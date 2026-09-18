@@ -1,10 +1,22 @@
-﻿import test from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
-import { getQuizImageSlotGeometry, recommendImageSizing, type ImageSlotGeometry, type ImageFit } from "../src/quizImageSizing/index.js";
+import {
+  getQuizImageSlotGeometry,
+  recommendImageSizing,
+  type ImageSlotGeometry,
+  type ImageFit,
+  type ImageSlotPurpose,
+} from "../src/quizImageSizing/index.js";
+import type { QuizChoicePresentation, ResolvedQuizLayoutId } from "../src/quizLayouts.types.js";
 
-function makeGeometry(width: number, height: number, fit: ImageFit = "cover", layoutId = "visual_choices_three"): ImageSlotGeometry {
+function makeGeometry(
+  width: number,
+  height: number,
+  fit: ImageFit = "cover",
+  layoutId: ResolvedQuizLayoutId = "visual_choices_three",
+): ImageSlotGeometry {
   return {
-    layoutId: layoutId as any,
+    layoutId,
     purpose: "answer_option",
     canvas: { width: 1920, height: 1080 },
     viewports: [{ width, height, fit }],
@@ -23,7 +35,7 @@ test("quizImageSizing - canonical formula test cases", () => {
   for (const [width, height, ratio, rw, rh] of cases) {
     const result = recommendImageSizing(makeGeometry(width, height, "cover"));
     assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.code);
+    if (!result.ok) throw new Error("Recommendation failed");
     assert.equal(result.value.aspectRatio, ratio);
     assert.deepEqual(result.value.recommended, { width: rw, height: rh });
   }
@@ -32,7 +44,7 @@ test("quizImageSizing - canonical formula test cases", () => {
 test("quizImageSizing - contain slot reports zero crop loss and reports unused area", () => {
   const result = recommendImageSizing(makeGeometry(800, 450, "contain"));
   assert.equal(result.ok, true);
-  if (!result.ok) throw new Error(result.code);
+  if (!result.ok) throw new Error("Recommendation failed");
   assert.equal(result.value.aspectRatio, "16:9");
   assert.equal(result.value.maxCropLoss, 0);
   assert.equal(result.value.maxUnusedArea, 0);
@@ -51,7 +63,7 @@ test("quizImageSizing - multiple viewports minimax selection", () => {
   };
   const result = recommendImageSizing(geometry);
   assert.equal(result.ok, true);
-  if (!result.ok) throw new Error(result.code);
+  if (!result.ok) throw new Error("Recommendation failed");
   assert.equal(result.value.aspectRatio, "16:9");
   assert.equal(result.value.maxCropLoss, 0);
 });
@@ -72,7 +84,7 @@ test("quizImageSizing - exact tie breaks by fixed priority order 1:1, 4:3, 3:4, 
   const geom = makeGeometry(500, 500, "cover");
   const result = recommendImageSizing(geom, ["16:9", "4:3", "1:1"]);
   assert.equal(result.ok, true);
-  if (!result.ok) throw new Error(result.code);
+  if (!result.ok) throw new Error("Recommendation failed");
   assert.equal(result.value.aspectRatio, "1:1");
 });
 
@@ -144,7 +156,7 @@ test("quizImageSizing - getQuizImageSlotGeometry returns null for text mode or l
   });
   assert.equal(splitTextChoice, null);
 
-  // Split versus visual mode produces 622 x 342 slot
+  // Split versus visual mode produces 674 x 422 slot
   const splitVisualChoice = getQuizImageSlotGeometry({
     layoutId: "split_versus_two",
     purpose: "answer_option",
@@ -153,9 +165,9 @@ test("quizImageSizing - getQuizImageSlotGeometry returns null for text mode or l
     canvasAspectRatio: "16:9",
   });
   assert.notEqual(splitVisualChoice, null);
-  assert.deepEqual(splitVisualChoice?.viewports[0], { width: 622, height: 342, fit: "cover" });
+  assert.deepEqual(splitVisualChoice?.viewports[0], { width: 674, height: 422, fit: "cover" });
 
-  // Visual choices three produces 432 x 336
+  // Visual choices three produces 432 x 441
   const vcChoice = getQuizImageSlotGeometry({
     layoutId: "visual_choices_three",
     purpose: "answer_option",
@@ -164,9 +176,9 @@ test("quizImageSizing - getQuizImageSlotGeometry returns null for text mode or l
     canvasAspectRatio: "16:9",
   });
   assert.notEqual(vcChoice, null);
-  assert.deepEqual(vcChoice?.viewports[0], { width: 432, height: 336, fit: "cover" });
+  assert.deepEqual(vcChoice?.viewports[0], { width: 432, height: 441, fit: "cover" });
 
-  // Visual choices three pure produces 432 x 484
+  // Visual choices three pure produces 432 x 544
   const pureChoice = getQuizImageSlotGeometry({
     layoutId: "visual_choices_three_pure",
     purpose: "answer_option",
@@ -175,5 +187,39 @@ test("quizImageSizing - getQuizImageSlotGeometry returns null for text mode or l
     canvasAspectRatio: "16:9",
   });
   assert.notEqual(pureChoice, null);
-  assert.deepEqual(pureChoice?.viewports[0], { width: 432, height: 484, fit: "cover" });
+  assert.deepEqual(pureChoice?.viewports[0], { width: 432, height: 544, fit: "cover" });
+});
+
+test("quizImageSizing - all six target layouts match planning ratios and recommendations", () => {
+  const targets: Array<{
+    layoutId: ResolvedQuizLayoutId;
+    purpose: ImageSlotPurpose;
+    presentation?: QuizChoicePresentation;
+    ratio: string;
+    rw: number;
+    rh: number;
+  }> = [
+    { layoutId: "media_left_choices_right", purpose: "hero_question_image", ratio: "4:3", rw: 1120, rh: 840 },
+    { layoutId: "visual_choices_three", purpose: "answer_option", presentation: "visual", ratio: "1:1", rw: 664, rh: 664 },
+    { layoutId: "visual_choices_three_pure", purpose: "answer_option", presentation: "visual", ratio: "3:4", rw: 648, rh: 864 },
+    { layoutId: "split_versus_two", purpose: "answer_option", presentation: "visual", ratio: "16:9", rw: 1152, rh: 648 },
+    { layoutId: "verdict_true_false", purpose: "hero_question_image", ratio: "4:3", rw: 1216, rh: 912 },
+    { layoutId: "mystery_reveal", purpose: "hero_question_image", ratio: "16:9", rw: 1408, rh: 792 },
+  ];
+
+  for (const t of targets) {
+    const geom = getQuizImageSlotGeometry({
+      layoutId: t.layoutId,
+      purpose: t.purpose,
+      presentation: t.presentation ?? "text",
+      choiceCount: 2,
+      canvasAspectRatio: "16:9",
+    });
+    assert.notEqual(geom, null, `geometry for ${t.layoutId} must not be null`);
+    const sizing = recommendImageSizing(geom!);
+    assert.equal(sizing.ok, true);
+    if (!sizing.ok) throw new Error("Recommendation failed");
+    assert.equal(sizing.value.aspectRatio, t.ratio, `ratio mismatch for ${t.layoutId}`);
+    assert.deepEqual(sizing.value.recommended, { width: t.rw, height: t.rh }, `dimensions mismatch for ${t.layoutId}`);
+  }
 });

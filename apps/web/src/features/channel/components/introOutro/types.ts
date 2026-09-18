@@ -1,4 +1,4 @@
-import type { IntroOutroTransitionType, TransitionDefinition } from "@studio/shared";
+import type { TransitionDefinition } from "@studio/shared";
 import { listTransitions } from "@studio/shared";
 
 export interface VideoFileInfo {
@@ -13,7 +13,7 @@ export interface VideoFileInfo {
 }
 
 export interface TransitionOption {
-  id: IntroOutroTransitionType | string;
+  id: string;
   name: string;
   description: string;
   tag: string;

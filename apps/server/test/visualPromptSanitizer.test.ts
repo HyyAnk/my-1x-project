@@ -32,7 +32,7 @@ describe("Visual Prompt Subject Identity Preservation", () => {
 
       const compiled = compileQuizAssetPrompt(requirement);
       expect(compiled.prompt).toContain(`Subject: ${expectedText}.`);
-      expect(compiled.cacheVersion).toMatch(/-v4-subject-identity$/);
+      expect(compiled.cacheVersion).toMatch(/-v5-layout-framing$/);
     });
 
     it("preserves answer_option choices in compileQuizAssetPrompt", () => {

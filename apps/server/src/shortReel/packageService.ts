@@ -236,7 +236,13 @@ export async function generateFullReelPackage(
     await generateReelReferencesUnit(repository, key, `references-${operation}`, options?.referenceOptions);
   const afterRefs = await repository.getShortReel(key);
   const jobs: Promise<ShortReelRecord>[] = [];
-  if (afterRefs.units.cover.state !== "ready") jobs.push(generateReelCover(repository, key, `cover-${operation}`, options?.coverOptions));
+  if (afterRefs.units.cover.state !== "ready")
+    jobs.push(
+      generateReelCover(repository, key, `cover-${operation}`, {
+        llmClient: options?.llmClient,
+        ...options?.coverOptions,
+      }),
+    );
   if (afterRefs.units.publishing.state !== "ready")
     jobs.push(
       generateReelPublishingUnit(repository, key, `publishing-${operation}`, {

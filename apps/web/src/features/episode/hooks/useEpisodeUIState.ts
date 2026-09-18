@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Scene } from "@studio/shared";
 import type { PreviewImageData } from "../types";
+import { useRouteTab } from "../../../hooks/router/useRouteTab";
 
 type UseEpisodeUIStateProps = {
   activeTab?: string | null;
@@ -8,39 +9,20 @@ type UseEpisodeUIStateProps = {
   simplifyMode?: boolean;
 };
 
-export function useEpisodeUIState({ activeTab, onTabChange, simplifyMode = true }: UseEpisodeUIStateProps) {
-  const initialWorkflowTab =
-    activeTab === "script" || activeTab === "visual" || activeTab === "timeline" || activeTab === "remix"
-      ? activeTab
-      : simplifyMode
-        ? "remix"
-        : "timeline";
+const WORKFLOW_TABS = ["script", "visual", "timeline", "remix"] as const;
+type WorkflowTab = (typeof WORKFLOW_TABS)[number];
 
-  const [workflowTab, setWorkflowTab] = useState<"script" | "visual" | "timeline" | "remix">(initialWorkflowTab);
+export function useEpisodeUIState({ activeTab, onTabChange, simplifyMode = true }: UseEpisodeUIStateProps) {
+  const routeTab = simplifyMode && activeTab !== "remix" ? null : activeTab;
+  const [workflowTab, switchWorkflowTab] = useRouteTab<WorkflowTab>({
+    value: routeTab,
+    allowedTabs: WORKFLOW_TABS,
+    fallback: simplifyMode ? "remix" : "timeline",
+    onChange: onTabChange,
+  });
   const [previewImage, setPreviewImage] = useState<PreviewImageData | null>(null);
   const [promptModalScene, setPromptModalScene] = useState<Scene | null>(null);
   const [globalPromptExpanded, setGlobalPromptExpanded] = useState<boolean | null>(false);
-
-  useEffect(() => {
-    if (simplifyMode && workflowTab !== "remix") {
-      setWorkflowTab("remix");
-    }
-  }, [simplifyMode]);
-
-  useEffect(() => {
-    if (
-      activeTab &&
-      (activeTab === "script" || activeTab === "visual" || activeTab === "timeline" || activeTab === "remix") &&
-      activeTab !== workflowTab
-    ) {
-      setWorkflowTab(activeTab);
-    }
-  }, [activeTab]);
-
-  const switchWorkflowTab = (tab: "script" | "visual" | "timeline" | "remix") => {
-    setWorkflowTab(tab);
-    onTabChange?.(tab);
-  };
 
   return {
     workflowTab,

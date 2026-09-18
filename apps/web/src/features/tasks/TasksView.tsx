@@ -18,6 +18,8 @@ export function TasksView({
   onRefresh,
   onNotice,
   onOpenEpisode,
+  activeTab,
+  onTabChange,
 }: {
   tasks: Task[];
   channels?: Channel[];
@@ -25,6 +27,8 @@ export function TasksView({
   onRefresh: () => Promise<void>;
   onNotice: (notice: NonNullable<Notice>) => void;
   onOpenEpisode?: (channelId: string, episodeId: string) => void;
+  activeTab?: string | null;
+  onTabChange?: (tab: string) => void;
 }) {
   const { t } = useTranslation();
   const {
@@ -58,7 +62,7 @@ export function TasksView({
     clearCompleted,
     cancelAllQueued,
     handleManualRefresh,
-  } = useTasksViewData({ tasks, channels, now, onRefresh, onNotice });
+  } = useTasksViewData({ tasks, channels, now, onRefresh, onNotice, activeTab, onTabChange });
 
   const selectedChannelObj = channels.find((c) => c.channel_id === channelFilter);
 

@@ -39,6 +39,7 @@ export function PresetPickerDropdown({ episode, disabled, saving, isOpen, onTogg
     answer_card_style: episode.quiz_config?.answer_card_style,
     counter_style: episode.quiz_config?.question_counter_style,
     thinking_bar_style: episode.quiz_config?.thinking_bar_style,
+    background_style: episode.quiz_config?.background_style,
   });
   const activePreset =
     episode.quiz_config?.style_preset_id && !["auto", "custom"].includes(episode.quiz_config.style_preset_id)
@@ -59,6 +60,7 @@ export function PresetPickerDropdown({ episode, disabled, saving, isOpen, onTogg
       questionBoxStyle: preset.question_box_style,
       answerCardStyle: preset.answer_card_style,
       counterStyle: preset.counter_style,
+      backgroundStyle: preset.background_style,
     },
     label: t(preset.nameKey || "") || preset.name,
   });

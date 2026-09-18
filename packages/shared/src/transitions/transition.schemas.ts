@@ -71,10 +71,7 @@ export function unknownTransition(id: string): TransitionDomainError {
 }
 
 export function unsupportedPlacement(id: string, placement: string): TransitionDomainError {
-  return new TransitionDomainError(
-    `Transition '${id}' does not support placement '${placement}'`,
-    "UNSUPPORTED_PLACEMENT",
-  );
+  return new TransitionDomainError(`Transition '${id}' does not support placement '${placement}'`, "UNSUPPORTED_PLACEMENT");
 }
 
 export const TransitionPlacementSchema: z.ZodType<TransitionPlacement> = z.enum(["intro", "scene"]);

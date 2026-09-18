@@ -1,5 +1,3 @@
-import type { ImgStudioResolution } from "@studio/shared";
-
 export type ImgStudioAspectRatio = "1:1" | "16:9" | "9:16" | "4:3" | "3:4" | "2:3" | "3:2";
 
 export interface ImgStudioGenerationRequest {
@@ -7,7 +5,7 @@ export interface ImgStudioGenerationRequest {
   prompt: string;
   aspect_ratio: string;
   resolution: string;
-  quality: "standard" | "high" | string;
+  quality: "standard" | "high" | (string & {});
   image?: string;
 }
 
@@ -56,7 +54,7 @@ export interface ImgStudioGenerationOptions {
   model?: string;
   aspect_ratio?: string;
   resolution?: string;
-  quality?: "standard" | "high" | string;
+  quality?: "standard" | "high" | (string & {});
   idempotencyKey?: string;
   referenceImage?: string;
   cancellationSignal?: AbortSignal;
@@ -76,4 +74,5 @@ export interface ImgStudioImageTarget {
   variant?: number;
   assetId?: string;
   fingerprint?: string;
+  taskId?: string;
 }

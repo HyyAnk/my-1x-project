@@ -1,10 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
 import type { QuizV2RouteDeps } from "./quizV2/index.js";
-import {
-  registerQuizV2ArtifactRoutes,
-  registerQuizV2PipelineRoutes,
-  registerQuizV2MediaRoutes,
-} from "./quizV2/index.js";
+import { registerQuizV2ArtifactRoutes, registerQuizV2PipelineRoutes, registerQuizV2MediaRoutes } from "./quizV2/index.js";
 
 export type { QuizV2RouteDeps } from "./quizV2/index.js";
 export {

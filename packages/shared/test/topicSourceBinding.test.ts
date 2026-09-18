@@ -112,7 +112,7 @@ void describe("topic source contracts", () => {
     assert.equal(sourceSha256Hex("abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
     assert.equal(sourceSha256Hex(""), "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
     assert.equal(sourceSha256Hex("Quiz ✓"), "731228dc3ecaff7544e2580a10bd4eee02d385082fb9328d7dd504c329a401ec");
-    assert.equal(legacyShortReelSha256Hex("abc"), "4336fab4257194ecf7d6a1f7e1bee8ac5cd67234ec13bb0bba8942377b64a6c4");
+    assert.equal(legacyShortReelSha256Hex("abc"), sourceSha256Hex("abc"));
   });
 
   void it("rejects source binding counts that cannot satisfy an episode candidate", () => {

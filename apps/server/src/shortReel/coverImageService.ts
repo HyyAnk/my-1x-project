@@ -2,7 +2,9 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import { ReelCoverPayloadSchema, type ReelCoverPayload, type ReelKey, type ShortReelRecord } from "@studio/shared";
 import type { PortraitImageClient } from "../providers/imageGeneration/imageGeneration.types.js";
+import type { LLMClient } from "../utils/promptSanitizer.js";
 import type { RepositoryService } from "../repository/service.js";
+import { planReelCoverWithAI, type ReelCoverPersona } from "./coverAiPlanner.js";
 import { COVER_PROMPT_VERSION, buildReelCoverPrompt } from "./coverPrompt.js";
 import { GenerationError } from "./generationErrors.js";
 import { assetChecksum, readBoundedAsset, storePackageAsset } from "./packageAssets.js";
@@ -76,6 +78,11 @@ async function verifyCoverDependenciesUnchanged(repository: RepositoryService, k
   }
 }
 
+export interface GenerateReelCoverPayloadOptions {
+  llmClient?: LLMClient | null;
+  personaOverride?: ReelCoverPersona;
+}
+
 /**
  * Generates the 9:16 portrait cover image conditioned on the accepted style reference.
  * Returns the cover payload with 1080x1920 dimensions and stored asset details.
@@ -88,6 +95,7 @@ export async function generateReelCoverPayload(
   client: PortraitImageClient,
   operationId: string,
   signal?: AbortSignal,
+  optionsOrLlmClient?: GenerateReelCoverPayloadOptions | LLMClient | null,
 ): Promise<ReelCoverPayload> {
   if (signal?.aborted) {
     throw new GenerationError("OPERATION_CANCELLED", "Cover generation cancelled.");
@@ -96,7 +104,20 @@ export async function generateReelCoverPayload(
   const { styleRef, referencesPayload } = validateCoverPrerequisites(snapshot);
   const { styleBuffer, styleMimeType } = await loadAndValidateStyleBuffer(repository, styleRef.path, styleRef.checksum);
 
-  const prompt = buildReelCoverPrompt(snapshot);
+  const options: GenerateReelCoverPayloadOptions =
+    optionsOrLlmClient && "completePrompt" in optionsOrLlmClient && typeof optionsOrLlmClient.completePrompt === "function"
+      ? { llmClient: optionsOrLlmClient as LLMClient }
+      : (optionsOrLlmClient as GenerateReelCoverPayloadOptions) || {};
+
+  const persona =
+    options.personaOverride ??
+    (await planReelCoverWithAI({
+      record: snapshot,
+      llmClient: options.llmClient,
+      signal,
+    }));
+
+  const prompt = buildReelCoverPrompt(snapshot, { persona });
   const scriptHash = createHash("sha256")
     .update(JSON.stringify(snapshot.units.script.last_accepted_payload?.script ?? snapshot.script))
     .digest("hex");

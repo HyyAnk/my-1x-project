@@ -22,6 +22,11 @@ import type {
   MascotRenderPhase,
 } from "./renderTypes.js";
 
+/**
+ * @deprecated Legacy V1 multi-frame animation format. Use `MascotPublishedAnimationAsset` instead.
+ */
+export type { MascotLegacyAnimationV1 } from "./renderTypes.js";
+
 export function clampFinite(value: number | undefined, fallback: number, min: number, max: number): number {
   const candidate = typeof value === "number" && Number.isFinite(value) ? value : fallback;
   return Math.min(max, Math.max(min, candidate));
@@ -69,6 +74,17 @@ export function cloneRenderAssets(assets: MascotRenderAssetCatalogV2): MascotRen
                 },
                 motion: { ...asset.motion },
                 legacy_animation: asset.legacy_animation ? { ...asset.legacy_animation } : undefined,
+                animation: asset.animation
+                  ? {
+                      ...asset.animation,
+                      ...(asset.animation.frames ? { frames: asset.animation.frames.map((f) => ({ ...f })) } : {}),
+                      registration: {
+                        ...asset.animation.registration,
+                        content_bounds: { ...asset.animation.registration.content_bounds },
+                        pivot: { ...asset.animation.registration.pivot },
+                      },
+                    }
+                  : undefined,
               }
             : asset,
         ];
@@ -92,6 +108,11 @@ export function phaseRuleWithVisibility(phase: MascotRenderPhase, config: Channe
   return { ...DEFAULT_MASCOT_PHASE_RULES[phase], visible: visibility };
 }
 
+/**
+ * Adapts a legacy V1 sprite action into a canonical V2 action asset.
+ *
+ * @deprecated Legacy action cloner. Use canonical V2 `MascotActionAssetV2` directly.
+ */
 export function adaptActionAsset(action: MascotActionType, legacy: MascotSpriteAction): MascotActionAssetV2 {
   const frameWidth = normalizeDimension(legacy.frame_width, 512);
   const frameHeight = normalizeDimension(legacy.frame_height, 512);
@@ -127,6 +148,11 @@ export function adaptActionAsset(action: MascotActionType, legacy: MascotSpriteA
   return asset;
 }
 
+/**
+ * Adapts a legacy master image URL into a canonical V2 master asset.
+ *
+ * @deprecated Legacy master asset cloner. Use canonical V2 `MascotMasterAssetV2` directly.
+ */
 export function adaptMasterAsset(imageUrl: string): MascotMasterAssetV2 {
   return {
     version: 2,

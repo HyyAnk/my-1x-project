@@ -1,9 +1,4 @@
-import {
-  ListDashes,
-  ListNumbers,
-  SquareSplitHorizontal,
-  type IconProps,
-} from "@phosphor-icons/react";
+import { ListDashes, ListNumbers, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
 import type { QuizLayoutUiDefinition } from "../../../quizLayouts/quizLayoutUiCatalog";
 
 export interface SandboxLayoutIconProps extends IconProps {

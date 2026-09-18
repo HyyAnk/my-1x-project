@@ -2,6 +2,7 @@ import { pathToFileURL } from "node:url";
 import type { QuizTimeline } from "@studio/shared";
 import { defaultBgmRegistry, type ResolveBgmOptions } from "../../audio/bgmRegistry.js";
 import { DEFAULT_SFX_MAP } from "../../audio/sfxRegistry.js";
+import { buildLocalizedArtifactFilename, parseAnimationArtifactUrl } from "../../../tasks/video/mascotAnimationResolver.js";
 import { escAttr } from "./candyArcadeSvg.js";
 
 export type SfxRawClip = {
@@ -15,20 +16,34 @@ export type SfxRawClip = {
 };
 
 export function source(value: string): string {
-  if (!value) return "";
+  if (!value || typeof value !== "string") return "";
+
+  if (value.startsWith("./mascot-assets/")) return value;
+  if (value.startsWith("/mascot-assets/")) return `.${value}`;
+  if (value.startsWith("mascot-assets/")) return `./${value}`;
+
+  const animArtifact = parseAnimationArtifactUrl(value);
+  if (animArtifact) {
+    return `./mascot-assets/${buildLocalizedArtifactFilename(animArtifact)}`;
+  }
+
+  const mascotAssetMatch = value.match(/(?:^|\/)api\/mascots\/[^/]+\/assets\/([^/?#]+)/);
+  if (mascotAssetMatch?.[1]) {
+    return `./mascot-assets/${decodeURIComponent(mascotAssetMatch[1])}`;
+  }
+
   if (/^(data:|https?:|file:)/i.test(value) || value.startsWith("./") || value.startsWith("../")) {
     return value;
   }
-  if (value.startsWith("/mascot-assets/")) {
-    return `.${value}`;
-  }
-  if (value.startsWith("/api/")) {
-    const match = value.match(/\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/);
-    if (match && match[1]) {
-      return `./mascot-assets/${match[1]}`;
-    }
+
+  if (value.startsWith("/api/") || value.startsWith("api/") || value.includes("/api/mascots/")) {
     return value;
   }
+
+  if (value.startsWith("/mascot/") || value.startsWith("mascot/")) {
+    return value;
+  }
+
   return pathToFileURL(value).href;
 }
 
@@ -55,10 +70,7 @@ export function buildBgmClips(
 ): string[] {
   const effectiveStartSeconds = Math.max(0, startSeconds ?? bgmOptions?.startSeconds ?? 0);
   const effectiveOutroStart = outroStart ?? bgmOptions?.outroStartSeconds;
-  const effectiveEndSeconds = Math.min(
-    duration,
-    effectiveOutroStart ?? duration,
-  );
+  const effectiveEndSeconds = Math.min(duration, effectiveOutroStart ?? duration);
 
   if (effectiveEndSeconds <= effectiveStartSeconds) {
     return [];
@@ -76,7 +88,6 @@ export function buildBgmClips(
   return schedule.map((item, index) => {
     const isFirstClip = index === 0;
     const isFinalClip = index === totalClips - 1;
-    const clipStart = item.startSeconds;
     const clipDuration = item.durationSeconds;
     const baseVolume = item.volume;
 

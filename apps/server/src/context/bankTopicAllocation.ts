@@ -37,10 +37,7 @@ function buildEmptyShortages(episodeQuestionCount: number): TopicSourceShortage[
   }));
 }
 
-function evaluateSlotEligibility(
-  rawQuestion: BankQuestion | BankQuestionWithCooldown,
-  def: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number],
-) {
+function evaluateSlotEligibility(rawQuestion: BankQuestion | BankQuestionWithCooldown, def: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]) {
   if (def.contentKind === "episode") {
     return evaluateEpisodeQuestionEligibility(rawQuestion, {
       targetLanguage: "en",

@@ -24,21 +24,7 @@ export function LayoutWireframeModal({ layoutId, layoutInfo }: LayoutWireframeMo
             <div className="wf-title">Question prompt goes here...</div>
           </div>
 
-          {layoutId === "clue_deduction" ? (
-            <div className="wf-deduction-row">
-              <div className="wf-clue-box">
-                <div className="wf-clue-badge">CLUE 100% CLEAR</div>
-                <div className="wf-clue-icon">🔍</div>
-                <div className="wf-clue-lbl">Object / Tool / Dish</div>
-              </div>
-              <div className="wf-arrow-divider">➔</div>
-              <div className="wf-reveal-box">
-                <div className="wf-reveal-badge">REVEAL DOCK</div>
-                <div className="wf-reveal-icon">✨</div>
-                <div className="wf-reveal-lbl">Answer Subject B</div>
-              </div>
-            </div>
-          ) : layoutId === "mystery_reveal" ? (
+          {layoutId === "mystery_reveal" ? (
             <div className="wf-mystery-stage">
               <div className="wf-stage-backdrop">
                 <div className="wf-silhouette-box">

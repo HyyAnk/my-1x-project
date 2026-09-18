@@ -53,9 +53,13 @@ describe("Candy Arcade visual and workflow regression", () => {
       ".game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1420px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }",
     );
 
-    // Game header defaults directly to x = 180px (centered in 0..360px pillar)
+    // Counter slot is derived from the question card and centers the badge body in the left gutter.
+    expect(css).toContain(".candy-scene:not(.quiz-frame-unified) .game-header {");
+    expect(css).toContain("top: 45px;");
+    expect(css).toContain("width: 370px;");
+    expect(css).toContain("justify-content: center;");
     expect(css).toContain(
-      ".game-header { position: absolute; z-index: 6; top: 0; left: 180px; transform: translateX(-50%); contain: layout style; }",
+      "margin-top: calc((168px - var(--counter-badge-body-height, 150px)) / 2 - var(--counter-badge-mount-height, 64px));",
     );
 
     // Question title and phase region centered/aligned to 1420px stage

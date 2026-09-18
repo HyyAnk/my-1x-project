@@ -195,20 +195,28 @@ export async function updateMascotSlot(this: RepositoryRuntime, mascotId: string
     let updatedSlot: MascotStateVariant;
     if (slotIndex >= 0) {
       const current = stateSlots[slotIndex];
+      const isNewImage = input.image_url !== undefined && input.image_url !== current.image_url;
       updatedSlot = {
         ...current,
         ...(input.image_url !== undefined ? { image_url: input.image_url } : {}),
+        ...(input.raw_image_url !== undefined ? { raw_image_url: input.raw_image_url } : {}),
+        ...(input.transparent_image_url !== undefined ? { transparent_image_url: input.transparent_image_url } : {}),
         ...(input.prompt_modifier !== undefined ? { prompt_modifier: input.prompt_modifier } : {}),
         ...(input.motion_preset !== undefined ? { motion_preset: input.motion_preset } : {}),
         ...(input.motion_speed !== undefined ? { motion_speed: input.motion_speed } : {}),
         ...(input.motion_intensity !== undefined ? { motion_intensity: input.motion_intensity } : {}),
       };
+      if (isNewImage && updatedSlot.animation) {
+        delete updatedSlot.animation;
+      }
       stateSlots[slotIndex] = updatedSlot;
     } else {
       updatedSlot = {
         id: `slot_${input.slot_index}`,
         slot_index: input.slot_index,
         image_url: input.image_url || "",
+        ...(input.raw_image_url !== undefined ? { raw_image_url: input.raw_image_url } : {}),
+        ...(input.transparent_image_url !== undefined ? { transparent_image_url: input.transparent_image_url } : {}),
         ...(input.prompt_modifier !== undefined ? { prompt_modifier: input.prompt_modifier } : {}),
         ...(input.motion_preset !== undefined ? { motion_preset: input.motion_preset } : {}),
         ...(input.motion_speed !== undefined ? { motion_speed: input.motion_speed } : {}),

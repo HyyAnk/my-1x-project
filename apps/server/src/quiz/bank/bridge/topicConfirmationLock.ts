@@ -9,11 +9,7 @@ const topicConfirmationLocks = new Map<string, Promise<unknown>>();
  * Acquires a per-topic mutex lock and executes the provided action,
  * releasing the lock upon completion or rejection.
  */
-export async function withTopicConfirmationLock<T>(
-  channelId: string,
-  topicId: string,
-  action: () => Promise<T>,
-): Promise<T> {
+export async function withTopicConfirmationLock<T>(channelId: string, topicId: string, action: () => Promise<T>): Promise<T> {
   const lockKey = `${channelId}:${topicId}`;
 
   while (topicConfirmationLocks.has(lockKey)) {

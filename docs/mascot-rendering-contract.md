@@ -1,45 +1,50 @@
 # Mascot rendering contract
 
-Reviewed against source boundaries on 2026-09-09. This describes the V2 model, not a claim that every preview and production combination has passed visual QA.
+Reviewed and updated on 2026-09-16. This documents the canonical Mascot V2 rendering contract, recording the retirement of the legacy V1 Sprite Action model.
 
-## Contracts and geometry
+## Retirement of Legacy V1 Sprite Action Model
 
-[packages/shared/src/mascot](../packages/shared/src/mascot/) owns render types, schemas, constants, compatibility adaptation, geometry, motion and resolution.
+The legacy V1 Sprite Action architecture (based on `MascotSpriteAction`, multi-frame sprite sheets/strips, and the root `mascot.actions` dictionary) is **formally retired**:
+- **Authoring Discontinued:** Authoring multi-frame sprite sheets or strips has been discontinued. New mascot assets are authored as standalone V2 action images (`MascotActionAssetV2`) or style state slot variants (`MascotStateVariant`).
+- **Compatibility Phase-Out:** Legacy compatibility adapters (`adaptMascotV1ToV2`, `buildLegacySpriteAction`) remain available strictly for transient reading of unmigrated data and are slated for removal. Runtime mutation of `mascot.actions` is disabled.
+- **Retired Portrait Path:** Legacy portrait (`9:16`) preview and production composition paths for legacy sprites are retired.
 
-- V2 action assets use one image per action with dimensions, visible bounds, pivot and registration metadata.
-- Legacy frame metadata can be preserved through compatibility adapters; do not infer that V2 authoring should create sprite strips.
-- The canonical base box is 220 by 220 logical pixels. Placement is in canvas coordinates, independent of viewport fit/zoom.
-- Read scale, motion limits, defaults and supported values from [renderSchema.ts](../packages/shared/src/mascot/renderSchema.ts) and [renderConstants.ts](../packages/shared/src/mascot/renderConstants.ts).
+## Canonical Data Models: `render_bundle` and `styles`
 
-Preserve this transform order:
+`render_bundle` (`MascotRenderBundleV2`) and `styles` (`MascotStyle`) are the canonical, authoritative, and primary data models across all authoring, persistence, preview, and video rendering pipelines:
 
-```text
-canvas anchor -> unscaled placement offset -> scale/flip around pivot
--> per-action registration offset -> deterministic motion
-```
+### 1. `render_bundle` (`MascotRenderBundleV2`)
+Defined in [packages/shared/src/mascot/renderTypes.ts](../packages/shared/src/mascot/renderTypes.ts) and validated by [packages/shared/src/mascot/renderSchema.ts](../packages/shared/src/mascot/renderSchema.ts):
+- **`config` (`MascotRenderConfigV2`):** Defines placements across supported aspect ratios (`16:9`, `9:16`) with anchor, scale, offset, and flip parameters, alongside visibility phase rules and reveal outcome actions.
+- **`assets` (`MascotRenderAssetCatalogV2`):** Maps action keys (`idle`, `wave`, `thinking`, `point`, `celebrate`, `oops`, `outro`) to dedicated `MascotActionAssetV2` instances, each specifying `image_url`, `registration` (source dimensions, content bounds, pivot, offsets), and deterministic `motion` presets (`preset`, `speed`, `intensity`).
+- **Canonical Base Geometry:** The base box is 220 by 220 logical pixels in canvas coordinates. Placement transforms apply in strict order:
+  ```text
+  canvas anchor -> unscaled placement offset -> scale/flip around pivot
+  -> per-action registration offset -> deterministic motion
+  ```
 
-Fallback assets must use the selected asset's own geometry and motion metadata. The resolver owns phase visibility, action overrides and reveal outcomes; do not duplicate that policy in UI components.
+### 2. `styles` (`MascotStyle[]`)
+Defined in [packages/shared/src/mascot/mascotStyleSchema.ts](../packages/shared/src/mascot/mascotStyleSchema.ts):
+- Authoritative for costume variants and multi-slot visual diversity across questions.
+- Each style contains an `id`, `name`, `keyword`, optional `anchor_image_url`, and a map of `states` (`thinking`, `celebrate`) containing up to 10 slot variants (`MascotStateVariant`).
+- Supports both static 3D characters with CSS keyframe motion and transparent WebM VP9 dynamic video animations (`MascotAnimationAssetV1`).
 
-## Runtime consumers
+## Runtime Pipeline Consumers
 
-[productionMascotRenderer.ts](../apps/server/src/quiz/render/productionMascotRenderer.ts) adapts product state into the shared render contract. [mascotHtmlRenderer.ts](../apps/server/src/quiz/render/mascotHtmlRenderer.ts) serializes the layer. [productionMascotTimeline.ts](../apps/server/src/quiz/render/productionMascotTimeline.ts) resolves phase/action markers.
+- **State Adaptation:** [productionMascotRenderer.ts](../apps/server/src/quiz/render/productionMascotRenderer.ts) and [productionMascotStateAdapter.ts](../apps/server/src/quiz/render/mascot/productionMascotStateAdapter.ts) adapt question requirements directly onto `render_bundle.assets.actions` and active style slots without mutating legacy `actions`.
+- **HTML Serialization:** [mascotHtmlRenderer.ts](../apps/server/src/quiz/render/mascotHtmlRenderer.ts) and [previewMascotRenderer.ts](../apps/server/src/quiz/render/previewMascotRenderer.ts) serialize DOM/CSS layers directly from `MascotRenderBundleV2`.
+- **Timeline Seeking:** [productionMascotTimeline.ts](../apps/server/src/quiz/render/productionMascotTimeline.ts) deterministically resolves phase markers, frame indices, and video seek times without clock drift.
+- **Studio & Previews:** [Stage Studio](../apps/web/src/features/stageStudio/) and [Visual Sandbox](../apps/web/src/features/sandbox/) consume canonical V2 bundles.
 
-[Stage Studio](../apps/web/src/features/stageStudio/) and [Visual Sandbox](../apps/web/src/features/sandbox/) are preview/editor consumers. Viewport scaling must not mutate saved placement. Preserve request identity and stale-preview rejection when changing asynchronous preview behavior.
+## Persistence and Storage Migration
 
-The shared mascot model retains both landscape and portrait canvas contracts. This is compatibility capability, not proof of a public portrait Episode mode: [Stage preview requests](../apps/web/src/features/stageStudio/utils/stagePreviewRequest.ts) and [video configuration](../packages/shared/src/schemas/config.ts) currently use `16:9`. Short-Reel workflows must be assessed separately.
-
-## Persistence and compatibility
-
-Use [mascot repositories](../apps/server/src/repository/mascots.ts) for changes. Preserve readable V1 data and existing V2 metadata; do not trigger migration, remove legacy fields or rewrite live assets as a side effect of preview.
-
-Migration tooling and compatibility tests are not instructions to migrate the user's storage automatically. Establish scope, recovery and position-preservation checks before any explicit migration.
-
-## Visual styles
-
-[Style modules](../apps/server/src/quiz/visual/styleModules/) and [element registries](../apps/server/src/quiz/visual/elements/) own module manifests, catalogs, namespacing, activation and concrete variants. [The visual registry](../apps/server/src/quiz/visual/registry.ts) composes themes.
-
-Read active catalog/registry definitions rather than copying variant lists into UI or documentation. Keep preview selection, persistence, cache revision and production lookup aligned when adding a style.
+All persistent mascot documents in [mascot repositories](../apps/server/src/repository/mascots.ts) enforce `schema_version: 2` with canonical `render_bundle` and `styles`:
+- When writing mascots, `buildPersistedMascotProfile` maintains `render_bundle` as the single source of truth.
+- Backward compatibility mirrors in `mascot.actions` are generated read-only for older external integrations and should not be relied upon for new features.
 
 ## Verification
 
-Verify geometry, fallback registration, phase visibility, deterministic seeking and persistence at the narrowest useful level. For changed visuals, also compare preview and rendered output at supported dimensions, including missing assets, stale requests and reduced-motion behavior where applicable. Follow [Workflow](workflow.md); this documentation update did not run visual regression or migrate assets.
+Modernized tests must verify the native V2 path (`render_bundle` and `styles`):
+- Test fixtures should directly instantiate `render_bundle` and `styles`.
+- Assertions should verify updates to `render_bundle.assets.actions` and `action_asset` rather than legacy `actions`.
+- HyperFrames validation tests verify bitwise deterministic rendering across arbitrary seek points.

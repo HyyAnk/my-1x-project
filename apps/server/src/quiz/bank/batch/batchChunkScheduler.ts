@@ -38,9 +38,7 @@ export {
  * Chunk execution scheduler managing worker concurrency throttling, LLM calls,
  * Auto-QA verification, mutexed persistence, chunk progress reporting, and cancellation.
  */
-export async function executeBatchChunkScheduler(
-  options: ScheduleBatchChunksOptions,
-): Promise<ScheduledBatchExecutionOutput> {
+export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOptions): Promise<ScheduledBatchExecutionOutput> {
   const { repository, input, allBankQuestions, targetCount } = options;
   const rateLimiter = options.rateLimiter ?? input.rateLimiter ?? new AdaptiveRateLimiter();
   const generationLanguage = normalizeGenerationLanguage(input.language);
@@ -72,7 +70,7 @@ export async function executeBatchChunkScheduler(
   const sharedQaIndex = new QuestionBankAutoQaIndex(allBankQuestions);
 
   async function recordFailedChunk(chunk: PlannedBatchChunk, chunkIndex: number, errorMsg: string): Promise<void> {
-    await persistenceMutex.run(async () => {
+    await persistenceMutex.run(() => {
       failedChunks.push({
         chunkIndex,
         error: errorMsg,
@@ -105,15 +103,14 @@ export async function executeBatchChunkScheduler(
 
     let chunkCandidates: BankQuestion[] = [];
     try {
-      chunkCandidates = await retryChunkOperation(
-        () => generateChunkCandidates(chunk, normalizedInput, allBankQuestions, rateLimiter),
-        {
-          ...retryOpts,
-          onRetry: (err, attempt, delay) => {
-            console.warn(`[QuestionBankBatch] Chunk ${chunkIndex + 1} candidate generation attempt ${attempt} failed, retrying in ${Math.round(delay)}ms: ${err instanceof Error ? err.message : String(err)}`);
-          },
+      chunkCandidates = await retryChunkOperation(() => generateChunkCandidates(chunk, normalizedInput, allBankQuestions, rateLimiter), {
+        ...retryOpts,
+        onRetry: (err, attempt, delay) => {
+          console.warn(
+            `[QuestionBankBatch] Chunk ${chunkIndex + 1} candidate generation attempt ${attempt} failed, retrying in ${Math.round(delay)}ms: ${err instanceof Error ? err.message : String(err)}`,
+          );
         },
-      );
+      });
     } catch (err) {
       if (normalizedInput.signal?.aborted) return;
       const errorMsg = err instanceof Error ? err.message : String(err);
@@ -166,7 +163,9 @@ export async function executeBatchChunkScheduler(
         {
           ...retryOpts,
           onRetry: (err, attempt, delay) => {
-            console.warn(`[QuestionBankBatch] Chunk ${chunkIndex + 1} persistence attempt ${attempt} failed, retrying in ${Math.round(delay)}ms: ${err instanceof Error ? err.message : String(err)}`);
+            console.warn(
+              `[QuestionBankBatch] Chunk ${chunkIndex + 1} persistence attempt ${attempt} failed, retrying in ${Math.round(delay)}ms: ${err instanceof Error ? err.message : String(err)}`,
+            );
           },
         },
       );
@@ -193,7 +192,7 @@ export async function executeBatchChunkScheduler(
         chunkToProcess = plannedChunks[currentIndex];
       } else {
         if (allSaved.length >= targetCount || nextChunkIndex >= totalChunks) break;
-        await persistenceMutex.run(async () => {
+        await persistenceMutex.run(() => {
           if (allSaved.length >= targetCount || nextChunkIndex >= totalChunks) return;
           currentIndex = nextChunkIndex++;
           const remainingNeeded = targetCount - allSaved.length;
@@ -218,7 +217,7 @@ export async function executeBatchChunkScheduler(
         await processPlannedChunk(chunkToProcess, currentIndex);
       } finally {
         if (isDynamic && chunkToProcess) {
-          await persistenceMutex.run(async () => {
+          await persistenceMutex.run(() => {
             for (const c of chunkToProcess!.candidates) inFlightEntityIds.delete(c.entity_id);
           });
         }

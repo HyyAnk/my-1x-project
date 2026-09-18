@@ -2,11 +2,7 @@ import { createHash } from "node:crypto";
 import { generateImgStudioImageBytes } from "../imgstudio/generator.js";
 import { GenerationError } from "../../shortReel/generationErrors.js";
 import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
-import type {
-  GeneratedImageBytes,
-  PortraitImageClient,
-  PortraitImageRequest,
-} from "./imageGeneration.types.js";
+import type { GeneratedImageBytes, PortraitImageClient, PortraitImageRequest } from "./imageGeneration.types.js";
 
 export interface ImgStudioPortraitAdapterOptions {
   apiKey?: string;

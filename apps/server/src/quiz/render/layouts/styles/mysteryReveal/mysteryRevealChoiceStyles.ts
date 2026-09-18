@@ -20,11 +20,11 @@ export function mysteryRevealChoiceStyles(): string {
   box-sizing: border-box;
 }
 
-/* Unified Arena Candidate Strip: top: 384px; height: 120px; */
+/* Unified Arena Candidate Strip: top: 637px; height: 120px; */
 .quiz-frame-unified.layout-mystery_reveal .choice-group,
 .quiz-frame-unified.layout-mystery_reveal .answer-grid {
   position: absolute;
-  top: 384px;
+  top: 637px;
   height: 120px;
   box-sizing: border-box;
   margin: 0;
@@ -244,6 +244,19 @@ export function mysteryRevealChoiceStyles(): string {
   animation: mystery-answer-dock 0.65s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.12s) both;
 }
 
+.quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card .choice-card-surface,
+.quiz-question-clip.layout-mystery_reveal .answer-count-1 .choice-card .choice-card-surface,
+.quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card.answer-reveal-correct .choice-card-surface,
+.quiz-question-clip.layout-mystery_reveal .answer-count-1 .choice-card.answer-reveal-correct .choice-card-surface,
+.quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card.answer-correct .choice-card-surface,
+.quiz-question-clip.layout-mystery_reveal .answer-count-1 .choice-card.answer-correct .choice-card-surface,
+.layout-mystery_reveal .answer-count-0 .choice-card.answer-reveal-correct .choice-card-surface,
+.layout-mystery_reveal .answer-count-1 .choice-card.answer-reveal-correct .choice-card-surface,
+.layout-mystery_reveal .answer-count-0 .choice-card.answer-correct .choice-card-surface,
+.layout-mystery_reveal .answer-count-1 .choice-card.answer-correct .choice-card-surface {
+  animation: mystery-surface-dock-win 0.65s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.12s) both;
+}
+
 .quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-reveal-correct .choice-label,
 .quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-correct .choice-label,
 .quiz-question-clip.layout-mystery_reveal .choice-card.answer-reveal-correct .choice-label,
@@ -271,9 +284,19 @@ export function mysteryRevealChoiceStyles(): string {
 .layout-mystery_reveal.is-revealed .choice-card.answer-correct,
 .layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-correct,
 .layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-reveal-correct {
+  transform: translateY(-4px) scale(1.03);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.layout-mystery_reveal[data-choice-phase="reveal"] .choice-card.answer-correct .choice-card-surface,
+.layout-mystery_reveal[data-choice-phase="explain"] .choice-card.answer-correct .choice-card-surface,
+.layout-mystery_reveal.is-revealed .choice-card.answer-correct .choice-card-surface,
+.layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-correct .choice-card-surface,
+.layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-reveal-correct .choice-card-surface {
   border-color: #22C55E;
   box-shadow: 0 16px 0 #15803D, 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 32px rgba(34, 197, 94, 0.75);
-  transform: translateY(-4px) scale(1.03);
 }
 
 .layout-mystery_reveal[data-choice-phase="reveal"] .choice-card.answer-incorrect,

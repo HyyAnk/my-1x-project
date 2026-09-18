@@ -6,7 +6,6 @@ import crypto from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
 import { removeKnowledgePolicyFields } from "../../../scripts/migrations/knowledge-policy-removal/transform.js";
 import { planMigration, applyMigration, rollbackMigration } from "../../../scripts/migrations/knowledge-policy-removal/files.js";
-import { MigrationError } from "../../../scripts/migrations/knowledge-policy-removal/types.js";
 
 const roots: string[] = [];
 

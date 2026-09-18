@@ -1,9 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  CANONICAL_TRANSITIONS,
-  type TransitionCatalogEntry,
-  type TransitionCatalogResponse,
-} from "@studio/shared";
+import { CANONICAL_TRANSITIONS, type TransitionCatalogEntry, type TransitionCatalogResponse } from "@studio/shared";
 import { fetchTransitionCatalog } from "../services/transitionPreviewApi";
 
 export type UseTransitionCatalogResult = {
@@ -33,9 +29,9 @@ export function useTransitionCatalog(sampleRevision?: string): UseTransitionCata
       setError(null);
       const data = await fetchTransitionCatalog(sampleRevision, ac.signal);
       setCatalog(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (ac.signal.aborted) return;
-      setError(err?.message || "Failed to load transition catalog");
+      setError(err instanceof Error ? err.message : String(err) || "Failed to load transition catalog");
     } finally {
       if (!ac.signal.aborted) {
         setIsLoading(false);

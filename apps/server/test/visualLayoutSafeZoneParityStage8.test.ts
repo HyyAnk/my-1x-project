@@ -2,14 +2,8 @@ import { describe, expect, it } from "vitest";
 import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio } from "@studio/shared";
 import { candyArcadeCss } from "../src/quiz/render/candyArcade/candyArcadeStyles.js";
 import { quizFrameCss } from "../src/quiz/render/frame/quizFrameStyles.js";
-import {
-  customIntroVideoClip,
-  renderIntroTransitionOverlay,
-} from "../src/quiz/render/candyArcade/customVideoClips.js";
-import {
-  sandboxSnapshotDocument,
-  sandboxRehearsalDocument,
-} from "../src/quiz/render/sandbox/sandboxDocumentTemplates.js";
+import { customIntroVideoClip, renderIntroTransitionOverlay } from "../src/quiz/render/candyArcade/customVideoClips.js";
+import { sandboxSnapshotDocument, sandboxRehearsalDocument } from "../src/quiz/render/sandbox/sandboxDocumentTemplates.js";
 import { adaptSandboxQuizScene } from "../src/quiz/render/scene/sandboxSceneAdapter.js";
 import { buildQuizSceneParts } from "../src/quiz/render/scene/buildQuizSceneParts.js";
 import { renderStableQuizSceneParts } from "../src/quiz/render/scene/renderQuizSceneParts.js";
@@ -37,7 +31,7 @@ describe("Stage 8: Visual Layout & Safe-Zone Viewport Parity (16:9 & 9:16)", () 
   });
 
   describe("2. Safe-zone custom properties verification", () => {
-    it("defines 16:9 standard broadcast safe zones in :root and #stage[data-aspect-ratio=\"16:9\"]", () => {
+    it('defines 16:9 standard broadcast safe zones in :root and #stage[data-aspect-ratio="16:9"]', () => {
       const css16x9 = candyArcadeCss({ fontMode: "render", aspectRatio: "16:9" });
 
       // Action Safe (54px top/bottom, 96px left/right)
@@ -94,7 +88,9 @@ describe("Stage 8: Visual Layout & Safe-Zone Viewport Parity (16:9 & 9:16)", () 
       expect(css16x9).toContain("word-break: break-word;");
 
       const css9x16 = candyArcadeCss({ fontMode: "render", aspectRatio: "9:16" });
-      expect(css9x16).toContain('#stage[data-aspect-ratio="9:16"] .question-title h1 { overflow-wrap: break-word; word-break: break-word; }');
+      expect(css9x16).toContain(
+        '#stage[data-aspect-ratio="9:16"] .question-title h1 { overflow-wrap: break-word; word-break: break-word; }',
+      );
     });
 
     it("enforces multi-line choice text clamping and word-break resilience across all choice span variants", () => {
@@ -141,10 +137,10 @@ describe("Stage 8: Visual Layout & Safe-Zone Viewport Parity (16:9 & 9:16)", () 
       const { model, parts, stableParts } = createMockSceneModel("16:9");
       const html = sandboxSnapshotDocument(model, parts, stableParts, "<div id='stage-content'></div>", "");
 
-      expect(html).toContain('--safe-zone-top: 54px;');
-      expect(html).toContain('--safe-zone-bottom: 54px;');
-      expect(html).toContain('--safe-zone-left: 96px;');
-      expect(html).toContain('--safe-zone-right: 96px;');
+      expect(html).toContain("--safe-zone-top: 54px;");
+      expect(html).toContain("--safe-zone-bottom: 54px;");
+      expect(html).toContain("--safe-zone-left: 96px;");
+      expect(html).toContain("--safe-zone-right: 96px;");
       expect(html).toContain('data-aspect-ratio="16:9"');
       expect(html).toContain('data-width="1920"');
       expect(html).toContain('data-height="1080"');
@@ -154,10 +150,10 @@ describe("Stage 8: Visual Layout & Safe-Zone Viewport Parity (16:9 & 9:16)", () 
       const { model, parts, stableParts } = createMockSceneModel("9:16");
       const html = sandboxSnapshotDocument(model, parts, stableParts, "<div id='stage-content'></div>", "");
 
-      expect(html).toContain('--safe-zone-top: 180px;');
-      expect(html).toContain('--safe-zone-bottom: 440px;');
-      expect(html).toContain('--safe-zone-left: 36px;');
-      expect(html).toContain('--safe-zone-right: 140px;');
+      expect(html).toContain("--safe-zone-top: 180px;");
+      expect(html).toContain("--safe-zone-bottom: 440px;");
+      expect(html).toContain("--safe-zone-left: 36px;");
+      expect(html).toContain("--safe-zone-right: 140px;");
       expect(html).toContain('data-aspect-ratio="9:16"');
       expect(html).toContain('data-width="1080"');
       expect(html).toContain('data-height="1920"');
@@ -166,21 +162,13 @@ describe("Stage 8: Visual Layout & Safe-Zone Viewport Parity (16:9 & 9:16)", () 
     it("injects safe zones and timeline parameters into sandbox rehearsal document", () => {
       const { model, parts, stableParts } = createMockSceneModel("16:9");
       const timeline = computeSandboxPhaseTimeline();
-      const html = sandboxRehearsalDocument(
-        model,
-        parts,
-        stableParts,
-        "<div id='stage-content'></div>",
-        "",
-        "",
-        timeline,
-      );
+      const html = sandboxRehearsalDocument(model, parts, stableParts, "<div id='stage-content'></div>", "", "", timeline);
 
-      expect(html).toContain('--safe-zone-top: 54px;');
-      expect(html).toContain('--safe-zone-bottom: 54px;');
+      expect(html).toContain("--safe-zone-top: 54px;");
+      expect(html).toContain("--safe-zone-bottom: 54px;");
       expect(html).toContain('data-aspect-ratio="16:9"');
-      expect(html).toContain('--scene-duration:');
-      expect(html).toContain('--timer-duration:');
+      expect(html).toContain("--scene-duration:");
+      expect(html).toContain("--timer-duration:");
     });
   });
 

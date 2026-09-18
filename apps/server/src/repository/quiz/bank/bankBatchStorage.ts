@@ -11,10 +11,17 @@ import { withBankSqliteDb } from "./bankSqliteEngine.js";
 import { upsertBankQuestionSqlite } from "./bankSqliteMutations.js";
 import { warmUpMatrixCoverageCache } from "../../../quiz/bank/matrixCoverageService.js";
 import {
-  assertNestedQuestionMembership, assertSafeTarget, assertUniqueQuestionIds,
-  matchesArchetypeFilter, normalizeLegacyArchetype, parseReadSubtopicBatch,
-  parseScannedBatchFile, readBatchContentWithFallback, readSafeBankBatchContent,
-  readSafeBankBatchFileNames, readSafeBankChildDirs, resolveBankCandidateRoots,
+  assertNestedQuestionMembership,
+  assertUniqueQuestionIds,
+  matchesArchetypeFilter,
+  normalizeLegacyArchetype,
+  parseReadSubtopicBatch,
+  parseScannedBatchFile,
+  readBatchContentWithFallback,
+  readSafeBankBatchContent,
+  readSafeBankBatchFileNames,
+  readSafeBankChildDirs,
+  resolveBankCandidateRoots,
   storeDiscoveredBatch,
 } from "./storage/index.js";
 
@@ -51,13 +58,23 @@ export async function writeSubtopicBatchUnlocked(this: RepositoryRuntime, batch:
   const normalizedBatch = { ...validated, archetype_id: normalizeLegacyArchetype(validated.archetype_id) };
   assertNestedQuestionMembership(validated, `${validated.archetype_id}/${validated.domain_id}/${validated.subtopic_id}`);
   const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
-  const batchPath = getQuestionBankWritePath.call(this, normalizedBatch.archetype_id, normalizedBatch.domain_id, `${normalizedBatch.subtopic_id}.json`);
+  const batchPath = getQuestionBankWritePath.call(
+    this,
+    normalizedBatch.archetype_id,
+    normalizedBatch.domain_id,
+    `${normalizedBatch.subtopic_id}.json`,
+  );
   await assertSafeBankFilesystemPath(runtimeBankRoot, batchPath);
   await mkdir(path.dirname(batchPath), { recursive: true });
   await this.writeJsonAtomic(batchPath, normalizedBatch);
 
   if (normalizedBatch.archetype_id === "verdict_true_false") {
-    const legacyPath = getQuestionBankWritePath.call(this, "verdict_fact_myth", normalizedBatch.domain_id, `${normalizedBatch.subtopic_id}.json`);
+    const legacyPath = getQuestionBankWritePath.call(
+      this,
+      "verdict_fact_myth",
+      normalizedBatch.domain_id,
+      `${normalizedBatch.subtopic_id}.json`,
+    );
     await assertSafeBankFilesystemPath(runtimeBankRoot, legacyPath);
     if (existsSync(legacyPath)) await this.writeJsonAtomic(legacyPath, normalizedBatch);
   }

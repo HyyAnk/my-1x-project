@@ -16,9 +16,11 @@ export interface QuestionBankViewProps {
   channels: Channel[];
   selectedChannel: Channel | null;
   onQuickBuildVideo?: (channelId: string, episodeId: string) => void;
+  activeTab?: string | null;
+  onTabChange?: (tab: string) => void;
 }
 
-export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo }: QuestionBankViewProps) {
+export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo, activeTab, onTabChange }: QuestionBankViewProps) {
   const { t } = useTranslation();
   const [isStatsCollapsed, setIsStatsCollapsed] = useState(false);
 
@@ -130,6 +132,8 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
           question={selectedQuestionWithDetails}
           buildingVideo={buildingVideo}
           onQuickBuildVideo={handleQuickBuildVideo}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
         />
       </div>
 

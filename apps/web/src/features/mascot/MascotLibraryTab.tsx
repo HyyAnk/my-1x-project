@@ -72,7 +72,7 @@ export function MascotLibraryTab({ channels, onNotice, onRefreshChannels, onStar
           title={searchQuery ? t("common.noResults") : t("mascots.noMascotsTitle")}
           copy=""
           action={searchQuery ? t("common.clear") : t("mascots.newMascot")}
-          actionHref={searchQuery ? undefined : "#/mascots?tab=generator"}
+          actionHref={searchQuery ? undefined : "#/mascots/new"}
           onAction={searchQuery ? () => setSearchQuery("") : onStartNew}
         />
       ) : (

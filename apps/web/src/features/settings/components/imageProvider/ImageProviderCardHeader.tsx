@@ -9,11 +9,7 @@ export interface ImageProviderCardHeaderProps {
   imageBalanceInfo: { balance_vnd: number; rpm?: number } | null;
 }
 
-export function ImageProviderCardHeader({
-  imageProvider,
-  hasImageApiKey,
-  imageBalanceInfo,
-}: ImageProviderCardHeaderProps) {
+export function ImageProviderCardHeader({ imageProvider, hasImageApiKey, imageBalanceInfo }: ImageProviderCardHeaderProps) {
   const providerDisplay =
     imageProvider === "gpti2"
       ? "gpti2.store (API)"

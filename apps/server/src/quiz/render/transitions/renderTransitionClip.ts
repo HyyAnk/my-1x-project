@@ -13,10 +13,7 @@ export type RenderTransitionClipContext = {
 /**
  * Emits timed HTML markup for a transition clip from an already-resolved instance.
  */
-export function renderResolvedTransitionClip(
-  instance: ResolvedTransitionInstance,
-  context: RenderTransitionClipContext,
-): string {
+export function renderResolvedTransitionClip(instance: ResolvedTransitionInstance, context: RenderTransitionClipContext): string {
   if (instance.id === "cut" || instance.durationFrames === 0) {
     return "";
   }

@@ -67,11 +67,7 @@ export function ImageProviderSettingsCard({
 
   return (
     <section className="panel image-settings-panel">
-      <ImageProviderCardHeader
-        imageProvider={imageProvider}
-        hasImageApiKey={hasImageApiKey}
-        imageBalanceInfo={imageBalanceInfo}
-      />
+      <ImageProviderCardHeader imageProvider={imageProvider} hasImageApiKey={hasImageApiKey} imageBalanceInfo={imageBalanceInfo} />
       <form className="codex-form" onSubmit={(event) => void onSaveImage(event)}>
         <label className="toggle-field">
           <input type="checkbox" checked={imageEnabled} onChange={(event) => setImageEnabled(event.target.checked)} />

@@ -158,10 +158,5 @@ export function buildConfiguredEpisode(params: BuildConfiguredEpisodeParams): {
 
 /** Formats the sources markdown list from bound question IDs and hashes. */
 export function buildSourcesMarkdown(questionIds: string[], sourceContentHashes: string[]): string {
-  return [
-    "# Question Bank Sources",
-    "",
-    ...questionIds.map((id, idx) => `- **${id}**: hash=${sourceContentHashes[idx]}`),
-    "",
-  ].join("\n");
+  return ["# Question Bank Sources", "", ...questionIds.map((id, idx) => `- **${id}**: hash=${sourceContentHashes[idx]}`), ""].join("\n");
 }

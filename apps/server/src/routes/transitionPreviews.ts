@@ -1,10 +1,7 @@
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import type { FastifyPluginCallback } from "fastify";
-import {
-  TransitionPreviewRequestSchema,
-  type TransitionPreviewRequest,
-} from "@studio/shared";
+import { TransitionPreviewRequestSchema, type TransitionPreviewRequest } from "@studio/shared";
 import type { TransitionPreviewService } from "../quiz/transitionPreview/transitionPreviewService.js";
 import type { TransitionPreviewStorePort } from "../quiz/transitionPreview/transitionPreview.types.js";
 import { TransitionPreviewFramesService } from "../quiz/transitionPreview/transitionPreviewFrames.js";
@@ -32,18 +29,20 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
         return reply.code(304).send();
       }
 
-      return reply
-        .code(200)
-        .header("ETag", etag)
-        .header("Cache-Control", "public, max-age=15, must-revalidate")
-        .send(catalog);
+      return reply.code(200).header("ETag", etag).header("Cache-Control", "public, max-age=15, must-revalidate").send(catalog);
     });
 
     // 2. POST /api/transition-previews
     server.post("/api/transition-previews", async (request, reply) => {
       const parsed = TransitionPreviewRequestSchema.safeParse(request.body);
       if (!parsed.success) {
-        const clientRequestId = (request.body as any)?.clientRequestId ?? "unknown";
+        let clientRequestId = "unknown";
+        if (typeof request.body === "object" && request.body !== null && "clientRequestId" in request.body) {
+          const rawId = (request.body as { clientRequestId?: unknown }).clientRequestId;
+          if (typeof rawId === "string") {
+            clientRequestId = rawId;
+          }
+        }
         return reply.code(400).send({
           error: {
             code: "INVALID_TIMING",
@@ -55,11 +54,7 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
       }
 
       const reqBody: TransitionPreviewRequest = parsed.data;
-      const callerId =
-        (request.headers["x-caller-id"] as string) ||
-        request.ip ||
-        reqBody.clientRequestId ||
-        "anonymous";
+      const callerId = (request.headers["x-caller-id"] as string) || request.ip || reqBody.clientRequestId || "anonymous";
 
       const status = await service.request(reqBody, { callerId, clientRequestId: reqBody.clientRequestId });
 
@@ -70,12 +65,7 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
         return reply.code(202).send(status);
       }
       if (status.status === "failed") {
-        const statusCode =
-          status.error.code === "CATALOG_CHANGED"
-            ? 409
-            : status.error.code === "RENDER_REQUIRED"
-              ? 422
-              : 400;
+        const statusCode = status.error.code === "CATALOG_CHANGED" ? 409 : status.error.code === "RENDER_REQUIRED" ? 422 : 400;
         return reply.code(statusCode).send(status);
       }
 
@@ -93,9 +83,10 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
       try {
         const status = await service.status(jobId, callerId ? { callerId } : undefined);
         return reply.code(200).send(status);
-      } catch (err: any) {
-        const statusCode = err?.statusCode ?? 500;
-        return reply.code(statusCode).send({ error: err?.message || "Error getting job status" });
+      } catch (err: unknown) {
+        const errorObj = err as { statusCode?: number; message?: string } | undefined;
+        const statusCode = errorObj?.statusCode ?? 500;
+        return reply.code(statusCode).send({ error: errorObj?.message || "Error getting job status" });
       }
     });
 
@@ -106,17 +97,15 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
         return reply.code(400).send({ error: "Invalid job ID" });
       }
 
-      const callerId =
-        (request.headers["x-caller-id"] as string) ||
-        request.ip ||
-        "anonymous";
+      const callerId = (request.headers["x-caller-id"] as string) || request.ip || "anonymous";
 
       try {
         const status = await service.cancel(jobId, { callerId });
         return reply.code(200).send(status);
-      } catch (err: any) {
-        const statusCode = err?.statusCode ?? 500;
-        return reply.code(statusCode).send({ error: err?.message || "Error cancelling job" });
+      } catch (err: unknown) {
+        const errorObj = err as { statusCode?: number; message?: string } | undefined;
+        const statusCode = errorObj?.statusCode ?? 500;
+        return reply.code(statusCode).send({ error: errorObj?.message || "Error cancelling job" });
       }
     });
 
@@ -137,11 +126,7 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
         return reply.code(304).send();
       }
 
-      return reply
-        .code(200)
-        .header("ETag", etag)
-        .header("Cache-Control", "public, max-age=31536000, immutable")
-        .send(artifact.manifest);
+      return reply.code(200).header("ETag", etag).header("Cache-Control", "public, max-age=31536000, immutable").send(artifact.manifest);
     });
 
     // 6. GET /api/transition-previews/artifacts/:id/video
@@ -176,10 +161,7 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
         const start = parseInt(parts[0], 10);
         const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
         if (start >= fileSize || end >= fileSize || start > end) {
-          return reply
-            .code(416)
-            .header("Content-Range", `bytes */${fileSize}`)
-            .send();
+          return reply.code(416).header("Content-Range", `bytes */${fileSize}`).send();
         }
         const chunksize = end - start + 1;
         const stream = createReadStream(artifact.videoPath, { start, end });
@@ -190,7 +172,7 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
             "Accept-Ranges": "bytes",
             "Content-Length": chunksize,
             "Content-Type": "video/mp4",
-            "ETag": etag,
+            ETag: etag,
             "Cache-Control": "public, max-age=31536000, immutable",
           })
           .send(stream);
@@ -203,7 +185,7 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
           "Content-Length": fileSize,
           "Accept-Ranges": "bytes",
           "Content-Type": "video/mp4",
-          "ETag": etag,
+          ETag: etag,
           "Cache-Control": "public, max-age=31536000, immutable",
         })
         .send(stream);
@@ -222,7 +204,8 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
       }
 
       try {
-        const decoded = await frames.decodeArtifactFrame(id, frameIndex, (request.raw as any).signal);
+        const rawReq = request.raw as unknown as { signal?: AbortSignal };
+        const decoded = await frames.decodeArtifactFrame(id, frameIndex, rawReq.signal);
         const etag = `"${decoded.artifactSha256}-f${decoded.frameIndex}"`;
 
         if (request.headers["if-none-match"] === etag) {
@@ -237,14 +220,15 @@ export function registerTransitionPreviewsRoutes(deps: TransitionPreviewRoutesDe
           .header("ETag", etag)
           .header("Cache-Control", "public, max-age=31536000, immutable")
           .send(decoded.png);
-      } catch (err: any) {
-        if (err?.code === "ARTIFACT_EXPIRED") {
-          return reply.code(404).send({ error: err.message, code: err.code });
+      } catch (err: unknown) {
+        const errorObj = err as { code?: string; message?: string } | undefined;
+        if (errorObj?.code === "ARTIFACT_EXPIRED") {
+          return reply.code(404).send({ error: errorObj.message ?? "Artifact expired", code: errorObj.code });
         }
-        if (err?.code === "INVALID_TIMING") {
-          return reply.code(400).send({ error: err.message, code: err.code });
+        if (errorObj?.code === "INVALID_TIMING") {
+          return reply.code(400).send({ error: errorObj.message ?? "Invalid timing", code: errorObj.code });
         }
-        return reply.code(500).send({ error: err?.message || "Failed to decode frame" });
+        return reply.code(500).send({ error: errorObj?.message || "Failed to decode frame" });
       }
     });
 

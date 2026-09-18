@@ -78,7 +78,7 @@ describe("Quiz V2 pacing", () => {
     const voice = buildQuizVoicePlan(quiz);
     expect(voice.segments.some((segment) => segment.role === "thinking_prompt")).toBe(true);
     expect(voice.segments.find((segment) => segment.role === "question")?.phrases.length).toBeGreaterThan(0);
-    expect(voice.segments.find((segment) => segment.segment_id === "question-2:fact")?.text).toBe(quiz.questions[1]?.fun_fact);
+    expect(voice.segments.find((segment) => segment.segment_id === "question-2:explanation")?.text).toBe(quiz.questions[1]?.explanation);
     expect(quizVoiceTempo("question")).toBeGreaterThanOrEqual(1);
     expect(quizVoiceTempo("choice")).toBeGreaterThanOrEqual(1);
     expect(quizVoiceTempo("reveal")).toBeGreaterThanOrEqual(1);

@@ -1,19 +1,9 @@
 import { Warning, Image as ImageIcon } from "@phosphor-icons/react";
-import type {
-  ReelAssetErrorBoxProps,
-  ReelAssetMediaSlotProps,
-  ReelAssetPlaceholderProps,
-  ReelAssetPreviewProps,
-} from "./reelAsset.types";
+import type { ReelAssetErrorBoxProps, ReelAssetMediaSlotProps, ReelAssetPlaceholderProps, ReelAssetPreviewProps } from "./reelAsset.types";
 import { ReelAssetMetadataBar } from "./ReelAssetMetadataBar";
 import { ReelAssetRetryButton } from "./ReelAssetActionControls";
 
-export function ReelAssetPlaceholder({
-  aspectRatio,
-  isGenerating,
-  statusMessage,
-  emptyState,
-}: ReelAssetPlaceholderProps) {
+export function ReelAssetPlaceholder({ aspectRatio, isGenerating, statusMessage, emptyState }: ReelAssetPlaceholderProps) {
   const frameClass = aspectRatio === "9:16" ? "short-reel-frame-portrait" : "short-reel-frame-square";
 
   if (isGenerating) {
@@ -64,12 +54,7 @@ export function ReelAssetPreview({
 }: ReelAssetPreviewProps) {
   if (!displayImage) {
     return (
-      <ReelAssetPlaceholder
-        aspectRatio={aspectRatio}
-        isGenerating={isGenerating}
-        statusMessage={statusMessage}
-        emptyState={emptyState}
-      />
+      <ReelAssetPlaceholder aspectRatio={aspectRatio} isGenerating={isGenerating} statusMessage={statusMessage} emptyState={emptyState} />
     );
   }
 
@@ -102,11 +87,7 @@ export function ReelAssetPreview({
   );
 }
 
-export function ReelAssetErrorBox({
-  error,
-  retryButton,
-  isGenerating = false,
-}: ReelAssetErrorBoxProps) {
+export function ReelAssetErrorBox({ error, retryButton, isGenerating = false }: ReelAssetErrorBoxProps) {
   if (!error) return null;
 
   return (
@@ -114,9 +95,7 @@ export function ReelAssetErrorBox({
       <Warning size={16} weight="fill" className="short-reel-error-icon" />
       <div className="short-reel-unit-error-content">
         <span className="short-reel-unit-error-msg">{error}</span>
-        {retryButton && (
-          <ReelAssetRetryButton retryButton={retryButton} isGenerating={isGenerating} />
-        )}
+        {retryButton && <ReelAssetRetryButton retryButton={retryButton} isGenerating={isGenerating} />}
       </div>
     </div>
   );

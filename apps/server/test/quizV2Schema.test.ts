@@ -312,11 +312,18 @@ describe("Quiz V2 shared schemas", () => {
   });
 
   describe("Master Presets Library (@studio/shared)", () => {
-    it("contains all 6 built-in presets with full definitions", () => {
-      expect(BUILT_IN_PRESETS.length).toBe(6);
+    it("contains all 7 built-in presets with full definitions", () => {
+      expect(BUILT_IN_PRESETS.length).toBe(7);
+      const thinkingBars = new Set<string>();
+      const questionBoxes = new Set<string>();
+      const answerCards = new Set<string>();
+      const counters = new Set<string>();
+      const backgrounds = new Set<string>();
+
       for (const preset of BUILT_IN_PRESETS) {
         expect(preset.id).toBeTruthy();
         expect(preset.name).toBeTruthy();
+        expect(preset.description).toBeTruthy();
         expect(preset.icon).toBeTruthy();
         expect(preset.theme).toBe("candy_arcade");
         expect(preset.palette_id).toBeTruthy();
@@ -324,7 +331,21 @@ describe("Quiz V2 shared schemas", () => {
         expect(preset.answer_card_style).toBeTruthy();
         expect(preset.counter_style).toBeTruthy();
         expect(preset.thinking_bar_style).toBeTruthy();
+        expect(preset.background_style).toBeTruthy();
+
+        thinkingBars.add(preset.thinking_bar_style);
+        questionBoxes.add(preset.question_box_style);
+        answerCards.add(preset.answer_card_style);
+        counters.add(preset.counter_style);
+        backgrounds.add(preset.background_style!);
       }
+
+      // Verify 100% unique 5-element suite across all 7 presets
+      expect(thinkingBars.size).toBe(7);
+      expect(questionBoxes.size).toBe(7);
+      expect(answerCards.size).toBe(7);
+      expect(counters.size).toBe(7);
+      expect(backgrounds.size).toBe(7);
     });
 
     it("finds built-in preset by id", () => {

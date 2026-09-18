@@ -1,53 +1,35 @@
-import path from "node:path";
-import { spawn } from "node:child_process";
-import { access } from "node:fs/promises";
 import Fastify, { type FastifyInstance } from "fastify";
-import cors from "@fastify/cors";
-import fastifyStatic from "@fastify/static";
-import websocket from "@fastify/websocket";
-import { ZodError } from "zod";
-import type { TaskEvent } from "@studio/shared";
 import { AntigravityClient } from "./antigravity.js";
 import { CodexAppServerClient } from "./codex.js";
 import { loadConfig, loadStorageRoot } from "./config.js";
 import { ContextEngine } from "./context.js";
 import { loadServerEnv } from "./env.js";
 import { StudioLogger } from "./logger.js";
-import { RepositoryError, RepositoryService } from "./repository.js";
+import { RepositoryService } from "./repository.js";
+import { registerAllRoutes } from "./routes/registerAllRoutes.js";
 import { studioRuntimePath } from "./runtimePaths.js";
-import { TaskManager } from "./tasks.js";
-import { registerAudioVideoRoutes } from "./routes/audioVideo.js";
-import { registerChannelsRoutes } from "./routes/channels.js";
-import type { LLMClient } from "./utils/promptSanitizer.js";
-import { createPortraitImageClient } from "./providers/imageGeneration/portraitImageClient.js";
-import { registerEpisodesRoutes } from "./routes/episodes.js";
-import { registerEventsRoutes, type EventClient } from "./routes/events.js";
-import { registerMascotsRoutes } from "./routes/mascots.js";
-import { registerQuizV2Routes } from "./routes/quizV2.js";
-import { registerSettingsRoutes } from "./routes/settings.js";
-import type { AppState } from "./routes/state.js";
-import { registerSystemRoutes } from "./routes/system.js";
-import { registerTasksRoutes } from "./routes/tasks.js";
-import { registerThumbnailsRoutes } from "./routes/thumbnails.js";
-import { registerVisualBibleRoutes } from "./routes/visualBible.js";
-import { registerAnalyticsRoutes } from "./routes/analytics.js";
-import { registerVoicesRoutes } from "./routes/voices.js";
-import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
-import { registerStyleModulesRoutes } from "./routes/styleModules.js";
-import { registerQuestionBankRoutes } from "./routes/questionBank.js";
-import { registerShortReelsRoutes } from "./routes/shortReels.js";
-import { registerIntroOutroStylesRoutes } from "./routes/introOutroStyles.js";
-import { registerTransitionPreviewsRoutes } from "./routes/transitionPreviews.js";
-import { TransitionPreviewService } from "./quiz/transitionPreview/transitionPreviewService.js";
-import { DiskTransitionPreviewStore } from "./quiz/transitionPreview/transitionPreviewStore.js";
-import { HyperframesTransitionPreviewRunner } from "./tasks/video/transitionPreviewRunner.js";
+import { registerErrorHandler } from "./server/errorHandler.js";
+import { registerServerPlugins } from "./server/serverPlugins.js";
 import { styleActivationManager } from "./quiz/visual/styleModules/activation.js";
+import { TaskManager } from "./tasks.js";
+import type { LLMClient } from "./utils/promptSanitizer.js";
+import type {
+  AnimationStorageAdapter,
+  FfmpegAdapter,
+  VideoUploadService,
+  VideoProcessingRepository,
+} from "./quiz/mascot/videoAnimation/index.js";
+import { createMascotSlotJobManager, createMascotSlotJobRepository, type MascotSlotJobManager } from "./quiz/mascot/slotJobs/index.js";
+import { createMascotStyleJobManager, createMascotStyleJobRepository, type MascotStyleJobManager } from "./quiz/mascot/styleJobs/index.js";
+import type { AppState } from "./routes/state.js";
 
 export type StudioApp = {
   server: FastifyInstance;
   repository: RepositoryService;
   tasks: TaskManager;
   logger: StudioLogger;
+  mascotSlotJobManager: MascotSlotJobManager;
+  mascotStyleJobManager: MascotStyleJobManager;
   close: () => Promise<void>;
 };
 
@@ -58,6 +40,12 @@ export type BuildAppOptions = {
   llmClient?: LLMClient | null;
   /** Allows test hosts to replace the local file explorer integration. */
   revealFile?: (filePath: string) => Promise<void>;
+  ffmpegAdapter?: FfmpegAdapter;
+  animationStorageAdapter?: AnimationStorageAdapter;
+  videoUploadService?: VideoUploadService;
+  videoProcessingRepository?: VideoProcessingRepository;
+  mascotSlotJobManager?: MascotSlotJobManager;
+  mascotStyleJobManager?: MascotStyleJobManager;
 };
 
 export async function buildApp(
@@ -65,14 +53,15 @@ export async function buildApp(
   options: BuildAppOptions = {},
 ): Promise<StudioApp> {
   await loadServerEnv(options.environmentRoot ?? rootDirectory);
-  const revealFile = options.revealFile ?? revealFileInSystem;
   const configuredStorageRoot = await loadStorageRoot(rootDirectory);
   const logger = new StudioLogger(rootDirectory, process.env.STUDIO_DEBUG === "1");
   logger.setRuntimeRoot(studioRuntimePath(configuredStorageRoot ?? rootDirectory));
   await logger.init();
+
   const repository = new RepositoryService(rootDirectory, configuredStorageRoot ?? rootDirectory);
   await repository.ensureBootstrap();
   styleActivationManager.configurePersistence(repository.resolvePath("runtime", "style-modules", "state.json"));
+
   const state: AppState = {
     config: await loadConfig(rootDirectory),
     storageConfigured: Boolean(configuredStorageRoot),
@@ -96,169 +85,60 @@ export async function buildApp(
   );
   await tasks.load();
 
+  const mascotSlotJobRepository = createMascotSlotJobRepository(repository);
+  const mascotSlotJobManager =
+    options.mascotSlotJobManager ??
+    createMascotSlotJobManager({
+      repository,
+      jobRepository: mascotSlotJobRepository,
+      imageConfig: state.config.image_generation,
+      imageFallbackConfig: state.config.image_fallback,
+      logger,
+    });
+  await mascotSlotJobManager.initialize();
+
+  const mascotStyleJobRepository = createMascotStyleJobRepository(repository);
+  const mascotStyleJobManager =
+    options.mascotStyleJobManager ??
+    createMascotStyleJobManager({
+      repository,
+      jobRepository: mascotStyleJobRepository,
+      imageConfig: state.config.image_generation,
+      imageFallbackConfig: state.config.image_fallback,
+      logger,
+    });
+  await mascotStyleJobManager.initialize();
+
   const server = Fastify({ logger: false, bodyLimit: 50 * 1024 * 1024 });
-  const clients = new Set<EventClient>();
-  await server.register(cors, {
-    origin: (origin, cb) => {
-      // Allow requests with no origin (e.g. same-origin, curl, server-to-server, desktop tools)
-      if (!origin) {
-        cb(null, true);
-        return;
-      }
-      try {
-        const parsed = new URL(origin);
-        const isLoopback =
-          parsed.hostname === "localhost" ||
-          parsed.hostname === "127.0.0.1" ||
-          parsed.hostname === "::1" ||
-          parsed.hostname === "[::1]" ||
-          parsed.hostname.endsWith(".localhost");
-        if (isLoopback) {
-          cb(null, true);
-          return;
-        }
-      } catch {
-        // Invalid URL format
-      }
-      cb(new Error("Not allowed by CORS"), false);
-    },
+  await registerServerPlugins(server, rootDirectory);
+  registerErrorHandler(server, logger);
+  await registerAllRoutes({
+    server,
+    rootDirectory,
+    repository,
+    tasks,
+    codex,
+    antigravity,
+    logger,
+    state,
+    mascotSlotJobManager,
+    mascotStyleJobManager,
+    ...options,
   });
-  await server.register(websocket);
-  await registerFrontend(server, rootDirectory);
-
-  tasks.on("event", (event: TaskEvent) => {
-    const payload = JSON.stringify(event);
-    for (const client of clients) {
-      if (client.readyState === client.OPEN) client.send(payload);
-    }
-  });
-
-  server.setErrorHandler((error, _request, reply) => {
-    const message = error instanceof Error ? error.message : "Request failed";
-    let statusCode = 500;
-    if (error instanceof RepositoryError) {
-      if (error.code.endsWith("NOT_FOUND")) {
-        statusCode = 404;
-      } else if (error.code === "BANK_EMPTY" || error.code === "INVALID_SOURCE" || error.code === "INVALID_RESOLUTION") {
-        statusCode = 422;
-      } else if (error.code === "STALE_REVISION" || error.code === "CONFLICT") {
-        statusCode = 409;
-      } else {
-        statusCode = 400;
-      }
-    } else if (error instanceof ZodError || (error && typeof error === "object" && "issues" in error)) {
-      statusCode = 400;
-    } else if (error && typeof error === "object" && "statusCode" in error && typeof error.statusCode === "number") {
-      statusCode = error.statusCode;
-    }
-
-    if (statusCode >= 500) {
-      logger.error(`Internal server error: ${message}${error instanceof Error && error.stack ? `\n${error.stack}` : ""}`, {
-        step: "http",
-      });
-    } else {
-      logger.warn(`Request failed: ${message}`, { step: "http" });
-    }
-    void reply.code(statusCode).send({ error: message });
-  });
-
-  await server.register(registerSystemRoutes({ rootDirectory, repository, tasks, codex, antigravity, logger, state }));
-  await server.register(registerSettingsRoutes({ rootDirectory, tasks, codex, antigravity, state }));
-  await server.register(registerVoicesRoutes({ repository, logger, state }));
-  const activeLlmClient: LLMClient | undefined =
-    options.llmClient !== undefined
-      ? (options.llmClient ?? undefined)
-      : (state.config.active_engine === "antigravity" ? antigravity : codex);
-  const portraitImageClient = createPortraitImageClient(state.config.image_generation, state.config.image_fallback);
-
-  await server.register(registerChannelsRoutes({ repository, tasks, logger, state, llmClient: activeLlmClient }));
-  await server.register(registerMascotsRoutes({ repository, logger, state }));
-  await server.register(registerEpisodesRoutes({ repository, state, tasks }));
-  await server.register(registerShortReelsRoutes({ repository, tasks, logger, llmClient: activeLlmClient, imageClient: portraitImageClient }));
-  await server.register(registerQuizV2Routes({ repository, tasks, codex, antigravity, state }));
-  await server.register(registerVisualBibleRoutes({ repository, tasks, state }));
-  await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));
-  await server.register(registerTasksRoutes({ tasks, codex }));
-  await server.register(registerThumbnailsRoutes({ repository, state, antigravity }));
-  await server.register(registerAnalyticsRoutes({ repository }));
-  await server.register(registerEventsRoutes({ tasks, clients }));
-  await server.register(registerStylePresetsRoutes({ repository }));
-  await server.register(registerStyleModulesRoutes({ repository }));
-  await server.register(registerQuestionBankRoutes({ repository, tasks, codex, antigravity, state }));
-  await server.register(registerIntroOutroStylesRoutes({ repository, logger, state }));
-
-  const transitionPreviewStore = new DiskTransitionPreviewStore({
-    storeDir: repository.resolvePath("runtime", "transition-previews", "artifacts"),
-  });
-  const transitionPreviewRunner = new HyperframesTransitionPreviewRunner({
-    runtimeDir: repository.resolvePath("runtime", "transition-previews", "renders"),
-  });
-  const transitionPreviewService = new TransitionPreviewService({
-    store: transitionPreviewStore,
-    runner: transitionPreviewRunner,
-    repository: {
-      getEpisodeRenderOutput: async (channelId: string, episodeId: string) => {
-        try {
-          const episode = (await repository.getEpisode(channelId, episodeId)) as any;
-          if (!episode || !episode.render_output?.video_path) return null;
-          return {
-            videoPath: repository.resolvePath(episode.render_output.video_path),
-            manifestPath: episode.render_output.manifest_path
-              ? repository.resolvePath(episode.render_output.manifest_path)
-              : undefined,
-            transitionSettings: episode.director_plan?.beats?.[0]?.transition_id
-              ? { scene: { id: episode.director_plan.beats[0].transition_id } }
-              : undefined,
-          };
-        } catch {
-          return null;
-        }
-      },
-    },
-    limiter: tasks.videoRenderLimiter,
-  });
-  await server.register(registerTransitionPreviewsRoutes({
-    service: transitionPreviewService,
-    store: transitionPreviewStore,
-  }));
 
   return {
     server,
     repository,
     tasks,
     logger,
+    mascotSlotJobManager,
+    mascotStyleJobManager,
     close: async () => {
+      mascotSlotJobManager.destroy();
+      mascotStyleJobManager.destroy();
       await codex.close();
       await server.close();
       await repository.close();
     },
   };
-}
-
-async function registerFrontend(server: FastifyInstance, rootDirectory: string): Promise<void> {
-  const frontendDirectory = path.join(rootDirectory, "apps", "web", "dist");
-  try {
-    await access(frontendDirectory);
-    await server.register(fastifyStatic, { root: frontendDirectory, prefix: "/", index: false });
-    server.get("/", async (_request, reply) => reply.sendFile("index.html"));
-  } catch {
-    // Vite serves the web app during development.
-  }
-}
-
-async function revealFileInSystem(filePath: string): Promise<void> {
-  const launch =
-    process.platform === "win32"
-      ? { command: "explorer.exe", args: ["/select,", filePath], windowsHide: false }
-      : process.platform === "darwin"
-        ? { command: "open", args: ["-R", filePath], windowsHide: true }
-        : { command: "xdg-open", args: [path.dirname(filePath)], windowsHide: true };
-  await new Promise<void>((resolve, reject) => {
-    const child = spawn(launch.command, launch.args, { detached: true, stdio: "ignore", windowsHide: launch.windowsHide });
-    child.once("error", reject);
-    child.once("spawn", () => {
-      child.unref();
-      resolve();
-    });
-  });
 }

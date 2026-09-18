@@ -12,19 +12,22 @@ import { styleBoundaryQuiz } from "./quizStyleBoundaryFixtures.js";
 type BackgroundId = Exclude<QuizBackgroundStyle, "auto">;
 
 describe("Candy Arcade background parity and composition integration", () => {
-  it.each<BackgroundId>(["candy_rays", "aurora_glow"])("emits canonical %s layer through both public composition entries", (background) => {
-    const production = parityProductionBundle([background, background]);
-    const sandbox = paritySandboxComposition(background);
-    const variant = resolveBackgroundVariant(background);
-    const canonicalProduction = variant.renderHtml({ surface: "production", questionIndex: 0 });
-    const canonicalSandbox = variant.renderHtml({ surface: "sandbox", questionIndex: 0 });
+  it.each<BackgroundId>(["candy_rays", "aurora_glow", "comic_burst", "construction_blueprint", "cosmic_starfield", "floating_clouds"])(
+    "emits canonical %s layer through both public composition entries",
+    (background) => {
+      const production = parityProductionBundle([background, background]);
+      const sandbox = paritySandboxComposition(background);
+      const variant = resolveBackgroundVariant(background);
+      const canonicalProduction = variant.renderHtml({ surface: "production", questionIndex: 0 });
+      const canonicalSandbox = variant.renderHtml({ surface: "sandbox", questionIndex: 0 });
 
-    expect(canonicalSandbox).toBe(canonicalProduction);
-    expect(canonicalProduction).toContain('class="quiz-scene-background"');
-    expect(canonicalProduction).toContain(`data-background-style="${background}"`);
-    expect(Object.values(production.files).join("\n")).toContain(canonicalProduction);
-    expect(sandbox.html).toContain(canonicalProduction);
-  });
+      expect(canonicalSandbox).toBe(canonicalProduction);
+      expect(canonicalProduction).toContain('class="quiz-scene-background"');
+      expect(canonicalProduction).toContain(`data-background-style="${background}"`);
+      expect(Object.values(production.files).join("\n")).toContain(canonicalProduction);
+      expect(sandbox.html).toContain(canonicalProduction);
+    },
+  );
 
   it("bundles each used background and scopes CSS properly without comment counting", () => {
     const candyOnly = candyArcadeCss({ backgroundStyles: ["candy_rays", "candy_rays"] });

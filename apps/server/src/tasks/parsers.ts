@@ -1,4 +1,4 @@
-import { EditorialOverlaySchema, QUIZ_MAX_CHOICES_PER_QUESTION, type Scene } from "@studio/shared";
+import { EditorialOverlaySchema, QUIZ_MAX_CHOICES_PER_QUESTION, type QuizAnswerMode, type Scene } from "@studio/shared";
 import type { Beat } from "../sceneTiming.js";
 import { stripEditorialOverlayInstructions } from "../visualPrompt.js";
 import { canonicalizeVisibleQuizAnswer, stripQuizChoiceLabel } from "../quiz/domain/quiz.js";
@@ -208,6 +208,9 @@ function parseQuizSceneContent(value: unknown): Scene["quiz"] {
   }
   const rawAnswer = asString(raw.answer).trim();
   const canonicalAnswer = canonicalizeVisibleQuizAnswer(choices, rawAnswer);
+  const rawAnswerMode = asString(raw.answer_mode).trim();
+  const answerMode: QuizAnswerMode =
+    rawAnswerMode === "single_reveal" || (!rawAnswerMode && choices.length === 1) ? "single_reveal" : "choice_selection";
   return {
     phase: phaseValue,
     question_number: Number.isInteger(Number(raw.question_number)) && Number(raw.question_number) > 0 ? Number(raw.question_number) : null,
@@ -216,6 +219,7 @@ function parseQuizSceneContent(value: unknown): Scene["quiz"] {
     answer: canonicalAnswer ?? rawAnswer,
     explanation: asString(raw.explanation).trim(),
     image_prompt: asString(raw.image_prompt).trim(),
+    answer_mode: answerMode,
   };
 }
 

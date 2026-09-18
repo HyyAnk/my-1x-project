@@ -4,3 +4,6 @@ export * from "./variants/hangingWoodSign.js";
 export * from "./variants/neonBadge.js";
 export * from "./variants/floatingBalloon.js";
 export * from "./variants/goldenShield.js";
+export * from "./variants/spaceRadar.js";
+export * from "./variants/bubbleBadge.js";
+export * from "./variants/goldenCompass.js";

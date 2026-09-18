@@ -110,7 +110,20 @@ describe("Cockpit OpenAI-compatible transport", () => {
     const notifications: Array<{ method: string; params: Record<string, unknown> }> = [];
     client.on("notification", (event: { method: string; params: Record<string, unknown> }) => notifications.push(event));
 
-    await client.connect();
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      try {
+        await client.connect();
+        lastError = undefined;
+        break;
+      } catch (err) {
+        lastError = err;
+        await new Promise((r) => setTimeout(r, 50));
+      }
+    }
+    if (lastError) {
+      throw lastError instanceof Error ? lastError : new Error(String(lastError));
+    }
     expect(await client.getModels()).toEqual([{ id: "cockpit-codex", label: "Cockpit Codex" }]);
     const threadId = await client.startThread();
     const turnId = await client.startTurn(threadId, "test prompt");

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test, { describe, it } from "node:test";
+import { describe, it } from "node:test";
 import { resolveTransitionSettings } from "../src/transitions/transitionSettings.js";
 
 describe("Transition Settings Precedence (Task 1)", () => {

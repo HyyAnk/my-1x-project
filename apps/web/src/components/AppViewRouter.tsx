@@ -31,6 +31,9 @@ export interface AppViewRouterProps {
   selectedChannel: Channel | null;
   selectedEpisodeId: string | null;
   selectedShortReelId?: string | null;
+  selectedMascotId?: string | null;
+  selectedStep?: number | null;
+  openMascot?: (mascotId?: string | null, step?: number | null) => void;
   tasks: Task[];
   activeTasks: Task[];
   taskClock: number;
@@ -131,6 +134,18 @@ export function AppViewRouter(props: AppViewRouterProps) {
         return (
           <MascotStudioView
             channels={props.channels}
+            activeTab={props.tab}
+            mascotId={props.selectedMascotId}
+            step={props.selectedStep}
+            openMascot={props.openMascot}
+            setQueryParam={props.setQueryParam}
+            onTabChange={(nextTab) => {
+              if (nextTab === "library") {
+                props.openMascot?.(null);
+              } else {
+                props.setQueryParam("tab", nextTab);
+              }
+            }}
             onNotice={props.setNotice}
             onRefreshChannels={async () => {
               await props.refreshChannels();
@@ -142,6 +157,8 @@ export function AppViewRouter(props: AppViewRouterProps) {
           <QuestionBankView
             channels={props.channels}
             selectedChannel={props.selectedChannel}
+            activeTab={props.tab}
+            onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
             onQuickBuildVideo={(channelId, episodeId) => {
               props.openEpisode(channelId, episodeId);
             }}
@@ -151,6 +168,8 @@ export function AppViewRouter(props: AppViewRouterProps) {
         return (
           <VisualSandboxTab
             channels={props.channels}
+            activeTab={props.tab}
+            onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
             onNotice={props.setNotice}
             onRefreshChannels={async () => {
               await props.refreshChannels();
@@ -163,6 +182,8 @@ export function AppViewRouter(props: AppViewRouterProps) {
             tasks={props.tasks}
             channels={props.channels}
             now={props.taskClock}
+            activeTab={props.tab}
+            onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
             onRefresh={props.refresh}
             onNotice={props.setNotice}
             onOpenEpisode={props.openEpisode}

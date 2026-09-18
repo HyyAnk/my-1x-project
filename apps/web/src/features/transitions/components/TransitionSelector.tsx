@@ -16,14 +16,10 @@ export const TransitionSelector: React.FC<TransitionSelectorProps> = ({
   placementContext,
   disabled = false,
 }) => {
-  const filtered = placementContext
-    ? entries.filter((e) => e.placements.includes(placementContext))
-    : entries;
+  const filtered = placementContext ? entries.filter((e) => e.placements.includes(placementContext)) : entries;
 
   const introEntries = filtered.filter((e) => e.placements.includes("intro"));
-  const sceneOnlyEntries = filtered.filter(
-    (e) => e.placements.includes("scene") && !e.placements.includes("intro"),
-  );
+  const sceneOnlyEntries = filtered.filter((e) => e.placements.includes("scene") && !e.placements.includes("intro"));
 
   return (
     <div className="transition-selector-container">

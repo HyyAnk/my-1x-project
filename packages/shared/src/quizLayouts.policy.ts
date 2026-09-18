@@ -132,6 +132,43 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
         ],
       };
     }
+
+    if (input.answerMode === "single_reveal" && input.requestedLayout !== "mystery_reveal") {
+      return {
+        ok: false,
+        requestedLayout: input.requestedLayout,
+        source: "explicit",
+        issues: [
+          issue(
+            "layout_choice_count_unsupported",
+            "choiceCount",
+            1,
+            QUIZ_LAYOUT_CATALOG[input.requestedLayout].supportedChoiceCounts,
+            `Layout ${input.requestedLayout} does not support single reveal answer mode.`,
+            "Use layout mystery_reveal for single reveal questions.",
+          ),
+        ],
+      };
+    }
+
+    if (input.requestedLayout === "mystery_reveal" && (input.answerMode === "choice_selection" || input.choiceCount > 1)) {
+      return {
+        ok: false,
+        requestedLayout: input.requestedLayout,
+        source: "explicit",
+        issues: [
+          issue(
+            "layout_choice_count_unsupported",
+            "choiceCount",
+            input.choiceCount,
+            [1],
+            `Mystery Reveal requires exactly one choice and single_reveal answer mode, received ${input.choiceCount} choices.`,
+            "Regenerate as a single-reveal Mystery question.",
+          ),
+        ],
+      };
+    }
+
     const compatibility = evaluateQuizLayoutCompatibility({ ...compatibilityInput, layoutId: input.requestedLayout });
     return compatibility.compatible
       ? { ok: true, layoutId: input.requestedLayout, source: "explicit", capability: compatibility.layout }
@@ -143,6 +180,7 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
     aspectRatio,
     choiceCount: input.choiceCount,
     media,
+    answerMode: input.answerMode,
   });
   const candidates = [preferred, ...autoCandidates.filter((layoutId) => layoutId !== preferred)];
   for (const layoutId of candidates) {
@@ -171,6 +209,7 @@ export type PreferredAutoLayoutOptions = {
   aspectRatio?: MascotRenderAspectRatio;
   choiceCount?: number;
   media?: readonly QuizLayoutMediaKind[];
+  answerMode?: import("./quizAnswerMode.js").QuizAnswerMode;
 };
 
 export function preferredAutoLayout(
@@ -184,6 +223,7 @@ export function preferredAutoLayout(input: {
   aspectRatio?: MascotRenderAspectRatio;
   choiceCount?: number;
   media?: readonly QuizLayoutMediaKind[];
+  answerMode?: import("./quizAnswerMode.js").QuizAnswerMode;
 }): ResolvedQuizLayoutId;
 export function preferredAutoLayout(
   archetypeOrInput:
@@ -194,26 +234,31 @@ export function preferredAutoLayout(
         aspectRatio?: MascotRenderAspectRatio;
         choiceCount?: number;
         media?: readonly QuizLayoutMediaKind[];
+        answerMode?: import("./quizAnswerMode.js").QuizAnswerMode;
       },
   maybeQuestionFormat?: QuizQuestionFormat,
-  _maybeOptions?: PreferredAutoLayoutOptions,
+  maybeOptions?: PreferredAutoLayoutOptions,
 ): ResolvedQuizLayoutId {
   let archetype: AnyQuizArchetype;
   let questionFormat: QuizQuestionFormat;
+  let options: PreferredAutoLayoutOptions | undefined;
 
   if (typeof archetypeOrInput === "object" && archetypeOrInput !== null) {
     archetype = archetypeOrInput.archetype;
     questionFormat = archetypeOrInput.questionFormat;
+    options = archetypeOrInput;
   } else {
     archetype = archetypeOrInput;
     questionFormat = maybeQuestionFormat!;
+    options = maybeOptions;
   }
 
   const archetypeStr = String(archetype);
 
-  if (archetypeStr === "clue_deduction") {
-    return "clue_deduction";
+  if (options?.answerMode === "single_reveal" || options?.choiceCount === 1) {
+    return "mystery_reveal";
   }
+
   if (questionFormat === "true_false" || archetypeStr === "true_false") {
     return "verdict_true_false";
   }

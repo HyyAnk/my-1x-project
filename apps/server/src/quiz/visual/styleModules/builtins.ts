@@ -1,24 +1,40 @@
 import type { SlotScopedStyleModule, StyleModule } from "./types.js";
 import { auroraGlowVariant } from "../elements/background/variants/auroraGlow.js";
 import { candyRaysVariant } from "../elements/background/variants/candyRays.js";
+import { comicBurstVariant } from "../elements/background/variants/comicBurst.js";
+import { constructionBlueprintVariant } from "../elements/background/variants/constructionBlueprint.js";
+import { cosmicStarfieldVariant } from "../elements/background/variants/cosmicStarfield.js";
+import { floatingCloudsVariant } from "../elements/background/variants/floatingClouds.js";
+import { treasureMapVariant } from "../elements/background/variants/treasureMap.js";
 import { glossyArcadeVariant } from "../elements/answerCard/variants/glossyArcade.js";
 import { comicChunkyVariant } from "../elements/answerCard/variants/comicChunky.js";
 import { glassNeonVariant } from "../elements/answerCard/variants/glassNeon.js";
 import { minimalSoftVariant } from "../elements/answerCard/variants/minimalSoft.js";
+import { steelBeamPlateVariant } from "../elements/answerCard/variants/steelBeamPlate.js";
+import { pastelMarshmallowVariant } from "../elements/answerCard/variants/pastelMarshmallow.js";
+import { rusticWoodPlankVariant } from "../elements/answerCard/variants/rusticWoodPlank.js";
 import { hangingWoodSignVariant } from "../elements/counterBadge/variants/hangingWoodSign.js";
 import { neonBadgeVariant } from "../elements/counterBadge/variants/neonBadge.js";
 import { floatingBalloonVariant } from "../elements/counterBadge/variants/floatingBalloon.js";
 import { goldenShieldVariant } from "../elements/counterBadge/variants/goldenShield.js";
+import { spaceRadarVariant } from "../elements/counterBadge/variants/spaceRadar.js";
+import { bubbleBadgeVariant } from "../elements/counterBadge/variants/bubbleBadge.js";
+import { goldenCompassVariant } from "../elements/counterBadge/variants/goldenCompass.js";
+
 import { candyPopVariant } from "../elements/questionBox/variants/candyPop.js";
 import { comicBubbleVariant } from "../elements/questionBox/variants/comicBubble.js";
 import { glassMorphismVariant } from "../elements/questionBox/variants/glassMorphism.js";
 import { parchmentScrollVariant } from "../elements/questionBox/variants/parchmentScroll.js";
+import { hazardStripesVariant } from "../elements/questionBox/variants/hazardStripes.js";
+import { cockpitHudVariant } from "../elements/questionBox/variants/cockpitHud.js";
+import { pastelCloudVariant } from "../elements/questionBox/variants/pastelCloud.js";
 import { starSliderVariant } from "../elements/thinkingBar/variants/starSlider.js";
 import { capsuleLiquidVariant } from "../elements/thinkingBar/variants/capsuleLiquid.js";
 import { energyLaserVariant } from "../elements/thinkingBar/variants/energyLaser.js";
 import { constructionMachineVariant } from "../elements/thinkingBar/variants/constructionMachine.js";
 import { emberTrailVariant } from "../elements/thinkingBar/variants/emberTrail.js";
 import { cosmicRocketVariant } from "../elements/thinkingBar/variants/cosmicRocket.js";
+import { treasureTrailVariant } from "../elements/thinkingBar/variants/treasureTrail.js";
 import type { StyleSlot } from "@studio/shared";
 
 const BUILTIN_VERSION = "1.0.0";
@@ -87,6 +103,7 @@ export const BUILT_IN_THINKING_BAR_MODULES = [
   styleModule("thinking-bar", constructionMachineVariant),
   styleModule("thinking-bar", emberTrailVariant),
   styleModule("thinking-bar", cosmicRocketVariant),
+  styleModule("thinking-bar", treasureTrailVariant),
 ] as const;
 
 export const BUILT_IN_QUESTION_BOX_MODULES = [
@@ -94,6 +111,9 @@ export const BUILT_IN_QUESTION_BOX_MODULES = [
   styleModule("question-box", comicBubbleVariant),
   styleModule("question-box", glassMorphismVariant),
   styleModule("question-box", parchmentScrollVariant),
+  styleModule("question-box", hazardStripesVariant),
+  styleModule("question-box", cockpitHudVariant),
+  styleModule("question-box", pastelCloudVariant),
 ] as const;
 
 export const BUILT_IN_ANSWER_CARD_MODULES = [
@@ -101,6 +121,9 @@ export const BUILT_IN_ANSWER_CARD_MODULES = [
   styleModule("answer-card", comicChunkyVariant),
   styleModule("answer-card", glassNeonVariant),
   styleModule("answer-card", minimalSoftVariant),
+  styleModule("answer-card", steelBeamPlateVariant),
+  styleModule("answer-card", pastelMarshmallowVariant),
+  styleModule("answer-card", rusticWoodPlankVariant),
 ] as const;
 
 export const BUILT_IN_COUNTER_MODULES = [
@@ -108,11 +131,19 @@ export const BUILT_IN_COUNTER_MODULES = [
   styleModule("counter", neonBadgeVariant),
   styleModule("counter", floatingBalloonVariant),
   styleModule("counter", goldenShieldVariant),
+  styleModule("counter", spaceRadarVariant),
+  styleModule("counter", bubbleBadgeVariant),
+  styleModule("counter", goldenCompassVariant),
 ] as const;
 
 export const BUILT_IN_BACKGROUND_MODULES = [
   styleModule("background", candyRaysVariant),
   styleModule("background", auroraGlowVariant),
+  styleModule("background", comicBurstVariant),
+  styleModule("background", constructionBlueprintVariant),
+  styleModule("background", cosmicStarfieldVariant),
+  styleModule("background", floatingCloudsVariant),
+  styleModule("background", treasureMapVariant),
 ] as const;
 
 export const BUILT_IN_STYLE_MODULES: readonly SlotScopedStyleModule[] = [

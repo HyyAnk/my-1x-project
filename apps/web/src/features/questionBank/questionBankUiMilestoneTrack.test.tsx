@@ -21,10 +21,7 @@ describe("QuestionBankMilestoneTrack", () => {
 
   it("renders active tier badge, counts, percentage, and countdown pill", () => {
     const progress = getMilestoneProgress(250);
-    renderWithLanguage(
-      <QuestionBankMilestoneTrack currentTotal={250} milestoneProgress={progress} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMilestoneTrack currentTotal={250} milestoneProgress={progress} />, "en");
 
     // Active tier badge
     expect(screen.getAllByText("Starter Seed").length).toBeGreaterThanOrEqual(1);
@@ -44,10 +41,7 @@ describe("QuestionBankMilestoneTrack", () => {
 
   it("renders segmented rail with progressbar accessibility attributes", () => {
     const progress = getMilestoneProgress(250);
-    renderWithLanguage(
-      <QuestionBankMilestoneTrack currentTotal={250} milestoneProgress={progress} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMilestoneTrack currentTotal={250} milestoneProgress={progress} />, "en");
 
     const progressBar = screen.getByRole("progressbar");
     expect(progressBar).toBeDefined();
@@ -59,10 +53,7 @@ describe("QuestionBankMilestoneTrack", () => {
 
   it("renders checkpoint markers for all tiers with proper statuses", () => {
     const progress = getMilestoneProgress(6000); // Level 3: Explorer, Level 1 & 2 achieved
-    renderWithLanguage(
-      <QuestionBankMilestoneTrack currentTotal={6000} milestoneProgress={progress} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMilestoneTrack currentTotal={6000} milestoneProgress={progress} />, "en");
 
     // Milestone targets
     expect(screen.getByText("2K")).toBeDefined();
@@ -78,10 +69,7 @@ describe("QuestionBankMilestoneTrack", () => {
 
   it("renders max tier reached status pill when current total exceeds top tier", () => {
     const maxProgress = getMilestoneProgress(120000);
-    renderWithLanguage(
-      <QuestionBankMilestoneTrack currentTotal={120000} milestoneProgress={maxProgress} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMilestoneTrack currentTotal={120000} milestoneProgress={maxProgress} />, "en");
 
     expect(screen.getByText("Max Tier Achieved")).toBeDefined();
     expect(screen.getByText("100%")).toBeDefined();
@@ -89,10 +77,7 @@ describe("QuestionBankMilestoneTrack", () => {
 
   it("hides checkpoint markers when isCollapsed is true", () => {
     const progress = getMilestoneProgress(500);
-    renderWithLanguage(
-      <QuestionBankMilestoneTrack currentTotal={500} milestoneProgress={progress} isCollapsed={true} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMilestoneTrack currentTotal={500} milestoneProgress={progress} isCollapsed={true} />, "en");
 
     expect(screen.queryByRole("list", { name: /milestone checkpoints/i })).toBeNull();
     expect(screen.getByRole("progressbar")).toBeDefined();
@@ -101,12 +86,7 @@ describe("QuestionBankMilestoneTrack", () => {
   it("applies compact and custom className modifiers", () => {
     const progress = getMilestoneProgress(500);
     const { container } = renderWithLanguage(
-      <QuestionBankMilestoneTrack
-        currentTotal={500}
-        milestoneProgress={progress}
-        compact={true}
-        className="custom-track-class"
-      />,
+      <QuestionBankMilestoneTrack currentTotal={500} milestoneProgress={progress} compact={true} className="custom-track-class" />,
       "en",
     );
 

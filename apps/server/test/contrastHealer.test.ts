@@ -33,7 +33,8 @@ describe("Contrast Self-Healing & Auto-Correction", () => {
     expect(css).not.toContain("nth-child(4n");
     expect(css).toContain(".answer-card > b, .visual-answer-label > b { color: #ffffff !important;");
     expect(css).toContain(".badge-comment, .badge-like, .badge-sub { color: #172a59 !important;");
-    expect(css).toContain('[data-text*="space" i]');
+    expect(css).toContain(".layout-verdict_true_false .choice-card .choice-text");
+    expect(css).toContain('[data-text*="space" i]:not(.layout-verdict_true_false *)');
   });
 
   it("patches HTML composition files in a directory hierarchy", async () => {

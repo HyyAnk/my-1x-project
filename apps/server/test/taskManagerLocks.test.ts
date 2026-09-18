@@ -56,6 +56,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     expect(manager.get(first.task_id).status).toBe("COMPLETED");
     expect(manager.get(second.task_id).status).toBe("COMPLETED");
     const secondEpisode = await repository.confirmTopic(channel.channel_id, topics[1].topic_id);
+    fake.turnDelayMs = 250;
     const parallelA = manager.submit("GENERATE_RESEARCH", channel.channel_id, episode.episode_id);
     const parallelB = manager.submit("GENERATE_RESEARCH", channel.channel_id, secondEpisode.episode_id);
     await waitFor(() => manager.get(parallelA.task_id).status === "COMPLETED" && manager.get(parallelB.task_id).status === "COMPLETED");

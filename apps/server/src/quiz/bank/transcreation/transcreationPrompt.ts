@@ -14,7 +14,9 @@ export interface BuildQuestionTranscreationPromptParams {
   additionalGuidelines?: string[];
 }
 
-const ARCHETYPE_TRANSCREATION_NUANCE: Record<BankGameplayArchetypeId, string> = {
+const ARCHETYPE_TRANSCREATION_NUANCE: Record<Exclude<BankGameplayArchetypeId, "clue_deduction">, string> & {
+  [archetype: string]: string | undefined;
+} = {
   verdict_true_false:
     "Archetype: 'True or False'. The question asserts a bold statement that sparks curiosity and challenges intuition, ending in 'True or False?' (or localized equivalent). Choice translations must strictly be True and False (e.g. 'True' / 'False', 'Verdadero' / 'Falso'). Explanations must convincingly clarify the scientific or factual reasoning.",
   verdict_fact_myth:
@@ -29,8 +31,8 @@ const ARCHETYPE_TRANSCREATION_NUANCE: Record<BankGameplayArchetypeId, string> = 
     "Archetype: 'Visual Spotting'. Prompt viewers to inspect the visual closely to catch subtle differences or camouflaged details.",
   visual_identification:
     "Archetype: 'Visual Identification'. Hint at hallmark characteristics to prompt viewers to guess the subject's identity.",
-  mystery_reveal: "Archetype: 'Mystery Reveal'. Build suspense and anticipation around a masked, blurred, or silhouetted image.",
-  clue_deduction: "Archetype: 'Clue Deduction'. Preserve progressive step-by-step clues so viewers can trace the investigative thread.",
+  mystery_reveal:
+    "Archetype: 'Mystery Reveal'. Build suspense and anticipation around a masked, blurred, or silhouetted image. Exactly 1 choice (the single canonical correct answer revealed after suspense).",
 };
 
 /**

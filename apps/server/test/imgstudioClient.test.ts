@@ -6,7 +6,6 @@ import {
   callImgStudioApi,
   checkImgStudioConnectivity,
   DEFAULT_IMGSTUDIO_ASPECT_RATIO,
-  DEFAULT_IMGSTUDIO_BASE_URL,
   generateImgStudioImageBytes,
   IMGSTUDIO_SUPPORTED_ASPECT_RATIOS,
   ImgStudioImageProvider,
@@ -15,7 +14,7 @@ import {
   resolveImgStudioResolution,
 } from "../src/providers/imgstudio/index.js";
 import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
-import { RepositoryError, RepositoryService } from "../src/repository.js";
+import { RepositoryService } from "../src/repository.js";
 
 const roots: string[] = [];
 const originalFetch = globalThis.fetch;
@@ -44,8 +43,9 @@ describe("ImgStudio Dimensions & Resolution Resolvers", () => {
 
     expect(resolveImgStudioAspectRatio(undefined)).toBe(DEFAULT_IMGSTUDIO_ASPECT_RATIO);
     expect(resolveImgStudioAspectRatio("")).toBe(DEFAULT_IMGSTUDIO_ASPECT_RATIO);
-    expect(resolveImgStudioAspectRatio("invalid-ratio")).toBe(DEFAULT_IMGSTUDIO_ASPECT_RATIO);
-    expect(resolveImgStudioAspectRatio("21:9", "16:9")).toBe("16:9");
+    expect(resolveImgStudioAspectRatio(undefined, "16:9")).toBe("16:9");
+    expect(() => resolveImgStudioAspectRatio("invalid-ratio")).toThrow(/Unsupported aspect ratio/);
+    expect(() => resolveImgStudioAspectRatio("21:9")).toThrow(/Unsupported aspect ratio/);
   });
 
   it("resolves resolution respecting model capabilities", () => {
@@ -285,9 +285,7 @@ describe("ImgStudio Connectivity Check (checkImgStudioConnectivity)", () => {
   });
 
   it("throws IMAGE_PROVIDER_NOT_CONFIGURED when apiKey is empty", async () => {
-    await expect(checkImgStudioConnectivity("")).rejects.toThrowError(
-      expect.objectContaining({ code: "IMAGE_PROVIDER_NOT_CONFIGURED" }),
-    );
+    await expect(checkImgStudioConnectivity("")).rejects.toThrowError(expect.objectContaining({ code: "IMAGE_PROVIDER_NOT_CONFIGURED" }));
   });
 
   it("throws IMAGE_PROVIDER_AUTH_ERROR on 401 response", async () => {
@@ -309,9 +307,7 @@ describe("ImgStudio Connectivity Check (checkImgStudioConnectivity)", () => {
       text: async () => JSON.stringify({ error: "Rate limit exceeded" }),
     });
 
-    await expect(checkImgStudioConnectivity("limited-key")).rejects.toThrowError(
-      expect.objectContaining({ code: "RATE_LIMIT_EXCEEDED" }),
-    );
+    await expect(checkImgStudioConnectivity("limited-key")).rejects.toThrowError(expect.objectContaining({ code: "RATE_LIMIT_EXCEEDED" }));
   });
 });
 

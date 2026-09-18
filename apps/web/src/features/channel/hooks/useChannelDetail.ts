@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Channel, Episode, QuizImageStyle, ShortReelRecord, Task, TopicCandidate, TopicRun } from "@studio/shared";
 import { api } from "../../../api";
-
-export type ChannelTab = "episodes" | "short-reels" | "topics" | "dna" | "intro-outro";
+import { useRouteTab } from "../../../hooks/router/useRouteTab";
 import { isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { Notice } from "../../../components/types";
 import { useChannelDna } from "./useChannelDna";
 import { useChannelMascotAndStyle } from "./useChannelMascotAndStyle";
 import { useTopicAvailability } from "./useTopicAvailability";
 import { useChannelEpisodes } from "./useChannelEpisodes";
+
+export type ChannelTab = "episodes" | "short-reels" | "topics" | "dna" | "intro-outro";
+const CHANNEL_TABS: readonly ChannelTab[] = ["episodes", "short-reels", "topics", "dna", "intro-outro"];
 
 export type UseChannelDetailProps = {
   channel: Channel;
@@ -42,28 +44,13 @@ export function useChannelDetail({
   const [deleteShortReelTarget, setDeleteShortReelTarget] = useState<ShortReelRecord | null>(null);
   const [loadingChannel, setLoadingChannel] = useState(true);
 
-  const isValidTab = (tab?: string | null): tab is ChannelTab =>
-    tab === "episodes" || tab === "short-reels" || tab === "topics" || tab === "intro-outro" || (tab === "dna" && !simplifyMode);
-
-  const initialTab: ChannelTab = isValidTab(activeTab) ? activeTab : "episodes";
-  const [channelTab, setChannelTab] = useState<ChannelTab>(initialTab);
-
-  useEffect(() => {
-    if (activeTab && isValidTab(activeTab) && activeTab !== channelTab) {
-      setChannelTab(activeTab);
-    }
-  }, [activeTab, simplifyMode, channelTab]);
-
-  useEffect(() => {
-    if (simplifyMode && channelTab === "dna") {
-      setChannelTab("episodes");
-    }
-  }, [simplifyMode, channelTab]);
-
-  const switchTab = (tab: ChannelTab) => {
-    setChannelTab(tab);
-    onTabChange?.(tab);
-  };
+  const routeTab = simplifyMode && activeTab === "dna" ? null : activeTab;
+  const [channelTab, switchTab] = useRouteTab({
+    value: routeTab,
+    allowedTabs: CHANNEL_TABS,
+    fallback: "episodes",
+    onChange: onTabChange,
+  });
 
   const channelTasks = tasks.filter((task) => task.channel_id === channel.channel_id);
   const topicTask = latestTask(channelTasks, ["SUGGEST_TOPICS"]);

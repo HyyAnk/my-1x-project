@@ -61,10 +61,10 @@ function parseEditorialOverlay(notes: string): Scene["editorial_overlay"] {
   const overlayData = parseOverlayData(matchField(notes, /- Overlay data:[ \t]*(.*)/i));
   const durStr = matchField(notes, /- Overlay duration:[ \t]*([\d.]+)/i);
   return {
-    kind: (matchField(notes, /- Overlay kind:[ \t]*(.*)/i, "none")) as Scene["editorial_overlay"]["kind"],
+    kind: matchField(notes, /- Overlay kind:[ \t]*(.*)/i, "none") as Scene["editorial_overlay"]["kind"],
     text: matchField(notes, /- Overlay text:[ \t]*(.*)/i),
-    motion: (matchField(notes, /- Overlay motion:[ \t]*(.*)/i, "none")) as Scene["editorial_overlay"]["motion"],
-    placement: (matchField(notes, /- Overlay placement:[ \t]*(.*)/i, "lower_third")) as Scene["editorial_overlay"]["placement"],
+    motion: matchField(notes, /- Overlay motion:[ \t]*(.*)/i, "none") as Scene["editorial_overlay"]["motion"],
+    placement: matchField(notes, /- Overlay placement:[ \t]*(.*)/i, "lower_third") as Scene["editorial_overlay"]["placement"],
     duration_seconds: durStr ? Number(durStr) || null : null,
     data: overlayData,
     source_ids: extractListValue(notes, "Overlay sources"),

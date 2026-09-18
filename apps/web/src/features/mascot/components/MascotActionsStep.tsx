@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Sparkle } from "@phosphor-icons/react";
 import { type MascotProfile, type MascotStyle, synthesizeLegacyCoreStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
+import { useBeforeUnloadWarning } from "../hooks/useBeforeUnloadWarning";
 import { MascotStyleTabBar } from "./MascotStyleTabBar";
 import { MascotStyleHeader } from "./MascotStyleHeader";
 import { MascotBatchProgressCard } from "./MascotBatchProgressCard";
@@ -25,8 +26,10 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
     setActiveStyleId,
     activeStyle,
     busySlotKey,
+    queuedSlotKeys,
     handleGenerateSlot,
     handleBatchGenerateStyle,
+    handleRegenerateSelectedSlots,
     batchProgress,
     handleStopBatchGeneration,
     editingSlot,
@@ -62,6 +65,8 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
 
   const isCoreStyle = resolvedActiveStyle?.id === "core" || Boolean(resolvedActiveStyle?.is_default);
   const isBatchBusy = batchProgress !== null || busySlotKey === "batch";
+
+  useBeforeUnloadWarning(isBatchBusy || busySlotKey !== null);
 
   return (
     <div className="wizard-step-content mascot-actions-step-container">
@@ -115,8 +120,10 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
             variants={thinkingVariants}
             isBatchBusy={isBatchBusy}
             busySlotKey={busySlotKey}
+            queuedSlotKeys={queuedSlotKeys}
             batchProgress={batchProgress}
             onBatchGenerate={handleBatchGenerateStyle}
+            onRegenerateSelected={handleRegenerateSelectedSlots}
             onGenerateSlot={handleGenerateSlot}
             onEditPrompt={handleOpenSlotPromptModal}
             onOpenLightbox={onOpenLightbox}
@@ -127,8 +134,10 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
             variants={celebrateVariants}
             isBatchBusy={isBatchBusy}
             busySlotKey={busySlotKey}
+            queuedSlotKeys={queuedSlotKeys}
             batchProgress={batchProgress}
             onBatchGenerate={handleBatchGenerateStyle}
+            onRegenerateSelected={handleRegenerateSelectedSlots}
             onGenerateSlot={handleGenerateSlot}
             onEditPrompt={handleOpenSlotPromptModal}
             onOpenLightbox={onOpenLightbox}

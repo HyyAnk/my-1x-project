@@ -104,6 +104,7 @@ async function generateGptImage(
         prompt,
         size,
         quality,
+        aspect_ratio: options.aspect_ratio,
         n: 1,
       };
       if (options.background) {

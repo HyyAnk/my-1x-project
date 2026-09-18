@@ -23,10 +23,7 @@ export function FallbackModelConfigFields({
     <>
       <label>
         Fallback Model
-        <select
-          value={fallbackModel}
-          onChange={(event) => setFallbackModel(event.target.value)}
-        >
+        <select value={fallbackModel} onChange={(event) => setFallbackModel(event.target.value)}>
           {availableModels.map((item) => (
             <option key={item.id} value={item.id}>
               {item.name} ({item.id === IMGSTUDIO_DEFAULT_MODEL_ID ? "Default · " : ""}Max {item.max_resolution})
@@ -41,10 +38,7 @@ export function FallbackModelConfigFields({
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
         <label>
           Fallback Resolution
-          <select
-            value={fallbackResolution}
-            onChange={(event) => setFallbackResolution(event.target.value as "1K" | "2K" | "4K")}
-          >
+          <select value={fallbackResolution} onChange={(event) => setFallbackResolution(event.target.value as "1K" | "2K" | "4K")}>
             <option value="1K">1K (Fast / Standard HD)</option>
             <option value="2K">2K (High Resolution - Recommended)</option>
             <option value="4K">4K (Ultra High Definition)</option>
@@ -53,10 +47,7 @@ export function FallbackModelConfigFields({
 
         <label>
           Fallback Quality
-          <select
-            value={fallbackQuality}
-            onChange={(event) => setFallbackQuality(event.target.value as "standard" | "high")}
-          >
+          <select value={fallbackQuality} onChange={(event) => setFallbackQuality(event.target.value as "standard" | "high")}>
             <option value="standard">Standard Quality</option>
             <option value="high">High Quality</option>
           </select>

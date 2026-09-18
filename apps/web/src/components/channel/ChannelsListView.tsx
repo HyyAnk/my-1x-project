@@ -1,14 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { ArrowsDownUp, Broadcast, Globe, Plus, X } from "@phosphor-icons/react";
-import { TARGET_COUNTRY_LANGUAGES, matchChannelLanguage, type Channel, type MascotProfile } from "@studio/shared";
+import { useEffect, useState } from "react";
+import { Broadcast, Globe, Plus, X } from "@phosphor-icons/react";
+import type { Channel, MascotProfile } from "@studio/shared";
 import { EmptyState } from "../EmptyState";
-import { CountryFlag } from "../CountryFlag";
 import { useTranslation } from "../../i18n";
 import { api } from "../../api";
 import { ChannelCard } from "./ChannelCard";
 import { ChannelReorderBanner } from "./ChannelReorderBanner";
+import { ChannelFilterToolbar } from "./ChannelFilterToolbar";
 import { useChannelOrder } from "../../features/channel/hooks/useChannelOrder";
 import { useChannelDragAndDrop } from "../../features/channel/hooks/useChannelDragAndDrop";
+import { useChannelFilterSort, type ChannelSortOption } from "../../features/channel/hooks/useChannelFilterSort";
+
+export type { ChannelSortOption };
 
 export type ChannelsListViewProps = {
   channels: Channel[];
@@ -18,22 +21,22 @@ export type ChannelsListViewProps = {
   onDelete: (channel: Channel) => void;
 };
 
-export type ChannelSortOption = "custom" | "latest" | "episodes" | "name";
-
 export function ChannelsListView({ channels, mascots: initialMascots, onCreate, openChannel, onDelete }: ChannelsListViewProps) {
   const { t } = useTranslation();
   const [mascots, setMascots] = useState<MascotProfile[]>(initialMascots || []);
-  const [languageFilter, setLanguageFilter] = useState<string>("all");
   const [isReordering, setIsReordering] = useState<boolean>(false);
 
   const { orderedChannels, hasCustomOrder, reorderChannel, pinToTop, resetOrder } = useChannelOrder(channels);
+  const { languageFilter, setLanguageFilter, sortBy, setSortBy, languageCounts, filteredChannels, handleStartReordering } =
+    useChannelFilterSort({
+      channels,
+      orderedChannels,
+      isReordering,
+      hasCustomOrder,
+      onStartReordering: () => setIsReordering(true),
+    });
 
-  const [sortBy, setSortBy] = useState<ChannelSortOption>(() => (hasCustomOrder ? "custom" : "latest"));
-
-  const { getDraggableProps } = useChannelDragAndDrop({
-    onReorder: reorderChannel,
-    enabled: isReordering,
-  });
+  const { getDraggableProps } = useChannelDragAndDrop({ onReorder: reorderChannel, enabled: isReordering });
 
   useEffect(() => {
     if (!initialMascots || initialMascots.length === 0) {
@@ -43,64 +46,6 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
         .catch(() => {});
     }
   }, [initialMascots]);
-
-  // Compute channel counts for each synchronized target language
-  const languageCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const lang of TARGET_COUNTRY_LANGUAGES) {
-      counts[lang.key] = 0;
-    }
-    for (const c of channels) {
-      for (const lang of TARGET_COUNTRY_LANGUAGES) {
-        if (matchChannelLanguage(c, lang.key)) {
-          counts[lang.key] = (counts[lang.key] || 0) + 1;
-        }
-      }
-    }
-    return counts;
-  }, [channels]);
-
-  // Create an index map for fast custom sorting
-  const orderIndexMap = useMemo(() => {
-    const map = new Map<string, number>();
-    orderedChannels.forEach((c, idx) => map.set(c.channel_id, idx));
-    return map;
-  }, [orderedChannels]);
-
-  const filteredChannels = useMemo(() => {
-    const baseList = isReordering ? orderedChannels : channels;
-
-    return [...baseList]
-      .filter((c) => {
-        if (isReordering) return true; // Show all channels during reordering
-        if (languageFilter !== "all" && !matchChannelLanguage(c, languageFilter)) {
-          return false;
-        }
-        return true;
-      })
-      .sort((a, b) => {
-        if (isReordering || sortBy === "custom") {
-          return (orderIndexMap.get(a.channel_id) ?? 0) - (orderIndexMap.get(b.channel_id) ?? 0);
-        }
-        if (sortBy === "episodes") {
-          return (b.episode_count || 0) - (a.episode_count || 0);
-        }
-        if (sortBy === "name") {
-          return a.display_name.localeCompare(b.display_name);
-        }
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-  }, [channels, orderedChannels, orderIndexMap, isReordering, languageFilter, sortBy]);
-
-  const handleStartReordering = () => {
-    setLanguageFilter("all");
-    setSortBy("custom");
-    setIsReordering(true);
-  };
-
-  const handleDoneReordering = () => {
-    setIsReordering(false);
-  };
 
   const handleResetOrder = () => {
     resetOrder();
@@ -121,80 +66,22 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
         </button>
       </div>
 
-      {/* Synchronized 10-Language Filter Toolbar */}
-      <div className="channel-toolbar">
-        <div className="channel-toolbar-left">
-          <div className="channel-filter-pills" role="radiogroup" aria-label={t("channels.filterByLanguage") || "Filter by language"}>
-            <button
-              type="button"
-              className={`channel-filter-btn ${languageFilter === "all" ? "is-active" : ""}`}
-              onClick={() => {
-                if (!isReordering) setLanguageFilter("all");
-              }}
-              disabled={isReordering}
-            >
-              <CountryFlag code="GLOBAL" size={13} />
-              <span>{t("channels.filterAll")}</span>
-              <span className="channel-filter-count">{channels.length}</span>
-            </button>
-            {TARGET_COUNTRY_LANGUAGES.map((lang) => {
-              const count = languageCounts[lang.key] || 0;
-              const isActive = languageFilter === lang.key;
-              const label = lang.name;
-              return (
-                <button
-                  type="button"
-                  key={lang.key}
-                  className={`channel-filter-btn ${isActive ? "is-active" : ""}`}
-                  onClick={() => {
-                    if (!isReordering) setLanguageFilter(lang.key);
-                  }}
-                  disabled={isReordering}
-                  title={lang.name}
-                >
-                  <CountryFlag code={lang.primaryCountryCode || lang.countryCodes[0]} size={13} />
-                  <span>{label}</span>
-                  <span className="channel-filter-count">{count}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      <ChannelFilterToolbar
+        totalChannels={channels.length}
+        languageCounts={languageCounts}
+        languageFilter={languageFilter}
+        onLanguageFilterChange={setLanguageFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        isReordering={isReordering}
+        hasCustomOrder={hasCustomOrder}
+        onStartReordering={handleStartReordering}
+      />
 
-        <div className="channel-toolbar-right">
-          {!isReordering ? (
-            <button
-              type="button"
-              className="quiet-button is-compact channel-reorder-toggle-btn"
-              onClick={handleStartReordering}
-              title={t("channels.reorderChannels")}
-            >
-              <ArrowsDownUp size={14} />
-              <span>{t("channels.reorderChannels")}</span>
-            </button>
-          ) : null}
+      {isReordering && (
+        <ChannelReorderBanner onDone={() => setIsReordering(false)} onReset={handleResetOrder} hasCustomOrder={hasCustomOrder} />
+      )}
 
-          <select
-            className="channel-sort-select"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as ChannelSortOption)}
-            aria-label={t("channels.sortBy")}
-            disabled={isReordering}
-          >
-            {hasCustomOrder || isReordering ? <option value="custom">{t("channels.sortCustom")}</option> : null}
-            <option value="latest">{t("channels.sortLatest")}</option>
-            <option value="episodes">{t("channels.sortEpisodes")}</option>
-            <option value="name">{t("channels.sortName")}</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Active Reordering Banner */}
-      {isReordering ? (
-        <ChannelReorderBanner onDone={handleDoneReordering} onReset={handleResetOrder} hasCustomOrder={hasCustomOrder} />
-      ) : null}
-
-      {/* Grid or Empty state */}
       {channels.length === 0 ? (
         <EmptyState
           icon={<Broadcast size={26} />}

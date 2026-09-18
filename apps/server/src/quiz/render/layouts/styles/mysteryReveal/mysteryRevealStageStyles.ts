@@ -93,9 +93,48 @@ export function mysteryRevealStageStyles(): string {
   justify-content: center;
 }
 
+.quiz-frame-unified.layout-mystery_reveal .mystery-hero-stage {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 880px;
+  height: 500px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .mystery-layer .hero-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 880px;
+  height: 500px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .mystery-layer .hero-image img {
+  width: 880px;
+  height: 495px;
+  max-width: 880px;
+  max-height: 495px;
+  object-fit: contain;
+}
+
 .quiz-frame-unified.layout-mystery_reveal .mystery-revealed-inner {
-  width: var(--slot-hero-width, 920px);
-  height: var(--slot-hero-height, 360px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 880px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .layout-mystery_reveal .mystery-revealed-layer img {

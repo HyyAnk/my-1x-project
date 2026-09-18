@@ -158,6 +158,35 @@
   background: #0f172a;
 }
 
+.lightbox-header-actions {
+  position: absolute;
+  top: -42px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lightbox-action-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.lightbox-action-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  color: #38bdf8;
+  transform: translateY(-1px);
+}
+
 .lightbox-close-btn {
   position: absolute;
   top: -40px;
@@ -172,6 +201,12 @@
   place-items: center;
   cursor: pointer;
   transition: background 0.2s ease;
+}
+
+.lightbox-header-actions .lightbox-close-btn {
+  position: static;
+  width: 34px;
+  height: 34px;
 }
 
 .lightbox-close-btn:hover {

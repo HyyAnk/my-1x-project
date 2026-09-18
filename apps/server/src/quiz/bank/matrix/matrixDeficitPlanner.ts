@@ -1,4 +1,4 @@
-import type { BankQuestion, MatrixComboCandidate } from "@studio/shared";
+import type { BankQuestion } from "@studio/shared";
 import { buildMatrixCoverageMap } from "./matrixCoverageCalculator.js";
 import { selectAutoCandidates, selectMatrixCandidatesAuto } from "./selectors/matrixAutoSelector.js";
 import { selectManualCandidates, selectMatrixCandidatesManual } from "./selectors/matrixManualSelector.js";
@@ -34,10 +34,7 @@ export {
  * Just-In-Time (JIT) Dynamic Deficit Chunk Planner
  * Evaluates the question bank's current state on-demand and selects the single highest-deficit chunk.
  */
-export function getDynamicDeficitChunk(
-  questions: BankQuestion[] = [],
-  options: DynamicDeficitChunkOptions = {},
-): PlannedBatchChunk {
+export function getDynamicDeficitChunk(questions: BankQuestion[] = [], options: DynamicDeficitChunkOptions = {}): PlannedBatchChunk {
   const chunkSize = Math.max(1, options.chunkSize || 20);
   const chunkIndex = options.chunkIndex ?? 0;
   const totalChunks = Math.max(1, options.totalChunks ?? 1);

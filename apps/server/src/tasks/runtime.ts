@@ -61,7 +61,7 @@ export interface TaskManagerRuntime {
   cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }>;
   completeWithOutput(active: ActiveRun): Promise<void>;
   createImageProvider(
-    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string; taskId?: string },
     output?: string,
   ): ImageProvider;
   emitEvent(event: TaskEvent): void;
@@ -69,7 +69,7 @@ export interface TaskManagerRuntime {
   finish(taskId: string, status: TaskStatus, error: string | null, outputFiles?: string[]): Promise<void>;
   generateBundleImageWithSafetyRetry(
     task: Task,
-    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string; taskId?: string },
     initialPrompt: string,
     signal?: AbortSignal,
     output?: string,

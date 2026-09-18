@@ -40,15 +40,7 @@ export function SceneAudioMismatchWarning({
   );
 }
 
-export function SceneAudioPlayer({
-  scene,
-  audioTask,
-  audioSrc,
-  processing,
-  mergePending,
-  now,
-  onGenerateAudio,
-}: SceneAudioPlayerProps) {
+export function SceneAudioPlayer({ scene, audioTask, audioSrc, processing, mergePending, now, onGenerateAudio }: SceneAudioPlayerProps) {
   return (
     <>
       {audioTask ? <InlineTaskState task={audioTask} now={now} /> : null}

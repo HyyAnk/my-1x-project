@@ -57,12 +57,7 @@ describe("ImageProviderFallbackCard", () => {
 
   it("triggers onVerifyFallbackConnection when Test Connection is clicked", () => {
     const onVerifyFallbackConnection = vi.fn();
-    render(
-      <ImageProviderFallbackCard
-        {...defaultProps}
-        onVerifyFallbackConnection={onVerifyFallbackConnection}
-      />,
-    );
+    render(<ImageProviderFallbackCard {...defaultProps} onVerifyFallbackConnection={onVerifyFallbackConnection} />);
 
     const testBtn = screen.getByRole("button", { name: "Test Connection" });
     fireEvent.click(testBtn);
@@ -79,13 +74,7 @@ describe("ImageProviderFallbackCard", () => {
   });
 
   it("displays Key Saved & Active badge and masked placeholder when API key is configured", () => {
-    render(
-      <ImageProviderFallbackCard
-        {...defaultProps}
-        hasFallbackApiKey={true}
-        fallbackApiKey=""
-      />,
-    );
+    render(<ImageProviderFallbackCard {...defaultProps} hasFallbackApiKey={true} fallbackApiKey="" />);
 
     expect(screen.getByText("Key Saved & Active")).toBeDefined();
     expect(screen.getByText("Configured & Active")).toBeDefined();

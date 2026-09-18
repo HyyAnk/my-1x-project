@@ -67,6 +67,7 @@ export function SandboxContentTab({
         phase={phase}
         setPhase={setPhase}
         setUseScrubber={setUseScrubber}
+        layoutId={layoutId}
       >
         <SandboxChoicesEditor
           choices={choices}

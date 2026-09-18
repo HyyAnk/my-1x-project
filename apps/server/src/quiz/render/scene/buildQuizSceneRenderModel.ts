@@ -12,7 +12,7 @@ export function buildQuizSceneRenderModel(input: BuildQuizSceneRenderModelInput)
       format: input.question.format,
       text: input.question.text,
       visualOpportunity: input.question.visualOpportunity,
-      factText: input.question.funFact || input.question.explanation,
+      factText: input.question.explanation || input.question.funFact,
       correctChoiceId: input.question.correctChoiceId,
     },
     choices,

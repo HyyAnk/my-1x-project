@@ -20,14 +20,6 @@ export const artifactConfig: Array<{
   active: string;
   complete: string;
 }> = [
-  { filename: "research.md", title: "Research", taskType: "GENERATE_RESEARCH", active: "Verifying sources", complete: "Research ready" },
-  {
-    filename: "treatment.md",
-    title: "Treatment",
-    taskType: "GENERATE_TREATMENT",
-    active: "Structuring the story",
-    complete: "Treatment ready",
-  },
   { filename: "script.md", title: "Narration script", taskType: "GENERATE_SCRIPT", active: "Writing narration", complete: "Script ready" },
   {
     filename: "visual_bible.md",

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { getCompatibleQuizLayout, type QuizPreviewLayoutId, type ResolvedQuizLayoutId } from "@studio/shared";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
@@ -13,12 +13,20 @@ export interface UseSandboxLayoutSyncOptions {
 }
 
 export function useSandboxLayoutSync({ design, question, viewport, mascot: _mascot }: UseSandboxLayoutSyncOptions) {
+  const cachedDraftChoicesRef = useRef<{ choices: string[]; correctIndex: number } | null>(null);
+
   const handleLayoutChange = useCallback(
     (newLayoutId: QuizPreviewLayoutId) => {
       design.setLayoutId(newLayoutId);
       const isTfChoices = question.choices.length === 2 && question.choices[0] === "True" && question.choices[1] === "False";
 
       if (newLayoutId === "mystery_reveal") {
+        if (question.choices.length > 1) {
+          cachedDraftChoicesRef.current = {
+            choices: [...question.choices],
+            correctIndex: question.correctChoiceIndex,
+          };
+        }
         const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || "Pikachu";
         question.setChoices([currentAnswer]);
         question.setCorrectChoiceIndex(0);
@@ -29,17 +37,30 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
         }
       } else if (newLayoutId === "split_versus_two") {
         if (question.choices.length !== 2 || isTfChoices) {
-          question.setChoices(question.choices.length > 2 && !isTfChoices ? question.choices.slice(0, 2) : ["Option A", "Option B"]);
-          if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
+          if (
+            cachedDraftChoicesRef.current &&
+            cachedDraftChoicesRef.current.choices.length === 2 &&
+            !cachedDraftChoicesRef.current.choices.includes("True")
+          ) {
+            question.setChoices([...cachedDraftChoicesRef.current.choices]);
+            question.setCorrectChoiceIndex(Math.min(cachedDraftChoicesRef.current.correctIndex, 1));
+          } else {
+            question.setChoices(question.choices.length > 2 && !isTfChoices ? question.choices.slice(0, 2) : ["Option A", "Option B"]);
+            if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
+          }
         }
       } else if (
         newLayoutId === "visual_choices_three" ||
         newLayoutId === "visual_choices_three_pure" ||
         newLayoutId === "media_left_choices_right" ||
-        newLayoutId === "full_stack_list" ||
-        newLayoutId === "clue_deduction"
+        newLayoutId === "full_stack_list"
       ) {
-        if (question.choices.length < 3) {
+        if (cachedDraftChoicesRef.current && cachedDraftChoicesRef.current.choices.length >= 3) {
+          const cached = cachedDraftChoicesRef.current;
+          cachedDraftChoicesRef.current = null;
+          question.setChoices([...cached.choices]);
+          question.setCorrectChoiceIndex(cached.correctIndex);
+        } else if (question.choices.length < 3) {
           if (isTfChoices) {
             question.setChoices(["Option A", "Option B", "Option C"]);
           } else if (question.choices.length <= 1) {

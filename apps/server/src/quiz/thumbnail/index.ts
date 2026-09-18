@@ -9,6 +9,8 @@ export * from "./thumbnailManifestManager.js";
 export * from "./thumbnailVariantGenerator.js";
 export * from "./thumbnailManifestStore.js";
 export * from "./thumbnailLegacyMigrator.js";
+export * from "./thumbnailRatio.js";
+export * from "./thumbnailLoaders.js";
 export * from "./thumbnailService.js";
 export * from "./thumbnailLocale.js";
 export * from "./thumbnailHookGuardrail.js";

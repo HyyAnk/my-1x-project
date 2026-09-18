@@ -14,14 +14,7 @@ export interface ReelAssetsProps {
   activeTask?: Task | null;
 }
 
-export function ReelAssets({
-  reel,
-  channel,
-  onCopyText,
-  onRegenerateUnit,
-  isGenerating,
-  activeTask,
-}: ReelAssetsProps) {
+export function ReelAssets({ reel, channel, onCopyText, onRegenerateUnit, isGenerating, activeTask }: ReelAssetsProps) {
   const data = useReelAssetsData(reel, channel, activeTask, isGenerating, onCopyText);
 
   return (

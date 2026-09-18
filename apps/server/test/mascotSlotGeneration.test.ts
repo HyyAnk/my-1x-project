@@ -74,9 +74,10 @@ describe("Mascot Style Slot Generation Pipeline", () => {
       "Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire and accessories.",
     );
     expect(result.prompt_used).toContain("Pose and Action: pondering over encrypted datapad.");
-    expect(result.prompt_used).toContain("floating character");
+    expect(result.prompt_used).toContain("16:9 widescreen canvas");
+    expect(result.prompt_used).toContain("large half-body subject");
     expect(result.prompt_used).toContain("no ground shadow");
-    expect(result.prompt_used).toContain("solid neutral light gray background (#E8E8E8)");
+    expect(result.prompt_used).toContain("solid flat chroma key green background (#00FF00)");
     expect(validateMascotPromptContract(result.prompt_used, true)).toBe(true);
 
     // Validate slot

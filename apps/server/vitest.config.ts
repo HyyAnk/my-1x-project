@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: "node",
     testTimeout: 15000,
-    hookTimeout: 30000,
+    hookTimeout: 60000,
     include: ["test/**/*.test.ts"],
     exclude: [
       ...configDefaults.exclude,

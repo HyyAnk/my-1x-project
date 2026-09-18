@@ -1,11 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  QuizAssetPlanSchema,
-  QuizAssetRequirementSchema,
-  QuizResolvedAssetSchema,
-  PersistedImageSizingSchema,
-} from "../src/schemas/quiz/quizAssets.js";
+import { QuizAssetPlanSchema, QuizResolvedAssetSchema, PersistedImageSizingSchema } from "../src/schemas/quiz/quizAssets.js";
 
 test("QuizAssetPlanSchema parses legacy plan without sizing metadata", () => {
   const legacyPlan = {

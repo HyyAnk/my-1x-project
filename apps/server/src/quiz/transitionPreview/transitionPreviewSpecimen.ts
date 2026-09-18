@@ -1,13 +1,7 @@
 import type { TransitionPreviewRequest } from "@studio/shared";
-import {
-  resolveRenderEngineSnapshot,
-  type RenderEngineSnapshot,
-} from "../../tasks/video/renderEngineSnapshot.js";
+import { resolveRenderEngineSnapshot, type RenderEngineSnapshot } from "../../tasks/video/renderEngineSnapshot.js";
 import { prepareTransitionSpecimen } from "../render/transitions/prepareTransitionSpecimen.js";
-import {
-  buildTransitionSpecimen,
-  type BuiltTransitionSpecimen,
-} from "../render/transitions/buildTransitionSpecimen.js";
+import { buildTransitionSpecimen, type BuiltTransitionSpecimen } from "../render/transitions/buildTransitionSpecimen.js";
 import { fingerprintTransitionPreview } from "./transitionPreviewFingerprint.js";
 
 export interface PreparedTransitionSpecimenData {
@@ -31,7 +25,7 @@ export function buildTransitionPreviewSpecimen(options: {
   const fingerprint = fingerprintTransitionPreview({
     catalogRevision: options.currentCatalogRevision,
     engineSnapshotHash: snapshot.snapshotHash,
-    aspectRatio: prepared.aspectRatio as "16:9" | "9:16",
+    aspectRatio: prepared.aspectRatio,
     width: prepared.width,
     height: prepared.height,
     fps: prepared.fps,

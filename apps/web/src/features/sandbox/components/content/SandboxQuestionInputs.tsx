@@ -16,6 +16,7 @@ export interface SandboxQuestionInputsProps {
   phase?: string;
   setPhase?: (phase: "question" | "choices" | "thinking" | "reveal" | "explain") => void;
   setUseScrubber?: (use: boolean) => void;
+  layoutId?: string;
   children?: ReactNode;
 }
 
@@ -33,6 +34,7 @@ export function SandboxQuestionInputs({
   phase,
   setPhase,
   setUseScrubber,
+  layoutId,
   children,
 }: SandboxQuestionInputsProps) {
   const { t } = useTranslation();
@@ -163,7 +165,9 @@ export function SandboxQuestionInputs({
               letterSpacing: "0.05em",
             }}
           >
-            {t("visualSandbox.factCardSection") || "Fact Card"}
+            {layoutId === "mystery_reveal"
+              ? t("visualSandbox.mysteryNarrationSection") || "Narration / Clue Fact"
+              : t("visualSandbox.factCardSection") || "Fact Card"}
           </label>
           {phase !== "explain" && setPhase && (
             <button
@@ -184,7 +188,10 @@ export function SandboxQuestionInputs({
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div>
             <span style={{ display: "block", fontSize: "10.5px", color: "var(--muted)", marginBottom: "4px" }}>
-              {t("visualSandbox.factCardTextLabel") || "Fact Card Text"}:
+              {layoutId === "mystery_reveal"
+                ? t("visualSandbox.mysteryNarrationTextLabel") || "Narration / Clue Explanation"
+                : t("visualSandbox.factCardTextLabel") || "Fact Card Text"}
+              :
             </span>
             <textarea
               className="text-input"

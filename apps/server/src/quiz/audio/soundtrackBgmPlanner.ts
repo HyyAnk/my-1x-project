@@ -52,10 +52,7 @@ export function resolveBgmScheduleItems(
 ): BgmScheduleItem[] {
   const registry = bgmRegistry ?? defaultBgmRegistry;
   const startSeconds = Math.max(0, options?.startSeconds ?? 0);
-  const effectiveEndSeconds = Math.min(
-    durationSeconds,
-    outroStartSeconds ?? options?.outroStartSeconds ?? durationSeconds,
-  );
+  const effectiveEndSeconds = Math.min(durationSeconds, outroStartSeconds ?? options?.outroStartSeconds ?? durationSeconds);
   const activeDuration = Math.max(1, effectiveEndSeconds - startSeconds);
 
   const schedule = registry.resolveBgmSchedule(activeDuration, {

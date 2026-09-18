@@ -3,33 +3,37 @@ import type { AnswerCardSkin } from "../types.js";
 export const glossyArcadeVariant: AnswerCardSkin = {
   id: "glossy_arcade",
   displayName: "Glossy Arcade 3D",
-  description: "Vibrant candy 3D glossy pill with circular letter badge, dashed border & shine.",
+  description: "Bright glossy capsule with a prominent circular A/B/C badge and a high-contrast text surface.",
   className: "ac-glossy-arcade",
   renderCss(): string {
     return `
 /* === Answer Card: Glossy Arcade 3D (ADR-003) === */
 .ac-glossy-arcade {
-  border: 8px solid var(--choice-stroke, #FFFFFF);
+  isolation: isolate;
+  border: 4px solid var(--choice-stroke, #F5A623);
   border-radius: 9999px;
-  background: var(--choice-pattern), var(--choice-bg-tint);
-  background-size: 64px 32px, 100% 100%;
-  box-shadow: 0 16px 0 var(--choice-depth-shadow, rgba(13,35,71,.2)), inset 0 4px 0 rgba(255,255,255,.7), 0 18px 32px rgba(10,25,60,.28);
+  background: var(--choice-pattern, linear-gradient(115deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 42%)), var(--choice-bg-tint, linear-gradient(180deg, #FFFFFF 0%, #FFF8E9 100%));
+  background-size: 100% 100%, 100% 100%;
+  box-shadow: 0 10px 0 var(--choice-depth-shadow, rgba(13,35,71,.2)), inset 0 3px 0 rgba(255,255,255,.9), 0 14px 24px rgba(10,25,60,.22);
 }
-.ac-glossy-arcade::before, .answer-card::before { content: ""; position: absolute; inset: 6px 14px 6px 24px; border: 3px dashed rgba(255, 255, 255, 0.7); border-radius: 9999px; pointer-events: none; z-index: 3; }
+.ac-glossy-arcade::before { content: ""; position: absolute; inset: 4px 8px; border: 2px solid rgba(255, 255, 255, 0.76); border-radius: inherit; pointer-events: none; z-index: 3; }
 .ac-glossy-arcade > b,
-.ac-glossy-arcade .choice-label {
-  border: 8px solid var(--choice-badge-border, #FFFFFF);
+.ac-glossy-arcade .choice-label,
+.skin-glossy_arcade .choice-label,
+.choice-card.skin-glossy_arcade .choice-label {
+  border: 5px solid var(--choice-badge-border, #FFFFFF);
   border-radius: 50%;
   background: var(--choice-badge-grad);
   color: #FFFFFF;
-  box-shadow: 0 12px 0 var(--choice-stroke-shadow), 0 14px 28px rgba(10,25,60,.35), -4px 6px 14px rgba(0,0,0,0.18), inset 0 -6px 0 rgba(0,0,0,0.22), inset 0 4px 0 rgba(255,255,255,0.85);
+  box-shadow: 0 8px 0 var(--choice-stroke-shadow), 0 12px 22px rgba(10,25,60,.3), -3px 5px 12px rgba(0,0,0,0.16), inset 0 -5px 0 rgba(0,0,0,0.18), inset 0 4px 0 rgba(255,255,255,0.9);
   -webkit-text-stroke: 4px var(--choice-stroke-shadow);
   paint-order: stroke fill;
   text-shadow: 0 4px 0 var(--choice-stroke-shadow), 0 2px 6px rgba(0,0,0,.35);
 }
 .ac-glossy-arcade > b::after,
 .ac-glossy-arcade .choice-label::after,
-.answer-card > b::after {
+.skin-glossy_arcade .choice-label::after,
+.choice-card.skin-glossy_arcade .choice-label::after {
   position: absolute;
   top: 4px;
   left: 12px;
@@ -80,7 +84,9 @@ export const glossyArcadeVariant: AnswerCardSkin = {
 .choice-card.answer-correct .ac-glossy-arcade > b,
 .choice-card.answer-correct .ac-glossy-arcade .choice-label,
 .visual-answer-card.answer-correct .ac-glossy-arcade > b,
-.visual-answer-card.answer-correct .ac-glossy-arcade .choice-label {
+.visual-answer-card.answer-correct .ac-glossy-arcade .choice-label,
+.choice-card.answer-correct.skin-glossy_arcade .choice-label,
+.visual-answer-card.answer-correct.skin-glossy_arcade .choice-label {
   background: linear-gradient(180deg, #4ADE80 0%, #22C55E 50%, #16A34A 100%);
   border-color: #FFFFFF;
   box-shadow: 0 12px 0 #15803D, 0 14px 28px rgba(21, 128, 61, 0.45), 0 0 24px rgba(74, 222, 128, 0.8), inset 0 -6px 0 rgba(0, 0, 0, 0.22), inset 0 4px 0 rgba(255, 255, 255, 0.85);
@@ -94,7 +100,9 @@ export const glossyArcadeVariant: AnswerCardSkin = {
 .choice-card.answer-reveal-correct .ac-glossy-arcade > b,
 .choice-card.answer-reveal-correct .ac-glossy-arcade .choice-label,
 .visual-answer-card.answer-reveal-correct .ac-glossy-arcade > b,
-.visual-answer-card.answer-reveal-correct .ac-glossy-arcade .choice-label {
+.visual-answer-card.answer-reveal-correct .ac-glossy-arcade .choice-label,
+.choice-card.answer-reveal-correct.skin-glossy_arcade .choice-label,
+.visual-answer-card.answer-reveal-correct.skin-glossy_arcade .choice-label {
   animation: ac-glossy-arcade-badge-bounce 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: transform;
 }
@@ -114,10 +122,14 @@ export const glossyArcadeVariant: AnswerCardSkin = {
 }
 
 /* Visual choice option image celebration border & halo */
-.skin-glossy_arcade.choice-card-visual.answer-correct .option-image,
-.skin-glossy_arcade.choice-card-visual.answer-reveal-correct .option-image {
+.skin-glossy_arcade.choice-card-visual.answer-correct .option-image {
   border-color: #22C55E;
   box-shadow: 0 16px 0 #15803D, 0 0 36px rgba(74, 222, 128, 0.75), inset 0 4px 8px rgba(255, 255, 255, 0.95);
+}
+
+.skin-glossy_arcade.choice-card-visual.answer-reveal-correct .option-image {
+  animation: visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow;
 }
 
 /* === Reveal State: Incorrect Answer (Clean Settle & Dimming) === */

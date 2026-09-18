@@ -1,16 +1,9 @@
 import { describe, expect, it } from "vitest";
 import sharp from "sharp";
 import type { ImageSizingRecommendation } from "@studio/shared";
-import {
-  validateQuizImageBytes,
-  resolveFallbackRecommendation,
-} from "../src/quiz/assets/imageMetadataValidator.js";
+import { validateQuizImageBytes, resolveFallbackRecommendation } from "../src/quiz/assets/imageMetadataValidator.js";
 
-function makeRecommendation(
-  aspectRatio: "16:9" | "4:3" | "1:1" | "3:4",
-  width: number,
-  height: number,
-): ImageSizingRecommendation {
+function makeRecommendation(aspectRatio: "16:9" | "4:3" | "1:1" | "3:4", width: number, height: number): ImageSizingRecommendation {
   return {
     policyVersion: 1,
     geometry: {
@@ -203,6 +196,6 @@ describe("quizImageMetadataValidation", () => {
 
     const rec4_3 = resolveFallbackRecommendation("4:3", "answer_option");
     expect(rec4_3.aspectRatio).toBe("4:3");
-    expect(rec4_3.recommended).toEqual({ width: 1056, height: 792 });
+    expect(rec4_3.recommended).toEqual({ width: 1120, height: 840 });
   });
 });

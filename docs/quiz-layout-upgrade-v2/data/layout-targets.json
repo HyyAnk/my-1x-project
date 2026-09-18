@@ -1,0 +1,889 @@
+{
+  "schemaVersion": 1,
+  "planId": "quiz-layout-upgrade-v2",
+  "units": "canvas_css_px",
+  "canvas": {
+    "width": 1920,
+    "height": 1080
+  },
+  "coordinateRule": "Absolute border-box coordinates at settled scale 1; local coordinates subtract arena origin (380,253).",
+  "fixed": {
+    "question": {
+      "x": 380,
+      "y": 53,
+      "width": 1420,
+      "height": 168
+    },
+    "counter": {
+      "centerX": 180,
+      "top": 0
+    },
+    "brand": {
+      "centerX": 180,
+      "top": 390,
+      "width": 320
+    },
+    "thinking": {
+      "x": 470,
+      "y": 946,
+      "width": 1240,
+      "height": 84
+    },
+    "factBefore": {
+      "x": 470,
+      "y": 846,
+      "width": 1240,
+      "height": 156
+    },
+    "factAfter": {
+      "x": 470,
+      "y": 886,
+      "width": 1240,
+      "height": 156
+    },
+    "factBottomClearance": 38
+  },
+  "layouts": {
+    "media_left_choices_right": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 570
+      },
+      "heroBefore": {
+        "x": 380,
+        "y": 253,
+        "width": 720,
+        "height": 510
+      },
+      "hero": {
+        "x": 380,
+        "y": 253,
+        "width": 720,
+        "height": 570
+      },
+      "imageViewport": {
+        "x": 392,
+        "y": 265,
+        "width": 696,
+        "height": 546
+      },
+      "answerVariants": {
+        "2": {
+          "outer": [
+            {
+              "x": 1140,
+              "y": 366,
+              "width": 660,
+              "height": 152
+            },
+            {
+              "x": 1140,
+              "y": 558,
+              "width": 660,
+              "height": 152
+            }
+          ],
+          "badge": [
+            {
+              "x": 1140,
+              "y": 366,
+              "width": 152,
+              "height": 152
+            },
+            {
+              "x": 1140,
+              "y": 558,
+              "width": 152,
+              "height": 152
+            }
+          ],
+          "text": [
+            {
+              "x": 1248,
+              "y": 380,
+              "width": 552,
+              "height": 124
+            },
+            {
+              "x": 1248,
+              "y": 572,
+              "width": 552,
+              "height": 124
+            }
+          ],
+          "gap": 40,
+          "overlap": 44
+        },
+        "3": {
+          "outer": [
+            {
+              "x": 1140,
+              "y": 304,
+              "width": 660,
+              "height": 132
+            },
+            {
+              "x": 1140,
+              "y": 472,
+              "width": 660,
+              "height": 132
+            },
+            {
+              "x": 1140,
+              "y": 640,
+              "width": 660,
+              "height": 132
+            }
+          ],
+          "badge": [
+            {
+              "x": 1140,
+              "y": 304,
+              "width": 132,
+              "height": 132
+            },
+            {
+              "x": 1140,
+              "y": 472,
+              "width": 132,
+              "height": 132
+            },
+            {
+              "x": 1140,
+              "y": 640,
+              "width": 132,
+              "height": 132
+            }
+          ],
+          "text": [
+            {
+              "x": 1234,
+              "y": 316,
+              "width": 566,
+              "height": 108
+            },
+            {
+              "x": 1234,
+              "y": 484,
+              "width": 566,
+              "height": 108
+            },
+            {
+              "x": 1234,
+              "y": 652,
+              "width": 566,
+              "height": 108
+            }
+          ],
+          "gap": 36,
+          "overlap": 38
+        }
+      }
+    },
+    "visual_choices_three": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 536
+      },
+      "mediaBefore": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 452,
+          "height": 356
+        },
+        {
+          "x": 864,
+          "y": 253,
+          "width": 452,
+          "height": 356
+        },
+        {
+          "x": 1348,
+          "y": 253,
+          "width": 452,
+          "height": 356
+        }
+      ],
+      "media": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 452,
+          "height": 411
+        },
+        {
+          "x": 864,
+          "y": 253,
+          "width": 452,
+          "height": 411
+        },
+        {
+          "x": 1348,
+          "y": 253,
+          "width": 452,
+          "height": 411
+        }
+      ],
+      "imageViewportSize": {
+        "width": 432,
+        "height": 391
+      },
+      "answerTopBefore": 625,
+      "answerVariants": {
+        "3": {
+          "outer": [
+            {
+              "x": 380,
+              "y": 685,
+              "width": 452,
+              "height": 104
+            },
+            {
+              "x": 864,
+              "y": 685,
+              "width": 452,
+              "height": 104
+            },
+            {
+              "x": 1348,
+              "y": 685,
+              "width": 452,
+              "height": 104
+            }
+          ],
+          "badge": [
+            {
+              "x": 380,
+              "y": 685,
+              "width": 104,
+              "height": 104
+            },
+            {
+              "x": 864,
+              "y": 685,
+              "width": 104,
+              "height": 104
+            },
+            {
+              "x": 1348,
+              "y": 685,
+              "width": 104,
+              "height": 104
+            }
+          ],
+          "text": [
+            {
+              "x": 454,
+              "y": 694,
+              "width": 378,
+              "height": 86
+            },
+            {
+              "x": 938,
+              "y": 694,
+              "width": 378,
+              "height": 86
+            },
+            {
+              "x": 1422,
+              "y": 694,
+              "width": 378,
+              "height": 86
+            }
+          ],
+          "overlap": 30
+        }
+      },
+      "cardSize": {
+        "width": 452,
+        "height": 536
+      },
+      "mediaAnswerGap": 21
+    },
+    "visual_choices_three_pure": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 608
+      },
+      "mediaBefore": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 452,
+          "height": 504
+        },
+        {
+          "x": 864,
+          "y": 253,
+          "width": 452,
+          "height": 504
+        },
+        {
+          "x": 1348,
+          "y": 253,
+          "width": 452,
+          "height": 504
+        }
+      ],
+      "media": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 452,
+          "height": 564
+        },
+        {
+          "x": 864,
+          "y": 253,
+          "width": 452,
+          "height": 564
+        },
+        {
+          "x": 1348,
+          "y": 253,
+          "width": 452,
+          "height": 564
+        }
+      ],
+      "imageViewportSize": {
+        "width": 432,
+        "height": 544
+      },
+      "badges": [
+        {
+          "x": 562,
+          "y": 773,
+          "width": 88,
+          "height": 88
+        },
+        {
+          "x": 1046,
+          "y": 773,
+          "width": 88,
+          "height": 88
+        },
+        {
+          "x": 1530,
+          "y": 773,
+          "width": 88,
+          "height": 88
+        }
+      ],
+      "cardSize": {
+        "width": 452,
+        "height": 608
+      },
+      "badgeCenterY": 817,
+      "factGap": 25
+    },
+    "split_versus_two": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 553
+      },
+      "mediaBefore": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 646,
+          "height": 366
+        },
+        {
+          "x": 1154,
+          "y": 253,
+          "width": 646,
+          "height": 366
+        }
+      ],
+      "media": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 646,
+          "height": 421
+        },
+        {
+          "x": 1154,
+          "y": 253,
+          "width": 646,
+          "height": 421
+        }
+      ],
+      "imageViewportSize": {
+        "width": 622,
+        "height": 397
+      },
+      "answerTopBefore": 619,
+      "answerVariants": {
+        "2": {
+          "outer": [
+            {
+              "x": 380,
+              "y": 684,
+              "width": 646,
+              "height": 122
+            },
+            {
+              "x": 1154,
+              "y": 684,
+              "width": 646,
+              "height": 122
+            }
+          ],
+          "text": [
+            {
+              "x": 380,
+              "y": 684,
+              "width": 646,
+              "height": 122
+            },
+            {
+              "x": 1154,
+              "y": 684,
+              "width": 646,
+              "height": 122
+            }
+          ],
+          "badge": []
+        }
+      },
+      "cardSize": {
+        "width": 646,
+        "height": 553
+      },
+      "mediaAnswerGap": 10,
+      "mediaRadius": 32,
+      "textRadius": 32,
+      "versusEmblem": {
+        "x": 1042,
+        "y": 415.5,
+        "width": 96,
+        "height": 96
+      },
+      "textOnlyFallback": [
+        {
+          "x": 380,
+          "y": 253,
+          "width": 646,
+          "height": 504
+        },
+        {
+          "x": 1154,
+          "y": 253,
+          "width": 646,
+          "height": 504
+        }
+      ]
+    },
+    "verdict_true_false": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 565
+      },
+      "heroBefore": {
+        "x": 380,
+        "y": 253,
+        "width": 820,
+        "height": 510
+      },
+      "hero": {
+        "x": 380,
+        "y": 253,
+        "width": 820,
+        "height": 565
+      },
+      "imageViewport": {
+        "x": 390,
+        "y": 263,
+        "width": 800,
+        "height": 545
+      },
+      "answerVariants": {
+        "2": {
+          "outer": [
+            {
+              "x": 1240,
+              "y": 349.5,
+              "width": 560,
+              "height": 164
+            },
+            {
+              "x": 1240,
+              "y": 557.5,
+              "width": 560,
+              "height": 164
+            }
+          ],
+          "text": [
+            {
+              "x": 1240,
+              "y": 349.5,
+              "width": 560,
+              "height": 164
+            },
+            {
+              "x": 1240,
+              "y": 557.5,
+              "width": 560,
+              "height": 164
+            }
+          ],
+          "badge": [],
+          "gap": 44
+        }
+      },
+      "heroAndAnswerCenterY": 535.5
+    },
+    "full_stack_list": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 528
+      },
+      "answerVariants": {
+        "2": {
+          "outerBefore": [
+            {
+              "x": 450,
+              "y": 329,
+              "width": 1280,
+              "height": 164
+            },
+            {
+              "x": 450,
+              "y": 533,
+              "width": 1280,
+              "height": 164
+            }
+          ],
+          "outer": [
+            {
+              "x": 450,
+              "y": 329,
+              "width": 1280,
+              "height": 164
+            },
+            {
+              "x": 450,
+              "y": 548,
+              "width": 1280,
+              "height": 164
+            }
+          ],
+          "badge": [
+            {
+              "x": 450,
+              "y": 329,
+              "width": 164,
+              "height": 164
+            },
+            {
+              "x": 450,
+              "y": 548,
+              "width": 164,
+              "height": 164
+            }
+          ],
+          "text": [
+            {
+              "x": 568,
+              "y": 343,
+              "width": 1162,
+              "height": 136
+            },
+            {
+              "x": 568,
+              "y": 562,
+              "width": 1162,
+              "height": 136
+            }
+          ],
+          "gapBefore": 40,
+          "gap": 55,
+          "overlap": 46
+        },
+        "3": {
+          "outerBefore": [
+            {
+              "x": 450,
+              "y": 275,
+              "width": 1280,
+              "height": 140
+            },
+            {
+              "x": 450,
+              "y": 443,
+              "width": 1280,
+              "height": 140
+            },
+            {
+              "x": 450,
+              "y": 611,
+              "width": 1280,
+              "height": 140
+            }
+          ],
+          "outer": [
+            {
+              "x": 450,
+              "y": 275,
+              "width": 1280,
+              "height": 140
+            },
+            {
+              "x": 450,
+              "y": 458,
+              "width": 1280,
+              "height": 140
+            },
+            {
+              "x": 450,
+              "y": 641,
+              "width": 1280,
+              "height": 140
+            }
+          ],
+          "badge": [
+            {
+              "x": 450,
+              "y": 275,
+              "width": 140,
+              "height": 140
+            },
+            {
+              "x": 450,
+              "y": 458,
+              "width": 140,
+              "height": 140
+            },
+            {
+              "x": 450,
+              "y": 641,
+              "width": 140,
+              "height": 140
+            }
+          ],
+          "text": [
+            {
+              "x": 550,
+              "y": 287,
+              "width": 1180,
+              "height": 116
+            },
+            {
+              "x": 550,
+              "y": 470,
+              "width": 1180,
+              "height": 116
+            },
+            {
+              "x": 550,
+              "y": 653,
+              "width": 1180,
+              "height": 116
+            }
+          ],
+          "gapBefore": 28,
+          "gap": 43,
+          "overlap": 40
+        }
+      }
+    },
+    "mystery_reveal": {
+      "arena": {
+        "x": 380,
+        "y": 253,
+        "width": 1420,
+        "height": 757
+      },
+      "heroBefore": {
+        "x": 630,
+        "y": 253,
+        "width": 920,
+        "height": 360
+      },
+      "hero": {
+        "x": 630,
+        "y": 253,
+        "width": 920,
+        "height": 540
+      },
+      "stageBorder": 4,
+      "stagePadding": 16,
+      "imageSlot": {
+        "x": 650,
+        "y": 273,
+        "width": 880,
+        "height": 500
+      },
+      "imageViewport": {
+        "x": 650,
+        "y": 275.5,
+        "width": 880,
+        "height": 495
+      },
+      "fit": "contain",
+      "answerBefore": {
+        "x": 630,
+        "y": 637,
+        "width": 920,
+        "height": 120
+      },
+      "answer": {
+        "x": 630,
+        "y": 890,
+        "width": 920,
+        "height": 120
+      },
+      "answerBottomClearance": 70,
+      "heroAnswerGap": 97,
+      "factVisible": false,
+      "supportedChoiceCounts": [1],
+      "timerToRevealGapSeconds": 0.5
+    }
+  },
+  "imagePolicies": [
+    {
+      "layout": "media_left_choices_right",
+      "viewport": {
+        "width": 696,
+        "height": 546
+      },
+      "ratio": "4:3",
+      "fit": "cover",
+      "cropLoss": 0.04395604395604396,
+      "recommended": {
+        "width": 1120,
+        "height": 840
+      },
+      "safeInsetPercent": {
+        "left": 8,
+        "right": 8,
+        "top": 6,
+        "bottom": 6
+      }
+    },
+    {
+      "layout": "visual_choices_three",
+      "viewport": {
+        "width": 432,
+        "height": 391
+      },
+      "ratio": "1:1",
+      "fit": "cover",
+      "cropLoss": 0.09490740740740741,
+      "recommended": {
+        "width": 648,
+        "height": 648
+      },
+      "safeInsetPercent": {
+        "left": 6,
+        "right": 6,
+        "top": 10,
+        "bottom": 10
+      }
+    },
+    {
+      "layout": "visual_choices_three_pure",
+      "viewport": {
+        "width": 432,
+        "height": 544
+      },
+      "ratio": "3:4",
+      "fit": "cover",
+      "cropLoss": 0.05555555555555555,
+      "recommended": {
+        "width": 648,
+        "height": 864
+      },
+      "safeInsetPercent": {
+        "left": 6,
+        "right": 6,
+        "top": 8,
+        "bottom": 14
+      }
+    },
+    {
+      "layout": "split_versus_two",
+      "viewport": {
+        "width": 622,
+        "height": 397
+      },
+      "ratio": "16:9",
+      "fit": "cover",
+      "cropLoss": 0.11870277078085634,
+      "recommended": {
+        "width": 1152,
+        "height": 648
+      },
+      "safeInsetPercent": {
+        "left": 12,
+        "right": 12,
+        "top": 6,
+        "bottom": 6
+      }
+    },
+    {
+      "layout": "verdict_true_false",
+      "viewport": {
+        "width": 800,
+        "height": 545
+      },
+      "ratio": "4:3",
+      "fit": "cover",
+      "cropLoss": 0.09166666666666666,
+      "recommended": {
+        "width": 1216,
+        "height": 912
+      },
+      "safeInsetPercent": {
+        "left": 6,
+        "right": 6,
+        "top": 10,
+        "bottom": 10
+      }
+    },
+    {
+      "layout": "mystery_reveal",
+      "viewport": {
+        "width": 880,
+        "height": 495
+      },
+      "slot": {
+        "width": 880,
+        "height": 500
+      },
+      "ratio": "16:9",
+      "fit": "contain",
+      "cropLoss": 0,
+      "recommended": {
+        "width": 1408,
+        "height": 792
+      },
+      "safeInsetPercent": {
+        "left": 6,
+        "right": 6,
+        "top": 6,
+        "bottom": 6
+      }
+    }
+  ],
+  "tolerances": {
+    "settledCssPx": 0.5,
+    "rasterPx": 1,
+    "timingSeconds": 0.001,
+    "frameTiming": "At most one output frame of quantization; never reveal early."
+  }
+}

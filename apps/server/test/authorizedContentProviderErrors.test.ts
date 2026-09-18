@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { QuizAssetPlan, Task } from "@studio/shared";
+import type { QuizAssetPlan } from "@studio/shared";
 import { ContextEngine } from "../src/context.js";
 import { StudioLogger } from "../src/logger.js";
 import { RepositoryService, RepositoryError } from "../src/repository.js";
@@ -451,7 +451,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
         consistency_groups: [],
       };
 
-      const writeQuizImageAsset = vi
+      const _writeQuizImageAsset = vi
         .spyOn(repository, "writeQuizImageAsset")
         .mockImplementation(async (_c, _e, assetId) => `/assets/${assetId}.png`);
 

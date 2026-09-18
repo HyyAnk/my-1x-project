@@ -280,7 +280,7 @@ describe("VideoRenderConcurrencyLimiter", () => {
 
     it("gates concurrent video tasks, shows queue progress, and releases slot sequentially", async () => {
       const limiter = new VideoRenderConcurrencyLimiter(1);
-      const { runtime, tasks, updates } = createMockRuntime(limiter);
+      const { runtime, tasks } = createMockRuntime(limiter);
 
       const task1 = TaskSchema.parse({
         task_id: "task-video-1",

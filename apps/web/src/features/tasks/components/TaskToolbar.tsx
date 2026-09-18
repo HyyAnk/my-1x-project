@@ -2,7 +2,7 @@ import type React from "react";
 import { CaretDown, Funnel, ListChecks, MagnifyingGlass, Trash, X } from "@phosphor-icons/react";
 import type { Channel } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import { getNavProps } from "../../../hooks/useRouter";
+import { buildHash, getNavProps } from "../../../hooks/useRouter";
 import type { StatusFilter } from "../types";
 
 export type TaskToolbarProps = {
@@ -57,7 +57,7 @@ export function TaskToolbar({
         <a
           aria-pressed={statusFilter === "all"}
           className={`task-kpi-chip ${statusFilter === "all" ? "is-active" : ""}`}
-          {...getNavProps("#/tasks?tab=all", () => setStatusFilter("all"))}
+          {...getNavProps(buildHash({ page: "tasks", tab: "all" }), () => setStatusFilter("all"))}
         >
           <span className="kpi-label">{t("tasks.filterAll")}</span>
           <span className="kpi-count">{totalCount}</span>
@@ -66,7 +66,7 @@ export function TaskToolbar({
         <a
           aria-pressed={statusFilter === "running"}
           className={`task-kpi-chip is-running ${statusFilter === "running" ? "is-active" : ""}`}
-          {...getNavProps("#/tasks?tab=running", () => setStatusFilter("running"))}
+          {...getNavProps(buildHash({ page: "tasks", tab: "running" }), () => setStatusFilter("running"))}
         >
           {runningCount > 0 && <span className="live-dot-pulse" />}
           <span className="kpi-label">{t("tasks.filterRunning")}</span>
@@ -76,7 +76,7 @@ export function TaskToolbar({
         <a
           aria-pressed={statusFilter === "queued"}
           className={`task-kpi-chip is-queued ${statusFilter === "queued" ? "is-active" : ""}`}
-          {...getNavProps("#/tasks?tab=queued", () => setStatusFilter("queued"))}
+          {...getNavProps(buildHash({ page: "tasks", tab: "queued" }), () => setStatusFilter("queued"))}
         >
           <span className="kpi-label">{t("tasks.filterQueued")}</span>
           <span className="kpi-count">{queuedCount}</span>
@@ -86,7 +86,7 @@ export function TaskToolbar({
           <a
             aria-pressed={statusFilter === "waiting_approval"}
             className={`task-kpi-chip is-waiting_approval ${statusFilter === "waiting_approval" ? "is-active" : ""}`}
-            {...getNavProps("#/tasks?tab=waiting_approval", () => setStatusFilter("waiting_approval"))}
+            {...getNavProps(buildHash({ page: "tasks", tab: "waiting_approval" }), () => setStatusFilter("waiting_approval"))}
           >
             <span className="kpi-label">{t("tasks.filterWaiting")}</span>
             <span className="kpi-count">{waitingApprovalCount}</span>
@@ -96,7 +96,7 @@ export function TaskToolbar({
         <a
           aria-pressed={statusFilter === "failed"}
           className={`task-kpi-chip is-failed ${statusFilter === "failed" ? "is-active" : ""}`}
-          {...getNavProps("#/tasks?tab=failed", () => setStatusFilter("failed"))}
+          {...getNavProps(buildHash({ page: "tasks", tab: "failed" }), () => setStatusFilter("failed"))}
         >
           <span className="kpi-label">{t("tasks.filterFailed")}</span>
           <span className={`kpi-count ${failedCount > 0 ? "has-errors" : ""}`}>{failedCount}</span>
@@ -105,7 +105,7 @@ export function TaskToolbar({
         <a
           aria-pressed={statusFilter === "completed"}
           className={`task-kpi-chip is-completed ${statusFilter === "completed" ? "is-active" : ""}`}
-          {...getNavProps("#/tasks?tab=completed", () => setStatusFilter("completed"))}
+          {...getNavProps(buildHash({ page: "tasks", tab: "completed" }), () => setStatusFilter("completed"))}
         >
           <span className="kpi-label">{t("tasks.filterCompleted")}</span>
           <span className="kpi-count">{completedCount}</span>
@@ -115,7 +115,7 @@ export function TaskToolbar({
           <a
             aria-pressed={statusFilter === "cancelled"}
             className={`task-kpi-chip is-cancelled ${statusFilter === "cancelled" ? "is-active" : ""}`}
-            {...getNavProps("#/tasks?tab=cancelled", () => setStatusFilter("cancelled"))}
+            {...getNavProps(buildHash({ page: "tasks", tab: "cancelled" }), () => setStatusFilter("cancelled"))}
           >
             <span className="kpi-label">{t("tasks.filterCancelled")}</span>
             <span className="kpi-count">{cancelledCount}</span>

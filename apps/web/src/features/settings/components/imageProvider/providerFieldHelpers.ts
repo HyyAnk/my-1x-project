@@ -6,11 +6,7 @@ export function getProviderKeyLabel(imageProvider: ImageProviderId): string {
   return "API Key / Bearer Token";
 }
 
-export function getProviderKeyPlaceholder(
-  imageProvider: ImageProviderId,
-  hasKey: boolean,
-  showKey: boolean,
-): string {
+export function getProviderKeyPlaceholder(imageProvider: ImageProviderId, hasKey: boolean, showKey: boolean): string {
   if (hasKey) {
     return showKey
       ? "Stored securely in local settings (enter new key to replace)"

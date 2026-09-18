@@ -1,11 +1,12 @@
-import { LANDSCAPE_FRAME } from "./landscapeFrameGeometry.js";
+import { LANDSCAPE_FRAME, LAYOUT_ARENA_GEOMETRY } from "./landscapeFrameGeometry.js";
+import { counterQuestionLayoutCss } from "./counterQuestionLayout.js";
 
 /**
  * Returns scoped CSS rules for the unified 16:9 landscape quiz frame.
  * Controls fixed positioning for counter, question card, brand rail, thinking bar, and fact card.
  */
 export function quizFrameCss(): string {
-  const { question, thinking, fact, arena, counter, brand, canvas } = LANDSCAPE_FRAME;
+  const { question, thinking, fact, arena, brand, canvas } = LANDSCAPE_FRAME;
 
   return `
 /* === Unified Landscape Quiz Frame Contract === */
@@ -29,14 +30,7 @@ export function quizFrameCss(): string {
   display: block;
 }
 
-.quiz-frame-unified .game-header {
-  position: absolute;
-  z-index: 6;
-  top: ${counter.top}px;
-  left: ${counter.centerX}px;
-  transform: translateX(-50%);
-  contain: layout style;
-}
+${counterQuestionLayoutCss(".quiz-frame-unified", question)}
 
 .quiz-frame-unified .channel-brand-mark {
   position: absolute;
@@ -77,6 +71,10 @@ export function quizFrameCss(): string {
   height: ${arena.height}px;
   contain: layout style;
 }
+
+${Object.entries(LAYOUT_ARENA_GEOMETRY)
+  .map(([layoutId, rect]) => `.quiz-frame-unified.layout-${layoutId} .quiz-content-anchor { height: ${rect.height}px; }`)
+  .join("\n")}
 
 .quiz-frame-unified .phase-region {
   position: absolute;
@@ -159,9 +157,9 @@ export function quizFrameCss(): string {
 
 /* Ensure .has-mascot never shifts the invariant landscape frame anchors */
 .quiz-frame-unified.has-mascot .game-header {
-  left: ${counter.centerX}px;
-  top: ${counter.top}px;
-  transform: translateX(-50%);
+  left: 0;
+  top: ${question.y}px;
+  transform: none;
 }
 
 .quiz-frame-unified.has-mascot .channel-brand-mark {

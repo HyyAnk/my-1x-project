@@ -2,7 +2,12 @@ import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { BankIndexSchema, type BankIndex, type BankQuestion, type MatrixCoverageStats } from "@studio/shared";
 import { RepositoryError } from "../../errors.js";
-import { calculateMatrixCoverageStats, ensureMatrixCoverageCache, getMatrixCoverageCache, warmUpMatrixCoverageCache } from "../../../quiz/bank/matrixCoverageService.js";
+import {
+  calculateMatrixCoverageStats,
+  ensureMatrixCoverageCache,
+  getMatrixCoverageCache,
+  warmUpMatrixCoverageCache,
+} from "../../../quiz/bank/matrixCoverageService.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { assertSafeBankFilesystemPath, isInside } from "./bankPathSafety.js";
 import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";

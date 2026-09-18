@@ -1,10 +1,6 @@
 import { ArrowRight, CircleNotch } from "@phosphor-icons/react";
 import type { QuizImageStyle, TopicAvailability, TopicCandidate } from "@studio/shared";
-import {
-  TopicAvailabilityNotice,
-  TopicTopBar,
-  useTopicCardState,
-} from "./topicCard/index";
+import { TopicAvailabilityNotice, TopicTopBar, useTopicCardState } from "./topicCard/index";
 
 export interface TopicCardProps {
   topic: TopicCandidate;
@@ -15,36 +11,24 @@ export interface TopicCardProps {
   disabled: boolean;
 }
 
-export function TopicCard({
-  topic,
-  channelStyles,
-  availability,
-  onConfirm,
-  busy,
-  disabled,
-}: TopicCardProps) {
-  const {
-    isShortReel,
-    canConfirm,
-    sourceCapacity,
-    maxAllowedQuestions,
-    selectedStyle,
-  } = useTopicCardState({ topic, availability, channelStyles });
+export function TopicCard({ topic, channelStyles, availability, onConfirm, busy, disabled }: TopicCardProps) {
+  const { isShortReel, canConfirm, sourceCapacity, maxAllowedQuestions, selectedStyle } = useTopicCardState({
+    topic,
+    availability,
+    channelStyles,
+  });
 
   const isClickable = !disabled && !busy && canConfirm;
 
   const handleSelect = () => {
     if (!isClickable) return;
-    const finalQuestionCount = isShortReel
-      ? 1
-      : Math.max(1, Math.min(topic.question_count || 8, maxAllowedQuestions));
+    const finalQuestionCount = isShortReel ? 1 : Math.max(1, Math.min(topic.question_count || 8, maxAllowedQuestions));
     const finalStyle = topic.content_kind === "episode" ? (topic.visual_style ?? selectedStyle) : "mixed";
     onConfirm(finalQuestionCount, finalStyle);
   };
 
-  const cardTitleTooltip = !canConfirm && availability?.recovery_action
-    ? availability.recovery_action
-    : `Click to select "${topic.title}" and start creation`;
+  const cardTitleTooltip =
+    !canConfirm && availability?.recovery_action ? availability.recovery_action : `Click to select "${topic.title}" and start creation`;
 
   return (
     <article
@@ -62,12 +46,7 @@ export function TopicCard({
       }}
       title={cardTitleTooltip}
     >
-      <TopicTopBar
-        topic={topic}
-        availability={availability}
-        canConfirm={canConfirm}
-        sourceCapacity={sourceCapacity}
-      />
+      <TopicTopBar topic={topic} availability={availability} canConfirm={canConfirm} sourceCapacity={sourceCapacity} />
       <h3 className="topic-card-title" title={topic.title}>
         {topic.title}
       </h3>

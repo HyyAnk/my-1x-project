@@ -66,7 +66,12 @@ export function useNavigationActions(navigate: (to: string, replace?: boolean) =
       const [pathPart = "", queryPart = ""] = (currentHash.startsWith("#") ? currentHash.slice(1) : currentHash).split("?");
       const params = new URLSearchParams(queryPart);
 
-      if (value === null || value === undefined || value === "") {
+      const existingValue = params.get(key);
+      const isRemoving = value === null || value === undefined || value === "";
+      if (isRemoving && !params.has(key)) return;
+      if (!isRemoving && existingValue === value) return;
+
+      if (isRemoving) {
         params.delete(key);
       } else {
         params.set(key, value);
@@ -86,11 +91,24 @@ export function useNavigationActions(navigate: (to: string, replace?: boolean) =
     [navigate],
   );
 
+  const openMascot = useCallback(
+    (mascotId?: string | null, step?: number | null) => {
+      if (!mascotId) {
+        navigate("/mascots");
+        return;
+      }
+      const query = step ? `?step=${step}` : "";
+      navigate(`/mascots/${encodeURIComponent(mascotId)}${query}`);
+    },
+    [navigate],
+  );
+
   return {
     openPage,
     openChannel,
     openEpisode,
     openShortReel,
+    openMascot,
     setQueryParam,
   };
 }

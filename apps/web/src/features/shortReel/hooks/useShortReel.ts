@@ -35,20 +35,19 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
     onApplyRemoteReel: setReel,
   });
 
-  const { isSaving, isGenerating, setIsGenerating, saveSegment, savePublishing, generate, cancel } =
-    useShortReelActions({
-      channelId,
-      reelId,
-      reel,
-      setReel,
-      activeTask,
-      setActiveTask,
-      getBaseRevision: draft.getBaseRevision,
-      markScriptSaved: draft.markScriptSaved,
-      markPublishingSaved: draft.markPublishingSaved,
-      onSyncRecord: () => syncRecordRef.current(),
-      onNotice,
-    });
+  const { isSaving, isGenerating, setIsGenerating, saveSegment, savePublishing, generate, cancel } = useShortReelActions({
+    channelId,
+    reelId,
+    reel,
+    setReel,
+    activeTask,
+    setActiveTask,
+    getBaseRevision: draft.getBaseRevision,
+    markScriptSaved: draft.markScriptSaved,
+    markPublishingSaved: draft.markPublishingSaved,
+    onSyncRecord: () => syncRecordRef.current(),
+    onNotice,
+  });
 
   const handleRecordUpdated = useCallback(
     (remoteReel: ShortReelRecord, remoteTask: Task | null) => {

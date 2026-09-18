@@ -16,6 +16,10 @@ import {
   auroraGlowVariant,
   backgroundRegistry,
   candyRaysVariant,
+  comicBurstVariant,
+  constructionBlueprintVariant,
+  cosmicStarfieldVariant,
+  floatingCloudsVariant,
   getBackgroundStylesCss,
 } from "../src/quiz/visual/elements/background/index.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
@@ -32,7 +36,17 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       const registryIds = Array.from(backgroundRegistry.keys());
 
       expect(registryIds.sort()).toEqual(nonAutoEnums.sort());
-      expect(registryIds).toEqual(["candy_rays", "aurora_glow"].sort());
+      expect(registryIds).toEqual(
+        [
+          "candy_rays",
+          "aurora_glow",
+          "comic_burst",
+          "construction_blueprint",
+          "cosmic_starfield",
+          "floating_clouds",
+          "treasure_map",
+        ].sort(),
+      );
       for (const id of registryIds) {
         const variant = backgroundRegistry.get(id);
         expect(variant).toBeDefined();
@@ -205,6 +219,65 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       expect(css).toContain("@keyframes aurora-shimmer");
     });
 
+    it("P7-REN-02b: Proof animated variants (comic_burst, construction_blueprint, cosmic_starfield, floating_clouds): own scoped HTML/CSS, palette-driven", () => {
+      // comic_burst
+      const comicHtml = comicBurstVariant.renderHtml({ surface: "production", questionIndex: 0 });
+      expect(comicHtml).toContain('class="bg-comic-burst"');
+      expect(comicHtml).toContain('class="comic-gradient-base"');
+      expect(comicHtml).toContain('class="comic-sunburst-rays"');
+      expect(comicHtml).toContain('class="comic-halftone-grid"');
+      expect(comicHtml).toContain('class="comic-speed-burst"');
+      const comicCss = comicBurstVariant.renderCss();
+      expect(comicCss).toContain(".bg-comic-burst");
+      expect(comicCss).toContain("var(--bg-primary)");
+      expect(comicCss).toContain("var(--bg-secondary)");
+      expect(comicCss).toContain("var(--bg-accent, var(--accent");
+      expect(comicCss).toContain("@keyframes comic-burst-spin");
+      expect(comicCss).toContain("@keyframes comic-speed-pulse");
+
+      // construction_blueprint
+      const blueprintHtml = constructionBlueprintVariant.renderHtml({ surface: "production", questionIndex: 0 });
+      expect(blueprintHtml).toContain('class="bg-construction-blueprint"');
+      expect(blueprintHtml).toContain('class="blueprint-gradient-base"');
+      expect(blueprintHtml).toContain('class="blueprint-grid-fine"');
+      expect(blueprintHtml).toContain('class="blueprint-grid-major"');
+      expect(blueprintHtml).toContain('class="blueprint-girders-container"');
+      const blueprintCss = constructionBlueprintVariant.renderCss();
+      expect(blueprintCss).toContain(".bg-construction-blueprint");
+      expect(blueprintCss).toContain("var(--bg-primary)");
+      expect(blueprintCss).toContain("var(--bg-secondary)");
+      expect(blueprintCss).toContain("var(--bg-accent, var(--accent");
+      expect(blueprintCss).toContain("@keyframes blueprint-girder-sway");
+
+      // cosmic_starfield
+      const cosmicHtml = cosmicStarfieldVariant.renderHtml({ surface: "production", questionIndex: 0 });
+      expect(cosmicHtml).toContain('class="bg-cosmic-starfield"');
+      expect(cosmicHtml).toContain('class="cosmic-void-base"');
+      expect(cosmicHtml).toContain('class="cosmic-nebula nebula-alpha"');
+      expect(cosmicHtml).toContain('class="cosmic-stars-layer"');
+      const cosmicCss = cosmicStarfieldVariant.renderCss();
+      expect(cosmicCss).toContain(".bg-cosmic-starfield");
+      expect(cosmicCss).toContain("var(--bg-primary)");
+      expect(cosmicCss).toContain("var(--bg-secondary)");
+      expect(cosmicCss).toContain("var(--bg-accent, var(--accent");
+      expect(cosmicCss).toContain("@keyframes cosmic-nebula-float");
+      expect(cosmicCss).toContain("@keyframes cosmic-star-pulse");
+
+      // floating_clouds
+      const cloudsHtml = floatingCloudsVariant.renderHtml({ surface: "production", questionIndex: 0 });
+      expect(cloudsHtml).toContain('class="bg-floating-clouds"');
+      expect(cloudsHtml).toContain('class="sky-gradient-base"');
+      expect(cloudsHtml).toContain('class="cloud-layer cloud-layer-back"');
+      expect(cloudsHtml).toContain('class="cloud-shimmer-particles"');
+      const cloudsCss = floatingCloudsVariant.renderCss();
+      expect(cloudsCss).toContain(".bg-floating-clouds");
+      expect(cloudsCss).toContain("var(--bg-primary)");
+      expect(cloudsCss).toContain("var(--bg-secondary)");
+      expect(cloudsCss).toContain("var(--bg-accent, var(--accent");
+      expect(cloudsCss).toContain("@keyframes cloud-drift-back");
+      expect(cloudsCss).toContain("@keyframes cloud-sparkle-float");
+    });
+
     it("P7-REN-03: Identical seed and inputs yield bit-for-bit identical output (100% deterministic)", () => {
       const run1 = auroraGlowVariant.renderHtml({ surface: "production", questionIndex: 2 });
       const run2 = auroraGlowVariant.renderHtml({ surface: "production", questionIndex: 2 });
@@ -213,6 +286,12 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       const candyRun1 = candyRaysVariant.renderHtml({ surface: "production", questionIndex: 3 });
       const candyRun2 = candyRaysVariant.renderHtml({ surface: "production", questionIndex: 3 });
       expect(candyRun1).toBe(candyRun2);
+
+      for (const variant of [comicBurstVariant, constructionBlueprintVariant, cosmicStarfieldVariant, floatingCloudsVariant]) {
+        const vRun1 = variant.renderHtml({ surface: "production", questionIndex: 4 });
+        const vRun2 = variant.renderHtml({ surface: "production", questionIndex: 4 });
+        expect(vRun1).toBe(vRun2);
+      }
     });
 
     it("P7-REN-04: Different questionIndex produces bounded phase variation", () => {
@@ -222,6 +301,12 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       // Both contain valid CSS variable phase offsets
       expect(q0).toContain("--aurora-phase:");
       expect(q1).toContain("--aurora-phase:");
+
+      for (const variant of [comicBurstVariant, constructionBlueprintVariant, cosmicStarfieldVariant, floatingCloudsVariant]) {
+        const vQ0 = variant.renderHtml({ surface: "production", questionIndex: 0 });
+        const vQ1 = variant.renderHtml({ surface: "production", questionIndex: 1 });
+        expect(vQ0).not.toBe(vQ1);
+      }
     });
 
     it("P7-REN-05: CSS assembly: background CSS included once, no duplicate legacy block", () => {
@@ -232,6 +317,10 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       // Master CSS contains the background registry CSS
       expect(masterCss).toContain("Background Variant: Candy Rays");
       expect(masterCss).toContain("Background Variant: Aurora Glow");
+      expect(masterCss).toContain("Background Variant: Comic Action Burst");
+      expect(masterCss).toContain("Background Variant: Construction Blueprint");
+      expect(masterCss).toContain("Background Variant: Cosmic Starfield");
+      expect(masterCss).toContain("Background Variant: Floating Clouds");
 
       // Verify no duplicate .bg-gradient definition in master CSS
       const count = (masterCss.match(/\.bg-gradient\s*\{/g) || []).length;
@@ -257,7 +346,7 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
   });
 
   describe("Surface and Reduced Motion Matrix", () => {
-    it("P7-SUR-01: Production versus Sandbox parity for both variants", () => {
+    it("P7-SUR-01: Production versus Sandbox parity for all variants", () => {
       // candy_rays in Sandbox
       const candySandbox = buildSandboxComposition({
         background_style: "candy_rays",
@@ -275,6 +364,42 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       });
       expect(auroraSandbox.html).toContain("bg-aurora-glow");
       expect(auroraSandbox.html).toContain("aurora-orb");
+
+      // comic_burst in Sandbox
+      const comicSandbox = buildSandboxComposition({
+        background_style: "comic_burst",
+        theme: "candy_arcade",
+        palette_id: "sunny",
+      });
+      expect(comicSandbox.html).toContain("bg-comic-burst");
+      expect(comicSandbox.html).toContain("comic-sunburst-rays");
+
+      // construction_blueprint in Sandbox
+      const blueprintSandbox = buildSandboxComposition({
+        background_style: "construction_blueprint",
+        theme: "candy_arcade",
+        palette_id: "aqua",
+      });
+      expect(blueprintSandbox.html).toContain("bg-construction-blueprint");
+      expect(blueprintSandbox.html).toContain("blueprint-grid-fine");
+
+      // cosmic_starfield in Sandbox
+      const cosmicSandbox = buildSandboxComposition({
+        background_style: "cosmic_starfield",
+        theme: "candy_arcade",
+        palette_id: "purple",
+      });
+      expect(cosmicSandbox.html).toContain("bg-cosmic-starfield");
+      expect(cosmicSandbox.html).toContain("cosmic-nebula");
+
+      // floating_clouds in Sandbox
+      const cloudsSandbox = buildSandboxComposition({
+        background_style: "floating_clouds",
+        theme: "candy_arcade",
+        palette_id: "pink",
+      });
+      expect(cloudsSandbox.html).toContain("bg-floating-clouds");
+      expect(cloudsSandbox.html).toContain("cloud-layer");
     });
 
     it("P7-SUR-04: Reduced motion disables continuous keyframe animations", () => {
@@ -285,6 +410,22 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
       const auroraCss = auroraGlowVariant.renderCss();
       expect(auroraCss).toContain("@media (prefers-reduced-motion: reduce)");
       expect(auroraCss).toContain(".aurora-orb, .aurora-stardust i { animation: none !important; }");
+
+      const comicCss = comicBurstVariant.renderCss();
+      expect(comicCss).toContain("@media (prefers-reduced-motion: reduce)");
+      expect(comicCss).toContain("animation: none !important;");
+
+      const blueprintCss = constructionBlueprintVariant.renderCss();
+      expect(blueprintCss).toContain("@media (prefers-reduced-motion: reduce)");
+      expect(blueprintCss).toContain("animation: none !important;");
+
+      const cosmicCss = cosmicStarfieldVariant.renderCss();
+      expect(cosmicCss).toContain("@media (prefers-reduced-motion: reduce)");
+      expect(cosmicCss).toContain("animation: none !important;");
+
+      const cloudsCss = floatingCloudsVariant.renderCss();
+      expect(cloudsCss).toContain("@media (prefers-reduced-motion: reduce)");
+      expect(cloudsCss).toContain("animation: none !important;");
     });
 
     it("P7-SUR-05: Production composition bundle renders selected background variant per beat", () => {

@@ -57,7 +57,9 @@ export async function mixMasterSoundtrack(options: MixMasterSoundtrackOptions): 
   const outroStartSeconds = options.outroStartSeconds ?? options.bgmOptions?.outroStartSeconds;
   const bgmOptions = options.bgmOptions
     ? { ...options.bgmOptions, outroStartSeconds: options.bgmOptions.outroStartSeconds ?? outroStartSeconds }
-    : (outroStartSeconds !== undefined ? { outroStartSeconds } : undefined);
+    : outroStartSeconds !== undefined
+      ? { outroStartSeconds }
+      : undefined;
 
   const bgmItems = resolveBgmScheduleItems(duration, bgmCandidateDirs, bgmOptions, options.bgmRegistry, outroStartSeconds);
 

@@ -1,16 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  SandboxPreviewInputBaseSchema,
-  sandboxPreviewLayoutIssues,
-} from "@studio/shared";
+import { SandboxPreviewInputBaseSchema, sandboxPreviewLayoutIssues } from "@studio/shared";
 import { buildSandboxComposition } from "../../quiz/render/sandboxComposition.js";
 import { resolveCandyArcadeFont } from "../../quiz/render/candyArcade/candyArcadeFonts.js";
-import {
-  defaultSfxCandidateDirectories,
-  resolveSfxCandidatePath,
-} from "../../quiz/audio/soundtrackSfxPlanner.js";
+import { defaultSfxCandidateDirectories, resolveSfxCandidatePath } from "../../quiz/audio/soundtrackSfxPlanner.js";
 import { RepositoryError } from "../../repository.js";
 import type { QuizV2RouteDeps } from "./quizV2Types.js";
 
@@ -50,10 +44,7 @@ export function registerQuizV2MediaRoutes(server: FastifyInstance, deps: QuizV2R
   server.get("/api/quiz/sfx/:filename", async (request, reply) => {
     const { filename } = request.params as { filename: string };
     const sanitized = path.basename(filename);
-    const candidateDirs = [
-      path.resolve(repository.rootDirectory, "assets", "audio", "sfx"),
-      ...defaultSfxCandidateDirectories(),
-    ];
+    const candidateDirs = [path.resolve(repository.rootDirectory, "assets", "audio", "sfx"), ...defaultSfxCandidateDirectories()];
     const sfxPath = resolveSfxCandidatePath(sanitized, candidateDirs);
     if (!sfxPath) {
       throw new RepositoryError("Quiz SFX audio not found", "QUIZ_SFX_NOT_FOUND");

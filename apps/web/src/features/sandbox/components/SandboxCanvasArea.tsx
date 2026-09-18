@@ -14,22 +14,9 @@ export interface SandboxCanvasAreaProps {
   themeColors: { from: string; to: string };
 }
 
-export function SandboxCanvasArea({
-  isTransitionMode,
-  transition,
-  viewport,
-  preview,
-  timeline,
-  themeColors,
-}: SandboxCanvasAreaProps) {
+export function SandboxCanvasArea({ isTransitionMode, transition, viewport, preview, timeline, themeColors }: SandboxCanvasAreaProps) {
   if (isTransitionMode) {
-    return (
-      <SandboxTransitionCanvasArea
-        transition={transition}
-        aspectRatio={viewport.aspectRatio}
-        themeColors={themeColors}
-      />
-    );
+    return <SandboxTransitionCanvasArea transition={transition} aspectRatio={viewport.aspectRatio} themeColors={themeColors} />;
   }
 
   return (

@@ -9,11 +9,7 @@ export interface ImageFallbackCardHeaderProps {
   fallbackModel: string;
 }
 
-export function ImageFallbackCardHeader({
-  fallbackEnabled,
-  hasFallbackApiKey,
-  fallbackModel,
-}: ImageFallbackCardHeaderProps) {
+export function ImageFallbackCardHeader({ fallbackEnabled, hasFallbackApiKey, fallbackModel }: ImageFallbackCardHeaderProps) {
   return (
     <>
       <div className="panel-heading">
@@ -39,10 +35,7 @@ export function ImageFallbackCardHeader({
         }
       />
       <ProviderApiKeyStatusLine hasApiKey={hasFallbackApiKey} />
-      <StatusLine
-        label="Active Fallback Model"
-        value={resolveImgStudioModelName(fallbackModel)}
-      />
+      <StatusLine label="Active Fallback Model" value={resolveImgStudioModelName(fallbackModel)} />
     </>
   );
 }

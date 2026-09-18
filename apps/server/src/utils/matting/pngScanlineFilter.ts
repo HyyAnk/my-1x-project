@@ -17,12 +17,7 @@ function unfilterByte(filterType: number, raw: number, a: number, b: number, c: 
   return raw;
 }
 
-export function unfilterScanlines(
-  decompressed: Uint8Array,
-  width: number,
-  height: number,
-  bpp: number,
-): Uint8Array[] {
+export function unfilterScanlines(decompressed: Uint8Array, width: number, height: number, bpp: number): Uint8Array[] {
   const scanlineLen = 1 + width * bpp;
   const prevRow = new Uint8Array(width * bpp);
   const rows: Uint8Array[] = [];

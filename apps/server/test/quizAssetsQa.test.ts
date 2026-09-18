@@ -94,7 +94,7 @@ describe("Quiz V2 assets and QA", () => {
     roots.push(root);
     const file = path.join(root, "tiger.png");
     const pngBuffer = await sharp({
-      create: { width: 728, height: 728, channels: 4, background: { r: 255, g: 120, b: 0, alpha: 1 } },
+      create: { width: 648, height: 864, channels: 4, background: { r: 255, g: 120, b: 0, alpha: 1 } },
     })
       .png()
       .toBuffer();

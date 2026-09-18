@@ -4,6 +4,9 @@ import { glossyArcadeVariant } from "../src/quiz/visual/elements/answerCard/vari
 import { glassNeonVariant } from "../src/quiz/visual/elements/answerCard/variants/glassNeon.js";
 import { minimalSoftVariant } from "../src/quiz/visual/elements/answerCard/variants/minimalSoft.js";
 import { comicChunkyVariant } from "../src/quiz/visual/elements/answerCard/variants/comicChunky.js";
+import { steelBeamPlateVariant } from "../src/quiz/visual/elements/answerCard/variants/steelBeamPlate.js";
+import { pastelMarshmallowVariant } from "../src/quiz/visual/elements/answerCard/variants/pastelMarshmallow.js";
+import { rusticWoodPlankVariant } from "../src/quiz/visual/elements/answerCard/variants/rusticWoodPlank.js";
 import { resolveAnswerCardSkin, answerCardRegistry } from "../src/quiz/visual/elements/answerCard/registry.js";
 import { renderChoiceGroup } from "../src/quiz/render/choices/renderChoiceGroup.js";
 import type { ChoiceGroupRenderInput } from "../src/quiz/render/choices/choiceGroup.types.js";
@@ -13,7 +16,10 @@ function choice(id: string, order: number, text: string): QuizSceneChoice {
   return { id, order, text, media: { source: null, altText: text, fallback: { subject: text, seed: order + 1 } } };
 }
 
-function createInput(skinId: Exclude<typeof ALL_ANSWER_CARD_STYLES[number], "auto">, overrides: Partial<ChoiceGroupRenderInput> = {}): ChoiceGroupRenderInput {
+function createInput(
+  skinId: Exclude<(typeof ALL_ANSWER_CARD_STYLES)[number], "auto">,
+  overrides: Partial<ChoiceGroupRenderInput> = {},
+): ChoiceGroupRenderInput {
   const skin = answerCardRegistry.get(skinId);
   if (!skin) throw new Error(`Missing skin: ${skinId}`);
   return {
@@ -33,6 +39,13 @@ function createInput(skinId: Exclude<typeof ALL_ANSWER_CARD_STYLES[number], "aut
 describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
   describe("Glossy Arcade 3D Skin (glossyArcade.ts)", () => {
     const css = glossyArcadeVariant.renderCss();
+
+    it("provides resilient fallbacks for choice-pattern and choice-bg-tint to preserve white glossy surface", () => {
+      expect(css).toContain("var(--choice-pattern,");
+      expect(css).toContain("var(--choice-bg-tint,");
+      expect(css).toContain("rgba(255, 255, 255, 0.9)");
+      expect(css).toContain("#FFFFFF");
+    });
 
     it("defines vibrant 3D win styles with green depth shadow and halo", () => {
       expect(css).toContain(".ac-glossy-arcade.answer-correct");
@@ -161,8 +174,131 @@ describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
     });
   });
 
-  describe("Universal Quality & Accessibility Across All 4 Skins", () => {
-    const skins = [glossyArcadeVariant, glassNeonVariant, minimalSoftVariant, comicChunkyVariant];
+  describe("Steel Beam Plate Skin (steelBeamPlate.ts)", () => {
+    const css = steelBeamPlateVariant.renderCss();
+
+    it("defines industrial heavy container and metallic rivets styling", () => {
+      expect(css).toContain(".ac-steel-beam-plate");
+      expect(css).toContain(".steel-hazard-trim");
+      expect(css).toContain(".steel-tread-texture");
+      expect(css).toContain(".steel-rivet");
+      expect(css).toContain("var(--bg-primary");
+      expect(css).toContain("var(--bg-secondary");
+      expect(css).toContain("var(--bg-accent");
+    });
+
+    it("defines celebration emerald win with hydraulic slam and halo", () => {
+      expect(css).toContain(".ac-steel-beam-plate.answer-correct");
+      expect(css).toContain(".ac-steel-beam-plate.is-correct");
+      expect(css).toContain(".ac-steel-beam-plate.answer-reveal-correct");
+      expect(css).toContain("#22C55E");
+      expect(css).toContain("#14532D");
+      expect(css).toContain("@keyframes ac-steel-beam-plate-win");
+    });
+
+    it("defines embossed badge slam and high-contrast text", () => {
+      expect(css).toContain(".ac-steel-beam-plate.answer-correct > b");
+      expect(css).toContain(".ac-steel-beam-plate.is-correct > b");
+      expect(css).toContain(".ac-steel-beam-plate.answer-reveal-correct > b");
+      expect(css).toContain("@keyframes ac-steel-beam-plate-badge-slam");
+      expect(css).toContain("#DCFCE7");
+    });
+
+    it("settles incorrect choices to opacity 0.35 and grayscale 78%", () => {
+      expect(css).toContain(".ac-steel-beam-plate.answer-incorrect");
+      expect(css).toContain(".ac-steel-beam-plate.is-wrong");
+      expect(css).toContain(".ac-steel-beam-plate.answer-reveal-incorrect");
+      expect(css).toContain("opacity: 0.35");
+      expect(css).toContain("grayscale(78%)");
+      expect(css).toContain("@keyframes ac-steel-beam-plate-settle");
+    });
+
+    it("supports visual choice option image and labels", () => {
+      expect(css).toContain(".skin-steel_beam_plate.choice-card-visual.answer-correct .option-image");
+      expect(css).toContain(".skin-steel_beam_plate.choice-card-visual.is-correct .option-image");
+      expect(css).toContain(".visual-answer-card.answer-correct .ac-steel-beam-plate");
+    });
+
+    it("renders markup decorations including hazard trims, tread texture and rivets", () => {
+      const decorations = steelBeamPlateVariant.renderDecorations?.({
+        order: 0,
+        presentation: "text",
+        state: "pending",
+      });
+      expect(decorations?.beforeLabelHtml).toContain("steel-hazard-trim");
+      expect(decorations?.beforeLabelHtml).toContain("steel-tread-texture");
+      expect(decorations?.beforeLabelHtml).toContain("steel-rivet");
+      expect(decorations?.labelSuffixHtml).toContain("steel-badge-bracket");
+    });
+  });
+
+  describe("Pastel Marshmallow Skin (pastelMarshmallow.ts)", () => {
+    const css = pastelMarshmallowVariant.renderCss();
+
+    it("defines soft rounded puffy pill card with candy pastel inner glow", () => {
+      expect(css).toContain(".ac-pastel-marshmallow");
+      expect(css).toContain(".marshmallow-inner-glow");
+      expect(css).toContain(".marshmallow-sprinkle");
+      expect(css).toContain("border-radius: 9999px");
+      expect(css).toContain("var(--bg-primary");
+      expect(css).toContain("var(--bg-secondary");
+      expect(css).toContain("var(--bg-accent");
+    });
+
+    it("defines sweet mint jelly celebration glow and jelly bounce win", () => {
+      expect(css).toContain(".ac-pastel-marshmallow.answer-correct");
+      expect(css).toContain(".ac-pastel-marshmallow.is-correct");
+      expect(css).toContain(".ac-pastel-marshmallow.answer-reveal-correct");
+      expect(css).toContain("#4ADE80");
+      expect(css).toContain("rgba(34, 197, 94, 0.4)");
+      expect(css).toContain("@keyframes ac-pastel-marshmallow-win");
+    });
+
+    it("defines circular marshmallow letter badge jiggle and soft text win", () => {
+      expect(css).toContain(".ac-pastel-marshmallow > b");
+      expect(css).toContain(".ac-pastel-marshmallow.answer-correct > b");
+      expect(css).toContain(".ac-pastel-marshmallow.is-correct > b");
+      expect(css).toContain("@keyframes ac-pastel-marshmallow-badge-jiggle");
+      expect(css).toContain("#064E3B");
+    });
+
+    it("settles incorrect choices to opacity 0.35 and grayscale 78%", () => {
+      expect(css).toContain(".ac-pastel-marshmallow.answer-incorrect");
+      expect(css).toContain(".ac-pastel-marshmallow.is-wrong");
+      expect(css).toContain(".ac-pastel-marshmallow.answer-reveal-incorrect");
+      expect(css).toContain("opacity: 0.35");
+      expect(css).toContain("grayscale(78%)");
+      expect(css).toContain("@keyframes ac-pastel-marshmallow-settle");
+    });
+
+    it("supports visual choice option image and labels", () => {
+      expect(css).toContain(".skin-pastel_marshmallow.choice-card-visual.answer-correct .option-image");
+      expect(css).toContain(".skin-pastel_marshmallow.choice-card-visual.is-correct .option-image");
+      expect(css).toContain(".visual-answer-card.answer-correct .ac-pastel-marshmallow");
+    });
+
+    it("renders markup decorations including inner glow, sprinkles and badge swirl", () => {
+      const decorations = pastelMarshmallowVariant.renderDecorations?.({
+        order: 0,
+        presentation: "text",
+        state: "pending",
+      });
+      expect(decorations?.beforeLabelHtml).toContain("marshmallow-inner-glow");
+      expect(decorations?.beforeLabelHtml).toContain("marshmallow-sprinkle");
+      expect(decorations?.labelSuffixHtml).toContain("marshmallow-badge-swirl");
+    });
+  });
+
+  describe("Universal Quality & Accessibility Across All 7 Skins", () => {
+    const skins = [
+      glossyArcadeVariant,
+      glassNeonVariant,
+      minimalSoftVariant,
+      comicChunkyVariant,
+      steelBeamPlateVariant,
+      pastelMarshmallowVariant,
+      rusticWoodPlankVariant,
+    ];
 
     it("maintains strict zero !important across all skin style rules", () => {
       for (const skin of skins) {
@@ -176,6 +312,23 @@ describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
         expect(css).not.toContain("grid-template-columns");
         expect(css).not.toContain("grid-template-areas");
         expect(css).not.toContain("grid-area:");
+      }
+    });
+
+    it("ensures skins do not leak static winning styles on .answer-reveal-correct", () => {
+      for (const skin of skins) {
+        const css = skin.renderCss();
+        // Static background colors or borders should not be applied to .answer-reveal-correct outside keyframes
+        // Ensure .answer-reveal-correct is not directly grouped with snapshot victory classes that set static color/background
+        const lines = css.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.includes(".answer-reveal-correct") && line.includes("{") && !line.includes("@keyframes")) {
+            // Must only contain animation or will-change, not static colors
+            expect(line).not.toMatch(/background\s*:/);
+            expect(line).not.toMatch(/color\s*:\s*#/);
+          }
+        }
       }
     });
 

@@ -47,8 +47,10 @@ describe("matrixCoveragePlanner (planBatchChunks)", () => {
     expect(archetypesSeen.size).toBeGreaterThanOrEqual(4);
   });
 
-  it("plans 200 questions into 10 chunks cycling all 8 gameplay archetypes", () => {
+  it("plans 200 questions into 10 chunks cycling all 7 gameplay archetypes", () => {
     const questions: BankQuestion[] = [];
+    const entities = loadAllKnowledgeEntities();
+
     const planned = planBatchChunks(questions, {
       mode: "auto",
       targetCount: 200,
@@ -66,8 +68,8 @@ describe("matrixCoveragePlanner (planBatchChunks)", () => {
       allEntityIds.push(...chunk.candidates.map((c) => c.entity_id));
     }
 
-    // 10 chunks must cover all 8 gameplay archetypes in the game matrix
-    expect(archetypesSeen.size).toBe(8);
+    // 10 chunks must cover all 7 gameplay archetypes in the game matrix
+    expect(archetypesSeen.size).toBe(7);
 
     // 200 total distinct entities
     expect(new Set(allEntityIds).size).toBe(200);

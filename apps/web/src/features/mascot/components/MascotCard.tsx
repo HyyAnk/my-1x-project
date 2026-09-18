@@ -2,6 +2,7 @@ import { DownloadSimple, PencilSimple, Trash } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type Channel, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
+import { buildHash } from "../../../hooks/useRouter";
 
 type MascotCardProps = {
   mascot: MascotProfile;
@@ -17,12 +18,13 @@ export function MascotCard({ mascot, channels, onEdit, onRenameRequest, onQuickA
   const assignedCount = mascot.assigned_channel_ids?.length || 0;
   const assignedNames =
     mascot.assigned_channel_ids?.map((cid) => channels.find((c) => c.channel_id === cid)?.display_name || cid).join(", ") || "";
+  const mascotNavHref = buildHash({ page: "mascots", mascotId: mascot.id });
 
   return (
     <article className="mascot-card">
       <div
         className="mascot-card-preview-box"
-        data-nav-href="#/mascots?tab=generator"
+        data-nav-href={mascotNavHref}
         onClick={() => onEdit(mascot)}
         role="button"
         tabIndex={0}
@@ -94,7 +96,7 @@ export function MascotCard({ mascot, channels, onEdit, onRenameRequest, onQuickA
           <button type="button" className="quiet-button compact" onClick={() => onQuickAssign(mascot)}>
             <span>{t("mascots.quickAssignBtn")}</span>
           </button>
-          <button type="button" className="primary-button compact" data-nav-href="#/mascots?tab=generator" onClick={() => onEdit(mascot)}>
+          <button type="button" className="primary-button compact" data-nav-href={mascotNavHref} onClick={() => onEdit(mascot)}>
             <span>{t("mascots.generatorBtn")}</span>
           </button>
         </div>

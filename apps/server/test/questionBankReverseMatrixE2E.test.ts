@@ -142,14 +142,14 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(nonExistent).toBeUndefined();
     });
 
-    it("automatically detects newly added entities and scales matrix combos dynamically (+8 per entity)", () => {
+    it("automatically detects newly added entities and scales matrix combos dynamically (+7 per entity)", () => {
       const entityDir = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base", "entities");
       const tempTestFile = path.join(entityDir, "zz_dynamic_test_entity.json");
 
       try {
-        // Initial baseline is 2,759 entities and 22,072 combos
+        // Initial baseline is 2,759 entities and 19,313 combos
         const before = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(before.total_combos).toBe(22072);
+        expect(before.total_combos).toBe(19313);
 
         // Dynamically add a new entity file to the knowledge base
         const newEntity = [
@@ -169,7 +169,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
 
         // The very next call to calculateMatrixCoverageStats immediately recognizes the addition
         const after = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(after.total_combos).toBe(22080); // 2,760 * 8 = 22,080 (+8 combos automatically!)
+        expect(after.total_combos).toBe(19320); // 2,760 * 7 = 19,320 (+7 combos automatically!)
 
         const dynamicEntity = getEntityById("ENT-DYN-001", { baseDir: entityDir });
         expect(dynamicEntity).toBeDefined();
@@ -178,9 +178,9 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
         if (existsSync(tempTestFile)) {
           unlinkSync(tempTestFile);
         }
-        // Cache automatically detects removal and reverts back to 22,072
+        // Cache automatically detects removal and reverts back to 19,313
         const reverted = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(reverted.total_combos).toBe(22072);
+        expect(reverted.total_combos).toBe(19313);
       }
     });
   });
@@ -191,12 +191,12 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   describe("2. Matrix Coverage Service & Least-Variant-First Priority Queue", () => {
     const baseDir = () => path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
 
-    it("computes exactly 22,072 total combos with 0% coverage on empty question bank", () => {
+    it("computes exactly 19,313 total combos with 0% coverage on empty question bank", () => {
       const coverage = calculateMatrixCoverageStats([], { baseDir: baseDir() });
-      expect(coverage.total_combos).toBe(22072);
+      expect(coverage.total_combos).toBe(19313);
       expect(coverage.covered_combos).toBe(0);
       expect(coverage.coverage_percent).toBe(0);
-      expect(Object.keys(coverage.by_archetype).length).toBe(8);
+      expect(Object.keys(coverage.by_archetype).length).toBe(7);
       expect(Object.keys(coverage.by_domain).length).toBe(18);
     });
 
@@ -242,7 +242,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       ];
 
       const coverage = calculateMatrixCoverageStats(questions, { baseDir: baseDir() });
-      expect(coverage.total_combos).toBe(22072);
+      expect(coverage.total_combos).toBe(19313);
       expect(coverage.covered_combos).toBe(1);
       expect(coverage.total_variants).toBe(1);
     });
@@ -458,16 +458,6 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(promptSpotting).toContain('NEVER repeat "is the odd one out"');
       expect(promptSpotting).toContain("Spot the impostor: Which Norse goddess does not belong?");
 
-      const promptClue = buildBatchGenerationPrompt({
-        archetypeId: "clue_deduction",
-        domainId: "pop_culture",
-        subtopicId: "fairy_tales",
-        count: 3,
-      });
-      expect(promptClue).toContain("GOLDEN CLUE DEDUCTION PARADIGMS");
-      expect(promptClue).toContain("DO NOT use dry");
-      expect(promptClue).toContain("Who is famous for wielding a nine-toothed iron rake?");
-
       const promptMystery = buildBatchGenerationPrompt({
         archetypeId: "mystery_reveal",
         domainId: "vehicles",
@@ -508,10 +498,6 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       const promptSpotting = buildReverseGenerationPrompt({ archetypeId: "visual_spotting", targets: [target] });
       expect(promptSpotting).toContain("SPECIALIZED VISUAL SPOTTING OUTLIER DIRECTIVE");
       expect(promptSpotting).toContain("ANTI-MONOTONY MANDATE");
-
-      const promptClue = buildReverseGenerationPrompt({ archetypeId: "clue_deduction", targets: [target] });
-      expect(promptClue).toContain("SPECIALIZED CLUE DEDUCTION DIRECTIVE");
-      expect(promptClue).toContain("DEDUCTIVE REASONING OVER DRY FACTS");
 
       const promptMystery = buildReverseGenerationPrompt({ archetypeId: "mystery_reveal", targets: [target] });
       expect(promptMystery).toContain("SPECIALIZED MYSTERY REVEAL DIRECTIVE");
@@ -706,7 +692,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(result.approvedCount).toBe(5);
       expect(result.rejectedCount).toBe(0);
       expect(result.matrixCoverage).toBeDefined();
-      expect(result.matrixCoverage?.total_combos).toBe(22072);
+      expect(result.matrixCoverage?.total_combos).toBe(19313);
 
       expect(progressCalls.length).toBeGreaterThan(0);
       const lastProgress = progressCalls[progressCalls.length - 1];
@@ -765,11 +751,11 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(res.statusCode).toBe(200);
       const body = res.json<ReverseCoverageBody>();
       expect(body.coverage).toBeDefined();
-      expect(body.coverage.total_combos).toBe(22072);
+      expect(body.coverage.total_combos).toBe(19313);
       expect(body.coverage.total_variants).toBeGreaterThanOrEqual(0);
       expect(body.coverage.covered_combos).toBeGreaterThanOrEqual(0);
       expect(typeof body.coverage.coverage_percent).toBe("number");
-      expect(Object.keys(body.coverage.by_archetype).length).toBe(8);
+      expect(Object.keys(body.coverage.by_archetype).length).toBe(7);
       expect(Object.keys(body.coverage.by_domain).length).toBe(18);
     });
 
@@ -833,7 +819,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(body.success).toBe(true);
       expect(body.approvedCount).toBe(1);
       expect(body.matrixCoverage).toBeDefined();
-      expect(body.matrixCoverage.total_combos).toBe(22072);
+      expect(body.matrixCoverage.total_combos).toBe(19313);
     });
   });
 });

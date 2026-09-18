@@ -14,16 +14,13 @@ export interface SampleImageSpec {
   secondaryColor: string;
 }
 
-export function createSampleImageSpecFromRecommendation(
-  recommendation: ImageSizingRecommendation,
-  role = "Specimen",
-): SampleImageSpec {
+export function createSampleImageSpecFromRecommendation(recommendation: ImageSizingRecommendation, role = "Specimen"): SampleImageSpec {
   const { aspectRatio, recommended } = recommendation;
   const baseSpec = getSampleImageSpec(aspectRatio);
   return {
     ...baseSpec,
     id: `sample-${aspectRatio.replace(":", "-")}-${recommended.width}x${recommended.height}`,
-    aspectRatio: aspectRatio as SampleImageAspectRatio,
+    aspectRatio,
     width: recommended.width,
     height: recommended.height,
     recommendedResolution: `${recommended.width} × ${recommended.height} px`,
@@ -49,7 +46,7 @@ export const SAMPLE_IMAGE_SPECS: Record<SampleImageAspectRatio, SampleImageSpec>
     width: 1080,
     height: 810,
     title: "4:3 Question Media",
-    role: "Question Hero / Clue Deduction",
+    role: "Question Hero",
     recommendedResolution: "1080 × 810 px",
     accentColor: "#f59e0b",
     secondaryColor: "#ec4899",
@@ -102,10 +99,7 @@ export function getSampleImageSpec(aspectRatio: string): SampleImageSpec {
   return SAMPLE_IMAGE_SPECS["16:9"];
 }
 
-export function generateSampleImageSvg(
-  spec: SampleImageSpec,
-  options?: SampleImageRenderOptions,
-): string {
+export function generateSampleImageSvg(spec: SampleImageSpec, options?: SampleImageRenderOptions): string {
   const { width, height, aspectRatio, recommendedResolution, role } = spec;
   const accent = options?.themeAccent ?? spec.accentColor;
   const secondary = spec.secondaryColor;
@@ -190,10 +184,7 @@ export function generateSampleImageSvg(
 </svg>`;
 }
 
-export function generateSampleImageDataUri(
-  spec: SampleImageSpec,
-  options?: SampleImageRenderOptions,
-): string {
+export function generateSampleImageDataUri(spec: SampleImageSpec, options?: SampleImageRenderOptions): string {
   const svg = generateSampleImageSvg(spec, options);
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }

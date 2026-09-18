@@ -2,6 +2,8 @@ import type { DirectorArchetype, QuizLayoutId, QuizQuestionFormat } from "./enum
 import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import type { MascotRenderAspectRatio } from "./mascot/renderTypes.js";
 
+export type ResolvedQuizLayoutId = Exclude<QuizLayoutId, "auto">;
+
 export type QuizChoicePresentation = "text" | "visual";
 export type QuizLayoutMediaKind = "question" | "choice";
 
@@ -49,6 +51,7 @@ export type QuizLayoutResolutionInput = {
   aspectRatio?: MascotRenderAspectRatio;
   choicePresentation?: QuizChoicePresentation;
   media?: readonly QuizLayoutMediaKind[];
+  answerMode?: import("./quizAnswerMode.js").QuizAnswerMode;
 };
 
 export type QuizLayoutCompatibilityInput<LayoutId extends string> = {

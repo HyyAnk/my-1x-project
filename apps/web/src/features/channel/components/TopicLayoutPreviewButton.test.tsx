@@ -19,19 +19,6 @@ describe("TopicLayoutPreviewButton", () => {
     expect(getByText(/Multiple Choice \/ Knowledge/)).toBeDefined();
   });
 
-  it("resolves and renders Clue Deduction layout when archetype is clue_deduction", () => {
-    const { getByRole, getByText } = render(<TopicLayoutPreviewButton quizFormat="image_guess" archetype="clue_deduction" />);
-
-    const button = getByRole("button", { name: /Layout: Clue Deduction/i });
-    expect(button).toBeDefined();
-
-    fireEvent.click(button);
-    expect(getByText(/clue_deduction/)).toBeDefined();
-    expect(getByText(/CLUE 100% CLEAR/)).toBeDefined();
-    expect(getByText(/REVEAL DOCK/)).toBeDefined();
-    expect(getByText(/1 clue image A \+ 1 answer image B/)).toBeDefined();
-  });
-
   it("resolves and renders Mystery Reveal layout when archetype is mystery_reveal", () => {
     const { getByRole, getByText } = render(<TopicLayoutPreviewButton quizFormat="image_guess" archetype="mystery_reveal" />);
 

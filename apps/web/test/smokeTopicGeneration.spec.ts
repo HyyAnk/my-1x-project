@@ -428,7 +428,7 @@ smokeTest("confirmed episode runs script to scene to render without F5", async (
   await page.goto("/#/channels");
   await page.getByRole("button", { name: /Episode demo/ }).click();
   await page.getByRole("link", { name: /The Demo Story/ }).click();
-  await page.getByRole("tab", { name: "1. Script & Plan", exact: true }).click();
+  await page.getByRole("tab", { name: "1. Script", exact: true }).click();
 
   await expect(page.getByRole("button", { name: "Starting production…", exact: true })).toBeDisabled();
   await expect(page.getByRole("progressbar", { name: "Narration script progress" })).toBeVisible();

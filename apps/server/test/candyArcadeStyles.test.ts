@@ -14,7 +14,6 @@ import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoic
 import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.js";
 import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
 import { mysteryRevealLayout } from "../src/quiz/render/layouts/mysteryReveal.js";
-import { clueDeductionLayout } from "../src/quiz/render/layouts/clueDeduction.js";
 import { visualChoicesThreePureLayout } from "../src/quiz/render/layouts/visualChoicesThreePure.js";
 import { baselineLayout } from "../src/quiz/render/layouts/baseline.js";
 import { glossyArcadeVariant } from "../src/quiz/visual/elements/answerCard/variants/glossyArcade.js";
@@ -182,14 +181,14 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     const vc3 = visualChoicesThreeLayout.css("16:9");
 
     expect(mlcr).toContain("--choice-card-min-height: 132px;");
-    expect(mlcr).toContain("--choice-badge-size: 104px;");
+    expect(mlcr).toContain("--choice-badge-size: 132px;");
     expect(mlcr).toContain("--choice-font-size-base: 44px;");
     expect(mlcr).toContain("--choice-font-size-medium: 38px;");
     expect(mlcr).toContain("--choice-font-size-long: 32px;");
     expect(mlcr).toContain("--choice-font-size-very_long: 32px;");
 
     expect(vc3).toContain("--choice-media-height: var(--slot-media-height, 356px);");
-    expect(vc3).toContain("--choice-badge-size: 72px;");
+    expect(vc3).toContain("--choice-badge-size: 104px;");
     expect(vc3).toContain("--choice-label-min-height: 70px;");
     expect(vc3).toContain("--choice-label-font-size-base: 26px;");
 
@@ -208,7 +207,7 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
 
     expect(sv2).toContain("--choice-card-min-height: 500px;");
     expect(sv2).toContain("--choice-card-height: 500px;");
-    expect(sv2).toContain("--choice-media-height: var(--slot-media-height, 366px);");
+    expect(sv2).toContain("--choice-media-height: var(--slot-media-height, 446px);");
     expect(sv2).toContain("--choice-badge-size: 116px;");
     expect(sv2).toContain("--choice-badge-font-size: 60px;");
     expect(sv2).toContain("--choice-font-size-base: 40px;");
@@ -235,7 +234,6 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(vtf).not.toContain(".has-mascot");
 
     const mr = mysteryRevealLayout.css("16:9");
-    const cd = clueDeductionLayout.css("16:9");
 
     expect(mr).toContain("--mystery-stage-width: 1100px;");
     expect(mr).toContain("--mystery-stage-height: 590px;");
@@ -248,17 +246,6 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(mr).toContain("width: min(75vw, 1100px);");
     expect(mr).toContain("width: min(1080px, 100%);");
     expect(mr).not.toContain(".has-mascot");
-
-    expect(cd).toContain("--clue-stage-width: 1180px;");
-    expect(cd).toContain("--clue-stage-height: 560px;");
-    expect(cd).toContain("width: var(--mascot-content-width, 1420px);");
-    expect(cd).toContain("max-width: 1420px;");
-    expect(cd).toContain("max-width: 1380px;");
-    expect(cd).toContain("max-width: 1180px;");
-    expect(cd).toContain("max-width: 1360px;");
-    expect(cd).toContain("width: min(72vw, 1180px);");
-    expect(cd).toContain("width: min(1180px, 100%);");
-    expect(cd).not.toContain(".has-mascot");
   });
 
   it("publishes answer card auto-fit tokens for all layouts and aspect ratios", () => {
@@ -312,30 +299,24 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(sv2).toContain("split-versus-winner-coronation");
     expect(sv2).toContain("split-versus-loser-defeat");
 
-    // 5. Clue Deduction
-    const cd = clueDeductionLayout.css("16:9");
-    expect(cd).toContain(".quiz-question-clip.layout-clue_deduction .choice-card:nth-child(n).answer-reveal-correct");
-    expect(cd).toContain("clue-correct-dock");
-
-    // 6. Mystery Reveal
+    // 5. Mystery Reveal
     const mr = mysteryRevealLayout.css("16:9");
     expect(mr).toContain(".quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-reveal-correct");
     expect(mr).toContain("correct-card-reveal");
 
-    // 7. Verdict True False
+    // 6. Verdict True False
     const vtf = verdictTrueFalseLayout.css("16:9");
     expect(vtf).toContain(".layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
     expect(vtf).toContain("verdict-correct-pop");
 
-    // 8. Visual Choices Three
+    // 7. Visual Choices Three
     const vc3 = visualChoicesThreeLayout.css("16:9");
     expect(vc3).toContain(".layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
     expect(vc3).toContain("visual-correct-card-reveal");
 
-    // 9. Visual Choices Three Pure
+    // 8. Visual Choices Three Pure
     const vcp = visualChoicesThreePureLayout.css("16:9");
     expect(vcp).toContain(".layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
     expect(vcp).toContain("visual-correct-card-reveal");
   });
 });
-

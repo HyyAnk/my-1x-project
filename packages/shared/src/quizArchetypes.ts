@@ -9,8 +9,7 @@ export type QuizGameplayArchetypeId =
   | "versus_faceoff"
   | "visual_identification"
   | "speed_blitz"
-  | "mystery_reveal"
-  | "clue_deduction";
+  | "mystery_reveal";
 
 export interface QuizGameplayArchetypeBlueprint {
   id: QuizGameplayArchetypeId;
@@ -88,19 +87,6 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
       "Animal Silhouette Guess",
       "Macro / Microscopic Guessing",
       "Hidden Shape Identification",
-    ],
-  },
-  {
-    id: "clue_deduction",
-    name: "Clue Deduction (Detective)",
-    description: "Detective deduction challenge connecting clue image A to surprise reveal answer B.",
-    defaultFormat: "image_guess",
-    targetLayout: "clue_deduction",
-    creativeAngles: [
-      "Identify Profession by Tool",
-      "Identify Country by Dish or Landmark",
-      "Identify Creature by Track or Habitat",
-      "Identify Historical Figure by Artifact",
     ],
   },
 ] as const;

@@ -87,8 +87,9 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         if (requirement?.required) {
           throw new Error(
             `Required render asset "${asset.asset_id}" failed preparation for episode ${episodeId}: ${
-              error instanceof Error ? error.message : error
+              error instanceof Error ? error.message : String(error)
             }`,
+            { cause: error },
           );
         }
         console.warn(

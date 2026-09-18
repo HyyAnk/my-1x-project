@@ -5,7 +5,6 @@ import {
   getPublishedPreviewArtifact,
   publishPreviewArtifact,
   type PublishedPreviewArtifact,
-  type TransitionPreviewArtifactManifest,
   type VerifiedPreviewArtifact,
 } from "../render/transitions/transitionPreviewStore.js";
 import type { TransitionPreviewStorePort } from "./transitionPreview.types.js";

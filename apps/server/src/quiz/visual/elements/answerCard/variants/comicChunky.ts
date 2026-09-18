@@ -27,32 +27,32 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .skin-comic_chunky:nth-child(1) .ac-comic-chunky,
 .choice-card:nth-child(1).ac-comic-chunky,
 .ac-comic-chunky:nth-child(1) {
-  --comic-base-rot: -1.2deg;
-  transform: rotate(var(--comic-base-rot));
+  --comic-base-rot: 0deg;
+  transform: none;
   background: var(--comic-card-bg-0, linear-gradient(135deg, #FFFFEE 0%, #FFF8D6 100%));
 }
 .ac-comic-chunky.comic-card-1,
 .skin-comic_chunky:nth-child(2) .ac-comic-chunky,
 .choice-card:nth-child(2).ac-comic-chunky,
 .ac-comic-chunky:nth-child(2) {
-  --comic-base-rot: 1.4deg;
-  transform: rotate(var(--comic-base-rot));
+  --comic-base-rot: 0deg;
+  transform: none;
   background: var(--comic-card-bg-1, linear-gradient(135deg, #FFF5F8 0%, #FFE3EC 100%));
 }
 .ac-comic-chunky.comic-card-2,
 .skin-comic_chunky:nth-child(3) .ac-comic-chunky,
 .choice-card:nth-child(3).ac-comic-chunky,
 .ac-comic-chunky:nth-child(3) {
-  --comic-base-rot: -0.9deg;
-  transform: rotate(var(--comic-base-rot));
+  --comic-base-rot: 0deg;
+  transform: none;
   background: var(--comic-card-bg-2, linear-gradient(135deg, #F0FBFF 0%, #DCF3FC 100%));
 }
 .ac-comic-chunky.comic-card-3,
 .skin-comic_chunky:nth-child(4) .ac-comic-chunky,
 .choice-card:nth-child(4).ac-comic-chunky,
 .ac-comic-chunky:nth-child(4) {
-  --comic-base-rot: 1deg;
-  transform: rotate(var(--comic-base-rot));
+  --comic-base-rot: 0deg;
+  transform: none;
   background: var(--comic-card-bg-3, linear-gradient(135deg, #F4FFF7 0%, #E2FBEA 100%));
 }
 
@@ -110,7 +110,9 @@ export const comicChunkyVariant: AnswerCardSkin = {
 
 /* Pop Art Letter Badge (A, B, C) */
 .ac-comic-chunky > b,
-.ac-comic-chunky .choice-label {
+.ac-comic-chunky .choice-label,
+.skin-comic_chunky .choice-label,
+.choice-card.skin-comic_chunky .choice-label {
   border: 6px solid #111827;
   border-radius: 22px;
   color: #FFFFFF;
@@ -121,7 +123,7 @@ export const comicChunkyVariant: AnswerCardSkin = {
   -webkit-text-stroke: 3.5px #111827;
   paint-order: stroke fill;
   text-shadow: 0 3px 0 #111827;
-  transform: rotate(-5deg);
+  transform: none;
   overflow: hidden;
 }
 
@@ -129,37 +131,45 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .ac-comic-chunky.comic-card-0 .choice-label,
 .choice-card:nth-child(1) .ac-comic-chunky > b,
 .choice-card:nth-child(1) .ac-comic-chunky .choice-label,
+.choice-card.skin-comic_chunky:nth-child(1) .choice-label,
+.choice-card.skin-comic_chunky .comic-card-0 .choice-label,
 .ac-comic-chunky:nth-child(1) > b,
 .ac-comic-chunky:nth-child(1) .choice-label {
   background: var(--comic-badge-0, linear-gradient(180deg, #FFE600 0%, #FF9500 100%));
-  transform: rotate(-6deg);
+  transform: none;
 }
 .ac-comic-chunky.comic-card-1 > b,
 .ac-comic-chunky.comic-card-1 .choice-label,
 .choice-card:nth-child(2) .ac-comic-chunky > b,
 .choice-card:nth-child(2) .ac-comic-chunky .choice-label,
+.choice-card.skin-comic_chunky:nth-child(2) .choice-label,
+.choice-card.skin-comic_chunky .comic-card-1 .choice-label,
 .ac-comic-chunky:nth-child(2) > b,
 .ac-comic-chunky:nth-child(2) .choice-label {
   background: var(--comic-badge-1, linear-gradient(180deg, #FF5E97 0%, #E60049 100%));
-  transform: rotate(5deg);
+  transform: none;
 }
 .ac-comic-chunky.comic-card-2 > b,
 .ac-comic-chunky.comic-card-2 .choice-label,
 .choice-card:nth-child(3) .ac-comic-chunky > b,
 .choice-card:nth-child(3) .ac-comic-chunky .choice-label,
+.choice-card.skin-comic_chunky:nth-child(3) .choice-label,
+.choice-card.skin-comic_chunky .comic-card-2 .choice-label,
 .ac-comic-chunky:nth-child(3) > b,
 .ac-comic-chunky:nth-child(3) .choice-label {
   background: var(--comic-badge-2, linear-gradient(180deg, #00D2FF 0%, #0066FF 100%));
-  transform: rotate(-4deg);
+  transform: none;
 }
 .ac-comic-chunky.comic-card-3 > b,
 .ac-comic-chunky.comic-card-3 .choice-label,
 .choice-card:nth-child(4) .ac-comic-chunky > b,
 .choice-card:nth-child(4) .ac-comic-chunky .choice-label,
+.choice-card.skin-comic_chunky:nth-child(4) .choice-label,
+.choice-card.skin-comic_chunky .comic-card-3 .choice-label,
 .ac-comic-chunky:nth-child(4) > b,
 .ac-comic-chunky:nth-child(4) .choice-label {
   background: var(--comic-badge-3, linear-gradient(180deg, #38EF7D 0%, #11998E 100%));
-  transform: rotate(6deg);
+  transform: none;
 }
 
 /* Gloss Glare on Badge */
@@ -209,7 +219,9 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .choice-card.answer-correct .ac-comic-chunky > b,
 .choice-card.answer-correct .ac-comic-chunky .choice-label,
 .visual-answer-card.answer-correct .ac-comic-chunky > b,
-.visual-answer-card.answer-correct .ac-comic-chunky .choice-label {
+.visual-answer-card.answer-correct .ac-comic-chunky .choice-label,
+.choice-card.answer-correct.skin-comic_chunky .choice-label,
+.visual-answer-card.answer-correct.skin-comic_chunky .choice-label {
   background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%);
   border-color: #0F5132;
   box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95);
@@ -220,16 +232,22 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .choice-card.answer-reveal-correct .ac-comic-chunky > b,
 .choice-card.answer-reveal-correct .ac-comic-chunky .choice-label,
 .visual-answer-card.answer-reveal-correct .ac-comic-chunky > b,
-.visual-answer-card.answer-reveal-correct .ac-comic-chunky .choice-label {
+.visual-answer-card.answer-reveal-correct .ac-comic-chunky .choice-label,
+.choice-card.answer-reveal-correct.skin-comic_chunky .choice-label,
+.visual-answer-card.answer-reveal-correct.skin-comic_chunky .choice-label {
   animation: comic-badge-bounce 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: transform;
 }
 
 /* Visual choice option image comic celebration */
-.skin-comic_chunky.choice-card-visual.answer-correct .option-image,
-.skin-comic_chunky.choice-card-visual.answer-reveal-correct .option-image {
+.skin-comic_chunky.choice-card-visual.answer-correct .option-image {
   border-color: #0F5132;
   box-shadow: 8px 10px 0 #0F5132, 0 0 28px rgba(34, 197, 94, 0.7);
+}
+
+.skin-comic_chunky.choice-card-visual.answer-reveal-correct .option-image {
+  animation: visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow;
 }
 
 /* Reveal State: Incorrect Answer */
@@ -249,23 +267,23 @@ export const comicChunkyVariant: AnswerCardSkin = {
 
 /* Comic Keyframe Animations */
 @keyframes comic-pop-win {
-  0% { transform: rotate(var(--comic-base-rot, 0deg)) scale(1); }
-  45% { transform: rotate(0deg) scale(1.08); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 36px rgba(34, 197, 94, 0.75), inset 0 3px 0 rgba(255,255,255,1); }
-  70% { transform: rotate(-1deg) scale(1.03); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 36px rgba(34, 197, 94, 0.75), inset 0 3px 0 rgba(255,255,255,1); }
-  100% { transform: rotate(0deg) scale(1.05); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 36px rgba(34, 197, 94, 0.75), inset 0 3px 0 rgba(255,255,255,1); }
+  0% { transform: scale(1); }
+  45% { transform: scale(1.08); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 36px rgba(34, 197, 94, 0.75), inset 0 3px 0 rgba(255,255,255,1); }
+  70% { transform: scale(1.03); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 36px rgba(34, 197, 94, 0.75), inset 0 3px 0 rgba(255,255,255,1); }
+  100% { transform: scale(1.05); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 36px rgba(34, 197, 94, 0.75), inset 0 3px 0 rgba(255,255,255,1); }
 }
 
 @keyframes comic-badge-bounce {
-  0% { transform: scale(1) rotate(-5deg); }
-  50% { transform: scale(1.22) rotate(8deg); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
-  100% { transform: scale(1.1) rotate(0deg); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.22); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
+  100% { transform: scale(1.1); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
 }
 
 @keyframes comic-dud-settle {
-  0% { opacity: 1; filter: grayscale(0%); transform: rotate(var(--comic-base-rot, 0deg)) scale(1); }
-  25% { transform: rotate(calc(var(--comic-base-rot, 0deg) - 2deg)) translateY(4px); }
-  60% { transform: rotate(calc(var(--comic-base-rot, 0deg) + 1.5deg)) translateY(6px); }
-  100% { opacity: 0.35; filter: grayscale(78%) contrast(0.95) brightness(0.92); transform: rotate(var(--comic-base-rot, 0deg)) translateY(6px) scale(0.96); }
+  0% { opacity: 1; filter: grayscale(0%); transform: scale(1); }
+  25% { transform: translateY(4px); }
+  60% { transform: translateY(6px); }
+  100% { opacity: 0.35; filter: grayscale(78%) contrast(0.95) brightness(0.92); transform: translateY(6px) scale(0.96); }
 }
 
 @keyframes comic-sparkle-pulse {

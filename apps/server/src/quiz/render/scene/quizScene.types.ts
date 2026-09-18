@@ -28,6 +28,7 @@ export type QuizSceneTiming = {
   questionNarrationStart?: number;
   choicesStart: number;
   thinkingStart: number;
+  timerHideAt?: number;
   revealStart: number;
   rewardStart: number;
   end: number;

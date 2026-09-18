@@ -8,6 +8,7 @@ import { executeHyperframesRender } from "./video/videoRenderExecution.js";
 import { persistVideoRenderArtifacts } from "./video/renderManifestWriter.js";
 import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
 import { pruneRenderRootIntermediateFiles } from "./storage/artifactRetentionPruner.js";
+import { packageEpisodeExport } from "./export/index.js";
 import { synthesizeScenesFromQuiz } from "../quiz/domain/quizArtifactSynthesizer.js";
 
 function ensureVideoTaskActive(runtime: TaskManagerRuntime, taskId: string, signal: AbortSignal): void {
@@ -171,6 +172,18 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       this.logger.warn(
         `Post-render intermediate artifact pruning deferred: ${pruneError instanceof Error ? pruneError.message : "unknown error"}`,
       );
+    }
+
+    try {
+      await packageEpisodeExport({
+        repository: this.repository,
+        channelId: task.channel_id,
+        episodeId: task.episode_id,
+        videoSourcePath: comp.outputPath,
+        duration,
+      });
+    } catch (exportError) {
+      this.logger.warn(`Episode export packaging deferred: ${exportError instanceof Error ? exportError.message : "unknown error"}`);
     }
 
     ensureVideoTaskActive(this, task.task_id, controller.signal);

@@ -112,10 +112,7 @@ export type QuestionHistorySettings = z.infer<typeof QuestionHistorySettingsSche
 export const QuestionContentTypeSchema = z.enum(["episode", "short_reel"]);
 export type QuestionContentType = z.infer<typeof QuestionContentTypeSchema>;
 
-export function inferQuestionHistoryContentType(entry: {
-  episode_id?: string;
-  content_type?: string | null;
-}): QuestionContentType {
+export function inferQuestionHistoryContentType(entry: { episode_id?: string; content_type?: string | null }): QuestionContentType {
   if (entry.content_type === "episode" || entry.content_type === "short_reel") {
     return entry.content_type;
   }

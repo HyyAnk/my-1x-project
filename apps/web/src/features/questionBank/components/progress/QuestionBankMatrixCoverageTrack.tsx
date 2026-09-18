@@ -81,10 +81,8 @@ export function QuestionBankMatrixCoverageTrack({
             <span className="qb-matrix-combo-summary">
               {covered.toLocaleString()} / {total.toLocaleString()} Combos
             </span>
-            <span className="qb-matrix-current-num">{covered.toLocaleString()}</span>{" "}
-            <span className="qb-matrix-target-slash">/</span>{" "}
-            <span className="qb-matrix-target-num">{total.toLocaleString()}</span>{" "}
-            <span className="qb-matrix-unit-label">Combos</span>
+            <span className="qb-matrix-current-num">{covered.toLocaleString()}</span> <span className="qb-matrix-target-slash">/</span>{" "}
+            <span className="qb-matrix-target-num">{total.toLocaleString()}</span> <span className="qb-matrix-unit-label">Combos</span>
           </div>
         </div>
 

@@ -1,11 +1,13 @@
-import { ArrowRight, Check, CircleNotch, FloppyDisk, MagicWand, X } from "@phosphor-icons/react";
+import { ArrowRight, CircleNotch, FloppyDisk, MagicWand } from "@phosphor-icons/react";
 import type { MascotProfile, QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import { PROMPT_TEMPLATES, QUICK_PROMPT_TAGS } from "../constants";
+import type { PROMPT_TEMPLATES } from "../constants";
 import { MascotIdentityForm } from "./MascotIdentityForm";
 import { MascotPromptStudio } from "./MascotPromptStudio";
 import { MascotConceptPreviewCard } from "./MascotConceptPreviewCard";
 import { MascotStyleConceptManager } from "./MascotStyleConceptManager";
+import { MascotPromptFocusModal } from "./MascotPromptFocusModal";
+import { MascotLightboxModal } from "./MascotLightboxModal";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 
 export interface MascotConceptStepProps {
@@ -27,12 +29,12 @@ export interface MascotConceptStepProps {
   showNotesAccordion: boolean;
   setShowNotesAccordion: React.Dispatch<React.SetStateAction<boolean>>;
   promptCopied: boolean;
+  savingIdentity?: boolean;
+  stylesState?: ReturnType<typeof useMascotStyles>;
   lightboxImage: string | null;
   setLightboxImage: (img: string | null) => void;
   isPromptModalOpen: boolean;
   setIsPromptModalOpen: (open: boolean) => void;
-  savingIdentity?: boolean;
-  stylesState?: ReturnType<typeof useMascotStyles>;
   onInjectTag: (tag: string) => void;
   onApplyTemplate: (tpl: (typeof PROMPT_TEMPLATES)[0]) => void;
   onCopyPrompt: () => void;
@@ -42,46 +44,46 @@ export interface MascotConceptStepProps {
   onNextStep: () => void;
 }
 
-export function MascotConceptStep({
-  genName,
-  setGenName,
-  genDescription,
-  setGenDescription,
-  genStyle,
-  setGenStyle,
-  genColor,
-  setGenColor,
-  genPrompt,
-  setGenPrompt,
-  editingMascot,
-  busyAction,
-  generationElapsed,
-  itemProgress,
-  currentStageMessage,
-  showNotesAccordion,
-  setShowNotesAccordion,
-  promptCopied,
-  lightboxImage,
-  setLightboxImage,
-  isPromptModalOpen,
-  setIsPromptModalOpen,
-  savingIdentity = false,
-  stylesState,
-  onInjectTag,
-  onApplyTemplate,
-  onCopyPrompt,
-  onGenerateConcept,
-  onSaveIdentity,
-  onRemoveBackground,
-  onNextStep,
-}: MascotConceptStepProps) {
+export function MascotConceptStep(props: MascotConceptStepProps) {
+  const {
+    genName,
+    setGenName,
+    genDescription,
+    setGenDescription,
+    genStyle,
+    setGenStyle,
+    genColor,
+    setGenColor,
+    genPrompt,
+    setGenPrompt,
+    editingMascot,
+    busyAction,
+    generationElapsed,
+    itemProgress,
+    currentStageMessage,
+    showNotesAccordion,
+    setShowNotesAccordion,
+    promptCopied,
+    lightboxImage,
+    setLightboxImage,
+    isPromptModalOpen,
+    setIsPromptModalOpen,
+    savingIdentity = false,
+    stylesState,
+    onInjectTag,
+    onApplyTemplate,
+    onCopyPrompt,
+    onGenerateConcept,
+    onSaveIdentity,
+    onRemoveBackground,
+    onNextStep,
+  } = props;
   const { t } = useTranslation();
 
   return (
     <div className="wizard-step-content mascot-concept-step-content">
       {/* TIER 1: CHARACTER CORE DNA & MASTER PREVIEW STAGE */}
       <div className="concept-tier-identity-grid">
-        {/* Left Column: Form & Hero Prompt Studio */}
         <div className="wizard-form-col">
           <div className="wizard-card step-identity-card">
             <div className="wizard-card-header-flex" style={{ marginBottom: "16px" }}>
@@ -120,10 +122,7 @@ export function MascotConceptStep({
                 <button
                   type="button"
                   className="primary-button ai-magic-btn"
-                  style={{
-                    background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
-                    boxShadow: `0 4px 16px ${genColor}35`,
-                  }}
+                  style={{ background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`, boxShadow: `0 4px 16px ${genColor}35` }}
                   disabled={busyAction !== null || savingIdentity || !genName.trim()}
                   onClick={onGenerateConcept}
                 >
@@ -160,7 +159,6 @@ export function MascotConceptStep({
           </div>
         </div>
 
-        {/* Right Column: Master Preview Stage Box */}
         <div className="wizard-preview-col">
           <MascotConceptPreviewCard
             editingMascot={editingMascot}
@@ -176,69 +174,22 @@ export function MascotConceptStep({
         </div>
       </div>
 
-      {/* TIER 2: STYLE THEMES & WARDROBE DECK (FULL-WIDTH HORIZONTAL SHOWCASE) */}
+      {/* TIER 2: STYLE THEMES & WARDROBE DECK */}
       {editingMascot?.master_image_url ? (
         <div className="concept-tier-styles-deck">
           <MascotStyleConceptManager editingMascot={editingMascot} stylesState={stylesState} onOpenLightbox={setLightboxImage} />
         </div>
       ) : null}
 
-      {/* Fullscreen Prompt Focus Modal */}
-      {isPromptModalOpen ? (
-        <div className="modal-backdrop" role="presentation" onClick={() => setIsPromptModalOpen(false)}>
-          <section className="modal prompt-focus-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-heading">
-              <div>
-                <h2 style={{ fontSize: "16px", margin: 0 }}>{t("mascots.focusPromptTitle")}</h2>
-              </div>
-              <button type="button" className="icon-button" onClick={() => setIsPromptModalOpen(false)}>
-                <X size={18} />
-              </button>
-            </div>
+      <MascotPromptFocusModal
+        isOpen={isPromptModalOpen}
+        onClose={() => setIsPromptModalOpen(false)}
+        genPrompt={genPrompt}
+        setGenPrompt={setGenPrompt}
+        onInjectTag={onInjectTag}
+      />
 
-            <div className="prompt-modal-body" style={{ padding: "16px 20px" }}>
-              <div className="quick-tags-bar" style={{ marginBottom: "12px" }}>
-                <div className="quick-tags-list">
-                  {QUICK_PROMPT_TAGS.map((tag, idx) => (
-                    <button key={idx} type="button" className="quick-tag-chip" onClick={() => onInjectTag(tag)}>
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <textarea
-                rows={12}
-                className="prompt-modal-textarea"
-                style={{ width: "100%", fontSize: "14px", lineHeight: "1.6" }}
-                value={genPrompt}
-                onChange={(e) => setGenPrompt(e.target.value)}
-                placeholder={t("mascots.promptPlaceholder")}
-                autoFocus
-              />
-            </div>
-
-            <div className="modal-actions" style={{ justifyContent: "flex-end" }}>
-              <button type="button" className="primary-button" onClick={() => setIsPromptModalOpen(false)}>
-                <Check size={16} />
-                <span>{t("common.saved")}</span>
-              </button>
-            </div>
-          </section>
-        </div>
-      ) : null}
-
-      {/* Image Lightbox Modal */}
-      {lightboxImage ? (
-        <div className="modal-backdrop lightbox-backdrop" role="presentation" onClick={() => setLightboxImage(null)}>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <button type="button" className="lightbox-close-btn" onClick={() => setLightboxImage(null)}>
-              <X size={20} />
-            </button>
-            <img src={lightboxImage} alt="Master Concept Large Preview" className="lightbox-img" />
-          </div>
-        </div>
-      ) : null}
+      <MascotLightboxModal imageUrl={lightboxImage} onClose={() => setLightboxImage(null)} />
     </div>
   );
 }

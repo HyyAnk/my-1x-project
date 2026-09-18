@@ -3,6 +3,7 @@ import { type RepositoryService } from "../../repository.js";
 import { generateIdempotencyKey } from "../gpti2Dimensions.js";
 import { resolveImgStudioAspectRatio } from "./dimensions.js";
 import { generateImgStudioImageBytes } from "./generator.js";
+import { validateReturnedImageDimensions } from "../../quiz/assets/imageDimensionValidator.js";
 import type { ImgStudioImageTarget } from "./types.js";
 
 export { type ImgStudioImageTarget };
@@ -50,6 +51,8 @@ export class ImgStudioQuizImageProvider {
       idempotencyKey,
       cancellationSignal,
     });
+
+    validateReturnedImageDimensions(result.bytes, aspectRatio, result.resolution);
 
     const assetPath = await this.repository.writeQuizImageAsset(
       this.target.channelId,
@@ -122,9 +125,10 @@ export class ImgStudioImageProvider implements ImageProvider {
     const bundleNumber = this.target.bundleNumber ?? 1;
     const variant = this.target.variant ?? 0;
     const aspectRatio = resolveImgStudioAspectRatio(this.options.aspectRatio, "16:9");
+    const taskSalt = this.target.taskId || Date.now().toString();
     const idempotencyKey = generateIdempotencyKey(
       "bundle_std",
-      `${this.target.channelId}:${this.target.episodeId}:bundle-${bundleNumber}:${variant}:${aspectRatio}:${prompt}`,
+      `${this.target.channelId}:${this.target.episodeId}:bundle-${bundleNumber}:${variant}:${aspectRatio}:${prompt}:${taskSalt}`,
     );
 
     const result = await generateImgStudioImageBytes(prompt, {

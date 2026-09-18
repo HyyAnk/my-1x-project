@@ -74,18 +74,20 @@ export function mysteryRevealBaseStyles(): string {
   contain: layout paint;
 }
 
-/* Unified Mystery Stage Viewport: (630, 253, 920, 360) -> local (250, 0, 920, 360) */
+/* Unified Mystery Stage Viewport: (630, 253, 920, 540) -> local (250, 0, 920, 540) */
 .quiz-frame-unified.layout-mystery_reveal .mystery-stage-wrapper {
   position: absolute;
   left: 250px;
   top: 0;
   width: var(--slot-hero-width, 920px);
-  height: var(--slot-hero-height, 360px);
+  height: var(--slot-hero-height, 540px);
   max-width: var(--slot-hero-width, 920px);
   margin: 0;
-  border-radius: 28px;
+  border-radius: 32px;
   overflow: hidden;
+  box-sizing: border-box;
   border: 4px solid rgba(251, 191, 36, 0.4);
+  padding: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 32px rgba(56, 189, 248, 0.18);
   background: #090d1a;
   contain: layout paint;

@@ -3,7 +3,7 @@ import { stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import type { FastifyPluginCallback } from "fastify";
 import { z } from "zod";
-import { getTransition, isValidTransition, nowIso, type IntroOutroStyle, type IntroOutroTransitionType } from "@studio/shared";
+import { getTransition, isValidTransition, nowIso, type IntroOutroStyle } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { AppState } from "./state.js";

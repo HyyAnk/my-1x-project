@@ -12,7 +12,7 @@ export const IMGSTUDIO_CONNECTIVITY_TIMEOUT_MS = 15_000;
 
 function parseJsonSafe(text: string): Record<string, unknown> | undefined {
   try {
-    const parsed = JSON.parse(text);
+    const parsed: unknown = JSON.parse(text);
     return typeof parsed === "object" && parsed !== null ? (parsed as Record<string, unknown>) : undefined;
   } catch {
     return undefined;
@@ -42,48 +42,29 @@ function extractErrorMessage(rawText: string, payload?: Record<string, unknown>)
 
 function handleApiHttpError(status: number, errorMsg: string): never {
   const isContentFilter =
-    (status === 400 || status === 422) &&
-    /(?:content filter|safety|moderation|policy|prohibited|inappropriate|violat)/i.test(errorMsg);
+    (status === 400 || status === 422) && /(?:content filter|safety|moderation|policy|prohibited|inappropriate|violat)/i.test(errorMsg);
 
   if (isContentFilter) {
-    throw new RepositoryError(
-      `ImgStudio API content filter rejection (${status}): ${errorMsg}`,
-      "IMAGE_CONTENT_FILTER_REJECTED",
-    );
+    throw new RepositoryError(`ImgStudio API content filter rejection (${status}): ${errorMsg}`, "IMAGE_CONTENT_FILTER_REJECTED");
   }
 
   if (status === 401) {
-    throw new RepositoryError(
-      `ImgStudio API authentication failed (401): ${errorMsg}`,
-      "IMAGE_PROVIDER_AUTH_ERROR",
-    );
+    throw new RepositoryError(`ImgStudio API authentication failed (401): ${errorMsg}`, "IMAGE_PROVIDER_AUTH_ERROR");
   }
 
   if (status === 403) {
-    throw new RepositoryError(
-      `ImgStudio API access forbidden (403): ${errorMsg}`,
-      "IMAGE_PROVIDER_AUTH_ERROR",
-    );
+    throw new RepositoryError(`ImgStudio API access forbidden (403): ${errorMsg}`, "IMAGE_PROVIDER_AUTH_ERROR");
   }
 
   if (status === 429) {
-    throw new RepositoryError(
-      `ImgStudio API rate limit exceeded (429): ${errorMsg}`,
-      "RATE_LIMIT_EXCEEDED",
-    );
+    throw new RepositoryError(`ImgStudio API rate limit exceeded (429): ${errorMsg}`, "RATE_LIMIT_EXCEEDED");
   }
 
   if (status >= 500) {
-    throw new RepositoryError(
-      `ImgStudio API server error (${status}): ${errorMsg}`,
-      "IMAGE_PROVIDER_SERVER_ERROR",
-    );
+    throw new RepositoryError(`ImgStudio API server error (${status}): ${errorMsg}`, "IMAGE_PROVIDER_SERVER_ERROR");
   }
 
-  throw new RepositoryError(
-    `ImgStudio API failed (${status}): ${errorMsg}`,
-    "IMAGE_PROVIDER_FAILED",
-  );
+  throw new RepositoryError(`ImgStudio API failed (${status}): ${errorMsg}`, "IMAGE_PROVIDER_FAILED");
 }
 
 /**
@@ -163,22 +144,16 @@ export async function callImgStudioApi(
     throw new RepositoryError("ImgStudio API returned malformed or non-JSON response", "IMAGE_PROVIDER_FAILED");
   }
 
-  return payload as ImgStudioGenerationResponse;
+  return payload;
 }
 
 /**
  * Checks connectivity and verifies API key validity against ImgStudio models endpoint.
  */
-export async function checkImgStudioConnectivity(
-  apiKey: string,
-  baseUrl?: string,
-): Promise<ImgStudioConnectivityResult> {
+export async function checkImgStudioConnectivity(apiKey: string, baseUrl?: string): Promise<ImgStudioConnectivityResult> {
   const trimmedKey = apiKey?.trim();
   if (!trimmedKey) {
-    throw new RepositoryError(
-      "API key for ImgStudio is not configured",
-      "IMAGE_PROVIDER_NOT_CONFIGURED",
-    );
+    throw new RepositoryError("API key for ImgStudio is not configured", "IMAGE_PROVIDER_NOT_CONFIGURED");
   }
 
   const normalizedBaseUrl = (baseUrl?.trim() || DEFAULT_IMGSTUDIO_BASE_URL).replace(/\/+$/, "");

@@ -1,10 +1,22 @@
 import { createHash } from "node:crypto";
 import type { QuizAssetRequirement } from "@studio/shared";
 
-export function assetFingerprint(request: Pick<QuizAssetRequirement, "semantic_key" | "subject" | "purpose" | "style" | "aspect_ratio" | "transparent_background"> & { consistency_group_id?: string | null }, provider = "local", generationVersion = "v2"): string {
+export function assetFingerprint(
+  request: Pick<QuizAssetRequirement, "semantic_key" | "subject" | "purpose" | "style" | "aspect_ratio" | "transparent_background"> & {
+    consistency_group_id?: string | null;
+    sizing?: { geometry_key?: string; layout_id?: string; policy_version?: number } | null;
+    geometry_key?: string | null;
+  },
+  provider = "local",
+  generationVersion = "v3-geom2",
+): string {
+  const geometryKey = request.geometry_key ?? request.sizing?.geometry_key ?? null;
+  const layoutId = request.sizing?.layout_id ?? null;
   const normalized = {
     aspect_ratio: request.aspect_ratio,
     consistency_group_id: request.consistency_group_id ?? null,
+    geometry_key: geometryKey,
+    layout_id: layoutId,
     provider,
     purpose: request.purpose,
     semantic_key: request.semantic_key.trim().toLocaleLowerCase(),

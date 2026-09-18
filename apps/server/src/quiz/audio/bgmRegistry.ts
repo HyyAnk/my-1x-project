@@ -96,9 +96,7 @@ export class BgmRegistry {
   resolveBgmSchedule(totalDurationSeconds: number, options?: ResolveBgmOptions): BgmPlacement[] {
     const categoryPref = options?.bpmPreference ?? "120_bpm_upbeat";
     const explicitTrack = options?.trackId
-      ? (this.getTrack(options.trackId) ??
-        this.getTracks().find((t) => t.id === options.trackId || t.filename === options.trackId) ??
-        null)
+      ? (this.getTrack(options.trackId) ?? this.getTracks().find((t) => t.id === options.trackId || t.filename === options.trackId) ?? null)
       : null;
     const pool = explicitTrack ? [explicitTrack] : this.getTracks(categoryPref === "auto" ? undefined : categoryPref);
     const available = pool.length > 0 ? pool : this.getTracks();

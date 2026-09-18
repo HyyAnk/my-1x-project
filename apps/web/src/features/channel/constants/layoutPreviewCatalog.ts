@@ -12,7 +12,6 @@ export type LayoutMeta = {
 
 export const ARCHETYPE_LAYOUT_MAP: Record<string, string> = {
   mystery_reveal: "mystery_reveal",
-  clue_deduction: "clue_deduction",
   versus_faceoff: "split_versus_two",
   visual_spotting: "visual_choices_three_pure",
   visual_identification: "visual_choices_three",
@@ -23,17 +22,6 @@ export const ARCHETYPE_LAYOUT_MAP: Record<string, string> = {
 };
 
 export const LAYOUT_CATALOG: Record<string, LayoutMeta> = {
-  clue_deduction: {
-    id: "clue_deduction",
-    name: "Clue Deduction (Clue A → Reveal B)",
-    badge: "🔍 Clue Deduction",
-    tagClass: "tag-deduction",
-    btnClass: "is-clue-deduction",
-    icon: "🔍",
-    format: "Image Guess / Deduction",
-    desc: "Clue image A is clearly presented. When the countdown completes, answer image B and the explanation card slide into view synchronously.",
-    assets: "1 clue image A + 1 answer image B",
-  },
   mystery_reveal: {
     id: "mystery_reveal",
     name: "Mystery Reveal (Silhouette / Scanner)",

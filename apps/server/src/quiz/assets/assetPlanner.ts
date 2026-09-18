@@ -70,20 +70,25 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
       });
     }
 
+    const isSingleReveal = effectiveLayoutId === "mystery_reveal" || question.answer_mode === "single_reveal";
+
     const choicePresentation =
-      beat.archetype === "visual_multiple_choice" ||
-      question.format === "odd_one_out" ||
-      (effectiveLayoutId === "split_versus_two" && beat.asset_intents.includes("choice_illustration"))
+      !isSingleReveal &&
+      (beat.archetype === "visual_multiple_choice" ||
+        question.format === "odd_one_out" ||
+        (effectiveLayoutId === "split_versus_two" && beat.asset_intents.includes("choice_illustration")))
         ? "visual"
         : "text";
 
-    const choiceGeometry = getQuizImageSlotGeometry({
-      layoutId: effectiveLayoutId,
-      purpose: "answer_option",
-      presentation: choicePresentation,
-      choiceCount: question.choices.length,
-      canvasAspectRatio: "16:9",
-    });
+    const choiceGeometry = !isSingleReveal
+      ? getQuizImageSlotGeometry({
+          layoutId: effectiveLayoutId,
+          purpose: "answer_option",
+          presentation: choicePresentation,
+          choiceCount: question.choices.length,
+          canvasAspectRatio: "16:9",
+        })
+      : null;
 
     if (choiceGeometry && beat.asset_intents.includes("choice_illustration")) {
       const choiceRec = recommendImageSizing(choiceGeometry);
@@ -109,7 +114,7 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         lighting: contract.lighting,
         framing: "one centered subject, eye-level, full silhouette visible",
         background_treatment: contract.optionBackground,
-        subject_scale: `centered subject scaled to roughly 68-72 percent of the ${ratio} frame, leaving safe margins on all sides to avoid edge clipping`,
+        subject_scale: "one large, clearly recognizable subject with a complete silhouette scaled to fill the card comfortably while keeping critical details within the layout-defined safe region, consistent in scale and lighting across every option in this set",
         contrast: "medium-high and matched across every option",
         saturation: "bright but matched across every option",
         edge_treatment: contract.edgeTreatment,

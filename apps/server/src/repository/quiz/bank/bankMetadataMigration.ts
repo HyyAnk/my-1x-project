@@ -4,13 +4,17 @@ import { RepositoryError } from "../../errors.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { withBankRead, withBankWrite } from "./bankSerializationBoundary.js";
 import {
-  assertSafeBackupPath, assertSafeFilesystemPath, assertSafeRelativePath,
-  assertValidMigrationId, collectBatchFiles, migrationRoot,
-  resolveCanonicalRoot, verifyCanonicalRootMatch,
+  assertSafeBackupPath,
+  assertSafeFilesystemPath,
+  assertSafeRelativePath,
+  assertValidMigrationId,
+  collectBatchFiles,
+  migrationRoot,
+  resolveCanonicalRoot,
+  verifyCanonicalRootMatch,
 } from "./migration/bankMigrationSafety.js";
 import { buildMigrationFile, parseBatchForMigration, sha256 } from "./migration/bankMigrationHasher.js";
 import { assertManifestPathSafe, persistManifest } from "./migration/bankMigrationApplier.js";
-
 
 export type BankMigrationFile = {
   relativePath: string;
@@ -46,23 +50,11 @@ export type BankLanguageMigrationResult = {
   manifestPath: string;
 };
 
-export {
-  assertValidMigrationId,
-  assertSafeRelativePath,
-  assertSafeBackupPath,
-} from "./migration/bankMigrationSafety.js";
+export { assertValidMigrationId, assertSafeRelativePath, assertSafeBackupPath } from "./migration/bankMigrationSafety.js";
 
-export {
-  sha256,
-  canonicalJson,
-  semanticHash,
-  serializedBatch,
-} from "./migration/bankMigrationHasher.js";
+export { sha256, canonicalJson, semanticHash, serializedBatch } from "./migration/bankMigrationHasher.js";
 
-export {
-  applyBankLanguageMigration,
-  rollbackBankLanguageMigration,
-} from "./migration/bankMigrationApplier.js";
+export { applyBankLanguageMigration, rollbackBankLanguageMigration } from "./migration/bankMigrationApplier.js";
 
 async function readIndexByteHash(canonicalRoot: string): Promise<string> {
   const indexPath = path.join(canonicalRoot, "index.json");
@@ -128,10 +120,7 @@ async function backupIndexFile(
   await repository.writeBinaryAtomic(indexBackupPath, indexBytes);
 }
 
-async function backupBatchFiles(
-  repository: RepositoryRuntime,
-  preview: BankLanguageMigrationPreview,
-): Promise<void> {
+async function backupBatchFiles(repository: RepositoryRuntime, preview: BankLanguageMigrationPreview): Promise<void> {
   const backupRoot = path.join(migrationRoot(preview.canonicalRoot), preview.migrationId, "backup");
   for (const file of preview.files) {
     assertSafeRelativePath(file.relativePath, preview.canonicalRoot);

@@ -142,7 +142,9 @@ export function buildEpisodeMarkdownStubs(meta: {
     "treatment.md": `# Treatment\n\n${treatment}`,
     "script.md": script,
     "visual_bible.md": "# Episode Visual Bible\n\nVisual development has not started.\n",
-    "scene_plan.md": hasScenes ? serializeScenes(meta.scenes!) : `# Scene Plan\n\n${meta.isTopic ? "Scene breakdown has not started.\n" : ""}`,
+    "scene_plan.md": hasScenes
+      ? serializeScenes(meta.scenes!)
+      : `# Scene Plan\n\n${meta.isTopic ? "Scene breakdown has not started.\n" : ""}`,
     "dialogue_script.md": hasScenes ? serializeDialogue(meta.scenes!) : "# Dialogue Script\n\n",
     "video_prompts.md": hasScenes ? serializePrompts(meta.scenes!) : "# Video Prompts\n\n",
   };

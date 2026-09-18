@@ -5,7 +5,7 @@ import { EmptyState } from "../../../components/EmptyState";
 import { TopicProgress } from "../../../components/TaskProgressPanel";
 import { useTopicAvailability } from "../hooks/useTopicAvailability";
 import { TopicCard } from "./TopicCard";
-import { TopicHistoryRow } from "./TopicHistoryRow";
+import { TopicHistorySection } from "./TopicHistorySection";
 
 type ChannelTopicsTabProps = {
   channel: Channel;
@@ -202,29 +202,15 @@ export function ChannelTopicsTab({
           ) : null}
 
           {historyTopics.length > 0 ? (
-            <div className="topic-history-section">
-              <div className="section-heading" style={{ marginTop: "32px", marginBottom: "14px" }}>
-                <div>
-                  <p className="eyebrow">Archive & Previous Ideas</p>
-                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700 }}>Older Ideas History ({historyTopics.length})</h3>
-                </div>
-                <span className="count-note">Single-line archive view</span>
-              </div>
-              <div className="topic-history-list">
-                {historyTopics.map((topic, index) => (
-                  <TopicHistoryRow
-                    key={topic.topic_id}
-                    index={latestRunTopics.length + index + 1}
-                    topic={topic}
-                    channelStyles={channel.selected_styles}
-                    availability={availabilityMap.get(topic.topic_id)}
-                    busy={confirmingTopicId === topic.topic_id}
-                    disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
-                    onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
-                  />
-                ))}
-              </div>
-            </div>
+            <TopicHistorySection
+              historyTopics={historyTopics}
+              latestRunTopicsCount={latestRunTopics.length}
+              channelStyles={channel.selected_styles}
+              availabilityMap={availabilityMap}
+              confirmingTopicId={confirmingTopicId}
+              channelStatus={channel.status}
+              onConfirmTopic={onConfirmTopic}
+            />
           ) : null}
         </>
       )}

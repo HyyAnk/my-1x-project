@@ -1,28 +1,29 @@
-import type { Episode, QuizImageStyle } from "@studio/shared";
-import { QUIZ_STYLE_CONTRACTS } from "../quiz/assets/promptCompiler.js";
 import { FRANCHISE_ANCHOR_MANDATE_LINES, VISUAL_ANCHOR_MANDATE_LINES } from "../quiz/bank/prompts/archetypePromptGuidelines.js";
 import type { OutputContractInput } from "./taskInstructions.js";
-
-function resolveVisualStyleContract(episode: Episode | null) {
-  const resolvedStyle: QuizImageStyle = episode?.quiz_config?.resolved_visual_style ?? "pixar_3d";
-  return QUIZ_STYLE_CONTRACTS[resolvedStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
-}
 
 export function buildDirectQuizOutputContract(input: OutputContractInput): string {
   const { episode, quizQuestionCount } = input;
   const quizConfig = episode?.quiz_config;
-  const isTrueFalse = quizConfig?.quiz_format === "true_false";
-  const styleContract = resolveVisualStyleContract(episode);
+  const isMystery = quizConfig?.quiz_format === "image_guess" || (quizConfig as { archetype?: string })?.archetype === "mystery_reveal";
+  const isTrueFalse = !isMystery && quizConfig?.quiz_format === "true_false";
   const targetLanguage = input.channelLanguage?.trim() || "en";
-  const choiceCountDesc = isTrueFalse
-    ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
-    : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
+  const choiceCountDesc = isMystery
+    ? "strictly exactly 1 choice with id 'choice-a' (the single canonical correct answer revealed after suspense)"
+    : isTrueFalse
+      ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
+      : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
   const questionPhrasingRule = isTrueFalse
     ? "Question phrasing & punctuation: Every question MUST end with a question mark '?'. Never write a flat declarative statement ending with a period. Phrase it either as an interrogative challenge (e.g. 'Did player two steer the ducks in Duck Hunt?', 'Do classic arcade light guns shoot real laser beams?') or as an engaging True/False question prompt (e.g. 'Is it true that player two could steer the ducks in Duck Hunt?')."
     : "Question phrasing & punctuation: Every question MUST always be an interrogative sentence ending with a question mark '?'. Never omit the question mark or end with a period.";
   const questionExample = isTrueFalse
     ? "Ultra-concise question ending with '?' (under 10 words, e.g. 'Did player two steer the ducks in Duck Hunt?' or 'Is it true that...?')"
     : "Ultra-concise child-friendly question ending with '?' (under 10 words, clear interrogative phrasing)";
+
+  const choicesJson = isMystery
+    ? `    { "id": "choice-a", "text": "Canonical correct answer text" }`
+    : isTrueFalse
+      ? `    { "id": "choice-true", "text": "True" },\n    { "id": "choice-false", "text": "False" }`
+      : `    { "id": "choice-a", "text": "Short distinct choice text" },\n    { "id": "choice-b", "text": "Short distinct choice text" },\n    { "id": "choice-c", "text": "Short distinct choice text" }`;
 
   const lines = [
     `Return ONLY a raw, valid JSON object matching QuizV2 schema (no markdown fences, no thought or commentary).`,
@@ -37,15 +38,14 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `{`,
     `  "id": "question-01" (padded 2 digits),`,
     `  "number": 1 (sequential integer starting from 1),`,
-    `  "format": "${quizConfig?.quiz_format ?? "text_multiple_choice"}",`,
+    `  "format": "${quizConfig?.quiz_format ?? (isMystery ? "image_guess" : "text_multiple_choice")}",`,
+    `  "answer_mode": "${isMystery ? "single_reveal" : "choice_selection"}",`,
     `  "difficulty": 1 to 5 (graded progressive difficulty),`,
     `  "question": "${questionExample}",`,
     `  "choices": [`,
-    `    { "id": "choice-a", "text": "Short distinct choice text" },`,
-    `    { "id": "choice-b", "text": "Short distinct choice text" },`,
-    `    { "id": "choice-c", "text": "Short distinct choice text" }`,
+    `${choicesJson}`,
     `  ],`,
-    `  "correct_choice_id": "choice-a" (must exactly match one of the choice ids),`,
+    `  "correct_choice_id": "${isTrueFalse ? "choice-true" : "choice-a"}" (must exactly match one of the choice ids),`,
     `  "explanation": "Strictly 1 punchy, child-friendly fun fact under 10 words and under 70 characters",`,
     `  "fun_fact": "Same concise fun fact or interesting trivia nugget",`,
     `  "source_ids": ["C01"] (Claim ID matching question number),`,

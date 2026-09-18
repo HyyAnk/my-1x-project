@@ -2,7 +2,7 @@ import { getMascotSlotDefaultPreset, pickShuffledUnusedPoses } from "@studio/sha
 import type { AppConfig, BatchGenerateStyleSlotsInput, MascotProfile } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import type { StudioLogger } from "../../../logger.js";
-import { generateMascotStyleSlot } from "../artGenerator.js";
+import { generateMascotStyleSlot } from "../generation/styleSlotGenerator.js";
 
 /**
  * Executes batch slot generation for a mascot style with bounded concurrency,
@@ -15,7 +15,7 @@ export async function generateMascotStyleBatch(
   input: BatchGenerateStyleSlotsInput,
   imageConfig: AppConfig["image_generation"],
   logger?: StudioLogger,
-  options: { signal?: AbortSignal } = {},
+  options: { signal?: AbortSignal; imageFallbackConfig?: AppConfig["image_fallback"] } = {},
 ): Promise<{ mascot: MascotProfile; generated_count: number; cancelled: boolean }> {
   const style = mascot.styles?.find((s) => s.id === styleId);
   if (!style) {
@@ -95,10 +95,14 @@ export async function generateMascotStyleBatch(
           state: item.state,
           slot_index: item.slot_index,
           prompt_modifier: item.prompt_modifier,
+          composition: "half_body_16_9",
         },
         imageConfig,
         logger,
-        { signal: options.signal },
+        {
+          signal: options.signal,
+          imageFallbackConfig: options.imageFallbackConfig,
+        },
       );
       generatedCount++;
     }

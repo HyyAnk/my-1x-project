@@ -9,6 +9,9 @@ export const COUNTER_BADGE_VARIANTS: Record<Exclude<QuizQuestionCounterStyle, "a
   neon_badge: BUILT_IN_COUNTER_MODULES[1].renderer,
   floating_balloon: BUILT_IN_COUNTER_MODULES[2].renderer,
   golden_shield: BUILT_IN_COUNTER_MODULES[3].renderer,
+  space_radar: BUILT_IN_COUNTER_MODULES[4].renderer,
+  bubble_badge: BUILT_IN_COUNTER_MODULES[5].renderer,
+  golden_compass: BUILT_IN_COUNTER_MODULES[6].renderer,
 };
 
 export const DEFAULT_COUNTER_BADGE_STYLE: Exclude<QuizQuestionCounterStyle, "auto"> = "hanging_woodsign";

@@ -12,8 +12,4 @@ export { ImageProviderCardHeader, type ImageProviderCardHeaderProps } from "./Im
 export { ImageFallbackCardHeader, type ImageFallbackCardHeaderProps } from "./ImageFallbackCardHeader";
 export { FallbackActionButtons, type FallbackActionButtonsProps } from "./FallbackActionButtons";
 export { ImageProviderActionButtons, type ImageProviderActionButtonsProps } from "./ImageProviderActionButtons";
-export {
-  getProviderKeyLabel,
-  getProviderKeyPlaceholder,
-  getProviderKeyHelpText,
-} from "./providerFieldHelpers";
+export { getProviderKeyLabel, getProviderKeyPlaceholder, getProviderKeyHelpText } from "./providerFieldHelpers";

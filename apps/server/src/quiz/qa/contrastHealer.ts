@@ -26,6 +26,8 @@ export function generateContrastSelfHealingCss(report: HyperframesCheckReport | 
     ".marker-val { color: #ffffff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.85) !important; }",
     ".mini-badge { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.4) !important; }",
     ".choice span { color: #ffffff !important; text-shadow: 0 3px 0 rgba(0,0,0,0.35) !important; }",
+    ".layout-verdict_true_false .choice-card .choice-text, .layout-verdict_true_false .choice-card.answer-card span, .layout-verdict_true_false .choice-card span { text-shadow: 0 2px 6px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.7) !important; color: #ffffff !important; }",
+    ".layout-verdict_true_false .choice-card.answer-reveal-incorrect, .layout-verdict_true_false .choice-card.answer-incorrect { opacity: 0.65 !important; }",
     ".badge-cta { color: #172a59 !important; border-color: #172a59 !important; }",
     ".badge-comment, .badge-like, .badge-sub { color: #172a59 !important; }",
   );
@@ -37,7 +39,7 @@ export function generateContrastSelfHealingCss(report: HyperframesCheckReport | 
     if (textSnippet.length > 0) {
       rules.push(
         `/* Specific contrast boost for text "${finding.text}" */`,
-        `[data-text*="${finding.text}" i] { color: #0f172a !important; text-shadow: 0 1px 0 #ffffff !important; }`,
+        `[data-text*="${finding.text}" i]:not(.layout-verdict_true_false *) { color: #0f172a !important; text-shadow: 0 1px 0 #ffffff !important; }`,
       );
     }
   }

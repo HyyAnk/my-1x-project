@@ -76,9 +76,8 @@ export function getBankQuestionLocationSqlite(
   db: SqliteDatabase,
   id: string,
 ): { archetype_id: string; domain_id: string; subtopic_id: string } | null {
-  const row = db
-    .prepare("SELECT archetype_id, domain_id, subtopic_id FROM bank_questions WHERE id = ? LIMIT 1;")
-    .get(id) as { archetype_id: string; domain_id: string; subtopic_id: string } | undefined;
+  const row = db.prepare("SELECT archetype_id, domain_id, subtopic_id FROM bank_questions WHERE id = ? LIMIT 1;").get(id) as
+    { archetype_id: string; domain_id: string; subtopic_id: string } | undefined;
   if (!row) return null;
   return row;
 }

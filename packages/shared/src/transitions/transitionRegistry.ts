@@ -1,11 +1,6 @@
 import type { TransitionCategory, TransitionDefinition } from "./types.js";
 import { TransitionDefinitionSchema } from "./types.js";
-import {
-  getTransitionDefinition,
-  listTransitionDefinitions,
-  registerTransitionImplementation,
-  resetTransitionCatalog,
-} from "./catalog.js";
+import { getTransitionDefinition, listTransitionDefinitions, registerTransitionImplementation, resetTransitionCatalog } from "./catalog.js";
 
 const LEGACY_METADATA: Record<string, { description: string; category: TransitionCategory; tag?: string; iconName?: string }> = {
   stinger_swipe: {

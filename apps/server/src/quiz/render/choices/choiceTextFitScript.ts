@@ -93,18 +93,20 @@ function measureElementWithin(element,container) {
 
 
 function measureChoiceText(choice,fontSize,lines,leading) {
+  if (choice.classList && choice.classList.contains('sr-only')) return true;
   const surface=choice.closest('.choice-card-surface');
-  if (!surface) return false;
+  if (!surface) return choice.classList ? choice.classList.contains('sr-only') : false;
   const surfaceStyles=getComputedStyle(surface);
   const textStyles=getComputedStyle(choice);
   if (surfaceStyles.display==='none' || textStyles.display==='none' || surface.offsetParent===null || choice.offsetParent===null) return true;
   const paddingTop=Number.parseFloat(surfaceStyles.paddingTop)||0;
   const paddingBottom=Number.parseFloat(surfaceStyles.paddingBottom)||0;
-  const surfaceInnerHeight=Math.max(0,surface.clientHeight-paddingTop-paddingBottom);
+  const surfaceHeight=Number(surface.clientHeight);
+  const surfaceInnerHeight=Number.isFinite(surfaceHeight) && surfaceHeight>0 ? Math.max(0,surfaceHeight-paddingTop-paddingBottom) : 0;
   const computedLineHeight=Number.parseFloat(textStyles.lineHeight);
   const lineHeight=Number.isFinite(computedLineHeight)?computedLineHeight:fontSize*leading;
   const glyphOverflowAllowance=Math.max(1,Math.ceil(fontSize*.08));
-  const heightLimit=Math.min(surfaceInnerHeight+1,lineHeight*lines+glyphOverflowAllowance);
+  const heightLimit=surfaceInnerHeight>0 ? Math.min(surfaceInnerHeight+1,lineHeight*lines+glyphOverflowAllowance) : lineHeight*lines+glyphOverflowAllowance;
   const paddingLeft=Number.parseFloat(textStyles.paddingLeft)||0;
   const paddingRight=Number.parseFloat(textStyles.paddingRight)||0;
   const choiceBounds=choice.getBoundingClientRect();

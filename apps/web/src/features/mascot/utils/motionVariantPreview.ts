@@ -1,4 +1,13 @@
-import type { MascotActionType, MascotProfile, MascotStateVariant, MascotStyle } from "@studio/shared";
+import type {
+  MascotActionAssetV2,
+  MascotActionType,
+  MascotAssetRegistration,
+  MascotMotionConfig,
+  MascotProfile,
+  MascotRenderBundleV2,
+  MascotStateVariant,
+  MascotStyle,
+} from "@studio/shared";
 
 export type MascotVariantState = "thinking" | "celebrate";
 
@@ -40,6 +49,45 @@ function overrideVariantAction(actions: MascotProfile["actions"], action: Mascot
   };
 }
 
+function overrideVariantBundleAction(
+  bundle: MascotRenderBundleV2 | undefined,
+  action: MascotVariantState,
+  variant: MascotStateVariant,
+): MascotRenderBundleV2 | undefined {
+  if (!bundle) return bundle;
+  const existing = bundle.assets?.actions?.[action];
+  const registration: MascotAssetRegistration = existing?.registration ?? {
+    source_width: 512,
+    source_height: 512,
+    content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+    pivot: { x: 256, y: 512 },
+    offset_x: 0,
+    offset_y: 0,
+  };
+  const motion: MascotMotionConfig = {
+    preset: existing?.motion?.preset ?? variant.motion_preset ?? (action === "thinking" ? "breathe" : "jump"),
+    speed: existing?.motion?.speed ?? variant.motion_speed ?? 1.0,
+    intensity: existing?.motion?.intensity ?? variant.motion_intensity ?? "normal",
+  };
+  const updatedAsset: MascotActionAssetV2 = {
+    version: 2,
+    action,
+    image_url: variant.image_url,
+    registration,
+    motion,
+  };
+  return {
+    ...bundle,
+    assets: {
+      ...bundle.assets,
+      actions: {
+        ...bundle.assets.actions,
+        [action]: updatedAsset,
+      },
+    },
+  };
+}
+
 /**
  * Overrides the thinking/celebrate actions of a profile with the style's filled
  * variants. The previewed action uses the selected variant; the other variant
@@ -54,21 +102,29 @@ export function applyVariantPreviewOverrides(
   if (!style) return profile;
 
   const actions = { ...profile.actions };
+  let renderBundle = profile.render_bundle ? { ...profile.render_bundle } : undefined;
 
   const thinkingVariants = collectFilledVariants(style, "thinking");
   const selectedThinking = resolveSelectedVariant(thinkingVariants, action === "thinking" ? variantIndex : 0);
   if (selectedThinking) {
     overrideVariantAction(actions, "thinking", selectedThinking);
+    if (renderBundle) {
+      renderBundle = overrideVariantBundleAction(renderBundle, "thinking", selectedThinking);
+    }
   }
 
   const celebrateVariants = collectFilledVariants(style, "celebrate");
   const selectedCelebrate = resolveSelectedVariant(celebrateVariants, action === "celebrate" ? variantIndex : 0);
   if (selectedCelebrate) {
     overrideVariantAction(actions, "celebrate", selectedCelebrate);
+    if (renderBundle) {
+      renderBundle = overrideVariantBundleAction(renderBundle, "celebrate", selectedCelebrate);
+    }
   }
 
   return {
     ...profile,
     actions,
+    ...(renderBundle ? { render_bundle: renderBundle } : {}),
   };
 }

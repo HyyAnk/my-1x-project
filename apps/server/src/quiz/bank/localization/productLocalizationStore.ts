@@ -18,9 +18,13 @@ async function readAndValidateArtifact(filePath: string, entityName: string): Pr
     try {
       parsed = JSON.parse(raw);
     } catch (error) {
-      throw new RepositoryError(`LOCALIZATION_CORRUPTED: ${entityName} localization artifact is not valid JSON.`, "LOCALIZATION_CORRUPTED", {
-        cause: error,
-      });
+      throw new RepositoryError(
+        `LOCALIZATION_CORRUPTED: ${entityName} localization artifact is not valid JSON.`,
+        "LOCALIZATION_CORRUPTED",
+        {
+          cause: error,
+        },
+      );
     }
     try {
       return ProductLocalizationArtifactSchema.parse(parsed);
@@ -34,9 +38,13 @@ async function readAndValidateArtifact(filePath: string, entityName: string): Pr
   } catch (error) {
     if (typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "ENOENT") return null;
     if (error instanceof RepositoryError) throw error;
-    throw new RepositoryError(`LOCALIZATION_UNREADABLE: ${entityName} localization artifact could not be read.`, "LOCALIZATION_UNREADABLE", {
-      cause: error,
-    });
+    throw new RepositoryError(
+      `LOCALIZATION_UNREADABLE: ${entityName} localization artifact could not be read.`,
+      "LOCALIZATION_UNREADABLE",
+      {
+        cause: error,
+      },
+    );
   }
 }
 

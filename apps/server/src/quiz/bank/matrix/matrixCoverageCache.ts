@@ -180,7 +180,7 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
     };
   }
 
-  public getComboVariantCount(archetypeId: BankGameplayArchetypeId | string, entityId: string): number {
+  public getComboVariantCount(archetypeId: BankGameplayArchetypeId | (string & {}), entityId: string): number {
     const arch = archetypeId === "verdict_fact_myth" ? "verdict_true_false" : archetypeId;
     return this.comboMap.get(`${arch}:${entityId}`) || 0;
   }
@@ -268,7 +268,8 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
           domAgg.coverage_percent = domAgg.total_combos > 0 ? Number(((domAgg.covered_combos / domAgg.total_combos) * 100).toFixed(1)) : 0;
         }
         if (archAgg) {
-          archAgg.coverage_percent = archAgg.total_combos > 0 ? Number(((archAgg.covered_combos / archAgg.total_combos) * 100).toFixed(1)) : 0;
+          archAgg.coverage_percent =
+            archAgg.total_combos > 0 ? Number(((archAgg.covered_combos / archAgg.total_combos) * 100).toFixed(1)) : 0;
         }
         this.coveragePercent = this.totalCombos > 0 ? Number(((this.coveredCombos / this.totalCombos) * 100).toFixed(1)) : 0;
       }

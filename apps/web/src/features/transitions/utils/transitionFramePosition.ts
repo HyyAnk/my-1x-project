@@ -13,11 +13,7 @@ export function ptsToSeconds(pts: number, timeBase: TimeBase): number {
   return (pts * timeBase.numerator) / timeBase.denominator;
 }
 
-export function secondsToFrameIndex(
-  seconds: number,
-  frames: readonly FramePts[],
-  timeBase: TimeBase,
-): number {
+export function secondsToFrameIndex(seconds: number, frames: readonly FramePts[], timeBase: TimeBase): number {
   if (frames.length === 0) return 0;
 
   let closestIndex = 0;
@@ -40,11 +36,7 @@ export function frameIndexToPts(frameIndex: number, frames: readonly FramePts[])
   return found ? found.pts : frameIndex;
 }
 
-export function formatFrameTime(
-  frameIndex: number,
-  totalFrames: number,
-  fpsVal: number,
-): string {
+export function formatFrameTime(frameIndex: number, totalFrames: number, fpsVal: number): string {
   const safeFps = fpsVal > 0 ? fpsVal : 30;
   const totalSeconds = frameIndex / safeFps;
   const minutes = Math.floor(totalSeconds / 60);

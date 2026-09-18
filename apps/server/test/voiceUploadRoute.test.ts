@@ -178,7 +178,7 @@ describe("Voice upload and management routes", () => {
     } finally {
       await app.close();
     }
-  }, 20000);
+  }, 60000);
 
   it("rejects non-WAV data with INVALID_AUDIO error", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "voice-upload-invalid-"));

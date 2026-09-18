@@ -73,9 +73,7 @@ export function ApiKeyInputField({
           autoComplete="off"
           style={{
             flex: 1,
-            ...(hasKey && !value
-              ? { borderColor: "color-mix(in srgb, var(--green) 40%, var(--line))" }
-              : {}),
+            ...(hasKey && !value ? { borderColor: "color-mix(in srgb, var(--green) 40%, var(--line))" } : {}),
           }}
         />
         <button

@@ -27,15 +27,8 @@ export function SegmentEditor({
   onGenerateScript,
   isGenerating = false,
 }: SegmentEditorProps) {
-  const {
-    activeSegmentIndex,
-    setActiveSegmentIndex,
-    activeSegment,
-    updateField,
-    updateDuration,
-    updateCueText,
-    updateCueTiming,
-  } = useSegmentDraft(segments, onChangeSegmentDraft);
+  const { activeSegmentIndex, setActiveSegmentIndex, activeSegment, updateField, updateDuration, updateCueText, updateCueTiming } =
+    useSegmentDraft(segments, onChangeSegmentDraft);
 
   if (!activeSegment) {
     return (

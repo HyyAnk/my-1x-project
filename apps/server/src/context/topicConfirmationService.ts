@@ -6,7 +6,6 @@ import {
   nowIso,
   type Channel,
   type Episode,
-  type EpisodeTopicCandidate,
   type QuizImageStyle,
   type TopicCandidate,
 } from "@studio/shared";
@@ -76,9 +75,7 @@ async function initializeEpisodeFiles(
   );
 
   const initialDocs = getInitialEpisodeDocuments();
-  await Promise.all(
-    initialDocs.map((doc) => repo.writeTextAtomic(path.join(episodeDirectory, doc.name), doc.content)),
-  );
+  await Promise.all(initialDocs.map((doc) => repo.writeTextAtomic(path.join(episodeDirectory, doc.name), doc.content)));
 }
 
 async function saveConfirmationReceiptRecord(
@@ -199,7 +196,7 @@ async function executeTopicConfirmation(
     channelId,
     channelSlug: channel.slug,
     episodeSlug,
-    candidate: candidate as EpisodeTopicCandidate,
+    candidate: candidate,
     selectedQuestionCount,
     requestedStyle,
     resolvedStyle,
@@ -221,16 +218,7 @@ async function executeTopicConfirmation(
   );
   await repo.updateChannel(channelId, { updated_at: timestamp });
 
-  await saveConfirmationReceiptRecord(
-    repo,
-    channel,
-    episode,
-    topicId,
-    selectedQuestionCount,
-    requestedStyle,
-    timestamp,
-    boundResult,
-  );
+  await saveConfirmationReceiptRecord(repo, channel, episode, topicId, selectedQuestionCount, requestedStyle, timestamp, boundResult);
 
   return episode;
 }

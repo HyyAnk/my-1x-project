@@ -165,6 +165,7 @@ export function deriveQuizV2FromScenes(input: {
         id: "question-" + String(index + 1).padStart(2, "0"),
         number: index + 1,
         format,
+        answer_mode: choices.length === 1 ? ("single_reveal" as const) : ("choice_selection" as const),
         difficulty: Math.min(5, 1 + Math.floor(index / Math.max(1, Math.ceil(grouped.size / 5)))),
         question,
         choices,

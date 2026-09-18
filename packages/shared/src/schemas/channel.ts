@@ -41,7 +41,7 @@ export const ChannelSchema = z
     default_background_style: QuizBackgroundStyleSchema.optional().default("auto"),
     default_palette_id: z.string().optional().default("auto"),
     mascot_id: z.string().nullable().default(null),
-    mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
+    mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 2.31, offset_x: 127, offset_y: 119 }),
     default_intro_outro_style_id: z.string().nullable().optional(),
   })
   .strict();
@@ -57,7 +57,6 @@ export const TopicGameplayArchetypeSchema = z.enum([
   "visual_identification",
   "speed_blitz",
   "mystery_reveal",
-  "clue_deduction",
 ]);
 
 export type TopicGameplayArchetype = z.infer<typeof TopicGameplayArchetypeSchema>;

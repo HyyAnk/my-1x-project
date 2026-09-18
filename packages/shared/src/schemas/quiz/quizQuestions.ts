@@ -3,12 +3,14 @@ import { QuizAgeBandSchema, type QuizQuestionFormat, QuizQuestionFormatSchema } 
 import {
   QUIZ_MAX_CHOICES_PER_QUESTION,
   QUIZ_MAX_QUESTION_COUNT,
-  QUIZ_MIN_CHOICES_PER_QUESTION,
   QUIZ_STANDARD_CHOICES_PER_QUESTION,
   QUIZ_TRUE_FALSE_CHOICES_PER_QUESTION,
 } from "../common.js";
 
-export function quizChoiceCountForFormat(format: QuizQuestionFormat): number {
+import { QuizAnswerModeSchema, type QuizAnswerMode } from "../../quizAnswerMode.js";
+
+export function quizChoiceCountForFormat(format: QuizQuestionFormat, answerMode: QuizAnswerMode = "choice_selection"): number {
+  if (answerMode === "single_reveal") return 1;
   return format === "true_false" ? QUIZ_TRUE_FALSE_CHOICES_PER_QUESTION : QUIZ_STANDARD_CHOICES_PER_QUESTION;
 }
 
@@ -34,7 +36,8 @@ export const QuizQuestionSchema = z
     format: QuizQuestionFormatSchema,
     difficulty: z.number().int().min(1).max(5),
     question: z.string().trim().min(1).max(320),
-    choices: QuizChoiceSchema.array().min(QUIZ_MIN_CHOICES_PER_QUESTION).max(QUIZ_MAX_CHOICES_PER_QUESTION),
+    answer_mode: QuizAnswerModeSchema.default("choice_selection"),
+    choices: QuizChoiceSchema.array().min(1).max(QUIZ_MAX_CHOICES_PER_QUESTION),
     correct_choice_id: z.string().min(1),
     explanation: z.string().trim().min(1).max(600),
     fun_fact: z.string().trim().max(600).default(""),
@@ -60,7 +63,33 @@ export const QuizQuestionSchema = z
         path: ["correct_choice_id"],
         message: "Canonical answer must reference a visible choice",
       });
-    const requiredChoiceCount = quizChoiceCountForFormat(question.format);
+
+    if (question.answer_mode === "single_reveal") {
+      if (question.format === "true_false" || question.format === "odd_one_out") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["format"],
+          message: `Single reveal answer mode is invalid with format "${question.format}". Use image_guess or multiple_choice.`,
+        });
+      }
+      if (question.choices.length !== 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["choices"],
+          message: `Single reveal requires exactly one choice; received ${question.choices.length}`,
+        });
+      }
+      if (question.choices[0] && question.correct_choice_id !== question.choices[0].id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["correct_choice_id"],
+          message: "Canonical answer must reference the single visible choice",
+        });
+      }
+      return;
+    }
+
+    const requiredChoiceCount = quizChoiceCountForFormat(question.format, question.answer_mode);
     if (question.choices.length !== requiredChoiceCount) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

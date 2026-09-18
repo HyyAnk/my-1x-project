@@ -198,53 +198,5 @@ export function baseChoiceStyles(): string {
   font-size: var(--choice-badge-font-size, 56px);
 }
 
-/* Default per-choice gradient token values (Arcade theme defaults) */
-.choice-card:nth-child(1), .answer-card:nth-child(1), .visual-answer-card:nth-child(1) {
-  --choice-stroke: #FFFFFF;
-  --choice-stroke-shadow: #9A3412;
-  --choice-depth-shadow: #E09000;
-  --choice-badge-grad: linear-gradient(180deg, #FFB800 0%, #FF6D00 100%);
-  --choice-badge-border: #FFFFFF;
-  --choice-bg-tint: linear-gradient(180deg, #FFDF40 0%, #FFB800 100%);
-  --choice-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M0 16 Q 16 6 32 16 T 64 16' fill='none' stroke='%23FFFFFF' stroke-opacity='0.12' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  --choice-text-color: #78350F;
-  --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
-}
-
-.choice-card:nth-child(2), .answer-card:nth-child(2), .visual-answer-card:nth-child(2) {
-  --choice-stroke: #FFFFFF;
-  --choice-stroke-shadow: #881337;
-  --choice-depth-shadow: #CC2556;
-  --choice-badge-grad: linear-gradient(180deg, #FF4572 0%, #D80036 100%);
-  --choice-badge-border: #FFFFFF;
-  --choice-bg-tint: linear-gradient(180deg, #FF80A6 0%, #FF4D7E 100%);
-  --choice-pattern: repeating-linear-gradient(-45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px);
-  --choice-text-color: #831843;
-  --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
-}
-
-.choice-card:nth-child(3), .answer-card:nth-child(3), .visual-answer-card:nth-child(3) {
-  --choice-stroke: #FFFFFF;
-  --choice-stroke-shadow: #034E7B;
-  --choice-depth-shadow: #007ECC;
-  --choice-badge-grad: linear-gradient(180deg, #2E93FF 0%, #0062E6 100%);
-  --choice-badge-border: #FFFFFF;
-  --choice-bg-tint: linear-gradient(180deg, #66D1FF 0%, #29B2FF 100%);
-  --choice-pattern: radial-gradient(circle, rgba(255,255,255,0.12) 28%, transparent 29%);
-  --choice-text-color: #0C4A6E;
-  --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
-}
-
-.choice-card:nth-child(4), .answer-card:nth-child(4), .visual-answer-card:nth-child(4) {
-  --choice-stroke: #FFFFFF;
-  --choice-stroke-shadow: #4C1D95;
-  --choice-depth-shadow: #7C3AED;
-  --choice-badge-grad: linear-gradient(180deg, #C4B5FD 0%, #7C3AED 100%);
-  --choice-badge-border: #A78BFA;
-  --choice-bg-tint: linear-gradient(180deg, #8B5CF6 0%, #6D28D9 100%);
-  --choice-pattern: repeating-linear-gradient(45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px);
-  --choice-text-color: #3B0764;
-  --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
-}
 `;
 }

@@ -149,7 +149,14 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         }),
       ];
 
-      const allQuestions = [...slot1Questions, ...slot2Questions, ...slot3Questions, ...slot4Questions, ...slot5Questions, ...slot6Questions];
+      const allQuestions = [
+        ...slot1Questions,
+        ...slot2Questions,
+        ...slot3Questions,
+        ...slot4Questions,
+        ...slot5Questions,
+        ...slot6Questions,
+      ];
 
       const result = allocateSourceBackedTopicSlots({
         questions: allQuestions,

@@ -12,7 +12,7 @@ import type { TaskManagerRuntime } from "./runtime.js";
 
 function tryCreateExplicitProvider(
   runtime: TaskManagerRuntime,
-  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string; taskId?: string },
 ): ImageProvider | null {
   const providerType: string = runtime.imageConfig.provider ?? "gpti2";
   const { api_key, model, quality, base_url } = runtime.imageConfig;
@@ -54,7 +54,7 @@ function tryCreateExplicitProvider(
 
 export function createImageProvider(
   this: TaskManagerRuntime,
-  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string; taskId?: string },
   output?: string,
 ): ImageProvider {
   const explicit = tryCreateExplicitProvider(this, imageTarget);
@@ -76,7 +76,7 @@ export function createImageProvider(
 export async function generateBundleImageWithSafetyRetry(
   this: TaskManagerRuntime,
   task: Task,
-  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string; taskId?: string },
   initialPrompt: string,
   signal?: AbortSignal,
   output?: string,
@@ -120,11 +120,7 @@ export async function generateBundleImageWithSafetyRetry(
   }
 
   const fallbackConfig = this.imageFallbackConfig;
-  if (
-    fallbackConfig &&
-    fallbackConfig.enabled !== false &&
-    ImgStudioImageProvider.isConfigured(fallbackConfig.api_key)
-  ) {
+  if (fallbackConfig && fallbackConfig.enabled !== false && ImgStudioImageProvider.isConfigured(fallbackConfig.api_key)) {
     this.logger.warn(
       `Primary image provider failed for bundle CB-${String(imageTarget.bundleNumber).padStart(2, "0")} (${(lastError as Error)?.message}). Initiating fallback to ImgStudio...`,
       { profileId: imageTarget.channelId, step: "IMAGE_FALLBACK_TRIGGERED" },
@@ -211,6 +207,7 @@ export async function executeBundleImageTask(this: TaskManagerRuntime, task: Tas
       bundleNumber,
       variant,
       theme,
+      taskId: task.task_id,
     };
 
     const { image } = await this.generateBundleImageWithSafetyRetry(

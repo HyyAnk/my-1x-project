@@ -11,6 +11,7 @@ export const THINKING_BAR_VARIANTS: Record<Exclude<QuizThinkingBarStyle, "auto">
   construction_machine: BUILT_IN_THINKING_BAR_MODULES[3].renderer,
   flame_fuse: BUILT_IN_THINKING_BAR_MODULES[4].renderer,
   cosmic_rocket: BUILT_IN_THINKING_BAR_MODULES[5].renderer,
+  treasure_trail: BUILT_IN_THINKING_BAR_MODULES[6].renderer,
 };
 
 export const DEFAULT_THINKING_BAR_STYLE: Exclude<QuizThinkingBarStyle, "auto"> = "star_slider";

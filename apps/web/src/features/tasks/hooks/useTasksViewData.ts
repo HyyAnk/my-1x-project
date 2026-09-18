@@ -3,6 +3,7 @@ import type { Channel, Task } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { ProductionItemSummary, StatusFilter } from "../types";
+import { useRouteTab } from "../../../hooks/router/useRouteTab";
 import { useTaskFiltering } from "./useTaskFiltering";
 import { useTaskActions } from "./useTaskActions";
 
@@ -12,10 +13,19 @@ export type UseTasksViewDataProps = {
   now: number;
   onRefresh: () => Promise<void>;
   onNotice: (notice: NonNullable<Notice>) => void;
+  activeTab?: string | null;
+  onTabChange?: (tab: string) => void;
 };
 
-export function useTasksViewData({ tasks, channels = [], now, onRefresh, onNotice }: UseTasksViewDataProps) {
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+const STATUS_FILTER_TABS: readonly StatusFilter[] = ["all", "running", "queued", "waiting_approval", "failed", "completed", "cancelled"];
+
+export function useTasksViewData({ tasks, channels = [], now, onRefresh, onNotice, activeTab, onTabChange }: UseTasksViewDataProps) {
+  const [statusFilter, setStatusFilter] = useRouteTab({
+    value: activeTab,
+    allowedTabs: STATUS_FILTER_TABS,
+    fallback: "all",
+    onChange: onTabChange,
+  });
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 

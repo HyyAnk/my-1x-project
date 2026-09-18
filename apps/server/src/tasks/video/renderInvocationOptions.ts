@@ -17,10 +17,7 @@ export type RenderInvocation = {
   timeoutMs: number;
 };
 
-export function buildRenderInvocation(
-  snapshot: RenderEngineSnapshot,
-  paths: RenderInvocationPaths,
-): RenderInvocation {
+export function buildRenderInvocation(snapshot: RenderEngineSnapshot, paths: RenderInvocationPaths): RenderInvocation {
   const browserTimeout = String(paths.browserTimeoutSeconds ?? process.env.HYPERFRAMES_BROWSER_TIMEOUT_SECONDS ?? 300);
   const timeoutMs = paths.timeoutMs ?? (Number(process.env.HYPERFRAMES_RENDER_TIMEOUT_MS) || 120 * 60_000);
   const workers = paths.workers !== undefined ? paths.workers : calculateOptimalWorkers();

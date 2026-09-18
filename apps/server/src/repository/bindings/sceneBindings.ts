@@ -1,15 +1,14 @@
+import { readScenes, attachBundleReference, saveScenes, invalidateQuizSourceArtifacts } from "../scenes.js";
 import {
-  readScenes,
   listBundleImages,
   getBundleImagePath,
   getBundleImageFile,
   writeBundleImage,
+  saveBundleImage,
   writeBundleImageFromFile,
   clearBundleImages,
-  attachBundleReference,
-  saveScenes,
-  invalidateQuizSourceArtifacts,
-} from "../scenes.js";
+  deleteBundleImage,
+} from "../bundleImages.js";
 
 export const sceneBindings = {
   readScenes,
@@ -17,8 +16,10 @@ export const sceneBindings = {
   getBundleImagePath,
   getBundleImageFile,
   writeBundleImage,
+  saveBundleImage,
   writeBundleImageFromFile,
   clearBundleImages,
+  deleteBundleImage,
   attachBundleReference,
   saveScenes,
   invalidateQuizSourceArtifacts,

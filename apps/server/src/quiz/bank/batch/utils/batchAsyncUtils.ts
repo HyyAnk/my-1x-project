@@ -9,7 +9,7 @@ import type { ChunkRetryOptions } from "../types/batchChunk.types.js";
 export class AsyncMutex {
   private mutex: Promise<void> = Promise.resolve();
 
-  async run<T>(fn: () => Promise<T>): Promise<T> {
+  async run<T>(fn: () => Promise<T> | T): Promise<T> {
     const previous = this.mutex;
     let release: () => void;
     this.mutex = new Promise<void>((resolve) => {
@@ -64,10 +64,7 @@ export async function executePromptWithRetry(
  * Retries an asynchronous chunk operation with exponential backoff and jitter.
  * Aborts immediately without retrying if the abort signal is triggered.
  */
-export async function retryChunkOperation<T>(
-  operation: (attempt: number) => Promise<T>,
-  options: ChunkRetryOptions = {},
-): Promise<T> {
+export async function retryChunkOperation<T>(operation: (attempt: number) => Promise<T>, options: ChunkRetryOptions = {}): Promise<T> {
   const maxAttempts = Math.max(1, options.attempts ?? 3);
   const baseDelayMs = Math.max(0, options.baseDelayMs ?? 500);
   const maxDelayMs = Math.max(baseDelayMs, options.maxDelayMs ?? 4000);

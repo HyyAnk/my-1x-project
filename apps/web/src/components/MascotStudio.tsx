@@ -1,119 +1,98 @@
-import { useState } from "react";
-import { ArrowLeft, CircleNotch, Plus, Upload } from "@phosphor-icons/react";
-import type { Channel, MascotProfile } from "@studio/shared";
+import type { Channel } from "@studio/shared";
 import type { Notice } from "./types";
 import { useTranslation } from "../i18n";
 import { getNavProps } from "../hooks/useRouter";
+import { useRouteTab } from "../hooks/router/useRouteTab";
 import { useMascotLibrary } from "../features/mascot/hooks/useMascotLibrary";
 import { useMascotGenerator } from "../features/mascot/hooks/useMascotGenerator";
+import { useMascotStudioRouting } from "../features/mascot/hooks/useMascotStudioRouting";
+import { MascotStudioHeader } from "../features/mascot/components/MascotStudioHeader";
 import { MascotLibraryTab } from "../features/mascot/MascotLibraryTab";
 import { MascotGeneratorTab } from "../features/mascot/MascotGeneratorTab";
+
+export interface MascotStudioViewProps {
+  channels: Channel[];
+  onNotice: (notice: NonNullable<Notice>) => void;
+  onRefreshChannels: () => Promise<void>;
+  activeTab?: string | null;
+  onTabChange?: (tab: string) => void;
+  mascotId?: string | null;
+  step?: number | null;
+  openMascot?: (mascotId?: string | null, step?: number | null) => void;
+  setQueryParam?: (key: string, value: string | null, replace?: boolean) => void;
+}
 
 export function MascotStudioView({
   channels,
   onNotice,
   onRefreshChannels,
-}: {
-  channels: Channel[];
-  onNotice: (notice: NonNullable<Notice>) => void;
-  onRefreshChannels: () => Promise<void>;
-}) {
+  activeTab,
+  onTabChange,
+  mascotId,
+  step,
+  openMascot,
+  setQueryParam,
+}: MascotStudioViewProps) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"library" | "generator">("library");
-
-  const libraryState = useMascotLibrary({
-    onNotice,
-    onRefreshChannels,
+  const [currentTab, switchTab] = useRouteTab({
+    value: activeTab,
+    allowedTabs: ["library", "generator"] as const,
+    fallback: mascotId ? "generator" : "library",
+    onChange: onTabChange,
   });
 
+  const libraryState = useMascotLibrary({ onNotice, onRefreshChannels });
   const generatorState = useMascotGenerator({
     onNotice,
     onRefreshChannels,
     onMascotsChanged: libraryState.loadMascots,
   });
 
-  const handleStartNew = () => {
-    generatorState.handleStartNew();
-    setActiveTab("generator");
-  };
-
-  const handleEditMascot = (mascot: MascotProfile) => {
-    generatorState.handleEditMascot(mascot);
-    setActiveTab("generator");
-  };
+  const { libraryUrl, generatorUrl, handleStartNew, handleEditMascot, handleBackToLibrary, handleSelectGeneratorTab } =
+    useMascotStudioRouting({
+      mascotId,
+      step,
+      openMascot,
+      setQueryParam,
+      currentTab,
+      switchTab,
+      generatorState,
+      libraryState,
+      onNotice,
+    });
 
   return (
     <section className="page-wrap mascot-studio-page">
-      {/* Studio Header */}
-      <div className="section-heading mascot-header">
-        <div>
-          <h1>{t("mascots.pageTitle")}</h1>
-        </div>
+      <MascotStudioHeader
+        currentTab={currentTab}
+        importingZip={libraryState.importingZip}
+        onImportZip={(file) => void libraryState.handleImportZip(file)}
+        onStartNew={handleStartNew}
+        onBackToLibrary={handleBackToLibrary}
+      />
 
-        <div className="mascot-top-actions" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          {activeTab === "library" ? (
-            <>
-              <label className="quiet-button" style={{ cursor: "pointer", margin: 0 }} title={t("common.importZip")}>
-                {libraryState.importingZip ? <CircleNotch className="spin" size={15} /> : <Upload size={15} />}
-                <span>{libraryState.importingZip ? t("common.importing") : t("common.importZip")}</span>
-                <input
-                  type="file"
-                  accept=".zip,application/zip"
-                  style={{ display: "none" }}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) void libraryState.handleImportZip(file);
-                  }}
-                />
-              </label>
-              <button type="button" className="primary-button" onClick={handleStartNew}>
-                <Plus size={16} weight="bold" />
-                <span>{t("mascots.newMascot")}</span>
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
-              className="quiet-button"
-              onClick={() => {
-                setActiveTab("library");
-                void libraryState.loadMascots();
-              }}
-            >
-              <ArrowLeft size={16} />
-              <span>{t("mascots.tabLibrary")}</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
       <div className="channel-group-tabs" role="tablist" aria-label="Mascot Studio Tabs" style={{ marginBottom: "20px" }}>
         <a
           role="tab"
-          aria-selected={activeTab === "library"}
-          className={`channel-group-tab ${activeTab === "library" ? "is-selected" : ""}`}
-          {...getNavProps("#/mascots?tab=library", () => setActiveTab("library"))}
+          aria-selected={currentTab === "library"}
+          className={`channel-group-tab ${currentTab === "library" ? "is-selected" : ""}`}
+          {...getNavProps(libraryUrl, handleBackToLibrary)}
         >
           <span>{t("mascots.tabLibrary")}</span>
           <small>{libraryState.mascots.length}</small>
         </a>
         <a
           role="tab"
-          aria-selected={activeTab === "generator"}
-          className={`channel-group-tab ${activeTab === "generator" ? "is-selected" : ""}`}
-          {...getNavProps("#/mascots?tab=generator", () => {
-            if (!generatorState.editingMascot) handleStartNew();
-            else setActiveTab("generator");
-          })}
+          aria-selected={currentTab === "generator"}
+          className={`channel-group-tab ${currentTab === "generator" ? "is-selected" : ""}`}
+          {...getNavProps(generatorUrl, handleSelectGeneratorTab)}
         >
           <span>{t("mascots.tabGenerator")}</span>
           {generatorState.editingMascot ? <small>{generatorState.editingMascot.name}</small> : null}
         </a>
       </div>
 
-      {/* Tab 1: Library */}
-      {activeTab === "library" ? (
+      {currentTab === "library" ? (
         <MascotLibraryTab
           channels={channels}
           onNotice={onNotice}
@@ -124,8 +103,7 @@ export function MascotStudioView({
         />
       ) : null}
 
-      {/* Tab 2: Generator */}
-      {activeTab === "generator" ? <MascotGeneratorTab generatorState={generatorState} /> : null}
+      {currentTab === "generator" ? <MascotGeneratorTab generatorState={generatorState} /> : null}
     </section>
   );
 }

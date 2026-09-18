@@ -53,6 +53,24 @@ describe("ChannelTopicsTab", () => {
     run_id: runId,
   });
 
+  const createShortReelTopic = (id: string, runId?: string, generatedAt = "2026-09-08T12:00:00.000Z"): TopicCandidate => ({
+    topic_id: id,
+    channel_id: mockChannel.channel_id,
+    content_kind: "short_reel",
+    aspect_ratio: "9:16",
+    origin: "discovery",
+    archetype: "deep_trivia",
+    title: `Title for ${id}`,
+    premise: `Premise for ${id}`,
+    why_it_fits: "Good audience fit",
+    hook: `Hook for ${id}`,
+    estimated_potential: "High",
+    generated_at: generatedAt,
+    selected: false,
+    question_count: 1,
+    run_id: runId,
+  });
+
   it("groups candidates strictly by latestRun.run_id, placing older runs into history", () => {
     const latestRun: TopicRun = {
       run_id: "run_latest_abc",
@@ -245,5 +263,172 @@ describe("ChannelTopicsTab", () => {
     fireEvent.click(suggestButtons[0]);
 
     expect(onSuggestMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("filters history topics by format when filter tabs are clicked", () => {
+    const latestRun: TopicRun = {
+      run_id: "run_current",
+      generated_at: "2026-09-08T12:00:00.000Z",
+      target_episode_count: 1,
+      target_short_reel_count: 0,
+      shortages: [],
+      candidates: [],
+    };
+
+    const latestTopic = createTopic("top_latest", "run_current");
+    const epHistory1 = { ...createTopic("top_ep_1", "run_prev"), title: "Episode History 1" };
+    const epHistory2 = { ...createTopic("top_ep_2", "run_prev"), title: "Episode History 2" };
+    const shortHistory1 = { ...createShortReelTopic("top_short_1", "run_prev"), title: "Short History 1" };
+    const shortHistory2 = { ...createShortReelTopic("top_short_2", "run_prev"), title: "Short History 2" };
+
+    const { getByRole, getByText, queryByText } = render(
+      <ChannelTopicsTab
+        channel={mockChannel}
+        topics={[latestTopic, epHistory1, epHistory2, shortHistory1, shortHistory2]}
+        latestRun={latestRun}
+        topicTask={null}
+        topicClock={0}
+        topicHint=""
+        setTopicHint={vi.fn()}
+        topicTaskActive={false}
+        busy={null}
+        confirmingTopicId={null}
+        onSuggest={vi.fn()}
+        onConfirmTopic={vi.fn()}
+      />,
+    );
+
+    expect(getByText(/Older Ideas History \(4\)/)).toBeDefined();
+    expect(getByText("Episode History 1")).toBeDefined();
+    expect(getByText("Short History 1")).toBeDefined();
+
+    // Click 16:9 Episodes tab
+    const epTab = getByRole("tab", { name: /16:9 Episodes/i });
+    fireEvent.click(epTab);
+
+    expect(getByText("Episode History 1")).toBeDefined();
+    expect(getByText("Episode History 2")).toBeDefined();
+    expect(queryByText("Short History 1")).toBeNull();
+    expect(queryByText("Short History 2")).toBeNull();
+
+    // Click 9:16 Shorts tab
+    const shortTab = getByRole("tab", { name: /9:16 Shorts/i });
+    fireEvent.click(shortTab);
+
+    expect(queryByText("Episode History 1")).toBeNull();
+    expect(queryByText("Episode History 2")).toBeNull();
+    expect(getByText("Short History 1")).toBeDefined();
+    expect(getByText("Short History 2")).toBeDefined();
+
+    // Click All tab
+    const allTab = getByRole("tab", { name: /All/i });
+    fireEvent.click(allTab);
+
+    expect(getByText("Episode History 1")).toBeDefined();
+    expect(getByText("Short History 1")).toBeDefined();
+  });
+
+  it("applies progressive disclosure defaulting to 6 items and toggles show all/less", () => {
+    const latestRun: TopicRun = {
+      run_id: "run_current",
+      generated_at: "2026-09-08T12:00:00.000Z",
+      target_episode_count: 1,
+      target_short_reel_count: 0,
+      shortages: [],
+      candidates: [],
+    };
+
+    const latestTopic = createTopic("top_latest", "run_current");
+    const historyTopics = Array.from({ length: 8 }, (_, i) => createTopic(`top_hist_${i + 1}`, "run_old", `2026-09-01T12:00:0${i}.000Z`));
+
+    const { getByRole, getByText, queryByText } = render(
+      <ChannelTopicsTab
+        channel={mockChannel}
+        topics={[latestTopic, ...historyTopics]}
+        latestRun={latestRun}
+        topicTask={null}
+        topicClock={0}
+        topicHint=""
+        setTopicHint={vi.fn()}
+        topicTaskActive={false}
+        busy={null}
+        confirmingTopicId={null}
+        onSuggest={vi.fn()}
+        onConfirmTopic={vi.fn()}
+      />,
+    );
+
+    expect(getByText(/Older Ideas History \(8\)/)).toBeDefined();
+
+    // First 6 items should be visible
+    expect(getByText("Title for top_hist_1")).toBeDefined();
+    expect(getByText("Title for top_hist_6")).toBeDefined();
+    // 7th and 8th items should NOT be visible initially
+    expect(queryByText("Title for top_hist_7")).toBeNull();
+    expect(queryByText("Title for top_hist_8")).toBeNull();
+
+    // Click Show all (8) older ideas
+    const showAllBtn = getByRole("button", { name: /Show all \(8\) older ideas/i });
+    expect(showAllBtn.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(showAllBtn);
+
+    expect(showAllBtn.getAttribute("aria-expanded")).toBe("true");
+    expect(getByText("Title for top_hist_7")).toBeDefined();
+    expect(getByText("Title for top_hist_8")).toBeDefined();
+
+    // Click Show less
+    const showLessBtn = getByRole("button", { name: /Show less/i });
+    fireEvent.click(showLessBtn);
+
+    expect(queryByText("Title for top_hist_7")).toBeNull();
+    expect(queryByText("Title for top_hist_8")).toBeNull();
+  });
+
+  it("toggles collapse and expand on entire history section header", () => {
+    const latestRun: TopicRun = {
+      run_id: "run_current",
+      generated_at: "2026-09-08T12:00:00.000Z",
+      target_episode_count: 1,
+      target_short_reel_count: 0,
+      shortages: [],
+      candidates: [],
+    };
+
+    const latestTopic = createTopic("top_latest", "run_current");
+    const historyTopic = createTopic("top_hist_col", "run_old");
+
+    const { getByRole, getByText, queryByText } = render(
+      <ChannelTopicsTab
+        channel={mockChannel}
+        topics={[latestTopic, historyTopic]}
+        latestRun={latestRun}
+        topicTask={null}
+        topicClock={0}
+        topicHint=""
+        setTopicHint={vi.fn()}
+        topicTaskActive={false}
+        busy={null}
+        confirmingTopicId={null}
+        onSuggest={vi.fn()}
+        onConfirmTopic={vi.fn()}
+      />,
+    );
+
+    const collapseBtn = getByRole("button", { name: /Collapse older ideas history/i });
+    expect(collapseBtn.getAttribute("aria-expanded")).toBe("true");
+    expect(getByText("Title for top_hist_col")).toBeDefined();
+
+    // Click collapse
+    fireEvent.click(collapseBtn);
+
+    expect(collapseBtn.getAttribute("aria-expanded")).toBe("false");
+    expect(queryByText("Title for top_hist_col")).toBeNull();
+    expect(getByText(/Section collapsed/i)).toBeDefined();
+
+    // Click expand
+    fireEvent.click(collapseBtn);
+
+    expect(collapseBtn.getAttribute("aria-expanded")).toBe("true");
+    expect(getByText("Title for top_hist_col")).toBeDefined();
   });
 });

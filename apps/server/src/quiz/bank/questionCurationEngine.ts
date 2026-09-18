@@ -1,5 +1,13 @@
-import type { BankGameplayArchetypeId, BankQuestion, BankQuestionWithCooldown, TopicCandidate } from "@studio/shared";
+import type { BankQuestion, TopicCandidate } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
+import {
+  assembleRetentionArc,
+  calculateRelevanceScore,
+  calculateVisualScore,
+  isValidBankQuestion,
+  resolveTargetArchetype,
+  type ScoredBankQuestion,
+} from "./curation/index.js";
 
 export interface CurateQuestionsForTopicDeps {
   repository: RepositoryService;
@@ -16,259 +24,6 @@ export interface CuratedTopicQuestionsResult {
   totalCandidatesFound: number;
   cooldownFilteredCount: number;
   retentionArcApplied: boolean;
-}
-
-export interface ScoredBankQuestion {
-  question: BankQuestionWithCooldown;
-  relevanceScore: number;
-  visualScore: number;
-  totalScore: number;
-}
-
-const STOP_WORDS = new Set([
-  "the",
-  "a",
-  "an",
-  "and",
-  "or",
-  "in",
-  "on",
-  "at",
-  "to",
-  "for",
-  "of",
-  "with",
-  "by",
-  "from",
-  "is",
-  "are",
-  "was",
-  "were",
-  "what",
-  "which",
-  "who",
-  "where",
-  "when",
-  "how",
-  "why",
-  "this",
-  "that",
-  "these",
-  "those",
-  "it",
-  "its",
-  "as",
-  "do",
-  "does",
-  "did",
-  "have",
-  "has",
-  "had",
-  "can",
-  "could",
-  "will",
-  "would",
-]);
-
-export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArchetypeId | undefined {
-  if (topic.archetype) {
-    return topic.archetype;
-  }
-  if (topic.suggested_layout) {
-    switch (topic.suggested_layout) {
-      case "media_left_choices_right":
-        return "deep_trivia";
-      case "visual_choices_three_pure":
-        return "visual_spotting";
-      case "verdict_true_false":
-        return "verdict_true_false";
-      case "split_versus_two":
-        return "versus_faceoff";
-      case "visual_choices_three":
-        return "visual_identification";
-      case "full_stack_list":
-        return "speed_blitz";
-      case "mystery_reveal":
-        return "mystery_reveal";
-      case "clue_deduction":
-        return "clue_deduction";
-    }
-  }
-  if (topic.quiz_format === "true_false") {
-    return "verdict_true_false";
-  }
-  if (topic.quiz_format === "odd_one_out") {
-    return "visual_spotting";
-  }
-  return undefined;
-}
-
-export function tokenizeText(text?: string): string[] {
-  if (!text) return [];
-  return text
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .split(/\s+/)
-    .filter((token) => token.length >= 3 && !STOP_WORDS.has(token));
-}
-
-export function calculateVisualScore(question: BankQuestionWithCooldown): number {
-  if (!question.visual_spec) return 0;
-  let score = 0;
-  const prompt = question.visual_spec.prompt?.trim();
-  if (prompt && prompt.length > 0) {
-    score += 5;
-    if (prompt.length >= 20) {
-      score += 5;
-    }
-  }
-  if (question.visual_spec.intent === "question_illustration" || question.visual_spec.intent === "choice_illustration") {
-    score += 2;
-  }
-  return score;
-}
-
-export function calculateRelevanceScore(question: BankQuestionWithCooldown, topic: TopicCandidate): number {
-  const topicTokens = new Set([
-    ...tokenizeText(topic.title),
-    ...tokenizeText(topic.premise),
-    ...tokenizeText(topic.hook),
-    ...tokenizeText(topic.theme_hint),
-  ]);
-
-  if (topicTokens.size === 0) return 0;
-
-  let score = 0;
-
-  const questionTokens = tokenizeText(question.question);
-  for (const token of questionTokens) {
-    if (topicTokens.has(token)) score += 2;
-  }
-
-  for (const tag of question.tags ?? []) {
-    const tagTokens = tokenizeText(tag);
-    for (const token of tagTokens) {
-      if (topicTokens.has(token)) score += 3;
-    }
-  }
-
-  if (question.subtopic_id) {
-    const subtopicTokens = tokenizeText(question.subtopic_id.replace(/_/g, " "));
-    for (const token of subtopicTokens) {
-      if (topicTokens.has(token)) score += 2;
-    }
-  }
-
-  const detailTokens = [...tokenizeText(question.explanation), ...tokenizeText(question.fun_fact)];
-  for (const token of detailTokens) {
-    if (topicTokens.has(token)) score += 1;
-  }
-
-  return score;
-}
-
-export function isValidBankQuestion(question: BankQuestionWithCooldown): boolean {
-  const status = (question.status as string) ?? "approved";
-  if (status === "archived" || status === "rejected") {
-    return false;
-  }
-  if (isLegacyPlaceholderBankQuestion(question)) {
-    return false;
-  }
-  if (status === "approved") {
-    return true;
-  }
-  const semanticStatus = (question as { validation?: { semantic_status?: string } }).validation?.semantic_status;
-  if (semanticStatus === "validated") {
-    return true;
-  }
-  return status !== "rejected";
-}
-
-const LEGACY_PLACEHOLDER_EXPLANATION_SUFFIX = " is verified through scientific and historical evidence.";
-const LEGACY_PLACEHOLDER_QUESTION_PATTERN = /: (key question #\d+|core fact|challenge fact|climax fact)\?$/;
-const LEGACY_PLACEHOLDER_CHOICE_PATTERN = /^(.+ )?(Choice|Contender) [A-Z]$/;
-
-/**
- * Detects questions produced by the retired deterministic JIT fallback, which
- * shipped template text ("Topic: key question #2?") into persisted banks.
- * Scoped to the legacy "JIT-" id prefix so real curated questions are unaffected.
- */
-export function isLegacyPlaceholderBankQuestion(question: BankQuestionWithCooldown): boolean {
-  if (!question.id.startsWith("JIT-")) {
-    return false;
-  }
-  if (question.explanation.endsWith(LEGACY_PLACEHOLDER_EXPLANATION_SUFFIX)) {
-    return true;
-  }
-  if (LEGACY_PLACEHOLDER_QUESTION_PATTERN.test(question.question)) {
-    return true;
-  }
-  return question.choices.some((choice) => LEGACY_PLACEHOLDER_CHOICE_PATTERN.test(choice.text));
-}
-
-function assembleThreeActArc(scored: ScoredBankQuestion[]): BankQuestionWithCooldown[] {
-  const remaining = [...scored];
-
-  // Slot 1 (The Hook): Difficulty 1 or 2, high visual score
-  const slot1Candidates = remaining.filter((s) => s.question.difficulty <= 2);
-  const slot1Pool = slot1Candidates.length > 0 ? slot1Candidates : remaining;
-  slot1Pool.sort((a, b) => b.visualScore - a.visualScore || b.totalScore - a.totalScore);
-  const slot1 = slot1Pool[0];
-  remaining.splice(remaining.indexOf(slot1), 1);
-
-  // Slot 3 (The Climax / Twist): Difficulty 3-5 or fun_fact presence
-  const slot3Candidates = remaining.filter(
-    (s) => s.question.difficulty >= 3 || Boolean(s.question.fun_fact && s.question.fun_fact.trim().length > 0),
-  );
-  const slot3Pool = slot3Candidates.length > 0 ? slot3Candidates : remaining;
-  slot3Pool.sort((a, b) => b.question.difficulty - a.question.difficulty || b.totalScore - a.totalScore);
-  const slot3 = slot3Pool[0];
-  remaining.splice(remaining.indexOf(slot3), 1);
-
-  // Slot 2 (The Challenge): Difficulty 2 or 3, or best remaining by score
-  const slot2Candidates = remaining.filter((s) => s.question.difficulty === 2 || s.question.difficulty === 3);
-  const slot2Pool = slot2Candidates.length > 0 ? slot2Candidates : remaining;
-  slot2Pool.sort((a, b) => b.totalScore - a.totalScore);
-  const slot2 = slot2Pool[0];
-
-  return [slot1.question, slot2.question, slot3.question];
-}
-
-function assembleGenericArc(scored: ScoredBankQuestion[], targetCount: number): BankQuestionWithCooldown[] {
-  const topQuestions = scored.slice(0, targetCount);
-  topQuestions.sort((a, b) => a.question.difficulty - b.question.difficulty || b.visualScore - a.visualScore);
-  return topQuestions.map((s) => s.question);
-}
-
-function assemblePartialArc(scored: ScoredBankQuestion[]): BankQuestionWithCooldown[] {
-  const sorted = [...scored];
-  sorted.sort((a, b) => a.question.difficulty - b.question.difficulty || b.visualScore - a.visualScore);
-  return sorted.map((s) => s.question);
-}
-
-export function assembleRetentionArc(
-  scored: ScoredBankQuestion[],
-  targetCount: number,
-): { selected: BankQuestionWithCooldown[]; retentionArcApplied: boolean } {
-  if (scored.length < targetCount) {
-    return {
-      selected: assemblePartialArc(scored),
-      retentionArcApplied: false,
-    };
-  }
-
-  if (targetCount === 3) {
-    return {
-      selected: assembleThreeActArc(scored),
-      retentionArcApplied: true,
-    };
-  }
-
-  return {
-    selected: assembleGenericArc(scored, targetCount),
-    retentionArcApplied: true,
-  };
 }
 
 export async function curateQuestionsForTopic(deps: CurateQuestionsForTopicDeps): Promise<CuratedTopicQuestionsResult> {
@@ -322,6 +77,7 @@ export async function curateQuestionsForTopic(deps: CurateQuestionsForTopicDeps)
   };
 }
 
+export * from "./curation/index.js";
 export {
   ensureTopicQuestionsWithJitFallback,
   determineMissingDifficulties,

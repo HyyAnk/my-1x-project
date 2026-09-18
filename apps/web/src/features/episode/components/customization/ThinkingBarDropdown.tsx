@@ -25,11 +25,18 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
   const activeStyle = currentThinkingBar === "auto" ? resolvedThinkingBar : currentThinkingBar;
   const styleOptions = useStyleCatalogOptions("thinking-bar", ALL_THINKING_BAR_STYLES);
 
+  const getStyleLabel = (style: string): string => {
+    const key = `episodeCustomization.thinking_bar_${style}`;
+    const translated = t(key);
+    if (translated && translated !== key) return translated;
+    return THINKING_BAR_STYLE_LABELS[style] ?? style;
+  };
+
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillThinkingBar")}
-        value={THINKING_BAR_STYLE_LABELS[activeStyle] ?? activeStyle}
+        value={getStyleLabel(activeStyle)}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -39,17 +46,18 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
         <CustomizationPopover title={t("episodeCustomization.pillThinkingBar")}>
           {["auto", ...styleOptions].map((style) => {
             if (style === "auto") return null;
+            const label = getStyleLabel(style);
             return (
               <StyleOptionRow
                 key={style}
                 name="timer_choice"
-                label={THINKING_BAR_STYLE_LABELS[style] ?? style}
+                label={label}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() =>
                   onPreview?.({
                     override: { thinkingBarStyle: style },
-                    label: THINKING_BAR_STYLE_LABELS[style] ?? style,
+                    label,
                   })
                 }
               />

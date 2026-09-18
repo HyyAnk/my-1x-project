@@ -119,8 +119,8 @@ export function SandboxPreviewCanvas({
       >
         {/* Canonical output frame wrapper */}
         {(() => {
-          const canvasWidth = aspectRatio === "9:16" ? 1080 : 1920;
-          const canvasHeight = aspectRatio === "9:16" ? 1920 : 1080;
+          const canvasWidth = 1920;
+          const canvasHeight = 1080;
           return (
             <div
               data-testid="sandbox-viewport-wrapper"

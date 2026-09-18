@@ -132,4 +132,3 @@ describe("Stage 9: Transition Extensibility & End-to-End Unification Audit", () 
     expect(selector.querySelector('option[value="curtain_wipe"]')).toBeDefined();
   });
 });
-

@@ -13,14 +13,7 @@ export interface QuestionRemixCompactCardProps {
   onRemixSingle: (questionId: string, mode: "rephrase" | "replace") => Promise<void> | void;
 }
 
-export function QuestionRemixCompactCard({
-  item,
-  index,
-  qId,
-  isRemixing,
-  remixAction,
-  onRemixSingle,
-}: QuestionRemixCompactCardProps) {
+export function QuestionRemixCompactCard({ item, index, qId, isRemixing, remixAction, onRemixSingle }: QuestionRemixCompactCardProps) {
   const { t } = useTranslation();
 
   return (

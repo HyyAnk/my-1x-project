@@ -94,16 +94,10 @@ export const TransitionPreviewPlayer: React.FC<TransitionPreviewPlayerProps> = (
   const resolvedInst = preview.artifact?.manifest.instances.find((i) => i.id === transitionType);
 
   return (
-    <div
-      className={`transition-preview-player ${className}`}
-      data-aspect-ratio={aspectRatio}
-      data-testid="transition-preview-player"
-    >
+    <div className={`transition-preview-player ${className}`} data-aspect-ratio={aspectRatio} data-testid="transition-preview-player">
       {/* Viewport container */}
       <div
-        className={`transition-viewport-wrapper aspect-${aspectRatio.replace(":", "-")} ${
-          isInspectNative ? "inspect-native-mode" : ""
-        }`}
+        className={`transition-viewport-wrapper aspect-${aspectRatio.replace(":", "-")} ${isInspectNative ? "inspect-native-mode" : ""}`}
         data-testid="transition-preview-viewport"
         style={
           themeColors
@@ -119,9 +113,7 @@ export const TransitionPreviewPlayer: React.FC<TransitionPreviewPlayerProps> = (
           <video
             ref={transport.videoRef}
             src={preview.artifact.videoUrl}
-            className={`transition-video-element ${
-              !transport.isPlaying && transport.authoritativePngUrl ? "video-paused-behind" : ""
-            }`}
+            className={`transition-video-element ${!transport.isPlaying && transport.authoritativePngUrl ? "video-paused-behind" : ""}`}
             playsInline
             muted
             data-testid="transition-video"

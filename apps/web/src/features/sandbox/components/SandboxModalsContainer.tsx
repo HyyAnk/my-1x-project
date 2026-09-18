@@ -14,13 +14,7 @@ export interface SandboxModalsContainerProps {
   design: ReturnType<typeof useSandboxDesignState>;
 }
 
-export function SandboxModalsContainer({
-  channels = [],
-  presets,
-  channelSync,
-  mascot,
-  design,
-}: SandboxModalsContainerProps) {
+export function SandboxModalsContainer({ channels = [], presets, channelSync, mascot, design }: SandboxModalsContainerProps) {
   return (
     <>
       <SandboxPresetModal

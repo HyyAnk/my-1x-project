@@ -19,10 +19,7 @@ export type TopicAvailabilityBatchOptions = {
   overrides?: Record<string, { question_count?: number }>;
 };
 
-export function calculateRequiredSourceCount(
-  candidate: TopicCandidate,
-  options?: TopicAvailabilityBatchOptions,
-): number {
+export function calculateRequiredSourceCount(candidate: TopicCandidate, options?: TopicAvailabilityBatchOptions): number {
   if (candidate.content_kind === "short_reel") {
     return 1;
   }
@@ -79,10 +76,7 @@ function evaluateCandidateSources(
   return { sourceCapacity, hasModified, hasCooldown };
 }
 
-function buildUnavailableScanAvailability(
-  candidate: TopicCandidate,
-  scanStatus: "unavailable" | "incomplete",
-): TopicAvailability {
+function buildUnavailableScanAvailability(candidate: TopicCandidate, scanStatus: "unavailable" | "incomplete"): TopicAvailability {
   const isUnavailable = scanStatus === "unavailable";
   return {
     topic_id: candidate.topic_id,
@@ -174,7 +168,7 @@ function resolveBatchTarget(
     };
   }
   return {
-    repo: repositoryOrChannelId as RepositoryRuntime,
+    repo: repositoryOrChannelId,
     channelId: channelIdOrOptions as string,
     options: optionsParam,
   };

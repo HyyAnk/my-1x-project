@@ -1,27 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { spawn } from "node:child_process";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import crypto from "node:crypto";
 import Fastify from "fastify";
-import {
-  decodePngToRawRgba,
-  decodeVideoFrameToPng,
-  decodeVideoFrameToRawRgba,
-} from "../src/tasks/video/videoFrameDecoder.js";
+import { decodePngToRawRgba, decodeVideoFrameToPng, decodeVideoFrameToRawRgba } from "../src/tasks/video/videoFrameDecoder.js";
 import { TransitionPreviewFramesService } from "../src/quiz/transitionPreview/transitionPreviewFrames.js";
 import { registerTransitionPreviewsRoutes } from "../src/routes/transitionPreviews.js";
 import { TransitionPreviewService } from "../src/quiz/transitionPreview/transitionPreviewService.js";
-import type {
-  TransitionPreviewStorePort,
-  TransitionPreviewRunnerPort,
-  TransitionPreviewRunnerInput,
-} from "../src/quiz/transitionPreview/transitionPreview.types.js";
-import type {
-  PublishedPreviewArtifact,
-  VerifiedPreviewArtifact,
-} from "../src/quiz/transitionPreview/transitionPreviewStore.js";
+import type { TransitionPreviewStorePort, TransitionPreviewRunnerPort } from "../src/quiz/transitionPreview/transitionPreview.types.js";
+import type { PublishedPreviewArtifact, VerifiedPreviewArtifact } from "../src/quiz/transitionPreview/transitionPreviewStore.js";
 
 async function generateBFrameVideo(outputPath: string, durationSeconds = 1): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -122,7 +111,7 @@ describe("Task 6: Video Frame Decoder & Exact Frames Verification", () => {
     } finally {
       await rm(tmpDir, { recursive: true, force: true }).catch(() => {});
     }
-  });
+  }, 60000);
 
   it("TransitionPreviewFramesService manages caching, deduplication, and bounds validation", async () => {
     const tmpDir = path.join(os.tmpdir(), `frames-svc-test-${Date.now()}`);

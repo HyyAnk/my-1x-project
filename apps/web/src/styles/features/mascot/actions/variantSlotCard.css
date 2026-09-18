@@ -26,22 +26,35 @@
 .variant-slot-card.is-busy {
   border-style: solid;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1.5px var(--accent), 0 0 16px rgba(6, 182, 212, 0.25);
+  box-shadow:
+    0 0 0 1.5px var(--accent),
+    0 0 16px rgba(6, 182, 212, 0.25);
   animation: slotCardPulse 1.8s ease-in-out infinite;
 }
 
 @keyframes slotCardPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 1.5px var(--accent), 0 0 8px rgba(6, 182, 212, 0.2);
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1.5px var(--accent),
+      0 0 8px rgba(6, 182, 212, 0.2);
   }
   50% {
-    box-shadow: 0 0 0 2px var(--accent), 0 0 18px rgba(6, 182, 212, 0.45);
+    box-shadow:
+      0 0 0 2px var(--accent),
+      0 0 18px rgba(6, 182, 212, 0.45);
   }
 }
 
 .variant-slot-card.is-queued {
   border-color: rgba(6, 182, 212, 0.35);
   opacity: 0.85;
+}
+
+.variant-slot-card.is-selected {
+  border-color: var(--accent);
+  background: rgba(6, 182, 212, 0.04);
+  box-shadow: 0 0 0 1.5px var(--accent);
 }
 
 .variant-slot-card:hover:not(.is-busy) {
@@ -54,6 +67,34 @@
   align-items: center;
   justify-content: space-between;
   gap: 6px;
+}
+
+.slot-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slot-select-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.slot-select-checkbox {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: var(--accent, #06b6d4);
+  margin: 0;
+}
+
+.slot-select-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .slot-number-badge {
@@ -94,7 +135,7 @@
 /* Slot Canvas & Checkerboard */
 .slot-canvas-container {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 16 / 9;
   position: relative;
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -152,8 +193,90 @@
   transition: opacity 0.2s ease;
 }
 
-.variant-slot-card:hover .slot-zoom-btn {
+.variant-slot-card:hover .slot-zoom-btn,
+.variant-slot-card:focus-within .slot-zoom-btn {
   opacity: 1;
+}
+
+.slot-downloads-overlay {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  transform: translateY(4px);
+  z-index: 3;
+}
+
+.variant-slot-card:hover .slot-downloads-overlay,
+.variant-slot-card:focus-within .slot-downloads-overlay,
+.slot-downloads-overlay:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .slot-downloads-overlay {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+.slot-download-btn {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #ffffff;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.slot-download-btn:hover {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.slot-download-btn:focus-visible {
+  outline: 2px solid var(--accent, #06b6d4);
+  outline-offset: 1px;
+}
+
+.slot-download-btn.is-transparent {
+  background: rgba(6, 182, 212, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.slot-download-btn.is-transparent:hover {
+  background: rgba(6, 182, 212, 0.98);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 .slot-empty-placeholder {

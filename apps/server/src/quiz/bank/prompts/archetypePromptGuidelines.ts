@@ -1,7 +1,7 @@
 import type { BankGameplayArchetypeId } from "@studio/shared";
 
 export interface ArchetypePromptGuideline {
-  format: "multiple_choice" | "true_false" | "odd_one_out" | "open_guess" | "slider" | "ordering";
+  format: "multiple_choice" | "true_false" | "odd_one_out" | "open_guess" | "slider" | "ordering" | "image_guess";
   choiceCount: number;
   visualIntent: "none" | "question_illustration" | "choice_illustration";
   defaultThinkingSeconds: number;
@@ -44,7 +44,9 @@ export const VISUAL_ANCHOR_MANDATE_LINES: string[] = [
   "6. ALWAYS write in 100% English because the underlying AI image generation models require English prompts.",
 ];
 
-export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypePromptGuideline> = {
+export const ARCHETYPE_GUIDELINES: Record<Exclude<BankGameplayArchetypeId, "clue_deduction">, ArchetypePromptGuideline> & {
+  [archetype: string]: ArchetypePromptGuideline | undefined;
+} = {
   verdict_true_false: {
     format: "true_false",
     choiceCount: 2,
@@ -168,8 +170,8 @@ export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypeProm
     ],
   },
   mystery_reveal: {
-    format: "multiple_choice",
-    choiceCount: 3,
+    format: "image_guess",
+    choiceCount: 1,
     visualIntent: "question_illustration",
     defaultThinkingSeconds: 6,
     instructions: [
@@ -181,27 +183,8 @@ export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypeProm
       "  3. Stat riddle: '[Surprising stat or achievement] — what [vehicle / subject] is hiding here?' (e.g. 'Sees 16 sunrises a day — what orbiting lab is this?')",
       "  4. Shadow identification: 'Whose outline is concealed in this mystery reveal?'",
       "  5. Historical unmasking: 'Unmask the legend: Which [craft / figure] [historic milestone]?'",
-      "3 choices with high plausibility.",
+      "EXACTLY 1 choice (the single canonical correct answer revealed after suspense). NO distractors, NO multiple choices.",
       "Explanation reveals the secret story and historical context behind the silhouette.",
-    ],
-  },
-  clue_deduction: {
-    format: "multiple_choice",
-    choiceCount: 3,
-    visualIntent: "question_illustration",
-    defaultThinkingSeconds: 7,
-    instructions: [
-      "Detective deduction challenge connecting clue image A to surprise reveal answer B.",
-      "CRITICAL ANTI-REPETITION RULE: DO NOT phrase questions as passive biographical trivia ('Which [adjective] [person] [did action]?'). Frame questions as active deductive clue-solving.",
-      "FRANCHISE ANCHOR MANDATE: Always name the franchise or universe in the clue hook so casual audiences have instant context (e.g. 'In Journey to the West, who wields this nine-toothed iron rake?').",
-      "Rotate between these 5 deductive framing styles:",
-      "  1. Clue pointer: 'This clue points directly to which legendary figure?'",
-      "  2. Artifact ownership: 'Who is famous for wielding this [weapon / artifact / symbol]?' (e.g. 'Who wields this nine-toothed iron rake?')",
-      "  3. Detective deduction: 'Can you deduce the [character / profession] from this single tool?'",
-      "  4. Trail puzzle: 'Match the clue: Which [hero / explorer] [legendary feat]?'",
-      "  5. Signature mystery: 'Whose signature legend revolves around this [item / creature]?'",
-      "3 choices.",
-      "Explanation connects clues clearly and persuasively.",
     ],
   },
 };

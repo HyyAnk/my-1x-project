@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { Plus, Sparkle } from "@phosphor-icons/react";
+import { Plus, Sparkle, MagicWand } from "@phosphor-icons/react";
 import { type MascotProfile, type MascotStyle, synthesizeLegacyCoreStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { MascotStyleAnchorCard } from "./MascotStyleAnchorCard";
+import { MascotStyleQueueProgressCard } from "./MascotStyleQueueProgressCard";
 import { StyleCreateModal } from "./StyleCreateModal";
 
 export interface MascotStyleConceptManagerProps {
@@ -24,6 +25,10 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
     return rawStyles;
   }, [editingMascot]);
 
+  const missingAnchorStylesCount = useMemo(() => {
+    return allStyles.filter((s) => s.id !== "core" && !s.is_default && !s.anchor_image_url).length;
+  }, [allStyles]);
+
   return (
     <div className="wizard-card style-concept-manager-card">
       <div className="style-concept-manager-header">
@@ -35,18 +40,41 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
           <p className="style-concept-subtitle">{t("mascots.styleConceptsSubtitle")}</p>
         </div>
 
-        {stylesState ? (
-          <button
-            type="button"
-            className="quiet-button compact style-concept-add-btn"
-            onClick={() => stylesState.setIsCreateModalOpen(true)}
-            title={t("mascots.addStyleBtn")}
-          >
-            <Plus size={14} weight="bold" />
-            <span>{t("mascots.addStyleBtn")}</span>
-          </button>
-        ) : null}
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          {stylesState && missingAnchorStylesCount >= 2 ? (
+            <button
+              type="button"
+              className="primary-button compact style-concept-queue-all-btn"
+              onClick={() => void stylesState.handleQueueAllMissingStyles()}
+              disabled={Boolean(stylesState.styleQueueProgress?.isStopping)}
+              title={t("mascots.queueAllMissingBtn", { count: missingAnchorStylesCount })}
+            >
+              <MagicWand size={14} weight="bold" />
+              <span>{t("mascots.queueAllMissingBtn", { count: missingAnchorStylesCount })}</span>
+            </button>
+          ) : null}
+
+          {stylesState ? (
+            <button
+              type="button"
+              className="quiet-button compact style-concept-add-btn"
+              onClick={() => stylesState.setIsCreateModalOpen(true)}
+              title={t("mascots.addStyleBtn")}
+            >
+              <Plus size={14} weight="bold" />
+              <span>{t("mascots.addStyleBtn")}</span>
+            </button>
+          ) : null}
+        </div>
       </div>
+
+      {stylesState?.styleQueueProgress ? (
+        <MascotStyleQueueProgressCard
+          styleQueueProgress={stylesState.styleQueueProgress}
+          onStopQueue={() => void stylesState.handleStopStyleQueue()}
+          onRetryFailed={() => void stylesState.handleRetryFailedStyles()}
+        />
+      ) : null}
 
       <div className="style-anchor-cards-grid">
         {allStyles.map((style) => (

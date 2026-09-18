@@ -7,11 +7,7 @@ import type {
   TopicSourceShortage,
 } from "@studio/shared";
 import type { EvaluatedBankQuestionCandidate } from "../quiz/bank/bankEligibility.js";
-import type {
-  TopicMatrixQuizFormat,
-  TopicMatrixSlotArchetype,
-  TopicMatrixSuggestedLayout,
-} from "./topicMatrixPlanner.js";
+import type { TopicMatrixQuizFormat, TopicMatrixSlotArchetype, TopicMatrixSuggestedLayout } from "./topicMatrixPlanner.js";
 
 export interface AllocatedSlot {
   slot: number;

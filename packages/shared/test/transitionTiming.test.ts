@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test, { describe, it } from "node:test";
+import { describe, it } from "node:test";
 import { resolveTransitionInstance } from "../src/transitions/resolveTransition.js";
 import { quantizeSecondsToFrames } from "../src/transitions/transitionTiming.js";
 import { transitionContext } from "./helpers/transitionContext.js";
@@ -85,11 +85,6 @@ describe("Transition Timing & Quantization (Task 1)", () => {
       ),
     );
 
-    assert.throws(() =>
-      resolveTransitionInstance(
-        { id: "bubble_splash" },
-        transitionContext({ fps: { numerator: 0, denominator: 1 } }),
-      ),
-    );
+    assert.throws(() => resolveTransitionInstance({ id: "bubble_splash" }, transitionContext({ fps: { numerator: 0, denominator: 1 } })));
   });
 });

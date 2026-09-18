@@ -42,20 +42,14 @@ export const TransitionTimingPanel: React.FC<TransitionTimingPanelProps> = ({
           onChange={(e) => onDurationChange(Number(e.target.value))}
           className="timing-slider"
         />
-        <button
-          type="button"
-          onClick={onReset}
-          className="timing-reset-btn"
-          title={`Reset to ${definition.defaultDurationSeconds}s`}
-        >
+        <button type="button" onClick={onReset} className="timing-reset-btn" title={`Reset to ${definition.defaultDurationSeconds}s`}>
           Reset
         </button>
       </div>
 
       {effectiveDurationSeconds !== undefined && Math.abs(effectiveDurationSeconds - currentDurationSeconds) > 0.01 && (
         <div className="timing-effective-note">
-          Effective: {effectiveDurationSeconds.toFixed(2)}s
-          {adjustmentMessage && ` (${adjustmentMessage})`}
+          Effective: {effectiveDurationSeconds.toFixed(2)}s{adjustmentMessage && ` (${adjustmentMessage})`}
         </div>
       )}
     </div>

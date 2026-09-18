@@ -30,24 +30,19 @@ export async function assertSafeTarget(
   runtimeOrTarget: Pick<RepositoryRuntime, "roots" | "rootDirectory"> | string,
   maybeTarget?: string,
 ): Promise<void> {
-  let runtime: Pick<RepositoryRuntime, "roots" | "rootDirectory">;
-  let target: string;
-
-  if (typeof runtimeOrTarget === "string") {
-    if (!this) {
-      throw new RepositoryError("Runtime context is required to assert safe target", "UNSAFE_PATH");
-    }
-    runtime = this;
-    target = runtimeOrTarget;
-  } else {
-    runtime = runtimeOrTarget;
-    target = maybeTarget!;
-  }
-
-  const roots = [
-    path.join(runtime.roots.runtime, QUESTION_BANK_DIR),
-    path.join(runtime.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR),
-  ];
+  const target = typeof runtimeOrTarget === "string" ? runtimeOrTarget : maybeTarget!;
+  const roots =
+    typeof runtimeOrTarget === "string"
+      ? (() => {
+          if (!this) {
+            throw new RepositoryError("Runtime context is required to assert safe target", "UNSAFE_PATH");
+          }
+          return [path.join(this.roots.runtime, QUESTION_BANK_DIR), path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR)];
+        })()
+      : [
+          path.join(runtimeOrTarget.roots.runtime, QUESTION_BANK_DIR),
+          path.join(runtimeOrTarget.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR),
+        ];
   const root = roots.find((candidate) => {
     const relative = path.relative(path.resolve(candidate), path.resolve(target));
     return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
@@ -88,11 +83,7 @@ export function resolveBankCandidateRoots(runtime: Pick<RepositoryRuntime, "root
 /**
  * Reads child directory names safely, verifying absence of symlinks and valid path segments.
  */
-export async function readSafeBankChildDirs(
-  bankRoot: string,
-  dirPath: string,
-  segmentKind: "archetype" | "domain",
-): Promise<string[]> {
+export async function readSafeBankChildDirs(bankRoot: string, dirPath: string, segmentKind: "archetype" | "domain"): Promise<string[]> {
   await assertSafeBankFilesystemPath(bankRoot, dirPath);
   try {
     const entries = await readdir(dirPath, { withFileTypes: true });

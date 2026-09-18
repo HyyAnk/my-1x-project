@@ -93,6 +93,25 @@ export function productionMascotCss(): string {
   background-position: 0% 50%;
   background-size: calc(var(--mascot-legacy-frames, 1) * 100%) 100%;
 }
+.candy-mascot-container.mascot-v2-container .mascot-v2-animation-art {
+  background-repeat: no-repeat;
+  background-size: 400% 300%;
+}
+.candy-mascot-container.mascot-v2-container video.mascot-v2-animation-video {
+  object-fit: contain;
+  background: transparent;
+  border: none;
+  outline: none;
+  background-image: none;
+}
+.candy-mascot-container.mascot-v2-container img.mascot-v2-frame {
+  object-fit: contain;
+  background-image: none;
+}
+.candy-mascot-container.mascot-v2-preview .mascot-v2-animation-art {
+  animation: none !important;
+  background-size: auto;
+}
 .candy-mascot-container.mascot-v2-preview .mascot-v2-state {
   opacity: 1;
   animation: none;
@@ -122,6 +141,34 @@ export function productionMascotCss(): string {
 @keyframes mascot-v2-legacy-frame {
   from { background-position: 0% 50%; }
   to { background-position: 100% 50%; }
+}
+@keyframes mascot-v2-atlas-loop {
+  0%, 8.332% { background-position: 0% 0%; }
+  8.333%, 16.665% { background-position: 33.3333% 0%; }
+  16.666%, 24.999% { background-position: 66.6667% 0%; }
+  25%, 33.332% { background-position: 100% 0%; }
+  33.333%, 41.665% { background-position: 0% 50%; }
+  41.666%, 49.999% { background-position: 33.3333% 50%; }
+  50%, 58.332% { background-position: 66.6667% 50%; }
+  58.333%, 66.665% { background-position: 100% 50%; }
+  66.666%, 74.999% { background-position: 0% 100%; }
+  75%, 83.332% { background-position: 33.3333% 100%; }
+  83.333%, 91.665% { background-position: 66.6667% 100%; }
+  91.666%, 100% { background-position: 100% 100%; }
+}
+@keyframes mascot-v2-atlas-oneshot {
+  0%, 8.332% { background-position: 0% 0%; }
+  8.333%, 16.665% { background-position: 33.3333% 0%; }
+  16.666%, 24.999% { background-position: 66.6667% 0%; }
+  25%, 33.332% { background-position: 100% 0%; }
+  33.333%, 41.665% { background-position: 0% 50%; }
+  41.666%, 49.999% { background-position: 33.3333% 50%; }
+  50%, 58.332% { background-position: 66.6667% 50%; }
+  58.333%, 66.665% { background-position: 100% 50%; }
+  66.666%, 74.999% { background-position: 0% 100%; }
+  75%, 83.332% { background-position: 33.3333% 100%; }
+  83.333%, 91.665% { background-position: 66.6667% 100%; }
+  91.666%, 100% { background-position: 100% 100%; }
 }
 @keyframes mascot-single-breathe { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) scale(1.025, 0.98); } }
 @keyframes mascot-single-sway { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-2.5deg); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 4px), calc(var(--action-offset-y, 0px) - 8px)) rotate(3.5deg); } }

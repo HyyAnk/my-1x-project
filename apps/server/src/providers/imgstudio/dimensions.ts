@@ -28,7 +28,9 @@ export function resolveImgStudioAspectRatio(
   if (IMGSTUDIO_SUPPORTED_ASPECT_RATIOS.includes(trimmed)) {
     return trimmed;
   }
-  return defaultRatio;
+  throw new Error(
+    `Unsupported aspect ratio '${aspectRatio}' for ImgStudio generation; supported ratios are: ${IMGSTUDIO_SUPPORTED_ASPECT_RATIOS.join(", ")}`,
+  );
 }
 
 /**
@@ -36,10 +38,7 @@ export function resolveImgStudioAspectRatio(
  * Respects max resolution limits defined in `@studio/shared` via `isSupportedImgStudioResolution`.
  * Defaults to '2K' unless the model only supports '1K'.
  */
-export function resolveImgStudioResolution(
-  modelId: string,
-  requestedResolution?: string,
-): ImgStudioResolution {
+export function resolveImgStudioResolution(modelId: string, requestedResolution?: string): ImgStudioResolution {
   const trimmed = requestedResolution?.trim().toUpperCase();
   if (trimmed && isSupportedImgStudioResolution(modelId, trimmed)) {
     return trimmed as ImgStudioResolution;

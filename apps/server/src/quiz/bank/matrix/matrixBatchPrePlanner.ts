@@ -41,10 +41,7 @@ function createVirtualReservationQuestion(
  * Pre-Allocation Matrix Planner: Plans and reserves multi-chunk candidate batches upfront
  * using virtual coverage tracking.
  */
-export function planBatchChunks(
-  questions: BankQuestion[],
-  options: PlanBatchChunksOptions,
-): PlannedBatchChunk[] {
+export function planBatchChunks(questions: BankQuestion[], options: PlanBatchChunksOptions): PlannedBatchChunk[] {
   const targetCount = Math.max(1, options.targetCount);
   const chunkSize = Math.max(1, options.chunkSize || 20);
   const totalChunks = Math.ceil(targetCount / chunkSize);
@@ -84,9 +81,7 @@ export function planBatchChunks(
     // Reserve chosen candidates in virtualQuestions so subsequent chunks select distinct entities
     const nowIso = new Date().toISOString();
     for (const c of candidatesForChunk) {
-      virtualQuestions.push(
-        createVirtualReservationQuestion(c, chunkIdx, options.difficulty ?? 2, nowIso),
-      );
+      virtualQuestions.push(createVirtualReservationQuestion(c, chunkIdx, options.difficulty ?? 2, nowIso));
     }
 
     plannedChunks.push({

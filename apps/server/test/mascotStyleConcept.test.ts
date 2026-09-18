@@ -91,10 +91,11 @@ describe("Mascot Style Concept Generation", () => {
       expect(savedAssets[0]?.filename).toContain("_anchor_");
       expect(savedAssets[1]?.filename).toContain("_anchor_raw_");
 
-      // Verify style's anchor_image_url was updated on the saved mascot profile
+      // Verify style's anchor_image_url and raw_anchor_image_url were updated on the saved mascot profile
       expect(savedMascotProfile).not.toBeNull();
       const updatedStyle = (savedMascotProfile as unknown as MascotProfile)?.styles?.find((s) => s.id === "style_cyber_ninja");
       expect(updatedStyle?.anchor_image_url).toBe(result.anchor_image_url);
+      expect(updatedStyle?.raw_anchor_image_url).toBe(result.raw_image_url);
     });
 
     it("throws error when styleId is not found on the mascot", async () => {
@@ -168,10 +169,11 @@ describe("Mascot Style Concept Generation", () => {
       expect(mattedFile.size).toBeGreaterThan(0);
       expect(rawFile.size).toBeGreaterThan(0);
 
-      // Verify reloaded mascot profile has anchor_image_url set
+      // Verify reloaded mascot profile has anchor_image_url and raw_anchor_image_url set
       const reloadedMascot = await app.repository.getMascot(mascot.id);
       const styleInMascot = reloadedMascot.styles?.find((s) => s.id === style.id);
       expect(styleInMascot?.anchor_image_url).toBe(result.anchor_image_url);
+      expect(styleInMascot?.raw_anchor_image_url).toBe(result.raw_image_url);
 
       // 5. Regenerate style concept to verify previous asset cleanup
       const result2 = await generateMascotStyleConcept(app.repository, reloadedMascot, style.id, testImageConfig);
@@ -180,6 +182,7 @@ describe("Mascot Style Concept Generation", () => {
       const reloadedMascot2 = await app.repository.getMascot(mascot.id);
       const styleInMascot2 = reloadedMascot2.styles?.find((s) => s.id === style.id);
       expect(styleInMascot2?.anchor_image_url).toBe(result2.anchor_image_url);
+      expect(styleInMascot2?.raw_anchor_image_url).toBe(result2.raw_image_url);
 
       // Old anchor file should have been cleaned up
       await expect(app.repository.getMascotAssetFile(mascot.id, mattedFilename)).rejects.toThrow();

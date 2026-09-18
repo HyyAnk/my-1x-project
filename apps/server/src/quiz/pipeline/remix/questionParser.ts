@@ -83,7 +83,11 @@ export function normalizeRawQuizQuestion(raw: unknown, targetFallback?: QuizQues
   const { id, number, format, difficulty } = extractQuestionIdentifiers(obj, targetFallback);
   const question = cleanQuestionText(obj.question, targetFallback?.question);
   const choices = normalizeRawChoices(obj.choices, targetFallback?.choices);
-  const requiredChoiceCount = quizChoiceCountForFormat(format);
+  const answerMode =
+    (typeof obj.answer_mode === "string" && (obj.answer_mode === "single_reveal" || obj.answer_mode === "choice_selection")
+      ? obj.answer_mode
+      : targetFallback?.answer_mode) ?? (choices.length === 1 ? "single_reveal" : "choice_selection");
+  const requiredChoiceCount = quizChoiceCountForFormat(format, answerMode);
 
   if (choices.length !== requiredChoiceCount) {
     throw new Error(
@@ -104,6 +108,7 @@ export function normalizeRawQuizQuestion(raw: unknown, targetFallback?: QuizQues
     id,
     number,
     format,
+    answer_mode: answerMode,
     difficulty,
     question,
     choices,

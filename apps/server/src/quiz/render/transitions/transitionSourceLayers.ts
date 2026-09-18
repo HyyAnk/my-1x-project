@@ -10,10 +10,7 @@ export type SourceLayerSelectors = {
  * at the exact boundary frame of a resolved transition instance.
  * Does NOT alter or take ownership of HyperFrames clip-level display.
  */
-export function applyTransitionSourceHandoff(
-  instance: ResolvedTransitionInstance,
-  sourceLayers: SourceLayerSelectors,
-): string {
+export function applyTransitionSourceHandoff(instance: ResolvedTransitionInstance, sourceLayers: SourceLayerSelectors): string {
   const fps = instance.fps.numerator / instance.fps.denominator;
   const boundarySeconds = instance.boundaryFrame / fps;
 

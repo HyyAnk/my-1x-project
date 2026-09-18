@@ -62,16 +62,12 @@ describe("gpti2.store Image Provider", () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation((input: RequestInfo | URL) => {
       const url = toUrlString(input);
       if (url.endsWith("/generations")) {
-        return Promise.resolve(
-          new Response(JSON.stringify({ id: "job_123", price_vnd: 50 }), { status: 202 }),
-        );
+        return Promise.resolve(new Response(JSON.stringify({ id: "job_123", price_vnd: 50 }), { status: 202 }));
       }
       if (url.includes("/jobs/job_123")) {
         pollCount += 1;
         if (pollCount === 1) {
-          return Promise.resolve(
-            new Response(JSON.stringify({ status: "running" }), { status: 200 }),
-          );
+          return Promise.resolve(new Response(JSON.stringify({ status: "running" }), { status: 200 }));
         }
         return Promise.resolve(
           new Response(
@@ -106,9 +102,7 @@ describe("gpti2.store Image Provider", () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation((input: RequestInfo | URL) => {
       const url = toUrlString(input);
       if (url.endsWith("/nano/generations")) {
-        return Promise.resolve(
-          new Response(JSON.stringify({ id: "nb_456", price_vnd: 100 }), { status: 202 }),
-        );
+        return Promise.resolve(new Response(JSON.stringify({ id: "nb_456", price_vnd: 100 }), { status: 202 }));
       }
       if (url.includes("/nano/nb_456")) {
         return Promise.resolve(
@@ -123,9 +117,7 @@ describe("gpti2.store Image Provider", () => {
         );
       }
       if (url.includes("/download/nb_456.png")) {
-        return Promise.resolve(
-          new Response(fakePngBytes.buffer, { status: 200 }),
-        );
+        return Promise.resolve(new Response(fakePngBytes.buffer, { status: 200 }));
       }
       return Promise.reject(new Error(`Unexpected url: ${url}`));
     });
@@ -275,9 +267,7 @@ describe("gpti2.store Image Provider", () => {
 
     // Test nano-banana-2 with direct aspect_ratio
     fetchMock
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ id: "nb_square", price_vnd: 100 }), { status: 202 }),
-      )
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: "nb_square", price_vnd: 100 }), { status: 202 }))
       .mockResolvedValueOnce(
         new Response(
           JSON.stringify({
@@ -288,9 +278,7 @@ describe("gpti2.store Image Provider", () => {
           { status: 200 },
         ),
       )
-      .mockResolvedValueOnce(
-        new Response(new Uint8Array([137, 80, 78, 71]).buffer, { status: 200 }),
-      );
+      .mockResolvedValueOnce(new Response(new Uint8Array([137, 80, 78, 71]).buffer, { status: 200 }));
 
     const nanoResult = await generateGpti2ImageBytes("A square icon", {
       apiKey: "sk-test",
@@ -354,9 +342,7 @@ describe("gpti2.store Image Provider", () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation((input: RequestInfo | URL) => {
       const url = toUrlString(input);
       if (url.endsWith("/nano/generations")) {
-        return Promise.resolve(
-          new Response(JSON.stringify({ id: "nb_ref_123", price_vnd: 100 }), { status: 202 }),
-        );
+        return Promise.resolve(new Response(JSON.stringify({ id: "nb_ref_123", price_vnd: 100 }), { status: 202 }));
       }
       if (url.includes("/nano/nb_ref_123")) {
         return Promise.resolve(
@@ -371,9 +357,7 @@ describe("gpti2.store Image Provider", () => {
         );
       }
       if (url.includes("/download/nb_ref_123.png")) {
-        return Promise.resolve(
-          new Response(new Uint8Array([137, 80, 78, 71]).buffer, { status: 200 }),
-        );
+        return Promise.resolve(new Response(new Uint8Array([137, 80, 78, 71]).buffer, { status: 200 }));
       }
       return Promise.reject(new Error(`Unexpected url: ${url}`));
     });

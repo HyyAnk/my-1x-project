@@ -1,26 +1,15 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import Fastify from "fastify";
-import {
-  registerTransition,
-  resetTransitionRegistry,
-  isValidTransition,
-  type TransitionDefinition,
-} from "@studio/shared";
+import { registerTransition, resetTransitionRegistry, isValidTransition, type TransitionDefinition } from "@studio/shared";
 import { registerTransitionPreviewsRoutes } from "../src/routes/transitionPreviews.js";
 import { TransitionPreviewService } from "../src/quiz/transitionPreview/transitionPreviewService.js";
-import {
-  prepareTransitionSpecimen,
-  SPECIMEN_SAMPLE_REVISION,
-} from "../src/quiz/render/transitions/prepareTransitionSpecimen.js";
+import { prepareTransitionSpecimen, SPECIMEN_SAMPLE_REVISION } from "../src/quiz/render/transitions/prepareTransitionSpecimen.js";
 import type {
   TransitionPreviewRunnerInput,
   TransitionPreviewRunnerPort,
   TransitionPreviewStorePort,
 } from "../src/quiz/transitionPreview/transitionPreview.types.js";
-import type {
-  PublishedPreviewArtifact,
-  VerifiedPreviewArtifact,
-} from "../src/quiz/transitionPreview/transitionPreviewStore.js";
+import type { PublishedPreviewArtifact, VerifiedPreviewArtifact } from "../src/quiz/transitionPreview/transitionPreviewStore.js";
 
 class ExtensibilityTestStore implements TransitionPreviewStorePort {
   private artifacts = new Map<string, VerifiedPreviewArtifact>();

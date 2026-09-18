@@ -2,18 +2,13 @@ import { useState } from "react";
 import type { ReelSegment, SegmentIndex } from "@studio/shared";
 import { clampDuration, clampCueTiming } from "./SegmentTimingControls";
 
-export function useSegmentDraft(
-  segments: ReelSegment[],
-  onChangeSegmentDraft: (updatedSegments: ReelSegment[]) => void,
-) {
+export function useSegmentDraft(segments: ReelSegment[], onChangeSegmentDraft: (updatedSegments: ReelSegment[]) => void) {
   const [activeSegmentIndex, setActiveSegmentIndex] = useState<SegmentIndex>(1);
   const activeSegment = segments.find((s) => s.index === activeSegmentIndex) || segments[0];
 
   const updateField = <K extends keyof ReelSegment>(field: K, value: ReelSegment[K]) => {
     if (!activeSegment) return;
-    const updatedSegments = segments.map((seg) =>
-      seg.index === activeSegment.index ? { ...seg, [field]: value } : seg,
-    );
+    const updatedSegments = segments.map((seg) => (seg.index === activeSegment.index ? { ...seg, [field]: value } : seg));
     onChangeSegmentDraft(updatedSegments);
   };
 

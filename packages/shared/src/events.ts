@@ -12,6 +12,7 @@ export const QuizTimelineEventTypeSchema = z.enum([
   "choices.enter",
   "countdown.start",
   "countdown.tick",
+  "timer.hide",
   "answer.reveal",
   "answer.dim_wrong",
   "mascot.state",

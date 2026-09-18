@@ -9,7 +9,26 @@ export type MascotBatchProgressCardProps = {
 export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBatchProgressCardProps) {
   if (!batchProgress) return null;
 
-  const percentage = Math.min(100, Math.round((batchProgress.completed / batchProgress.total) * 100));
+  const percentage = Math.min(100, Math.round((batchProgress.completed / Math.max(1, batchProgress.total)) * 100));
+  const queuedCount = Math.max(0, batchProgress.total - batchProgress.completed - batchProgress.failed);
+
+  const isRegenerating = batchProgress.mode === "regenerate_selected" || batchProgress.statusMessage.toLowerCase().includes("selected");
+
+  const targetStateLabel =
+    batchProgress.targetState && batchProgress.targetState !== "all"
+      ? batchProgress.targetState === "thinking"
+        ? "Thinking "
+        : "Celebrate "
+      : "";
+
+  const title =
+    batchProgress.total === 1
+      ? isRegenerating
+        ? `Regenerating ${targetStateLabel}Variant`
+        : `Generating ${targetStateLabel}Variant`
+      : isRegenerating
+        ? `Regenerating ${targetStateLabel}Variants (3 Concurrent Streams)`
+        : `Generating ${targetStateLabel || "Style "}Variants (3 Concurrent Streams)`;
 
   return (
     <div
@@ -24,10 +43,11 @@ export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBa
         <div className="batch-progress-meta">
           <div className="batch-progress-title-row">
             <Lightning size={17} weight="fill" className="batch-pulse-icon" />
-            <span className="batch-progress-title">Generating Style Variants (3 Concurrent Streams)</span>
+            <span className="batch-progress-title">{title}</span>
           </div>
           <span className="batch-progress-counter">
-            {batchProgress.completed} / {batchProgress.total} slots ({percentage}%)
+            {batchProgress.completed} / {batchProgress.total} completed ({percentage}%)
+            {queuedCount > 0 ? ` • ${queuedCount} queued` : ""}
             {batchProgress.failed > 0 ? ` • ${batchProgress.failed} failed` : ""}
           </span>
         </div>
@@ -38,6 +58,7 @@ export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBa
           onClick={onStopBatch}
           disabled={batchProgress.isStopping}
           title="Cancel the remaining server-side slot generation"
+          aria-label="Stop Generation"
         >
           <Stop size={14} weight="fill" />
           <span>{batchProgress.isStopping ? "Stopping Queue..." : "Stop Generation"}</span>
@@ -57,14 +78,15 @@ export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBa
         </div>
 
         {batchProgress.activeSlotKeys.length > 0 ? (
-          <div className="active-streams-pills">
+          <div className="active-streams-pills" role="status" aria-label="Active generation streams">
             <span className="active-streams-label">Active Streams:</span>
             {batchProgress.activeSlotKeys.map((key, idx) => {
               const [st, num] = key.split("_");
+              const stateName = st === "thinking" ? "Thinking" : st === "celebrate" ? "Celebrate" : st;
               return (
-                <span key={key} className="stream-badge">
-                  <span className="stream-dot" />
-                  Stream {idx + 1}: {st === "thinking" ? "Thinking" : "Celebrate"} #{num}
+                <span key={key} className="stream-badge" title={`Stream ${idx + 1}: ${stateName} #${num}`}>
+                  <span className="stream-dot" aria-hidden="true" />
+                  <span className="stream-text">{`Stream ${idx + 1}: ${stateName} #${num}`}</span>
                 </span>
               );
             })}

@@ -54,4 +54,51 @@ describe("hashCodec", () => {
     const built = buildHash({ page: "channels", channelId: "ch-1", tab: "short-reels" });
     expect(built).toBe("#/channels/ch-1?tab=short-reels");
   });
+
+  it("parses and builds mascot routes with mascotId and step", () => {
+    const libraryRoute = parseHash("#/mascots");
+    expect(libraryRoute.page).toBe("mascots");
+    expect(libraryRoute.mascotId).toBeNull();
+    expect(libraryRoute.step).toBeNull();
+    expect(libraryRoute.tab).toBe("library");
+
+    const newMascotRoute = parseHash("#/mascots/new");
+    expect(newMascotRoute.page).toBe("mascots");
+    expect(newMascotRoute.mascotId).toBe("new");
+    expect(newMascotRoute.step).toBeNull();
+    expect(newMascotRoute.tab).toBe("generator");
+
+    const specificMascotRoute = parseHash("#/mascots/mascot-123?step=2");
+    expect(specificMascotRoute.page).toBe("mascots");
+    expect(specificMascotRoute.mascotId).toBe("mascot-123");
+    expect(specificMascotRoute.step).toBe(2);
+    expect(specificMascotRoute.tab).toBe("generator");
+
+    const legacyQueryRoute = parseHash("#/mascots?tab=generator&mascotId=mascot-123&step=3");
+    expect(legacyQueryRoute.page).toBe("mascots");
+    expect(legacyQueryRoute.mascotId).toBe("mascot-123");
+    expect(legacyQueryRoute.step).toBe(3);
+    expect(legacyQueryRoute.tab).toBe("generator");
+
+    expect(buildHash({ page: "mascots", mascotId: "mascot-123", step: 4 })).toBe("#/mascots/mascot-123?step=4");
+    expect(buildHash({ page: "mascots", mascotId: "new" })).toBe("#/mascots/new");
+  });
+
+  it("round-trips workspace tabs for every routed area", () => {
+    const routes = [
+      ["#/tasks?tab=failed", "tasks", "failed"],
+      ["#/settings?tab=media", "settings", "media"],
+      ["#/mascots?tab=generator", "mascots", "generator"],
+      ["#/sandbox?tab=transition", "sandbox", "transition"],
+      ["#/question_bank?tab=details", "question_bank", "details"],
+      ["#/channels/ch-1/short-reels/reel-1?tab=publishing", "channels", "publishing"],
+    ] as const;
+
+    for (const [hash, page, tab] of routes) {
+      const parsed = parseHash(hash);
+      expect(parsed.page).toBe(page);
+      expect(parsed.tab).toBe(tab);
+      expect(buildHash(parsed)).toBe(hash);
+    }
+  });
 });

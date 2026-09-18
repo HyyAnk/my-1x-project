@@ -794,14 +794,7 @@ describe("Question Bank Studio UI Components", () => {
       },
     };
 
-    renderWithLanguage(
-      <QuestionBankActivityBar
-        job={runningJob}
-        onCancelJob={onCancel}
-        onOpenQuestionBank={onOpen}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankActivityBar job={runningJob} onCancelJob={onCancel} onOpenQuestionBank={onOpen} />, "en");
 
     expect(screen.getByText("AI BATCH")).toBeDefined();
     expect(screen.getByText(/Question Bank AI Generator \(25\/50 questions\)/)).toBeDefined();
@@ -843,13 +836,7 @@ describe("Question Bank Studio UI Components", () => {
       },
     };
 
-    renderWithLanguage(
-      <QuestionBankActivityBar
-        job={completedJob}
-        onDismiss={onDismiss}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankActivityBar job={completedJob} onDismiss={onDismiss} />, "en");
 
     expect(screen.getByText("DONE")).toBeDefined();
     expect(screen.getByText("Batch Complete: 40 questions added to Question Bank")).toBeDefined();
@@ -913,7 +900,11 @@ describe("Question Bank Studio UI Components", () => {
       },
     };
 
-    rerender(<LanguageProvider><QuestionBankActivityBar job={warningJob} /></LanguageProvider>);
+    rerender(
+      <LanguageProvider>
+        <QuestionBankActivityBar job={warningJob} />
+      </LanguageProvider>,
+    );
 
     expect(screen.getByText(/Batch Complete with Warnings: 20 questions added \(1 chunk failed\)/)).toBeDefined();
     expect(screen.getByText("1 chunk failed due to timeout")).toBeDefined();

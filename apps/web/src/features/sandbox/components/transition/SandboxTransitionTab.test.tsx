@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SandboxTransitionState } from "../../hooks/useSandboxTransitionState";
 import { SandboxTransitionTab } from "./SandboxTransitionTab";

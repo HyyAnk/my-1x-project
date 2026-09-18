@@ -49,7 +49,6 @@ export const questionBankEn = {
       visual_spotting: "Visual Spotting",
       visual_identification: "Visual Identification",
       mystery_reveal: "Mystery Reveal",
-      clue_deduction: "Clue Deduction",
     },
 
     // Toolbar Filters

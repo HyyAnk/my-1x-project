@@ -90,14 +90,9 @@ export function useAccessibleDropdown<T, E extends HTMLElement = HTMLDivElement>
         if (!isOpen) {
           setIsOpen(true);
         } else if (items.length > 0) {
-          const currentIndex = selectedItem
-            ? items.findIndex((item) => isItemEqual(item, selectedItem))
-            : -1;
+          const currentIndex = selectedItem ? items.findIndex((item) => isItemEqual(item, selectedItem)) : -1;
           const activeIndex = currentIndex >= 0 ? currentIndex : 0;
-          const nextIndex =
-            e.key === "ArrowDown"
-              ? (activeIndex + 1) % items.length
-              : (activeIndex - 1 + items.length) % items.length;
+          const nextIndex = e.key === "ArrowDown" ? (activeIndex + 1) % items.length : (activeIndex - 1 + items.length) % items.length;
           handleSelect(items[nextIndex]);
         }
       } else if (e.key === "Enter" || e.key === " ") {

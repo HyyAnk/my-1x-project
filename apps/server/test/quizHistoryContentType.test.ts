@@ -55,14 +55,7 @@ describe("Question History Content Type", () => {
     const reelId = "custom_reel_123";
     const question = makeQuestion("q-short-1", "What is the fastest animal on earth?");
 
-    await repository.appendQuestionHistory(
-      channel.channel_id,
-      reelId,
-      [question],
-      30,
-      undefined,
-      "short_reel",
-    );
+    await repository.appendQuestionHistory(channel.channel_id, reelId, [question], 30, undefined, "short_reel");
 
     const history = await repository.readQuestionHistory(channel.channel_id);
     expect(history).toHaveLength(1);
@@ -76,14 +69,7 @@ describe("Question History Content Type", () => {
     const episodeId = "sreel_but_forced_episode";
     const question = makeQuestion("q-ep-1", "What is the capital of France?");
 
-    await repository.appendQuestionHistory(
-      channel.channel_id,
-      episodeId,
-      [question],
-      30,
-      undefined,
-      "episode",
-    );
+    await repository.appendQuestionHistory(channel.channel_id, episodeId, [question], 30, undefined, "episode");
 
     const history = await repository.readQuestionHistory(channel.channel_id);
     expect(history).toHaveLength(1);
@@ -98,22 +84,12 @@ describe("Question History Content Type", () => {
     // 1. Reel id starting with sreel_ should infer short_reel
     const reelId = "sreel_auto_inferred_01";
     const reelQuestion = makeQuestion("q-infer-reel", "Which element has chemical symbol O?");
-    await repository.appendQuestionHistory(
-      channel.channel_id,
-      reelId,
-      [reelQuestion],
-      30,
-    );
+    await repository.appendQuestionHistory(channel.channel_id, reelId, [reelQuestion], 30);
 
     // 2. Standard episode id should infer episode
     const episodeId = "ep_standard_01";
     const epQuestion = makeQuestion("q-infer-ep", "Who wrote Romeo and Juliet?");
-    await repository.appendQuestionHistory(
-      channel.channel_id,
-      episodeId,
-      [epQuestion],
-      30,
-    );
+    await repository.appendQuestionHistory(channel.channel_id, episodeId, [epQuestion], 30);
 
     const history = await repository.readQuestionHistory(channel.channel_id);
     expect(history).toHaveLength(2);
@@ -133,23 +109,9 @@ describe("Question History Content Type", () => {
     const reelId = "sreel_keep_1";
     const episodeId = "ep_keep_1";
 
-    await repository.appendQuestionHistory(
-      channel.channel_id,
-      reelId,
-      [makeQuestion("q1", "Question 1")],
-      30,
-      undefined,
-      "short_reel",
-    );
+    await repository.appendQuestionHistory(channel.channel_id, reelId, [makeQuestion("q1", "Question 1")], 30, undefined, "short_reel");
 
-    await repository.appendQuestionHistory(
-      channel.channel_id,
-      episodeId,
-      [makeQuestion("q2", "Question 2")],
-      30,
-      undefined,
-      "episode",
-    );
+    await repository.appendQuestionHistory(channel.channel_id, episodeId, [makeQuestion("q2", "Question 2")], 30, undefined, "episode");
 
     let history = await repository.readQuestionHistory(channel.channel_id);
     expect(history).toHaveLength(2);

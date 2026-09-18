@@ -19,85 +19,62 @@ export async function readJsonFile(filePath: string): Promise<Record<string, unk
   }
 }
 
+function asObject(val: unknown): Record<string, unknown> {
+  return val && typeof val === "object" && !Array.isArray(val) ? (val as Record<string, unknown>) : {};
+}
+
+interface LocalSettingsOverrides {
+  localCodex: Record<string, unknown>;
+  localAgySettings: Record<string, unknown>;
+  localAudioSettings: Record<string, unknown>;
+  localImageSettings: Record<string, unknown>;
+  localFallbackSettings: Record<string, unknown>;
+}
+
+async function loadLocalOverrides(rootDirectory: string): Promise<LocalSettingsOverrides> {
+  const localCodexFile = await readJsonFile(studioRuntimePath(rootDirectory, codexSettingsFilename));
+  const localAgyFile = await readJsonFile(studioRuntimePath(rootDirectory, antigravitySettingsFilename));
+  const localAudioFile = await readJsonFile(studioRuntimePath(rootDirectory, audioSettingsFilename));
+  const localImageFile = await readJsonFile(studioRuntimePath(rootDirectory, imageSettingsFilename));
+
+  return {
+    localCodex: asObject(localCodexFile.codex),
+    localAgySettings: asObject(localAgyFile.antigravity),
+    localAudioSettings: asObject(localAudioFile.audio_generation),
+    localImageSettings: asObject(localImageFile.image_generation),
+    localFallbackSettings: asObject(localImageFile.image_fallback),
+  };
+}
+
 export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
   const configPath = studioRuntimePath(rootDirectory, "config.json");
-  const localConfigPath = studioRuntimePath(rootDirectory, codexSettingsFilename);
-  const localAgyConfigPath = studioRuntimePath(rootDirectory, antigravitySettingsFilename);
+  const local = await loadLocalOverrides(rootDirectory);
+
   try {
     const raw = await readJsonFile(configPath);
-    const local = await readJsonFile(localConfigPath);
-    const localAgy = await readJsonFile(localAgyConfigPath);
-    const localAudio = await readJsonFile(studioRuntimePath(rootDirectory, audioSettingsFilename));
-    const localImage = await readJsonFile(studioRuntimePath(rootDirectory, imageSettingsFilename));
-    const trackedCodex = raw.codex && typeof raw.codex === "object" ? (raw.codex as Record<string, unknown>) : {};
-    const localCodex = local.codex && typeof local.codex === "object" ? (local.codex as Record<string, unknown>) : {};
-    const trackedAgy = raw.antigravity && typeof raw.antigravity === "object" ? (raw.antigravity as Record<string, unknown>) : {};
-    const localAgySettings =
-      localAgy.antigravity && typeof localAgy.antigravity === "object" ? (localAgy.antigravity as Record<string, unknown>) : {};
-    const trackedAudio =
-      raw.audio_generation && typeof raw.audio_generation === "object" ? (raw.audio_generation as Record<string, unknown>) : {};
-    const localAudioSettings =
-      localAudio.audio_generation && typeof localAudio.audio_generation === "object"
-        ? (localAudio.audio_generation as Record<string, unknown>)
-        : {};
-    const trackedImages =
-      raw.image_generation && typeof raw.image_generation === "object" ? (raw.image_generation as Record<string, unknown>) : {};
-    const localImageSettings =
-      localImage.image_generation && typeof localImage.image_generation === "object"
-        ? (localImage.image_generation as Record<string, unknown>)
-        : {};
-    const trackedFallback =
-      raw.image_fallback && typeof raw.image_fallback === "object" ? (raw.image_fallback as Record<string, unknown>) : {};
-    const localFallbackSettings =
-      localImage.image_fallback && typeof localImage.image_fallback === "object"
-        ? (localImage.image_fallback as Record<string, unknown>)
-        : {};
-    const trackedHistory =
-      raw.question_history && typeof raw.question_history === "object" ? (raw.question_history as Record<string, unknown>) : {};
-    const trackedKnowledgeBase =
-      raw.knowledge_base && typeof raw.knowledge_base === "object" ? (raw.knowledge_base as Record<string, unknown>) : {};
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
       ...raw,
-      mascot_stage: { ...DEFAULT_CONFIG.mascot_stage, ...(raw.mascot_stage as object | undefined) },
-      video_generation: { ...DEFAULT_CONFIG.video_generation, ...(raw.video_generation as object | undefined) },
-      codex: { ...DEFAULT_CONFIG.codex, ...trackedCodex, api_key: "", ...localCodex },
-      antigravity: { ...DEFAULT_CONFIG.antigravity, ...trackedAgy, api_key: "", ...localAgySettings },
-      audio_generation: { ...DEFAULT_CONFIG.audio_generation, ...trackedAudio, ...localAudioSettings },
-      image_generation: { ...DEFAULT_CONFIG.image_generation, ...trackedImages, ...localImageSettings },
-      image_fallback: { ...DEFAULT_CONFIG.image_fallback, ...trackedFallback, ...localFallbackSettings },
-      question_history: { ...DEFAULT_CONFIG.question_history, ...trackedHistory },
-      knowledge_base: { ...DEFAULT_CONFIG.knowledge_base, ...trackedKnowledgeBase },
+      mascot_stage: { ...DEFAULT_CONFIG.mascot_stage, ...asObject(raw.mascot_stage) },
+      video_generation: { ...DEFAULT_CONFIG.video_generation, ...asObject(raw.video_generation) },
+      codex: { ...DEFAULT_CONFIG.codex, ...asObject(raw.codex), api_key: "", ...local.localCodex },
+      antigravity: { ...DEFAULT_CONFIG.antigravity, ...asObject(raw.antigravity), api_key: "", ...local.localAgySettings },
+      audio_generation: { ...DEFAULT_CONFIG.audio_generation, ...asObject(raw.audio_generation), ...local.localAudioSettings },
+      image_generation: { ...DEFAULT_CONFIG.image_generation, ...asObject(raw.image_generation), ...local.localImageSettings },
+      image_fallback: { ...DEFAULT_CONFIG.image_fallback, ...asObject(raw.image_fallback), ...local.localFallbackSettings },
+      question_history: { ...DEFAULT_CONFIG.question_history, ...asObject(raw.question_history) },
+      knowledge_base: { ...DEFAULT_CONFIG.knowledge_base, ...asObject(raw.knowledge_base) },
     });
   } catch {
     await mkdir(path.dirname(configPath), { recursive: true });
     await writeFile(configPath, `${JSON.stringify(DEFAULT_CONFIG, null, 2)}\n`, "utf8");
-    const local = await readJsonFile(localConfigPath);
-    const localCodex = local.codex && typeof local.codex === "object" ? (local.codex as Record<string, unknown>) : {};
-    const localAgy = await readJsonFile(localAgyConfigPath);
-    const localAgySettings =
-      localAgy.antigravity && typeof localAgy.antigravity === "object" ? (localAgy.antigravity as Record<string, unknown>) : {};
-    const localAudio = await readJsonFile(studioRuntimePath(rootDirectory, audioSettingsFilename));
-    const localAudioSettings =
-      localAudio.audio_generation && typeof localAudio.audio_generation === "object"
-        ? (localAudio.audio_generation as Record<string, unknown>)
-        : {};
-    const localImage = await readJsonFile(studioRuntimePath(rootDirectory, imageSettingsFilename));
-    const localImageSettings =
-      localImage.image_generation && typeof localImage.image_generation === "object"
-        ? (localImage.image_generation as Record<string, unknown>)
-        : {};
-    const localFallbackSettings =
-      localImage.image_fallback && typeof localImage.image_fallback === "object"
-        ? (localImage.image_fallback as Record<string, unknown>)
-        : {};
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
-      codex: { ...DEFAULT_CONFIG.codex, ...localCodex },
-      antigravity: { ...DEFAULT_CONFIG.antigravity, ...localAgySettings },
-      audio_generation: { ...DEFAULT_CONFIG.audio_generation, ...localAudioSettings },
-      image_generation: { ...DEFAULT_CONFIG.image_generation, ...localImageSettings },
-      image_fallback: { ...DEFAULT_CONFIG.image_fallback, ...localFallbackSettings },
+      codex: { ...DEFAULT_CONFIG.codex, ...local.localCodex },
+      antigravity: { ...DEFAULT_CONFIG.antigravity, ...local.localAgySettings },
+      audio_generation: { ...DEFAULT_CONFIG.audio_generation, ...local.localAudioSettings },
+      image_generation: { ...DEFAULT_CONFIG.image_generation, ...local.localImageSettings },
+      image_fallback: { ...DEFAULT_CONFIG.image_fallback, ...local.localFallbackSettings },
     });
   }
 }

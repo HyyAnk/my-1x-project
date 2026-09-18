@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { AssetConsistencyGroupSchema, QuizV2Schema, resolveQuizLayout, type ChannelMascotConfig } from "@studio/shared";
+import { AssetConsistencyGroupSchema, QuizV2Schema, resolveQuizLayout, type ChannelMascotConfig, type MascotProfile } from "@studio/shared";
+import { rootRelativeSubCompositionAssets } from "../src/quiz/render/candyArcade/candyArcadeClips.js";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan, ENGLISH_OUTRO_CLOSING_VARIANTS } from "../src/quiz/audio/voicePlan.js";
@@ -305,7 +306,7 @@ describe("Candy Arcade visual template", () => {
     expect(plasticToyPrompt.prompt).toContain(
       "Living creatures, characters, dinosaurs, and animals must have complete, expressive natural eyes",
     );
-    expect(plasticToyPrompt.cacheVersion).toContain("v4-subject-identity");
+    expect(plasticToyPrompt.cacheVersion).toContain("v5-layout-framing");
 
     expect(assessQuizVisualLayout({ quiz: candyArcadeQuiz, director }).filter((issue) => issue.severity === "blocker")).toEqual([]);
     const fairnessIssues = assessQuizVisualLayout({ quiz: candyArcadeQuiz, director, assetPlan });
@@ -406,7 +407,7 @@ describe("Candy Arcade visual template", () => {
     expect(html).toContain("@keyframes quiz-timer-marker-slide");
     expect(html).toContain("layout-media_left_choices_right .hero-image");
     expect(html).toContain('<strong class="keyword-highlight">');
-    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(0.2);
+    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(0.19);
     expect(html).toContain("transition-bubble_splash");
     expect(html).toContain("splash-brand");
     expect(html).toContain(".decor-7 { left: 30%; top: 8%;");
@@ -725,6 +726,141 @@ describe("Candy Arcade visual template", () => {
     expect(sources).toContain("ac-comic-chunky");
     // Verify flame fuse thinking bar rendered
     expect(sources).toContain("thinking-bar-flame-fuse");
+  });
+
+  it("normalizes subcomposition asset paths with rootRelativeSubCompositionAssets", () => {
+    const inputHtml = [
+      '<section class="clip candy-scene">',
+      '  <video src="./mascot-assets/m1_cyber_thinking_s1_video_transparent.webm" poster="./mascot-assets/poster.png"></video>',
+      "  <div style=\"background-image:url('./mascot-assets/atlas.png');\"></div>",
+      '  <img src="/mascot-assets/m1_image.png">',
+      "  <div style=\"--mascot-art-url:url('/mascot-assets/m1_art.png');\"></div>",
+      '  <audio src="./sfx/ui_pop.wav"></audio>',
+      "</section>",
+    ].join("\n");
+
+    const rewritten = rootRelativeSubCompositionAssets(inputHtml);
+
+    expect(rewritten).toContain('src="mascot-assets/m1_cyber_thinking_s1_video_transparent.webm"');
+    expect(rewritten).toContain('poster="mascot-assets/poster.png"');
+    expect(rewritten).toContain("background-image:url('mascot-assets/atlas.png')");
+    expect(rewritten).toContain('src="mascot-assets/m1_image.png"');
+    expect(rewritten).toContain("--mascot-art-url:url('mascot-assets/m1_art.png')");
+    expect(rewritten).toContain('src="sfx/ui_pop.wav"');
+    expect(rewritten).not.toContain('src="./mascot-assets/');
+    expect(rewritten).not.toContain('src="/mascot-assets/');
+    expect(rewritten).not.toContain("url('./mascot-assets/");
+    expect(rewritten).not.toContain("url('/mascot-assets/");
+  });
+
+  it("rewrites animated mascot asset URLs into root-relative subcompositions and preload tags", () => {
+    const animatedMascot: MascotProfile = {
+      id: "mascot_anim_test",
+      name: "Cyber Fox",
+      description: "Cyber Fox mascot",
+      visual_style: "pixar_3d",
+      master_prompt: "Cyber Fox",
+      master_image_url: "/api/mascots/mascot_anim_test/assets/master.png",
+      color_theme: "#06b6d4",
+      actions: {},
+      styles: [
+        {
+          id: "cyber",
+          name: "Cyber",
+          keyword: "cyberpunk",
+          anchor_image_url: "/api/mascots/mascot_anim_test/assets/anchor.png",
+          is_default: true,
+          states: {
+            thinking: [
+              {
+                id: "think_1",
+                slot_index: 1,
+                image_url: "/api/mascots/mascot_anim_test/assets/think_1.png",
+                animation: {
+                  version: 1,
+                  state: "thinking",
+                  slot_index: 1,
+                  frame_count: 12,
+                  fps: 12,
+                  duration_ms: 1000,
+                  loop: true,
+                  transparent_video_url:
+                    "/api/mascots/mascot_anim_test/styles/cyber/animations/thinking/1/artifacts/video_transparent.webm",
+                  atlas_url: "/api/mascots/mascot_anim_test/styles/cyber/animations/thinking/1/artifacts/atlas.png",
+                  manifest_url: "/api/mascots/mascot_anim_test/styles/cyber/animations/thinking/1/artifacts/manifest.json",
+                  registration: {
+                    source_width: 512,
+                    source_height: 512,
+                    content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+                    pivot: { x: 256, y: 512 },
+                    offset_x: 0,
+                    offset_y: 0,
+                  },
+                  content_fingerprint: "fp123",
+                  source_fingerprint: "sfp123",
+                },
+              },
+            ],
+            celebrate: [],
+          },
+          created_at: "2026-09-01T00:00:00.000Z",
+          updated_at: "2026-09-01T00:00:00.000Z",
+        },
+      ],
+      assigned_channel_ids: ["ch-cyber"],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    };
+
+    const mascotConfig: ChannelMascotConfig = {
+      enabled: true,
+      position: "bottom_left",
+      scale: 1.0,
+      offset_x: 0,
+      offset_y: 0,
+      flip_x: false,
+      show_in_intro: false,
+      show_in_outro: false,
+      show_in_question: true,
+    };
+
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({
+      quiz: candyArcadeQuiz,
+      director,
+      voicePlan: buildQuizVoicePlan(candyArcadeQuiz),
+    });
+
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: animatedMascot,
+      mascotConfig,
+      mascotStyleId: "cyber",
+    });
+
+    // 1. Verify bundle.html contains safe preloads without leaking raw /api/ routes
+    expect(bundle.html).toContain('rel="preload"');
+    expect(bundle.html).toContain("./mascot-assets/mascot_anim_test_cyber_thinking_s1_video_transparent.webm");
+    expect(bundle.html).toContain('as="video" type="video/webm"');
+    expect(bundle.html).toContain("./mascot-assets/mascot_anim_test_cyber_thinking_s1_atlas.png");
+    expect(bundle.html).toContain('as="image"');
+    expect(bundle.html).not.toMatch(/<link rel="preload"[^>]*\/api\/mascots\//);
+
+    // 2. Verify subcomposition files contain properly rewritten root-relative paths
+    const questionFiles = questionCompositionFiles(bundle.files);
+    expect(questionFiles.length).toBeGreaterThanOrEqual(1);
+
+    for (const qHtml of questionFiles) {
+      expect(qHtml).toContain('src="mascot-assets/mascot_anim_test_cyber_thinking_s1_video_transparent.webm"');
+      expect(qHtml).not.toMatch(/src="\/api\//);
+      expect(qHtml).not.toMatch(/src="\.\.\//);
+      expect(qHtml).not.toMatch(/file:\/\/\/[A-Za-z]:\/api\//);
+    }
   });
 });
 

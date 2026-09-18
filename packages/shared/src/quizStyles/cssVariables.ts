@@ -21,6 +21,7 @@ export function serializeQuizPaletteCssVariables(palette?: QuizPaletteLike | nul
   return {
     "--bg-primary": bgPrimary,
     "--bg-secondary": bgSecondary,
+    "--bg-accent": accent,
     "--accent": accent,
     "--surface-accent": surfaceAccent,
     "--on-accent": onAccent,

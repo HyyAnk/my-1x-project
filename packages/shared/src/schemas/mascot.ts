@@ -1,8 +1,20 @@
 import { z } from "zod";
-import { MascotActionTypeSchema, MascotMotionIntensitySchema, MascotMotionPresetSchema, QuizImageStyleSchema } from "../enums.js";
+import {
+  MascotActionTypeSchema,
+  MascotMotionIntensitySchema,
+  MascotMotionPresetSchema,
+  QuizImageStyleSchema,
+  type MascotMotionPreset,
+} from "../enums.js";
 import { MascotRenderBundleV2Schema } from "../mascot/renderSchema.js";
+import type { MascotActionAssetV2 } from "../mascot/renderTypes.js";
+import { MascotBoundsSchema, MascotCanvasSizeSchema, MascotPointSchema } from "../mascot/renderRegistrationSchema.js";
+import { MascotPublishedAnimationAssetSchema, MascotSlotStateSchema, MascotSlotStatusSchema } from "../mascot/animation/animationSchema.js";
 import { IsoDate } from "./common.js";
 
+/**
+ * @deprecated Legacy V1 sprite action schema. Use `MascotRenderBundleV2` or `MascotStateVariantSchema` instead.
+ */
 export const MascotSpriteActionSchema = z.object({
   action: MascotActionTypeSchema,
   sprite_url: z.string().default(""),
@@ -19,18 +31,40 @@ export const MascotSpriteActionSchema = z.object({
   motion_intensity: z.enum(["subtle", "normal", "dynamic"]).default("normal").optional(),
 });
 
+/**
+ * @deprecated Legacy V1 sprite action definition. Use V2 render bundle actions or style variants instead.
+ */
 export type MascotSpriteAction = z.infer<typeof MascotSpriteActionSchema>;
 
-export const MascotStateVariantSchema = z.object({
-  id: z.string().min(1),
-  slot_index: z.number().int().min(1).max(10),
-  image_url: z.string().default(""),
-  prompt_modifier: z.string().optional(),
-  motion_preset: MascotMotionPresetSchema.optional(),
-  motion_speed: z.number().optional(),
-  motion_intensity: MascotMotionIntensitySchema.optional(),
-  created_at: z.string().optional(),
-});
+export const MascotStateVariantSchema = z
+  .object({
+    id: z.string().min(1),
+    slot_index: z.number().int().min(1).max(10),
+    image_url: z.string().default(""),
+    raw_image_url: z.string().optional(),
+    transparent_image_url: z.string().optional(),
+    canvas: MascotCanvasSizeSchema.optional(),
+    content_bounds: MascotBoundsSchema.optional(),
+    pivot: MascotPointSchema.optional(),
+    source_fingerprint: z.string().optional(),
+    prompt_modifier: z.string().optional(),
+    motion_preset: MascotMotionPresetSchema.optional(),
+    motion_speed: z.number().optional(),
+    motion_intensity: MascotMotionIntensitySchema.optional(),
+    status: z.union([MascotSlotStatusSchema, MascotSlotStateSchema]).optional(),
+    generation_revision: z.number().int().positive().optional(),
+    animation: MascotPublishedAnimationAssetSchema.optional(),
+    created_at: z.string().optional(),
+  })
+  .superRefine((variant, ctx) => {
+    if (variant.status === "ready" && !variant.animation) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["animation"],
+        message: "A ready animation slot must include a valid animation asset",
+      });
+    }
+  });
 
 export type MascotStateVariant = z.infer<typeof MascotStateVariantSchema>;
 
@@ -39,6 +73,7 @@ export const MascotStyleSchema = z.object({
   name: z.string().min(1),
   keyword: z.string().default(""),
   anchor_image_url: z.string().nullable().default(null),
+  raw_anchor_image_url: z.string().nullable().optional().default(null),
   is_default: z.boolean().default(false),
   states: z.object({
     thinking: z.array(MascotStateVariantSchema).default([]),
@@ -48,8 +83,9 @@ export const MascotStyleSchema = z.object({
   updated_at: z.string(),
 });
 
-export type MascotStyle = Omit<z.infer<typeof MascotStyleSchema>, "anchor_image_url"> & {
+export type MascotStyle = Omit<z.infer<typeof MascotStyleSchema>, "anchor_image_url" | "raw_anchor_image_url"> & {
   anchor_image_url?: string | null;
+  raw_anchor_image_url?: string | null;
 };
 
 export const MascotProfileSchema = z.object({
@@ -59,64 +95,79 @@ export const MascotProfileSchema = z.object({
   visual_style: QuizImageStyleSchema.default("pixar_3d"),
   master_prompt: z.string().default(""),
   master_image_url: z.string().nullable().default(null),
+  master_raw_image_url: z.string().nullable().optional().default(null),
   color_theme: z.string().default("#06b6d4"),
-  actions: z.record(MascotActionTypeSchema, MascotSpriteActionSchema.nullable().optional()).default({}),
+  /**
+   * @deprecated Legacy V1 sprite actions map. Retained for backwards compatibility.
+   * Canonical V2 mascot assets reside in `render_bundle` and `styles`.
+   */
+  actions: z.record(MascotActionTypeSchema, MascotSpriteActionSchema.nullable().optional()).optional().default({}),
+  /** Canonical V2 visual styles with state variants. */
   styles: z.array(MascotStyleSchema).default([]),
   active_style_id: z.string().optional(),
   /** Persisted V2 render data; absent on V1 manifests until migration. */
   schema_version: z.number().int().positive().optional(),
+  /** Canonical V2 render bundle containing configurations and registered action/master assets. */
   render_bundle: MascotRenderBundleV2Schema.optional(),
   assigned_channel_ids: z.array(z.string()).default([]),
   created_at: IsoDate,
   updated_at: IsoDate,
 });
 
-export type MascotProfile = Omit<z.infer<typeof MascotProfileSchema>, "styles"> & {
+export type MascotProfile = Omit<z.infer<typeof MascotProfileSchema>, "styles" | "master_image_url" | "master_raw_image_url"> & {
+  master_image_url?: string | null;
+  master_raw_image_url?: string | null;
+  /** Canonical V2 visual styles with state variants. */
   styles?: MascotStyle[];
 };
 
+function buildSynthesizedStateVariant(
+  bundleAction: MascotActionAssetV2 | null | undefined,
+  legacyAction: MascotSpriteAction | null | undefined,
+  defaultPreset: MascotMotionPreset,
+  createdAt?: string,
+): MascotStateVariant | null {
+  if (!bundleAction && !legacyAction) return null;
+  const imageUrl = bundleAction?.image_url || legacyAction?.preview_url || legacyAction?.sprite_url || "";
+  return {
+    id: "slot_1",
+    slot_index: 1,
+    image_url: imageUrl,
+    motion_preset: bundleAction?.motion?.preset ?? legacyAction?.motion_preset ?? defaultPreset,
+    motion_speed: bundleAction?.motion?.speed ?? legacyAction?.motion_speed ?? 1.0,
+    motion_intensity: bundleAction?.motion?.intensity ?? legacyAction?.motion_intensity ?? "normal",
+    content_bounds: bundleAction?.registration?.content_bounds,
+    pivot: bundleAction?.registration?.pivot,
+    animation: bundleAction?.animation,
+    created_at: createdAt,
+  };
+}
+
+/**
+ * Synthesizes a fallback V2 core style from legacy V1 profile actions or V2 render bundle actions.
+ * Prioritizes V2 render bundle assets when present, falling back to legacy actions.
+ */
 export function synthesizeLegacyCoreStyle(profile: Partial<MascotProfile> | MascotProfile): MascotStyle {
-  const thinkingAction = profile.actions?.thinking;
-  const celebrateAction = profile.actions?.celebrate;
+  const bundleActions = profile.render_bundle?.assets?.actions;
+  const legacyActions = profile.actions;
 
-  const thinkingVariants: MascotStateVariant[] = [];
-  if (thinkingAction) {
-    thinkingVariants.push({
-      id: "slot_1",
-      slot_index: 1,
-      image_url: thinkingAction.preview_url || thinkingAction.sprite_url || "",
-      motion_preset: thinkingAction.motion_preset ?? "sway",
-      motion_speed: thinkingAction.motion_speed ?? 1.0,
-      motion_intensity: thinkingAction.motion_intensity ?? "normal",
-      created_at: profile.created_at,
-    });
-  }
-
-  const celebrateVariants: MascotStateVariant[] = [];
-  if (celebrateAction) {
-    celebrateVariants.push({
-      id: "slot_1",
-      slot_index: 1,
-      image_url: celebrateAction.preview_url || celebrateAction.sprite_url || "",
-      motion_preset: celebrateAction.motion_preset ?? "jump",
-      motion_speed: celebrateAction.motion_speed ?? 1.0,
-      motion_intensity: celebrateAction.motion_intensity ?? "normal",
-      created_at: profile.created_at,
-    });
-  }
+  const thinkingVariant = buildSynthesizedStateVariant(bundleActions?.thinking, legacyActions?.thinking, "sway", profile.created_at);
+  const celebrateVariant = buildSynthesizedStateVariant(bundleActions?.celebrate, legacyActions?.celebrate, "jump", profile.created_at);
 
   const timestamp = typeof profile.created_at === "string" && profile.created_at ? profile.created_at : new Date().toISOString();
   const updatedTimestamp = typeof profile.updated_at === "string" && profile.updated_at ? profile.updated_at : timestamp;
+  const candidateAnchor = profile.master_image_url || profile.render_bundle?.assets?.master?.image_url || null;
 
   return {
     id: "core",
     name: "Core Style",
     keyword: "",
-    anchor_image_url: profile.master_image_url || null,
+    anchor_image_url: candidateAnchor,
+    raw_anchor_image_url: (profile as MascotProfile).master_raw_image_url || null,
     is_default: true,
     states: {
-      thinking: thinkingVariants,
-      celebrate: celebrateVariants,
+      thinking: thinkingVariant ? [thinkingVariant] : [],
+      celebrate: celebrateVariant ? [celebrateVariant] : [],
     },
     created_at: timestamp,
     updated_at: updatedTimestamp,
@@ -145,9 +196,9 @@ export function resolveMascotStyle(profile: MascotProfile, styleId?: string | nu
 
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
   position: "bottom_left",
-  scale: 1.84,
-  offset_x: 67,
-  offset_y: 90,
+  scale: 2.31,
+  offset_x: 127,
+  offset_y: 119,
   flip_x: false,
 } as const;
 
@@ -171,10 +222,10 @@ export const RECOMMENDED_MASCOT_PLACEMENT_PRESETS: Record<"16:9" | "9:16", Masco
 
 export const ChannelMascotConfigSchema = z.object({
   enabled: z.boolean().default(true),
-  position: z.enum(["bottom_left", "bottom_right"]).default("bottom_left"),
-  scale: z.number().default(1.0),
-  offset_x: z.number().default(0),
-  offset_y: z.number().default(0),
+  position: z.enum(["bottom_left", "bottom_right"]).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),
+  scale: z.number().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale),
+  offset_x: z.number().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x),
+  offset_y: z.number().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y),
   flip_x: z.boolean().default(false),
   show_in_intro: z.boolean().default(false),
   show_in_outro: z.boolean().default(false),
@@ -206,10 +257,10 @@ export function resolveChannelMascotPlacement(
   }
 
   return {
-    position: config?.position ?? "bottom_left",
-    scale: config?.scale ?? 1.0,
-    offset_x: config?.offset_x ?? 0,
-    offset_y: config?.offset_y ?? 0,
+    position: config?.position ?? RECOMMENDED_MASCOT_PLACEMENT_PRESET.position,
+    scale: config?.scale ?? RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale,
+    offset_x: config?.offset_x ?? RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x,
+    offset_y: config?.offset_y ?? RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y,
     flip_x: config?.flip_x ?? false,
   };
 }

@@ -32,8 +32,7 @@ export interface BankQuestionRow {
 }
 
 export function bankQuestionToRow(question: BankQuestion): BankQuestionRow {
-  const normalizedArchetype =
-    question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id;
+  const normalizedArchetype = question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id;
   const now = new Date().toISOString();
 
   return {
@@ -61,38 +60,24 @@ export function bankQuestionToRow(question: BankQuestion): BankQuestionRow {
   };
 }
 
+function parseJsonSafe<T>(raw: string | null | undefined, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    const val: unknown = JSON.parse(raw);
+    return val as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export function rowToBankQuestion(row: BankQuestionRow): BankQuestion {
-  let parsedChoices: BankChoice[] = [];
-  try {
-    parsedChoices = JSON.parse(row.choices);
-  } catch {
-    parsedChoices = [];
-  }
-
-  let parsedTags: string[] = [];
-  try {
-    parsedTags = JSON.parse(row.tags || "[]");
-  } catch {
-    parsedTags = [];
-  }
-
-  let parsedVisualSpec: BankQuestion["visual_spec"];
-  if (row.visual_spec) {
-    try {
-      parsedVisualSpec = JSON.parse(row.visual_spec);
-    } catch {
-      parsedVisualSpec = undefined;
-    }
-  }
-
-  let parsedTranslations: BankQuestion["translations"];
-  if (row.translations && row.translations !== "{}" && row.translations !== "null") {
-    try {
-      parsedTranslations = JSON.parse(row.translations);
-    } catch {
-      parsedTranslations = undefined;
-    }
-  }
+  const parsedChoices = parseJsonSafe<BankChoice[]>(row.choices, []);
+  const parsedTags = parseJsonSafe<string[]>(row.tags, []);
+  const parsedVisualSpec = row.visual_spec ? parseJsonSafe<BankQuestion["visual_spec"]>(row.visual_spec, undefined) : undefined;
+  const parsedTranslations =
+    row.translations && row.translations !== "{}" && row.translations !== "null"
+      ? parseJsonSafe<BankQuestion["translations"]>(row.translations, undefined)
+      : undefined;
 
   const question: BankQuestion = {
     id: row.id,

@@ -1,50 +1,44 @@
-﻿import type { GetQuizImageSlotGeometryInput, ImageSlotGeometry, ImageSlotViewport } from "./types.js";
+import { QUIZ_LAYOUT_GEOMETRY } from "../quizLayoutGeometry/index.js";
+import type { GetQuizImageSlotGeometryInput, ImageSlotGeometry, ImageSlotViewport } from "./types.js";
 
 export const CANONICAL_IMAGE_SLOT_DEFINITIONS = Object.freeze({
   visual_choices_three: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 452, height: 504 }),
-    mediaBorderBox: Object.freeze({ width: 452, height: 356 }),
-    borderEachSide: 10,
-    viewport: Object.freeze({ width: 432, height: 336, fit: "cover" as const }),
+    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.visual_choices_three.imageSlot!.cardBorderBox,
+    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.visual_choices_three.imageSlot!.mediaBorderBox,
+    borderEachSide: QUIZ_LAYOUT_GEOMETRY.visual_choices_three.imageSlot!.borderEachSide,
+    viewport: QUIZ_LAYOUT_GEOMETRY.visual_choices_three.imageSlot!.viewport,
   }),
   visual_choices_three_pure: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 452, height: 504 }),
-    mediaBorderBox: Object.freeze({ width: 452, height: 504 }),
-    borderEachSide: 10,
-    viewport: Object.freeze({ width: 432, height: 484, fit: "cover" as const }),
+    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.imageSlot!.cardBorderBox,
+    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.imageSlot!.mediaBorderBox,
+    borderEachSide: QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.imageSlot!.borderEachSide,
+    viewport: QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.imageSlot!.viewport,
   }),
   split_versus_two: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 646, height: 504 }),
-    mediaBorderBox: Object.freeze({ width: 646, height: 366 }),
-    borderEachSide: 12,
-    viewport: Object.freeze({ width: 622, height: 342, fit: "cover" as const }),
+    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.split_versus_two.imageSlot!.cardBorderBox,
+    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.split_versus_two.imageSlot!.mediaBorderBox,
+    borderEachSide: QUIZ_LAYOUT_GEOMETRY.split_versus_two.imageSlot!.borderEachSide,
+    viewport: QUIZ_LAYOUT_GEOMETRY.split_versus_two.imageSlot!.viewport,
   }),
   media_left_choices_right: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 720, height: 510 }),
-    mediaBorderBox: Object.freeze({ width: 720, height: 510 }),
-    borderEachSide: 12,
-    viewport: Object.freeze({ width: 696, height: 486, fit: "cover" as const }),
+    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.imageSlot!.cardBorderBox,
+    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.imageSlot!.mediaBorderBox,
+    borderEachSide: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.imageSlot!.borderEachSide,
+    viewport: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.imageSlot!.viewport,
   }),
   verdict_true_false: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 820, height: 510 }),
-    mediaBorderBox: Object.freeze({ width: 820, height: 510 }),
-    borderEachSide: 10,
-    viewport: Object.freeze({ width: 800, height: 490, fit: "cover" as const }),
+    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.cardBorderBox,
+    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.mediaBorderBox,
+    borderEachSide: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.borderEachSide,
+    viewport: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.viewport,
   }),
   mystery_reveal: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 920, height: 360 }),
-    mediaBorderBox: Object.freeze({ width: 920, height: 360 }),
-    borderEachSide: 0,
-    viewports: Object.freeze([
-      Object.freeze({ width: 754.8, height: 249.27, fit: "contain" as const }),
-      Object.freeze({ width: 761.6, height: 255.36, fit: "contain" as const }),
-    ]),
-  }),
-  clue_deduction: Object.freeze({
-    cardBorderBox: Object.freeze({ width: 824, height: 410 }),
-    mediaBorderBox: Object.freeze({ width: 824, height: 410 }),
-    borderEachSide: 0,
-    viewport: Object.freeze({ width: 672, height: 324.23, fit: "contain" as const }),
+    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.cardBorderBox,
+    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.mediaBorderBox,
+    borderEachSide: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.borderEachSide,
+    slot: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.slot!,
+    viewport: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.viewport,
+    viewports: Object.freeze([QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.viewport]),
   }),
 });
 
@@ -90,17 +84,6 @@ export function getQuizImageSlotGeometry(input: GetQuizImageSlotGeometryInput): 
       }
       case "mystery_reveal": {
         const viewports = CANONICAL_IMAGE_SLOT_DEFINITIONS.mystery_reveal.viewports;
-        return {
-          layoutId: input.layoutId,
-          purpose: input.purpose,
-          canvas,
-          viewports,
-          geometryKey: serializeGeometryKey(input.layoutId, input.purpose, canvas, viewports),
-        };
-      }
-      case "clue_deduction": {
-        const vp = CANONICAL_IMAGE_SLOT_DEFINITIONS.clue_deduction.viewport;
-        const viewports = [vp];
         return {
           layoutId: input.layoutId,
           purpose: input.purpose,

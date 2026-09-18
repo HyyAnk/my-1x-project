@@ -55,10 +55,6 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
       const versusIns = ARCHETYPE_GUIDELINES.versus_faceoff.instructions.join(" ");
       expect(versusIns).toContain("FRANCHISE ANCHOR MANDATE");
       expect(versusIns).toContain("Goku (Dragon Ball) vs Saitama (One Punch Man)");
-
-      const clueIns = ARCHETYPE_GUIDELINES.clue_deduction.instructions.join(" ");
-      expect(clueIns).toContain("FRANCHISE ANCHOR MANDATE");
-      expect(clueIns).toContain("In Journey to the West, who wields this nine-toothed iron rake?");
     });
   });
 
@@ -141,10 +137,10 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
         targets: [mockTarget],
       });
 
-      expect(prompt).toContain('In Dragon Ball Z, whose signature energy wave is the Kamehameha?');
-      expect(prompt).toContain('In One Piece, what straw accessory was given to Luffy by Shanks?');
+      expect(prompt).toContain("In Dragon Ball Z, whose signature energy wave is the Kamehameha?");
+      expect(prompt).toContain("In One Piece, what straw accessory was given to Luffy by Shanks?");
       expect(prompt).toContain("In Pokemon, which electric mouse is Ash Ketchum's loyal partner?");
-      expect(prompt).toContain('In Naruto, which swirling blue sphere technique did Minato invent?');
+      expect(prompt).toContain("In Naruto, which swirling blue sphere technique did Minato invent?");
       expect(prompt).toContain("In Detective Conan, what gadget lets Conan mimic Kogoro's voice?");
       expect(prompt).toContain("ANTI-OBSCURITY CONSTRAINTS");
       expect(prompt).toContain("NEVER test secondary character family lineages, blood types, or obscure minor jutsu/spells.");
@@ -173,7 +169,9 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
       });
 
       expect(contract).toContain("=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===");
-      expect(contract).toContain("Franchise Anchoring: When generating questions about anime, manga, gaming, comics, movies, or fictional characters");
+      expect(contract).toContain(
+        "Franchise Anchoring: When generating questions about anime, manga, gaming, comics, movies, or fictional characters",
+      );
     });
   });
 

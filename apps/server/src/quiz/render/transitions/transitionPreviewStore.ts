@@ -1,7 +1,7 @@
 import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { canonicalJsonStringify, sha256Hex, type FrameRate, type ResolvedTransitionInstance } from "@studio/shared";
+import { canonicalJsonStringify, type FrameRate, type ResolvedTransitionInstance } from "@studio/shared";
 
 export type TransitionPreviewArtifactManifest = Readonly<{
   artifactId: string;
@@ -51,17 +51,14 @@ export async function verifyExistingArtifact(
     const videoPath = path.join(artifactDir, "video.mp4");
     const manifestPath = path.join(artifactDir, "manifest.json");
 
-    const [videoStat, manifestStat] = await Promise.all([
-      stat(videoPath),
-      stat(manifestPath),
-    ]);
+    const [videoStat, manifestStat] = await Promise.all([stat(videoPath), stat(manifestPath)]);
 
     if (videoStat.size === 0 || manifestStat.size === 0) {
       return null;
     }
 
     const manifestContent = await readFile(manifestPath, "utf-8");
-    const manifest: TransitionPreviewArtifactManifest = JSON.parse(manifestContent);
+    const manifest = JSON.parse(manifestContent) as TransitionPreviewArtifactManifest;
 
     // Verify sha256
     const actualSha256 = await computeFileSha256(videoPath);
@@ -133,13 +130,24 @@ export async function publishPreviewArtifact(
 
     await writeFile(stagedManifest, canonicalJsonStringify(verified.manifest), "utf-8");
 
-    // Atomic move/rename
-    try {
-      await rename(stagingDir, targetDir);
-    } catch {
-      // Fallback for Windows cross-volume or existing target
-      await rm(targetDir, { recursive: true, force: true }).catch(() => {});
-      await rename(stagingDir, targetDir);
+    // Atomic move/rename with Windows transient lock handling
+    let delay = 25;
+    for (let attempt = 0; attempt <= 5; attempt++) {
+      try {
+        await rename(stagingDir, targetDir);
+        break;
+      } catch (err: unknown) {
+        const error = err as NodeJS.ErrnoException;
+        const isTransient =
+          error && (error.code === "EPERM" || error.code === "EBUSY" || error.code === "EACCES" || error.code === "EEXIST");
+        if (isTransient && attempt < 5) {
+          await rm(targetDir, { recursive: true, force: true }).catch(() => {});
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay = Math.min(delay * 2, 200);
+          continue;
+        }
+        throw error;
+      }
     }
 
     return {

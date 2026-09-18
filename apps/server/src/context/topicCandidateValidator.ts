@@ -27,20 +27,14 @@ export interface ValidateTopicResponseInput {
 /**
  * Validates and normalizes generated topic candidates strictly against an assigned TopicMatrixPlan.
  */
-export function validateAndNormalizeTopicCandidates(
-  rawOutput: unknown,
-  plan: TopicMatrixPlan,
-  channelId: string,
-): TopicCandidate[] {
+export function validateAndNormalizeTopicCandidates(rawOutput: unknown, plan: TopicMatrixPlan, channelId: string): TopicCandidate[] {
   const rawList = extractRawCandidates(rawOutput);
 
   if (rawList.length !== 6) {
     throw new Error(`Expected exactly 6 topic candidates, got ${rawList.length}`);
   }
 
-  const candidates = rawList.map((raw, idx) =>
-    buildCandidateFromSlot(raw, plan.slots[idx], idx, channelId, plan),
-  );
+  const candidates = rawList.map((raw, idx) => buildCandidateFromSlot(raw, plan.slots[idx], idx, channelId, plan));
   const ids = new Set<string>();
   for (const candidate of candidates) {
     if (ids.has(candidate.topic_id)) {

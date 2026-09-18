@@ -2,11 +2,7 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import type { BankSubtopicBatch } from "@studio/shared";
 import { RepositoryError } from "../../../errors.js";
-import {
-  assertSafeBackupPath,
-  assertSafeRelativePath,
-  backupPathFor,
-} from "./bankMigrationSafety.js";
+import { assertSafeBackupPath, assertSafeRelativePath, backupPathFor } from "./bankMigrationSafety.js";
 import type { BankMigrationFile } from "../bankMetadataMigration.js";
 
 export function sha256(bytes: Uint8Array): string {
@@ -87,9 +83,7 @@ export function buildMigrationFile(
 
   const migratedBatch: BankSubtopicBatch = {
     ...batch,
-    questions: batch.questions.map((question) =>
-      missingIds.has(question.id) ? { ...question, language: "en" as const } : question,
-    ),
+    questions: batch.questions.map((question) => (missingIds.has(question.id) ? { ...question, language: "en" as const } : question)),
   };
   return {
     relativePath,
@@ -102,4 +96,3 @@ export function buildMigrationFile(
     backupPath,
   };
 }
-

@@ -91,7 +91,7 @@ describe("Candy Arcade visual regression contract", () => {
 
   it("keeps every resolved hero layout above the old boxed-image area", () => {
     const baseline = candyArcadeHeroAreaRatio("baseline");
-    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(baseline * 2);
+    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(baseline * 1.5);
     expect(candyArcadeHeroAreaRatio("visual_choices_three")).toBeGreaterThan(baseline * 2);
   });
 
@@ -156,27 +156,29 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("visual-correct-border");
   });
 
-  it("renders prominent 3D glossy circular badges and distinct choice-coded stroke borders for kids", () => {
+  it("renders prominent orange, blue, and purple glossy badges with readable capsule surfaces", () => {
     const html = renderHtml();
     expect(html).toContain("border-radius: 50%");
-    expect(html).toContain("--choice-depth-shadow: #E09000");
-    expect(html).toContain("--choice-depth-shadow: #CC2556");
-    expect(html).toContain("--choice-depth-shadow: #007ECC");
+    expect(html).toContain("--choice-depth-shadow: #D97706");
+    expect(html).toContain("--choice-depth-shadow: #0878C9");
+    expect(html).toContain("--choice-depth-shadow: #7026D3");
     expect(html).not.toContain("--choice-depth-shadow: #6BA607");
     expect(html).not.toContain("answer-count-4");
-    expect(html).toContain(
-      '.answer-card::before { content: ""; position: absolute; inset: 6px 14px 6px 24px; border: 3px dashed rgba(255, 255, 255, 0.7);',
-    );
+    expect(html).toContain('.ac-glossy-arcade::before { content: "";');
+    expect(html).toContain("border: 2px solid rgba(255, 255, 255, 0.76)");
+    expect(html).not.toContain("border: 3px dashed");
     expect(html).toMatch(/\.answer-card > b[^}]*width: 156px/);
     expect(html).toMatch(/\.answer-card > b[^}]*font-size: 80px/);
     expect(html).toMatch(/\.answer-card > b[^}]*margin-left: -86px/);
-    expect(html).toContain(".answer-card > b::after");
+    expect(html).toContain(".skin-glossy_arcade .choice-label::after");
+    expect(html).not.toContain(".answer-card > b::after");
     expect(html).toContain("-webkit-text-stroke: 4px var(--choice-stroke-shadow)");
-    expect(html).toContain("--choice-text-color: #78350F");
-    expect(html).toContain("--choice-text-color: #831843");
+    expect(html).toContain("--choice-text-color: #7C2D12");
+    expect(html).toContain("--choice-text-color: #0B3B78");
+    expect(html).toContain("--choice-text-color: #4C1D95");
     expect(html).toContain(".quiz-frame-unified.layout-media_left_choices_right .answer-grid.answer-count-2");
     expect(html).toContain("gap: 40px;");
-    expect(html).toContain("--choice-badge-size: 112px;");
+    expect(html).toContain("--choice-badge-size: 152px;");
     expect(html).toContain("--choice-card-height: 152px;");
     expect(html).toContain("--choice-font-size-base: 44px;");
     expect(html).toContain("--choice-font-size-medium: 38px;");

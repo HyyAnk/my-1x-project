@@ -40,6 +40,26 @@ export function choiceStateStyles(): string {
   will-change: transform;
 }
 
+.answer-card.answer-correct .choice-card-surface,
+.choice-card-text.answer-correct .choice-card-surface,
+.answer-card.answer-reveal-correct .choice-card-surface,
+.choice-card-text.answer-reveal-correct .choice-card-surface,
+.quiz-question-clip .choice-card:nth-child(n).answer-correct .choice-card-surface,
+.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct .choice-card-surface,
+.quiz-question-clip .answer-card:nth-child(n).answer-correct .choice-card-surface,
+.quiz-question-clip .answer-card:nth-child(n).answer-reveal-correct .choice-card-surface,
+.quiz-question-clip .choice-card-text:nth-child(n).answer-correct .choice-card-surface,
+.quiz-question-clip .choice-card-text:nth-child(n).answer-reveal-correct .choice-card-surface,
+.quiz-question-clip .choice-card.answer-correct .choice-card-surface,
+.quiz-question-clip .choice-card.answer-reveal-correct .choice-card-surface,
+.quiz-question-clip .answer-card.answer-correct .choice-card-surface,
+.quiz-question-clip .answer-card.answer-reveal-correct .choice-card-surface,
+.quiz-question-clip .choice-card-text.answer-correct .choice-card-surface,
+.quiz-question-clip .choice-card-text.answer-reveal-correct .choice-card-surface {
+  animation: correct-surface-reveal .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow;
+}
+
 .answer-card.answer-incorrect,
 .choice-card-text.answer-incorrect,
 .answer-card.answer-reveal-incorrect,

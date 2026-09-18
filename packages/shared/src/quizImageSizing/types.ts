@@ -1,5 +1,4 @@
-﻿import type { QuizChoicePresentation, QuizLayoutAssetAspectRatio } from "../quizLayouts.types.js";
-import type { ResolvedQuizLayoutId } from "../quizLayouts.catalog.js";
+import type { QuizChoicePresentation, QuizLayoutAssetAspectRatio, ResolvedQuizLayoutId } from "../quizLayouts.types.js";
 
 export type ImageSlotPurpose = "hero_question_image" | "answer_option";
 export type ImageFit = "cover" | "contain";

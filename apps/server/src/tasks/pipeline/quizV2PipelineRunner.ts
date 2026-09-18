@@ -150,8 +150,13 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     artifacts = await readQuizArtifacts(input);
   }
 
-  await executeQuizQaGatesWithHealing(this, task, input, artifacts);
+  artifacts = await executeQuizQaGatesWithHealing(this, task, input, artifacts);
   await recordStageTiming("qaGates", qaGatesStart);
+
+  if (!artifacts.timeline) {
+    await this.update(task.task_id, { progress_message: "Quiz · compiling deterministic timeline", progress_percent: 58 });
+    await compileTimeline(input);
+  }
 
   try {
     const thumbStart = Date.now();

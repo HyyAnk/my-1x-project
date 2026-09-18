@@ -1,4 +1,4 @@
-import type { ChannelMascotConfig, MascotActionType, MascotMotionPreset, MascotProfile } from "@studio/shared";
+import type { ChannelMascotConfig, MascotActionType, MascotMotionPreset, MascotProfile, MascotStateVariant } from "@studio/shared";
 
 export type MascotPhase = "intro" | "question" | "outro" | "thinking" | "reveal" | "explain";
 
@@ -109,6 +109,23 @@ export function resolveMascotLayout(config: ChannelMascotConfig | null | undefin
   };
 }
 
+function addVariantPreloadUrls(urls: Set<string>, variants?: MascotStateVariant[]): void {
+  for (const variant of variants || []) {
+    if (variant.image_url?.trim()) urls.add(variant.image_url.trim());
+    if (variant.animation?.atlas_url?.trim()) urls.add(variant.animation.atlas_url.trim());
+    if (variant.animation?.transparent_video_url?.trim()) urls.add(variant.animation.transparent_video_url.trim());
+  }
+}
+
+function addBundlePreloadUrls(urls: Set<string>, bundle?: MascotProfile["render_bundle"]): void {
+  if (!bundle?.assets?.actions) return;
+  for (const actionAsset of Object.values(bundle.assets.actions)) {
+    if (actionAsset?.image_url?.trim()) urls.add(actionAsset.image_url.trim());
+    if (actionAsset?.animation?.atlas_url?.trim()) urls.add(actionAsset.animation.atlas_url.trim());
+    if (actionAsset?.animation?.transparent_video_url?.trim()) urls.add(actionAsset.animation.transparent_video_url.trim());
+  }
+}
+
 /**
  * Extracts all unique asset URLs for a mascot to enable seamless browser/renderer preloading.
  */
@@ -123,14 +140,37 @@ export function getMascotPreloadUrls(mascot: MascotProfile | null | undefined): 
     if (style.anchor_image_url?.trim()) {
       urls.add(style.anchor_image_url.trim());
     }
-    for (const variant of style.states?.thinking || []) {
-      if (variant.image_url?.trim()) urls.add(variant.image_url.trim());
-    }
-    for (const variant of style.states?.celebrate || []) {
-      if (variant.image_url?.trim()) urls.add(variant.image_url.trim());
-    }
+    addVariantPreloadUrls(urls, style.states?.thinking);
+    addVariantPreloadUrls(urls, style.states?.celebrate);
   }
+  addBundlePreloadUrls(urls, mascot.render_bundle);
   return Array.from(urls);
+}
+
+function isValidPreloadUrl(src: string): boolean {
+  if (!src || !src.trim()) return false;
+  const trimmed = src.trim();
+  if (trimmed.startsWith("/api/") || trimmed.startsWith("api/")) {
+    return false;
+  }
+  return true;
+}
+
+function getPreloadAttributes(src: string): { as: string; type?: string } {
+  const clean = src.split(/[?#]/)[0].toLowerCase();
+  if (clean.endsWith(".webm")) {
+    return { as: "video", type: "video/webm" };
+  }
+  if (clean.endsWith(".mp4")) {
+    return { as: "video", type: "video/mp4" };
+  }
+  if (clean.endsWith(".wav")) {
+    return { as: "audio", type: "audio/wav" };
+  }
+  if (clean.endsWith(".mp3")) {
+    return { as: "audio", type: "audio/mpeg" };
+  }
+  return { as: "image" };
 }
 
 /**
@@ -142,8 +182,12 @@ export function getMascotPreloadTags(mascot: MascotProfile | null | undefined, s
   return urls
     .map((url) => {
       const src = sourceMapper ? sourceMapper(url) : url;
-      return `<link rel="preload" href="${escAttr(src)}" as="image">`;
+      if (!isValidPreloadUrl(src)) return "";
+      const { as, type } = getPreloadAttributes(src);
+      const typeAttr = type ? ` type="${type}"` : "";
+      return `<link rel="preload" href="${escAttr(src)}" as="${as}"${typeAttr}>`;
     })
+    .filter(Boolean)
     .join("\n");
 }
 

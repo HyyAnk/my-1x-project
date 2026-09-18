@@ -1,11 +1,16 @@
 import { StyleModuleManifestSchema } from "./manifestSchema.js";
 import { BUILT_IN_STYLE_MODULES } from "./builtins.js";
+import { validateAnswerCardPresentationTokens } from "../elements/answerCard/presentationContract.js";
 import type { SlotScopedStyleModule } from "./types.js";
 
 export function renderValidatedModuleCss(module: SlotScopedStyleModule): string {
   const manifest = StyleModuleManifestSchema.parse(module.manifest);
   const css = module.renderer.renderCss();
   const isBuiltIn = BUILT_IN_STYLE_MODULES.some((candidate) => candidate === module);
+
+  if (manifest.slot === "answer-card") {
+    validateAnswerCardPresentationTokens(css, manifest.id);
+  }
 
   if (!isBuiltIn) {
     validateCssAtRules(css, manifest.namespace, manifest.id);

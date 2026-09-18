@@ -14,7 +14,7 @@ export type QuizLayoutUiDefinition = {
   descriptionKey: string;
   sandboxLabelKey: string;
   sandboxDescriptionKey: string;
-  preview: "media-left" | "visual-three" | "full-stack";
+  preview: "media-left" | "visual-three" | "full-stack" | "mystery-reveal" | "split-versus" | "verdict";
   icon: "split" | "visual" | "stack";
 };
 
@@ -52,7 +52,7 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     descriptionKey: "stageStudio.layoutSplitVersusTwoDesc",
     sandboxLabelKey: "stageStudio.layoutSplitVersusTwo",
     sandboxDescriptionKey: "stageStudio.layoutSplitVersusTwoDesc",
-    preview: "media-left",
+    preview: "split-versus",
     icon: "split",
   },
   verdict_true_false: {
@@ -61,7 +61,7 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     descriptionKey: "stageStudio.layoutVerdictTrueFalseDesc",
     sandboxLabelKey: "stageStudio.layoutVerdictTrueFalse",
     sandboxDescriptionKey: "stageStudio.layoutVerdictTrueFalseDesc",
-    preview: "media-left",
+    preview: "verdict",
     icon: "split",
   },
   full_stack_list: {
@@ -79,16 +79,7 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     descriptionKey: "stageStudio.layoutMysteryRevealDesc",
     sandboxLabelKey: "stageStudio.layoutMysteryReveal",
     sandboxDescriptionKey: "stageStudio.layoutMysteryRevealDesc",
-    preview: "media-left",
-    icon: "visual",
-  },
-  clue_deduction: {
-    id: "clue_deduction",
-    labelKey: "stageStudio.layoutClueDeduction",
-    descriptionKey: "stageStudio.layoutClueDeductionDesc",
-    sandboxLabelKey: "stageStudio.layoutClueDeduction",
-    sandboxDescriptionKey: "stageStudio.layoutClueDeductionDesc",
-    preview: "media-left",
+    preview: "mystery-reveal",
     icon: "visual",
   },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutUiDefinition>;

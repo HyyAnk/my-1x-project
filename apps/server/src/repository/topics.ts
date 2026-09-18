@@ -10,10 +10,7 @@ import { buildTopicRun } from "./topicRunBuilder.js";
 import { findLatestTopicRunFile, loadTopicRunsFromDirectory, readTopicRunFile } from "./topicRunReader.js";
 
 export { confirmTopic } from "../context/topicConfirmationService.js";
-export {
-  getTopicAvailabilityBatch,
-  type TopicAvailabilityBatchOptions,
-} from "../quiz/bank/topicAvailabilityService.js";
+export { getTopicAvailabilityBatch, type TopicAvailabilityBatchOptions } from "../quiz/bank/topicAvailabilityService.js";
 export { updateEpisodeSettings } from "./episodeSettings.js";
 
 export async function listTopics(this: RepositoryRuntime, channelId: string): Promise<TopicCandidate[]> {

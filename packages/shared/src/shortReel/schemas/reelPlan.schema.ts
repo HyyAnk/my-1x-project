@@ -1,16 +1,8 @@
 import { z } from "zod";
 import { SegmentIndexSchema, ReelSegmentSchema } from "./reelSegment.schema.js";
 import { ReelScriptSchema } from "./reelScript.schema.js";
-import {
-  ReelReferencesPayloadSchema,
-  ReelCoverPayloadSchema,
-  ShortReelDisplayProjectionSchema,
-} from "./reelShotPlan.schema.js";
-import {
-  ShortReelSourceSnapshotSchema,
-  CompleteShortReelSourceSnapshotSchema,
-  sha256Hex,
-} from "../shortReelSource.schema.js";
+import { ReelReferencesPayloadSchema, ReelCoverPayloadSchema, ShortReelDisplayProjectionSchema } from "./reelShotPlan.schema.js";
+import { ShortReelSourceSnapshotSchema, CompleteShortReelSourceSnapshotSchema, sha256Hex } from "../shortReelSource.schema.js";
 import { ReelPublishingPayloadSchema } from "../shortReelPublishing.schema.js";
 import { ReelVisualContextSchema } from "../shortReelVisual.schema.js";
 

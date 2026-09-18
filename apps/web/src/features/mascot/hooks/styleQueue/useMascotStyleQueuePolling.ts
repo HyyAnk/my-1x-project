@@ -1,0 +1,163 @@
+import { useCallback, useRef, useEffect } from "react";
+import type { MascotStyleBatchJob } from "@studio/shared";
+import { api } from "../../../../api";
+import { createStyleBatchOutcomeNotice, createStyleConceptSuccessNotice } from "../../services/mascotQueueNotices";
+import type { MascotStyleQueueStateReturn, StyleQueueRefs } from "./types";
+
+export interface UseMascotStyleQueuePollingProps {
+  state: MascotStyleQueueStateReturn;
+  refs: StyleQueueRefs;
+}
+
+export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueuePollingProps) {
+  const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isPollingRef = useRef<boolean>(false);
+
+  const stopPolling = useCallback(() => {
+    if (pollTimerRef.current) {
+      clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    isPollingRef.current = false;
+  }, []);
+
+  const handleBatchSettled = useCallback(
+    async (batch: MascotStyleBatchJob, mascotId: string) => {
+      stopPolling();
+      state.setActiveBatch(batch);
+      state.setQueuedStyleIds([]);
+      state.setActiveStyleIds([]);
+      refs.activeBatchIdRef.current = null;
+
+      try {
+        const mascotRes = await api.mascot(mascotId);
+        if (refs.isMountedRef.current && mascotRes?.mascot) {
+          refs.onMascotUpdatedRef.current(mascotRes.mascot);
+        }
+      } catch {
+        // Non-critical mascot refresh error
+      }
+
+      const isAborted = batch.status === "cancelled";
+      refs.onNoticeRef.current(createStyleBatchOutcomeNotice(isAborted, batch.completed_count, batch.failed_count, batch.total_styles));
+
+      if (batch.failed_count === 0 && !isAborted) {
+        setTimeout(() => {
+          if (refs.isMountedRef.current && !refs.activeBatchIdRef.current) {
+            state.setQueueProgress(null);
+          }
+        }, 3500);
+      } else {
+        state.setQueueProgress((prev) =>
+          prev
+            ? {
+                ...prev,
+                completed: batch.completed_count,
+                failed: batch.failed_count,
+                statusMessage: isAborted ? "Generation stopped by user" : `${batch.failed_count} style concept(s) failed`,
+              }
+            : null,
+        );
+      }
+    },
+    [refs, state, stopPolling],
+  );
+
+  const pollBatchStatus = useCallback(async () => {
+    const currentMascot = refs.mascotRef.current;
+    if (!currentMascot || !refs.isMountedRef.current) return;
+
+    try {
+      const statusRes = await api.getStyleGenerationStatus(currentMascot.id);
+      if (!refs.isMountedRef.current) return;
+
+      const batch = statusRes.active_batch;
+      if (!batch) {
+        if (refs.activeBatchIdRef.current) {
+          stopPolling();
+          refs.activeBatchIdRef.current = null;
+          state.setQueuedStyleIds([]);
+          state.setActiveStyleIds([]);
+          state.setQueueProgress(null);
+        }
+        return;
+      }
+
+      state.setActiveBatch(batch);
+      state.setQueuedStyleIds(statusRes.queued_style_ids || []);
+      state.setActiveStyleIds(statusRes.active_style_ids || []);
+
+      const activeJobs = batch.items.filter((j) => j.status === "generating");
+      const activeNames = activeJobs.map((j) => j.style_name || j.style_id);
+      const activeDesc = activeNames.length > 0 ? activeNames.join(", ") : "Preparing...";
+      const queuedCount = statusRes.queued_style_ids?.length || 0;
+
+      state.setQueueProgress((prev) => ({
+        total: batch.total_styles,
+        completed: batch.completed_count,
+        failed: batch.failed_count,
+        activeStyleIds: statusRes.active_style_ids || [],
+        activeStyleNames: activeNames,
+        statusMessage: `Generating: ${activeDesc}${queuedCount > 0 ? ` • ${queuedCount} queued` : ""}`,
+        isStopping: prev?.isStopping ?? false,
+        startTime: prev?.startTime ?? (new Date(batch.created_at).getTime() || Date.now()),
+      }));
+
+      // If new completions occurred since last poll, update mascot in real-time
+      if (batch.completed_count > refs.lastCompletedCountRef.current) {
+        refs.lastCompletedCountRef.current = batch.completed_count;
+        try {
+          const mascotRes = await api.mascot(currentMascot.id);
+          if (refs.isMountedRef.current && mascotRes?.mascot) {
+            refs.onMascotUpdatedRef.current(mascotRes.mascot);
+          }
+        } catch {
+          // Non-critical mascot refresh
+        }
+
+        const justFinishedJob = batch.items.find(
+          (j) => j.status === "completed" && j.completed_at && Date.now() - new Date(j.completed_at).getTime() < 3000,
+        );
+        if (justFinishedJob) {
+          refs.onNoticeRef.current(createStyleConceptSuccessNotice(justFinishedJob.style_name || justFinishedJob.style_id));
+        }
+      }
+
+      if (["completed", "failed", "cancelled"].includes(batch.status)) {
+        await handleBatchSettled(batch, currentMascot.id);
+      }
+    } catch {
+      // Polling network error handled silently on individual tick
+    }
+  }, [handleBatchSettled, refs, state, stopPolling]);
+
+  const startPolling = useCallback(() => {
+    stopPolling();
+    isPollingRef.current = true;
+    void pollBatchStatus();
+    pollTimerRef.current = setInterval(() => {
+      void pollBatchStatus();
+    }, 1500);
+  }, [pollBatchStatus, stopPolling]);
+
+  // Tab switch resilience: trigger instant catch-up when tab becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && refs.activeBatchIdRef.current) {
+        void pollBatchStatus();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      stopPolling();
+    };
+  }, [pollBatchStatus, refs.activeBatchIdRef, stopPolling]);
+
+  return {
+    startPolling,
+    stopPolling,
+    pollBatchStatus,
+  };
+}

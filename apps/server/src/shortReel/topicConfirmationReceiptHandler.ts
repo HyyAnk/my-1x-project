@@ -1,15 +1,7 @@
-import {
-  type Channel,
-  type ConfirmShortReelTopicResponse,
-  type BankQuestion,
-  type ShortReelRecord,
-} from "@studio/shared";
+import { type Channel, type ConfirmShortReelTopicResponse, type BankQuestion, type ShortReelRecord } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../repository/service.js";
 import { convertBankQuestionToQuizQuestionLossless } from "../quiz/bank/bridge/bankQuestionConverter.js";
-import {
-  loadShortReelLocalizationArtifact,
-  normalizeTargetLanguage,
-} from "../quiz/bank/localization/productLocalization.js";
+import { loadShortReelLocalizationArtifact, normalizeTargetLanguage } from "../quiz/bank/localization/productLocalization.js";
 import {
   computeConfirmationOptionsFingerprint,
   saveTopicConfirmationReceipt,
@@ -37,11 +29,7 @@ export async function reconcileQuestionHistory(
 /**
  * Ensures a confirmed topic is marked selected in repository state projection.
  */
-export async function reconcileTopicSelection(
-  repository: RepositoryService,
-  channelId: string,
-  topicId: string,
-): Promise<void> {
+export async function reconcileTopicSelection(repository: RepositoryService, channelId: string, topicId: string): Promise<void> {
   const topics = await repository.listTopics(channelId);
   const topic = topics.find((t) => t.topic_id === topicId);
   if (topic && !topic.selected) {
@@ -74,10 +62,7 @@ export async function handleCompletedReelReceipt(
 ): Promise<ConfirmShortReelTopicResponse> {
   const existingReel = await repository.getShortReel({ channel_id: channelId, reel_id: receipt.product_id });
   if (!existingReel) {
-    throw new RepositoryError(
-      "CONFIRMATION_PRODUCT_MISSING: Completed confirmation product is missing.",
-      "CONFIRMATION_PRODUCT_MISSING",
-    );
+    throw new RepositoryError("CONFIRMATION_PRODUCT_MISSING: Completed confirmation product is missing.", "CONFIRMATION_PRODUCT_MISSING");
   }
   const locArtifact = await loadShortReelLocalizationArtifact(repository, channelId, existingReel.reel_id).catch(() => null);
   if (!locArtifact) {
@@ -162,7 +147,17 @@ export interface EnsurePreparingReceiptParams {
  * Idempotently creates a preparing receipt to establish intent before generation/localization.
  */
 export async function ensurePreparingReceipt(params: EnsurePreparingReceiptParams): Promise<void> {
-  const { repository, channelId, topicId, existingReceipt, reservedReelId, effectiveRequestId, incomingOptions, boundQuestionIds, boundContentHashes } = params;
+  const {
+    repository,
+    channelId,
+    topicId,
+    existingReceipt,
+    reservedReelId,
+    effectiveRequestId,
+    incomingOptions,
+    boundQuestionIds,
+    boundContentHashes,
+  } = params;
   if (existingReceipt && existingReceipt.status === "preparing") return;
 
   await saveTopicConfirmationReceipt(repository, channelId, {
@@ -213,4 +208,3 @@ export async function saveCompletedConfirmationReceipt(params: SaveCompletedConf
     status: "completed",
   });
 }
-

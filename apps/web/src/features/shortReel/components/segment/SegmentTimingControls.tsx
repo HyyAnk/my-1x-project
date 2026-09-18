@@ -41,14 +41,7 @@ export interface CueTimingInputsProps {
   onTimingChange: (field: "start_seconds" | "end_seconds", rawVal: string) => void;
 }
 
-export function CueTimingInputs({
-  segmentIndex,
-  cueIndex,
-  startSeconds,
-  endSeconds,
-  maxDuration,
-  onTimingChange,
-}: CueTimingInputsProps) {
+export function CueTimingInputs({ segmentIndex, cueIndex, startSeconds, endSeconds, maxDuration, onTimingChange }: CueTimingInputsProps) {
   return (
     <div className="short-reel-cue-timing" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
       <input
@@ -88,12 +81,7 @@ export interface SegmentTimingControlsProps {
   onDurationChange: (raw: string) => void;
 }
 
-export function SegmentTimingControls({
-  segmentIndex,
-  durationSeconds,
-  mode,
-  onDurationChange,
-}: SegmentTimingControlsProps) {
+export function SegmentTimingControls({ segmentIndex, durationSeconds, mode, onDurationChange }: SegmentTimingControlsProps) {
   const isInvalidDuration = durationSeconds < 8 || durationSeconds > 10;
 
   return (
@@ -137,13 +125,7 @@ export function SegmentTimingControls({
         <label className="short-reel-label" htmlFor={`seg-mode-${segmentIndex}`}>
           <span>Mode</span>
         </label>
-        <input
-          id={`seg-mode-${segmentIndex}`}
-          type="text"
-          readOnly
-          className="short-reel-input short-reel-input-readonly"
-          value={mode}
-        />
+        <input id={`seg-mode-${segmentIndex}`} type="text" readOnly className="short-reel-input short-reel-input-readonly" value={mode} />
       </div>
     </div>
   );

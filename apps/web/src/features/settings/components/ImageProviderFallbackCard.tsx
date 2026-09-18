@@ -75,24 +75,16 @@ export function ImageProviderFallbackCard({
 
   return (
     <section className="panel image-fallback-panel">
-      <ImageFallbackCardHeader
-        fallbackEnabled={fallbackEnabled}
-        hasFallbackApiKey={hasFallbackApiKey}
-        fallbackModel={fallbackModel}
-      />
+      <ImageFallbackCardHeader fallbackEnabled={fallbackEnabled} hasFallbackApiKey={hasFallbackApiKey} fallbackModel={fallbackModel} />
 
       <form className="codex-form" onSubmit={(event) => void onSaveFallback(event)}>
         <label className="toggle-field">
-          <input
-            type="checkbox"
-            checked={fallbackEnabled}
-            onChange={(event) => setFallbackEnabled(event.target.checked)}
-          />
+          <input type="checkbox" checked={fallbackEnabled} onChange={(event) => setFallbackEnabled(event.target.checked)} />
           <span>Enable automatic fallback to ImgStudio</span>
         </label>
         <small className="field-help" style={{ marginTop: "-6px", marginBottom: "8px" }}>
-          When any image in a batch fails on the primary provider (e.g., content filter rejection, timeout, or quota limit),
-          that specific image is immediately generated via ImgStudio so the video creation workflow continues without disruption.
+          When any image in a batch fails on the primary provider (e.g., content filter rejection, timeout, or quota limit), that specific
+          image is immediately generated via ImgStudio so the video creation workflow continues without disruption.
         </small>
 
         <FallbackModelConfigFields
@@ -126,9 +118,7 @@ export function ImageProviderFallbackCard({
           onVerifyFallbackConnection={onVerifyFallbackConnection}
         />
 
-        {verificationResult ? (
-          <ProviderVerificationBanner result={verificationResult} />
-        ) : null}
+        {verificationResult ? <ProviderVerificationBanner result={verificationResult} /> : null}
       </form>
     </section>
   );

@@ -55,7 +55,7 @@ describe("quizDirectPromptBuilder", () => {
     expect(contract).toContain('"age_band": "7-9"');
     expect(contract).toContain("exactly 3 question objects");
     expect(contract).toContain("strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'");
-    expect(contract).toContain("3D modern digital animated movie character render style");
+    expect(contract).toContain("Visual Opportunity Entity & Setting Mandate");
   });
 
   it("builds a contract respecting true_false format", () => {

@@ -3,7 +3,7 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { resolveRenderEngineSnapshot } from "../src/tasks/video/renderEngineSnapshot.js";
 import { buildRenderInvocation } from "../src/tasks/video/renderInvocationOptions.js";
-import { getHyperframesInvocation, getHyperframesPackageVersion } from "../src/tasks/video/videoInvocation.js";
+import { getHyperframesPackageVersion } from "../src/tasks/video/videoInvocation.js";
 import {
   fingerprintTransitionPreview,
   type TransitionPreviewFingerprintInput,

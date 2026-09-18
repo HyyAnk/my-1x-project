@@ -256,7 +256,8 @@ describe("runtime visual style catalog", () => {
 
     expect(glossyArcade).toBeDefined();
     expect(candyRays).toBeDefined();
-    expect(renderValidatedModuleCss(glossyArcade!)).toContain(".answer-card::before");
+    expect(renderValidatedModuleCss(glossyArcade!)).toContain(".ac-glossy-arcade::before");
+    expect(renderValidatedModuleCss(glossyArcade!)).not.toContain(".answer-card::before");
     expect(renderValidatedModuleCss(glossyArcade!)).not.toContain("@scope");
     expect(renderValidatedModuleCss(candyRays!)).toContain(".bg-gradient {");
   });

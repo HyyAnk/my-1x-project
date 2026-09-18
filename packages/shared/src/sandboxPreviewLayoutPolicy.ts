@@ -22,7 +22,13 @@ export type SandboxPreviewLayoutContext = {
 export function sandboxPreviewLayoutIssues(input: SandboxPreviewLayoutContext): readonly QuizLayoutIncompatibility[] {
   if (input.layout_id === "baseline") return [];
   const capability = getQuizLayoutCapability(input.layout_id);
-  const questionFormat = input.question_format ?? (input.choices.length === 2 ? "true_false" : "multiple_choice");
+  const questionFormat =
+    input.question_format ??
+    (input.layout_id === "mystery_reveal" || input.choices.length === 1
+      ? "image_guess"
+      : input.choices.length === 2
+        ? "true_false"
+        : "multiple_choice");
   const hasSemanticContext = Boolean(input.question_format || input.archetype);
   const defaultPresentation = capability.supportedPresentations[0];
   const archetype = resolveSandboxArchetype(input.archetype, questionFormat, defaultPresentation);

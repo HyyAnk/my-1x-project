@@ -1,8 +1,13 @@
 import type { ShortReelRecord } from "@studio/shared";
 import { sanitizeThumbnailHook } from "../quiz/thumbnail/thumbnailHookGuardrail.js";
 import { GenerationError } from "./generationErrors.js";
+import type { ReelCoverPersona } from "./coverAiPlanner.js";
 
 export const COVER_PROMPT_VERSION = "v1";
+
+export interface BuildReelCoverPromptOptions {
+  persona?: ReelCoverPersona;
+}
 
 function sanitizeUntrusted(text: string | undefined | null): string {
   if (!text) return "";
@@ -11,7 +16,7 @@ function sanitizeUntrusted(text: string | undefined | null): string {
 
 /**
  * Pure function that compiles the 9:16 portrait cover prompt from an accepted script,
- * visual context, and accepted style reference.
+ * visual context, accepted style reference, and optional dynamic mascot persona.
  *
  * Enforces:
  * - 9:16 full-bleed portrait orientation
@@ -20,8 +25,9 @@ function sanitizeUntrusted(text: string | undefined | null): string {
  * - Single dramatic focal subject (no multi-question grids or matrices)
  * - Concise curiosity hook banner (no correct answer spoiler)
  * - Delimited narrative context with prompt-injection defense
+ * - Dynamic emotional archetype, pose, costume, and prop expression
  */
-export function buildReelCoverPrompt(record: ShortReelRecord): string {
+export function buildReelCoverPrompt(record: ShortReelRecord, options?: BuildReelCoverPromptOptions): string {
   if (!record.visual_context) {
     throw new GenerationError("MISSING_REFERENCE", "Visual context is required to build cover prompt.");
   }
@@ -50,14 +56,42 @@ export function buildReelCoverPrompt(record: ShortReelRecord): string {
   const sanitizedQuestion = sanitizeUntrusted(source.question_text);
   const sanitizedAnswer = sanitizeUntrusted(source.selected_answer_text);
 
+  const persona = options?.persona;
+  const sanitizedArchetype = persona ? sanitizeUntrusted(persona.archetypeName) : "";
+  const sanitizedExpression = persona ? sanitizeUntrusted(persona.expression) : "";
+  const sanitizedPose = persona ? sanitizeUntrusted(persona.poseDescription) : "";
+  const sanitizedRole = persona ? sanitizeUntrusted(persona.role) : "";
+  const sanitizedCostume = persona?.costume ? sanitizeUntrusted(persona.costume) : "";
+  const sanitizedProp = persona?.prop ? sanitizeUntrusted(persona.prop) : "";
+  const sanitizedClimax = persona?.dramaticHook ? sanitizeUntrusted(persona.dramaticHook) : "";
+
+  const personaLines = persona
+    ? [
+        "",
+        `MASCOT ACTION & DRAMATIC EXPRESSION (Archetype: ${sanitizedArchetype}):`,
+        `- Contextual Role: ${sanitizedRole}`,
+        `- Facial Expression: ${sanitizedExpression}`,
+        `- Dynamic Posture & Action: ${sanitizedPose}`,
+        sanitizedCostume ? `- Thematic Costume: ${sanitizedCostume}` : null,
+        sanitizedProp ? `- Thematic Prop / Focal Item: ${sanitizedProp}` : null,
+        sanitizedClimax ? `- Dramatic Climax: ${sanitizedClimax}` : null,
+      ].filter((line): line is string => line !== null)
+    : [];
+
   return [
     "You are an elite short-form vertical video cover designer creating a high-CTR 9:16 portrait thumbnail cover.",
     "",
     "TASK:",
-    `Create a compelling, high-contrast 9:16 vertical portrait cover image featuring character "${sanitizedMascot}" in a dramatic quiz challenge scene.`,
+    `Create a compelling, high-contrast 9:16 vertical portrait cover image featuring character "${sanitizedMascot}" in a dramatic quiz challenge scene.${
+      sanitizedArchetype ? ` The character strongly embodies "${sanitizedArchetype}" with intense emotional engagement.` : ""
+    }`,
+    ...personaLines,
     "",
     "REFERENCE CONDITIONING:",
     `- Maintain visual consistency with the provided 9:16 style reference keyframe in character design, lighting, materials, and art direction (${sanitizedArtDirection}).`,
+    ...(persona
+      ? ["- Enact the specified dynamic action, dramatic pose, and expressive facial reaction while preserving character identity."]
+      : []),
     "",
     "COMPOSITION & SAFE ZONES:",
     "- Aspect Ratio: 9:16 vertical portrait (1080x1920).",

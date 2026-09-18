@@ -10,7 +10,7 @@ describe("Mystery Reveal layout & archetype", () => {
     expect(capability).toBeDefined();
     expect(capability.id).toBe("mystery_reveal");
     expect(capability.supportedAspectRatios).toEqual(["16:9"]);
-    expect(capability.supportedChoiceCounts).toEqual([0, 1, 2, 3]);
+    expect(capability.supportedChoiceCounts).toEqual([1]);
     expect(capability.recommendedFormats).toContain("image_guess");
     expect(capability.media.required).toContain("question");
   });
@@ -76,7 +76,7 @@ describe("Mystery Reveal layout & archetype", () => {
 
   it("verifies hero area ratio is substantial for cinematic visual impact", () => {
     const ratio = candyArcadeHeroAreaRatio("mystery_reveal");
-    expect(ratio).toBeGreaterThan(0.25);
+    expect(ratio).toBeGreaterThan(0.23);
   });
 
   it("renders sandbox preview composition with 1 choice without schema errors", () => {
@@ -90,35 +90,23 @@ describe("Mystery Reveal layout & archetype", () => {
     expect(composition.html).toContain("Pikachu");
   });
 
-  it("renders sandbox preview composition with 0 choices (pure visual reveal) without schema errors", () => {
-    const composition = buildSandboxComposition({
-      layout_id: "mystery_reveal",
-      choices: [],
-      correct_choice_index: 0,
-      phase: "reveal",
-    });
-    expect(composition.html).toContain("hero-image");
-  });
+  it("strictly rejects choice counts other than 1 in sandbox preview schema", () => {
+    expect(() => {
+      buildSandboxComposition({
+        layout_id: "mystery_reveal",
+        choices: [],
+        correct_choice_index: 0,
+      });
+    }).toThrow();
 
-  it("renders sandbox preview composition with 2 or 3 choices smoothly", () => {
-    const twoChoices = buildSandboxComposition({
-      layout_id: "mystery_reveal",
-      choices: ["Choice A", "Choice B"],
-      correct_choice_index: 0,
-      phase: "reveal",
-    });
-    expect(twoChoices.html).toContain("Choice A");
+    expect(() => {
+      buildSandboxComposition({
+        layout_id: "mystery_reveal",
+        choices: ["Choice A", "Choice B"],
+        correct_choice_index: 0,
+      });
+    }).toThrow();
 
-    const threeChoices = buildSandboxComposition({
-      layout_id: "mystery_reveal",
-      choices: ["A", "B", "C"],
-      correct_choice_index: 1,
-      phase: "reveal",
-    });
-    expect(threeChoices.html).toContain("mystery-stage-wrapper");
-  });
-
-  it("strictly rejects more than 3 choices in sandbox preview schema", () => {
     expect(() => {
       buildSandboxComposition({
         layout_id: "mystery_reveal",

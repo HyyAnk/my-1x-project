@@ -102,9 +102,7 @@ export function selectSteeredCandidates(
   const scoredCandidates = slotCandidates
     .filter((c) => hintTokens.every((token) => scoreQuestionKeywordMatch(c.question, [token]) > 0))
     .map((c) => {
-      let score =
-        scoreQuestionKeywordMatch(c.question, hintTokens) +
-        scoreDomainKeywordMatch(c.question.domain_id || "", hintTokens);
+      let score = scoreQuestionKeywordMatch(c.question, hintTokens) + scoreDomainKeywordMatch(c.question.domain_id || "", hintTokens);
       // Priority bonus for iconic_franchises and difficulty: 1
       if (c.question.subtopic_id === "iconic_franchises") {
         score += 25;

@@ -2,17 +2,32 @@ import {
   getTransition,
   getTransitionDefinition,
   MASCOT_CANVAS_SIZES,
-  type IntroOutroTransitionType,
   type MascotRenderAspectRatio,
   type TransitionDefinition,
 } from "@studio/shared";
 import { escAttr } from "./candyArcadeSvg.js";
 
+type TransitionWithMarkup = TransitionDefinition & {
+  renderMarkup?: (args: {
+    instanceId: string;
+    placement: string;
+    fps: { numerator: number; denominator: number };
+    startFrame: number;
+    boundaryFrame: number;
+    availableEndFrameExclusive: number;
+    width: number;
+    height: number;
+    fromColor: string;
+    toColor: string;
+    inkColor: string;
+  }) => string;
+};
+
 /**
  * Resolves a transition definition from the shared registry,
  * falling back to sensible defaults for known core transitions or standard naming.
  */
-export function resolveTransitionDefinition(transitionType: IntroOutroTransitionType | string): TransitionDefinition {
+export function resolveTransitionDefinition(transitionType: string): TransitionDefinition {
   const def = getTransition(transitionType);
   if (def) {
     return def;
@@ -74,7 +89,7 @@ export function resolveTransitionDefinition(transitionType: IntroOutroTransition
  */
 export function calculateIntroTransitionTiming(
   clipDurationSeconds: number,
-  transitionType: IntroOutroTransitionType | string,
+  transitionType: string,
   configuredDurationSeconds?: number,
 ): { transitionStart: number; transitionDuration: number } {
   if (transitionType === "cut") {
@@ -98,17 +113,17 @@ export function calculateIntroTransitionTiming(
  * Generates transition overlay DOM markup dynamically based on transition metadata.
  */
 export function renderIntroTransitionOverlay(
-  transitionType: IntroOutroTransitionType | string,
+  transitionType: string,
   transitionStart: number,
   transitionDuration: number,
-  def?: any,
+  def?: TransitionWithMarkup | null,
   instanceId?: string,
   aspectRatio: MascotRenderAspectRatio = "16:9",
 ): string {
-  let activeDef = def;
+  let activeDef: TransitionWithMarkup | undefined = def ?? undefined;
   if (!activeDef) {
     try {
-      activeDef = getTransitionDefinition(transitionType);
+      activeDef = getTransitionDefinition(transitionType) as unknown as TransitionWithMarkup;
     } catch {
       activeDef = resolveTransitionDefinition(transitionType);
     }
@@ -161,7 +176,7 @@ export function renderIntroTransitionOverlay(
 export function customIntroVideoClip(
   videoPath: string,
   durationSeconds: number,
-  transitionType: IntroOutroTransitionType | string = "stinger_swipe",
+  transitionType = "stinger_swipe",
   hasAudioOrDuration: boolean | number = true,
   transitionDurationSeconds?: number,
   instanceId?: string,
@@ -177,9 +192,9 @@ export function customIntroVideoClip(
     targetDuration = hasAudioOrDuration;
   }
 
-  let def: any;
+  let def: TransitionWithMarkup | undefined;
   try {
-    def = getTransitionDefinition(transitionType);
+    def = getTransitionDefinition(transitionType) as unknown as TransitionWithMarkup;
   } catch {
     def = resolveTransitionDefinition(transitionType);
   }

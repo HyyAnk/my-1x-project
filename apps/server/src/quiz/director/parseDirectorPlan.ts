@@ -88,6 +88,7 @@ function resolveDefaultLayout(question: QuizQuestion, archetype: DirectorArchety
     questionFormat: question.format,
     choiceCount: question.choices.length,
     aspectRatio,
+    answerMode: question.answer_mode,
   });
   if (resolution.ok) return resolution.layoutId;
   throw new Error(resolution.issues.map((issue) => issue.message).join(" "));

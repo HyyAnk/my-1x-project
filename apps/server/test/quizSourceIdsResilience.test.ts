@@ -1,6 +1,9 @@
 ﻿import { describe, expect, it, vi } from "vitest";
 import { makeAuthorizedBankQuestion } from "./helpers/authorizedContentFixtures.js";
-import { convertBankQuestionToQuizQuestionLossless, convertBankQuestionToQuizQuestion } from "../src/quiz/bank/bridge/bankQuestionConverter.js";
+import {
+  convertBankQuestionToQuizQuestionLossless,
+  convertBankQuestionToQuizQuestion,
+} from "../src/quiz/bank/bridge/bankQuestionConverter.js";
 import { assessSemanticQa } from "../src/quiz/qa/stages/assessSemanticQa.js";
 import { deriveQuizV2FromScenes } from "../src/quiz/domain/quiz.js";
 import { executeQuizQaGatesWithHealing } from "../src/tasks/pipeline/quizPipelineVoiceStep.js";
@@ -164,13 +167,7 @@ describe("Quiz Source IDs Resilience and Preflight Safety", () => {
       config: {},
     };
 
-    await executeQuizQaGatesWithHealing(
-      mockRuntime,
-      task,
-      input,
-      initialArtifacts,
-      3
-    );
+    await executeQuizQaGatesWithHealing(mockRuntime, task, input, initialArtifacts, 3);
 
     expect(mockRepo.writeQuiz).toHaveBeenCalled();
     expect(writtenQuizzes.length).toBeGreaterThan(0);

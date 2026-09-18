@@ -6,6 +6,7 @@ import {
   getMascotStyleReadiness,
   GenerateMascotStyleConceptRequestSchema,
   GenerateMascotStyleConceptResponseSchema,
+  MascotProfileSchema,
   type MascotStyle,
   type MascotProfile,
 } from "../src/index.js";
@@ -282,7 +283,136 @@ describe("MascotStyleSchema and style readiness", () => {
       const parsed = GenerateMascotStyleConceptResponseSchema.parse(rawData);
       assert.equal(parsed.style.id, "style_test");
       assert.equal(parsed.style.anchor_image_url, "https://example.com/anchor.png");
+      assert.equal(parsed.style.raw_anchor_image_url, null);
       assert.equal(parsed.mascot.id, "mascot_1");
+      assert.equal(parsed.mascot.master_raw_image_url, null);
+    });
+
+    it("parses style and response with raw_anchor_image_url and master_raw_image_url", () => {
+      const rawData = {
+        style: {
+          id: "style_test",
+          name: "Cyberpunk",
+          keyword: "neon",
+          anchor_image_url: "https://example.com/anchor.png",
+          raw_anchor_image_url: "https://example.com/anchor_raw.png",
+          is_default: false,
+          states: { thinking: [], celebrate: [] },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+        mascot: {
+          id: "mascot_1",
+          name: "Robo Fox",
+          description: "Fox",
+          visual_style: "pixar_3d",
+          master_prompt: "fox",
+          master_image_url: "https://example.com/master.png",
+          master_raw_image_url: "https://example.com/master_raw.png",
+          color_theme: "#06b6d4",
+          actions: {},
+          styles: [],
+          assigned_channel_ids: [],
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+        anchor_image_url: "https://example.com/anchor.png",
+        raw_anchor_image_url: "https://example.com/anchor_raw.png",
+      };
+
+      const parsed = GenerateMascotStyleConceptResponseSchema.parse(rawData);
+      assert.equal(parsed.style.raw_anchor_image_url, "https://example.com/anchor_raw.png");
+      assert.equal(parsed.mascot.master_raw_image_url, "https://example.com/master_raw.png");
+      assert.equal(parsed.raw_anchor_image_url, "https://example.com/anchor_raw.png");
+    });
+  });
+
+  describe("V2 canonical profile and style integration", () => {
+    it("parses MascotProfile with render_bundle and styles as canonical primary model", () => {
+      const v2Profile = {
+        schema_version: 2,
+        id: "mascot_v2",
+        name: "V2 Model Mascot",
+        visual_style: "pixar_3d",
+        color_theme: "#06b6d4",
+        styles: [
+          {
+            id: "core",
+            name: "Core Style",
+            is_default: true,
+            anchor_image_url: "https://example.com/anchor.png",
+            states: {
+              thinking: [{ id: "t1", slot_index: 1, image_url: "https://example.com/t1.png", motion_preset: "sway" }],
+              celebrate: [{ id: "c1", slot_index: 1, image_url: "https://example.com/c1.png", motion_preset: "jump" }],
+            },
+            created_at: "2026-09-16T00:00:00.000Z",
+            updated_at: "2026-09-16T00:00:00.000Z",
+          },
+        ],
+        render_bundle: {
+          config: {
+            version: 2,
+            placements: {
+              "16:9": { anchor: "bottom_right", scale: 1.5, offset_x: 0, offset_y: 0, flip_x: false },
+              "9:16": { anchor: "bottom_right", scale: 1.5, offset_x: 0, offset_y: 0, flip_x: false },
+            },
+            visibility: {
+              enabled: true,
+              phase_rules: {
+                intro: { visible: false, action: "wave", enter_transition: "fade", exit_transition: "fade" },
+                question: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
+                choices: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
+                thinking: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
+                reveal: { visible: true, action: "celebrate", enter_transition: "pop", exit_transition: "fade" },
+                explain: { visible: true, action: "celebrate", enter_transition: "fade", exit_transition: "fade" },
+                outro: { visible: false, action: "wave", enter_transition: "fade", exit_transition: "fade" },
+              },
+              reveal_outcome_actions: { correct: "celebrate", wrong: "oops", timeout: "oops" },
+            },
+          },
+          assets: {
+            actions: {
+              thinking: {
+                version: 2,
+                action: "thinking",
+                image_url: "https://example.com/t1.png",
+                registration: {
+                  source_width: 512,
+                  source_height: 512,
+                  content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+                  pivot: { x: 256, y: 512 },
+                  offset_x: 0,
+                  offset_y: 0,
+                },
+                motion: { preset: "sway", speed: 1, intensity: "normal" },
+              },
+            },
+            master: {
+              version: 2,
+              image_url: "https://example.com/master.png",
+              registration: {
+                source_width: 512,
+                source_height: 512,
+                content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+                pivot: { x: 256, y: 512 },
+                offset_x: 0,
+                offset_y: 0,
+              },
+            },
+          },
+        },
+        actions: {},
+        assigned_channel_ids: [],
+        created_at: "2026-09-16T00:00:00.000Z",
+        updated_at: "2026-09-16T00:00:00.000Z",
+      };
+
+      const parsed = MascotProfileSchema.parse(v2Profile);
+      assert.equal(parsed.schema_version, 2);
+      assert.equal(parsed.render_bundle?.config.version, 2);
+      assert.equal(parsed.styles.length, 1);
+      assert.equal(parsed.styles[0]?.id, "core");
+      assert.equal(parsed.render_bundle?.assets.actions.thinking?.action, "thinking");
     });
   });
 });

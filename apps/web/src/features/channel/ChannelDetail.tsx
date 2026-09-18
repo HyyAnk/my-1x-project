@@ -1,39 +1,19 @@
 import { useState } from "react";
-import { Archive, FileText, FilmSlate, FilmStrip, Lightbulb, PencilSimple, Trash, VideoCamera } from "@phosphor-icons/react";
+import { FileText, FilmSlate, FilmStrip, Lightbulb, VideoCamera } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
-import { ChannelBreadcrumb } from "../../components/Breadcrumbs";
-import { StatusBadge } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
-import { useTranslation } from "../../i18n";
 import { buildHash, getNavProps } from "../../hooks/useRouter";
-import { MascotAssignModal } from "../../components/MascotAssignModal";
+import { ChannelDetailHeader } from "./components/ChannelDetailHeader";
+import { ChannelDetailModals } from "./components/ChannelDetailModals";
 import { ChannelLoadingState } from "./components/ChannelLoadingState";
-import { CreateShortReelModal } from "./components/CreateShortReelModal";
-import { DeleteEpisodeModal } from "./components/DeleteEpisodeModal";
-import { DeleteShortReelModal } from "./components/DeleteShortReelModal";
-import { EditChannelModal } from "./components/EditChannelModal";
 import { ChannelEpisodesTab } from "./components/ChannelEpisodesTab";
 import { ChannelShortReelsTab } from "./components/ChannelShortReelsTab";
 import { ChannelTopicsTab } from "./components/ChannelTopicsTab";
 import { ChannelDnaTab } from "./components/ChannelDnaTab";
 import { ChannelIntroOutroTab } from "./components/ChannelIntroOutroTab";
-import { useChannelDetail } from "./hooks/useChannelDetail";
+import { useChannelDetail, type ChannelTab } from "./hooks/useChannelDetail";
 
-export function ChannelDetail({
-  channel,
-  channels: _channels,
-  tasks,
-  activeTab,
-  onTabChange,
-  onNavigateHome,
-  onTaskSubmitted,
-  onBack,
-  onRefresh,
-  onNotice,
-  onDelete,
-  openEpisode,
-  simplifyMode = true,
-}: {
+type ChannelDetailProps = {
   channel: Channel;
   channels: Channel[];
   tasks: Task[];
@@ -47,8 +27,24 @@ export function ChannelDetail({
   onDelete: (channel: Channel) => void;
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
   simplifyMode?: boolean;
-}) {
-  const { t } = useTranslation();
+};
+
+export function ChannelDetail(props: ChannelDetailProps) {
+  const {
+    channel,
+    tasks,
+    activeTab,
+    onTabChange,
+    onNavigateHome,
+    onTaskSubmitted,
+    onBack,
+    onRefresh,
+    onNotice,
+    onDelete,
+    openEpisode,
+    simplifyMode = true,
+  } = props;
+
   const state = useChannelDetail({
     channel,
     tasks,
@@ -70,93 +66,36 @@ export function ChannelDetail({
   return (
     <>
       <section className="page-wrap detail-page">
-        <ChannelBreadcrumb channelName={channel.display_name} onNavigateHome={onNavigateHome} onNavigateChannels={onBack} />
+        <ChannelDetailHeader
+          channel={channel}
+          onNavigateHome={onNavigateHome}
+          onBack={onBack}
+          onEditProfile={() => state.setIsEditProfileOpen(true)}
+          onArchive={() => state.archive()}
+          onDelete={onDelete}
+        />
 
-        <div className="detail-header">
-          <div>
-            <p className="eyebrow">Quiz Engine Channel</p>
-            <h1>{channel.display_name}</h1>
-            {channel.description ? <p className="detail-copy">{channel.description}</p> : null}
-          </div>
-          <div className="detail-actions">
-            <StatusBadge status={channel.status} />
-            <button className="quiet-button" onClick={() => state.setIsEditProfileOpen(true)} title={t("channelDetail.editProfileBtn")}>
-              <PencilSimple size={16} />
-              <span>{t("channelDetail.editProfileBtn")}</span>
-            </button>
-            <button className="quiet-button" onClick={() => void state.archive()}>
-              <Archive size={16} />
-              <span>{channel.status === "ARCHIVED" ? "Restore" : "Archive"}</span>
-            </button>
-            <button
-              className="icon-button danger"
-              title="Delete channel"
-              aria-label={`Delete ${channel.display_name}`}
-              onClick={() => onDelete(channel)}
-            >
-              <Trash size={17} />
-            </button>
-          </div>
-        </div>
-
-        {/* 3-Tab Navigation Bar */}
+        {/* Tab Navigation Bar */}
         <div className="channel-group-tabs" role="tablist" aria-label="Channel workspace tabs">
-          <a
-            role="tab"
-            aria-selected={state.channelTab === "episodes"}
-            className={`channel-group-tab ${state.channelTab === "episodes" ? "is-selected" : ""}`}
-            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "episodes" }), () =>
-              state.switchTab("episodes"),
-            )}
-          >
-            <FilmSlate size={18} weight={state.channelTab === "episodes" ? "fill" : "regular"} />
-            <span>Episodes</span>
-            <small>{state.episodes.length}</small>
-          </a>
-          <a
-            role="tab"
-            aria-selected={state.channelTab === "short-reels"}
-            className={`channel-group-tab ${state.channelTab === "short-reels" ? "is-selected" : ""}`}
-            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "short-reels" }), () =>
-              state.switchTab("short-reels"),
-            )}
-          >
-            <FilmStrip size={18} weight={state.channelTab === "short-reels" ? "fill" : "regular"} />
-            <span>Short-Reels</span>
-            <small>{state.shortReels.length}</small>
-          </a>
-          <a
-            role="tab"
-            aria-selected={state.channelTab === "topics"}
-            className={`channel-group-tab ${state.channelTab === "topics" ? "is-selected" : ""}`}
-            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "topics" }), () => state.switchTab("topics"))}
-          >
-            <Lightbulb size={18} weight={state.channelTab === "topics" ? "fill" : "regular"} />
-            <span>Idea Lab & Topics</span>
-            <small>{state.topics.length}</small>
-          </a>
-          {!simplifyMode ? (
+          {[
+            { id: "episodes" as ChannelTab, label: "Episodes", icon: FilmSlate, count: state.episodes.length },
+            { id: "short-reels" as ChannelTab, label: "Short-Reels", icon: FilmStrip, count: state.shortReels.length },
+            { id: "topics" as ChannelTab, label: "Idea Lab & Topics", icon: Lightbulb, count: state.topics.length },
+            ...(!simplifyMode ? [{ id: "dna" as ChannelTab, label: "Channel DNA & Identity", icon: FileText }] : []),
+            { id: "intro-outro" as ChannelTab, label: "Intro & Outro", icon: VideoCamera },
+          ].map((tab) => (
             <a
+              key={tab.id}
               role="tab"
-              aria-selected={state.channelTab === "dna"}
-              className={`channel-group-tab ${state.channelTab === "dna" ? "is-selected" : ""}`}
-              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "dna" }), () => state.switchTab("dna"))}
+              aria-selected={state.channelTab === tab.id}
+              className={`channel-group-tab ${state.channelTab === tab.id ? "is-selected" : ""}`}
+              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: tab.id }), () => state.switchTab(tab.id))}
             >
-              <FileText size={18} weight={state.channelTab === "dna" ? "fill" : "regular"} />
-              <span>Channel DNA & Identity</span>
+              <tab.icon size={18} weight={state.channelTab === tab.id ? "fill" : "regular"} />
+              <span>{tab.label}</span>
+              {"count" in tab ? <small>{tab.count}</small> : null}
             </a>
-          ) : null}
-          <a
-            role="tab"
-            aria-selected={state.channelTab === "intro-outro"}
-            className={`channel-group-tab ${state.channelTab === "intro-outro" ? "is-selected" : ""}`}
-            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "intro-outro" }), () =>
-              state.switchTab("intro-outro"),
-            )}
-          >
-            <VideoCamera size={18} weight={state.channelTab === "intro-outro" ? "fill" : "regular"} />
-            <span>Intro & Outro</span>
-          </a>
+          ))}
         </div>
 
         {/* Tab 1: Episodes */}
@@ -183,23 +122,21 @@ export function ChannelDetail({
             loading={state.episodesHook.loading}
           />
         ) : null}
-
         {/* Tab 2: Short-Reels */}
         {state.channelTab === "short-reels" ? (
           <ChannelShortReelsTab
             channel={channel}
             shortReels={state.shortReels}
             tasks={tasks}
-            onOpenStudio={(channelId, reelId) => {
-              window.location.hash = `#/channels/${encodeURIComponent(channelId)}/short-reels/${encodeURIComponent(reelId)}`;
+            onOpenStudio={(cId, rId) => {
+              window.location.hash = buildHash({ page: "channels", channelId: cId, shortReelId: rId });
             }}
             onDeleteShortReel={(reel) => state.setDeleteShortReelTarget(reel)}
             onGoToTopics={() => state.switchTab("topics")}
             onNewShortReel={() => setIsCreateShortReelOpen(true)}
           />
         ) : null}
-
-        {/* Tab 2: Idea Lab & Topics */}
+        {/* Tab 3: Idea Lab & Topics */}
         {state.channelTab === "topics" ? (
           <ChannelTopicsTab
             channel={channel}
@@ -216,8 +153,7 @@ export function ChannelDetail({
             onConfirmTopic={state.confirmTopic}
           />
         ) : null}
-
-        {/* Tab 3: Channel DNA & Identity */}
+        {/* Tab 4: Channel DNA & Identity */}
         {state.channelTab === "dna" && !simplifyMode ? (
           <ChannelDnaTab
             channel={channel}
@@ -241,76 +177,20 @@ export function ChannelDetail({
             onTaskSubmitted={onTaskSubmitted}
           />
         ) : null}
-
-        {/* Tab 4: Custom Intro & Outro Styles */}
+        {/* Tab 5: Custom Intro & Outro Styles */}
         {state.channelTab === "intro-outro" ? (
           <ChannelIntroOutroTab channel={channel} onNotice={onNotice} onChannelUpdate={() => void onRefresh()} />
         ) : null}
       </section>
 
-      {/* Edit Channel Profile Modal */}
-      {state.isEditProfileOpen ? (
-        <EditChannelModal
-          channel={channel}
-          onClose={() => state.setIsEditProfileOpen(false)}
-          onSaved={async () => {
-            await state.load();
-            await onRefresh();
-          }}
-          onNotice={onNotice}
-        />
-      ) : null}
-
-      {/* Unified Mascot Video Stage Studio Modal (Single Channel Mode) */}
-      <MascotAssignModal
-        isOpen={state.isStageStudioOpen}
-        singleChannelId={channel.channel_id}
-        mascot={state.mascotsList.find((m) => m.id === channel.mascot_id) || null}
-        channels={[channel]}
-        allMascots={state.mascotsList}
-        onClose={() => state.setIsStageStudioOpen(false)}
-        onSaved={async () => {
-          await onRefresh();
-        }}
+      <ChannelDetailModals
+        channel={channel}
+        state={state}
+        isCreateShortReelOpen={isCreateShortReelOpen}
+        setIsCreateShortReelOpen={setIsCreateShortReelOpen}
+        onRefresh={onRefresh}
         onNotice={onNotice}
       />
-
-      {state.deleteEpisodeTarget ? (
-        <DeleteEpisodeModal
-          channel={channel}
-          episode={state.deleteEpisodeTarget}
-          onClose={() => state.setDeleteEpisodeTarget(null)}
-          onDeleted={state.handleEpisodeDeleted}
-          onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete episode" })}
-        />
-      ) : null}
-
-      {state.deleteShortReelTarget ? (
-        <DeleteShortReelModal
-          channel={channel}
-          reel={state.deleteShortReelTarget}
-          onClose={() => state.setDeleteShortReelTarget(null)}
-          onDeleted={state.handleShortReelDeleted}
-          onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete Short-Reel" })}
-        />
-      ) : null}
-
-      {isCreateShortReelOpen ? (
-        <CreateShortReelModal
-          channel={channel}
-          onClose={() => setIsCreateShortReelOpen(false)}
-          onCreated={async (newReel) => {
-            setIsCreateShortReelOpen(false);
-            onNotice({
-              tone: "good",
-              message: `Short-Reel created: ${newReel.topic.title}`,
-            });
-            await state.load();
-            await onRefresh();
-            window.location.hash = `#/channels/${encodeURIComponent(channel.channel_id)}/short-reels/${encodeURIComponent(newReel.reel_id)}`;
-          }}
-        />
-      ) : null}
     </>
   );
 }

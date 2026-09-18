@@ -1,11 +1,5 @@
 import { randomUUID } from "node:crypto";
-import {
-  TaskSchema,
-  type GenerateShortReelRequest,
-  type ReelKey,
-  type ShortReelRecord,
-  type Task,
-} from "@studio/shared";
+import { TaskSchema, type GenerateShortReelRequest, type ReelKey, type ShortReelRecord, type Task } from "@studio/shared";
 import type { RepositoryService } from "../../repository/service.js";
 import {
   generateReelCover,
@@ -16,12 +10,11 @@ import {
 import { cancelReelUnitAttempt } from "../../shortReel/unitLifecycle.js";
 import { executeReelGeneration } from "../../shortReel/generationWorkflow.js";
 import type { TaskManager } from "../../tasks/manager.js";
+import type { PortraitImageClient } from "../../providers/imageGeneration/imageGeneration.types.js";
+import type { LLMClient } from "../../utils/promptSanitizer.js";
 import type { ShortReelsRouteDeps } from "./shortReelsTypes.js";
 
-export type ReplayCheckResult =
-  | { kind: "replay"; statusCode: number; body: unknown }
-  | { kind: "active_conflict" }
-  | { kind: "none" };
+export type ReplayCheckResult = { kind: "replay"; statusCode: number; body: unknown } | { kind: "active_conflict" } | { kind: "none" };
 
 export function checkTaskReplayOrConflict(
   tasks: TaskManager,
@@ -67,14 +60,16 @@ export async function runDirectFallbackGeneration(
 ): Promise<ShortReelRecord | { unavailableError: string }> {
   if (deps.executor) {
     return await deps.executor(deps.repository, key, parsedBody, {
-      llmClient: (deps.llmClient ?? undefined) as any,
-      imageClient: (deps.imageClient ?? undefined) as any,
+      llmClient: (deps.llmClient ?? undefined) as unknown as LLMClient,
+      imageClient: (deps.imageClient ?? undefined) as unknown as PortraitImageClient,
       signal: new AbortController().signal,
       onProgress: async () => {},
     });
   }
   if (parsedBody.target === "cover") {
-    return await generateReelCover(deps.repository, key, "cover-" + randomUUID());
+    return await generateReelCover(deps.repository, key, "cover-" + randomUUID(), {
+      llmClient: deps.llmClient ?? undefined,
+    });
   }
   if (parsedBody.target === "references") {
     return await generateReelReferencesUnit(deps.repository, key, "references-" + randomUUID());
@@ -95,7 +90,7 @@ export async function runDirectFallbackGeneration(
   }
   return await executeReelGeneration(deps.repository, key, parsedBody, {
     llmClient: deps.llmClient,
-    imageClient: (deps.imageClient ?? undefined) as any,
+    imageClient: (deps.imageClient ?? undefined) as unknown as PortraitImageClient,
     signal: new AbortController().signal,
     onProgress: async () => {},
   });

@@ -27,8 +27,7 @@ export class GoogleImagenProvider implements ImageProvider {
 
   private resolveTargetAspectRatio(prompt: string): string {
     const ratioMatch =
-      prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) ||
-      prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
+      prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
     return this.target.aspectRatio || (ratioMatch ? ratioMatch[1] : "16:9");
   }
 
@@ -78,9 +77,7 @@ export class GoogleImagenProvider implements ImageProvider {
     );
   }
 
-  private parseImagenResponse(data: {
-    predictions?: Array<{ bytesBase64Encoded?: string; mimeType?: string }>;
-  }): string | undefined {
+  private parseImagenResponse(data: { predictions?: Array<{ bytesBase64Encoded?: string; mimeType?: string }> }): string | undefined {
     return data.predictions?.[0]?.bytesBase64Encoded;
   }
 
@@ -110,10 +107,7 @@ export class GoogleImagenProvider implements ImageProvider {
     if (status === 429) {
       return new RepositoryError("Google Gemini/Imagen quota exceeded (429)", "RATE_LIMIT_EXCEEDED");
     }
-    return new RepositoryError(
-      `Google Gemini/Imagen request failed (${status}): ${raw.slice(0, 200)}`,
-      "IMAGE_GENERATION_FAILED",
-    );
+    return new RepositoryError(`Google Gemini/Imagen request failed (${status}): ${raw.slice(0, 200)}`, "IMAGE_GENERATION_FAILED");
   }
 
   private async persistImage(imageBytes: Buffer): Promise<string> {

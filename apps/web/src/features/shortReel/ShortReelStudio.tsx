@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { X } from "@phosphor-icons/react";
 import type { Channel } from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { LoadingState } from "../../components/EmptyState";
-import { ShortReelSourceCard } from "./components/ShortReelSourceCard";
+import { ShortReelBreadcrumb } from "../../components/Breadcrumbs";
+import { useRouteTab } from "../../hooks/router/useRouteTab";
 import { SegmentEditor } from "./components/SegmentEditor";
 import { ReelAssets } from "./components/ReelAssets";
 import { PublishingPanel } from "./components/PublishingPanel";
 import { ShortReelHeader } from "./components/ShortReelHeader";
 import { ShortReelConflictBanner } from "./components/ShortReelConflictBanner";
 import { ShortReelTopicCard } from "./components/ShortReelTopicCard";
+import { ShortReelSourceCard } from "./components/ShortReelSourceCard";
 import { ShortReelDeliverablesGrid } from "./components/ShortReelDeliverablesGrid";
 import { ShortReelStateError } from "./components/ShortReelStateError";
 import { ReelGenerationProgress } from "./components/ReelGenerationProgress";
+import { StudioTabNav, type StudioTab } from "./components/StudioTabNav";
+import { ClipboardFallbackModal } from "./components/ClipboardFallbackModal";
 import { useShortReel } from "./hooks/useShortReel";
-import { ShortReelBreadcrumb } from "../../components/Breadcrumbs";
 import { canExportReel, getCleanTopicTitle, hasPendingGeneration } from "./utils/shortReelStudioRules";
 import "./ShortReelStudio.css";
 
@@ -26,65 +27,8 @@ export interface ShortReelStudioProps {
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
   onNavigateChannel?: () => void;
-}
-
-type StudioTab = "script" | "assets" | "publishing";
-
-const STUDIO_TABS: { key: StudioTab; label: string; ariaLabel: string }[] = [
-  { key: "script", label: "Script", ariaLabel: "Script & Segments" },
-  { key: "assets", label: "Assets", ariaLabel: "Assets & Prompts" },
-  { key: "publishing", label: "Publishing", ariaLabel: "Publishing Metadata" },
-];
-
-function StudioTabNav({ activeTab, onSelectTab }: { activeTab: StudioTab; onSelectTab: (tab: StudioTab) => void }) {
-  return (
-    <nav className="short-reel-nav-tabs" role="tablist" aria-label="Studio View Tabs">
-      {STUDIO_TABS.map((tab) => (
-        <button
-          key={tab.key}
-          type="button"
-          role="tab"
-          aria-label={tab.ariaLabel}
-          aria-selected={activeTab === tab.key}
-          className={`short-reel-nav-tab ${activeTab === tab.key ? "active" : ""}`}
-          onClick={() => onSelectTab(tab.key)}
-        >
-          <span>{tab.label}</span>
-        </button>
-      ))}
-    </nav>
-  );
-}
-
-function ClipboardFallbackModal({ clipboardFallbackText, onClose }: { clipboardFallbackText: string; onClose: () => void }) {
-  return (
-    <div className="short-reel-modal-backdrop" role="dialog" aria-modal="true" aria-label="Manual Copy Fallback">
-      <div className="short-reel-modal">
-        <div className="short-reel-modal-header">
-          <h3>Manual Copy Fallback</h3>
-          <button type="button" className="short-reel-modal-close-btn" onClick={onClose} aria-label="Close dialog">
-            <X size={18} />
-          </button>
-        </div>
-        <div className="short-reel-modal-body">
-          <p>Clipboard access was not permitted. You can select and copy the text below:</p>
-          <textarea
-            readOnly
-            rows={6}
-            className="short-reel-textarea short-reel-fallback-textarea"
-            value={clipboardFallbackText}
-            autoFocus
-            onFocus={(e) => e.target.select()}
-          />
-        </div>
-        <div className="short-reel-modal-footer">
-          <button type="button" className="short-reel-primary-btn" onClick={onClose}>
-            Done
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  activeTab?: string | null;
+  onTabChange?: (tab: string) => void;
 }
 
 export function ShortReelStudio({
@@ -95,8 +39,15 @@ export function ShortReelStudio({
   onNavigateHome,
   onNavigateChannels,
   onNavigateChannel,
+  activeTab: routeTab,
+  onTabChange,
 }: ShortReelStudioProps) {
-  const [activeTab, setActiveTab] = useState<StudioTab>("script");
+  const [activeTab, switchTab] = useRouteTab<StudioTab>({
+    value: routeTab,
+    allowedTabs: ["script", "assets", "publishing"] as const,
+    fallback: "script",
+    onChange: onTabChange,
+  });
 
   const {
     status,
@@ -122,11 +73,7 @@ export function ShortReelStudio({
     keepLocalDraft,
     discardDraftAndReload,
     retry,
-  } = useShortReel({
-    channelId: channel.channel_id,
-    reelId,
-    onNotice,
-  });
+  } = useShortReel({ channelId: channel.channel_id, reelId, onNotice });
 
   if (status === "loading") {
     return <LoadingState />;
@@ -192,7 +139,7 @@ export function ShortReelStudio({
 
       <ShortReelDeliverablesGrid units={units} />
 
-      <StudioTabNav activeTab={activeTab} onSelectTab={setActiveTab} />
+      <StudioTabNav activeTab={activeTab} onSelectTab={switchTab} />
 
       <div className="short-reel-tab-panel">
         {activeTab === "script" && (
@@ -206,7 +153,6 @@ export function ShortReelStudio({
             isGenerating={isGeneratingOrPending}
           />
         )}
-
         {activeTab === "assets" && (
           <ReelAssets
             reel={reel}
@@ -217,7 +163,6 @@ export function ShortReelStudio({
             activeTask={activeTask}
           />
         )}
-
         {activeTab === "publishing" && (
           <PublishingPanel
             publishing={draftPublishing ?? units.publishing.last_accepted_payload}

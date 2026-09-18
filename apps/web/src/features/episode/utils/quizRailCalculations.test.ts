@@ -48,6 +48,7 @@ const mockState: QuizV2State = {
         id: "q1",
         number: 1,
         format: "multiple_choice",
+        answer_mode: "choice_selection",
         difficulty: 1,
         question: "Question 1",
         choices: [

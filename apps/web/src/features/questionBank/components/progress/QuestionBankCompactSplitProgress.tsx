@@ -19,25 +19,14 @@ export function QuestionBankCompactSplitProgress({
 }: QuestionBankCompactSplitProgressProps) {
   const { t } = useTranslation();
 
-  const containerClasses = [
-    "qb-compact-split-progress",
-    compact ? "is-compact" : "",
-    isCollapsed ? "is-collapsed" : "",
-    className,
-  ]
+  const containerClasses = ["qb-compact-split-progress", compact ? "is-compact" : "", isCollapsed ? "is-collapsed" : "", className]
     .filter(Boolean)
     .join(" ");
 
-  const ariaLabel =
-    t("questionBank.splitBar.compactSplitTitle") ||
-    "Question Bank Target Progress and Matrix Coverage";
+  const ariaLabel = t("questionBank.splitBar.compactSplitTitle") || "Question Bank Target Progress and Matrix Coverage";
 
   return (
-    <div
-      className={containerClasses}
-      role="region"
-      aria-label={ariaLabel}
-    >
+    <div className={containerClasses} role="region" aria-label={ariaLabel}>
       {/* Left Partition: Total Question Volume and Milestone Roadmap */}
       <QuestionBankMilestoneTrack
         currentTotal={currentTotal}
@@ -47,11 +36,7 @@ export function QuestionBankCompactSplitProgress({
       />
 
       {/* Visual Separation: Vertical Split Divider */}
-      <div
-        className="qb-split-divider"
-        role="separator"
-        aria-orientation="vertical"
-      />
+      <div className="qb-split-divider" role="separator" aria-orientation="vertical" />
 
       {/* Right Partition: 2D Archetype x Taxonomy Matrix Coverage */}
       <QuestionBankMatrixCoverageTrack

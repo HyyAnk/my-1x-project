@@ -25,11 +25,18 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
   const activeStyle = currentBoxStyle === "auto" ? resolvedBoxStyle : currentBoxStyle;
   const styleOptions = useStyleCatalogOptions("question-box", ALL_QUESTION_BOX_STYLES);
 
+  const getStyleLabel = (style: string): string => {
+    const key = `episodeCustomization.question_box_${style}`;
+    const translated = t(key);
+    if (translated && translated !== key) return translated;
+    return QUESTION_BOX_STYLE_LABELS[style] ?? style;
+  };
+
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillQuestionCard")}
-        value={QUESTION_BOX_STYLE_LABELS[activeStyle] ?? activeStyle}
+        value={getStyleLabel(activeStyle)}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -39,17 +46,18 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
         <CustomizationPopover title={t("episodeCustomization.pillQuestionCard")}>
           {["auto", ...styleOptions].map((style) => {
             if (style === "auto") return null;
+            const label = getStyleLabel(style);
             return (
               <StyleOptionRow
                 key={style}
                 name="box_choice"
-                label={QUESTION_BOX_STYLE_LABELS[style] ?? style}
+                label={label}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() =>
                   onPreview?.({
                     override: { questionBoxStyle: style },
-                    label: QUESTION_BOX_STYLE_LABELS[style] ?? style,
+                    label,
                   })
                 }
               />

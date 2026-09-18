@@ -19,6 +19,8 @@ export const EditorialOverlaySchema = z
 
 export type EditorialOverlay = z.infer<typeof EditorialOverlaySchema>;
 
+import { QuizAnswerModeSchema } from "../quizAnswerMode.js";
+
 export const QuizSceneContentSchema = z.object({
   phase: z.enum(["intro", "question", "reveal", "explanation", "outro"]).default("question"),
   question_number: z.number().int().positive().nullable().default(null),
@@ -27,9 +29,12 @@ export const QuizSceneContentSchema = z.object({
   answer: z.string().default(""),
   explanation: z.string().default(""),
   image_prompt: z.string().default(""),
+  answer_mode: QuizAnswerModeSchema.optional().default("choice_selection"),
 });
 
 export type QuizSceneContent = z.infer<typeof QuizSceneContentSchema>;
+export { QuizSceneContentSchema as SceneQuizContentSchema };
+export type SceneQuizContent = QuizSceneContent;
 
 export const SceneSchema = z.object({
   scene_id: z.string().min(1),

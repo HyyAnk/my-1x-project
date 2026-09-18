@@ -1,10 +1,6 @@
 import type { ShortReelDisplayProjection } from "@studio/shared";
 import { RepositoryError } from "../../../repository.js";
-import {
-  SUPPORTED_BASE_LANGUAGES,
-  type SupportedBaseLanguage,
-  type ProductLocalizationArtifact,
-} from "./localization.types.js";
+import { SUPPORTED_BASE_LANGUAGES, type SupportedBaseLanguage, type ProductLocalizationArtifact } from "./localization.types.js";
 
 export type { ShortReelDisplayProjection };
 
@@ -20,10 +16,7 @@ export {
   type RepositoryStorageAccessor,
 } from "./localization.types.js";
 
-export {
-  createProductTranslationAdapter,
-  localizeProductContent,
-} from "./productTranslationService.js";
+export { createProductTranslationAdapter, localizeProductContent } from "./productTranslationService.js";
 
 export {
   saveProductLocalizationArtifact,

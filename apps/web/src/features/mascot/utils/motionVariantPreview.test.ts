@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { MascotProfile, MascotStyle } from "@studio/shared";
+import { adaptMascotConfigV1ToV2, type MascotProfile, type MascotStyle } from "@studio/shared";
 import {
   applyVariantPreviewOverrides,
   collectFilledVariants,
@@ -124,5 +124,39 @@ describe("applyVariantPreviewOverrides", () => {
     applyVariantPreviewOverrides(profile, style, "celebrate", 0);
     expect(profile.actions.celebrate).toBeUndefined();
     expect(profile.actions.thinking?.sprite_url).toBe("https://example.com/legacy_think.png");
+  });
+
+  it("updates render_bundle.assets.actions alongside actions when render_bundle is present", () => {
+    const profileWithBundle: MascotProfile = {
+      ...profile,
+      render_bundle: {
+        config: adaptMascotConfigV1ToV2(),
+        assets: {
+          actions: {
+            thinking: {
+              version: 2,
+              action: "thinking",
+              image_url: "https://example.com/original_v2_think.png",
+              registration: {
+                source_width: 512,
+                source_height: 512,
+                content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+                pivot: { x: 256, y: 512 },
+                offset_x: 0,
+                offset_y: 0,
+              },
+              motion: { preset: "breathe", speed: 1.0, intensity: "normal" },
+            },
+          },
+          master: null,
+        },
+      },
+    };
+
+    const result = applyVariantPreviewOverrides(profileWithBundle, style, "thinking", 0);
+    expect(result.actions.thinking?.sprite_url).toBe("https://example.com/t1.png");
+    expect(result.render_bundle?.assets.actions.thinking?.image_url).toBe("https://example.com/t1.png");
+    expect(result.render_bundle?.assets.actions.thinking?.motion.preset).toBe("breathe");
+    expect(result.render_bundle?.assets.actions.celebrate?.image_url).toBe("https://example.com/c1.png");
   });
 });

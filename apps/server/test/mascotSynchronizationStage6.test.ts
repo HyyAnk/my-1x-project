@@ -248,7 +248,9 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
     it("verifies state window CSS keyframe rules hold opacity: 1 and hold opacity: 0 with forwards fill-mode", () => {
       const css = productionMascotCss();
 
-      expect(css).toContain("animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 forwards;");
+      expect(css).toContain(
+        "animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 forwards;",
+      );
       expect(css).toContain("@keyframes mascot-v2-state-window {");
       expect(css).toContain("0%, 99.9% { opacity: 1; }");
       expect(css).toContain("100% { opacity: 0; }");
@@ -547,9 +549,9 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
 
       expect(css).toContain('#stage[data-aspect-ratio="9:16"] .quiz-question-clip .candy-mascot-container.mascot-v2-container');
       expect(css).toContain("bottom: var(--safe-zone-bottom, 440px);");
-      expect(css).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.anchor-bottom_left {");
+      expect(css).toContain('#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.anchor-bottom_left {');
       expect(css).toContain("left: 36px;");
-      expect(css).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.anchor-bottom_right {");
+      expect(css).toContain('#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.anchor-bottom_right {');
       expect(css).toContain("right: var(--safe-zone-right, 140px);");
     });
   });

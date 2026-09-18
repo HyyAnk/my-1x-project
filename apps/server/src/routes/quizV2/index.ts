@@ -6,11 +6,7 @@ import { registerQuizV2MediaRoutes } from "./quizV2MediaRoutes.js";
 
 export type { QuizV2RouteDeps } from "./quizV2Types.js";
 export { registerQuizV2PipelineRoutes } from "./quizV2PipelineRoutes.js";
-export {
-  registerQuizV2ArtifactRoutes,
-  resolveTopicFields,
-  mergeUpdatedDescription,
-} from "./quizV2ArtifactRoutes.js";
+export { registerQuizV2ArtifactRoutes, resolveTopicFields, mergeUpdatedDescription } from "./quizV2ArtifactRoutes.js";
 export { registerQuizV2MediaRoutes } from "./quizV2MediaRoutes.js";
 
 /**

@@ -1,11 +1,12 @@
 import path from "node:path";
 import { createReadStream } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import type { FastifyInstance, FastifyPluginCallback, FastifyReply } from "fastify";
 import { GenerateAllAudioInputSchema, SceneSchema } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import { composeMergedVisualPrompt, mergeEditorialOverlays } from "../sceneTiming.js";
 import type { TaskManager } from "../tasks.js";
+import { packageEpisodeExport } from "../tasks/export/index.js";
 import { createStoredZip } from "../zip.js";
 import type { AppState } from "./state.js";
 
@@ -144,9 +145,56 @@ function registerStreamingRoutes(
   });
   server.post("/api/channels/:channelId/episodes/:episodeId/video/open-folder", async (request) => {
     const params = request.params as { channelId: string; episodeId: string };
-    const file = await repository.getEpisodeVideoFile(params.channelId, params.episodeId);
-    await revealFile(file.absolutePath);
-    return { opened: true, folder_path: path.dirname(file.path) };
+    const [channel, episode] = await Promise.all([
+      repository.getChannel(params.channelId),
+      repository.getEpisode(params.channelId, params.episodeId),
+    ]);
+    const exportDir = repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "export");
+    const exportVideo = path.join(exportDir, "quiz-video.mp4");
+    let targetPath: string;
+    let folderPath: string;
+    try {
+      const videoStat = await stat(exportVideo);
+      if (videoStat.isFile()) {
+        targetPath = exportVideo;
+        folderPath = `channels/${channel.slug}/episodes/${episode.slug}/export`;
+      } else {
+        const file = await repository.getEpisodeVideoFile(params.channelId, params.episodeId);
+        targetPath = file.absolutePath;
+        folderPath = path.dirname(file.path);
+      }
+    } catch {
+      const file = await repository.getEpisodeVideoFile(params.channelId, params.episodeId);
+      targetPath = file.absolutePath;
+      folderPath = path.dirname(file.path);
+    }
+    await revealFile(targetPath);
+    return { opened: true, folder_path: folderPath };
+  });
+  server.post("/api/channels/:channelId/episodes/:episodeId/export", async (request) => {
+    const params = request.params as { channelId: string; episodeId: string };
+    const result = await packageEpisodeExport({
+      repository,
+      channelId: params.channelId,
+      episodeId: params.episodeId,
+    });
+    return { success: true, ...result };
+  });
+  server.get("/api/channels/:channelId/episodes/:episodeId/export", async (request, reply) => {
+    const params = request.params as { channelId: string; episodeId: string };
+    const [channel, episode] = await Promise.all([
+      repository.getChannel(params.channelId),
+      repository.getEpisode(params.channelId, params.episodeId),
+    ]);
+    const exportDir = repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "export");
+    const metadataPath = path.join(exportDir, "metadata.json");
+    try {
+      const raw = await readFile(metadataPath, "utf8");
+      const metadata: unknown = JSON.parse(raw);
+      return { exported: true, metadata };
+    } catch {
+      return reply.code(404).send({ exported: false, error: "Export not found for episode" });
+    }
   });
   server.put("/api/channels/:channelId/episodes/:episodeId/scenes", async (request) => {
     const params = request.params as { channelId: string; episodeId: string };

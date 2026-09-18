@@ -43,8 +43,7 @@ export function fitTransitionWindow(options: {
   for (let frames = requestedFrames; frames >= 1; frames -= 1) {
     const start = boundaryFrame - Math.round(frames * boundedProgress);
     if (start >= startFrame && start + frames <= availableEndFrameExclusive) {
-      const timingAdjustment: TransitionTimingAdjustment =
-        frames < requestedFrames ? "window-limited" : "none";
+      const timingAdjustment: TransitionTimingAdjustment = frames < requestedFrames ? "window-limited" : "none";
       return {
         startFrame: start,
         durationFrames: frames,

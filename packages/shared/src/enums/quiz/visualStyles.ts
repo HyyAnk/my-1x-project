@@ -24,6 +24,7 @@ const thinkingBarBuiltInSchema = z.enum([
   "construction_machine",
   "flame_fuse",
   "cosmic_rocket",
+  "treasure_trail",
 ]);
 export const QuizThinkingBarStyleSchema = z.union([
   thinkingBarBuiltInSchema,
@@ -39,6 +40,7 @@ export const ALL_THINKING_BAR_STYLES: QuizThinkingBarStyle[] = [
   "construction_machine",
   "flame_fuse",
   "cosmic_rocket",
+  "treasure_trail",
 ];
 
 export const THINKING_BAR_STYLE_LABELS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> = {
@@ -48,6 +50,7 @@ export const THINKING_BAR_STYLE_LABELS: Record<Exclude<QuizThinkingBarStyle, "au
   construction_machine: "Dozer Crate Push",
   flame_fuse: "Ember Trail",
   cosmic_rocket: "Cosmic Rocket Warp",
+  treasure_trail: "Expedition Map Trail",
 };
 
 export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> = {
@@ -58,9 +61,20 @@ export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyl
     "Cheerful construction bulldozer pushing a wooden countdown crate along a hazard-striped dirt trench towards the build-site target.",
   flame_fuse: "A glowing ember burns across a braided fuse, leaving a charred trail with a clear 5–1 countdown.",
   cosmic_rocket: "Retro-futuristic 3D space rocket boosting with fiery exhaust through a cosmic nebula warp highway.",
+  treasure_trail:
+    "Dotted adventurer expedition route across an antique parchment track with milestone waypoint islands and a sliding galleon compass ship.",
 };
 
-const counterBuiltInSchema = z.enum(["auto", "hanging_woodsign", "neon_badge", "floating_balloon", "golden_shield"]);
+const counterBuiltInSchema = z.enum([
+  "auto",
+  "hanging_woodsign",
+  "neon_badge",
+  "floating_balloon",
+  "golden_shield",
+  "space_radar",
+  "bubble_badge",
+  "golden_compass",
+]);
 export const QuizQuestionCounterStyleSchema = z.union([
   counterBuiltInSchema,
   z.string().regex(/^[a-z][a-z0-9-]*\.counter\.[a-z][a-z0-9-]*$/),
@@ -73,6 +87,9 @@ export const ALL_QUESTION_COUNTER_STYLES: QuizQuestionCounterStyle[] = [
   "neon_badge",
   "floating_balloon",
   "golden_shield",
+  "space_radar",
+  "bubble_badge",
+  "golden_compass",
 ];
 
 export const QUESTION_COUNTER_STYLE_LABELS: Record<Exclude<QuizQuestionCounterStyle, "auto">, string> = {
@@ -80,6 +97,9 @@ export const QUESTION_COUNTER_STYLE_LABELS: Record<Exclude<QuizQuestionCounterSt
   neon_badge: "Cyber Neon Badge",
   floating_balloon: "Floating Party Balloon",
   golden_shield: "Golden Trophy Shield",
+  space_radar: "Space Radar Scope",
+  bubble_badge: "Glossy Bubble Badge",
+  golden_compass: "Ancient Golden Compass",
 };
 
 export const QUESTION_COUNTER_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionCounterStyle, "auto">, string> = {
@@ -87,9 +107,23 @@ export const QUESTION_COUNTER_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionCou
   neon_badge: "Futuristic glowing neon badge with high-voltage border.",
   floating_balloon: "Whimsical floating helium balloon gently bobbing with question number.",
   golden_shield: "Arcade metallic gold shield with glistening highlight.",
+  space_radar:
+    "Circular tactical radar sweep display tracking quiz question progression with concentric grid rings and glowing sweep ping.",
+  bubble_badge: "Translucent glossy soap bubble sphere with bouncing highlight glints and iridescent refraction border.",
+  golden_compass:
+    "Ornate brass mariner's astrolabe and nautical compass with rotating needle and cardinal degree markers tracking question progression.",
 };
 
-const questionBoxBuiltInSchema = z.enum(["auto", "candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"]);
+const questionBoxBuiltInSchema = z.enum([
+  "auto",
+  "candy_pop",
+  "comic_bubble",
+  "glass_morphism",
+  "parchment_scroll",
+  "hazard_stripes",
+  "cockpit_hud",
+  "pastel_cloud",
+]);
 export const QuizQuestionBoxStyleSchema = z.union([
   questionBoxBuiltInSchema,
   z.string().regex(/^[a-z][a-z0-9-]*\.question-box\.[a-z][a-z0-9-]*$/),
@@ -97,13 +131,24 @@ export const QuizQuestionBoxStyleSchema = z.union([
 export type QuizQuestionBoxStyle = z.infer<typeof QuizQuestionBoxStyleSchema>;
 export type QuizQuestionBoxStyleId = Exclude<QuizQuestionBoxStyle, "auto">;
 
-export const ALL_QUESTION_BOX_STYLES: QuizQuestionBoxStyle[] = ["candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"];
+export const ALL_QUESTION_BOX_STYLES: QuizQuestionBoxStyle[] = [
+  "candy_pop",
+  "comic_bubble",
+  "glass_morphism",
+  "parchment_scroll",
+  "hazard_stripes",
+  "cockpit_hud",
+  "pastel_cloud",
+];
 
 export const QUESTION_BOX_STYLE_LABELS: Record<Exclude<QuizQuestionBoxStyle, "auto">, string> = {
   candy_pop: "Candy Pop Card",
   comic_bubble: "Comic Book Bubble",
   glass_morphism: "Frosted Glassmorphism",
   parchment_scroll: "Adventure Parchment Scroll",
+  hazard_stripes: "Hazard Worksite Frame",
+  cockpit_hud: "Cockpit Sci-Fi HUD",
+  pastel_cloud: "Pastel Fluffy Cloud",
 };
 
 export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyle, "auto">, string> = {
@@ -111,9 +156,22 @@ export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyl
   comic_bubble: "Playful comic speech bubble with bold outline, halftone dots, and tail.",
   glass_morphism: "Ultra-modern translucent frosted glass card with glowing outline.",
   parchment_scroll: "Classic rolled parchment banner with ancient adventurous aesthetics.",
+  hazard_stripes: "Heavy-duty industrial container accented with bold diagonal hazard caution stripes and steel rivets.",
+  cockpit_hud:
+    "Futuristic aerospace HUD terminal with targeted reticles, cyan digital telemetry brackets, and holographic display borders.",
+  pastel_cloud: "Soft fluffy cumulus cloud container with gentle curved billows, pastel perimeter aura, and dreamy aesthetic.",
 };
 
-const answerCardBuiltInSchema = z.enum(["auto", "glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"]);
+const answerCardBuiltInSchema = z.enum([
+  "auto",
+  "glossy_arcade",
+  "comic_chunky",
+  "glass_neon",
+  "minimal_soft",
+  "steel_beam_plate",
+  "pastel_marshmallow",
+  "rustic_wood_plank",
+]);
 export const QuizAnswerCardStyleSchema = z.union([
   answerCardBuiltInSchema,
   z.string().regex(/^[a-z][a-z0-9-]*\.answer-card\.[a-z][a-z0-9-]*$/),
@@ -121,13 +179,24 @@ export const QuizAnswerCardStyleSchema = z.union([
 export type QuizAnswerCardStyle = z.infer<typeof QuizAnswerCardStyleSchema>;
 export type QuizAnswerCardStyleId = Exclude<QuizAnswerCardStyle, "auto">;
 
-export const ALL_ANSWER_CARD_STYLES: QuizAnswerCardStyle[] = ["glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"];
+export const ALL_ANSWER_CARD_STYLES: QuizAnswerCardStyle[] = [
+  "glossy_arcade",
+  "comic_chunky",
+  "glass_neon",
+  "minimal_soft",
+  "steel_beam_plate",
+  "pastel_marshmallow",
+  "rustic_wood_plank",
+];
 
 export const ANSWER_CARD_STYLE_LABELS: Record<Exclude<QuizAnswerCardStyle, "auto">, string> = {
   glossy_arcade: "Glossy Arcade 3D",
   comic_chunky: "Comic Pop Art",
   glass_neon: "Glassmorphism Neon",
   minimal_soft: "Minimalist Soft Card",
+  steel_beam_plate: "Steel Beam Plate",
+  pastel_marshmallow: "Pastel Marshmallow",
+  rustic_wood_plank: "Rustic Wood Plank",
 };
 
 export const ANSWER_CARD_STYLE_DESCRIPTIONS: Record<Exclude<QuizAnswerCardStyle, "auto">, string> = {
@@ -135,9 +204,22 @@ export const ANSWER_CARD_STYLE_DESCRIPTIONS: Record<Exclude<QuizAnswerCardStyle,
   comic_chunky: "Retro comic book style with thick ink borders, shadow offsets & pop-art fonts.",
   glass_neon: "Translucent frosted acrylic panel with luminous edge glows & cyber typography.",
   minimal_soft: "Ultra-clean modern card with subtle shadows, rounded pill badge & soft elegance.",
+  steel_beam_plate: "Heavy industrial steel girder card with riveted metallic corners, diamond tread texture, and bold mechanical bevels.",
+  pastel_marshmallow: "Ultra-plush marshmallow rounded card with soft bouncy shadow, candy confection accents, and playful bouncy badge.",
+  rustic_wood_plank:
+    "Hand-hewn antique oak plank with brass corner braces, iron nail studs, warm parchment text, and glowing royal seal badges.",
 };
 
-const backgroundBuiltInSchema = z.enum(["auto", "candy_rays", "aurora_glow"]);
+const backgroundBuiltInSchema = z.enum([
+  "auto",
+  "candy_rays",
+  "aurora_glow",
+  "comic_burst",
+  "construction_blueprint",
+  "cosmic_starfield",
+  "floating_clouds",
+  "treasure_map",
+]);
 export const QuizBackgroundStyleSchema = z.union([
   backgroundBuiltInSchema,
   z.string().regex(/^[a-z][a-z0-9-]*\.background\.[a-z][a-z0-9-]*$/),
@@ -145,16 +227,36 @@ export const QuizBackgroundStyleSchema = z.union([
 export type QuizBackgroundStyle = z.infer<typeof QuizBackgroundStyleSchema>;
 export type QuizBackgroundStyleId = Exclude<QuizBackgroundStyle, "auto">;
 
-export const ALL_BACKGROUND_STYLES: QuizBackgroundStyle[] = ["candy_rays", "aurora_glow"];
+export const ALL_BACKGROUND_STYLES: QuizBackgroundStyle[] = [
+  "candy_rays",
+  "aurora_glow",
+  "comic_burst",
+  "construction_blueprint",
+  "cosmic_starfield",
+  "floating_clouds",
+  "treasure_map",
+];
 
 export const BACKGROUND_STYLE_LABELS: Record<Exclude<QuizBackgroundStyle, "auto">, string> = {
   candy_rays: "Candy Rays",
   aurora_glow: "Aurora Glow",
+  comic_burst: "Comic Action Burst",
+  construction_blueprint: "Construction Blueprint",
+  cosmic_starfield: "Cosmic Starfield",
+  floating_clouds: "Floating Clouds",
+  treasure_map: "Antique Treasure Map",
 };
 
 export const BACKGROUND_STYLE_DESCRIPTIONS: Record<Exclude<QuizBackgroundStyle, "auto">, string> = {
   candy_rays: "Vibrant rotating candy rays with sprinkles, floating shapes, and sparkle stars.",
   aurora_glow: "Soft undulating aurora glow with luminous ambient orbs and gentle stardust.",
+  comic_burst: "Dynamic comic book action background with dramatic radial sunburst rays, speed dots, and pop-art energy.",
+  construction_blueprint:
+    "Technical architectural blueprint grid with subtle construction crosshairs, ruler measurements, and drafting lines.",
+  cosmic_starfield: "Deep space cosmic starfield with twinkling starlight, glowing constellations, and celestial nebula glow.",
+  floating_clouds: "Gentle drifting pastel clouds across a dreamy sky with soft daylight gradients and floating sparkles.",
+  treasure_map:
+    "Aged sepia parchment nautical chart with rotating compass rose, latitude rhumb lines, island archipelago contours, and floating amber dust motes.",
 };
 
 export const QuizPaletteIdSchema = z.enum(["auto", "lime", "aqua", "sunny", "purple", "pink", "orange", "red", "blue"]);

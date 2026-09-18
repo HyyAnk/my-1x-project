@@ -1,9 +1,24 @@
-﻿import type { QuizLayoutAssetAspectRatio } from "../quizLayouts.types.js";
-import type { ImageSizingRecommendation, ImageSizingResult, ImageSlotGeometry } from "./types.js";
+import type { QuizLayoutAssetAspectRatio } from "../quizLayouts.types.js";
+import type { ImageSizingResult, ImageSlotGeometry, ImageSlotViewport } from "./types.js";
 
 export const DEFAULT_SUPPORTED_RATIOS: readonly QuizLayoutAssetAspectRatio[] = Object.freeze(["1:1", "4:3", "3:4", "16:9"]);
 
 const RATIO_TIE_BREAK_ORDER: readonly QuizLayoutAssetAspectRatio[] = Object.freeze(["1:1", "4:3", "3:4", "16:9"]);
+
+interface RatioCandidate {
+  ratioStr: QuizLayoutAssetAspectRatio;
+  n: number;
+  d: number;
+  val: number;
+}
+
+interface CandidateLoss {
+  candidate: RatioCandidate;
+  maxMismatchLoss: number;
+  meanMismatchLoss: number;
+  maxCropLoss: number;
+  maxUnusedArea: number;
+}
 
 function gcd(a: number, b: number): number {
   let x = Math.abs(Math.round(a));
@@ -32,25 +47,24 @@ function parseRatio(ratio: string): { n: number; d: number } | null {
   return { n, d };
 }
 
-export function recommendImageSizing(
-  geometry: ImageSlotGeometry,
-  supportedRatios: readonly QuizLayoutAssetAspectRatio[] = DEFAULT_SUPPORTED_RATIOS,
-): ImageSizingResult {
-  // 1. Validate Geometry
+function isValidGeometry(geometry: ImageSlotGeometry): boolean {
   if (
     !geometry ||
-    !Array.isArray(geometry.viewports) ||
-    geometry.viewports.length === 0 ||
     !geometry.canvas ||
     !Number.isFinite(geometry.canvas.width) ||
     !Number.isFinite(geometry.canvas.height) ||
     geometry.canvas.width <= 0 ||
     geometry.canvas.height <= 0
   ) {
-    return { ok: false, code: "invalid_geometry" };
+    return false;
   }
 
-  for (const vp of geometry.viewports) {
+  const viewports: readonly ImageSlotViewport[] = geometry.viewports;
+  if (!Array.isArray(viewports) || viewports.length === 0) {
+    return false;
+  }
+
+  for (const vp of viewports as readonly ImageSlotViewport[]) {
     if (
       !vp ||
       !Number.isFinite(vp.width) ||
@@ -59,26 +73,19 @@ export function recommendImageSizing(
       vp.height <= 0 ||
       (vp.fit !== "cover" && vp.fit !== "contain")
     ) {
-      return { ok: false, code: "invalid_geometry" };
+      return false;
     }
   }
 
-  // 2. Validate Supported Ratios
-  if (!Array.isArray(supportedRatios) || supportedRatios.length === 0) {
-    return { ok: false, code: "unsupported_ratio_set" };
-  }
+  return true;
+}
 
-  const validCandidates: Array<{
-    ratioStr: QuizLayoutAssetAspectRatio;
-    n: number;
-    d: number;
-    val: number;
-  }> = [];
-
+function parseSupportedCandidates(supportedRatios: readonly QuizLayoutAssetAspectRatio[]): RatioCandidate[] {
+  const candidates: RatioCandidate[] = [];
   for (const r of supportedRatios) {
     const parsed = parseRatio(r);
     if (parsed) {
-      validCandidates.push({
+      candidates.push({
         ratioStr: r,
         n: parsed.n,
         d: parsed.d,
@@ -86,23 +93,13 @@ export function recommendImageSizing(
       });
     }
   }
+  return candidates;
+}
 
-  if (validCandidates.length === 0) {
-    return { ok: false, code: "unsupported_ratio_set" };
-  }
-
-  // 3. Evaluate Candidates
-  interface CandidateLoss {
-    candidate: (typeof validCandidates)[number];
-    maxMismatchLoss: number;
-    meanMismatchLoss: number;
-    maxCropLoss: number;
-    maxUnusedArea: number;
-  }
-
+function evaluateCandidateLosses(geometry: ImageSlotGeometry, candidates: readonly RatioCandidate[]): CandidateLoss[] {
   const evaluated: CandidateLoss[] = [];
 
-  for (const cand of validCandidates) {
+  for (const cand of candidates) {
     const s = cand.val;
     let maxMismatch = 0;
     let totalMismatch = 0;
@@ -131,25 +128,21 @@ export function recommendImageSizing(
     });
   }
 
-  // 4. Rank candidates by minimax mismatchLoss, then mean mismatchLoss, then fixed order
   evaluated.sort((a, b) => {
     const maxDiff = a.maxMismatchLoss - b.maxMismatchLoss;
-    if (Math.abs(maxDiff) > 1e-9) {
-      return maxDiff;
-    }
+    if (Math.abs(maxDiff) > 1e-9) return maxDiff;
     const meanDiff = a.meanMismatchLoss - b.meanMismatchLoss;
-    if (Math.abs(meanDiff) > 1e-9) {
-      return meanDiff;
-    }
+    if (Math.abs(meanDiff) > 1e-9) return meanDiff;
     const idxA = RATIO_TIE_BREAK_ORDER.indexOf(a.candidate.ratioStr);
     const idxB = RATIO_TIE_BREAK_ORDER.indexOf(b.candidate.ratioStr);
     return (idxA >= 0 ? idxA : 999) - (idxB >= 0 ? idxB : 999);
   });
 
-  const best = evaluated[0];
-  const { n, d, ratioStr } = best.candidate;
+  return evaluated;
+}
 
-  // 5. Calculate Recommended Raster Dimensions
+function computeAlignedDimensions(geometry: ImageSlotGeometry, candidate: RatioCandidate): { width: number; height: number } | null {
+  const { n, d } = candidate;
   const perViewportScales = geometry.viewports.map((vp) =>
     vp.fit === "cover" ? Math.max(vp.width / n, vp.height / d) : Math.min(vp.width / n, vp.height / d),
   );
@@ -167,6 +160,34 @@ export function recommendImageSizing(
     recommendedWidth <= 0 ||
     recommendedHeight <= 0
   ) {
+    return null;
+  }
+
+  return { width: recommendedWidth, height: recommendedHeight };
+}
+
+export function recommendImageSizing(
+  geometry: ImageSlotGeometry,
+  supportedRatios: readonly QuizLayoutAssetAspectRatio[] = DEFAULT_SUPPORTED_RATIOS,
+): ImageSizingResult {
+  if (!isValidGeometry(geometry)) {
+    return { ok: false, code: "invalid_geometry" };
+  }
+
+  if (!Array.isArray(supportedRatios) || supportedRatios.length === 0) {
+    return { ok: false, code: "unsupported_ratio_set" };
+  }
+
+  const validCandidates = parseSupportedCandidates(supportedRatios);
+  if (validCandidates.length === 0) {
+    return { ok: false, code: "unsupported_ratio_set" };
+  }
+
+  const evaluated = evaluateCandidateLosses(geometry, validCandidates);
+  const best = evaluated[0];
+  const dims = computeAlignedDimensions(geometry, best.candidate);
+
+  if (!dims) {
     return { ok: false, code: "invalid_geometry" };
   }
 
@@ -175,11 +196,8 @@ export function recommendImageSizing(
     value: {
       policyVersion: 1,
       geometry,
-      aspectRatio: ratioStr,
-      recommended: {
-        width: recommendedWidth,
-        height: recommendedHeight,
-      },
+      aspectRatio: best.candidate.ratioStr,
+      recommended: dims,
       maxCropLoss: best.maxCropLoss,
       maxUnusedArea: best.maxUnusedArea,
     },

@@ -1,5 +1,5 @@
-import { Sparkle, ArrowCounterClockwise, PencilSimple, CircleNotch, Plus, MagnifyingGlassPlus } from "@phosphor-icons/react";
-import { type MascotStateVariant, findPoseByPrompt, getMascotSlotDefaultPreset } from "@studio/shared";
+import { type MascotStateVariant, isMascotVariantAvailable, isMockFixtureIdentifier } from "@studio/shared";
+import { VariantSlotHeader, resolveSlotPoseMetadata, VariantSlotFilledView, VariantSlotEmptyView } from "./slot";
 
 export interface VariantSlotCardProps {
   state: "thinking" | "celebrate";
@@ -8,167 +8,68 @@ export interface VariantSlotCardProps {
   isBusy: boolean;
   isQueued?: boolean;
   statusText?: string;
+  isSelected?: boolean;
+  onToggleSelect?: (slotIndex: number, selected: boolean) => void;
+  isSelectable?: boolean;
   onGenerate: (slotIndex: number) => void;
   onRegenerate: (slotIndex: number) => void;
   onEditPrompt: (slotIndex: number) => void;
   onOpenLightbox?: (url: string) => void;
+  onDownloadOriginal?: (url: string) => void;
+  onDownloadTransparent?: (url: string) => void;
 }
 
-export function VariantSlotCard({
-  state,
-  slotIndex,
-  variant,
-  isBusy,
-  isQueued = false,
-  statusText = "Generating pose...",
-  onGenerate,
-  onRegenerate,
-  onEditPrompt,
-  onOpenLightbox,
-}: VariantSlotCardProps) {
-  const isFilled = Boolean(variant?.image_url);
+export function VariantSlotCard(props: VariantSlotCardProps) {
+  const {
+    state,
+    slotIndex,
+    variant,
+    isBusy,
+    isQueued = false,
+    isSelected = false,
+    onToggleSelect,
+    isSelectable = !isBusy && !isQueued,
+    onGenerate,
+    onEditPrompt,
+  } = props;
+  const imageUrl = variant?.image_url && !isMockFixtureIdentifier(variant.image_url) ? variant.image_url : null;
+  const isFilled = isMascotVariantAvailable(variant) && Boolean(imageUrl);
   const promptModifier = variant?.prompt_modifier?.trim() || "";
-  const hasCustomPrompt = Boolean(promptModifier);
 
-  // Look up pose preset details from the 20-pose library
-  const knownPose = promptModifier ? findPoseByPrompt(state, promptModifier) : undefined;
-  const defaultSlotPreset = getMascotSlotDefaultPreset(state, slotIndex);
-  const defaultPose = findPoseByPrompt(state, defaultSlotPreset);
-
-  const poseBadgeLabel = knownPose ? knownPose.label : promptModifier ? "Customized" : isFilled && defaultPose ? defaultPose.label : null;
-
-  const poseTooltip = promptModifier
-    ? knownPose
-      ? `${knownPose.label}: "${promptModifier}"`
-      : `Custom Prompt: "${promptModifier}"`
-    : `Default Slot ${slotIndex}: "${defaultSlotPreset}"`;
+  const { poseBadgeLabel, poseTooltip } = resolveSlotPoseMetadata(state, slotIndex, promptModifier, isFilled);
 
   return (
     <div
-      className={`variant-slot-card ${isFilled ? "is-filled" : "is-empty"} ${isBusy ? "is-busy" : ""} ${isQueued ? "is-queued" : ""}`}
+      className={`variant-slot-card ${isFilled ? "is-filled" : "is-empty"} ${isBusy ? "is-busy" : ""} ${isQueued ? "is-queued" : ""} ${isSelected ? "is-selected" : ""}`}
       data-slot-index={slotIndex}
       data-slot-state={state}
       title={poseTooltip}
     >
-      {/* Slot Header */}
-      <div className="variant-slot-header">
-        <span className="slot-number-badge">Slot {slotIndex}</span>
-        <div className="slot-header-tags">
-          {isQueued ? (
-            <span className="slot-queued-tag" title="In queue for batch generation">
-              <CircleNotch size={10} className="spin" />
-              <span>Queued</span>
-            </span>
-          ) : poseBadgeLabel ? (
-            <span className="slot-custom-tag" title={poseTooltip}>
-              {poseBadgeLabel}
-            </span>
-          ) : null}
-        </div>
-      </div>
+      <VariantSlotHeader
+        slotIndex={slotIndex}
+        state={state}
+        isQueued={isQueued}
+        isFilled={isFilled}
+        isSelected={isSelected}
+        isSelectable={isSelectable}
+        onToggleSelect={onToggleSelect ? (checked) => onToggleSelect(slotIndex, checked) : undefined}
+        poseBadgeLabel={poseBadgeLabel}
+        poseTooltip={poseTooltip}
+      />
 
-      {/* Card Content Area */}
-      <div className="slot-canvas-container">
-        {isFilled && variant?.image_url ? (
-          <div className="slot-checkerboard-canvas">
-            <img src={variant.image_url} alt={`${state} variant slot ${slotIndex}`} className="slot-variant-img" loading="lazy" />
-            {onOpenLightbox ? (
-              <button
-                type="button"
-                className="slot-zoom-btn"
-                title="View Full Size"
-                aria-label="View Full Size"
-                onClick={() => onOpenLightbox(variant.image_url)}
-              >
-                <MagnifyingGlassPlus size={16} />
-              </button>
-            ) : null}
-          </div>
-        ) : (
-          <div className="slot-empty-placeholder">
-            <div className="slot-empty-icon-wrap">
-              <Plus size={24} weight="bold" />
-            </div>
-            <span className="slot-empty-text">{isQueued ? "Waiting in Queue..." : "Empty Slot"}</span>
-          </div>
-        )}
-
-        {/* Busy Overlay */}
-        {isBusy ? (
-          <div className="slot-busy-overlay" role="status" aria-live="polite">
-            <CircleNotch size={26} className="spin slot-busy-spinner" />
-            <span className="slot-busy-text">{statusText}</span>
-          </div>
-        ) : null}
-      </div>
-
-      {/* Card Footer Actions */}
-      <div className="slot-card-actions">
-        {isFilled ? (
-          <>
-            <button
-              type="button"
-              className={`slot-action-btn is-regen ${isBusy ? "is-generating" : ""}`}
-              onClick={() => onRegenerate(slotIndex)}
-              disabled={isBusy || isQueued}
-              title="Regenerate with an unused pose from library"
-            >
-              {isBusy ? (
-                <>
-                  <CircleNotch size={13} className="spin" />
-                  <span>Regenerating...</span>
-                </>
-              ) : (
-                <>
-                  <ArrowCounterClockwise size={13} weight="bold" />
-                  <span>Regenerate</span>
-                </>
-              )}
-            </button>
-            <button
-              type="button"
-              className="slot-action-btn is-edit-prompt"
-              onClick={() => onEditPrompt(slotIndex)}
-              disabled={isBusy || isQueued}
-              title="Edit action prompt modifier"
-            >
-              <PencilSimple size={13} />
-              <span>Edit Prompt</span>
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              className={`slot-action-btn is-generate ${isBusy ? "is-generating" : ""}`}
-              onClick={() => onGenerate(slotIndex)}
-              disabled={isBusy || isQueued}
-            >
-              {isBusy ? (
-                <>
-                  <CircleNotch size={13} className="spin" />
-                  <span>Generating...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkle size={13} weight="fill" />
-                  <span>Generate</span>
-                </>
-              )}
-            </button>
-            <button
-              type="button"
-              className="slot-action-btn is-pre-prompt"
-              onClick={() => onEditPrompt(slotIndex)}
-              disabled={isBusy || isQueued}
-              title="Add prompt modifier before generating"
-            >
-              <PencilSimple size={13} />
-              <span>{hasCustomPrompt ? "Edit Prompt" : "Add Prompt"}</span>
-            </button>
-          </>
-        )}
-      </div>
+      {isFilled && imageUrl ? (
+        <VariantSlotFilledView {...props} imageUrl={imageUrl} />
+      ) : (
+        <VariantSlotEmptyView
+          slotIndex={slotIndex}
+          isBusy={isBusy}
+          isQueued={isQueued}
+          statusText={props.statusText}
+          hasCustomPrompt={Boolean(promptModifier)}
+          onGenerate={onGenerate}
+          onEditPrompt={onEditPrompt}
+        />
+      )}
     </div>
   );
 }

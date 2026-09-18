@@ -35,7 +35,10 @@ export function SequenceDivider({
           }
           title="Click to enlarge image"
         >
-          <img src={api.bundleImageUrl(channelId, episodeId, image.filename, image.modified_at)} alt={`${scene.continuity_bundle_id} anchor`} />
+          <img
+            src={api.bundleImageUrl(channelId, episodeId, image.filename, image.modified_at)}
+            alt={`${scene.continuity_bundle_id} anchor`}
+          />
           <span>{scene.continuity_bundle_id}</span>
         </button>
       ) : null}

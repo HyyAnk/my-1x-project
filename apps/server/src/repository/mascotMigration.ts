@@ -10,6 +10,7 @@ import {
   type MascotProfile,
 } from "@studio/shared";
 import type { RepositoryRuntime } from "./runtime.js";
+import { ensureMascotStyles } from "./mascot/mascotStyles.js";
 
 const SAFE_MIGRATION_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$/;
 
@@ -74,11 +75,13 @@ export async function migrateMascotStorage(
       }
 
       const backupPath = await createBackup(repository, migrationId, mascotId, metadataPath);
-      const migratedProfile = MascotProfileSchema.parse({
-        ...profile,
-        schema_version: MASCOT_RENDER_CONTRACT_VERSION,
-        render_bundle: bundle,
-      });
+      const migratedProfile = MascotProfileSchema.parse(
+        ensureMascotStyles({
+          ...profile,
+          schema_version: MASCOT_RENDER_CONTRACT_VERSION,
+          render_bundle: bundle,
+        }),
+      );
       await repository.writeJsonAtomic(metadataPath, migratedProfile);
       const migratedSha256 = sha256(await readFile(metadataPath));
       const relativeBackupPath = path.relative(repository.roots.runtime, backupPath);

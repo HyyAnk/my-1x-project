@@ -54,10 +54,7 @@ export async function saveHistorySettings(rootDirectory: string, input: SaveHist
   return loadConfig(rootDirectory);
 }
 
-export async function saveKnowledgeBaseSettings(
-  rootDirectory: string,
-  input: KnowledgeBaseSettingsInput,
-): Promise<AppConfig> {
+export async function saveKnowledgeBaseSettings(rootDirectory: string, input: KnowledgeBaseSettingsInput): Promise<AppConfig> {
   const parsed = KnowledgeBaseSettingsInputSchema.parse(input);
   const current = await loadConfig(rootDirectory);
   const next = { ...current.knowledge_base, ...parsed };
@@ -224,15 +221,7 @@ export async function saveImageFallbackSettings(rootDirectory: string, input: Im
       ? (currentLocal.image_fallback as Record<string, unknown>)
       : {};
   const nextFallback = { ...currentFallback } as Record<string, unknown>;
-  for (const key of [
-    "enabled",
-    "provider",
-    "base_url",
-    "model",
-    "api_key",
-    "resolution",
-    "quality",
-  ] as const) {
+  for (const key of ["enabled", "provider", "base_url", "model", "api_key", "resolution", "quality"] as const) {
     const value = parsed[key];
     if (value !== undefined) nextFallback[key] = value;
   }

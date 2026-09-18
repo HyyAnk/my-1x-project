@@ -16,10 +16,7 @@ function createMockAnimation(initialState: "running" | "paused" | "finished" = "
 }
 
 function setupMockRehearsalEnvironment(totalDuration: number | ReturnType<typeof computeSandboxPhaseTimeline> = 10.0) {
-  const animations = [
-    createMockAnimation("paused", 0),
-    createMockAnimation("paused", 0),
-  ];
+  const animations = [createMockAnimation("paused", 0), createMockAnimation("paused", 0)];
 
   const messageListeners: Array<(event: { data: unknown }) => void> = [];
 

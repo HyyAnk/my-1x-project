@@ -7,15 +7,13 @@ import type { BankQuestion } from "@studio/shared";
 import {
   ALL_MATRIX_ARCHETYPES,
   calculateMatrixCoverageStats,
-  ensureMatrixCoverageCache,
   getMatrixCoverageCache,
   MatrixCoverageCache,
   resetAllMatrixCoverageCaches,
-  warmUpMatrixCoverageCache,
 } from "../src/quiz/bank/matrixCoverageService.js";
 import { getEntityById, loadAllKnowledgeEntities } from "../src/quiz/bank/knowledgeBaseLoader.js";
 import { RepositoryService } from "../src/repository/service.js";
-import { closeBankSqliteDb, getBankSqliteDb } from "../src/repository/quiz/questionBankRepository.js";
+import { closeBankSqliteDb } from "../src/repository/quiz/questionBankRepository.js";
 
 describe("Question Bank In-Memory Matrix Coverage & Stats Cache (Phase 4)", () => {
   let tempDir: string;
@@ -72,7 +70,7 @@ describe("Question Bank In-Memory Matrix Coverage & Stats Cache (Phase 4)", () =
 
       const allEntities = loadAllKnowledgeEntities();
       expect(coverage.total_combos).toBe(allEntities.length * ALL_MATRIX_ARCHETYPES.length);
-      expect(coverage.total_combos).toBe(22072);
+      expect(coverage.total_combos).toBe(19313);
       expect(coverage.covered_combos).toBe(0);
       expect(coverage.total_variants).toBe(0);
       expect(coverage.coverage_percent).toBe(0);

@@ -5,7 +5,15 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
-import { type Channel, type MascotProfile, type MascotSpriteAction, type MascotStyle, QuizV2Schema } from "@studio/shared";
+import {
+  type Channel,
+  type MascotActionAssetV2,
+  type MascotProfile,
+  type MascotRenderBundleV2,
+  type MascotSpriteAction,
+  type MascotStyle,
+  QuizV2Schema,
+} from "@studio/shared";
 
 const roots: string[] = [];
 
@@ -82,11 +90,19 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(waveRes.statusCode).toBe(200);
-      const waveData = waveRes.json<{ action_sprite: MascotSpriteAction }>();
+      const waveData = waveRes.json<{
+        action_sprite: MascotSpriteAction;
+        action_asset?: MascotActionAssetV2;
+        render_bundle?: MascotRenderBundleV2;
+      }>();
       expect(waveData.action_sprite.action).toBe("wave");
       expect(waveData.action_sprite.frames_count).toBe(1);
       expect(waveData.action_sprite.motion_preset).toBe("wave");
       expect(waveData.action_sprite.sprite_url).toBeDefined();
+      expect(waveData.action_asset?.action).toBe("wave");
+      expect(waveData.action_asset?.image_url).toBe(waveData.action_sprite.sprite_url);
+      expect(waveData.action_asset?.motion.preset).toBe("wave");
+      expect(waveData.render_bundle?.assets.actions.wave?.image_url).toBe(waveData.action_sprite.sprite_url);
 
       const thinkRes = await app.server.inject({
         method: "POST",
@@ -99,8 +115,15 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(thinkRes.statusCode).toBe(200);
-      const thinkData = thinkRes.json<{ action_sprite: MascotSpriteAction }>();
+      const thinkData = thinkRes.json<{
+        action_sprite: MascotSpriteAction;
+        action_asset?: MascotActionAssetV2;
+        render_bundle?: MascotRenderBundleV2;
+      }>();
       expect(thinkData.action_sprite.motion_preset).toBe("sway");
+      expect(thinkData.action_asset?.action).toBe("thinking");
+      expect(thinkData.action_asset?.motion.preset).toBe("sway");
+      expect(thinkData.render_bundle?.assets.actions.thinking?.image_url).toBeDefined();
 
       // 6. Upload Custom State Image (1 frame)
       const uploadRes = await app.server.inject({
@@ -117,10 +140,17 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(uploadRes.statusCode).toBe(200);
-      const uploadData = uploadRes.json<{ action_sprite: MascotSpriteAction }>();
+      const uploadData = uploadRes.json<{
+        action_sprite: MascotSpriteAction;
+        action_asset?: MascotActionAssetV2;
+        render_bundle?: MascotRenderBundleV2;
+      }>();
       expect(uploadData.action_sprite.action).toBe("celebrate");
       expect(uploadData.action_sprite.frames_count).toBe(1);
       expect(uploadData.action_sprite.motion_preset).toBe("jump");
+      expect(uploadData.action_asset?.action).toBe("celebrate");
+      expect(uploadData.action_asset?.motion.preset).toBe("jump");
+      expect(uploadData.render_bundle?.assets.actions.celebrate?.image_url).toBe(uploadData.action_sprite.sprite_url);
 
       // 7. Get Mascot Detail
       const getRes = await app.server.inject({
@@ -132,6 +162,9 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(detailedMascot.actions.wave?.sprite_url).toBeDefined();
       expect(detailedMascot.actions.thinking?.sprite_url).toBeDefined();
       expect(detailedMascot.actions.celebrate?.sprite_url).toBeDefined();
+      expect(detailedMascot.render_bundle?.assets.actions.wave?.image_url).toBeDefined();
+      expect(detailedMascot.render_bundle?.assets.actions.thinking?.image_url).toBeDefined();
+      expect(detailedMascot.render_bundle?.assets.actions.celebrate?.image_url).toBeDefined();
 
       // 8. Assign Mascot to Channel
       const assignRes = await app.server.inject({
@@ -170,12 +203,24 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(calibrateRes.statusCode).toBe(200);
-      const calibratedAction = calibrateRes.json<{ action: MascotSpriteAction }>().action;
-      expect(calibratedAction.offset_x).toBe(8);
-      expect(calibratedAction.offset_y).toBe(-4);
-      expect(calibratedAction.motion_preset).toBe("wave");
-      expect(calibratedAction.motion_speed).toBe(1.5);
-      expect(calibratedAction.motion_intensity).toBe("dynamic");
+      const calibrateData = calibrateRes.json<{
+        action: MascotSpriteAction;
+        action_asset?: MascotActionAssetV2;
+        render_bundle?: MascotRenderBundleV2;
+      }>();
+      expect(calibrateData.action.offset_x).toBe(8);
+      expect(calibrateData.action.offset_y).toBe(-4);
+      expect(calibrateData.action.motion_preset).toBe("wave");
+      expect(calibrateData.action.motion_speed).toBe(1.5);
+      expect(calibrateData.action.motion_intensity).toBe("dynamic");
+      expect(calibrateData.action_asset?.registration.offset_x).toBe(8);
+      expect(calibrateData.action_asset?.registration.offset_y).toBe(-4);
+      expect(calibrateData.action_asset?.motion.preset).toBe("wave");
+      expect(calibrateData.action_asset?.motion.speed).toBe(1.5);
+      expect(calibrateData.action_asset?.motion.intensity).toBe("dynamic");
+      expect(calibrateData.render_bundle?.assets.actions.wave?.motion.speed).toBe(1.5);
+      expect(calibrateData.render_bundle?.assets.actions.wave?.registration.offset_x).toBe(8);
+      expect(calibrateData.render_bundle?.assets.actions.wave?.registration.offset_y).toBe(-4);
 
       // 8b-2. Calibrate with invalid action returns validation error
       const invalidCalibrateRes = await app.server.inject({
@@ -463,7 +508,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     expect(conceptPrompt).toContain("floating character");
     expect(conceptPrompt).toContain("no ground shadow");
     expect(conceptPrompt).toContain("no floor");
-    expect(conceptPrompt).toContain("solid neutral light gray background (#E8E8E8)");
+    expect(conceptPrompt).toContain("solid flat chroma key green background (#00FF00)");
     expect(conceptPrompt).toContain("high contrast studio rim lighting");
     expect(conceptPrompt).toContain("sharp clean silhouette");
     expect(conceptPrompt).toContain("single standalone character");
@@ -484,7 +529,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     expect(actionWithRef).toContain('Strictly preserve character identity from @1 for "Guardian Dragon"');
     expect(actionWithRef).toContain("floating character");
     expect(actionWithRef).toContain("no ground shadow");
-    expect(actionWithRef).toContain("solid neutral light gray background (#E8E8E8)");
+    expect(actionWithRef).toContain("solid flat chroma key green background (#00FF00)");
     expect(actionWithRef).toContain("no floor");
     expect(actionWithRef).toContain("no character sheet");
     expect(actionWithRef).toContain("no sprite sheet");
@@ -658,6 +703,64 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       const persistedAfterPut = await app.repository.getMascot(mascot.id);
       const styleAfterPut = persistedAfterPut.styles?.find((s) => s.id === style.id);
       expect(styleAfterPut?.anchor_image_url).toBe(customAnchorUrl);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("generates and uploads actions via canonical V2 endpoints and verifies action_asset and render_bundle updates", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-v2-actions-test-"));
+    roots.push(root);
+
+    const app = await buildApp(root);
+    try {
+      const createRes = await app.server.inject({
+        method: "POST",
+        url: "/api/mascots",
+        payload: {
+          name: "V2 Action Mascot",
+          visual_style: "pixar_3d",
+        },
+      });
+      expect(createRes.statusCode).toBe(201);
+      const mascot = createRes.json<{ mascot: MascotProfile }>().mascot;
+
+      // Modern endpoint: POST /api/mascots/:mascotId/actions/:action/generate
+      const genRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${mascot.id}/actions/point/generate`,
+        payload: { prompt: "Pointing excitedly" },
+      });
+      expect(genRes.statusCode).toBe(200);
+      const genData = genRes.json<{
+        action_asset: MascotActionAssetV2;
+        render_bundle: MascotRenderBundleV2;
+        mascot: MascotProfile;
+      }>();
+      expect(genData.action_asset.action).toBe("point");
+      expect(genData.action_asset.image_url).toBeDefined();
+      expect(genData.render_bundle.assets.actions.point?.image_url).toBe(genData.action_asset.image_url);
+      expect(genData.mascot.render_bundle?.assets.actions.point?.image_url).toBe(genData.action_asset.image_url);
+
+      // Modern endpoint: POST /api/mascots/:mascotId/actions/:action/upload
+      const uploadRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${mascot.id}/actions/oops/upload`,
+        payload: {
+          data: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+          motion_preset: "shake",
+        },
+      });
+      expect(uploadRes.statusCode).toBe(200);
+      const uploadData = uploadRes.json<{
+        action_asset: MascotActionAssetV2;
+        render_bundle: MascotRenderBundleV2;
+        mascot: MascotProfile;
+      }>();
+      expect(uploadData.action_asset.action).toBe("oops");
+      expect(uploadData.action_asset.motion.preset).toBe("shake");
+      expect(uploadData.render_bundle.assets.actions.oops?.image_url).toBe(uploadData.action_asset.image_url);
+      expect(uploadData.mascot.render_bundle?.assets.actions.oops?.motion.preset).toBe("shake");
     } finally {
       await app.close();
     }

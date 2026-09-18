@@ -341,6 +341,80 @@ describe("bundle image tasks", () => {
     const images = await repository.listBundleImages(channel.channel_id, episode.episode_id);
     expect(images.length).toBe(2);
   }, 15000);
+
+  it("regenerates bundle image multiple times without short-circuiting or reusing stale artifacts", async () => {
+    delete process.env.SHOPAIKEY_API_KEY;
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-image-regen-"));
+    roots.push(root);
+    await mkdir(path.join(root, "templates"), { recursive: true });
+    await writeFile(
+      path.join(root, "templates", "example_channel_dna.md"),
+      "# DNA\n\n## Visual Style\nWarm\n\n## Visual Language\nCinematic\n",
+      "utf8",
+    );
+    await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
+    const repository = new RepositoryService(root);
+    const channel = await repository.createChannel({
+      name: "Regen Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `regen_topic_${index}`,
+      channel_id: channel.channel_id,
+      content_kind: "episode" as const,
+      title: `Regen Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
+    await repository.saveTopicRun(channel.channel_id, topics);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      "# Episode Visual Bible\n\n## Continuity bundle CB-01 — Workshop\n\n- Era: 1950s\n- Anchor-frame prompt: A warm workshop with brass tools.\n- Reference asset slots: anchor\n",
+    );
+    await repository.saveScenes(channel.channel_id, episode.episode_id, [scene(episode.episode_id, 1, "First")]);
+    const logger = new StudioLogger(root);
+    await logger.init();
+
+    const fakeCodex = new ImageCodex();
+    const manager = new TaskManager(
+      repository,
+      new ContextEngine(repository, logger),
+      fakeCodex as never,
+      1,
+      8,
+      logger,
+      undefined,
+      undefined,
+      { enabled: true, images_per_bundle: 1 },
+    );
+    await manager.load();
+
+    // First generation
+    const task1 = manager.submit("GENERATE_BUNDLE_IMAGE", channel.channel_id, episode.episode_id, 1);
+    await waitFor(() => manager.get(task1.task_id).status === "COMPLETED");
+    expect(fakeCodex.turnsStarted).toBe(1);
+
+    // Second generation (regeneration)
+    const task2 = manager.submit("GENERATE_BUNDLE_IMAGE", channel.channel_id, episode.episode_id, 1);
+    await waitFor(() => manager.get(task2.task_id).status === "COMPLETED");
+    expect(fakeCodex.turnsStarted).toBe(2);
+
+    // Third generation (regeneration again)
+    const task3 = manager.submit("GENERATE_BUNDLE_IMAGE", channel.channel_id, episode.episode_id, 1);
+    await waitFor(() => manager.get(task3.task_id).status === "COMPLETED");
+    expect(fakeCodex.turnsStarted).toBe(3);
+  });
 });
 
 function scene(episodeId: string, sceneNumber: number, dialogue: string) {

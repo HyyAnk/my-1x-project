@@ -283,11 +283,11 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
     const controller = new AbortController();
 
     let lateResolved = false;
-    let lateRejected = false;
+    const _lateRejected = false;
 
     const taskPromise = runBoundedPackageProvider(
       (signal) =>
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _reject) => {
           signal.addEventListener("abort", () => {
             // Simulate late asynchronous provider resolution after abort
             setTimeout(() => {

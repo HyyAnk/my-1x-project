@@ -22,9 +22,9 @@ export function SandboxMonitorHeader({
   lastRenderTime,
   showSafeArea,
   setShowSafeArea,
-  showShortsGuide,
-  setShowShortsGuide,
-  aspectRatio,
+  showShortsGuide: _showShortsGuide,
+  setShowShortsGuide: _setShowShortsGuide,
+  aspectRatio: _aspectRatio,
   setIframeKey,
   zoom,
   setZoom,
@@ -72,7 +72,7 @@ export function SandboxMonitorHeader({
               boxShadow: "0 0 6px #22c55e",
             }}
           />
-          {aspectRatio === "9:16" ? "1080 × 1920" : "1920 × 1080"}
+          1920 × 1080
         </span>
 
         <div

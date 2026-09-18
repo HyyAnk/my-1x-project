@@ -9,8 +9,10 @@ import type {
   GenerateMascotSlotInput,
   GenerateMascotSpriteInput,
   GenerateMascotStyleConceptResponse,
+  MascotActionAssetV2,
   MascotActionType,
   MascotProfile,
+  MascotRenderBundleV2,
   MascotSpriteAction,
   MascotStateVariant,
   MascotStyle,
@@ -21,14 +23,19 @@ import type {
   UploadMascotSpriteInput,
 } from "@studio/shared";
 import { request } from "./client";
+import { mascotSlotJobApi } from "../features/mascot/services/mascotSlotJobApi";
+import { mascotStyleJobApi } from "../features/mascot/services/mascotStyleJobApi";
 
 export type UpdateMascotStylePayload = UpdateMascotStyleInput & {
   anchor_image_url?: string | null;
 };
 
 export const mascotApi = {
+  ...mascotSlotJobApi,
+  ...mascotStyleJobApi,
   mascots: () => request<{ mascots: MascotProfile[] }>("/api/mascots"),
   mascot: (id: string) => request<{ mascot: MascotProfile }>(`/api/mascots/${id}`),
+  getMascot: (id: string) => request<{ mascot: MascotProfile }>(`/api/mascots/${id}`),
   createMascot: (body: CreateMascotInput) =>
     request<{ mascot: MascotProfile }>("/api/mascots", { method: "POST", body: JSON.stringify(body) }),
   updateMascot: (id: string, body: UpdateMascotInput) =>
@@ -42,16 +49,37 @@ export const mascotApi = {
         body: JSON.stringify(body ?? {}),
       },
     ),
+  generateMascotAction: (id: string, body: GenerateMascotSpriteInput) =>
+    request<{
+      mascot: MascotProfile;
+      action_asset?: MascotActionAssetV2;
+      render_bundle?: MascotRenderBundleV2;
+      action_sprite?: MascotSpriteAction;
+      prompt_used: string;
+      placeholder?: boolean;
+    }>(`/api/mascots/${id}/generate-sprite`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   generateMascotSprite: (id: string, body: GenerateMascotSpriteInput) =>
-    request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction; prompt_used: string; placeholder?: boolean }>(
-      `/api/mascots/${id}/generate-sprite`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-      },
-    ),
+    request<{
+      mascot: MascotProfile;
+      action_asset?: MascotActionAssetV2;
+      render_bundle?: MascotRenderBundleV2;
+      action_sprite?: MascotSpriteAction;
+      prompt_used: string;
+      placeholder?: boolean;
+    }>(`/api/mascots/${id}/generate-sprite`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   uploadMascotSprite: (id: string, body: UploadMascotSpriteInput) =>
-    request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction }>(`/api/mascots/${id}/upload-sprite`, {
+    request<{
+      mascot: MascotProfile;
+      action_sprite?: MascotSpriteAction;
+      action_asset?: MascotActionAssetV2;
+      render_bundle?: MascotRenderBundleV2;
+    }>(`/api/mascots/${id}/upload-sprite`, {
       method: "POST",
       body: JSON.stringify(body),
     }),
@@ -63,7 +91,12 @@ export const mascotApi = {
   importMascotZip: (data: string) =>
     request<{ mascot: MascotProfile }>("/api/mascots/import", { method: "POST", body: JSON.stringify({ data }) }),
   calibrateMascotAction: (id: string, action: MascotActionType, body: CalibrateMascotActionRequest) =>
-    request<{ mascot: MascotProfile; action: MascotSpriteAction }>(`/api/mascots/${id}/actions/${action}/calibrate`, {
+    request<{
+      mascot: MascotProfile;
+      action?: MascotSpriteAction;
+      action_asset?: MascotActionAssetV2;
+      render_bundle?: MascotRenderBundleV2;
+    }>(`/api/mascots/${id}/actions/${action}/calibrate`, {
       method: "PATCH",
       body: JSON.stringify(body),
     }),

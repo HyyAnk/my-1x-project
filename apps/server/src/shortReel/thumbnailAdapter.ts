@@ -9,6 +9,8 @@ import { ScriptGenerationError } from "./scriptProvider.js";
 import { requireCompleteShortReelSource } from "../repository/shortReelSourcePolicy.js";
 import type { ImageProvider } from "../providers/index.js";
 import { loadShortReelLocalizationArtifact, type ProductLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
+import type { LLMClient } from "../utils/promptSanitizer.js";
+import { planReelCoverWithAI, type ReelCoverPersona } from "./coverAiPlanner.js";
 
 export type CoverErrorCode = "INVALID_COVER_SOURCE" | "COVER_GENERATION_FAILED" | "INVALID_DIMENSIONS" | "PROVIDER_ERROR";
 
@@ -27,12 +29,14 @@ export interface CoverGenerationOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
   localization?: ProductLocalizationArtifact | null;
+  llmClient?: LLMClient | null;
+  persona?: ReelCoverPersona;
 }
 
 /**
  * Compiles a 9:16 portrait prompt suitable for Short-Reel cover generation.
  */
-export function compileCoverPrompt(record: ShortReelRecord, localizedThumbnailText?: string): string {
+export function compileCoverPrompt(record: ShortReelRecord, localizedThumbnailText?: string, persona?: ReelCoverPersona): string {
   const inSceneQuestion = localizedThumbnailText || record.source.question_text;
   return [
     "9:16 portrait cover art, high resolution 1080x1920, vertical composition.",
@@ -40,6 +44,13 @@ export function compileCoverPrompt(record: ShortReelRecord, localizedThumbnailTe
     `Premise: ${record.topic.premise}`,
     `In-Scene Question: "${inSceneQuestion}"`,
     `Canonical answer: ${JSON.stringify(record.source.selected_answer_text)}`,
+    ...(persona
+      ? [
+          `Mascot Action & Archetype (${persona.archetypeName}): ${persona.poseDescription}. Expression: ${persona.expression}.`,
+          persona.costume ? `Costume: ${persona.costume}.` : null,
+          persona.prop ? `Thematic prop: ${persona.prop}.` : null,
+        ].filter((l): l is string => l !== null)
+      : []),
     ...(record.units.references.last_accepted_payload?.references ?? []).map(
       (reference) =>
         `Selected ${reference.role} reference: ${reference.path} (SHA-256 ${reference.checksum}). Preserve this selected identity and visual direction.`,
@@ -70,7 +81,14 @@ export async function generateReelCoverImage(
   if (options?.imageProvider) {
     try {
       const localization = options?.localization ?? (await loadShortReelLocalizationArtifact(repository, key.channel_id, key.reel_id));
-      const prompt = compileCoverPrompt(reel, localization?.thumbnail_text);
+      const persona =
+        options?.persona ??
+        (await planReelCoverWithAI({
+          record: reel,
+          llmClient: options?.llmClient,
+          signal: options?.signal,
+        }));
+      const prompt = compileCoverPrompt(reel, localization?.thumbnail_text, persona);
       const provider = options.imageProvider;
       const generated = await runBoundedPackageProvider(
         (signal) => provider.generateReference(prompt, signal),

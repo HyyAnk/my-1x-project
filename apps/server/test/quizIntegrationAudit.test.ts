@@ -20,11 +20,8 @@ describe("Quiz Integration Audit Suite", () => {
         format: "image_guess",
         difficulty: 2,
         question: "Guess the animal from its shadow?",
-        choices: [
-          { id: "c-lion", text: "Lion" },
-          { id: "c-tiger", text: "Tiger" },
-          { id: "c-bear", text: "Bear" },
-        ],
+        answer_mode: "single_reveal",
+        choices: [{ id: "c-lion", text: "Lion" }],
         correct_choice_id: "c-lion",
         explanation: "The lion has a magnificent mane.",
         fun_fact: "Lions live in prides.",
@@ -33,9 +30,9 @@ describe("Quiz Integration Audit Suite", () => {
         validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
       },
       {
-        id: "q-clue",
+        id: "q-trivia",
         number: 2,
-        format: "image_guess",
+        format: "multiple_choice",
         difficulty: 3,
         question: "Whose medical tool is this stethoscope?",
         choices: [
@@ -71,7 +68,7 @@ describe("Quiz Integration Audit Suite", () => {
   });
 
   describe("1. Director Schema & Archetype Enums", () => {
-    it("accepts 'mystery_reveal' and 'clue_deduction' in DirectorPlanSchema", () => {
+    it("accepts 'mystery_reveal' in DirectorPlanSchema", () => {
       const plan: DirectorPlan = {
         schema_version: 2,
         episode_id: "ep-audit-test",
@@ -100,12 +97,12 @@ describe("Quiz Integration Audit Suite", () => {
             reward_intensity: "small",
           },
           {
-            question_id: "q-clue",
-            archetype: "clue_deduction",
+            question_id: "q-trivia",
+            archetype: "illustrated_multiple_choice",
             energy: "excited",
             visual_density: "lively",
             palette_id: "aqua",
-            layout_id: "clue_deduction",
+            layout_id: "media_left_choices_right",
             motion_id: "enter.slideUp",
             transition_id: "bubble_splash",
             thinking_bar_style: "auto",
@@ -144,7 +141,7 @@ describe("Quiz Integration Audit Suite", () => {
             reward_intensity: "big",
           },
         ],
-        midpoint_question_id: "q-clue",
+        midpoint_question_id: "q-trivia",
         final_challenge_question_id: "q-fact",
       };
 
@@ -164,24 +161,12 @@ describe("Quiz Integration Audit Suite", () => {
         requestedLayout: "auto",
         archetype: "mystery_reveal",
         questionFormat: "image_guess",
-        choiceCount: 3,
+        choiceCount: 1,
+        answerMode: "single_reveal",
       });
       expect(res.ok).toBe(true);
       if (res.ok) {
         expect(res.layoutId).toBe("mystery_reveal");
-      }
-    });
-
-    it("routes archetype 'clue_deduction' with auto layout to 'clue_deduction'", () => {
-      const res = resolveQuizLayout({
-        requestedLayout: "auto",
-        archetype: "clue_deduction",
-        questionFormat: "image_guess",
-        choiceCount: 3,
-      });
-      expect(res.ok).toBe(true);
-      if (res.ok) {
-        expect(res.layoutId).toBe("clue_deduction");
       }
     });
 
@@ -190,7 +175,8 @@ describe("Quiz Integration Audit Suite", () => {
         requestedLayout: "auto",
         archetype: "image_guess",
         questionFormat: "image_guess",
-        choiceCount: 3,
+        choiceCount: 1,
+        answerMode: "single_reveal",
       });
       expect(res.ok).toBe(true);
       if (res.ok) {
@@ -203,11 +189,25 @@ describe("Quiz Integration Audit Suite", () => {
         requestedLayout: "auto",
         archetype: "visual_reveal",
         questionFormat: "image_guess",
-        choiceCount: 3,
+        choiceCount: 1,
+        answerMode: "single_reveal",
       });
       expect(res.ok).toBe(true);
       if (res.ok) {
         expect(res.layoutId).toBe("mystery_reveal");
+      }
+    });
+
+    it("falls back to 'media_left_choices_right' when choiceCount > 1 for image_guess", () => {
+      const res = resolveQuizLayout({
+        requestedLayout: "auto",
+        archetype: "mystery_reveal",
+        questionFormat: "image_guess",
+        choiceCount: 3,
+      });
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.layoutId).toBe("media_left_choices_right");
       }
     });
   });
@@ -229,7 +229,7 @@ describe("Quiz Integration Audit Suite", () => {
   });
 
   describe("4. Asset Planner Integration", () => {
-    it("assigns transparent_background: true to mystery_reveal beats and false to clue_deduction beats", () => {
+    it("assigns transparent_background: true to mystery_reveal beats and false to illustrated_multiple_choice beats", () => {
       const plan: DirectorPlan = {
         schema_version: 2,
         episode_id: baseQuiz.episode_id,
@@ -258,12 +258,12 @@ describe("Quiz Integration Audit Suite", () => {
             reward_intensity: "small",
           },
           {
-            question_id: "q-clue",
-            archetype: "clue_deduction",
+            question_id: "q-trivia",
+            archetype: "illustrated_multiple_choice",
             energy: "excited",
             visual_density: "lively",
             palette_id: "aqua",
-            layout_id: "clue_deduction",
+            layout_id: "media_left_choices_right",
             motion_id: "enter.slideUp",
             transition_id: "bubble_splash",
             thinking_bar_style: "auto",
@@ -291,9 +291,9 @@ describe("Quiz Integration Audit Suite", () => {
       expect(silhouetteAsset).toBeDefined();
       expect(silhouetteAsset?.transparent_background).toBe(true);
 
-      const clueAsset = assetPlan.assets.find((a) => a.question_id === "q-clue");
-      expect(clueAsset).toBeDefined();
-      expect(clueAsset?.transparent_background).toBe(false);
+      const triviaAsset = assetPlan.assets.find((a) => a.question_id === "q-trivia");
+      expect(triviaAsset).toBeDefined();
+      expect(triviaAsset?.transparent_background).toBe(false);
     });
   });
 
@@ -302,12 +302,12 @@ describe("Quiz Integration Audit Suite", () => {
       const config = QuizConfigSchema.parse({
         question_count: 5,
         quiz_format: "image_guess",
-        archetype: "clue_deduction",
-        target_layout: "clue_deduction",
+        archetype: "mystery_reveal",
+        target_layout: "mystery_reveal",
       });
 
-      expect(config.archetype).toBe("clue_deduction");
-      expect(config.target_layout).toBe("clue_deduction");
+      expect(config.archetype).toBe("mystery_reveal");
+      expect(config.target_layout).toBe("mystery_reveal");
     });
   });
 
@@ -319,6 +319,7 @@ describe("Quiz Integration Audit Suite", () => {
         archetype: "mystery_reveal",
         questionFormat: question.format,
         choiceCount: question.choices.length,
+        answerMode: question.answer_mode,
       });
       expect(resolution.ok).toBe(true);
       if (!resolution.ok) return;
@@ -362,69 +363,17 @@ describe("Quiz Integration Audit Suite", () => {
       expect(html).toContain("scanner-beam");
       expect(html).toContain("scanner-flare");
     });
-
-    it("renders valid HTML with clue-deduction elements for clue_deduction questions", () => {
-      const question = baseQuiz.questions[1];
-      const resolution = resolveQuizLayout({
-        requestedLayout: "clue_deduction",
-        archetype: "clue_deduction",
-        questionFormat: question.format,
-        choiceCount: question.choices.length,
-      });
-      expect(resolution.ok).toBe(true);
-      if (!resolution.ok) return;
-
-      const html = questionClip({
-        start: 0,
-        choicesStart: 2,
-        thinkingStart: 4,
-        revealStart: 9,
-        rewardStart: 10,
-        end: 12,
-        question,
-        archetype: "clue_deduction",
-        layoutResolution: resolution,
-        questionIndex: 1,
-        count: 3,
-        visual: {
-          palette: {
-            id: "aqua",
-            name: "Aqua",
-            primary: "#00ffff",
-            secondary: "#ffffff",
-            accent: "#0000ff",
-            dark: "#000033",
-            light: "#ccffff",
-            surface: "#006666",
-            card: "#009999",
-            ink: "#000000",
-          },
-          motionId: "enter.slideUp",
-          transitionId: "bubble_splash",
-        },
-        copy: quizCopy("en"),
-        assets: {},
-        isFinal: false,
-      });
-
-      expect(html).toContain("layout-clue_deduction");
-      expect(html).toContain("clue-deduction-stage-wrapper");
-      expect(html).toContain("clue-stage-backdrop");
-      expect(html).toContain("clue-card-stage");
-      expect(html).toContain("clue-hero-frame");
-      expect(html).toContain("clue-glow-ring");
-    });
   });
 
   describe("7. Visual Sandbox Preview Integration", () => {
-    it("renders Visual Sandbox previews for mystery_reveal and clue_deduction without runtime errors", () => {
+    it("renders Visual Sandbox previews for mystery_reveal without runtime errors", () => {
       const previewMystery = adaptSandboxQuizScene(
         {
           layout_id: "mystery_reveal",
           question_number: 1,
           total_questions: 5,
           question_text: "What animal is hidden?",
-          choices: ["Lion", "Tiger", "Bear"],
+          choices: ["Lion"],
           correct_choice_index: 0,
           fact_card_text: "Lions roar loudly!",
           palette_id: "lime",
@@ -441,7 +390,7 @@ describe("Quiz Integration Audit Suite", () => {
         question_number: 1,
         total_questions: 5,
         question_text: "What animal is hidden?",
-        choices: ["Lion", "Tiger", "Bear"],
+        choices: ["Lion"],
         correct_choice_index: 0,
         fact_card_text: "Lions roar loudly!",
         palette_id: "lime",
@@ -450,39 +399,6 @@ describe("Quiz Integration Audit Suite", () => {
         question_format: "image_guess",
       });
       expect(mysteryHtml.html).toContain("mystery-stage-wrapper");
-
-      const previewClue = adaptSandboxQuizScene(
-        {
-          layout_id: "clue_deduction",
-          question_number: 2,
-          total_questions: 5,
-          question_text: "Whose tool is this?",
-          choices: ["Doctor", "Pilot", "Chef"],
-          correct_choice_index: 0,
-          fact_card_text: "Doctors heal patients!",
-          palette_id: "aqua",
-          aspect_ratio: "16:9",
-          mascot_position: "bottom_left",
-          question_format: "image_guess",
-        },
-        false,
-      );
-      expect(previewClue.layout.id).toBe("clue_deduction");
-
-      const clueHtml = buildSandboxComposition({
-        layout_id: "clue_deduction",
-        question_number: 2,
-        total_questions: 5,
-        question_text: "Whose tool is this?",
-        choices: ["Doctor", "Pilot", "Chef"],
-        correct_choice_index: 0,
-        fact_card_text: "Doctors heal patients!",
-        palette_id: "aqua",
-        aspect_ratio: "16:9",
-        mascot_position: "bottom_left",
-        question_format: "image_guess",
-      });
-      expect(clueHtml.html).toContain("clue-deduction-stage-wrapper");
     });
   });
 });

@@ -6,10 +6,7 @@ export interface ProviderApiKeyStatusLineProps {
   hasApiKey: boolean;
 }
 
-export function ProviderApiKeyStatusLine({
-  label = "API Key Status",
-  hasApiKey,
-}: ProviderApiKeyStatusLineProps) {
+export function ProviderApiKeyStatusLine({ label = "API Key Status", hasApiKey }: ProviderApiKeyStatusLineProps) {
   return (
     <StatusLine
       label={label}

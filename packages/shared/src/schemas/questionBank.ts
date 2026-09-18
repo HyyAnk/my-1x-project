@@ -11,7 +11,6 @@ export const BankGameplayArchetypeIdSchema = z.enum([
   "visual_identification",
   "speed_blitz",
   "mystery_reveal",
-  "clue_deduction",
 ]);
 export type BankGameplayArchetypeId = z.infer<typeof BankGameplayArchetypeIdSchema>;
 
@@ -55,13 +54,14 @@ export const BankTranslationChoiceSchema = z.object({
 export type BankTranslationChoice = z.infer<typeof BankTranslationChoiceSchema>;
 
 export function bankRequiredChoiceCountForArchetype(archetypeId: BankGameplayArchetypeId): number {
+  if (archetypeId === "mystery_reveal") return 1;
   return archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth" || archetypeId === "versus_faceoff" ? 2 : 3;
 }
 
 export const BankTranslationContentSchema = z.object({
   language: z.string().trim().min(1).max(40),
   question: z.string().trim().min(1).max(400),
-  choices: BankTranslationChoiceSchema.array().min(2).max(3),
+  choices: BankTranslationChoiceSchema.array().min(1).max(3),
   explanation: z.string().trim().min(1).max(900),
   fun_fact: z.string().trim().max(700).default(""),
   translated_at: z.string().datetime().optional(),
@@ -82,7 +82,7 @@ export const BankQuestionSchema = z
     language: z.string().trim().min(1).max(40).optional(),
     question: z.string().trim().min(1).max(350),
     format: QuizQuestionFormatSchema,
-    choices: BankChoiceSchema.array().min(2).max(3),
+    choices: BankChoiceSchema.array().min(1).max(3),
     correct_choice_id: z.string().trim().min(1),
     explanation: z.string().trim().min(1).max(800),
     fun_fact: z.string().trim().max(600).default(""),
@@ -113,6 +113,36 @@ export const BankQuestionSchema = z
         path: ["choices"],
         message: `Archetype "${data.archetype_id}" requires exactly ${expectedChoiceCount} choices, received ${data.choices.length}`,
       });
+    }
+
+    if (data.archetype_id === "mystery_reveal" && data.visual_spec?.intent === "choice_illustration") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["visual_spec", "intent"],
+        message: "Mystery Reveal does not support choice illustrations",
+      });
+    }
+
+    if (data.translations) {
+      for (const [lang, trans] of Object.entries(data.translations)) {
+        if (trans.choices.length !== data.choices.length) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["translations", lang, "choices"],
+            message: `Translation "${lang}" has ${trans.choices.length} choices, but source question has ${data.choices.length}`,
+          });
+        }
+        const transChoiceIds = new Set(trans.choices.map((c) => c.id));
+        for (const sourceChoice of data.choices) {
+          if (!transChoiceIds.has(sourceChoice.id)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["translations", lang, "choices"],
+              message: `Translation "${lang}" missing choice ID "${sourceChoice.id}" from source question`,
+            });
+          }
+        }
+      }
     }
   });
 export type BankQuestion = z.infer<typeof BankQuestionSchema>;

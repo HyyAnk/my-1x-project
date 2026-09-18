@@ -56,11 +56,103 @@ export function generateProceduralMascotArt(name: string, color: string, _state?
   return Buffer.from(svg, "utf8");
 }
 
+export interface ProceduralArtOptions {
+  composition?: "full_body" | "half_body_16_9";
+}
+
+/**
+ * Generates a 16:9 large half-body procedural source artwork for Step 2.
+ * Canvas is 1280x720, centered neutral placement, lower body continuing beyond bottom edge,
+ * head/ears/hands inside safe margins, chroma key green background (#00FF00), no floor or pedestal.
+ */
+export function generateProceduralSourceArt(name: string, color: string, state: "thinking" | "celebrate"): Uint8Array {
+  return generateProceduralStateArt(name, color, state, 1, { composition: "half_body_16_9" });
+}
+
 /**
  * Generates an expressive procedural SVG state artwork for quiz stages
  */
-export function generateProceduralStateArt(name: string, color: string, action: MascotActionType, _framesCount: number = 1): Uint8Array {
+export function generateProceduralStateArt(
+  name: string,
+  color: string,
+  action: MascotActionType,
+  _framesCount: number = 1,
+  options?: ProceduralArtOptions,
+): Uint8Array {
   const primaryColor = color || "#06b6d4";
+  const isHalfBody16x9 = options?.composition === "half_body_16_9";
+
+  if (isHalfBody16x9) {
+    // 16:9 Canvas (1280x720) with large half-body composition centered at cx=640,
+    // positioned in lower-middle frame with top 1/3 (~240px) headroom for animation jump safety
+    let armLeft = `<ellipse cx="440" cy="580" rx="48" ry="32" fill="${primaryColor}"/>`;
+    let armRight = `<ellipse cx="840" cy="580" rx="48" ry="32" fill="${primaryColor}"/>`;
+    let mouth = `<path d="M 610 470 Q 640 500 670 470" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/>`;
+    let eyeLeft = `<ellipse cx="560" cy="410" rx="24" ry="32" fill="#0f172a"/><circle cx="570" cy="398" r="10" fill="#ffffff"/><circle cx="556" cy="422" r="5" fill="#ffffff"/>`;
+    const eyeRight = `<ellipse cx="720" cy="410" rx="24" ry="32" fill="#0f172a"/><circle cx="730" cy="398" r="10" fill="#ffffff"/><circle cx="716" cy="422" r="5" fill="#ffffff"/>`;
+    let extraDecor = "";
+
+    if (action === "thinking") {
+      armRight = `<g transform="translate(730, 500) rotate(-70)"><ellipse cx="0" cy="0" rx="60" ry="28" fill="${primaryColor}"/></g>`;
+      eyeLeft = `<ellipse cx="560" cy="400" rx="24" ry="26" fill="#0f172a"/><circle cx="568" cy="390" r="9" fill="#ffffff"/>`;
+      extraDecor = `<text x="790" y="270" font-size="56">❓</text>`;
+    } else if (action === "celebrate") {
+      armLeft = `<g transform="translate(420, 440) rotate(-45)"><ellipse cx="0" cy="0" rx="64" ry="30" fill="${primaryColor}"/></g>`;
+      armRight = `<g transform="translate(860, 440) rotate(45)"><ellipse cx="0" cy="0" rx="64" ry="30" fill="${primaryColor}"/></g>`;
+      mouth = `<path d="M 600 455 Q 640 515 680 455 Z" fill="#e11d48"/>`;
+      extraDecor = `<text x="360" y="260" font-size="52">🎉</text><text x="880" y="260" font-size="52">⭐</text>`;
+    }
+
+    const svg16x9 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <linearGradient id="bodyGrad169_${action}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${primaryColor}"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <filter id="shadow169_${action}" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="rgba(0,0,0,0.2)"/>
+    </filter>
+  </defs>
+  <!-- Flat chroma key green studio backdrop for effortless matting -->
+  <rect width="1280" height="720" fill="#00FF00"/>
+  <g filter="url(#shadow169_${action})">
+    <!-- Ears safely within top margins with 1/3 headroom (y >= 240) -->
+    <circle cx="510" cy="300" r="60" fill="${primaryColor}"/>
+    <circle cx="510" cy="300" r="36" fill="#fbcfe8"/>
+    <circle cx="770" cy="300" r="60" fill="${primaryColor}"/>
+    <circle cx="770" cy="300" r="36" fill="#fbcfe8"/>
+
+    <!-- Large Lower Torso continuing beyond bottom edge (cy=680, rx=240, ry=210, extends to y=890) -->
+    <ellipse cx="640" cy="680" rx="240" ry="210" fill="url(#bodyGrad169_${action})"/>
+    <ellipse cx="640" cy="700" rx="150" ry="120" fill="#ffffff" opacity="0.9"/>
+
+    <!-- Arms -->
+    ${armLeft}
+    ${armRight}
+
+    <!-- Large Head centered at cx=640, cy=430 -->
+    <circle cx="640" cy="430" r="165" fill="url(#bodyGrad169_${action})"/>
+
+    <!-- Cheeks -->
+    <circle cx="530" cy="470" r="26" fill="#f43f5e" opacity="0.5"/>
+    <circle cx="750" cy="470" r="26" fill="#f43f5e" opacity="0.5"/>
+
+    <!-- Eyes -->
+    ${eyeLeft}
+    ${eyeRight}
+
+    <!-- Nose & Mouth -->
+    <ellipse cx="640" cy="450" rx="16" ry="11" fill="#0f172a"/>
+    ${mouth}
+
+    <!-- Star Badge / Charm -->
+    <path d="M 640 565 L 652 589 L 678 592 L 658 610 L 664 636 L 640 622 L 616 636 L 622 610 L 602 592 L 628 589 Z" fill="#fbbf24"/>
+    ${extraDecor}
+  </g>
+</svg>`;
+    return Buffer.from(svg16x9, "utf8");
+  }
+
   let armLeft = `<ellipse cx="140" cy="330" rx="26" ry="18" fill="${primaryColor}"/>`;
   let armRight = `<ellipse cx="372" cy="330" rx="26" ry="18" fill="${primaryColor}"/>`;
   let mouth = `<path d="M 238 250 Q 256 266 274 250" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>`;

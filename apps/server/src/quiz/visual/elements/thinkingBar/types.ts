@@ -5,6 +5,7 @@ export type ThinkingBarRenderInput = {
   clipStart: number;
   questionNarrationStart?: number;
   revealStart: number;
+  timerHideAt?: number;
   thinkingStart?: number;
   duration?: number;
   questionNumber?: number;
@@ -39,11 +40,13 @@ export function calculateThinkingBarTiming(input: {
   clipStart: number;
   questionNarrationStart?: number;
   revealStart: number;
+  timerHideAt?: number;
   thinkingStart?: number;
 }): ThinkingBarTiming {
   // STRICT INVARIANT: Always anchor timer origin to question appearance (clipStart)
   const timerStart = input.clipStart;
-  const duration = Math.max(0.05, input.revealStart - timerStart);
+  const timerHideAt = input.timerHideAt ?? input.revealStart;
+  const duration = Math.max(0.05, timerHideAt - timerStart);
   const cd5Raw = duration - 5;
   const cd4Raw = duration - 4;
   const cd3Raw = duration - 3;
@@ -62,9 +65,12 @@ export function calculateThinkingBarTiming(input: {
   const cd2 = Math.max(0, cd2Raw);
   const cd1 = Math.max(0, cd1Raw);
   const queryHoldDuration = cd5Show ? cd5 : 0;
+  const timerExitStart = Math.max(0, duration - 0.28);
   const cssVars = [
     `--timer-start:${timerStart.toFixed(3)}s`,
     `--timer-duration:${duration.toFixed(3)}s`,
+    `--timer-hide-at:${timerHideAt.toFixed(3)}s`,
+    `--timer-exit-start:${timerExitStart.toFixed(3)}s`,
     `--query-hold-duration:${queryHoldDuration.toFixed(3)}s`,
     `--query-display:${queryHoldDuration > 0 ? "grid" : "none"}`,
     `--cd5-at:${cd5.toFixed(3)}s`,

@@ -20,7 +20,7 @@ export function TaskActivityBar({
 }) {
   const { t } = useTranslation();
   const episodeTasks = tasks.filter((t) => Boolean(t.episode_id));
-  if (episodeTasks.length === 0 && realtimeStatus === "connected") return null;
+  if (episodeTasks.length === 0) return null;
   const task = episodeTasks[0] ?? null;
   const reconnecting = realtimeStatus !== "connected";
 

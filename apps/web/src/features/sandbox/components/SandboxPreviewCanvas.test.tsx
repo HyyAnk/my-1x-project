@@ -50,17 +50,4 @@ describe("SandboxPreviewCanvas (Stage 8 Dimensions & Viewport Parity)", () => {
     expect(viewportWrapper.style.height).toBe("1080px");
     expect(screen.getByText("1920 × 1080")).toBeTruthy();
   });
-
-  it("renders 1080x1920 canvas frame in 9:16 portrait mode", () => {
-    render(
-      <LanguageProvider>
-        <SandboxPreviewCanvas {...defaultProps} aspectRatio="9:16" />
-      </LanguageProvider>,
-    );
-
-    const viewportWrapper = screen.getByTestId("sandbox-viewport-wrapper");
-    expect(viewportWrapper.style.width).toBe("1080px");
-    expect(viewportWrapper.style.height).toBe("1920px");
-    expect(screen.getByText("1080 × 1920")).toBeTruthy();
-  });
 });

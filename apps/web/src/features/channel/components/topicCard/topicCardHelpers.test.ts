@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  QUIZ_MAX_QUESTION_COUNT,
-  QUIZ_MIN_QUESTION_COUNT,
-} from "@studio/shared";
+import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "@studio/shared";
 import {
   calculateEstimatedDurationMinutes,
   calculateMaxAllowedQuestions,

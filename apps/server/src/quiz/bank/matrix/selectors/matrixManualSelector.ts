@@ -6,12 +6,11 @@ import type { SelectManualCandidatesOptions } from "../types/matrixPlanner.types
 /**
  * Filters knowledge entities according to optional criteria (domain, subtopic, difficulty, exclusions).
  */
-function filterManualEntities(
-  entities: KnowledgeEntity[],
-  options: SelectManualCandidatesOptions,
-): KnowledgeEntity[] {
+function filterManualEntities(entities: KnowledgeEntity[], options: SelectManualCandidatesOptions): KnowledgeEntity[] {
   const excludedSet = options.excludeEntityIds
-    ? (options.excludeEntityIds instanceof Set ? options.excludeEntityIds : new Set(options.excludeEntityIds))
+    ? options.excludeEntityIds instanceof Set
+      ? options.excludeEntityIds
+      : new Set(options.excludeEntityIds)
     : null;
 
   let filtered = entities;
@@ -39,17 +38,13 @@ function filterManualEntities(
  * Manual Diversity Mode: Filters entities by user criteria and prioritizes combinations
  * with the fewest existing variants (Least-Variant-First priority queue).
  */
-export function selectManualCandidates(
-  questions: BankQuestion[],
-  options: SelectManualCandidatesOptions,
-): MatrixComboCandidate[] {
+export function selectManualCandidates(questions: BankQuestion[], options: SelectManualCandidatesOptions): MatrixComboCandidate[] {
   const targetCount = Math.max(1, options.count);
   const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
   const coverageMap = options.coverageMap || buildMatrixCoverageMap(questions);
 
   const filtered = filterManualEntities(entities, options);
-  const candidateArchetypes =
-    options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
+  const candidateArchetypes = options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
 
   const entityMap = new Map<string, KnowledgeEntity>(filtered.map((e) => [e.id, e]));
   const candidates: MatrixComboCandidate[] = [];

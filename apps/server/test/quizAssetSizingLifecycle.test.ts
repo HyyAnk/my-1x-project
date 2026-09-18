@@ -3,16 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import { existsSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  EpisodeSchema,
-  type DirectorPlan,
-  type QuizAssetPlan,
-  type QuizV2,
-} from "@studio/shared";
-import {
-  ensureQuizAssetSizing,
-  computeQuizSourceIdentityToken,
-} from "../src/quiz/assets/ensureQuizAssetSizing.js";
+import { EpisodeSchema, type DirectorPlan, type QuizAssetPlan, type QuizV2 } from "@studio/shared";
+import { ensureQuizAssetSizing, computeQuizSourceIdentityToken } from "../src/quiz/assets/ensureQuizAssetSizing.js";
 import { prepareVideoComposition } from "../src/tasks/video/videoCompositionPreparer.js";
 import { styleBoundaryChannel, styleBoundaryEpisode } from "./quizStyleBoundaryFixtures.js";
 import type { RepositoryService } from "../src/repository.js";

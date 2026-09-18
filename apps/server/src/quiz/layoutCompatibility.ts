@@ -36,6 +36,7 @@ export function resolveQuestionLayout(
     choiceCount: question.choices.length,
     aspectRatio,
     media,
+    answerMode: question.answer_mode,
   });
 }
 

@@ -1,9 +1,7 @@
 import {
   QuizV2Schema,
-  type DirectorPlan,
   type FrameRate,
   type MascotRenderAspectRatio,
-  type QuizTimeline,
   type QuizV2,
   type ResolvedTransitionInstance,
   type TransitionPlacement,
@@ -122,9 +120,73 @@ function createSilentWavDataUri(durationSeconds: number = 6): string {
   return `data:audio/wav;base64,${buffer.toString("base64")}`;
 }
 
-export function prepareTransitionSpecimen(
-  options: PrepareTransitionSpecimenOptions,
-): PreparedTransitionSpecimen {
+function buildCompactTiming(
+  selectionDuration: number | undefined,
+  defaultDuration: number,
+  segments: readonly { segment_id: string }[],
+): { timingPolicy: Partial<QuizTimingPolicy>; audioDurations: Record<string, number> } {
+  const timingPolicy: Partial<QuizTimingPolicy> = {
+    question_entrance_seconds: 0.25,
+    question_narration_lead_seconds: 0.1,
+    choices_enter_delay_seconds: 0.15,
+    choice_entrance_seconds: 0.15,
+    choice_stagger_seconds: 0.08,
+    choice_settle_seconds: 0.15,
+    narration_gap_seconds: 0.08,
+    question_to_choices_pause_seconds: 0.08,
+    thinking_settle_seconds: 0.1,
+    post_prompt_thinking_seconds: 0.1,
+    minimum_thinking_seconds: 0.4,
+    maximum_thinking_seconds: 0.8,
+    countdown_seconds: 1,
+    reveal_delay_seconds: 0.1,
+    reveal_seconds: 0.25,
+    reveal_voice_lead_seconds: 0.1,
+    reveal_hold_seconds: 0.15,
+    reward_seconds: { small: 0.2, medium: 0.25, big: 0.3 },
+    explanation_lead_seconds: 0.1,
+    explanation_hold_seconds: 0.15,
+    fact_hold_seconds: 0.15,
+    transition_seconds: selectionDuration ?? defaultDuration,
+    transition_overlap_seconds: 0.08,
+    outro_hold_seconds: 0.3,
+  };
+
+  const audioDurations: Record<string, number> = {};
+  for (const segment of segments) {
+    audioDurations[segment.segment_id] = 0.25;
+  }
+
+  return { timingPolicy, audioDurations };
+}
+
+function buildStyleContext(sandboxInput: Record<string, unknown> | undefined): QuizRenderStyleContext {
+  const theme = typeof sandboxInput?.theme === "string" ? sandboxInput.theme : "candy_arcade";
+  const paletteId = typeof sandboxInput?.palette_id === "string" ? sandboxInput.palette_id : "lime";
+  const thinkingBarStyle = typeof sandboxInput?.thinking_bar_style === "string" ? sandboxInput.thinking_bar_style : "star_slider";
+  const questionBoxStyle = typeof sandboxInput?.question_box_style === "string" ? sandboxInput.question_box_style : "candy_pop";
+  const answerCardStyle = typeof sandboxInput?.answer_card_style === "string" ? sandboxInput.answer_card_style : "glossy_arcade";
+  const counterStyle = typeof sandboxInput?.counter_style === "string" ? sandboxInput.counter_style : "hanging_woodsign";
+  const backgroundStyle = typeof sandboxInput?.background_style === "string" ? sandboxInput.background_style : "candy_rays";
+  const catalogRev = typeof sandboxInput?.style_catalog_revision === "string" ? sandboxInput.style_catalog_revision : undefined;
+
+  return {
+    theme,
+    episode: {
+      visual_theme: theme,
+      palette_id: paletteId,
+      thinking_bar_style: thinkingBarStyle,
+      question_box_style: questionBoxStyle,
+      answer_card_style: answerCardStyle,
+      question_counter_style: counterStyle,
+      background_style: backgroundStyle,
+      style_catalog_revision: catalogRev,
+    },
+    styleCatalogRevision: catalogRev,
+  };
+}
+
+export function prepareTransitionSpecimen(options: PrepareTransitionSpecimenOptions): PreparedTransitionSpecimen {
   const { selection, source, compactTiming = true } = options;
   const fps: FrameRate = options.fps ?? { numerator: 30, denominator: 1 };
   const fpsVal = fps.numerator / fps.denominator;
@@ -132,8 +194,9 @@ export function prepareTransitionSpecimen(
   const definition = getTransitionDefinition(selection.id);
   const placement: TransitionPlacement = definition.placements.includes("scene") ? "scene" : "intro";
 
-  const sandboxInput = source.kind === "sample" ? source.sandboxInput : undefined;
-  const aspectRatio: MascotRenderAspectRatio = (sandboxInput?.aspect_ratio ?? "16:9") as MascotRenderAspectRatio;
+  const sandboxInput = source.kind === "sample" ? (source.sandboxInput as Record<string, unknown> | undefined) : undefined;
+  const rawAspectRatio = typeof sandboxInput?.aspect_ratio === "string" ? sandboxInput.aspect_ratio : "16:9";
+  const aspectRatio: MascotRenderAspectRatio = rawAspectRatio === "9:16" ? "9:16" : "16:9";
   const canvas = MASCOT_CANVAS_SIZES[aspectRatio] ?? { width: 1920, height: 1080 };
 
   const quiz: QuizV2 = {
@@ -143,85 +206,37 @@ export function prepareTransitionSpecimen(
 
   const director = createDefaultDirectorPlan(quiz, aspectRatio);
   if (director.beats[0]) {
-    director.beats[0].transition_id = selection.id as any;
+    director.beats[0].transition_id = selection.id as (typeof director.beats)[0]["transition_id"];
   }
 
   const voicePlan = buildQuizVoicePlan(quiz);
 
-  let timingPolicy: Partial<QuizTimingPolicy> | undefined;
-  let audioDurations: Record<string, number> | undefined;
-
-  if (compactTiming) {
-    timingPolicy = {
-      question_entrance_seconds: 0.25,
-      question_narration_lead_seconds: 0.1,
-      choices_enter_delay_seconds: 0.15,
-      choice_entrance_seconds: 0.15,
-      choice_stagger_seconds: 0.08,
-      choice_settle_seconds: 0.15,
-      narration_gap_seconds: 0.08,
-      question_to_choices_pause_seconds: 0.08,
-      thinking_settle_seconds: 0.1,
-      post_prompt_thinking_seconds: 0.1,
-      minimum_thinking_seconds: 0.4,
-      maximum_thinking_seconds: 0.8,
-      countdown_seconds: 1,
-      reveal_delay_seconds: 0.1,
-      reveal_seconds: 0.25,
-      reveal_voice_lead_seconds: 0.1,
-      reveal_hold_seconds: 0.15,
-      reward_seconds: { small: 0.2, medium: 0.25, big: 0.3 },
-      explanation_lead_seconds: 0.1,
-      explanation_hold_seconds: 0.15,
-      fact_hold_seconds: 0.15,
-      transition_seconds: selection.durationSeconds ?? definition.defaultDurationSeconds,
-      transition_overlap_seconds: 0.08,
-      outro_hold_seconds: 0.3,
-    };
-
-    audioDurations = {};
-    for (const segment of voicePlan.segments) {
-      audioDurations[segment.segment_id] = 0.25;
-    }
-  }
+  const timingSetup = compactTiming
+    ? buildCompactTiming(selection.durationSeconds, definition.defaultDurationSeconds, voicePlan.segments)
+    : { timingPolicy: undefined, audioDurations: undefined };
 
   const timeline = compileQuizTimeline({
     quiz,
     director,
     voicePlan,
-    timing: timingPolicy,
-    audioDurations,
+    timing: timingSetup.timingPolicy,
+    audioDurations: timingSetup.audioDurations,
   });
 
-  const boundaryId = quiz.questions[0]!.id;
-  const transitionEvent = timeline.events.find(
-    (event) => event.question_id === boundaryId && event.type === "transition.start",
-  );
+  const boundaryId = quiz.questions[0].id;
+  const transitionEvent = timeline.events.find((event) => event.question_id === boundaryId && event.type === "transition.start");
 
   const startSeconds = transitionEvent ? transitionEvent.at_seconds : 2.5;
   const durationSeconds = transitionEvent
     ? transitionEvent.duration_seconds
-    : selection.durationSeconds ?? definition.defaultDurationSeconds;
+    : (selection.durationSeconds ?? definition.defaultDurationSeconds);
 
   const startFrame = Math.round(startSeconds * fpsVal);
   const durationFrames = Math.max(1, Math.round(durationSeconds * fpsVal));
   const boundaryFrame = startFrame + Math.round(durationFrames / 2);
   const availableEndFrameExclusive = startFrame + durationFrames;
 
-  const styleContext: QuizRenderStyleContext = {
-    theme: sandboxInput?.theme ?? "candy_arcade",
-    episode: {
-      visual_theme: sandboxInput?.theme ?? "candy_arcade",
-      palette_id: sandboxInput?.palette_id ?? "lime",
-      thinking_bar_style: sandboxInput?.thinking_bar_style ?? "star_slider",
-      question_box_style: sandboxInput?.question_box_style ?? "candy_pop",
-      answer_card_style: sandboxInput?.answer_card_style ?? "glossy_arcade",
-      question_counter_style: sandboxInput?.counter_style ?? "hanging_woodsign",
-      background_style: sandboxInput?.background_style ?? "candy_rays",
-      style_catalog_revision: sandboxInput?.style_catalog_revision,
-    },
-    styleCatalogRevision: sandboxInput?.style_catalog_revision,
-  };
+  const styleContext = buildStyleContext(sandboxInput);
 
   const resolvedInstance = resolveTransitionInstance(selection, {
     instanceId: boundaryId,
@@ -243,10 +258,7 @@ export function prepareTransitionSpecimen(
   const inspectionFrames = Math.round(0.75 * fpsVal);
   const reviewWindow = {
     firstFrame: Math.max(0, resolvedInstance.startFrame - inspectionFrames),
-    lastFrameInclusive: Math.min(
-      Math.max(0, totalFrames - 1),
-      resolvedInstance.endFrameExclusive - 1 + inspectionFrames,
-    ),
+    lastFrameInclusive: Math.min(Math.max(0, totalFrames - 1), resolvedInstance.endFrameExclusive - 1 + inspectionFrames),
     boundaryFrame: resolvedInstance.boundaryFrame,
   };
 

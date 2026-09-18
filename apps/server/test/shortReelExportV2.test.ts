@@ -4,7 +4,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import sharp from "sharp";
 import { parseZipArchive } from "../src/quiz/zipHelper.js";
-import { packageFixture, packageImage } from "./helpers/shortReelPackageFixture.js";
+import { packageFixture } from "./helpers/shortReelPackageFixture.js";
 import { repairScript } from "./helpers/shortReelRepairFixture.js";
 import { exportShortReelPackage, ExportError, assertSafeArchiveEntryName } from "../src/shortReel/exportService.js";
 import { buildPublishingExport } from "../src/shortReel/publishingExport.js";
@@ -173,7 +173,7 @@ describe("Short-Reel Export V2 (Phase 07: E01, E02, E03)", () => {
       });
 
       // Generate package, then mark publishing stale
-      const ready = await generateFullReelPackage(f.repo, f.key, {
+      const _ready = await generateFullReelPackage(f.repo, f.key, {
         script: repairScript(),
         coverOptions: { imageProvider: f.imageProvider },
       });

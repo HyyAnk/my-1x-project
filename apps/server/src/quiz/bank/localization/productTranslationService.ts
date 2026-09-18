@@ -52,11 +52,7 @@ function requireTranslatedText(translations: Record<string, string>, key: string
   return value.trim();
 }
 
-function collectItemsToTranslate(
-  quizQuestions: QuizQuestion[],
-  videoDescription?: string,
-  thumbnailText?: string,
-): Record<string, string> {
+function collectItemsToTranslate(quizQuestions: QuizQuestion[], videoDescription?: string, thumbnailText?: string): Record<string, string> {
   const items: Record<string, string> = {};
   quizQuestions.forEach((q) => {
     items[`${q.id}_question`] = q.question;

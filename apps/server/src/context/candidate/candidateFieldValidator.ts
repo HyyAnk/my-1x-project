@@ -28,16 +28,10 @@ export function ensureCandidateObject(raw: unknown, slotNumber: number | string)
 /**
  * Extracts and validates required text fields from a candidate item.
  */
-export function extractCandidateTextFields(
-  item: Record<string, unknown>,
-  slotNumber: number | string,
-): CandidateTextFields {
+export function extractCandidateTextFields(item: Record<string, unknown>, slotNumber: number | string): CandidateTextFields {
   const title = typeof item.title === "string" ? item.title.trim() : "";
   const premise = typeof item.premise === "string" ? item.premise.trim() : "";
-  const whyItFits =
-    typeof (item.why_it_fits ?? item.whyItFits) === "string"
-      ? String(item.why_it_fits ?? item.whyItFits).trim()
-      : "";
+  const whyItFits = typeof (item.why_it_fits ?? item.whyItFits) === "string" ? String(item.why_it_fits ?? item.whyItFits).trim() : "";
   const hook = typeof item.hook === "string" ? item.hook.trim() : "";
   const estimatedPotential =
     typeof (item.estimated_potential ?? item.estimatedPotential) === "string"
@@ -56,15 +50,8 @@ export function extractCandidateTextFields(
 /**
  * Validates that candidate metadata conforms strictly to the slot plan.
  */
-export function checkSlotKindAndArchetype(
-  item: Record<string, unknown>,
-  slotPlan: TopicMatrixSlotPlan,
-  slotNumber: number,
-): void {
-  const rawKind =
-    typeof (item.content_kind ?? item.contentKind) === "string"
-      ? String(item.content_kind ?? item.contentKind)
-      : undefined;
+export function checkSlotKindAndArchetype(item: Record<string, unknown>, slotPlan: TopicMatrixSlotPlan, slotNumber: number): void {
+  const rawKind = typeof (item.content_kind ?? item.contentKind) === "string" ? String(item.content_kind ?? item.contentKind) : undefined;
   if (!rawKind) throw new Error(`Slot ${slotNumber} candidate is missing required content_kind`);
   if (rawKind !== slotPlan.contentKind) {
     throw new Error(`Slot ${slotNumber} candidate has content_kind "${rawKind}", expected assigned "${slotPlan.contentKind}"`);
@@ -96,14 +83,8 @@ export function validateEpisodeCandidateSlot(
 ): ValidatedEpisodeSlotFields {
   checkSlotKindAndArchetype(item, slotPlan, slotNumber);
   const textFields = extractCandidateTextFields(item, slotNumber);
-  const visualStyle =
-    typeof item.visual_style === "string"
-      ? (item.visual_style as EpisodeTopicCandidate["visual_style"])
-      : "mixed";
-  const ageBand =
-    typeof item.age_band === "string"
-      ? (item.age_band as EpisodeTopicCandidate["age_band"])
-      : "7-9";
+  const visualStyle = typeof item.visual_style === "string" ? (item.visual_style as EpisodeTopicCandidate["visual_style"]) : "mixed";
+  const ageBand = typeof item.age_band === "string" ? (item.age_band as EpisodeTopicCandidate["age_band"]) : "7-9";
 
   return { ...textFields, visualStyle, ageBand };
 }
@@ -145,12 +126,7 @@ export function validateRawCandidateSlotIds(rawList: unknown[], allowedSlots: Se
 /**
  * Finds the index of a candidate matching the specified allocated slot.
  */
-export function findCandidateIndexForSlot(
-  rawList: unknown[],
-  slot: AllocatedSlot,
-  idx: number,
-  usedRawIndices: Set<number>,
-): number {
+export function findCandidateIndexForSlot(rawList: unknown[], slot: AllocatedSlot, idx: number, usedRawIndices: Set<number>): number {
   let matchIdx = rawList.findIndex(
     (item, i) =>
       !usedRawIndices.has(i) &&

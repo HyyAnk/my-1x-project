@@ -1,10 +1,8 @@
-import { mkdtemp, mkdir, rm, writeFile, readFile } from "node:fs/promises";
-import os from "node:os";
+import { mkdir, rm, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { BankQuestionSchema, hashBankQuestionSource, type BankQuestion, type TopicRunResult } from "@studio/shared";
-import { RepositoryService } from "../src/repository/service.js";
+import { hashBankQuestionSource, type BankQuestion } from "@studio/shared";
 import { resolveBoundTopicSources } from "../src/quiz/bank/bridge/boundSourceResolver.js";
 import { convertBankQuestionToQuizQuestionLossless } from "../src/quiz/bank/bridge/bankQuestionConverter.js";
 import {
@@ -15,7 +13,17 @@ import {
 import { confirmShortReelTopic } from "../src/shortReel/topicConfirmation.js";
 import { createEpisodeFromTopicWithBank, createEpisodeFromQuestionBank } from "../src/quiz/bank/questionBankToQuizBridge.js";
 import { loadProductLocalizationArtifact } from "../src/quiz/bank/localization/productLocalization.js";
-import type { LLMClient } from "../src/utils/promptSanitizer.js";
+import {
+  createConfirmationTestFixture,
+  createBoundCandidate,
+  createSourceBinding,
+  createTopicRunResult,
+  createMockReceipt,
+  createGermanLocalizationStubLlm,
+  createUnboundCandidate,
+  makeBankQuestion,
+  seedBankQuestions,
+} from "./fixtures/topicConfirmationFixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,49 +37,7 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
   });
 
   async function createFixture() {
-    const root = await mkdtemp(path.join(os.tmpdir(), "stage4-confirm-test-"));
-    roots.push(root);
-
-    await mkdir(path.join(root, "templates"), { recursive: true });
-    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
-    await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
-    await writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz DNA\n", "utf8");
-
-    const repo = new RepositoryService(projectRoot, root);
-    await repo.ensureBootstrap();
-
-    const channel = await repo.createChannel({
-      name: "Test Confirmation Channel",
-      description: "Channel for Stage 4 testing",
-      target_audience: "Kids",
-      language: "en",
-      market: "US",
-      dna_mode: "example",
-    });
-
-    return { repo, channel, root };
-  }
-
-  function makeBankQuestion(id: string, overrides: Partial<BankQuestion> = {}): BankQuestion {
-    return BankQuestionSchema.parse({
-      id,
-      format: "multiple_choice",
-      archetype_id: "deep_trivia",
-      domain_id: "science",
-      subtopic_id: "space",
-      language: "en",
-      status: "approved",
-      age_band: "7-9",
-      question: `Question text for ${id}`,
-      explanation: `Explanation for ${id}`,
-      choices: [
-        { id: "c1", text: "Option A", is_correct: true },
-        { id: "c2", text: "Option B", is_correct: false },
-        { id: "c3", text: "Option C", is_correct: false },
-      ],
-      correct_choice_id: "c1",
-      ...overrides,
-    });
+    return createConfirmationTestFixture(roots, projectRoot);
   }
 
   it("converts bound sources losslessly without remapping choice IDs or truncating text", () => {
@@ -104,12 +70,6 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
     expect(() => convertBankQuestionToQuizQuestionLossless(question)).toThrow(/BOUND_SOURCE_INCOMPATIBLE/);
   });
 
-  async function seedBankQuestions(repo: RepositoryService, questions: BankQuestion[]) {
-    for (const q of questions) {
-      await repo.saveQuestionBankQuestion(q);
-    }
-  }
-
   describe("Bound Source Resolution and Integrity Guards", () => {
     it("rejects confirmation if a bound source question was deleted after suggestion", async () => {
       const { repo, channel } = await createFixture();
@@ -117,44 +77,18 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       await seedBankQuestions(repo, [q1]);
 
       const hash = hashBankQuestionSource(q1);
-      const runResult: TopicRunResult = {
-        run_id: "run_del_test",
-        target_episode_count: 0,
-        target_short_reel_count: 1,
-        candidates: [
-          {
-            slot_id: "slot_4",
-            topic_id: "topic_del_test",
-            channel_id: channel.channel_id,
-            content_kind: "short_reel",
-            archetype: "deep_trivia",
-            aspect_ratio: "9:16",
-            title: "Space Trivia",
-            premise: "A fun space quiz",
-            why_it_fits: "Fits science",
-            hook: "Look up!",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 1,
-            source_bindings: [
-              {
-                source_question_id: "q_non_existent",
-                source_hash_version: 1,
-                source_content_hash: hash,
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_del_test",
+        contentKind: "short_reel",
+        title: "Space Trivia",
+        premise: "A fun space quiz",
+        whyItFits: "Fits science",
+        hook: "Look up!",
+        questionCount: 1,
+        sourceBindings: [createSourceBinding("q_non_existent", hash)],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_del_test", [candidate]));
 
       await expect(
         resolveBoundTopicSources({
@@ -172,44 +106,18 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
 
       // Provide a hash that does NOT match q1's current content
       const staleHash = "0".repeat(64);
-      const runResult: TopicRunResult = {
-        run_id: "run_mod_test",
-        target_episode_count: 0,
-        target_short_reel_count: 1,
-        candidates: [
-          {
-            slot_id: "slot_4",
-            topic_id: "topic_mod_test",
-            channel_id: channel.channel_id,
-            content_kind: "short_reel",
-            archetype: "deep_trivia",
-            aspect_ratio: "9:16",
-            title: "Modified Space Trivia",
-            premise: "A fun space quiz",
-            why_it_fits: "Fits science",
-            hook: "Look up!",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 1,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: staleHash,
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_mod_test",
+        contentKind: "short_reel",
+        title: "Modified Space Trivia",
+        premise: "A fun space quiz",
+        whyItFits: "Fits science",
+        hook: "Look up!",
+        questionCount: 1,
+        sourceBindings: [createSourceBinding(q1.id, staleHash)],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_mod_test", [candidate]));
 
       await expect(
         resolveBoundTopicSources({
@@ -225,45 +133,17 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       const q1 = makeBankQuestion("q_unapp_1", { status: "draft" });
       await seedBankQuestions(repo, [q1]);
 
-      const hash = hashBankQuestionSource(q1);
-      const runResult: TopicRunResult = {
-        run_id: "run_unapp_test",
-        target_episode_count: 0,
-        target_short_reel_count: 1,
-        candidates: [
-          {
-            slot_id: "slot_4",
-            topic_id: "topic_unapp_test",
-            channel_id: channel.channel_id,
-            content_kind: "short_reel",
-            archetype: "deep_trivia",
-            aspect_ratio: "9:16",
-            title: "Unapproved Space Trivia",
-            premise: "A fun space quiz",
-            why_it_fits: "Fits science",
-            hook: "Look up!",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 1,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: hash,
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_unapp_test",
+        contentKind: "short_reel",
+        title: "Unapproved Space Trivia",
+        premise: "A fun space quiz",
+        whyItFits: "Fits science",
+        hook: "Look up!",
+        questions: [q1],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_unapp_test", [candidate]));
 
       await expect(
         resolveBoundTopicSources({
@@ -285,18 +165,13 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
         JSON.stringify({
           generated_at: new Date().toISOString(),
           candidates: [
-            {
-              topic_id: "legacy_unbound_topic",
-              channel_id: channel.channel_id,
-              content_kind: "episode",
+            createUnboundCandidate(channel.channel_id, "legacy_unbound_topic", {
               title: "Legacy Topic",
               premise: "Legacy premise",
               why_it_fits: "Legacy fit",
               hook: "Legacy hook",
               estimated_potential: "Medium",
-              generated_at: new Date().toISOString(),
-              selected: false,
-            },
+            }),
           ],
         }),
         "utf8",
@@ -363,19 +238,7 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
 
     it("saves and retrieves topic confirmation receipts", async () => {
       const { repo, channel } = await createFixture();
-      const receipt = {
-        receipt_id: "rec_001",
-        channel_id: channel.channel_id,
-        topic_id: "topic_rec_001",
-        content_kind: "episode" as const,
-        product_id: "ep_rec_001",
-        confirmed_at: new Date().toISOString(),
-        request_id: "req_001",
-        options_fingerprint: "0".repeat(64),
-        options: { question_count: 3 },
-        source_question_ids: ["q_1", "q_2", "q_3"],
-        source_content_hashes: ["0".repeat(64), "1".repeat(64), "2".repeat(64)],
-      };
+      const receipt = createMockReceipt(channel.channel_id, "topic_rec_001");
 
       await saveTopicConfirmationReceipt(repo, channel.channel_id, receipt);
       const loaded = await getTopicConfirmationReceipt(repo, channel.channel_id, "topic_rec_001");
@@ -402,64 +265,17 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       const q3 = makeBankQuestion("q_bound_3");
       await seedBankQuestions(repo, [q1, q2, q3]);
 
-      const runResult: TopicRunResult = {
-        run_id: "run_e2e_confirm",
-        target_episode_count: 1,
-        target_short_reel_count: 0,
-        candidates: [
-          {
-            slot_id: "slot_1",
-            topic_id: "topic_e2e_1",
-            channel_id: channel.channel_id,
-            content_kind: "episode",
-            title: "Cosmic Mysteries",
-            premise: "Discover outer space",
-            why_it_fits: "Engaging science topic",
-            hook: "What lurks beyond the stars?",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 3,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q1),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q2.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q2),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q3.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q3),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_e2e_1",
+        contentKind: "episode",
+        title: "Cosmic Mysteries",
+        premise: "Discover outer space",
+        whyItFits: "Engaging science topic",
+        hook: "What lurks beyond the stars?",
+        questions: [q1, q2, q3],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_e2e_confirm", [candidate]));
 
       // Confirm topic into episode
       const result1 = await createEpisodeFromTopicWithBank({
@@ -526,44 +342,18 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       });
       await seedBankQuestions(repo, [qReel]);
 
-      const runResult: TopicRunResult = {
-        run_id: "run_reel_confirm",
-        target_episode_count: 0,
-        target_short_reel_count: 1,
-        candidates: [
-          {
-            slot_id: "slot_4",
-            topic_id: "topic_reel_1",
-            channel_id: channel.channel_id,
-            content_kind: "short_reel",
-            title: "Lion vs Tiger",
-            premise: "Epic face-off",
-            why_it_fits: "High engagement",
-            hook: "Who wins?",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            archetype: "versus_faceoff",
-            aspect_ratio: "9:16",
-            question_count: 1,
-            source_bindings: [
-              {
-                source_question_id: qReel.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(qReel),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_reel_1",
+        contentKind: "short_reel",
+        title: "Lion vs Tiger",
+        premise: "Epic face-off",
+        whyItFits: "High engagement",
+        hook: "Who wins?",
+        archetype: "versus_faceoff",
+        questions: [qReel],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_reel_confirm", [candidate]));
 
       const confirmResult = await confirmShortReelTopic({
         repository: repo,
@@ -601,64 +391,16 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       const indexBytesBefore = await readFile(indexPath);
       const batchBytesBefore = await readFile(batchPath);
 
-      const runResult: TopicRunResult = {
-        run_id: "run_imm_test",
-        target_episode_count: 1,
-        target_short_reel_count: 0,
-        candidates: [
-          {
-            slot_id: "slot_1",
-            topic_id: "topic_imm_1",
-            channel_id: channel.channel_id,
-            content_kind: "episode",
-            title: "Galactic Voyage",
-            premise: "A deep dive into galaxies",
-            why_it_fits: "Fits science",
-            hook: "How big is our galaxy?",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 3,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q1),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q2.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q2),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q3.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q3),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_imm_1",
+        title: "Galactic Voyage",
+        premise: "A deep dive into galaxies",
+        whyItFits: "Fits science",
+        hook: "How big is our galaxy?",
+        questions: [q1, q2, q3],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_imm_test", [candidate]));
 
       // Confirm topic into episode
       await createEpisodeFromTopicWithBank({
@@ -690,90 +432,18 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       const q3 = makeBankQuestion("q_de_3");
       await seedBankQuestions(repo, [q1, q2, q3]);
 
-      const runResult: TopicRunResult = {
-        run_id: "run_de_loc",
-        target_episode_count: 1,
-        target_short_reel_count: 0,
-        candidates: [
-          {
-            slot_id: "slot_1",
-            topic_id: "topic_de_loc",
-            channel_id: channel.channel_id,
-            content_kind: "episode",
-            title: "English Topic Title",
-            premise: "English topic premise about cosmos",
-            why_it_fits: "Science fit",
-            hook: "English topic hook",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 3,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q1),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q2.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q2),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q3.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q3),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_de_loc",
+        title: "English Topic Title",
+        premise: "English topic premise about cosmos",
+        whyItFits: "Science fit",
+        hook: "English topic hook",
+        questions: [q1, q2, q3],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_de_loc", [candidate]));
 
-      const stubLlmClient: LLMClient = {
-        connect: () => Promise.resolve(),
-        generateContent: () =>
-          Promise.resolve({
-            text: JSON.stringify({
-              [`${q1.id}_question`]: "Welche Frage 1?",
-              [`${q1.id}_explanation`]: "Erklärung 1 auf Deutsch.",
-              [`${q1.id}_choice_c1`]: "Option A auf Deutsch",
-              [`${q1.id}_choice_c2`]: "Option B auf Deutsch",
-              [`${q1.id}_choice_c3`]: "Option C auf Deutsch",
-              [`${q2.id}_question`]: "Welche Frage 2?",
-              [`${q2.id}_explanation`]: "Erklärung 2 auf Deutsch.",
-              [`${q2.id}_choice_c1`]: "Zweite Option A auf Deutsch",
-              [`${q2.id}_choice_c2`]: "Zweite Option B auf Deutsch",
-              [`${q2.id}_choice_c3`]: "Zweite Option C auf Deutsch",
-              [`${q3.id}_question`]: "Welche Frage 3?",
-              [`${q3.id}_explanation`]: "Erklärung 3 auf Deutsch.",
-              [`${q3.id}_choice_c1`]: "Dritte Option A auf Deutsch",
-              [`${q3.id}_choice_c2`]: "Dritte Option B auf Deutsch",
-              [`${q3.id}_choice_c3`]: "Dritte Option C auf Deutsch",
-              product_video_description: "Deutsche Beschreibung für das Video",
-              product_thumbnail_text: "DEUTSCHER TITEL",
-            }),
-          }),
-      };
+      const stubLlmClient = createGermanLocalizationStubLlm([q1.id, q2.id, q3.id]);
 
       const result = await createEpisodeFromTopicWithBank({
         repository: repo,
@@ -825,64 +495,16 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       const q3 = makeBankQuestion("q_fail_loc_3");
       await seedBankQuestions(repo, [q1, q2, q3]);
 
-      const runResult: TopicRunResult = {
-        run_id: "run_fail_loc",
-        target_episode_count: 1,
-        target_short_reel_count: 0,
-        candidates: [
-          {
-            slot_id: "slot_1",
-            topic_id: "topic_fail_loc",
-            channel_id: channel.channel_id,
-            content_kind: "episode",
-            title: "Will Fail Localization",
-            premise: "Premise",
-            why_it_fits: "Fit",
-            hook: "Hook",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 3,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q1),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q2.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q2),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q3.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q3),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_fail_loc",
+        title: "Will Fail Localization",
+        premise: "Premise",
+        whyItFits: "Fit",
+        hook: "Hook",
+        questions: [q1, q2, q3],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_fail_loc", [candidate]));
 
       // Attempt non-English confirmation without an LLM translation provider
       await expect(
@@ -937,64 +559,16 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       const q3 = makeBankQuestion("q_conc_3");
       await seedBankQuestions(repo, [q1, q2, q3]);
 
-      const runResult: TopicRunResult = {
-        run_id: "run_conc_test",
-        target_episode_count: 1,
-        target_short_reel_count: 0,
-        candidates: [
-          {
-            slot_id: "slot_1",
-            topic_id: "topic_conc_1",
-            channel_id: channel.channel_id,
-            content_kind: "episode",
-            title: "Concurrent Topic",
-            premise: "Premise",
-            why_it_fits: "Fit",
-            hook: "Hook",
-            estimated_potential: "High",
-            generated_at: new Date().toISOString(),
-            selected: false,
-            question_count: 3,
-            source_bindings: [
-              {
-                source_question_id: q1.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q1),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q2.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q2),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-              {
-                source_question_id: q3.id,
-                source_hash_version: 1,
-                source_content_hash: hashBankQuestionSource(q3),
-                projection_provenance: {
-                  source_variant: "native",
-                  resolved_language: "en",
-                  translation_key: null,
-                  translation_provenance: "native",
-                },
-              },
-            ],
-          },
-        ],
-        shortages: [],
-      };
-      await repo.saveTopicRun(channel.channel_id, runResult);
+      const candidate = createBoundCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic_conc_1",
+        title: "Concurrent Topic",
+        premise: "Premise",
+        whyItFits: "Fit",
+        hook: "Hook",
+        questions: [q1, q2, q3],
+      });
+      await repo.saveTopicRun(channel.channel_id, createTopicRunResult("run_conc_test", [candidate]));
 
       // Launch two confirmation calls concurrently for the exact same topic
       const [res1, res2] = await Promise.all([
@@ -1033,33 +607,19 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
     const { repo, channel } = await createFixture();
     const questions = [makeBankQuestion("q_receipt_retry_1"), makeBankQuestion("q_receipt_retry_2"), makeBankQuestion("q_receipt_retry_3")];
     await seedBankQuestions(repo, questions);
-    await repo.saveTopicRun(channel.channel_id, [
-      {
-        topic_id: "topic_receipt_retry",
-        channel_id: channel.channel_id,
-        content_kind: "episode",
-        origin: "discovery",
-        title: "Receipt Retry Topic",
-        premise: "Premise",
-        why_it_fits: "Fits",
-        hook: "Hook",
-        estimated_potential: "High",
-        generated_at: new Date().toISOString(),
-        selected: false,
-        question_count: 3,
-        source_bindings: questions.map((question) => ({
-          source_question_id: question.id,
-          source_hash_version: 1 as const,
-          source_content_hash: hashBankQuestionSource(question),
-          projection_provenance: {
-            source_variant: "native" as const,
-            resolved_language: "en" as const,
-            translation_key: null,
-            translation_provenance: "native" as const,
-          },
-        })),
-      },
-    ]);
+
+    const candidate = createBoundCandidate({
+      channelId: channel.channel_id,
+      topicId: "topic_receipt_retry",
+      origin: "discovery",
+      title: "Receipt Retry Topic",
+      premise: "Premise",
+      whyItFits: "Fits",
+      hook: "Hook",
+      questions,
+    });
+    await repo.saveTopicRun(channel.channel_id, [candidate]);
+
     const originalWrite = repo.writeJsonAtomic.bind(repo);
     let receiptWrites = 0;
     const writeSpy = vi.spyOn(repo, "writeJsonAtomic").mockImplementation(async (file, value) => {
@@ -1094,20 +654,13 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
     it("strictly rejects unbound topic confirmation in createEpisodeFromTopicWithBank and repo.confirmTopic", async () => {
       const { repo, channel } = await createFixture();
 
-      const unboundCandidate = {
-        topic_id: "unbound_cand_1",
-        channel_id: channel.channel_id,
-        content_kind: "episode" as const,
+      const unboundCandidate = createUnboundCandidate(channel.channel_id, "unbound_cand_1", {
         title: "Unbound Candidate",
         premise: "No bindings",
         why_it_fits: "None",
         hook: "Hook",
         estimated_potential: "Low",
-        generated_at: new Date().toISOString(),
-        selected: false,
-        question_count: 3,
-        // Notice: NO source_bindings!
-      };
+      });
 
       const topicsDir = repo.resolvePath("channels", channel.slug, "topics");
       await mkdir(topicsDir, { recursive: true });

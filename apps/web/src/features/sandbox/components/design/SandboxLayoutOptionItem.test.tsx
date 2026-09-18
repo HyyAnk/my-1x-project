@@ -56,12 +56,7 @@ describe("SandboxLayoutOptionItem", () => {
   it("renders badge when provided", () => {
     render(
       <LanguageProvider>
-        <SandboxLayoutOptionItem
-          layout={mockLayout}
-          isSelected={false}
-          onSelect={vi.fn()}
-          badge="16:9"
-        />
+        <SandboxLayoutOptionItem layout={mockLayout} isSelected={false} onSelect={vi.fn()} badge="16:9" />
       </LanguageProvider>,
     );
 

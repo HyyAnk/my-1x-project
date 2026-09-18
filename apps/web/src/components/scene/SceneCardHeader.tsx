@@ -43,9 +43,7 @@ export function SceneCardHeader({
 }: SceneCardHeaderProps) {
   const mergedDuration = nextScene ? scene.duration_seconds + nextScene.duration_seconds : null;
   const mergeTooLong = mergedDuration !== null && mergedDuration > maxDuration;
-  const mergeTooltip = mergeTooLong
-    ? `Combined duration exceeds the ${maxDuration}s generation limit`
-    : "Override automatic shot grouping";
+  const mergeTooltip = mergeTooLong ? `Combined duration exceeds the ${maxDuration}s generation limit` : "Override automatic shot grouping";
 
   return (
     <div className="scene-card-header">

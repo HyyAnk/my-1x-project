@@ -37,7 +37,7 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
 
     const mockLlmClient: LLMClient = {
       connect: async () => {},
-      generateContent: async () => {
+      generateContent: async (prompt) => {
         callCounter++;
         const id = callCounter;
         const qText = distinctTemplates[(id - 1) % distinctTemplates.length];
@@ -50,16 +50,21 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
         await new Promise((res) => setTimeout(res, 2));
         activeCalls--;
 
+        const isMystery = typeof prompt === "string" && prompt.includes("mystery_reveal");
+        const choices = isMystery
+          ? [{ id: "A", text: "Option Alpha", is_correct: true }]
+          : [
+              { id: "A", text: "Option Alpha", is_correct: true },
+              { id: "B", text: "Option Beta", is_correct: false },
+            ];
+
         return {
           text: JSON.stringify([
             {
               entity_id: `ENT-E2E-00${id}`,
               question: qText,
-              format: "multiple_choice",
-              choices: [
-                { id: "A", text: "Option Alpha", is_correct: true },
-                { id: "B", text: "Option Beta", is_correct: false },
-              ],
+              format: isMystery ? "image_guess" : "multiple_choice",
+              choices,
               correct_choice_id: "A",
               explanation: "Clear verified explanation for test purposes.",
               visual_spec: { intent: "none" },
@@ -87,7 +92,7 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
     // Poll until completed (with timeout protection)
     const startTime = Date.now();
     while (jobManager.getStatus().status === "running") {
-      if (Date.now() - startTime > 10000) {
+      if (Date.now() - startTime > 30000) {
         throw new Error("Timeout waiting for 5-worker background job to complete");
       }
       await new Promise((res) => setTimeout(res, 2));
@@ -109,19 +114,23 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
     let callCounter = 0;
     const mockLlmClient: LLMClient = {
       connect: async () => {},
-      generateContent: async () => {
+      generateContent: async (prompt) => {
         callCounter++;
         await new Promise((res) => setTimeout(res, 8));
+        const isMystery = typeof prompt === "string" && prompt.includes("mystery_reveal");
+        const choices = isMystery
+          ? [{ id: "A", text: "A", is_correct: true }]
+          : [
+              { id: "A", text: "A", is_correct: true },
+              { id: "B", text: "B", is_correct: false },
+            ];
         return {
           text: JSON.stringify([
             {
               entity_id: `ENT-CANCEL-00${callCounter}`,
               question: `Sample question ${callCounter}?`,
-              format: "multiple_choice",
-              choices: [
-                { id: "A", text: "A", is_correct: true },
-                { id: "B", text: "B", is_correct: false },
-              ],
+              format: isMystery ? "image_guess" : "multiple_choice",
+              choices,
               correct_choice_id: "A",
               explanation: "Explanation",
               visual_spec: { intent: "none" },

@@ -15,25 +15,13 @@ export type UseImageFallbackSettingsProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function useImageFallbackSettingsState({
-  appConfig,
-  onFallbackSaved,
-  onNotice,
-}: UseImageFallbackSettingsProps) {
+export function useImageFallbackSettingsState({ appConfig, onFallbackSaved, onNotice }: UseImageFallbackSettingsProps) {
   const [fallbackEnabled, setFallbackEnabled] = useState(appConfig?.image_fallback?.enabled ?? true);
-  const [fallbackModel, setFallbackModel] = useState(
-    appConfig?.image_fallback?.model ?? IMGSTUDIO_DEFAULT_MODEL_ID,
-  );
-  const [fallbackResolution, setFallbackResolution] = useState<"1K" | "2K" | "4K">(
-    appConfig?.image_fallback?.resolution ?? "2K",
-  );
-  const [fallbackQuality, setFallbackQuality] = useState<"standard" | "high">(
-    appConfig?.image_fallback?.quality ?? "standard",
-  );
+  const [fallbackModel, setFallbackModel] = useState(appConfig?.image_fallback?.model ?? IMGSTUDIO_DEFAULT_MODEL_ID);
+  const [fallbackResolution, setFallbackResolution] = useState<"1K" | "2K" | "4K">(appConfig?.image_fallback?.resolution ?? "2K");
+  const [fallbackQuality, setFallbackQuality] = useState<"standard" | "high">(appConfig?.image_fallback?.quality ?? "standard");
   const [fallbackApiKey, setFallbackApiKey] = useState(appConfig?.image_fallback?.api_key ?? "");
-  const [fallbackBaseUrl, setFallbackBaseUrl] = useState(
-    appConfig?.image_fallback?.base_url ?? "https://imgstudio.site",
-  );
+  const [fallbackBaseUrl, setFallbackBaseUrl] = useState(appConfig?.image_fallback?.base_url ?? "https://imgstudio.site");
   const [showFallbackKey, setShowFallbackKey] = useState(false);
   const [hasFallbackApiKey, setHasFallbackApiKey] = useState(
     Boolean(appConfig?.image_fallback?.has_api_key || appConfig?.image_fallback?.api_key),
@@ -50,9 +38,7 @@ export function useImageFallbackSettingsState({
       setFallbackResolution(appConfig.image_fallback.resolution || "2K");
       setFallbackQuality(appConfig.image_fallback.quality || "standard");
       setFallbackBaseUrl(appConfig.image_fallback.base_url || "https://imgstudio.site");
-      setHasFallbackApiKey(
-        Boolean(appConfig.image_fallback.has_api_key || appConfig.image_fallback.api_key),
-      );
+      setHasFallbackApiKey(Boolean(appConfig.image_fallback.has_api_key || appConfig.image_fallback.api_key));
       setFallbackApiKey(appConfig.image_fallback.api_key ?? "");
     }
   }, [appConfig]);

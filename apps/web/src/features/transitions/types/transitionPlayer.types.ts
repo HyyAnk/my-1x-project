@@ -44,7 +44,7 @@ export type TransitionPreviewState =
       kind: "failed";
       jobId?: string;
       requestId: string;
-      error: { code: TransitionPreviewErrorCode | string; message: string; retryable: boolean };
+      error: { code: TransitionPreviewErrorCode; message: string; retryable: boolean };
       staleArtifact?: LoadedArtifact;
     }
   | {

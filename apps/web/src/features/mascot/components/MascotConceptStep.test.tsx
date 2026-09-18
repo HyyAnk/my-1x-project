@@ -199,4 +199,33 @@ describe("MascotConceptStep (2-Tier Studio Layout)", () => {
     expect(screen.getByText("goggles")).toBeTruthy();
     expect(screen.getByText("+2")).toBeTruthy();
   });
+
+  it("renders prompt focus modal when isPromptModalOpen is true", () => {
+    const setIsPromptModalOpen = vi.fn();
+    renderConceptStep({
+      isPromptModalOpen: true,
+      setIsPromptModalOpen,
+    });
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /saved/i })).toBeTruthy();
+    fireEvent.click(screen.getByLabelText(/close/i));
+    expect(setIsPromptModalOpen).toHaveBeenCalledWith(false);
+  });
+
+  it("renders image lightbox modal when lightboxImage is set", () => {
+    const setLightboxImage = vi.fn();
+    renderConceptStep({
+      lightboxImage: "https://example.com/concept-preview.png",
+      setLightboxImage,
+    });
+
+    const img = screen.getByAltText("Master Concept Large Preview");
+    expect(img).toBeTruthy();
+    expect(img.getAttribute("src")).toBe("https://example.com/concept-preview.png");
+
+    const closeBtn = screen.getByTitle(/close/i);
+    fireEvent.click(closeBtn);
+    expect(setLightboxImage).toHaveBeenCalledWith(null);
+  });
 });

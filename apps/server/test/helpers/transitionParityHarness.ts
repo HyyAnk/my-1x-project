@@ -7,10 +7,7 @@ import { copyCandyArcadeFonts } from "../../src/quiz/render/candyArcade/candyArc
 import { getHyperframesInvocation } from "../../src/tasks/video/videoInvocation.js";
 import type { TransitionFixture } from "./transitionFixtures.js";
 
-export async function captureProductionBoundary(
-  fixture: TransitionFixture,
-  frameIndex: number,
-): Promise<Buffer> {
+export async function captureProductionBoundary(fixture: TransitionFixture, frameIndex: number): Promise<Buffer> {
   const renderer = new HyperframesRenderer();
   const fps = fixture.boundaryIdentity.fps.numerator / fixture.boundaryIdentity.fps.denominator;
   const captureTimeSeconds = frameIndex / fps;

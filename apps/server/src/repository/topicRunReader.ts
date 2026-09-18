@@ -63,10 +63,7 @@ export function parseTopicRunData(parsed: unknown, fileName: string): TopicRun {
     };
   }
 
-  throw new RepositoryError(
-    `TOPIC_RUN_CORRUPTED: Latest topic run file "${fileName}" failed schema validation.`,
-    "TOPIC_RUN_CORRUPTED",
-  );
+  throw new RepositoryError(`TOPIC_RUN_CORRUPTED: Latest topic run file "${fileName}" failed schema validation.`, "TOPIC_RUN_CORRUPTED");
 }
 
 export async function readTopicRunFile(filePath: string, fileName: string): Promise<TopicRun> {
@@ -74,11 +71,9 @@ export async function readTopicRunFile(filePath: string, fileName: string): Prom
   try {
     content = await readFile(filePath, "utf8");
   } catch (error) {
-    throw new RepositoryError(
-      `TOPIC_RUN_CORRUPTED: Failed to read latest topic run file "${fileName}".`,
-      "TOPIC_RUN_CORRUPTED",
-      { cause: error },
-    );
+    throw new RepositoryError(`TOPIC_RUN_CORRUPTED: Failed to read latest topic run file "${fileName}".`, "TOPIC_RUN_CORRUPTED", {
+      cause: error,
+    });
   }
 
   try {
@@ -86,11 +81,9 @@ export async function readTopicRunFile(filePath: string, fileName: string): Prom
     return parseTopicRunData(parsed, fileName);
   } catch (error) {
     if (error instanceof RepositoryError) throw error;
-    throw new RepositoryError(
-      `TOPIC_RUN_CORRUPTED: Latest topic run file "${fileName}" contains invalid JSON.`,
-      "TOPIC_RUN_CORRUPTED",
-      { cause: error },
-    );
+    throw new RepositoryError(`TOPIC_RUN_CORRUPTED: Latest topic run file "${fileName}" contains invalid JSON.`, "TOPIC_RUN_CORRUPTED", {
+      cause: error,
+    });
   }
 }
 

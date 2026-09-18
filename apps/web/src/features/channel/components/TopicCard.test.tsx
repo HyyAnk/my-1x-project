@@ -64,9 +64,7 @@ describe("TopicCard", () => {
   });
 
   it("omits why-it-fits, premise text, question pickers, and potential rating from streamlined card", () => {
-    const { queryByText, queryByLabelText } = render(
-      <TopicCard topic={baseTopic} onConfirm={vi.fn()} busy={false} disabled={false} />,
-    );
+    const { queryByText, queryByLabelText } = render(<TopicCard topic={baseTopic} onConfirm={vi.fn()} busy={false} disabled={false} />);
 
     expect(queryByText("High viewer retention in astronomy")).toBeNull();
     expect(queryByText("Exploring forgotten cosmic events")).toBeNull();

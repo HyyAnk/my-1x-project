@@ -49,8 +49,11 @@ export function useReelAssetsData(
     }
   };
 
-  const { styleStage, coverStage, isStylePending, isCoverPending, styleError, coverError } =
-    resolveStageStatuses(units, activeTask, isGenerating);
+  const { styleStage, coverStage, isStylePending, isCoverPending, styleError, coverError } = resolveStageStatuses(
+    units,
+    activeTask,
+    isGenerating,
+  );
 
   const mascotDisplayUrl = acceptedMascotRef ? assetUrl(acceptedMascotRef.asset_id) : channelMasterUrl;
   const styleDisplayUrl = acceptedStyleRef ? assetUrl(acceptedStyleRef.asset_id) : null;

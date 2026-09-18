@@ -101,10 +101,15 @@ export function convertBankQuestionToQuizQuestionLossless(
   const localizedExplanation = translation?.explanation || bankQuestion.explanation || "Detailed explanation for the correct answer.";
   const localizedFunFact = translation?.fun_fact !== undefined ? translation.fun_fact : bankQuestion.fun_fact || "";
 
+  const isMystery = bankQuestion.archetype_id === "mystery_reveal" || quizChoices.length === 1;
+  const answerMode = isMystery ? "single_reveal" : "choice_selection";
+  const resolvedFormat = isMystery ? "image_guess" : quizChoices.length === 2 ? "true_false" : bankQuestion.format || "multiple_choice";
+
   const candidateQuestion = {
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
-    format: quizChoices.length === 2 ? "true_false" : bankQuestion.format || "multiple_choice",
+    format: resolvedFormat,
+    answer_mode: answerMode,
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
     question: localizedQuestion.trim(),
     choices: quizChoices,
@@ -123,24 +128,27 @@ export function convertBankQuestionToQuizQuestionLossless(
   return QuizQuestionSchema.parse(candidateQuestion);
 }
 
-/**
- * Converts legacy and dynamically transcreated questions for the historical
- * non-bound flow. Bound products must use convertBankQuestionToQuizQuestionLossless.
- */
-export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
+function buildConvertedChoices(
+  bankQuestion: BankQuestion,
+  options: ConvertBankQuestionOptions,
+  isMystery: boolean,
+  requiredCount: number,
+): { mapped: Array<{ id: string; text: string }>; correctIndex: number } {
   const sourceChoices =
     bankQuestion.choices.length > 0
       ? bankQuestion.choices
-      : bankQuestion.format === "true_false"
-        ? [
-            { id: "true", text: "True", is_correct: true },
-            { id: "false", text: "False", is_correct: false },
-          ]
-        : [
-            { id: "a", text: "Option A", is_correct: true },
-            { id: "b", text: "Option B", is_correct: false },
-            { id: "c", text: "Option C", is_correct: false },
-          ];
+      : isMystery
+        ? [{ id: "a", text: "Option A", is_correct: true }]
+        : bankQuestion.format === "true_false"
+          ? [
+              { id: "true", text: "True", is_correct: true },
+              { id: "false", text: "False", is_correct: false },
+            ]
+          : [
+              { id: "a", text: "Option A", is_correct: true },
+              { id: "b", text: "Option B", is_correct: false },
+              { id: "c", text: "Option C", is_correct: false },
+            ];
   const translated = options.translation?.choices ?? [];
   const choices = sourceChoices.map((choice, index) => ({
     source: choice,
@@ -155,33 +163,48 @@ export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, op
       ? sourceChoices.findIndex((choice) => choice.id === bankQuestion.correct_choice_id)
       : sourceChoices.findIndex((choice) => choice.is_correct),
   );
-  const requiredCount = bankQuestion.format === "true_false" ? 2 : 3;
   const visible = choices.slice(0, requiredCount);
-  while (visible.length < requiredCount)
+  while (visible.length < requiredCount) {
     visible.push({
       source: { id: `fallback_${visible.length}`, text: `Option ${visible.length + 1}`, is_correct: false },
       text: `Option ${visible.length + 1}`,
     });
+  }
   const ids = ["a", "b", "c"];
   const mapped = visible.map((choice, index) => ({
-    id: ids[index],
+    id: isMystery && choice.source.id ? choice.source.id : ids[index],
     text: choice.text.trim().slice(0, 180) || `Option ${ids[index].toUpperCase()}`,
   }));
   const seenTexts = new Set<string>();
   mapped.forEach((choice, index) => {
     const normalized = choice.text.normalize("NFKC").trim().toLowerCase();
-    if (seenTexts.has(normalized)) choice.text = `${choice.text} (${ids[index].toUpperCase()})`;
+    if (seenTexts.has(normalized) && mapped.length > 1) choice.text = `${choice.text} (${ids[index].toUpperCase()})`;
     seenTexts.add(choice.text.normalize("NFKC").trim().toLowerCase());
   });
+  return { mapped, correctIndex };
+}
+
+/**
+ * Converts legacy and dynamically transcreated questions for the historical
+ * non-bound flow. Bound products must use convertBankQuestionToQuizQuestionLossless.
+ */
+export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
+  const isMystery = bankQuestion.archetype_id === "mystery_reveal" || bankQuestion.format === "image_guess";
+  const requiredCount = isMystery ? 1 : bankQuestion.format === "true_false" ? 2 : 3;
+  const { mapped, correctIndex } = buildConvertedChoices(bankQuestion, options, isMystery, requiredCount);
   const mappedCorrectIndex = Math.min(Math.max(correctIndex, 0), requiredCount - 1);
   return QuizQuestionSchema.parse({
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
-    format: bankQuestion.format || "multiple_choice",
+    format: isMystery ? "image_guess" : bankQuestion.format || "multiple_choice",
+    answer_mode: isMystery ? "single_reveal" : "choice_selection",
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
     question: (options.translation?.question || bankQuestion.question || "Engaging trivia challenge question").slice(0, 320).trim(),
     choices: mapped,
-    correct_choice_id: mapped[mappedCorrectIndex].id,
+    correct_choice_id:
+      isMystery && bankQuestion.correct_choice_id && mapped.some((m) => m.id === bankQuestion.correct_choice_id)
+        ? bankQuestion.correct_choice_id
+        : mapped[mappedCorrectIndex].id,
     explanation: (options.translation?.explanation || bankQuestion.explanation || "Detailed explanation for the correct answer.")
       .slice(0, 600)
       .trim(),

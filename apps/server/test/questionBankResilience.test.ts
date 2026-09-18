@@ -190,12 +190,8 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       subtopic_id: "ocean_giants",
       language: "en",
       question: "Which creature glows in the deep dark ocean depths?",
-      format: "multiple_choice",
-      choices: [
-        { id: "a", text: "Anglerfish", is_correct: true },
-        { id: "b", text: "Clownfish", is_correct: false },
-        { id: "c", text: "Salmon", is_correct: false },
-      ],
+      format: "image_guess",
+      choices: [{ id: "a", text: "Anglerfish", is_correct: true }],
       correct_choice_id: "a",
       explanation: "The anglerfish uses a bioluminescent lure to attract prey.",
       difficulty: 3,
@@ -281,16 +277,18 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
         question: `Test question for archetype ${archetypeMeta.name}?`,
         format: archetypeMeta.defaultFormat,
         choices:
-          archetypeMeta.defaultFormat === "true_false" || archetypeMeta.id === "versus_faceoff"
-            ? [
-                { id: "a", text: "Option 1", is_correct: true },
-                { id: "b", text: "Option 2", is_correct: false },
-              ]
-            : [
-                { id: "a", text: "Option 1", is_correct: true },
-                { id: "b", text: "Option 2", is_correct: false },
-                { id: "c", text: "Option 3", is_correct: false },
-              ],
+          archetypeMeta.id === "mystery_reveal"
+            ? [{ id: "a", text: "Option 1", is_correct: true }]
+            : archetypeMeta.defaultFormat === "true_false" || archetypeMeta.id === "versus_faceoff"
+              ? [
+                  { id: "a", text: "Option 1", is_correct: true },
+                  { id: "b", text: "Option 2", is_correct: false },
+                ]
+              : [
+                  { id: "a", text: "Option 1", is_correct: true },
+                  { id: "b", text: "Option 2", is_correct: false },
+                  { id: "c", text: "Option 3", is_correct: false },
+                ],
         correct_choice_id: "a",
         explanation: "Test explanation for archetype validation.",
         fun_fact: "Interesting scientific fact.",

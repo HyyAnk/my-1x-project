@@ -14,7 +14,7 @@ const TRAILING_PUNCTUATION_REGEX = /[\s.,;:!?…。！？]+$/u;
  * @param format - Optional quiz format ('multiple_choice', 'true_false', etc.).
  * @returns Cleaned question text ending with '?'.
  */
-export function normalizeQuestionPunctuation(questionText: string, format?: string): string {
+export function normalizeQuestionPunctuation(questionText: string, _format?: string): string {
   if (typeof questionText !== "string") {
     return "";
   }

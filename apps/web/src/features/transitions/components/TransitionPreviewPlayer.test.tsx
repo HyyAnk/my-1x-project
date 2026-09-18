@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 import { TransitionPreviewPlayer } from "./TransitionPreviewPlayer";
@@ -74,13 +74,7 @@ describe("TransitionPreviewPlayer", () => {
 
   it("toggles Timing panel from overflow menu for configurable effects", () => {
     const onDurationChange = vi.fn();
-    render(
-      <TransitionPreviewPlayer
-        transitionType="stinger_swipe"
-        durationSeconds={0.8}
-        onDurationChange={onDurationChange}
-      />,
-    );
+    render(<TransitionPreviewPlayer transitionType="stinger_swipe" durationSeconds={0.8} onDurationChange={onDurationChange} />);
 
     expect(screen.queryByTestId("transition-timing-panel")).toBeNull();
 
@@ -116,11 +110,7 @@ describe("TransitionPreviewPlayer", () => {
 
   it("applies custom brand theme colors to CSS variables", () => {
     render(
-      <TransitionPreviewPlayer
-        transitionType="stinger_swipe"
-        durationSeconds={0.5}
-        themeColors={{ from: "#3B82F6", to: "#8B5CF6" }}
-      />,
+      <TransitionPreviewPlayer transitionType="stinger_swipe" durationSeconds={0.5} themeColors={{ from: "#3B82F6", to: "#8B5CF6" }} />,
     );
 
     const viewport = screen.getByTestId("transition-preview-viewport");

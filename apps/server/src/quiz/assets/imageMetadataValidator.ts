@@ -31,7 +31,7 @@ export interface ValidateQuizImageBytesInput {
 
 const FALLBACK_DIMENSIONS_BY_RATIO: Record<string, { width: number; height: number }> = {
   "16:9": { width: 1280, height: 720 },
-  "4:3": { width: 1056, height: 792 },
+  "4:3": { width: 1120, height: 840 },
   "1:1": { width: 728, height: 728 },
   "3:4": { width: 768, height: 1024 },
   "9:16": { width: 720, height: 1280 },

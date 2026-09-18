@@ -340,7 +340,9 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
     const director = createDefaultDirectorPlan(testQuiz);
     const voicePlan = buildQuizVoicePlan(testQuiz, { skipIntro: true, skipOutro: true });
     const timeline = compileQuizTimeline({ quiz: testQuiz, director, voicePlan, introDuration, outroDuration: 10.0 });
-    const outroEvent = timeline.events.find((e) => e.segment_id === "outro" || (e.type === "narration.segment" && e.segment_id === "outro"));
+    const outroEvent = timeline.events.find(
+      (e) => e.segment_id === "outro" || (e.type === "narration.segment" && e.segment_id === "outro"),
+    );
     expect(outroEvent).toBeDefined();
     expect(lastEnd).toBeLessThanOrEqual(outroEvent!.at_seconds + 0.001);
   });

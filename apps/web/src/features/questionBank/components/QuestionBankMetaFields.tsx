@@ -20,7 +20,6 @@ const ARCHETYPE_OPTIONS: Array<{ id: string; defaultLabel: string; icon: string 
   { id: "visual_spotting", defaultLabel: "Visual Spotting", icon: "👁️" },
   { id: "visual_identification", defaultLabel: "Visual ID", icon: "🔍" },
   { id: "mystery_reveal", defaultLabel: "Mystery Reveal", icon: "🎭" },
-  { id: "clue_deduction", defaultLabel: "Clue Deduction", icon: "🕵️" },
 ];
 
 /** Classification block of the question form: archetype, domain, and subtopic. */

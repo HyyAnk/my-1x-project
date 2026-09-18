@@ -63,13 +63,21 @@ export function useSandboxPreviewRenderer({
             ? "true_false"
             : design.layoutId === "visual_choices_three_pure"
               ? "odd_one_out"
-              : design.layoutId === "mystery_reveal" || design.layoutId === "clue_deduction"
+              : design.layoutId === "mystery_reveal"
                 ? "image_guess"
                 : design.layoutId === "split_versus_two"
                   ? "multiple_choice"
                   : question.choices.length === 2
                     ? "true_false"
                     : "multiple_choice";
+
+        const isMystery = design.layoutId === "mystery_reveal";
+        const normalizedChoices = isMystery
+          ? question.choices.length > 0
+            ? [question.choices[question.correctChoiceIndex] || question.choices[0] || "Mystery Answer"]
+            : ["Mystery Answer"]
+          : question.choices;
+        const normalizedCorrectIndex = isMystery ? 0 : question.correctChoiceIndex;
 
         const input: SandboxPreviewRequest = {
           aspect_ratio: "16:9",
@@ -86,8 +94,8 @@ export function useSandboxPreviewRenderer({
           timeline_time_seconds: currentTimeline.useScrubber ? currentTimeline.timelineSeconds : undefined,
           question_format: questionFormat,
           question_text: question.questionText,
-          choices: question.choices,
-          correct_choice_index: question.correctChoiceIndex,
+          choices: normalizedChoices,
+          correct_choice_index: normalizedCorrectIndex,
           question_number: mascot.selectedVariantIndex != null ? mascot.selectedVariantIndex + 1 : question.questionNumber,
           total_questions: question.totalQuestions,
           countdown_progress: 0.5,
@@ -187,7 +195,12 @@ export function useSandboxPreviewRenderer({
         }
       } catch (error) {
         if (!pendingPreview || pendingPreview.html !== html) return;
-        const message = error instanceof Error ? error.message : t("visualSandbox.fontLoadFailed");
+        const message =
+          error instanceof Error
+            ? error.message
+            : typeof error === "object" && error !== null && "message" in error && typeof error.message === "string"
+              ? (error as { message: string }).message
+              : t("visualSandbox.fontLoadFailed");
         setPendingPreview(null);
         setPreviewError(message);
         setLoading(false);

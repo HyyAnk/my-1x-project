@@ -44,11 +44,7 @@ describe("SandboxTimelineControls", () => {
     const setUseScrubber = vi.fn();
     render(
       <LanguageProvider>
-        <SandboxTimelineControls
-          {...defaultProps}
-          handleTogglePlay={handleTogglePlay}
-          setUseScrubber={setUseScrubber}
-        />
+        <SandboxTimelineControls {...defaultProps} handleTogglePlay={handleTogglePlay} setUseScrubber={setUseScrubber} />
       </LanguageProvider>,
     );
 

@@ -19,9 +19,7 @@ export function normalizeBatchLegacyArchetypes(batch: BankSubtopicBatch): BankSu
   const normalizedArch: BankSubtopicBatch["archetype_id"] =
     batch.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : batch.archetype_id;
   const questions = batch.questions.map((question) =>
-    question.archetype_id === "verdict_fact_myth"
-      ? { ...question, archetype_id: "verdict_true_false" as const }
-      : question,
+    question.archetype_id === "verdict_fact_myth" ? { ...question, archetype_id: "verdict_true_false" as const } : question,
   );
   return {
     ...batch,

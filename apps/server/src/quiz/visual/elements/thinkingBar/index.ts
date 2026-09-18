@@ -6,3 +6,4 @@ export { energyLaserVariant } from "./variants/energyLaser.js";
 export { constructionMachineVariant } from "./variants/constructionMachine.js";
 export { emberTrailVariant } from "./variants/emberTrail.js";
 export { cosmicRocketVariant } from "./variants/cosmicRocket.js";
+export { treasureTrailVariant } from "./variants/treasureTrail.js";

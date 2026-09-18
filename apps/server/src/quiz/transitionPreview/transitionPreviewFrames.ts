@@ -19,11 +19,7 @@ export class TransitionPreviewFramesService {
     this.store = store;
   }
 
-  async decodeArtifactFrame(
-    artifactId: string,
-    frameIndex: number,
-    signal?: AbortSignal,
-  ): Promise<DecodedFrameResult> {
+  async decodeArtifactFrame(artifactId: string, frameIndex: number, signal?: AbortSignal): Promise<DecodedFrameResult> {
     if (!Number.isInteger(frameIndex) || frameIndex < 0) {
       throw new TransitionDomainError("INVALID_TIMING", `Frame index must be a non-negative integer: ${frameIndex}`);
     }
@@ -35,10 +31,7 @@ export class TransitionPreviewFramesService {
 
     const totalFrames = artifact.manifest.frameCount;
     if (frameIndex >= totalFrames) {
-      throw new TransitionDomainError(
-        "INVALID_TIMING",
-        `Frame index ${frameIndex} is out of range [0, ${totalFrames - 1}]`,
-      );
+      throw new TransitionDomainError("INVALID_TIMING", `Frame index ${frameIndex} is out of range [0, ${totalFrames - 1}]`);
     }
 
     const cacheKey = `${artifact.manifest.artifactSha256}:f${frameIndex}`;
@@ -71,13 +64,7 @@ export class TransitionPreviewFramesService {
         });
 
         this.memoryCache.set(cacheKey, png);
-        this.triggerPrefetch(
-          artifact.artifactId,
-          artifact.videoPath,
-          artifact.manifest.artifactSha256,
-          frameIndex,
-          totalFrames,
-        );
+        this.triggerPrefetch(artifact.artifactId, artifact.videoPath, artifact.manifest.artifactSha256, frameIndex, totalFrames);
 
         return {
           artifactId,
@@ -94,19 +81,8 @@ export class TransitionPreviewFramesService {
     return promise;
   }
 
-  private triggerPrefetch(
-    artifactId: string,
-    videoPath: string,
-    artifactSha256: string,
-    currentFrame: number,
-    totalFrames: number,
-  ): void {
-    const neighbors = [
-      currentFrame - 1,
-      currentFrame + 1,
-      currentFrame - 2,
-      currentFrame + 2,
-    ].filter((f) => f >= 0 && f < totalFrames);
+  private triggerPrefetch(artifactId: string, videoPath: string, artifactSha256: string, currentFrame: number, totalFrames: number): void {
+    const neighbors = [currentFrame - 1, currentFrame + 1, currentFrame - 2, currentFrame + 2].filter((f) => f >= 0 && f < totalFrames);
 
     for (const neighbor of neighbors) {
       const key = `${artifactSha256}:f${neighbor}`;

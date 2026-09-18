@@ -136,11 +136,14 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
               </span>
               <span className="fallback-divider">·</span>
               <strong className="fallback-spend">
-                ${fallbackSpendUsd.toLocaleString(numberLocale, { minimumFractionDigits: fallbackUsdDecimals, maximumFractionDigits: fallbackUsdDecimals })} USD
+                $
+                {fallbackSpendUsd.toLocaleString(numberLocale, {
+                  minimumFractionDigits: fallbackUsdDecimals,
+                  maximumFractionDigits: fallbackUsdDecimals,
+                })}{" "}
+                USD
               </strong>
-              {fallbackSpendVnd > 0 && (
-                <span className="fallback-vnd">({fallbackSpendVnd.toLocaleString(numberLocale)} VND)</span>
-              )}
+              {fallbackSpendVnd > 0 && <span className="fallback-vnd">({fallbackSpendVnd.toLocaleString(numberLocale)} VND)</span>}
             </div>
           </div>
         </div>

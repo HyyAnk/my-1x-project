@@ -24,16 +24,28 @@ export function buildEpisodePreviewQuestions(
         0,
         question.choices.findIndex((choice) => choice.id === question.correct_choice_id),
       );
-      const archetype = beat?.archetype ?? inferQuestionArchetype(question.format);
+      const archetype = beat?.archetype ?? (question.choices.length === 1 ? "mystery_reveal" : inferQuestionArchetype(question.format));
+      const isMystery = archetype === "mystery_reveal" || beat?.layout_id === "mystery_reveal";
+      const choices =
+        isMystery && question.choices.length > 0
+          ? [question.choices[correctChoiceIndex]?.text || question.choices[0].text]
+          : question.choices.map((choice) => choice.text);
+      const effectiveCorrectIndex = isMystery ? 0 : correctChoiceIndex;
+
       return {
         id: question.id,
         number: question.number,
         text: question.question,
-        choices: question.choices.map((choice) => choice.text),
-        correctChoiceIndex,
-        factText: question.fun_fact || question.explanation,
+        choices,
+        correctChoiceIndex: effectiveCorrectIndex,
+        factText: question.explanation || question.fun_fact,
         totalQuestions: quiz.questions.length,
-        layoutId: resolvePreviewLayout(beat?.layout_id ?? "auto", archetype, question.format, question.choices.length),
+        layoutId: resolvePreviewLayout(
+          beat?.layout_id ?? (isMystery ? "mystery_reveal" : "auto"),
+          archetype,
+          question.format,
+          choices.length,
+        ),
         questionFormat: question.format,
         archetype,
         layoutSource: beat ? "director" : "inferred",
@@ -49,10 +61,11 @@ export function buildEpisodePreviewQuestions(
 }
 
 export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePreviewQuestion {
+  const isMystery = (episode.quiz_config as { gameplay_archetype?: string } | undefined)?.gameplay_archetype === "mystery_reveal";
   const quizFormat = normalizeQuizQuestionFormat(episode.quiz_config?.quiz_format);
-  const archetype = inferQuestionArchetype(quizFormat);
-  const choiceCount = quizFormat === "true_false" ? 2 : 3;
-  const layoutId = resolvePreviewLayout("auto", archetype, quizFormat, choiceCount);
+  const archetype = isMystery ? "mystery_reveal" : inferQuestionArchetype(quizFormat);
+  const choiceCount = isMystery ? 1 : quizFormat === "true_false" ? 2 : 3;
+  const layoutId = resolvePreviewLayout(isMystery ? "mystery_reveal" : "auto", archetype, quizFormat, choiceCount);
   const totalQuestions = episode.quiz_config?.question_count ?? 8;
 
   const topicTitle = episode.topic?.title?.trim();
@@ -62,7 +75,10 @@ export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePrev
   let text = topicTitle || "Sample Quiz Question";
   let choices: string[];
 
-  if (quizFormat === "odd_one_out") {
+  if (isMystery) {
+    text = topicTitle ? `Can you guess the mystery subject? ${topicTitle}` : "Who or what is hidden in the shadows?";
+    choices = ["Mystery Answer"];
+  } else if (quizFormat === "odd_one_out") {
     text = topicTitle ? `Find the odd one out: ${topicTitle}` : "Find the odd one out among the choices";
     choices = ["Option A", "Option B", "Option C"];
   } else if (quizFormat === "true_false") {
@@ -80,7 +96,7 @@ export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePrev
     number: 1,
     text,
     choices,
-    correctChoiceIndex: quizFormat === "true_false" ? 0 : 1,
+    correctChoiceIndex: isMystery ? 0 : quizFormat === "true_false" ? 0 : 1,
     factText: topicHook || topicPremise || "Previewing visual style before generating script.",
     totalQuestions,
     layoutId,

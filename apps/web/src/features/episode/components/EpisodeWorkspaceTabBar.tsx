@@ -33,7 +33,7 @@ export function EpisodeWorkspaceTabBar({
           )}
         >
           <FileText size={17} weight={pipeline.workflowTab === "script" ? "fill" : "regular"} />
-          <span>1. Script & Plan</span>
+          <span>1. Script</span>
           {pipeline.readiness.script ? <CheckCircle size={14} weight="fill" style={{ color: "var(--green)" }} /> : null}
         </a>
       ) : null}

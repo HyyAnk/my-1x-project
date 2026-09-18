@@ -1,4 +1,4 @@
-import { copyFile, mkdir, rename, unlink, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, rename, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export interface AtomicWriteOptions {
@@ -54,6 +54,16 @@ export async function atomicRenameWithRetry(temporaryPath: string, targetPath: s
         }
       }
 
+      if (error && error.code === "ENOENT") {
+        try {
+          await stat(path.dirname(targetPath));
+        } catch {
+          // Destination directory removed concurrently during teardown
+          await doUnlink(temporaryPath).catch(() => {});
+          return;
+        }
+      }
+
       // Clean up the temporary file before rethrowing to prevent .tmp file buildup
       await doUnlink(temporaryPath).catch(() => {});
       throw error;
@@ -65,20 +75,66 @@ export async function atomicRenameWithRetry(temporaryPath: string, targetPath: s
  * Writes a text file atomically with retry for Windows locking resilience.
  */
 export async function writeTextAtomic(targetPath: string, content: string, options?: AtomicWriteOptions): Promise<void> {
-  await mkdir(path.dirname(targetPath), { recursive: true });
+  const dir = path.dirname(targetPath);
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch (err: unknown) {
+    const error = err as NodeJS.ErrnoException;
+    if (error && error.code === "ENOENT") {
+      return;
+    }
+    throw err;
+  }
   const temporary = `${targetPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
-  await writeFile(temporary, content, "utf8");
-  await atomicRenameWithRetry(temporary, targetPath, options);
+  try {
+    await writeFile(temporary, content, "utf8");
+    await atomicRenameWithRetry(temporary, targetPath, options);
+  } catch (err: unknown) {
+    const error = err as NodeJS.ErrnoException;
+    if (error && error.code === "ENOENT") {
+      try {
+        await stat(dir);
+      } catch {
+        // Directory removed concurrently during teardown; ignore gracefully
+        await unlink(temporary).catch(() => {});
+        return;
+      }
+    }
+    throw err;
+  }
 }
 
 /**
  * Writes a binary file atomically with retry for Windows locking resilience.
  */
 export async function writeBinaryAtomic(targetPath: string, content: Uint8Array, options?: AtomicWriteOptions): Promise<void> {
-  await mkdir(path.dirname(targetPath), { recursive: true });
+  const dir = path.dirname(targetPath);
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch (err: unknown) {
+    const error = err as NodeJS.ErrnoException;
+    if (error && error.code === "ENOENT") {
+      return;
+    }
+    throw err;
+  }
   const temporary = `${targetPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
-  await writeFile(temporary, content);
-  await atomicRenameWithRetry(temporary, targetPath, options);
+  try {
+    await writeFile(temporary, content);
+    await atomicRenameWithRetry(temporary, targetPath, options);
+  } catch (err: unknown) {
+    const error = err as NodeJS.ErrnoException;
+    if (error && error.code === "ENOENT") {
+      try {
+        await stat(dir);
+      } catch {
+        // Directory removed concurrently during teardown; ignore gracefully
+        await unlink(temporary).catch(() => {});
+        return;
+      }
+    }
+    throw err;
+  }
 }
 
 /**

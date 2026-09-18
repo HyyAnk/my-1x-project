@@ -8,10 +8,7 @@ import type { DomainArchEvaluation, SelectAutoCandidatesOptions } from "../types
  * Groups knowledge entities by domain, respecting optional exclusion criteria.
  * Falls back to all entities if all available entities were excluded.
  */
-function groupEntitiesByDomain(
-  entities: KnowledgeEntity[],
-  excludedSet: Set<string> | null,
-): Map<string, KnowledgeEntity[]> {
+function groupEntitiesByDomain(entities: KnowledgeEntity[], excludedSet: Set<string> | null): Map<string, KnowledgeEntity[]> {
   const entitiesByDomain = new Map<string, KnowledgeEntity[]>();
   for (const e of entities) {
     if (excludedSet && excludedSet.has(e.id)) continue;
@@ -39,11 +36,7 @@ function groupEntitiesByDomain(
  * 3. Total variants across all archetypes (when available)
  * 4. Deterministic tie-breaking by entity id
  */
-export function compareEntityPriority(
-  a: KnowledgeEntity,
-  b: KnowledgeEntity,
-  entityVariantTotals?: Map<string, number>,
-): number {
+export function compareEntityPriority(a: KnowledgeEntity, b: KnowledgeEntity, entityVariantTotals?: Map<string, number>): number {
   const aIconic = a.subtopic_id === "iconic_franchises" ? 0 : 1;
   const bIconic = b.subtopic_id === "iconic_franchises" ? 0 : 1;
   if (aIconic !== bIconic) return aIconic - bIconic;
@@ -119,11 +112,7 @@ function evaluateDomainArchPair(
  * 4. Lowest archetype total variants
  * 5. Diagonal tie-breaker (domainIndex + archIndex)
  */
-function sortEvaluations(
-  evaluations: DomainArchEvaluation[],
-  candidateDomainsLength: number,
-  candidateArchetypesLength: number,
-): void {
+function sortEvaluations(evaluations: DomainArchEvaluation[], candidateDomainsLength: number, candidateArchetypesLength: number): void {
   evaluations.sort((a, b) => {
     const aHasUnfilled = a.unfilledEntities.length > 0;
     const bHasUnfilled = b.unfilledEntities.length > 0;
@@ -208,29 +197,23 @@ function pickSelectedEntities(
  * Auto Mode: Selects a cohesive chunk (batch) anchored to exactly ONE Domain and ONE Archetype,
  * picking up to `count` distinct entities within that domain.
  */
-export function selectAutoCandidates(
-  questions: BankQuestion[],
-  options: SelectAutoCandidatesOptions,
-): MatrixComboCandidate[] {
+export function selectAutoCandidates(questions: BankQuestion[], options: SelectAutoCandidatesOptions): MatrixComboCandidate[] {
   const targetCount = Math.max(1, options.count);
   const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
   const coverageMap = options.coverageMap || buildMatrixCoverageMap(questions);
 
   const excludedSet = options.excludeEntityIds
-    ? (options.excludeEntityIds instanceof Set ? options.excludeEntityIds : new Set(options.excludeEntityIds))
+    ? options.excludeEntityIds instanceof Set
+      ? options.excludeEntityIds
+      : new Set(options.excludeEntityIds)
     : null;
 
   const entitiesByDomain = groupEntitiesByDomain(entities, excludedSet);
 
   const candidateDomains = options.domain_id ? [options.domain_id] : Array.from(entitiesByDomain.keys()).sort();
-  const candidateArchetypes =
-    options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
+  const candidateArchetypes = options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
 
-  const { domainVariantTotals, archVariantTotals, entityVariantTotals } = calculateTotals(
-    questions,
-    coverageMap,
-    entities,
-  );
+  const { domainVariantTotals, archVariantTotals, entityVariantTotals } = calculateTotals(questions, coverageMap, entities);
 
   const evaluations: DomainArchEvaluation[] = [];
 

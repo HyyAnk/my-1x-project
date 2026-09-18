@@ -9,6 +9,9 @@ export const QUESTION_BOX_VARIANTS: Record<Exclude<QuizQuestionBoxStyle, "auto">
   comic_bubble: BUILT_IN_QUESTION_BOX_MODULES[1].renderer,
   glass_morphism: BUILT_IN_QUESTION_BOX_MODULES[2].renderer,
   parchment_scroll: BUILT_IN_QUESTION_BOX_MODULES[3].renderer,
+  hazard_stripes: BUILT_IN_QUESTION_BOX_MODULES[4].renderer,
+  cockpit_hud: BUILT_IN_QUESTION_BOX_MODULES[5].renderer,
+  pastel_cloud: BUILT_IN_QUESTION_BOX_MODULES[6].renderer,
 };
 
 export const DEFAULT_QUESTION_BOX_STYLE: Exclude<QuizQuestionBoxStyle, "auto"> = "candy_pop";

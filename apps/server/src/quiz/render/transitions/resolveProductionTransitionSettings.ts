@@ -1,8 +1,4 @@
-﻿import {
-  type ResolvedTransitionSettings,
-  type TransitionSettings,
-  resolveTransitionSettings,
-} from "@studio/shared";
+﻿import { type ResolvedTransitionSettings, type TransitionSettings, resolveTransitionSettings } from "@studio/shared";
 
 export interface ProductionTransitionSettingsOptions {
   preset?: { transitions?: TransitionSettings } | null;
@@ -15,9 +11,7 @@ export interface ProductionTransitionSettingsOptions {
  * Server adapter around the shared resolveTransitionSettings contract.
  * Preserves strict precedence: draft -> explicit/director -> preset -> channel -> defaults.
  */
-export function resolveProductionTransitionSettings(
-  options: ProductionTransitionSettingsOptions,
-): ResolvedTransitionSettings {
+export function resolveProductionTransitionSettings(options: ProductionTransitionSettingsOptions): ResolvedTransitionSettings {
   return resolveTransitionSettings({
     draft: options.draft ?? undefined,
     explicit: options.director ?? undefined,

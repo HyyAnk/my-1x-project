@@ -81,10 +81,7 @@ export const DETERMINISTIC_TRANSITION_QUIZ: QuizV2 = QuizV2Schema.parse({
   ],
 });
 
-export function createTransitionFixture(
-  id: string,
-  aspectRatio: TransitionFixtureAspect = "16:9",
-): TransitionFixture {
+export function createTransitionFixture(id: string, aspectRatio: TransitionFixtureAspect = "16:9"): TransitionFixture {
   const quiz = DETERMINISTIC_TRANSITION_QUIZ;
   const director = createDefaultDirectorPlan(quiz, aspectRatio);
 
@@ -101,9 +98,7 @@ export function createTransitionFixture(
   });
 
   const fps = { numerator: 30, denominator: 1 };
-  const transitionEvent = timeline.events.find(
-    (event) => event.question_id === "specimen-q1" && event.type === "transition.start",
-  );
+  const transitionEvent = timeline.events.find((event) => event.question_id === "specimen-q1" && event.type === "transition.start");
 
   const startSeconds = transitionEvent ? transitionEvent.at_seconds : 9.5;
   const durationSeconds = transitionEvent ? transitionEvent.duration_seconds : 0.8;
@@ -178,15 +173,28 @@ export function createTransitionFixture(
 
 export async function generateDeterministicIntroVideo(targetPath: string, durationSeconds: number = 1.0): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn("ffmpeg", [
-      "-y",
-      "-f", "lavfi", "-i", `testsrc=size=1920x1080:rate=30:duration=${durationSeconds}`,
-      "-f", "lavfi", "-i", `sine=frequency=440:duration=${durationSeconds}`,
-      "-c:v", "libx264",
-      "-pix_fmt", "yuv420p",
-      "-c:a", "aac",
-      targetPath,
-    ], { stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(
+      "ffmpeg",
+      [
+        "-y",
+        "-f",
+        "lavfi",
+        "-i",
+        `testsrc=size=1920x1080:rate=30:duration=${durationSeconds}`,
+        "-f",
+        "lavfi",
+        "-i",
+        `sine=frequency=440:duration=${durationSeconds}`,
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        targetPath,
+      ],
+      { stdio: ["ignore", "pipe", "pipe"] },
+    );
 
     let stderr = "";
     child.stderr.on("data", (chunk) => {

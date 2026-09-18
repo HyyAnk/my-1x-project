@@ -1,28 +1,15 @@
-import {
-  createEnglishSourceSnapshot,
-  sha256Hex,
-  type ConfirmShortReelTopicResponse,
-  type TopicCandidate,
-} from "@studio/shared";
+import { createEnglishSourceSnapshot, sha256Hex, type ConfirmShortReelTopicResponse, type TopicCandidate } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../repository/service.js";
 import { resolveBoundTopicSources } from "../quiz/bank/bridge/boundSourceResolver.js";
 import { convertBankQuestionToQuizQuestionLossless } from "../quiz/bank/bridge/bankQuestionConverter.js";
-import {
-  localizeProductContent,
-  normalizeTargetLanguage,
-  type TranslateFunction,
-} from "../quiz/bank/localization/productLocalization.js";
+import { localizeProductContent, normalizeTargetLanguage, type TranslateFunction } from "../quiz/bank/localization/productLocalization.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 import {
   assertConfirmationReplayOrConflict,
   getTopicConfirmationReceipt,
   type TopicConfirmationOptions,
 } from "../repository/topicConfirmationReceipts.js";
-import {
-  ensurePreparingReceipt,
-  handleCompletedReelReceipt,
-  handleLegacyDiscoveredReel,
-} from "./topicConfirmationReceiptHandler.js";
+import { ensurePreparingReceipt, handleCompletedReelReceipt, handleLegacyDiscoveredReel } from "./topicConfirmationReceiptHandler.js";
 import { createAndFinalizeShortReel } from "./topicConfirmationFinalizer.js";
 
 export interface ConfirmShortReelTopicDeps {
@@ -61,11 +48,7 @@ export async function confirmShortReelTopic(deps: ConfirmShortReelTopicDeps): Pr
   }
 }
 
-async function findAndValidateTopicCandidate(
-  repository: RepositoryService,
-  channelId: string,
-  topicId: string,
-): Promise<TopicCandidate> {
+async function findAndValidateTopicCandidate(repository: RepositoryService, channelId: string, topicId: string): Promise<TopicCandidate> {
   const topics = await repository.listTopics(channelId);
   const topic = topics.find((t) => t.topic_id === topicId);
   if (!topic) {

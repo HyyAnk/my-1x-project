@@ -87,7 +87,9 @@ export function compileQuizAssetPrompt(
   request: QuizAssetRequirement,
   consistencyGroup?: AssetConsistencyGroup,
   visualStyle: QuizImageStyle = "pixar_3d",
+  options?: { layoutId?: string },
 ): CompiledAssetPrompt {
+  const layoutId = options?.layoutId ?? request.sizing?.layout_id;
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const rules = purposeRules(request.purpose);
   const cleanSubject = request.subject.trim();
@@ -116,7 +118,7 @@ export function compileQuizAssetPrompt(
         : "Use facial features only when naturally present in the subject; living creatures, dinosaurs, and animals must have complete clear eyes with pupils, while inanimate objects have no cartoon faces.",
   ] : [];
 
-  const framing = framingRules(request.aspect_ratio, request.purpose);
+  const framing = framingRules(request.aspect_ratio, request.purpose, { layoutId });
   const rawPrompt = [
     "Create one image asset for a children's educational quiz video.",
     `Subject: ${cleanSubject}.`,
@@ -135,7 +137,7 @@ export function compileQuizAssetPrompt(
 
   return {
     prompt,
-    cacheVersion: `${contract.id}-v4-subject-identity`,
+    cacheVersion: `${contract.id}-v5-layout-framing`,
     critical: request.required,
   };
 }

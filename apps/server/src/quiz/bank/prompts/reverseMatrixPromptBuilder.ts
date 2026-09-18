@@ -166,21 +166,6 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
           ``,
         ]
       : []),
-    ...(options.archetypeId === "clue_deduction"
-      ? [
-          `=== SPECIALIZED CLUE DEDUCTION DIRECTIVE ===`,
-          `CRITICAL RULES FOR DETECTIVE CLUE DEDUCTION:`,
-          `1. DEDUCTIVE REASONING OVER DRY FACTS: DO NOT phrase questions as passive biographical trivia ('Which [adjective] [person] [did something]?'). Frame them as active mystery solving where the viewer deduces the answer from Clue Image A.`,
-          `2. DEDUCTION HOOK ROTATION: Rotate across these 5 phrasing patterns:`,
-          `   - Clue pointer: "This clue points directly to which legendary figure?"`,
-          `   - Artifact ownership: "Who is famous for wielding this [weapon / artifact / symbol]?"`,
-          `   - Detective deduction: "Can you deduce the [character / profession] from this single clue?"`,
-          `   - Trail puzzle: "Match the clue: Which [hero / figure] [legendary feat]?"`,
-          `   - Signature legend: "Whose signature legend revolves around this [item / creature]?"`,
-          `3. ANCHORING: Use the entity's Core Traits as the mystery clue that points decisively to the entity.`,
-          ``,
-        ]
-      : []),
     ...(options.archetypeId === "mystery_reveal"
       ? [
           `=== SPECIALIZED MYSTERY REVEAL DIRECTIVE ===`,
@@ -221,7 +206,9 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
     options.archetypeId === "speed_blitz"
       ? `3. TRICK / RIDDLE ANCHOR: Craft a fast-reflex brainteaser or cognitive trap situated around the entity (its traits, behavior, or physical nature).`
       : `3. TRUTH & ACCURACY: Base the question directly on the provided Core Traits, True / False Claims, or Versus Rivals. Do NOT hallucinate facts.`,
-    `4. DISTRACTORS: Draw plausible wrong choices from the provided Distractor Pool or Versus Rivals whenever possible.`,
+    options.archetypeId === "mystery_reveal"
+      ? `4. SINGLE ANSWER: For mystery_reveal, provide EXACTLY ONE choice (the canonical target entity answer). Do NOT provide distractors or wrong choices.`
+      : `4. DISTRACTORS: Draw plausible wrong choices from the provided Distractor Pool or Versus Rivals whenever possible.`,
     `5. CONCISE HOOK: Question text must be strictly 6 to 12 words (40-75 characters max) suited for fast mobile reading.`,
     `6. STRICT CONTENT POLICY & ANTI-OBSCURITY CONSTRAINTS:`,
     `   - DO NOT create offensive, gory, or dangerous content.`,
@@ -240,10 +227,14 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
     `    "subtopic_id": "<target subtopic>",`,
     `    "question": "Punchy question text?",`,
     `    "format": "${guideline.format}",`,
-    `    "choices": [`,
-    `      { "id": "A", "text": "Option A", "is_correct": true },`,
-    `      { "id": "B", "text": "Option B", "is_correct": false }`,
-    `    ],`,
+    ...(options.archetypeId === "mystery_reveal"
+      ? [`    "choices": [`, `      { "id": "A", "text": "Target Entity Name", "is_correct": true }`, `    ],`]
+      : [
+          `    "choices": [`,
+          `      { "id": "A", "text": "Option A", "is_correct": true },`,
+          `      { "id": "B", "text": "Option B", "is_correct": false }`,
+          `    ],`,
+        ]),
     `    "correct_choice_id": "A",`,
     `    "explanation": "Clear explanation of the correct answer.",`,
     `    "fun_fact": "Surprising related fact.",`,

@@ -1,4 +1,3 @@
-import { EventEmitter } from "node:events";
 import {
   nowIso,
   type AppConfig,
@@ -27,53 +26,22 @@ import { cancelTask, submitTask } from "./taskSubmission.js";
 import { TaskMutationQueue } from "./taskMutationQueue.js";
 import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 import { attachTaskManagerClientEvents, type ConnectionStatus } from "./taskClientEvents.js";
-import { runFailedBuildCleanup, scheduleFailedBuildCleanup } from "./taskFailedBuildCleaner.js";
-import {
-  run,
-  handleNotification,
-  handleServerRequest,
-  completeWithOutput,
-  retryQuizResearch,
-  retryScript,
-  retryVisualBible,
-  retrySequenceScenes,
-  retryTopicSuggestions,
-} from "./codexRunner.js";
-import {
-  createImageProvider,
-  generateBundleImageWithSafetyRetry,
-  runAntigravityBundleImageTask,
-  runGpti2BundleImageTask,
-  runShopAiKeyImageTask,
-} from "./imageRunner.js";
-import {
-  runPipelineTask,
-  hasReadyArtifact,
-  generatePipelineBundleImages,
-  runQuizV2Pipeline,
-  attachPipelineBundleImages,
-  hasReadyScript,
-  hasValidNarrationAsset,
-  isShotPlanFresh,
-  waitForTaskTerminal,
-} from "./pipelineRunner.js";
-import { runAudioTask } from "./audioRunner.js";
-import { runVideoTask } from "./videoRunner.js";
 import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
-import {
-  hasActiveEpisodeTasks,
-  hasActiveChannelTasks,
-  pruneEpisodeTasks,
-  pruneChannelTasks,
-  reconcileQuestionHistory,
-  reconcileOrphanedTasks,
-  reconcileStartupState,
-} from "./taskLifecycle.js";
+import { TaskManagerLifecycleBase } from "./lifecycle/taskLifecycleMaintenance.js";
 
 const ACTIVE_TERMINAL_STATUSES = ["QUEUED", "RUNNING", "WAITING_APPROVAL"] as const;
+const DEFAULT_AUDIO_CONFIG: AppConfig["audio_generation"] = {
+  provider: "chatterbox",
+  service_url: "http://127.0.0.1:8890",
+  exaggeration: 0.5,
+  cfg_weight: 0.5,
+  max_concurrent_tasks: 2,
+  merge_gap_ms: 300,
+  match_target_duration: true,
+};
 
-export class TaskManager extends EventEmitter implements TaskManagerRuntime {
-  private readonly abortRegistry = new TaskAbortRegistry();
+export class TaskManager extends TaskManagerLifecycleBase implements TaskManagerRuntime {
+  readonly abortRegistry = new TaskAbortRegistry();
   private readonly pipelineEngine = new PipelineExecutionEngine();
   private readonly queueCoordinator = new TaskQueueCoordinator(() => pumpTaskQueue(this));
   private approvalRegistry!: TaskApprovalRegistry;
@@ -91,12 +59,12 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly shortReelTargets: Map<string, GenerateShortReelTarget> = this.abortRegistry.shortReelTargets;
   readonly imageVariants = new Map<string, number>();
   readonly topicHints = new Map<string, string>();
+  readonly activeAudio = new Set<string>();
   runningCount = 0;
   runningAudioCount = 0;
   runningImageCount = 0;
   runningVideoCount = 0;
   runningPipelineCount = 0;
-  readonly activeAudio = new Set<string>();
   audioConfig: AppConfig["audio_generation"];
   imageConfig: AppConfig["image_generation"];
   imageFallbackConfig: AppConfig["image_fallback"];
@@ -109,7 +77,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   antigravityStatus: ConnectionStatus = "disconnected";
   activeEngine: "codex" | "antigravity" = "codex";
 
-  /** Pending approval requests, owned by the approval registry (frozen flat contract). */
   get approvalRequests(): Map<number, { taskId: string; request: CodexServerRequest }> {
     return this.approvalRegistry.requests;
   }
@@ -121,15 +88,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     readonly maxConcurrent: number,
     videoConfigOrMaxSceneDuration: AppConfig["video_generation"] | number,
     readonly logger: StudioLogger,
-    audioConfig: AppConfig["audio_generation"] = {
-      provider: "chatterbox",
-      service_url: "http://127.0.0.1:8890",
-      exaggeration: 0.5,
-      cfg_weight: 0.5,
-      max_concurrent_tasks: 2,
-      merge_gap_ms: 300,
-      match_target_duration: true,
-    },
+    audioConfig: AppConfig["audio_generation"] = DEFAULT_AUDIO_CONFIG,
     audioProviderFactory?: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider,
     imageConfig: AppConfig["image_generation"] = DEFAULT_CONFIG.image_generation,
     readonly antigravity?: AntigravityClient,
@@ -158,8 +117,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   async load(): Promise<void> {
-    const loaded = await loadTasksFromDisk(this.repository.roots.runtime);
-    for (const task of loaded) this.tasks.set(task.task_id, task);
+    for (const task of await loadTasksFromDisk(this.repository.roots.runtime)) this.tasks.set(task.task_id, task);
     await this.reconcileOrphanedTasks();
     await this.reconcileQuestionHistory();
     await this.cleanupExpiredFailedBuilds();
@@ -188,9 +146,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
   updateVideoConfig(config: AppConfig["video_generation"]): void {
     this.videoConfig = config;
-    if (config.max_concurrent_tasks && !process.env.MAX_CONCURRENT_VIDEO_RENDERS) {
+    if (config.max_concurrent_tasks && !process.env.MAX_CONCURRENT_VIDEO_RENDERS)
       videoRenderConcurrencyLimiter.setMaxConcurrency(config.max_concurrent_tasks);
-    }
     void this.pump();
   }
   updateImageConfig(config: AppConfig["image_generation"]): void {
@@ -245,6 +202,14 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     );
   }
 
+  private registerSubmittedTask(task: Task): Task {
+    this.tasks.set(task.task_id, task);
+    void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
+    this.emitTask(task);
+    void this.pump();
+    return task;
+  }
+
   submit(
     taskType: TaskType,
     channelId: string,
@@ -255,33 +220,15 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     reelId?: string | null,
     parentTaskId?: string,
   ): Task {
-    const task = submitTask(
-      this,
-      taskType,
-      channelId,
-      episodeId,
-      sceneNumber,
-      requestedImageVariant,
-      topicHint,
-      reelId,
-      undefined,
-      parentTaskId,
+    return this.registerSubmittedTask(
+      submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint, reelId, undefined, parentTaskId),
     );
-    this.tasks.set(task.task_id, task);
-    void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
-    this.emitTask(task);
-    void this.pump();
-    return task;
   }
 
   submitShortReel(channelId: string, reelId: string, request: GenerateShortReelRequest): Task {
     const task = submitTask(this, "GENERATE_SHORT_REEL_PACKAGE", channelId, null, undefined, undefined, undefined, reelId, request);
     this.shortReelTargets.set(task.task_id, request.target);
-    this.tasks.set(task.task_id, task);
-    void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
-    this.emitTask(task);
-    void this.pump();
-    return task;
+    return this.registerSubmittedTask(task);
   }
 
   async cancel(taskId: string): Promise<Task> {
@@ -290,8 +237,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     return res;
   }
 
-  decideApproval(taskId: string, requestId: number, decision: "accept" | "acceptForSession" | "decline" | "cancel"): Promise<Task> {
-    return this.approvalRegistry.decide(taskId, requestId, decision);
+  decideApproval(taskId: string, reqId: number, decision: "accept" | "acceptForSession" | "decline" | "cancel"): Promise<Task> {
+    return this.approvalRegistry.decide(taskId, reqId, decision);
   }
 
   private pump(): Promise<void> {
@@ -335,134 +282,5 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
   emitEvent(event: TaskEvent): void {
     this.emit("event", event);
-  }
-
-  // --- Task execution (delegated to focused runner modules) ---
-
-  run(task: Task): Promise<void> {
-    return run.call(this, task);
-  }
-  createImageProvider(
-    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
-    output?: string,
-  ): ReturnType<TaskManagerRuntime["createImageProvider"]> {
-    return createImageProvider.call(this, imageTarget, output);
-  }
-  generateBundleImageWithSafetyRetry(
-    task: Task,
-    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
-    initialPrompt: string,
-    signal?: AbortSignal,
-    output?: string,
-    visualBibleContent?: string,
-  ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }> {
-    return generateBundleImageWithSafetyRetry.call(this, task, imageTarget, initialPrompt, signal, output, visualBibleContent);
-  }
-  runGpti2BundleImageTask(task: Task): Promise<void> {
-    return runGpti2BundleImageTask.call(this, task);
-  }
-  runAntigravityBundleImageTask(task: Task): Promise<void> {
-    return runAntigravityBundleImageTask.call(this, task);
-  }
-  runShopAiKeyImageTask(task: Task): Promise<void> {
-    return runShopAiKeyImageTask.call(this, task);
-  }
-  runPipelineTask(task: Task): Promise<void> {
-    return runPipelineTask.call(this, task);
-  }
-  runVideoTask(task: Task): Promise<void> {
-    return runVideoTask.call(this, task);
-  }
-  hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean> {
-    return hasReadyArtifact.call(this, channelId, episodeId, filename);
-  }
-  generatePipelineBundleImages(task: Task, run: PipelineRun): Promise<void> {
-    return generatePipelineBundleImages.call(this, task, run);
-  }
-  runQuizV2Pipeline(task: Task): Promise<void> {
-    return runQuizV2Pipeline.call(this, task);
-  }
-  attachPipelineBundleImages(channelId: string, episodeId: string): Promise<void> {
-    return attachPipelineBundleImages.call(this, channelId, episodeId);
-  }
-  hasReadyScript(channelId: string, episodeId: string): Promise<boolean> {
-    return hasReadyScript.call(this, channelId, episodeId);
-  }
-  hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean> {
-    return hasValidNarrationAsset.call(this, channelId, episodeId, assetPath);
-  }
-  isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean> {
-    return isShotPlanFresh.call(this, channelId, episodeId);
-  }
-  waitForTaskTerminal(
-    taskId: string,
-    run: PipelineRun,
-    onProgress?: (task: Task) => Promise<void> | void,
-    pollIntervalMs?: number,
-  ): Promise<Task> {
-    return waitForTaskTerminal.call(this, taskId, run, onProgress, pollIntervalMs);
-  }
-  runAudioTask(task: Task): Promise<void> {
-    return runAudioTask.call(this, task);
-  }
-  handleNotification(method: string, params: Record<string, unknown>): void {
-    return handleNotification.call(this, method, params);
-  }
-  handleServerRequest(request: CodexServerRequest): void {
-    return handleServerRequest.call(this, request);
-  }
-  completeWithOutput(active: ActiveRun): Promise<void> {
-    return completeWithOutput.call(this, active);
-  }
-  retryQuizResearch(active: ActiveRun, reason: string): Promise<void> {
-    return retryQuizResearch.call(this, active, reason);
-  }
-  retryScript(active: ActiveRun, reason: string): Promise<void> {
-    return retryScript.call(this, active, reason);
-  }
-  retryVisualBible(active: ActiveRun, reason: string): Promise<void> {
-    return retryVisualBible.call(this, active, reason);
-  }
-  retrySequenceScenes(active: ActiveRun, reason: string): Promise<void> {
-    return retrySequenceScenes.call(this, active, reason);
-  }
-  retryTopicSuggestions(active: ActiveRun, reason: string): Promise<void> {
-    return retryTopicSuggestions.call(this, active, reason);
-  }
-
-  // --- Lifecycle maintenance (prune/reconcile/cleanup) ---
-
-  hasActiveEpisodeTasks(episodeId: string): boolean {
-    return hasActiveEpisodeTasks.call(this, episodeId);
-  }
-  hasActiveChannelTasks(channelId: string): boolean {
-    return hasActiveChannelTasks.call(this, channelId);
-  }
-  async pruneEpisodeTasks(episodeId: string): Promise<string[]> {
-    const taskIds = await pruneEpisodeTasks.call(this, episodeId);
-    this.abortRegistry.releaseShortReelsFor(taskIds);
-    return taskIds;
-  }
-  async pruneChannelTasks(channelId: string): Promise<string[]> {
-    const taskIds = await pruneChannelTasks.call(this, channelId);
-    this.abortRegistry.releaseShortReelsFor(taskIds);
-    return taskIds;
-  }
-  reconcileQuestionHistory(): Promise<void> {
-    return reconcileQuestionHistory.call(this);
-  }
-  async reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }> {
-    const result = await reconcileOrphanedTasks.call(this);
-    this.abortRegistry.reconcileShortReels(new Set(this.tasks.keys()));
-    return result;
-  }
-  reconcileStartupState(): Promise<{ prunedDirs: string[]; reclaimedBytes: number }> {
-    return reconcileStartupState.call(this);
-  }
-  cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
-    return runFailedBuildCleanup(this, nowMs);
-  }
-  startFailedBuildCleanupTimer(): void {
-    scheduleFailedBuildCleanup(this);
   }
 }

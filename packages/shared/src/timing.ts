@@ -117,6 +117,7 @@ export type SandboxPhaseTimeline = {
   questionStart: number;
   choicesStart: number;
   thinkingStart: number;
+  timerHideAt?: number;
   revealStart: number;
   explainStart: number;
   totalDuration: number;
@@ -125,21 +126,29 @@ export type SandboxPhaseTimeline = {
 /**
  * Computes exact phase boundary timestamps based on a timing policy.
  */
-export function computeSandboxPhaseTimeline(policy: QuizTimingPolicy = timingPolicyForAgeBand("7-9")): SandboxPhaseTimeline {
+export function computeSandboxPhaseTimeline(
+  policyOrOptions?: QuizTimingPolicy | { isSingleReveal?: boolean },
+  maybeOptions?: { isSingleReveal?: boolean },
+): SandboxPhaseTimeline {
+  const options = policyOrOptions && "isSingleReveal" in policyOrOptions ? policyOrOptions : maybeOptions;
+  const policy = policyOrOptions && "countdown_seconds" in policyOrOptions ? policyOrOptions : timingPolicyForAgeBand("7-9");
+  const isSingleReveal = options?.isSingleReveal ?? false;
   const questionStart = 0;
-  const choicesStart = 0.85;
-  const thinkingStart = 2.47;
-  const revealStart = 7.47;
+  const choicesStart = isSingleReveal ? 0 : 0.85;
+  const thinkingStart = isSingleReveal ? 1.0 : 2.47;
+  const timerHideAt = isSingleReveal ? 7.47 : undefined;
+  const revealStart = isSingleReveal ? 7.97 : 7.47;
   // In production candyArcadeComposition, rewardStart = revealStart + 0.8s,
   // at which point the fact card enters and reward celebration plays.
   const revealDuration = 0.8;
-  const explainStart = revealStart + revealDuration;
-  const totalDuration = explainStart + policy.explanation_hold_seconds;
+  const explainStart = Number((revealStart + revealDuration).toFixed(3));
+  const totalDuration = Number((explainStart + policy.explanation_hold_seconds).toFixed(3));
 
   return {
     questionStart,
     choicesStart,
     thinkingStart,
+    timerHideAt,
     revealStart,
     explainStart,
     totalDuration,

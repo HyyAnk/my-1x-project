@@ -1,13 +1,7 @@
-import {
-  type TransitionCatalogResponse,
-  computeCatalogRevision,
-  listTransitionDefinitions,
-} from "@studio/shared";
+import { type TransitionCatalogResponse, computeCatalogRevision, listTransitionDefinitions } from "@studio/shared";
 import { SPECIMEN_SAMPLE_REVISION } from "../render/transitions/prepareTransitionSpecimen.js";
 
-export function getTransitionCatalogSnapshot(
-  sampleRevision: string = SPECIMEN_SAMPLE_REVISION,
-): TransitionCatalogResponse {
+export function getTransitionCatalogSnapshot(sampleRevision: string = SPECIMEN_SAMPLE_REVISION): TransitionCatalogResponse {
   const revision = computeCatalogRevision();
   const entries = listTransitionDefinitions().map((def) => ({
     id: def.id,

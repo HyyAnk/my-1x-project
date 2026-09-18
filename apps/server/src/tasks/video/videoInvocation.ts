@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url);
 export function getHyperframesPackageVersion(): string {
   try {
     const pkgJson = require.resolve("hyperframes/package.json");
-    const pkg = require(pkgJson);
+    const pkg = require(pkgJson) as { version?: unknown };
     return typeof pkg.version === "string" ? pkg.version : "0.8.17";
   } catch {
     throw new TransitionDomainError(

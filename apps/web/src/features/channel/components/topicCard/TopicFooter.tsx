@@ -40,23 +40,13 @@ export function TopicFooter({
         className="primary-button topic-build-btn"
         disabled={disabled || !isQuestionCountValid || !canConfirm}
         title={
-          !canConfirm
-            ? recoveryAction
-            : !isQuestionCountValid
-              ? `Question count must not exceed capacity (${sourceCapacity})`
-              : undefined
+          !canConfirm ? recoveryAction : !isQuestionCountValid ? `Question count must not exceed capacity (${sourceCapacity})` : undefined
         }
         onClick={() => onConfirm(isShortReel ? 1 : questionCount, selectedStyle)}
       >
         {busy ? <CircleNotch className="spin" size={15} /> : <CheckCircle size={15} weight="bold" />}
         <span>
-          {busy
-            ? isShortReel
-              ? "Creating Short-Reel…"
-              : "Selecting Topic…"
-            : isShortReel
-              ? "Create Short-Reel"
-              : "Select Topic"}
+          {busy ? (isShortReel ? "Creating Short-Reel…" : "Selecting Topic…") : isShortReel ? "Create Short-Reel" : "Select Topic"}
         </span>
       </button>
     </div>

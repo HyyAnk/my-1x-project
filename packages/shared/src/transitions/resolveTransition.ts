@@ -1,15 +1,5 @@
-import {
-  invalidTiming,
-  TransitionContextSchema,
-  unknownTransition,
-  unsupportedPlacement,
-} from "./transition.schemas.js";
-import type {
-  ResolvedTransitionInstance,
-  TransitionContext,
-  TransitionImplementation,
-  TransitionSelection,
-} from "./transition.types.js";
+import { invalidTiming, TransitionContextSchema, unknownTransition, unsupportedPlacement } from "./transition.schemas.js";
+import type { ResolvedTransitionInstance, TransitionContext, TransitionImplementation, TransitionSelection } from "./transition.types.js";
 import { fitTransitionWindow, framesToSeconds, quantizeSecondsToFrames } from "./transitionTiming.js";
 
 type ImplementationGetter = (id: string) => TransitionImplementation | undefined;
@@ -101,10 +91,7 @@ function getImplementation(id: string): TransitionImplementation | Omit<Transiti
   return fallback;
 }
 
-export function resolveTransitionInstance(
-  selection: TransitionSelection,
-  context: TransitionContext,
-): ResolvedTransitionInstance {
+export function resolveTransitionInstance(selection: TransitionSelection, context: TransitionContext): ResolvedTransitionInstance {
   TransitionContextSchema.parse(context);
 
   if (!selection.id || typeof selection.id !== "string") {

@@ -16,43 +16,36 @@ const test = (name: string, testCase: TestCallback): void => {
 test("QUIZ_LAYOUT_CATALOG enforces standardized asset metrics and aspect ratios", () => {
   // media_left_choices_right: 4:3 question asset
   assert.deepEqual(QUIZ_LAYOUT_CATALOG.media_left_choices_right.metrics.assets.question, {
-    maxWidth: 1056,
-    maxHeight: 792,
+    maxWidth: 1120,
+    maxHeight: 840,
     aspectRatio: "4:3",
   });
 
-  // verdict_true_false: 16:9 question asset
+  // verdict_true_false: 4:3 question asset
   assert.deepEqual(QUIZ_LAYOUT_CATALOG.verdict_true_false.metrics.assets.question, {
-    maxWidth: 1408,
-    maxHeight: 792,
-    aspectRatio: "16:9",
-  });
-
-  // clue_deduction: 16:9 question asset
-  assert.deepEqual(QUIZ_LAYOUT_CATALOG.clue_deduction.metrics.assets.question, {
-    maxWidth: 896,
-    maxHeight: 504,
-    aspectRatio: "16:9",
-  });
-
-  // visual_choices_three: 4:3 choice asset
-  assert.deepEqual(QUIZ_LAYOUT_CATALOG.visual_choices_three.metrics.assets.choice, {
-    maxWidth: 672,
-    maxHeight: 504,
+    maxWidth: 1216,
+    maxHeight: 912,
     aspectRatio: "4:3",
   });
 
-  // visual_choices_three_pure: 1:1 choice asset
-  assert.deepEqual(QUIZ_LAYOUT_CATALOG.visual_choices_three_pure.metrics.assets.choice, {
-    maxWidth: 728,
-    maxHeight: 728,
+  // visual_choices_three: 1:1 choice asset
+  assert.deepEqual(QUIZ_LAYOUT_CATALOG.visual_choices_three.metrics.assets.choice, {
+    maxWidth: 664,
+    maxHeight: 664,
     aspectRatio: "1:1",
+  });
+
+  // visual_choices_three_pure: 3:4 choice asset
+  assert.deepEqual(QUIZ_LAYOUT_CATALOG.visual_choices_three_pure.metrics.assets.choice, {
+    maxWidth: 648,
+    maxHeight: 864,
+    aspectRatio: "3:4",
   });
 
   // split_versus_two: 16:9 choice asset, 4:3 question asset
   assert.deepEqual(QUIZ_LAYOUT_CATALOG.split_versus_two.metrics.assets.choice, {
-    maxWidth: 1024,
-    maxHeight: 576,
+    maxWidth: 1152,
+    maxHeight: 648,
     aspectRatio: "16:9",
   });
   assert.deepEqual(QUIZ_LAYOUT_CATALOG.split_versus_two.metrics.assets.question, {
@@ -63,8 +56,8 @@ test("QUIZ_LAYOUT_CATALOG enforces standardized asset metrics and aspect ratios"
 
   // mystery_reveal: 16:9 question asset
   assert.deepEqual(QUIZ_LAYOUT_CATALOG.mystery_reveal.metrics.assets.question, {
-    maxWidth: 768,
-    maxHeight: 432,
+    maxWidth: 1408,
+    maxHeight: 792,
     aspectRatio: "16:9",
   });
 
@@ -84,10 +77,9 @@ test("resolveQuizLayoutAssetAspectRatio resolves question asset ratios correctly
   assert.equal(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "hero_question_image"), "4:3");
   assert.equal(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "question_illustration"), "4:3");
   assert.equal(resolveQuizLayoutAssetAspectRatio("split_versus_two", "hero_question_image"), "4:3");
+  assert.equal(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image"), "4:3");
 
   // 16:9 layouts
-  assert.equal(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image"), "16:9");
-  assert.equal(resolveQuizLayoutAssetAspectRatio("clue_deduction", "hero_question_image"), "16:9");
   assert.equal(resolveQuizLayoutAssetAspectRatio("mystery_reveal", "hero_question_image"), "16:9");
   assert.equal(resolveQuizLayoutAssetAspectRatio("mystery_reveal", "question_illustration"), "16:9");
   assert.equal(resolveQuizLayoutAssetAspectRatio("baseline", "hero_question_image"), "16:9");
@@ -95,13 +87,13 @@ test("resolveQuizLayoutAssetAspectRatio resolves question asset ratios correctly
 });
 
 test("resolveQuizLayoutAssetAspectRatio resolves choice asset ratios correctly", () => {
-  // 4:3 choice
-  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "answer_option"), "4:3");
-  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "choice_illustration"), "4:3");
-
   // 1:1 choice
-  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option"), "1:1");
-  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "choice_illustration"), "1:1");
+  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "answer_option"), "1:1");
+  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "choice_illustration"), "1:1");
+
+  // 3:4 choice
+  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option"), "3:4");
+  assert.equal(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "choice_illustration"), "3:4");
 
   // 16:9 choice
   assert.equal(resolveQuizLayoutAssetAspectRatio("split_versus_two", "answer_option"), "16:9");

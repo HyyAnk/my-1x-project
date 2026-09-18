@@ -5,11 +5,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 import { QuizV2Schema } from "@studio/shared";
-import {
-  DEFAULT_BGM_BASE_VOLUME,
-  defaultBgmRegistry,
-  BgmRegistry,
-} from "../src/quiz/audio/bgmRegistry.js";
+import { DEFAULT_BGM_BASE_VOLUME, defaultBgmRegistry, BgmRegistry } from "../src/quiz/audio/bgmRegistry.js";
 import {
   DEFAULT_DUCKING_ATTACK_MS,
   DEFAULT_DUCKING_RATIO,
@@ -18,11 +14,7 @@ import {
   buildFilterGraphScript,
   type MasterSoundtrackPlan,
 } from "../src/quiz/audio/soundtrackFfmpegBuilder.js";
-import {
-  defaultBgmCandidateDirectories,
-  mixMasterSoundtrack,
-  resolveBgmScheduleItems,
-} from "../src/quiz/audio/soundtrackMixer.js";
+import { defaultBgmCandidateDirectories, mixMasterSoundtrack } from "../src/quiz/audio/soundtrackMixer.js";
 import { createSilenceWav } from "../src/quiz/audio/voiceSynthesis.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -142,9 +134,7 @@ describe("Soundtrack Ducking Engine", () => {
     ]);
 
     const script = buildFilterGraphScript(plan, inputIndices);
-    expect(script).toContain(
-      "sidechaincompress=threshold=0.04:ratio=4:attack=100:release=300[bgm_ducked];",
-    );
+    expect(script).toContain("sidechaincompress=threshold=0.04:ratio=4:attack=100:release=300[bgm_ducked];");
     expect(script).toContain("volume=1.0");
     expect(script).toContain("volume=0.04");
   });

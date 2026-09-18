@@ -130,11 +130,7 @@ export function buildCandidateFromSlot(
 /**
  * Builds a ShortReel TopicRunCandidate for an allocated slot.
  */
-export function buildShortReelRunCandidate(
-  slot: AllocatedSlot,
-  item: Record<string, unknown>,
-  channelId: string,
-): TopicRunCandidate {
+export function buildShortReelRunCandidate(slot: AllocatedSlot, item: Record<string, unknown>, channelId: string): TopicRunCandidate {
   const textFields = extractCandidateTextFields(item, slot.slot);
   const topicId = makeId("topic_reel");
   const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
@@ -170,23 +166,13 @@ export function buildShortReelRunCandidate(
 /**
  * Builds an Episode TopicRunCandidate for an allocated slot.
  */
-export function buildEpisodeRunCandidate(
-  slot: AllocatedSlot,
-  item: Record<string, unknown>,
-  channelId: string,
-): TopicRunCandidate {
+export function buildEpisodeRunCandidate(slot: AllocatedSlot, item: Record<string, unknown>, channelId: string): TopicRunCandidate {
   const textFields = extractCandidateTextFields(item, slot.slot);
   const topicId = makeId("topic_ep");
   const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
   const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
-  const visualStyle =
-    typeof item.visual_style === "string"
-      ? (item.visual_style as EpisodeTopicCandidate["visual_style"])
-      : "mixed";
-  const ageBand =
-    typeof item.age_band === "string"
-      ? (item.age_band as EpisodeTopicCandidate["age_band"])
-      : "7-9";
+  const visualStyle = typeof item.visual_style === "string" ? (item.visual_style as EpisodeTopicCandidate["visual_style"]) : "mixed";
+  const ageBand = typeof item.age_band === "string" ? (item.age_band as EpisodeTopicCandidate["age_band"]) : "7-9";
 
   const episodeCandidate: EpisodeTopicCandidate = {
     topic_id: topicId,
@@ -221,11 +207,7 @@ export function buildEpisodeRunCandidate(
 /**
  * Builds and normalizes a candidate from an allocated slot and raw match.
  */
-export function buildCandidateFromItem(
-  slot: AllocatedSlot,
-  rawMatch: unknown,
-  channelId: string,
-): TopicRunCandidate {
+export function buildCandidateFromItem(slot: AllocatedSlot, rawMatch: unknown, channelId: string): TopicRunCandidate {
   const item = rawMatch as Record<string, unknown>;
   if (slot.contentKind === "short_reel") {
     return buildShortReelRunCandidate(slot, item, channelId);

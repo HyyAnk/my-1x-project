@@ -1,15 +1,16 @@
 import { lazy, Suspense } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
 import { useTranslation } from "../../i18n";
-import { getLocalizedActionMeta } from "./constants";
 import { MascotConceptStep } from "./components/MascotConceptStep";
 import { MascotActionsStep } from "./components/MascotActionsStep";
+import { MascotAnimationProcessingStep } from "./components/MascotAnimationProcessingStep";
+import { MascotGeneratorStepperHeader } from "./components/MascotGeneratorStepperHeader";
 import { useMascotGenerator } from "./hooks/useMascotGenerator";
 import { useMascotStyles } from "./hooks/useMascotStyles";
 import type { Notice } from "../../components/types";
 
-const MascotAnimationStep = lazy(() =>
-  import("./components/MascotAnimationStep").then((module) => ({ default: module.MascotAnimationStep })),
+const MascotMotionAnimationStep = lazy(() =>
+  import("./components/MascotMotionAnimationStep").then((module) => ({ default: module.MascotMotionAnimationStep })),
 );
 
 type MascotGeneratorTabProps = {
@@ -97,90 +98,18 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
 
   return (
     <div className="mascot-generator-container">
-      {/* Stepper Header */}
-      <div className="wizard-stepper">
-        <button
-          type="button"
-          className={`wizard-step-btn ${generatorStep === 1 ? "is-active" : generatorStep > 1 ? "is-done" : ""}`}
-          onClick={() => setGeneratorStep(1)}
-        >
-          <span className="step-num">1</span>
-          <span className="step-label">{t("mascots.generatorStep1")}</span>
-        </button>
-        <div className="wizard-step-line" />
-        <button
-          type="button"
-          className={`wizard-step-btn ${generatorStep === 2 ? "is-active" : generatorStep > 2 ? "is-done" : ""}`}
-          onClick={() => setGeneratorStep(2)}
-          disabled={!editingMascot?.master_image_url}
-        >
-          <span className="step-num">2</span>
-          <span className="step-label">{t("mascots.generatorStep2")}</span>
-        </button>
-        <div className="wizard-step-line" />
-        <button
-          type="button"
-          className={`wizard-step-btn ${generatorStep === 3 ? "is-active" : ""}`}
-          onClick={() => setGeneratorStep(3)}
-          disabled={!editingMascot?.master_image_url}
-        >
-          <span className="step-num">3</span>
-          <span className="step-label">{t("mascots.generatorStep3")}</span>
-        </button>
-      </div>
+      <MascotGeneratorStepperHeader
+        generatorStep={generatorStep}
+        onSelectStep={setGeneratorStep}
+        hasMasterImage={Boolean(editingMascot?.master_image_url)}
+        busyAction={busyAction}
+        overallProgress={overallProgress}
+        generationElapsed={generationElapsed}
+        currentStageMessage={currentStageMessage}
+        batchState={batchState}
+      />
 
-      {/* GLOBAL GENERATOR PROGRESS & ANIMATION BANNER */}
-      {busyAction !== null ? (
-        <div
-          className="mascot-gen-progress-banner"
-          role="progressbar"
-          aria-valuenow={overallProgress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          <div className="mascot-gen-banner-main">
-            <div className="mascot-gen-banner-left">
-              <div className="mascot-gen-banner-text">
-                <div className="mascot-gen-banner-title-row">
-                  <h4 className="mascot-gen-banner-title">
-                    {busyAction === "concept"
-                      ? t("mascots.globalGenTitleConcept")
-                      : busyAction === "batch-core"
-                        ? t("mascots.globalGenTitleBatchCore")
-                        : busyAction === "batch"
-                          ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 2 })
-                          : busyAction === "assign"
-                            ? t("mascots.savingAndApplyingBtn") || "Saving & Applying..."
-                            : busyAction === "matting-master" || busyAction?.startsWith("matting-")
-                              ? busyAction === "matting-all"
-                                ? t("mascots.globalGenTitleMattingAll", { total: 2 })
-                                : t("mascots.globalGenTitleMatting")
-                              : t("mascots.globalGenTitleSingle", {
-                                  action: getLocalizedActionMeta(busyAction, t).label.split(" ")[0],
-                                })}
-                  </h4>
-                  <span className="mascot-gen-badge-active">
-                    <span className="mascot-gen-pulse-dot" />
-                    {t("mascots.globalGenActiveBadge")}
-                  </span>
-                </div>
-                <p className="mascot-gen-banner-sub">{currentStageMessage || t("mascots.globalGenReassurance")}</p>
-              </div>
-            </div>
-
-            <div className="mascot-gen-banner-right">
-              <span className="mascot-gen-timer-pill">{Math.floor(generationElapsed)}s</span>
-              <span className="mascot-gen-percent-text">{overallProgress}%</span>
-            </div>
-          </div>
-
-          <div className="mascot-gen-bar-track">
-            <div className="mascot-gen-bar-fill" style={{ width: `${overallProgress}%` }} />
-          </div>
-        </div>
-      ) : null}
-
-      {/* STEP 1: IDENTITY & MASTER CONCEPT */}
+      {/* Step 1: Identity & Master Concept */}
       {generatorStep === 1 ? (
         <MascotConceptStep
           genName={genName}
@@ -217,7 +146,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
         />
       ) : null}
 
-      {/* STEP 2: EXPRESSIVE STATES STUDIO */}
+      {/* Step 2: Expressive States Studio */}
       {generatorStep === 2 ? (
         <MascotActionsStep
           editingMascot={editingMascot}
@@ -228,8 +157,19 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
         />
       ) : null}
 
-      {/* STEP 3: MOTION & ANIMATION STUDIO */}
+      {/* Step 3: Animation Processing Studio */}
       {generatorStep === 3 ? (
+        <MascotAnimationProcessingStep
+          editingMascot={editingMascot}
+          stylesState={mascotStylesState}
+          onBackStep={() => setGeneratorStep(2)}
+          onNextStep={() => setGeneratorStep(4)}
+          onNotice={onNotice}
+        />
+      ) : null}
+
+      {/* Step 4: Motion & Animation Studio */}
+      {generatorStep === 4 ? (
         <Suspense
           fallback={
             <div role="status" aria-live="polite" style={{ display: "grid", placeItems: "center", padding: "60px 0" }}>
@@ -238,7 +178,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
             </div>
           }
         >
-          <MascotAnimationStep
+          <MascotMotionAnimationStep
             effectiveMascot={effectiveMascot}
             genColor={genColor}
             busyAction={busyAction}
@@ -262,7 +202,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
             onResetDefaultMotions={handleResetDefaultMotions}
             onSaveMotion={handleSaveMotion}
             onFinishMascot={handleFinishMascot}
-            onBackStep={() => setGeneratorStep(2)}
+            onBackStep={() => setGeneratorStep(3)}
             activeStyle={activeStyle}
             previewStyleId={previewStyleId}
             onPreviewStyleChange={setPreviewStyleId}
@@ -270,6 +210,8 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
             selectedVariant={selectedVariant}
             activeVariantIndex={activeVariantIndex}
             onSelectVariantIndex={setActiveVariantIndex}
+            stylesState={mascotStylesState}
+            onNotice={onNotice}
           />
         </Suspense>
       ) : null}

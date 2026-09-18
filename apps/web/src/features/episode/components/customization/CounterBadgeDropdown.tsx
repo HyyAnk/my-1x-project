@@ -31,11 +31,18 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
   const activeStyle = currentCounter === "auto" ? resolvedCounter : currentCounter;
   const styleOptions = useStyleCatalogOptions("counter", ALL_QUESTION_COUNTER_STYLES);
 
+  const getStyleLabel = (style: string): string => {
+    const key = `episodeCustomization.counter_${style}`;
+    const translated = t(key);
+    if (translated && translated !== key) return translated;
+    return QUESTION_COUNTER_STYLE_LABELS[style] ?? style;
+  };
+
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillCounterBadge")}
-        value={QUESTION_COUNTER_STYLE_LABELS[activeStyle] ?? activeStyle}
+        value={getStyleLabel(activeStyle)}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -45,17 +52,18 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
         <CustomizationPopover title={t("episodeCustomization.pillCounterBadge")}>
           {["auto", ...styleOptions].map((style) => {
             if (style === "auto") return null;
+            const label = getStyleLabel(style);
             return (
               <StyleOptionRow
                 key={style}
                 name="counter_choice"
-                label={QUESTION_COUNTER_STYLE_LABELS[style] ?? style}
+                label={label}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() =>
                   onPreview?.({
                     override: { counterStyle: style },
-                    label: QUESTION_COUNTER_STYLE_LABELS[style] ?? style,
+                    label,
                   })
                 }
               />

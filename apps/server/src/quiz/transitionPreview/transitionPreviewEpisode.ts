@@ -1,7 +1,4 @@
-import type {
-  TransitionPreviewRequest,
-  TransitionPreviewStatus,
-} from "@studio/shared";
+import type { TransitionPreviewRequest, TransitionPreviewStatus } from "@studio/shared";
 import type { TransitionPreviewRepositoryPort } from "./transitionPreview.types.js";
 
 export async function resolveEpisodeTransitionPreview(
@@ -31,8 +28,7 @@ export async function resolveEpisodeTransitionPreview(
     };
   }
 
-  const renderedTransitionId =
-    episodeOutput.transitionSettings?.scene?.id ?? episodeOutput.transitionSettings?.intro?.id;
+  const renderedTransitionId = episodeOutput.transitionSettings?.scene?.id ?? episodeOutput.transitionSettings?.intro?.id;
   if (renderedTransitionId && renderedTransitionId !== request.selection.id) {
     return {
       status: "failed",

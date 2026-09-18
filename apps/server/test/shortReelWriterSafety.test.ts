@@ -10,7 +10,7 @@ import { releaseWriterAdmission, setShortReelWriteHookForTesting } from "../src/
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-describe("ShortReelWriterSafety Cross-Process Tests (Stage A)", () => {
+describe("ShortReelWriterSafety Cross-Process Tests (Stage A)", { timeout: 60_000 }, () => {
   let tempDir: string;
 
   beforeEach(async () => {

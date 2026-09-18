@@ -9,8 +9,8 @@ import type { MascotBounds, MascotPoint, MascotRenderGeometry, MascotRenderSpecV
 export function resolveMascotRenderGeometry(spec: MascotRenderSpecV2): MascotRenderGeometry {
   const baseBox = MASCOT_BASE_BOX_PX;
   const registration = spec.asset.registration;
-  const frameWidth = spec.asset.legacy_animation?.frame_width ?? registration.source_width;
-  const frameHeight = spec.asset.legacy_animation?.frame_height ?? registration.source_height;
+  const frameWidth = spec.asset.animation?.frames?.[0]?.width ?? spec.asset.legacy_animation?.frame_width ?? registration.source_width;
+  const frameHeight = spec.asset.animation?.frames?.[0]?.height ?? spec.asset.legacy_animation?.frame_height ?? registration.source_height;
   const imageScale = Math.min(baseBox / frameWidth, baseBox / frameHeight);
   const imageOffsetX = (baseBox - frameWidth * imageScale) / 2;
   const imageOffsetY = (baseBox - frameHeight * imageScale) / 2;

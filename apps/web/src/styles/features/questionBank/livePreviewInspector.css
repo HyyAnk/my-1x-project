@@ -226,7 +226,9 @@
   }
   50% {
     transform: scale(1.04);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 8px rgba(16, 185, 129, 0.3);
+    box-shadow:
+      0 0 20px rgba(16, 185, 129, 0.6),
+      inset 0 0 8px rgba(16, 185, 129, 0.3);
   }
   75% {
     transform: scale(1.015);
@@ -234,7 +236,9 @@
   100% {
     transform: scale(1.03);
     border-color: var(--green);
-    box-shadow: 0 0 16px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2);
+    box-shadow:
+      0 0 16px rgba(16, 185, 129, 0.4),
+      inset 0 0 4px rgba(16, 185, 129, 0.2);
   }
 }
 

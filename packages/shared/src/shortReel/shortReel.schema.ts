@@ -22,14 +22,6 @@ export {
   type GeneratedReelPublishing,
 } from "./shortReelPublishing.schema.js";
 
-export {
-  ReelVisualContextSchema,
-  type ReelVisualContext,
-} from "./shortReelVisual.schema.js";
+export { ReelVisualContextSchema, type ReelVisualContext } from "./shortReelVisual.schema.js";
 
-export {
-  computeSourceContentHash,
-  isEnglishLanguage,
-  createEnglishSourceSnapshot,
-  createSourceSnapshot,
-} from "./shortReelSource.js";
+export { computeSourceContentHash, isEnglishLanguage, createEnglishSourceSnapshot, createSourceSnapshot } from "./shortReelSource.js";

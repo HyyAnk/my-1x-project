@@ -344,6 +344,40 @@ describe("useSandboxPreviewRenderer", () => {
     expect(result.current.previewHtml).toContain("confirmed-slow");
   });
 
+  it("captures and displays specific error message when font verification fails", async () => {
+    const onNotice = vi.fn();
+    vi.spyOn(api, "previewSandboxComposition").mockResolvedValue(previewResponse("font-error-test"));
+    vi.spyOn(previewFontVerification, "verifyPreviewFonts").mockRejectedValue({
+      message: "QUIZ_CHOICE_TEXT_OVERFLOW: 1 answer group could not fit",
+    });
+
+    const { result } = renderHook(
+      () =>
+        useSandboxPreviewRenderer({
+          design: mockDesign,
+          mascot: mockMascot,
+          question: mockQuestion,
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+          onNotice,
+        }),
+      { wrapper },
+    );
+
+    await vi.waitFor(() => expect(result.current.pendingPreviewHtml).toContain("font-error-test"));
+
+    await act(async () => {
+      await result.current.verifyPendingPreview(document.createElement("iframe"), result.current.pendingPreviewHtml);
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.previewError).toBe("QUIZ_CHOICE_TEXT_OVERFLOW: 1 answer group could not fit");
+    expect(onNotice).toHaveBeenCalledWith({
+      tone: "bad",
+      message: "QUIZ_CHOICE_TEXT_OVERFLOW: 1 answer group could not fit",
+    });
+  });
+
   it("P8C-ASY-01 preserves input on error and retries the current selection", async () => {
     let failPreview = true;
     const previewSpy = vi.spyOn(api, "previewSandboxComposition").mockImplementation(() => {

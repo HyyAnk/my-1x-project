@@ -49,12 +49,21 @@ export function mysteryRevealAnimationStyles(): string {
   }
   50% {
     transform: translateY(-8px) scale(1.045);
-    border-color: #22C55E;
-    box-shadow: 0 18px 0 #15803D, 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 44px rgba(74, 222, 128, 0.85);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mystery-surface-dock-win {
+  0% {
+  }
+  50% {
+    border-color: #22C55E;
+    box-shadow: 0 18px 0 #15803D, 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 44px rgba(74, 222, 128, 0.85);
+  }
+  100% {
     border-color: #22C55E;
     box-shadow: 0 16px 0 #15803D, 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 36px rgba(34, 197, 94, 0.75);
   }

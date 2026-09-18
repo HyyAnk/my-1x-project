@@ -82,13 +82,14 @@ describe("ContextEngine", () => {
     expect(context.prompt).toContain("IMPORTANT TOPIC THEME REQUIREMENT");
     expect(context.prompt).toContain("Các loại nghề nghiệp");
     expect(context.prompt).toContain("Exactly 2 candidates MUST be directly inspired by");
-    expect(context.prompt).toContain("The remaining 3 candidates should be diverse");
+    expect(context.prompt).toContain("The remaining 4 candidates should be diverse");
     expect(context.prompt).toContain("GAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY");
     expect(context.prompt).toContain("Slot 1 (Episode - Deep Trivia)");
     expect(context.prompt).toContain("Slot 2 (Episode - Mystery Reveal)");
     expect(context.prompt).toContain("Slot 3 (Episode - True or False)");
     expect(context.prompt).toContain("Slot 4 (Short-Reel - Versus Face-off)");
     expect(context.prompt).toContain("Slot 5 (Short-Reel - Deep Trivia)");
+    expect(context.prompt).toContain("Slot 6 (Short-Reel - Versus Clash)");
     expect(context.prompt).toContain("mystery_reveal");
     expect(context.prompt).toContain("versus_faceoff");
   });

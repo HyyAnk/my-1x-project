@@ -8,10 +8,9 @@ import {
   type ChannelMascotConfig,
   type MascotActionType,
   type MascotProfile,
-  type MascotSpriteAction,
 } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
-import { buildCalibratedMascotAction } from "./mascotActionCalibration.js";
+import { calibrateProfileRenderAction, type MascotActionCalibrationInput } from "./mascotActionCalibration.js";
 import { buildPersistedMascotProfile } from "./mascotRenderPersistence.js";
 import type { RepositoryRuntime } from "./runtime.js";
 import { withMascotWriteLock } from "./mascot/mascotLock.js";
@@ -101,22 +100,11 @@ export async function calibrateMascotAction(
   this: RepositoryRuntime,
   mascotId: string,
   action: MascotActionType,
-  calibration: Partial<MascotSpriteAction>,
+  calibration: MascotActionCalibrationInput,
 ): Promise<MascotProfile> {
   return withMascotWriteLock(mascotId, async () => {
     const mascot = await this.getMascot(mascotId);
-    const currentAction = mascot.actions[action];
-    const updatedAction = buildCalibratedMascotAction(action, currentAction, calibration);
-
-    const updatedMascot: MascotProfile = {
-      ...mascot,
-      actions: {
-        ...mascot.actions,
-        [action]: updatedAction,
-      },
-      updated_at: new Date().toISOString(),
-    };
-
+    const updatedMascot = calibrateProfileRenderAction(mascot, action, calibration);
     return this.saveMascot(updatedMascot);
   });
 }

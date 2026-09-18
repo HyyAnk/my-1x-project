@@ -95,16 +95,22 @@
     grid-template-columns: 1fr;
   }
   .topic-history-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "identity content"
+      "status   actions";
+    gap: 8px 12px;
+    padding: 10px 14px;
+    align-items: center;
   }
-  .topic-history-main {
-    width: 100%;
+  .topic-history-col-status {
+    justify-content: flex-start;
   }
-  .topic-history-meta {
-    width: 100%;
-    justify-content: space-between;
+  .topic-history-col-actions {
+    justify-content: flex-end;
+  }
+  .topic-history-premise-snippet {
+    display: none;
   }
   .scene-columns {
     grid-template-columns: 1fr;

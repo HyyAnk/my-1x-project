@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import path from "node:path";
-import { type FrameRate, type ResolvedTransitionInstance } from "@studio/shared";
+import { type ResolvedTransitionInstance } from "@studio/shared";
 import type { RenderEngineSnapshot } from "./renderEngineSnapshot.js";
 import { buildRenderInvocation } from "./renderInvocationOptions.js";
 import { runHyperframesProcess } from "./hyperframesProcess.js";
@@ -12,10 +12,7 @@ import {
   type TransitionPreviewArtifactManifest,
   type VerifiedPreviewArtifact,
 } from "../../quiz/render/transitions/transitionPreviewStore.js";
-import type {
-  TransitionPreviewRunnerInput,
-  TransitionPreviewRunnerPort,
-} from "../../quiz/transitionPreview/transitionPreview.types.js";
+import type { TransitionPreviewRunnerInput, TransitionPreviewRunnerPort } from "../../quiz/transitionPreview/transitionPreview.types.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -27,6 +24,23 @@ export type VideoFrameProbeResult = {
   width: number;
   height: number;
 };
+
+interface ProbeStream {
+  width?: number;
+  height?: number;
+  time_base?: string;
+  nb_read_packets?: string | number;
+}
+
+interface ProbeFrame {
+  pts?: number | string;
+  pkt_pts?: number | string;
+}
+
+interface ProbeOutput {
+  streams?: ProbeStream[];
+  frames?: ProbeFrame[];
+}
 
 export async function probeVideoFrames(videoPath: string): Promise<VideoFrameProbeResult> {
   const result = await execFileAsync(
@@ -46,22 +60,25 @@ export async function probeVideoFrames(videoPath: string): Promise<VideoFramePro
     { timeout: 60_000, windowsHide: true },
   );
 
-  const parsed = JSON.parse(result.stdout);
+  const parsed = JSON.parse(result.stdout) as ProbeOutput;
   const stream = parsed.streams?.[0] ?? {};
   const [tbNum, tbDen] = (stream.time_base || "1/1000").split("/").map(Number);
   const timeBase = { numerator: tbNum || 1, denominator: tbDen || 1000 };
 
-  const rawFrames: Array<{ pts?: number; pkt_pts?: number }> = parsed.frames ?? [];
+  const rawFrames: ProbeFrame[] = parsed.frames ?? [];
   const frames = rawFrames.map((f, index) => ({
     index,
     pts: f.pts !== undefined ? Number(f.pts) : f.pkt_pts !== undefined ? Number(f.pkt_pts) : index,
   }));
 
+  const frameCount = frames.length || Number(stream.nb_read_packets || 0);
+  const durationSeconds = frames.length ? (frames[frames.length - 1].pts * timeBase.numerator) / timeBase.denominator : 0;
+
   return {
-    frameCount: frames.length || Number(stream.nb_read_packets || 0),
+    frameCount,
     timeBase,
     frames,
-    durationSeconds: frames.length ? (frames[frames.length - 1].pts * timeBase.numerator) / timeBase.denominator : 0,
+    durationSeconds,
     width: stream.width ?? 1920,
     height: stream.height ?? 1080,
   };
@@ -82,9 +99,7 @@ export type RenderTransitionPreviewOptions = {
   onProgress?: (progress: number) => void;
 };
 
-export async function renderTransitionPreviewArtifact(
-  options: RenderTransitionPreviewOptions,
-): Promise<VerifiedPreviewArtifact> {
+export async function renderTransitionPreviewArtifact(options: RenderTransitionPreviewOptions): Promise<VerifiedPreviewArtifact> {
   const {
     renderRoot,
     outputPath,
@@ -113,10 +128,11 @@ export async function renderTransitionPreviewArtifact(
     timeoutMs: invocation.timeoutMs,
     logPath,
     signal,
-    onProgress: async (event) => {
+    onProgress: (event) => {
       if (event.kind === "measured" && onProgress) {
         onProgress(mapRenderTaskPercent(event.sample));
       }
+      return Promise.resolve();
     },
   });
 

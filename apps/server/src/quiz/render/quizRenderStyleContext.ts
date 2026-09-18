@@ -11,7 +11,8 @@ export type QuizRenderStyleContext = Omit<QuizStyleResolutionContext, "beat"> & 
 export function buildQuizRenderStyleContext(channel: Channel, episode: QuizConfig): QuizRenderStyleContext {
   return {
     theme: episode.visual_theme,
-    transitions: (episode as any).transitions ?? (channel as any).transitions,
+    transitions:
+      (episode as { transitions?: TransitionSettings }).transitions ?? (channel as { transitions?: TransitionSettings }).transitions,
     channel: {
       default_palette_id: channel.default_palette_id,
       default_thinking_bar_style: channel.default_thinking_bar_style,

@@ -104,7 +104,7 @@ describe("Question Content Type & History Schema Tests", () => {
 
     it("returns explicit content_type when 'short_reel' even if episode_id has standard episode format", () => {
       const result = inferQuestionHistoryContentType({
-        episode_id: "ep_full_documentary_12",
+        episode_id: "ep_full_feature_12",
         content_type: "short_reel",
       });
       assert.equal(result, "short_reel");

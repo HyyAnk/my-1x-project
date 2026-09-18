@@ -10,7 +10,6 @@ export const ARCHETYPE_OPTIONS: Array<{ id: BankGameplayArchetypeId; label: stri
   { id: "visual_spotting", label: "Visual Spotting", icon: "👁️" },
   { id: "visual_identification", label: "Visual ID", icon: "🔍" },
   { id: "mystery_reveal", label: "Mystery Reveal", icon: "🎭" },
-  { id: "clue_deduction", label: "Clue Deduction", icon: "🕵️" },
 ];
 
 export interface AiGenerateManualConfigProps {

@@ -1,7 +1,4 @@
-import type {
-  TransitionPreviewErrorCode,
-  TransitionPreviewStatus,
-} from "@studio/shared";
+import type { TransitionPreviewErrorCode, TransitionPreviewStatus } from "@studio/shared";
 import type { RenderEngineSnapshot } from "../../tasks/video/renderEngineSnapshot.js";
 import type { BuiltTransitionSpecimen } from "../render/transitions/buildTransitionSpecimen.js";
 import type { VerifiedPreviewArtifact } from "./transitionPreviewStore.js";

@@ -136,7 +136,7 @@ describe("Authorized Content End-to-End Pipeline Integration (P6)", () => {
       const compiled = compileQuizAssetPrompt(heroAsset);
       // Explicit subject identity preserved without generic proxy rewrite
       expect(compiled.prompt).toContain(subject);
-      expect(compiled.cacheVersion).toBe("pixar_3d-v4-subject-identity");
+      expect(compiled.cacheVersion).toBe("pixar_3d-v5-layout-framing");
       expect(compiled.prompt).not.toContain("generic arachnid hero");
     }
 

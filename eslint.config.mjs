@@ -17,6 +17,8 @@ export default tseslint.config(
       "test-results/**",
       "playwright-report/**",
       "scripts/archive/**",
+      "docs/**",
+      "**/tmp/**",
     ],
   },
   {
@@ -24,6 +26,16 @@ export default tseslint.config(
     extends: [js.configs.recommended],
     languageOptions: {
       globals: globals.node,
+    },
+    rules: {
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
   },
   {
@@ -43,6 +55,33 @@ export default tseslint.config(
       complexity: ["error", { max: 30 }],
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  {
+    files: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}", "**/test/**/*.{ts,tsx}", "**/tests/**/*.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/no-redundant-type-constituents": "off",
+      "@typescript-eslint/no-base-to-string": "off",
+      "@typescript-eslint/no-implied-eval": "off",
+      "@typescript-eslint/unbound-method": "off",
+      complexity: "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

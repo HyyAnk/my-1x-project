@@ -337,7 +337,15 @@ describe("Short-Reel Generation Workflow V2 (Concurrency & Ordering)", () => {
 
     const mockLlm: LLMClient = {
       connect: async () => {},
-      generateContent: async () => {
+      generateContent: async (prompt?: string) => {
+        const p = typeof prompt === "string" ? prompt : JSON.stringify(prompt ?? "");
+        if (p.includes("cover") || p.includes("Cover")) {
+          return {
+            text: JSON.stringify({
+              variations: [],
+            }),
+          };
+        }
         publishingGenerationCount++;
         return {
           text: JSON.stringify({

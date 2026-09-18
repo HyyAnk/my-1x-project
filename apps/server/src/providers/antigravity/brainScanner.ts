@@ -18,6 +18,7 @@ export async function findGeneratedImage(
 
   try {
     const normalizedPrefix = imageNamePrefix.toLowerCase().replace(/[^a-z0-9_]/g, "_");
+    const minMtime = turnStartTime ? turnStartTime - 10_000 : Date.now() - 5 * 60 * 1000;
 
     // 1. If specific conversation ID is known, search that folder first
     if (specificConvId) {
@@ -29,8 +30,12 @@ export async function findGeneratedImage(
             /\.(png|jpe?g|webp)$/i.test(file) &&
             (file.toLowerCase().startsWith(normalizedPrefix) || file.toLowerCase().includes(normalizedPrefix))
           ) {
-            const data = await readFile(path.join(specificPath, file));
-            if (data.length >= 8) return new Uint8Array(data);
+            const filePath = path.join(specificPath, file);
+            const st = await stat(filePath);
+            if (st.mtimeMs >= minMtime) {
+              const data = await readFile(filePath);
+              if (data.length >= 8) return new Uint8Array(data);
+            }
           }
         }
         // Also check any image file created in this specific folder after turn start
@@ -38,7 +43,7 @@ export async function findGeneratedImage(
           if (/\.(png|jpe?g|webp)$/i.test(file)) {
             const filePath = path.join(specificPath, file);
             const st = await stat(filePath);
-            if (!turnStartTime || st.mtimeMs >= turnStartTime - 10_000) {
+            if (st.mtimeMs >= minMtime) {
               const data = await readFile(filePath);
               if (data.length >= 8) return new Uint8Array(data);
             }
@@ -84,9 +89,11 @@ export async function findGeneratedImage(
 
         imageFiles.sort((a, b) => b.mtime - a.mtime);
 
-        // Look for image starting with our imageName prefix
+        // Look for image starting with our imageName prefix created after turn start
         const matching = imageFiles.find(
-          (img) => img.filename.toLowerCase().startsWith(normalizedPrefix) || img.filename.toLowerCase().includes(normalizedPrefix),
+          (img) =>
+            (img.filename.toLowerCase().startsWith(normalizedPrefix) || img.filename.toLowerCase().includes(normalizedPrefix)) &&
+            img.mtime >= minMtime,
         );
         if (matching) {
           const data = await readFile(matching.filePath);
@@ -94,7 +101,6 @@ export async function findGeneratedImage(
         }
 
         // If recent image created during this turn or within the last 5 minutes
-        const minMtime = turnStartTime ? turnStartTime - 10_000 : Date.now() - 5 * 60 * 1000;
         const recentImage = imageFiles.find((img) => img.mtime >= minMtime);
         if (recentImage) {
           const data = await readFile(recentImage.filePath);

@@ -165,12 +165,7 @@ export function SceneCard({
           autoGrow={autoGrow}
         />
       </div>
-      <SceneNotesEditor
-        scene={scene}
-        processing={processing}
-        mergePending={mergePending}
-        onChange={onChange}
-      />
+      <SceneNotesEditor scene={scene} processing={processing} mergePending={mergePending} onChange={onChange} />
       <SceneOverlayEditor
         scene={scene}
         overlay={overlay}

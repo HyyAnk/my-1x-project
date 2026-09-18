@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ChannelMascotConfig, MascotProfile } from "@studio/shared";
+import { source } from "../src/quiz/render/candyArcade/candyArcadeAudio.js";
 import {
   getMascotPreloadTags,
   getMascotPreloadUrls,
@@ -201,6 +202,83 @@ describe("MascotStateResolver", () => {
 
     it("returns empty string for null mascot", () => {
       expect(getMascotPreloadTags(null)).toBe("");
+    });
+
+    it("preloads animation atlases as image and WebM videos as video", () => {
+      const animMascot: MascotProfile = {
+        ...baseMascot,
+        styles: [
+          {
+            id: "cyber",
+            name: "Cyber",
+            keyword: "cyberpunk",
+            anchor_image_url: "/api/mascots/mascot_123/assets/anchor.png",
+            is_default: true,
+            states: {
+              thinking: [
+                {
+                  id: "t1",
+                  slot_index: 1,
+                  image_url: "/api/mascots/mascot_123/assets/think.png",
+                  animation: {
+                    version: 1,
+                    state: "thinking",
+                    slot_index: 1,
+                    frame_count: 10,
+                    fps: 10,
+                    loop: true,
+                    transparent_video_url: "/api/mascots/mascot_123/styles/cyber/animations/thinking/1/artifacts/video_transparent.webm",
+                    atlas_url: "/api/mascots/mascot_123/styles/cyber/animations/thinking/1/artifacts/atlas.png",
+                    manifest_url: "/api/mascots/mascot_123/styles/cyber/animations/thinking/1/artifacts/manifest.json",
+                    registration: {
+                      source_width: 512,
+                      source_height: 512,
+                      content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+                      pivot: { x: 256, y: 512 },
+                      offset_x: 0,
+                      offset_y: 0,
+                    },
+                    content_fingerprint: "c1",
+                    source_fingerprint: "s1",
+                  },
+                },
+              ],
+              celebrate: [],
+            },
+            created_at: "2026-08-29T00:00:00.000Z",
+            updated_at: "2026-08-29T00:00:00.000Z",
+          },
+        ],
+      };
+
+      const urls = getMascotPreloadUrls(animMascot);
+      expect(urls).toContain("/api/mascots/mascot_123/styles/cyber/animations/thinking/1/artifacts/video_transparent.webm");
+      expect(urls).toContain("/api/mascots/mascot_123/styles/cyber/animations/thinking/1/artifacts/atlas.png");
+
+      // When mapped with source():
+      const tags = getMascotPreloadTags(animMascot, source);
+      expect(tags).toContain(
+        '<link rel="preload" href="./mascot-assets/mascot_123_cyber_thinking_s1_video_transparent.webm" as="video" type="video/webm">',
+      );
+      expect(tags).toContain('<link rel="preload" href="./mascot-assets/mascot_123_cyber_thinking_s1_atlas.png" as="image">');
+      expect(tags).not.toMatch(/<link rel="preload"[^>]*\/api\/mascots\//);
+    });
+
+    it("filters out unmapped or broken /api/ URLs to prevent offline render check errors", () => {
+      const mascotWithBrokenRoutes: MascotProfile = {
+        ...baseMascot,
+        master_image_url: "/api/broken/unmapped/master.png",
+        actions: {
+          wave: {
+            action: "wave",
+            sprite_url: "/api/broken/wave.png",
+          },
+        },
+      };
+
+      // Without source mapper, raw /api/ routes are filtered out
+      const tags = getMascotPreloadTags(mascotWithBrokenRoutes);
+      expect(tags).toBe("");
     });
   });
 

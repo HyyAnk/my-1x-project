@@ -4,3 +4,6 @@ export * from "./variants/candyPop.js";
 export * from "./variants/comicBubble.js";
 export * from "./variants/glassMorphism.js";
 export * from "./variants/parchmentScroll.js";
+export * from "./variants/hazardStripes.js";
+export * from "./variants/cockpitHud.js";
+export * from "./variants/pastelCloud.js";

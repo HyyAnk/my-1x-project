@@ -1,4 +1,4 @@
-﻿import { CANONICAL_IMAGE_SLOT_DEFINITIONS } from "@studio/shared";
+import { CANONICAL_IMAGE_SLOT_DEFINITIONS } from "@studio/shared";
 
 /**
  * Image slot renderer styling helper.
@@ -11,7 +11,6 @@ export function imageSlotStyles(): string {
   const ml = CANONICAL_IMAGE_SLOT_DEFINITIONS.media_left_choices_right;
   const vtf = CANONICAL_IMAGE_SLOT_DEFINITIONS.verdict_true_false;
   const mr = CANONICAL_IMAGE_SLOT_DEFINITIONS.mystery_reveal;
-  const cd = CANONICAL_IMAGE_SLOT_DEFINITIONS.clue_deduction;
 
   return `
 /* Canonical Image Slot Geometry Variables */
@@ -61,13 +60,10 @@ export function imageSlotStyles(): string {
 .layout-mystery_reveal {
   --slot-hero-width: ${mr.cardBorderBox.width}px;
   --slot-hero-height: ${mr.cardBorderBox.height}px;
-}
-
-.layout-clue_deduction {
-  --slot-hero-width: ${cd.cardBorderBox.width}px;
-  --slot-hero-height: ${cd.cardBorderBox.height}px;
-  --slot-hero-viewport-width: ${cd.viewport.width}px;
-  --slot-hero-viewport-height: ${cd.viewport.height}px;
+  --slot-image-slot-width: ${mr.slot.width}px;
+  --slot-image-slot-height: ${mr.slot.height}px;
+  --slot-viewport-width: ${mr.viewport.width}px;
+  --slot-viewport-height: ${mr.viewport.height}px;
 }
 `;
 }

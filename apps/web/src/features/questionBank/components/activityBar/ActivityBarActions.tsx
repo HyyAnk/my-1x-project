@@ -9,13 +9,7 @@ export interface ActivityBarActionsProps {
   onDismiss: (e: React.MouseEvent) => void;
 }
 
-export function ActivityBarActions({
-  isRunning,
-  progressPercent,
-  cancelling,
-  onCancel,
-  onDismiss,
-}: ActivityBarActionsProps) {
+export function ActivityBarActions({ isRunning, progressPercent, cancelling, onCancel, onDismiss }: ActivityBarActionsProps) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
       {isRunning ? (

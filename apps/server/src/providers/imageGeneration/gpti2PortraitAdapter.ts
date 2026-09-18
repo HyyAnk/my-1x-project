@@ -1,11 +1,7 @@
 import { createHash } from "node:crypto";
 import { generateGpti2ImageBytes } from "../gpti2Image.js";
 import { GenerationError } from "../../shortReel/generationErrors.js";
-import type {
-  GeneratedImageBytes,
-  PortraitImageClient,
-  PortraitImageRequest,
-} from "./imageGeneration.types.js";
+import type { GeneratedImageBytes, PortraitImageClient, PortraitImageRequest } from "./imageGeneration.types.js";
 
 export interface Gpti2PortraitAdapterOptions {
   apiKey?: string;
@@ -23,12 +19,7 @@ export class Gpti2PortraitAdapter implements PortraitImageClient {
       throw new GenerationError("OPERATION_CANCELLED", "Image generation cancelled before dispatch.");
     }
 
-    const apiKey = (
-      this.options.apiKey ||
-      process.env.GPTI2_API_KEY ||
-      process.env.SHOPAIKEY_API_KEY ||
-      ""
-    ).trim();
+    const apiKey = (this.options.apiKey || process.env.GPTI2_API_KEY || process.env.SHOPAIKEY_API_KEY || "").trim();
 
     if (!apiKey) {
       throw new GenerationError(
@@ -80,11 +71,7 @@ export class Gpti2PortraitAdapter implements PortraitImageClient {
       const isNotConfigured = /not\s*configured/i.test(sanitizedMessage);
 
       throw new GenerationError(
-        isNotConfigured
-          ? "IMAGE_PROVIDER_NOT_CONFIGURED"
-          : isTimeout
-            ? "IMAGE_TIMEOUT"
-            : "IMAGE_PROVIDER_FAILED",
+        isNotConfigured ? "IMAGE_PROVIDER_NOT_CONFIGURED" : isTimeout ? "IMAGE_TIMEOUT" : "IMAGE_PROVIDER_FAILED",
         sanitizedMessage,
         { cause: error },
       );

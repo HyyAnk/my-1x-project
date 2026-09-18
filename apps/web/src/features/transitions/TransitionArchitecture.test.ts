@@ -108,14 +108,10 @@ describe("Task 9: Static Architecture & AST Invariant Checks", () => {
       const checkNode = (node: ts.Node) => {
         if (ts.isArrayLiteralExpression(node)) {
           const elements = node.elements;
-          const stringElements = elements
-            .filter((e) => ts.isStringLiteral(e))
-            .map((e) => (e as ts.StringLiteral).text);
+          const stringElements = elements.filter((e) => ts.isStringLiteral(e)).map((e) => (e as ts.StringLiteral).text);
 
           // If an array literal hardcodes multiple known transition IDs
-          const matches = stringElements.filter((str) =>
-            ["stinger_swipe", "bubble_splash", "brush_wave", "lightning_brush"].includes(str),
-          );
+          const matches = stringElements.filter((str) => ["stinger_swipe", "bubble_splash", "brush_wave", "lightning_brush"].includes(str));
 
           if (matches.length >= 2) {
             const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));

@@ -60,6 +60,10 @@ export function useRouter() {
 
   const navigate = useCallback((to: string, replace = false) => {
     const targetHash = to.startsWith("#") ? to : `#${to}`;
+    const currentHash = window.location.hash || "#/dashboard";
+    if (currentHash === targetHash) {
+      return;
+    }
     if (replace) {
       const url = new URL(window.location.href);
       url.hash = targetHash;
@@ -79,6 +83,8 @@ export function useRouter() {
       channelId: route.channelId,
       episodeId: route.episodeId,
       shortReelId: route.shortReelId,
+      mascotId: route.mascotId,
+      step: route.step,
       tab: route.tab,
       group: route.group,
       navigate,

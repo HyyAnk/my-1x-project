@@ -50,12 +50,13 @@ export function calculateOptimalWorkers(configuredWorkers?: number): number {
   const totalCpus = os.cpus().length || 4;
   const freeMemGb = os.freemem() / (1024 * 1024 * 1024);
 
-  // Each Chromium worker instance typically consumes 350MB - 500MB RAM
+  // Each Chromium worker instance typically consumes 350MB - 500MB RAM (using 750MB safe buffer)
   const memorySafeWorkers = Math.max(2, Math.floor(freeMemGb / 0.75));
-  const cpuTargetWorkers = Math.max(2, Math.floor(totalCpus * 0.35));
+  // Allocate up to 50% of CPU threads to Chromium rendering workers to leave ample headroom for FFmpeg and OS
+  const cpuTargetWorkers = Math.max(2, Math.floor(totalCpus * 0.5));
 
-  // Sweet spot for automatic streaming frame capture on Windows (4-6 workers)
-  return Math.min(6, Math.max(2, Math.min(cpuTargetWorkers, memorySafeWorkers)));
+  // Scale gracefully up to 16 workers based on available CPU threads and free memory
+  return Math.min(16, Math.max(2, Math.min(cpuTargetWorkers, memorySafeWorkers)));
 }
 
 /**

@@ -12,10 +12,22 @@ describe("pngCodec", () => {
     const width = 2;
     const height = 2;
     const data = new Uint8Array([
-      255, 0, 0, 255,   // Red
-      0, 255, 0, 255,   // Green
-      0, 0, 255, 255,   // Blue
-      255, 255, 0, 128, // Yellow semi-transparent
+      255,
+      0,
+      0,
+      255, // Red
+      0,
+      255,
+      0,
+      255, // Green
+      0,
+      0,
+      255,
+      255, // Blue
+      255,
+      255,
+      0,
+      128, // Yellow semi-transparent
     ]);
 
     const pngBytes = encodeRgbaToPng({ width, height, data });

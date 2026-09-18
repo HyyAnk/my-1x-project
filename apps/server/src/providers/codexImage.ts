@@ -18,19 +18,6 @@ export class CodexImageProvider implements ImageProvider {
   ) {}
 
   async generateReference(_prompt: string): Promise<{ asset_path: string }> {
-    const destination = await this.repository.getBundleImagePath(
-      this.target.channelId,
-      this.target.episodeId,
-      this.target.bundleNumber,
-      this.target.variant,
-    );
-    try {
-      await readFile(destination.absolutePath);
-      return { asset_path: destination.path };
-    } catch {
-      // Codex may have returned image bytes or written the file under another workspace path.
-    }
-
     const dataUrl =
       this.output.match(/data:image\/png;base64,([A-Za-z0-9+/=\s]+)/i)?.[1]?.replace(/\s+/g, "") ??
       this.output.match(/"(?:b64_json|base64|data)"\s*:\s*"([A-Za-z0-9+/=]+)"/i)?.[1];
@@ -62,6 +49,19 @@ export class CodexImageProvider implements ImageProvider {
       } catch (error) {
         if (!(error instanceof Error) || !/ENOENT|not found/i.test(error.message)) throw error;
       }
+    }
+
+    const destination = await this.repository.getBundleImagePath(
+      this.target.channelId,
+      this.target.episodeId,
+      this.target.bundleNumber,
+      this.target.variant,
+    );
+    try {
+      await readFile(destination.absolutePath);
+      return { asset_path: destination.path };
+    } catch {
+      // Codex may have returned image bytes or written the file under another workspace path.
     }
 
     throw new Error(

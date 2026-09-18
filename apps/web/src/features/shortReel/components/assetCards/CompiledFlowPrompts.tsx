@@ -6,11 +6,7 @@ export interface CompiledFlowPromptsProps {
   onCopyPrompt: (index: number, text: string) => void;
 }
 
-export function CompiledFlowPrompts({
-  compiledPrompts,
-  copiedPromptIndex,
-  onCopyPrompt,
-}: CompiledFlowPromptsProps) {
+export function CompiledFlowPrompts({ compiledPrompts, copiedPromptIndex, onCopyPrompt }: CompiledFlowPromptsProps) {
   return (
     <section className="short-reel-card short-reel-card-fullwidth" aria-label="Flow Prompts">
       <div className="short-reel-card-header">

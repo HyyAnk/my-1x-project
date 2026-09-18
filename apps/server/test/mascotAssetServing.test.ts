@@ -2,7 +2,6 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import * as fsPromises from "node:fs/promises";
 import { buildApp } from "../src/app.js";
 import { detectMimeTypeFromMagicBytes, generateAssetETag, isAssetNotModified, resolveMediaMimeType } from "../src/utils/mediaMime.js";
 

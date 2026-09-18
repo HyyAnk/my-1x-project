@@ -9,11 +9,7 @@ import { synthesizeScenesFromQuiz } from "../../domain/quizArtifactSynthesizer.j
  * Moves a staged episode directory to its final location.
  * Uses atomic rename when possible, with cross-device (EXDEV) copy fallback.
  */
-export async function publishStagedEpisode(
-  stagingDir: string,
-  finalDir: string,
-  replaceExisting = false,
-): Promise<void> {
+export async function publishStagedEpisode(stagingDir: string, finalDir: string, replaceExisting = false): Promise<void> {
   if (replaceExisting) {
     await rm(finalDir, { recursive: true, force: true });
   }
@@ -53,22 +49,9 @@ export interface StageAndPublishSingleQuestionParams {
 /**
  * Writes single question episode artifacts into staging and promotes them to the final directory.
  */
-export async function stageAndPublishSingleQuestionEpisodeFiles(
-  params: StageAndPublishSingleQuestionParams,
-): Promise<void> {
-  const {
-    repository,
-    channelSlug,
-    parentDir,
-    episodeSlug,
-    episode,
-    quiz,
-    directorPlan,
-    localizationArtifact,
-    title,
-    hook,
-    premise,
-  } = params;
+export async function stageAndPublishSingleQuestionEpisodeFiles(params: StageAndPublishSingleQuestionParams): Promise<void> {
+  const { repository, channelSlug, parentDir, episodeSlug, episode, quiz, directorPlan, localizationArtifact, title, hook, premise } =
+    params;
 
   const stagingDir = repository.resolvePath("channels", channelSlug, ".staging", episodeSlug);
   await prepareStagingDirectory(stagingDir);
@@ -106,9 +89,7 @@ export interface StageAndPublishTopicParams {
 /**
  * Writes topic candidate episode artifacts into staging and promotes them to the final directory.
  */
-export async function stageAndPublishTopicEpisodeFiles(
-  params: StageAndPublishTopicParams,
-): Promise<void> {
+export async function stageAndPublishTopicEpisodeFiles(params: StageAndPublishTopicParams): Promise<void> {
   const {
     repository,
     channelSlug,

@@ -95,25 +95,14 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
           ``,
         ]
       : []),
-    ...(options.archetypeId === "clue_deduction"
-      ? [
-          `=== GOLDEN CLUE DEDUCTION PARADIGMS (DETECTIVE RIDDLE EXAMPLES) ===`,
-          `Study these 4 deductive clue styles (DO NOT use dry "Which [adjective] [noun]..." trivia):`,
-          `1. Artifact ownership: "Who is famous for wielding a nine-toothed iron rake?" -> [A: Zhu Bajie (Correct), B: Sun Wukong, C: Sha Wujing]`,
-          `2. Clue pointer: "This riddle about a raven and a desk points to which host?" -> [A: Mad Hatter (Correct), B: March Hare, C: Cheshire Cat]`,
-          `3. Detective inquiry: "Can you deduce the jungle child raised by wolves?" -> [A: Mowgli (Correct), B: Tarzan, C: Peter Pan]`,
-          `4. Signature trail: "Demons sought immortality from which holy monk's flesh?" -> [A: Tang Sanzang (Correct), B: Xuanzang, C: Bodhidharma]`,
-          ``,
-        ]
-      : []),
     ...(options.archetypeId === "mystery_reveal"
       ? [
           `=== GOLDEN MYSTERY REVEAL PARADIGMS (SILHOUETTE SUSPENSE EXAMPLES) ===`,
-          `Study these 4 mystery reveal framing styles:`,
-          `1. Stat riddle: "Sees 16 sunrises every day — what orbiting lab is this?" -> [A: ISS (Correct), B: Mir, C: Tiangong]`,
-          `2. Scanner teaser: "Behind the scan: Name the rover vaporizing Martian rocks!" -> [A: Curiosity (Correct), B: Spirit, C: Opportunity]`,
-          `3. Deep space milestone: "What robotic explorer carried Earth's Golden Record?" -> [A: Voyager 1 (Correct), B: Pioneer 10, C: New Horizons]`,
-          `4. Silhouette outline: "Can you identify this lunar buggy with wire mesh wheels?" -> [A: Apollo Lunar Rover (Correct), B: Lunokhod 1, C: Yutu]`,
+          `Study these 4 mystery reveal framing styles (SINGLE REVEAL ANSWER ONLY - NO DISTRACTORS):`,
+          `1. Stat riddle: "Sees 16 sunrises every day — what orbiting lab is this?" -> [A: International Space Station (Correct)]`,
+          `2. Scanner teaser: "Behind the scan: Name the rover vaporizing Martian rocks!" -> [A: Curiosity Rover (Correct)]`,
+          `3. Deep space milestone: "What robotic explorer carried Earth's Golden Record?" -> [A: Voyager 1 (Correct)]`,
+          `4. Silhouette outline: "Can you identify this lunar buggy with wire mesh wheels?" -> [A: Apollo Lunar Rover (Correct)]`,
           ``,
         ]
       : []),
@@ -160,10 +149,14 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
     `    "subtopic_id": "${options.subtopicId}",`,
     `    "question": "Concise, hook-oriented question text?",`,
     `    "format": "${guideline.format}",`,
-    `    "choices": [`,
-    `      { "id": "A", "text": "Option A text", "is_correct": true },`,
-    `      { "id": "B", "text": "Option B text", "is_correct": false }`,
-    `    ],`,
+    ...(options.archetypeId === "mystery_reveal"
+      ? [`    "choices": [`, `      { "id": "A", "text": "Canonical Answer Text", "is_correct": true }`, `    ],`]
+      : [
+          `    "choices": [`,
+          `      { "id": "A", "text": "Option A text", "is_correct": true },`,
+          `      { "id": "B", "text": "Option B text", "is_correct": false }`,
+          `    ],`,
+        ]),
     `    "correct_choice_id": "A",`,
     `    "explanation": "Concise 1-2 sentence explanation of why it is correct and the real-world context.",`,
     `    "fun_fact": "Surprising bonus fact.",`,

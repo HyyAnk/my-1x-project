@@ -2,7 +2,7 @@ import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { QuizAssessmentSchema, QuizAssetPlanSchema, QuizAssetResolutionSchema, type Task } from "@studio/shared";
+import { QuizAssessmentSchema, QuizAssetResolutionSchema, type Task } from "@studio/shared";
 import { ContextEngine } from "../src/context.js";
 import { StudioLogger } from "../src/logger.js";
 import { RepositoryService } from "../src/repository.js";

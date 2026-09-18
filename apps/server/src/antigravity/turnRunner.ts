@@ -1,14 +1,11 @@
-import { spawn, execFile } from "node:child_process";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { promisify } from "node:util";
 import type { AppConfig } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
-import { watchTranscriptStream } from "./transcriptWatcher.js";
-import { discoverActiveSession } from "./discovery.js";
+import { runAgentApiTurn } from "./runners/agentApiRunner.js";
+import { runCliTurn } from "./runners/cliRunner.js";
+import { runGoogleApiTurn } from "./runners/googleApiRunner.js";
 import type { ActiveSessionInfo, ResolvedAntigravityTarget } from "./types.js";
-
-const execFileAsync = promisify(execFile);
 
 export type TurnRunnerContext = {
   rootDirectory: string;
@@ -21,6 +18,19 @@ export type TurnRunnerContext = {
   onCompleted: (status: "completed" | "interrupted" | "failed", error?: string) => void;
 };
 
+export { runAgentApiTurn, runGoogleApiTurn, runCliTurn };
+
+const PROMPT_FILE_THRESHOLD = 24_000;
+const DEFAULT_FALLBACK_MODEL = "gemini-3.1-flash-image";
+
+async function persistLargePromptToFile(prompt: string, threadId: string, rootDirectory: string): Promise<string> {
+  const promptDir = path.join(rootDirectory, ".context");
+  await mkdir(promptDir, { recursive: true });
+  const promptFile = path.join(promptDir, `task_prompt_${threadId}.md`);
+  await writeFile(promptFile, prompt, "utf8");
+  return promptFile;
+}
+
 export async function executeTurn(
   threadId: string,
   turnId: string,
@@ -32,14 +42,11 @@ export async function executeTurn(
   let promptFile: string | null = null;
   try {
     const rawModel = modelOverride?.trim() || ctx.config.antigravity.model.trim();
-    const selectedModel = rawModel || "gemini-3.1-flash-image";
+    const selectedModel = rawModel || DEFAULT_FALLBACK_MODEL;
 
     let effectivePrompt = prompt;
-    if (prompt.length > 24_000) {
-      const promptDir = path.join(ctx.rootDirectory, ".context");
-      await mkdir(promptDir, { recursive: true });
-      promptFile = path.join(promptDir, `task_prompt_${threadId}.md`);
-      await writeFile(promptFile, prompt, "utf8");
+    if (prompt.length > PROMPT_FILE_THRESHOLD) {
+      promptFile = await persistLargePromptToFile(prompt, threadId, ctx.rootDirectory);
       const promptFileUrl = `file:///${promptFile.replace(/\\/g, "/")}`;
       effectivePrompt = `Please read the complete task instructions and context from ${promptFileUrl} using view_file and execute the task strictly following those instructions. Do NOT run any other tools, codebase searches, or command executions. Produce the final output directly in your response.`;
     }
@@ -73,188 +80,4 @@ export async function executeTurn(
       });
     }
   }
-}
-
-async function runAgentApiTurn(
-  threadId: string,
-  turnId: string,
-  effectivePrompt: string,
-  selectedModel: string,
-  controller: AbortController,
-  ctx: TurnRunnerContext,
-): Promise<void> {
-  const getEnv = (session: ActiveSessionInfo) => ({
-    ...process.env,
-    ...(session.address ? { ANTIGRAVITY_LS_ADDRESS: session.address } : {}),
-    ...(session.csrfToken ? { ANTIGRAVITY_CSRF_TOKEN: session.csrfToken } : {}),
-    ...(session.projectId ? { ANTIGRAVITY_PROJECT_ID: session.projectId } : {}),
-  });
-
-  const modelArg = selectedModel.includes("lite") ? "flash_lite" : selectedModel.includes("pro") ? "pro" : "flash";
-  const args = [...ctx.target.argsPrefix, "new-conversation", `--model=${modelArg}`, effectivePrompt];
-
-  let result: { stdout: string; stderr: string };
-  try {
-    result = await execFileAsync(ctx.target.command, args, {
-      cwd: ctx.rootDirectory,
-      env: getEnv(ctx.session),
-      timeout: 180_000,
-      windowsHide: true,
-      maxBuffer: 10 * 1024 * 1024,
-      shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
-    });
-  } catch (execErr: unknown) {
-    const errObj = execErr as { message?: string; stdout?: string; stderr?: string };
-    const details = errObj.stderr?.trim() || errObj.stdout?.trim() || errObj.message || "Unknown error";
-
-    // Auto-heal: If language_server was restarted or port changed, refresh active session and retry once
-    const isConnErr = /(?:connectex|connection error|actively refused|Unavailable desc = connection error|dial tcp)/i.test(details);
-    if (isConnErr) {
-      try {
-        const refreshedSession = await discoverActiveSession(ctx.logger, true);
-        ctx.session = refreshedSession;
-        result = await execFileAsync(ctx.target.command, args, {
-          cwd: ctx.rootDirectory,
-          env: getEnv(refreshedSession),
-          timeout: 180_000,
-          windowsHide: true,
-          maxBuffer: 10 * 1024 * 1024,
-          shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
-        });
-      } catch (retryErr: unknown) {
-        const retryErrObj = retryErr as { message?: string; stdout?: string; stderr?: string };
-        const retryDetails = retryErrObj.stderr?.trim() || retryErrObj.stdout?.trim() || retryErrObj.message || details;
-        throw new Error(`Antigravity AgentAPI execution failed: ${retryDetails}`, { cause: retryErr });
-      }
-    } else {
-      throw new Error(`Antigravity AgentAPI execution failed: ${details}`, { cause: execErr });
-    }
-  }
-
-  let conversationId = "";
-  try {
-    const parsed = JSON.parse(result.stdout) as { response?: { newConversation?: { conversationId?: string } } };
-    conversationId = parsed.response?.newConversation?.conversationId ?? "";
-  } catch {
-    const match = result.stdout.match(/"conversationId":\s*"([^"]+)"/);
-    if (match) conversationId = match[1];
-  }
-
-  if (!conversationId) {
-    throw new Error(`Antigravity AgentAPI did not return a conversation ID: ${result.stdout || result.stderr}`);
-  }
-
-  ctx.threadConversations.set(threadId, conversationId);
-
-  await watchTranscriptStream(conversationId, threadId, turnId, controller, {
-    onDelta: ctx.onDelta,
-    onCompleted: ctx.onCompleted,
-    logger: ctx.logger,
-  });
-}
-
-async function runGoogleApiTurn(
-  effectivePrompt: string,
-  selectedModel: string,
-  controller: AbortController,
-  ctx: TurnRunnerContext,
-): Promise<void> {
-  const base = (ctx.config.antigravity.api_base_url.trim() || "https://generativelanguage.googleapis.com/v1beta").replace(/\/+$/, "");
-  const apiKey = ctx.config.antigravity.api_key.trim();
-  const url = `${base}/models/${selectedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    signal: controller.signal,
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: effectivePrompt }] }],
-      generationConfig: { temperature: 0.7 },
-    }),
-  });
-
-  if (!response.ok) {
-    const raw = await response.text();
-    if (response.status === 401 || response.status === 403) {
-      throw new Error("Antigravity authentication required: Google AI API key is invalid or unauthorized");
-    }
-    if (response.status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(raw)) {
-      throw new Error("Antigravity quota exceeded: Google AI rate limit or quota exceeded");
-    }
-    throw new Error(`Google AI request failed (${response.status}): ${raw.slice(0, 300)}`);
-  }
-
-  const payload = (await response.json()) as {
-    candidates?: Array<{
-      content?: { parts?: Array<{ text?: string }> };
-      finishReason?: string;
-    }>;
-  };
-
-  const output = payload.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-  if (!output.trim()) {
-    throw new Error("Antigravity process terminated with empty output");
-  }
-
-  ctx.onDelta(output);
-  ctx.onCompleted("completed");
-}
-
-async function runCliTurn(
-  effectivePrompt: string,
-  selectedModel: string,
-  controller: AbortController,
-  ctx: TurnRunnerContext,
-): Promise<void> {
-  const args = ["--model", selectedModel, "--prompt", effectivePrompt, "--output-format", "stream"];
-  const child = spawn(ctx.target.command, args, {
-    cwd: ctx.rootDirectory,
-    stdio: ["pipe", "pipe", "pipe"],
-    shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
-    windowsHide: true,
-  });
-
-  let fullOutput = "";
-  let errorOutput = "";
-
-  child.stdout.on("data", (chunk: Buffer) => {
-    const text = chunk.toString();
-    fullOutput += text;
-    ctx.onDelta(text);
-  });
-
-  child.stderr.on("data", (chunk: Buffer) => {
-    errorOutput += chunk.toString();
-    ctx.logger.debug(`Antigravity stderr: ${chunk.toString().trim()}`, { step: "antigravity_stderr" });
-  });
-
-  controller.signal.addEventListener("abort", () => {
-    if (!child.killed) child.kill();
-  });
-
-  const exitCode = await new Promise<number | null>((resolve) => {
-    child.on("exit", resolve);
-    child.on("error", () => resolve(1));
-  });
-
-  if (controller.signal.aborted) {
-    ctx.onCompleted("interrupted");
-    return;
-  }
-
-  if (exitCode !== 0 || !fullOutput.trim()) {
-    const combined = `${errorOutput}\n${fullOutput}`.toLowerCase();
-    if (/not logged in|unauthenticated|auth login|login required/i.test(combined)) {
-      throw new Error("Antigravity authentication required: run 'agy auth login' to authenticate");
-    }
-    if (/quota|rate limit|429|resource_exhausted/i.test(combined)) {
-      throw new Error("Antigravity quota exceeded: please wait or check your subscription plan");
-    }
-    if (!fullOutput.trim()) {
-      throw new Error("Antigravity process terminated with empty output");
-    }
-    throw new Error(`Antigravity process failed with code ${exitCode}: ${errorOutput.slice(0, 300) || "unknown error"}`);
-  }
-
-  ctx.onCompleted("completed");
 }

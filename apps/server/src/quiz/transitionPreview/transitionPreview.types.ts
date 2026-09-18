@@ -1,8 +1,4 @@
-import type {
-  TransitionPreviewRequest,
-  TransitionPreviewStatus,
-  TransitionPreviewErrorCode,
-} from "@studio/shared";
+import type { TransitionSettings } from "@studio/shared";
 import type { BuiltTransitionSpecimen } from "../render/transitions/buildTransitionSpecimen.js";
 import type { RenderEngineSnapshot } from "../../tasks/video/renderEngineSnapshot.js";
 import type { VerifiedPreviewArtifact } from "../render/transitions/transitionPreviewStore.js";
@@ -43,8 +39,8 @@ export interface TransitionPreviewStorePort {
 export type EpisodeRenderOutput = {
   videoPath: string;
   manifestPath?: string;
-  manifest?: any;
-  transitionSettings?: any;
+  manifest?: Record<string, unknown>;
+  transitionSettings?: TransitionSettings;
 };
 
 export interface TransitionPreviewRepositoryPort {

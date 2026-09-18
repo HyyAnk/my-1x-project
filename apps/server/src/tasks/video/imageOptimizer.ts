@@ -119,13 +119,13 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
 
   // Check if target already exists with identical optimization parameters and is fresh
   try {
-    const [sourceStat, targetStat, sidecarRaw] = await Promise.all([
-      stat(sourcePath),
-      stat(targetPath),
-      readFile(sidecarPath, "utf-8"),
-    ]);
+    const [sourceStat, targetStat, sidecarRaw] = await Promise.all([stat(sourcePath), stat(targetPath), readFile(sidecarPath, "utf-8")]);
     if (targetStat.size > 0 && targetStat.mtimeMs >= sourceStat.mtimeMs) {
-      const sidecar = JSON.parse(sidecarRaw);
+      const sidecar = JSON.parse(sidecarRaw) as {
+        identity?: string;
+        targetWidth?: number;
+        targetHeight?: number;
+      };
       if (sidecar.identity === identity) {
         return {
           optimized: true,

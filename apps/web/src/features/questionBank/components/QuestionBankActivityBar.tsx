@@ -1,11 +1,6 @@
 import type { QuestionBankJobState } from "../types/questionBankUi.types";
 import { useQuestionBankActivityBar } from "../hooks/useQuestionBankActivityBar";
-import {
-  ActivityBarActions,
-  ActivityBarCopy,
-  ActivityBarSignal,
-  getBorderBottomColor,
-} from "./activityBar";
+import { ActivityBarActions, ActivityBarCopy, ActivityBarSignal, getBorderBottomColor } from "./activityBar";
 
 export interface QuestionBankActivityBarProps {
   job?: QuestionBankJobState | null;

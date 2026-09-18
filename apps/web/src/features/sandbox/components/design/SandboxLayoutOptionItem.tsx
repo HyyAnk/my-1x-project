@@ -11,12 +11,7 @@ export interface SandboxLayoutOptionItemProps {
   badge?: ReactNode;
 }
 
-export function SandboxLayoutOptionItem({
-  layout,
-  isSelected,
-  onSelect,
-  badge,
-}: SandboxLayoutOptionItemProps) {
+export function SandboxLayoutOptionItem({ layout, isSelected, onSelect, badge }: SandboxLayoutOptionItemProps) {
   const { t } = useTranslation();
 
   return (
@@ -38,14 +33,8 @@ export function SandboxLayoutOptionItem({
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <SandboxLayoutIcon
-            icon={layout.icon}
-            size={16}
-            style={{ color: isSelected ? "var(--accent)" : "var(--muted)", flexShrink: 0 }}
-          />
-          <span style={{ fontSize: "12px", fontWeight: isSelected ? 700 : 500 }}>
-            {t(layout.labelKey)}
-          </span>
+          <SandboxLayoutIcon icon={layout.icon} size={16} style={{ color: isSelected ? "var(--accent)" : "var(--muted)", flexShrink: 0 }} />
+          <span style={{ fontSize: "12px", fontWeight: isSelected ? 700 : 500 }}>{t(layout.labelKey)}</span>
           {badge && (
             <span
               style={{

@@ -97,7 +97,8 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
       qaSummary: qaReport.summary,
       savedQuestions,
       rejectedQuestions: qaReport.rejectedQuestions,
-      matrixCoverage: persist && savedQuestions.length > 0 ? await repository.getQuestionBankMatrixCoverage() : calculateMatrixCoverageStats(allCurrent),
+      matrixCoverage:
+        persist && savedQuestions.length > 0 ? await repository.getQuestionBankMatrixCoverage() : calculateMatrixCoverageStats(allCurrent),
       failedChunks: [],
       failedChunksCount: 0,
     };

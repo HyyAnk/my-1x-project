@@ -26,13 +26,7 @@ describe("Breadcrumbs Components", () => {
     const onNavigateHome = vi.fn();
     const onNavigateChannels = vi.fn();
 
-    render(
-      <ChannelBreadcrumb
-        channelName="Novy"
-        onNavigateHome={onNavigateHome}
-        onNavigateChannels={onNavigateChannels}
-      />,
-    );
+    render(<ChannelBreadcrumb channelName="Novy" onNavigateHome={onNavigateHome} onNavigateChannels={onNavigateChannels} />);
 
     const homeLink = screen.getByText("Dashboard");
     fireEvent.click(homeLink);
@@ -48,14 +42,7 @@ describe("Breadcrumbs Components", () => {
   it("renders EpisodeBreadcrumb with channel and episode title", () => {
     const onNavigateChannel = vi.fn();
 
-    render(
-      <EpisodeBreadcrumb
-        channelName="Novy"
-        channelId="novy_1"
-        episodeTitle="Episode 1"
-        onNavigateChannel={onNavigateChannel}
-      />,
-    );
+    render(<EpisodeBreadcrumb channelName="Novy" channelId="novy_1" episodeTitle="Episode 1" onNavigateChannel={onNavigateChannel} />);
 
     const channelLink = screen.getByText("Novy");
     fireEvent.click(channelLink);

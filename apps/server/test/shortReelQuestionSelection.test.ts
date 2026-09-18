@@ -110,29 +110,39 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
           archetype: "deep_trivia",
           domain_id: "space_earth",
         },
+        {
+          title: "Apex Predator Clash",
+          premise: "Epic head to head showdown",
+          why_it_fits: "High tension showdown",
+          hook: "Who reigns supreme?",
+          estimated_potential: "Viral",
+          archetype: "versus_faceoff",
+          domain_id: "nature_animals",
+        },
       ],
     });
 
     const plan = planTopicSuggestionMatrix({});
     const candidates = parseTopicCandidates(assignPlanMetadata(rawOutput, plan), "ch_test_123", plan);
 
-    expect(candidates).toHaveLength(5);
+    expect(candidates).toHaveLength(6);
 
-    // Distribution: exactly 3 Episode, 2 Short-Reel
+    // Distribution: exactly 3 Episode, 3 Short-Reel
     const episodeCandidates = candidates.filter((c) => c.content_kind === "episode");
     const shortReelCandidates = candidates.filter((c) => c.content_kind === "short_reel");
 
     expect(episodeCandidates).toHaveLength(3);
-    expect(shortReelCandidates).toHaveLength(2);
+    expect(shortReelCandidates).toHaveLength(3);
 
     // Slots 1-3 (indices 0..2) are Episode
     expect(candidates[0].content_kind).toBe("episode");
     expect(candidates[1].content_kind).toBe("episode");
     expect(candidates[2].content_kind).toBe("episode");
 
-    // Slots 4-5 (indices 3..4) are Short-Reel
+    // Slots 4-6 (indices 3..5) are Short-Reel
     expect(candidates[3].content_kind).toBe("short_reel");
     expect(candidates[4].content_kind).toBe("short_reel");
+    expect(candidates[5].content_kind).toBe("short_reel");
 
     // Validate Episode schemas
     for (const ep of episodeCandidates) {
@@ -170,13 +180,14 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
         { title: "Topic 3", premise: "P3", why_it_fits: "W3", hook: "H3", archetype: "verdict_true_false", estimated_potential: "High" },
         { title: "Topic 4", premise: "P4", why_it_fits: "W4", hook: "H4", archetype: "versus_faceoff", estimated_potential: "High" },
         { title: "Topic 5", premise: "P5", why_it_fits: "W5", hook: "H5", archetype: "deep_trivia", estimated_potential: "High" },
+        { title: "Topic 6", premise: "P6", why_it_fits: "W6", hook: "H6", archetype: "versus_faceoff", estimated_potential: "High" },
       ],
     });
 
     // 1. With topicHint provided
     const hintPlan = planTopicSuggestionMatrix({ topicHint: "Quantum Computing" });
     const withHint = parseTopicCandidates(assignPlanMetadata(rawOutput, hintPlan), "ch_test_123", hintPlan);
-    expect(withHint).toHaveLength(5);
+    expect(withHint).toHaveLength(6);
 
     // Slot 1 (Episode, index 0): keyword-steered
     expect(withHint[0].origin).toBe("keyword");
@@ -192,14 +203,16 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
     expect(withHint[3].origin).toBe("keyword");
     expect(withHint[3].theme_hint).toBe("Quantum Computing");
 
-    // Slot 5 (Short-Reel, index 4): discovery
+    // Slot 5 & 6 (Short-Reel, indices 4, 5): discovery
     expect(withHint[4].origin).toBe("discovery");
     expect(withHint[4].theme_hint).toBeUndefined();
+    expect(withHint[5].origin).toBe("discovery");
+    expect(withHint[5].theme_hint).toBeUndefined();
 
     // 2. Without topicHint provided
     const discoveryPlan = planTopicSuggestionMatrix({});
     const withoutHint = parseTopicCandidates(assignPlanMetadata(rawOutput, discoveryPlan), "ch_test_123", discoveryPlan);
-    expect(withoutHint).toHaveLength(5);
+    expect(withoutHint).toHaveLength(6);
     for (const c of withoutHint) {
       expect(c.origin).toBe("discovery");
       expect(c.theme_hint).toBeUndefined();

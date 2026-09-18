@@ -1,8 +1,4 @@
-import {
-  QUIZ_MAX_QUESTION_COUNT,
-  QUIZ_MIN_QUESTION_COUNT,
-  QUIZ_SECONDS_PER_QUESTION,
-} from "@studio/shared";
+import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QUIZ_SECONDS_PER_QUESTION } from "@studio/shared";
 
 /**
  * Formats a domain identifier into title case with spaces.
@@ -21,11 +17,7 @@ export function calculateEstimatedDurationMinutes(questionCount: number): number
 /**
  * Formats duration hint string based on question count validity.
  */
-export function formatDurationHint(
-  questionCount: number,
-  isQuestionCountValid: boolean,
-  maxAllowedQuestions: number,
-): string {
+export function formatDurationHint(questionCount: number, isQuestionCountValid: boolean, maxAllowedQuestions: number): string {
   if (!isQuestionCountValid) {
     return `Choose ${QUIZ_MIN_QUESTION_COUNT}-${maxAllowedQuestions}`;
   }
@@ -36,11 +28,7 @@ export function formatDurationHint(
 /**
  * Calculates maximum allowed questions for a topic candidate.
  */
-export function calculateMaxAllowedQuestions(
-  contentKind: string,
-  sourceCapacity: number,
-  isBoundOrAvailable: boolean,
-): number {
+export function calculateMaxAllowedQuestions(contentKind: string, sourceCapacity: number, isBoundOrAvailable: boolean): number {
   if (contentKind === "short_reel") {
     return 1;
   }

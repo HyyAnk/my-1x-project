@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
-import { type QuizAssetPlan, type QuizV2, QuizV2Schema } from "@studio/shared";
+import { type QuizAssetPlan } from "@studio/shared";
 import { RepositoryService } from "../src/repository.js";
 import { generateGpti2ImageBytes } from "../src/providers/gpti2Image.js";
 import { generateShopAiKeyImageBytes } from "../src/providers/shopAiKeyImage.js";
@@ -34,10 +34,7 @@ async function createTestRepository(): Promise<{ repository: RepositoryService; 
   return { repository, root };
 }
 
-async function createTestEpisode(
-  repository: RepositoryService,
-  prefix: string,
-): Promise<{ channelId: string; episodeId: string }> {
+async function createTestEpisode(repository: RepositoryService, prefix: string): Promise<{ channelId: string; episodeId: string }> {
   const channel = await repository.createChannel({
     name: `${prefix} Channel`,
     description: "Test channel",
@@ -254,7 +251,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
       // Validation issues contain blocker
       expect(issues).toContainEqual(
         expect.objectContaining({
-          code: "image_output_aspect_mismatch",
+          code: "asset_generation_failed",
           severity: "blocker",
         }),
       );
@@ -288,8 +285,8 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
             consistency_group_id: null,
             sizing: {
               policy_version: 1,
-              layout_id: "verdict_true_false",
-              geometry_key: "verdict_true_false:hero_question_image:1920x1080:800x490_cover",
+              layout_id: "mystery_reveal",
+              geometry_key: "mystery_reveal:hero_question_image:1920x1080:1126x634_cover",
               recommended_width: 1408,
               recommended_height: 792,
             },
@@ -348,8 +345,8 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
             consistency_group_id: null,
             sizing: {
               policy_version: 1,
-              layout_id: "verdict_true_false",
-              geometry_key: "verdict_true_false:hero_question_image:1920x1080:800x490_cover",
+              layout_id: "mystery_reveal",
+              geometry_key: "mystery_reveal:hero_question_image:1920x1080:1126x634_cover",
               recommended_width: 1408,
               recommended_height: 792,
             },

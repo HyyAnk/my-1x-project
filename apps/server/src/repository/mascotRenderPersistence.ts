@@ -1,4 +1,5 @@
 import {
+  MASCOT_RENDER_CONTRACT_VERSION,
   MascotProfileSchema,
   MascotSpriteActionSchema,
   adaptMascotAssetsV1ToV2,
@@ -9,9 +10,12 @@ import {
 } from "@studio/shared";
 
 type PersistedRenderBundle = NonNullable<MascotProfile["render_bundle"]>;
-type PersistedActionAssets = PersistedRenderBundle["assets"]["actions"];
 export type MascotSaveInput = Partial<MascotProfile> & { name: string };
 
+/**
+ * Builds a validated, persisted mascot profile where render_bundle and styles
+ * serve as the primary source of truth.
+ */
 export function buildPersistedMascotProfile(
   input: MascotSaveInput,
   existing: MascotProfile | null,
@@ -19,11 +23,10 @@ export function buildPersistedMascotProfile(
   timestamp: string,
 ): MascotProfile {
   const snapshot = buildLegacySnapshot(input, existing, id, timestamp);
-  const persistV2 = shouldPersistV2(input, existing);
   return MascotProfileSchema.parse({
     ...snapshot,
-    schema_version: persistV2 ? 2 : firstPresent(input.schema_version, existing?.schema_version, undefined),
-    render_bundle: resolveRenderBundle(input, existing, snapshot, persistV2),
+    schema_version: MASCOT_RENDER_CONTRACT_VERSION,
+    render_bundle: resolveRenderBundle(input, existing, snapshot),
   });
 }
 
@@ -54,19 +57,14 @@ function buildLegacySnapshot(input: MascotSaveInput, existing: MascotProfile | n
   return snapshot;
 }
 
-function shouldPersistV2(input: MascotSaveInput, existing: MascotProfile | null): boolean {
-  const hasBundle = [input.render_bundle, existing?.render_bundle].some(Boolean);
-  const hasV2Version = [input.schema_version, existing?.schema_version].includes(2);
-  return hasBundle || hasV2Version;
+/**
+ * @deprecated All mascot profiles now persist V2 render bundles by default.
+ */
+export function shouldPersistV2(_input?: MascotSaveInput, _existing?: MascotProfile | null): boolean {
+  return true;
 }
 
-function resolveRenderBundle(
-  input: MascotSaveInput,
-  existing: MascotProfile | null,
-  snapshot: MascotProfile,
-  persistV2: boolean,
-): PersistedRenderBundle | undefined {
-  if (!persistV2) return undefined;
+function resolveRenderBundle(input: MascotSaveInput, existing: MascotProfile | null, snapshot: MascotProfile): PersistedRenderBundle {
   if (input.render_bundle) return input.render_bundle;
   if (!existing?.render_bundle) {
     return { config: adaptMascotConfigV1ToV2(), assets: adaptMascotAssetsV1ToV2(snapshot) };
@@ -85,13 +83,12 @@ function firstPresent<T>(incoming: T | null | undefined, existing: T | null | un
 }
 
 /**
- * Carries forward V2 calibration while accepting legacy-shaped profile saves
- * from existing clients. Changed legacy metadata is adapted into a fresh V2
- * asset; unchanged metadata keeps the calibrated registration and motion.
+ * Merges persisted V2 render bundle while preserving calibrated registration and motion.
+ * render_bundle is the primary source of truth; legacy actions do not overwrite calibrated action assets.
  */
 export function mergePersistedMascotRenderBundle(
   existingBundle: PersistedRenderBundle,
-  previousActions: MascotProfile["actions"],
+  _previousActions: MascotProfile["actions"],
   nextProfile: MascotProfile,
   actionsProvided: boolean,
   masterImageProvided: boolean,
@@ -100,35 +97,19 @@ export function mergePersistedMascotRenderBundle(
   return {
     config: existingBundle.config,
     assets: {
-      actions: actionsProvided
-        ? mergeActionAssets(existingBundle.assets.actions, generatedAssets.actions, previousActions, nextProfile.actions)
-        : existingBundle.assets.actions,
+      actions: actionsProvided ? { ...generatedAssets.actions, ...existingBundle.assets.actions } : existingBundle.assets.actions,
       master: masterImageProvided
-        ? mergeMasterAsset(existingBundle.assets.master, generatedAssets.master, nextProfile.master_image_url)
+        ? mergeMasterAsset(existingBundle.assets.master, generatedAssets.master, nextProfile.master_image_url ?? null)
         : existingBundle.assets.master,
     },
   };
 }
 
-function mergeActionAssets(
-  existingActions: PersistedActionAssets,
-  generatedActions: PersistedActionAssets,
-  previousActions: MascotProfile["actions"],
-  nextActions: MascotProfile["actions"],
-): PersistedActionAssets {
-  return Object.fromEntries(
-    Object.entries(nextActions).flatMap(([action, nextAction]) => {
-      if (!nextAction) return [];
-      const generatedAsset = generatedActions[action as keyof typeof generatedActions];
-      if (!generatedAsset) return [];
-      const existingAsset = existingActions[action as keyof typeof existingActions];
-      const previousAction = previousActions[action as keyof typeof previousActions];
-      return [[action, existingAsset && areLegacyActionsEqual(previousAction, nextAction) ? existingAsset : generatedAsset]];
-    }),
-  );
-}
-
-function areLegacyActionsEqual(
+/**
+ * @deprecated Dual-write comparison between legacy actions and render bundle is retired.
+ * Retained for backwards compatibility.
+ */
+export function areLegacyActionsEqual(
   previous: MascotProfile["actions"][MascotActionType],
   next: MascotProfile["actions"][MascotActionType],
 ): boolean {
@@ -149,6 +130,14 @@ function areLegacyActionsEqual(
     "motion_speed",
     "motion_intensity",
   ].every((key) => previousParsed[key as keyof typeof previousParsed] === nextParsed[key as keyof typeof nextParsed]);
+}
+
+/**
+ * @deprecated Dual-write legacy action generation from render_bundle is retired.
+ * render_bundle and styles are the primary source of truth.
+ */
+export function generateLegacyActionsFromBundle(_bundle: PersistedRenderBundle): MascotProfile["actions"] {
+  return {};
 }
 
 function mergeMasterAsset(

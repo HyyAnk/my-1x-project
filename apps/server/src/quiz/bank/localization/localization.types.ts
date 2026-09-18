@@ -18,7 +18,7 @@ export const LocalizedQuizQuestionSchema = z
   .object({
     question_id: z.string().trim().min(1),
     question: z.string().trim().min(1),
-    choices: z.array(LocalizedQuizChoiceSchema).min(2),
+    choices: z.array(LocalizedQuizChoiceSchema).min(1),
     explanation: z.string().trim().min(1),
   })
   .strict();

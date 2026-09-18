@@ -19,11 +19,19 @@ describe("imageOptimizer", () => {
 
   it("calculates layout-aware optimal dimensions correctly", () => {
     expect(getOptimalAssetDimensions("choice_thumbnail")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
-    expect(getOptimalAssetDimensions("answer_option", "visual_choices_three")).toEqual({ maxWidth: 672, maxHeight: 504, aspectRatio: "4:3" });
-    expect(getOptimalAssetDimensions("answer_option", "visual_choices_three_pure")).toEqual({ maxWidth: 728, maxHeight: 728, aspectRatio: "1:1" });
-    expect(getOptimalAssetDimensions("hero", "media_left_choices_right")).toEqual({ maxWidth: 1056, maxHeight: 792, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("answer_option", "visual_choices_three")).toEqual({
+      maxWidth: 664,
+      maxHeight: 664,
+      aspectRatio: "1:1",
+    });
+    expect(getOptimalAssetDimensions("answer_option", "visual_choices_three_pure")).toEqual({
+      maxWidth: 648,
+      maxHeight: 864,
+      aspectRatio: "3:4",
+    });
+    expect(getOptimalAssetDimensions("hero", "media_left_choices_right")).toEqual({ maxWidth: 1120, maxHeight: 840, aspectRatio: "4:3" });
     expect(getOptimalAssetDimensions("hero", "baseline")).toEqual({ maxWidth: 1080, maxHeight: 608, aspectRatio: "16:9" });
-    expect(getOptimalAssetDimensions("answer_option", "split_versus_two")).toEqual({ maxWidth: 1024, maxHeight: 576, aspectRatio: "16:9" });
+    expect(getOptimalAssetDimensions("answer_option", "split_versus_two")).toEqual({ maxWidth: 1152, maxHeight: 648, aspectRatio: "16:9" });
     expect(getOptimalAssetDimensions()).toEqual({ maxWidth: 1280, maxHeight: 720, aspectRatio: "16:9" });
   });
 

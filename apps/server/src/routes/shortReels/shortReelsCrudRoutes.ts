@@ -104,20 +104,33 @@ export function registerShortReelsCrudRoutes(server: FastifyInstance, deps: Shor
     }
   });
 
+  interface LegacyPublishingCommand {
+    kind: string;
+    publishing: {
+      hook: string;
+      description: string;
+      cta?: string | null;
+      hashtags?: string[];
+    };
+  }
+
+  function hasLegacyPublishing(body: unknown): body is Record<string, unknown> & { command: LegacyPublishingCommand } {
+    if (!body || typeof body !== "object") return false;
+    const cmd = (body as { command?: unknown }).command;
+    if (!cmd || typeof cmd !== "object") return false;
+    const c = cmd as { kind?: unknown; publishing?: unknown };
+    if (c.kind !== "update_publishing" || !c.publishing || typeof c.publishing !== "object") return false;
+    const p = c.publishing as { hook?: unknown };
+    return typeof p.hook === "string";
+  }
+
   // Edit command with expected revision and idempotency
   server.patch("/api/channels/:channelId/short-reels/:reelId", async (request: FastifyRequest, reply: FastifyReply) => {
     const params = request.params as { channelId: string; reelId: string };
     try {
       await repository.getChannel(params.channelId);
-      let rawBody = request.body as any;
-      if (
-        rawBody &&
-        typeof rawBody === "object" &&
-        rawBody.command &&
-        rawBody.command.kind === "update_publishing" &&
-        rawBody.command.publishing &&
-        typeof rawBody.command.publishing.hook === "string"
-      ) {
+      let rawBody: unknown = request.body;
+      if (hasLegacyPublishing(rawBody)) {
         rawBody = {
           ...rawBody,
           command: {

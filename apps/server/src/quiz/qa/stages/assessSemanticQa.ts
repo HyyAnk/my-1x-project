@@ -5,13 +5,16 @@ export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
 
   const semanticProblems = quiz.questions.flatMap((question) => {
     const result: QuizIssue[] = [];
-    const requiredChoiceCount = quizChoiceCountForFormat(question.format);
+    const requiredChoiceCount = quizChoiceCountForFormat(question.format, question.answer_mode);
     if (question.choices.length !== requiredChoiceCount) {
       result.push({
         code: "quiz_choice_count_invalid",
         severity: "blocker",
         message: `Question ${question.number} has ${question.choices.length} choices; exactly ${requiredChoiceCount} required.`,
-        next_action: "Regenerate the question with only the canonical A–C answer layout (or exactly True/False).",
+        next_action:
+          question.answer_mode === "single_reveal"
+            ? "Regenerate as a single-reveal Mystery question."
+            : "Regenerate the question with only the canonical A–C answer layout (or exactly True/False).",
         question_ids: [question.id],
         stage: "semantic",
       });

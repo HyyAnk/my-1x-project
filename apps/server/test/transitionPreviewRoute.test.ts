@@ -12,10 +12,7 @@ import type {
   TransitionPreviewRunnerPort,
   TransitionPreviewStorePort,
 } from "../src/quiz/transitionPreview/transitionPreview.types.js";
-import type {
-  PublishedPreviewArtifact,
-  VerifiedPreviewArtifact,
-} from "../src/quiz/transitionPreview/transitionPreviewStore.js";
+import type { PublishedPreviewArtifact, VerifiedPreviewArtifact } from "../src/quiz/transitionPreview/transitionPreviewStore.js";
 
 class RouteTestStore implements TransitionPreviewStorePort {
   private readonly artifacts = new Map<string, VerifiedPreviewArtifact>();

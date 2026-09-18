@@ -26,7 +26,6 @@ const ARCHETYPE_META: Record<string, { label: string; icon: string }> = {
   visual_spotting: { label: "Visual Spotting", icon: "👁️" },
   visual_identification: { label: "Visual ID", icon: "🔍" },
   mystery_reveal: { label: "Mystery Reveal", icon: "🎭" },
-  clue_deduction: { label: "Clue Deduction", icon: "🕵️" },
 };
 
 export function QuestionBankTable({

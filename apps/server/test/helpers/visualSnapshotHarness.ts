@@ -8,7 +8,7 @@ import { buildSandboxComposition } from "../../src/quiz/render/sandboxCompositio
 import { copyCandyArcadeFonts, resolveCandyArcadeFonts } from "../../src/quiz/render/candyArcade/candyArcadeFonts.js";
 
 export type VisualSnapshotAspect = "16:9" | "9:16";
-export type VisualSnapshotFormat = "multiple_choice" | "odd_one_out" | "true_false";
+export type VisualSnapshotFormat = "multiple_choice" | "odd_one_out" | "true_false" | "image_guess";
 
 export type VisualSnapshotCase = {
   layoutId: string;
@@ -54,15 +54,8 @@ export const VISUAL_SNAPSHOT_CASES: VisualSnapshotCase[] = [
   {
     layoutId: "mystery_reveal",
     aspectRatio: "16:9",
-    choices: ["Secret A", "Secret B", "Secret C"],
-    questionFormat: "multiple_choice",
-    phase: "reveal",
-  },
-  {
-    layoutId: "clue_deduction",
-    aspectRatio: "16:9",
-    choices: ["Clue A", "Clue B", "Clue C"],
-    questionFormat: "multiple_choice",
+    choices: ["Secret Answer"],
+    questionFormat: "image_guess",
     phase: "reveal",
   },
 ];

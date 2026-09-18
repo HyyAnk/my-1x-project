@@ -1,11 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import {
-  CORE_TRANSITIONS,
-  getTransition,
-  listTransitions,
-  type TransitionDefinition,
-  type TransitionSettings,
-} from "@studio/shared";
+import { CORE_TRANSITIONS, getTransition, listTransitions, type TransitionSettings } from "@studio/shared";
 
 export const DEFAULT_TRANSITION_ID = "stinger_swipe";
 export const DEFAULT_TRANSITION_DURATION = 0.5;
@@ -143,16 +137,11 @@ export function useSandboxTransitionState(options?: UseSandboxTransitionStateOpt
   const syncFromChannel = useCallback(
     (channel?: ChannelTransitionConfigInput | null) => {
       if (!channel) return;
-      const transId =
-        channel.transitions?.scene?.id ??
-        channel.transitions?.intro?.id ??
-        channel.transition_type;
+      const transId = channel.transitions?.scene?.id ?? channel.transitions?.intro?.id ?? channel.transition_type;
       if (transId && typeof transId === "string") {
         setTransitionId(transId);
         const duration =
-          channel.transitions?.scene?.durationSeconds ??
-          channel.transitions?.intro?.durationSeconds ??
-          channel.transition_duration_seconds;
+          channel.transitions?.scene?.durationSeconds ?? channel.transitions?.intro?.durationSeconds ?? channel.transition_duration_seconds;
         if (typeof duration === "number") {
           setTransitionDuration(duration);
         }

@@ -7,6 +7,9 @@ import {
   assembleFullDescription,
   normalizeHashtags,
   parseDescriptionJsonResponse,
+  assembleDescriptionFields,
+  buildFallbackDescription,
+  resolveDescriptionDefaults,
   generateVideoDescription,
 } from "../src/quiz/description/index.js";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
@@ -243,6 +246,82 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const text = 'Here is the requested description metadata:\n\n{"topic_category": "Địa lý"}\n\nHope this helps!';
       const parsed = parseDescriptionJsonResponse(text);
       expect(parsed.topic_category).toBe("Địa lý");
+    });
+  });
+
+  describe("descriptionFallbackLocales", () => {
+    it("builds fallback descriptions for supported locales (en, de, fr, es)", () => {
+      const tiers = calculateScoringTiers(5);
+      const enFallback = buildFallbackDescription("en", sampleEpisode, 5, tiers);
+      expect(enFallback.primary_keyword).toBe("kỳ quan thế giới cổ đại");
+      expect(enFallback.hook_lines).toContain("5 Question Challenge!");
+      expect(enFallback.suggested_playlist_category).toBe(sampleEpisode.topic.title);
+
+      const deFallback = buildFallbackDescription("de", sampleEpisode, 5, tiers);
+      expect(deFallback.hook_lines).toContain("5 Fragen!");
+
+      const frFallback = buildFallbackDescription("fr", sampleEpisode, 5, tiers);
+      expect(frFallback.hook_lines).toContain("Défi 5 Questions !");
+
+      const esFallback = buildFallbackDescription("es", sampleEpisode, 5, tiers);
+      expect(esFallback.hook_lines).toContain("¡Desafío de 5 preguntas!");
+    });
+
+    it("throws RepositoryError for unsupported locale", () => {
+      const tiers = calculateScoringTiers(5);
+      expect(() => buildFallbackDescription("unsupported_xyz", sampleEpisode, 5, tiers)).toThrow(/DESCRIPTION_LOCALIZATION_FAILED/);
+    });
+
+    it("resolves description defaults across locales", () => {
+      const tiers = calculateScoringTiers(5);
+      const enDefaults = resolveDescriptionDefaults("en", sampleEpisode, tiers);
+      expect(enDefaults.defaultCtaText).toBe("How many did you get right? Comment below!");
+      expect(enDefaults.defaultBeginner).toContain("Beginner");
+
+      const deDefaults = resolveDescriptionDefaults("de", sampleEpisode, tiers);
+      expect(deDefaults.defaultCtaText).toBe("Wie viele hast du richtig? Kommentiere unten!");
+
+      const fallbackDefaults = resolveDescriptionDefaults("unknown_lang", sampleEpisode, tiers);
+      expect(fallbackDefaults.defaultHookLines).toBeUndefined();
+      expect(fallbackDefaults.defaultBeginner).toContain("Beginner");
+    });
+  });
+
+  describe("assembleDescriptionFields", () => {
+    it("assembles fields with proper defaults and hashtag normalization", () => {
+      const tiers = calculateScoringTiers(5);
+      const defaults = resolveDescriptionDefaults("en", sampleEpisode, tiers);
+      const assembled = assembleDescriptionFields(
+        {
+          topic_category: "World Wonders",
+          primary_keyword: "ancient wonders",
+          hashtags: ["#quiz", "#wonders", "trivia"],
+        },
+        sampleEpisode,
+        "en",
+        defaults,
+      );
+
+      expect(assembled.topicCategory).toBe("World Wonders");
+      expect(assembled.primaryKeyword).toBe("ancient wonders");
+      expect(assembled.hookLines).toBe(defaults.defaultHookLines);
+      expect(assembled.semanticParagraph).toBe(defaults.defaultSemantic);
+      expect(assembled.hashtags).toEqual(["#quiz", "#wonders", "#trivia"]);
+    });
+
+    it("throws when missing mandatory fields without locale defaults", () => {
+      const emptyDefaults = {
+        defaultHookLines: undefined,
+        defaultSemantic: undefined,
+        defaultBeginner: "1 pt",
+        defaultIntermediate: "2 pts",
+        defaultExpert: "3 pts",
+        defaultCtaText: "Comment below!",
+      };
+
+      expect(() => assembleDescriptionFields({}, sampleEpisode, "unknown", emptyDefaults)).toThrow(
+        /Missing hook lines for unknown description/,
+      );
     });
   });
 

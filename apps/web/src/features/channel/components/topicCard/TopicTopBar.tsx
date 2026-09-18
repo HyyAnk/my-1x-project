@@ -9,12 +9,7 @@ export interface TopicTopBarProps {
   sourceCapacity: number;
 }
 
-export function TopicTopBar({
-  topic,
-  availability,
-  canConfirm,
-  sourceCapacity,
-}: TopicTopBarProps) {
+export function TopicTopBar({ topic, availability, canConfirm, sourceCapacity }: TopicTopBarProps) {
   const isShortReel = topic.content_kind === "short_reel";
 
   return (
@@ -28,15 +23,9 @@ export function TopicTopBar({
         </div>
         <div>
           {topic.content_kind === "episode" ? (
-            <TopicLayoutPreviewButton
-              quizFormat={topic.quiz_format}
-              archetype={topic.archetype}
-              layoutId={topic.suggested_layout}
-            />
+            <TopicLayoutPreviewButton quizFormat={topic.quiz_format} archetype={topic.archetype} layoutId={topic.suggested_layout} />
           ) : (
-            <span className="topic-archetype-tag">
-              {topic.archetype === "versus_faceoff" ? "Versus Face-off" : "Deep Trivia"}
-            </span>
+            <span className="topic-archetype-tag">{topic.archetype === "versus_faceoff" ? "Versus Face-off" : "Deep Trivia"}</span>
           )}
         </div>
       </div>
@@ -52,10 +41,7 @@ export function TopicTopBar({
           </span>
         ) : null}
         {availability ? (
-          <span
-            className={`badge topic-availability-pill ${canConfirm ? "is-ready" : "is-unready"}`}
-            title={availability.recovery_action}
-          >
+          <span className={`badge topic-availability-pill ${canConfirm ? "is-ready" : "is-unready"}`} title={availability.recovery_action}>
             {canConfirm
               ? `${sourceCapacity} Ready`
               : availability.reason_code === "UNBOUND_LEGACY_TOPIC"

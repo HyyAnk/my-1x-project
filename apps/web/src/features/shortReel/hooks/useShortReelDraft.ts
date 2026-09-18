@@ -109,10 +109,7 @@ export function useShortReelDraft({ currentReel, onNotice, onApplyRemoteReel }: 
     }
   }, [conflictRemoteRecord]);
 
-  const getBaseRevision = useCallback(
-    (fallbackRevision: number) => draftBaseRevisionRef.current ?? fallbackRevision,
-    [],
-  );
+  const getBaseRevision = useCallback((fallbackRevision: number) => draftBaseRevisionRef.current ?? fallbackRevision, []);
 
   return {
     draftScript,

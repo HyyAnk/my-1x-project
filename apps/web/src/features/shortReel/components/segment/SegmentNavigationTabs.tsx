@@ -35,9 +35,7 @@ export function SegmentNavigationTabs({
             >
               <div className="short-reel-segment-tab-content">
                 <span className="short-reel-segment-tab-title">Segment {idx}</span>
-                <span className="short-reel-segment-tab-sub">
-                  {seg ? `${seg.duration_seconds}s • ${seg.mode}` : "Empty"}
-                </span>
+                <span className="short-reel-segment-tab-sub">{seg ? `${seg.duration_seconds}s • ${seg.mode}` : "Empty"}</span>
               </div>
               {isStale && (
                 <span className="short-reel-stale-badge" title="Downstream segment is marked stale from earlier edits">

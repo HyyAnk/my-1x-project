@@ -1,12 +1,6 @@
 import path from "node:path";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import {
-  CancelShortReelRequestSchema,
-  GenerateShortReelRequestSchema,
-  type ReelKey,
-  type ShortReelRecord,
-  type Task,
-} from "@studio/shared";
+import { CancelShortReelRequestSchema, GenerateShortReelRequestSchema, type ReelKey, type Task } from "@studio/shared";
 import { RepositoryError } from "../../repository/errors.js";
 import { requireCompleteShortReelSource } from "../../repository/shortReelSourcePolicy.js";
 import { exportShortReelPackage } from "../../shortReel/exportService.js";

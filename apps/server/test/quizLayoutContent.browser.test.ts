@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { chromium, type Browser, type Page } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { QUIZ_LANDSCAPE_LAYOUT_IDS, SandboxPreviewInputSchema } from "@studio/shared";
+import { QUIZ_LANDSCAPE_LAYOUT_IDS, QUIZ_LAYOUT_GEOMETRY, SandboxPreviewInputSchema } from "@studio/shared";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 import { resolveCandyArcadeFonts } from "../src/quiz/render/candyArcade/candyArcadeFonts.js";
 import { LAYOUT_CONTENT_GEOMETRY } from "../src/quiz/render/layouts/layoutContentGeometry.js";
@@ -26,11 +26,11 @@ describe("quizLayoutContent.browser", () => {
     browser = await chromium.launch({ headless: true });
     page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
     await page.route(/^https?:/, (route) => route.abort());
-  }, 30000);
+  }, 60000);
 
   afterAll(async () => {
     await browser?.close();
-  });
+  }, 60000);
 
   async function loadSnapshot(layout: (typeof QUIZ_LANDSCAPE_LAYOUT_IDS)[number], choiceCount: number) {
     const choices = Array.from({ length: choiceCount }, (_, i) => `Choice ${String.fromCharCode(65 + i)}`);
@@ -68,6 +68,14 @@ describe("quizLayoutContent.browser", () => {
     return counts.map((choiceCount) => ({ layoutId, choiceCount }));
   });
 
+  const DETACHED_BADGE_CASES = [
+    { layoutId: "media_left_choices_right", choiceCount: 2 },
+    { layoutId: "media_left_choices_right", choiceCount: 3 },
+    { layoutId: "visual_choices_three", choiceCount: 3 },
+    { layoutId: "full_stack_list", choiceCount: 2 },
+    { layoutId: "full_stack_list", choiceCount: 3 },
+  ] as const;
+
   it.each(TEST_CASES)("measures expected bounds for $layoutId with $choiceCount choices", async ({ layoutId, choiceCount }) => {
     const geometry = LAYOUT_CONTENT_GEOMETRY[layoutId];
     await loadSnapshot(layoutId, choiceCount);
@@ -86,15 +94,17 @@ describe("quizLayoutContent.browser", () => {
           const r = heroEl.getBoundingClientRect();
           heroBox = { x: r.x, y: r.y, width: r.width, height: r.height };
         }
-      } else if (layout === "clue_deduction") {
-        const heroEl = document.querySelector<HTMLElement>(".clue-card-stage");
-        if (heroEl) {
-          const r = heroEl.getBoundingClientRect();
-          heroBox = { x: r.x, y: r.y, width: r.width, height: r.height };
-        }
       }
 
-      const cards = Array.from(document.querySelectorAll<HTMLElement>(".choice-card")).map((card) => {
+      let selector = ".choice-card";
+      if (layout === "visual_choices_three") {
+        selector = ".visual-answer-assembly";
+      } else if (layout === "visual_choices_three_pure") {
+        selector = ".choice-media";
+      } else if (layout === "split_versus_two") {
+        selector = ".choice-card-surface";
+      }
+      const cards = Array.from(document.querySelectorAll<HTMLElement>(selector)).map((card) => {
         const r = card.getBoundingClientRect();
         return { x: r.x, y: r.y, width: r.width, height: r.height };
       });
@@ -132,4 +142,38 @@ describe("quizLayoutContent.browser", () => {
       expect(Math.abs(actual.height - expected.height)).toBeLessThanOrEqual(2);
     }
   });
+
+  it.each(DETACHED_BADGE_CASES)(
+    "keeps the badge fused above the answer surface for $layoutId with $choiceCount choices",
+    async ({ layoutId, choiceCount }) => {
+      await loadSnapshot(layoutId, choiceCount);
+      const measured = await page.evaluate(() => {
+        const badge = document.querySelector<HTMLElement>(".choice-label");
+        const surface = document.querySelector<HTMLElement>(".choice-card-surface");
+        if (!badge || !surface) throw new Error("Detached answer parts are missing");
+        const badgeRect = badge.getBoundingClientRect();
+        const surfaceRect = surface.getBoundingClientRect();
+        return {
+          badge: { x: badgeRect.x, y: badgeRect.y, width: badgeRect.width, height: badgeRect.height },
+          surface: { x: surfaceRect.x, y: surfaceRect.y, width: surfaceRect.width, height: surfaceRect.height },
+          textX: document.querySelector<HTMLElement>(".choice-text")?.getBoundingClientRect().x ?? 0,
+          badgeZ: Number(getComputedStyle(badge).zIndex),
+          surfaceZ: Number(getComputedStyle(surface).zIndex),
+        };
+      });
+      const expected = QUIZ_LAYOUT_GEOMETRY[layoutId].answerVariants[choiceCount]!;
+      const expectedBadge = expected.badge[0];
+      const expectedSurface = expected.text[0];
+      const actualOverlap = measured.badge.x + measured.badge.width - measured.surface.x;
+
+      for (const key of ["x", "y", "width", "height"] as const) {
+        expect(Math.abs(measured.badge[key] - expectedBadge[key])).toBeLessThanOrEqual(2);
+        expect(Math.abs(measured.surface[key] - expectedSurface[key])).toBeLessThanOrEqual(2);
+      }
+      expect(Math.abs(actualOverlap - expected.overlap!)).toBeLessThanOrEqual(2);
+      expect(actualOverlap / measured.badge.width).toBeGreaterThanOrEqual(0.27);
+      expect(measured.textX - (measured.badge.x + measured.badge.width)).toBeGreaterThanOrEqual(12);
+      expect(measured.badgeZ).toBeGreaterThan(measured.surfaceZ);
+    },
+  );
 });

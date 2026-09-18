@@ -50,13 +50,7 @@ describe("Question History Scope & Content Type Separation", () => {
   };
 
   it("ignores short_reel history entries when checking against episode target", () => {
-    const result = checkQuestionsAgainstHistory(
-      "ep_current",
-      [sampleQuestion],
-      [shortReelEntry],
-      0,
-      "episode",
-    );
+    const result = checkQuestionsAgainstHistory("ep_current", [sampleQuestion], [shortReelEntry], 0, "episode");
 
     expect(result.duplicate_count).toBe(0);
     expect(result.passed).toBe(true);
@@ -65,13 +59,7 @@ describe("Question History Scope & Content Type Separation", () => {
   });
 
   it("ignores episode history entries when checking against short_reel target", () => {
-    const result = checkQuestionsAgainstHistory(
-      "sreel_current",
-      [sampleQuestion],
-      [episodeEntry],
-      0,
-      "short_reel",
-    );
+    const result = checkQuestionsAgainstHistory("sreel_current", [sampleQuestion], [episodeEntry], 0, "short_reel");
 
     expect(result.duplicate_count).toBe(0);
     expect(result.passed).toBe(true);
@@ -81,26 +69,14 @@ describe("Question History Scope & Content Type Separation", () => {
 
   it("correctly flags duplicates when target and entry content types match", () => {
     // Both are episode
-    const episodeResult = checkQuestionsAgainstHistory(
-      "ep_current",
-      [sampleQuestion],
-      [episodeEntry],
-      0,
-      "episode",
-    );
+    const episodeResult = checkQuestionsAgainstHistory("ep_current", [sampleQuestion], [episodeEntry], 0, "episode");
     expect(episodeResult.duplicate_count).toBe(1);
     expect(episodeResult.passed).toBe(false);
     expect(episodeResult.items[0].status).toBe("duplicate");
     expect(episodeResult.items[0].matched_entry?.question_id).toBe("hist-ep-1");
 
     // Both are short_reel
-    const shortReelResult = checkQuestionsAgainstHistory(
-      "sreel_current",
-      [sampleQuestion],
-      [shortReelEntry],
-      0,
-      "short_reel",
-    );
+    const shortReelResult = checkQuestionsAgainstHistory("sreel_current", [sampleQuestion], [shortReelEntry], 0, "short_reel");
     expect(shortReelResult.duplicate_count).toBe(1);
     expect(shortReelResult.passed).toBe(false);
     expect(shortReelResult.items[0].status).toBe("duplicate");
@@ -137,13 +113,7 @@ describe("Question History Scope & Content Type Separation", () => {
     };
 
     // When checking for episode, legacyShortEntry is ignored while legacyEpisodeEntry is matched
-    const epResult = checkQuestionsAgainstHistory(
-      "ep_current",
-      [sampleQuestion],
-      [legacyShortEntry, legacyEpisodeEntry],
-      0,
-      "episode",
-    );
+    const epResult = checkQuestionsAgainstHistory("ep_current", [sampleQuestion], [legacyShortEntry, legacyEpisodeEntry], 0, "episode");
     expect(epResult.duplicate_count).toBe(1);
     expect(epResult.items[0].matched_entry?.question_id).toBe("hist-legacy-ep");
 

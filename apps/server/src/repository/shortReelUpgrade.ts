@@ -64,7 +64,10 @@ export async function prepareShortReelV1UpgradeBackup(targetFile: string): Promi
   } catch {
     try {
       await unlink(tempBackup);
-    } catch {}
+    } catch {
+      // Ignore cleanup error if temporary file was already deleted
+      void 0;
+    }
     const concurrentBytes = await readFile(backupFile);
     if (!concurrentBytes.equals(existingBytes)) {
       throw new RepositoryError("Concurrent reel.v1.backup.json does not match disk v1 record", "UPGRADE_BACKUP_MISMATCH");

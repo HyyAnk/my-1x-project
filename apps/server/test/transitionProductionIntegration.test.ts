@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getTransitionDefinition,
-  type ResolvedTransitionInstance,
-} from "@studio/shared";
+import { getTransitionDefinition, type ResolvedTransitionInstance } from "@studio/shared";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -32,35 +29,35 @@ describe("Task 3: Production Transition Integration", () => {
       aspectRatio: "16:9",
     });
 
-      // 3. Verify boundary ID and instance consistency
-      const boundaryId = quiz.questions[0]!.id;
-      const resolvedInstance = result.transitionInstances[boundaryId];
-      expect(resolvedInstance).toBeDefined();
-      expect(result.transitionInstances[boundaryId]).toEqual(resolvedInstance);
+    // 3. Verify boundary ID and instance consistency
+    const boundaryId = quiz.questions[0]!.id;
+    const resolvedInstance = result.transitionInstances[boundaryId];
+    expect(resolvedInstance).toBeDefined();
+    expect(result.transitionInstances[boundaryId]).toEqual(resolvedInstance);
 
-      // 4. Verify markup contains data-transition-instance attribute
-      expect(result.html).toContain(`data-transition-instance="${boundaryId}"`);
+    // 4. Verify markup contains data-transition-instance attribute
+    expect(result.html).toContain(`data-transition-instance="${boundaryId}"`);
 
-      // 5. Narration and event timing preservation
-      const narrationAfter = timeline.events.filter((event) => event.type === "narration.segment");
-      expect(narrationAfter).toEqual(narrationBefore);
+    // 5. Narration and event timing preservation
+    const narrationAfter = timeline.events.filter((event) => event.type === "narration.segment");
+    expect(narrationAfter).toEqual(narrationBefore);
 
-      // Check question enter times are preserved
-      const q1Enter = timeline.events.find((e) => e.question_id === "specimen-q1" && e.type === "question.enter");
-      const q2Enter = timeline.events.find((e) => e.question_id === "specimen-q2" && e.type === "question.enter");
-      expect(q1Enter).toBeDefined();
-      expect(q2Enter).toBeDefined();
-      expect(q2Enter!.at_seconds).toBeGreaterThan(q1Enter!.at_seconds);
+    // Check question enter times are preserved
+    const q1Enter = timeline.events.find((e) => e.question_id === "specimen-q1" && e.type === "question.enter");
+    const q2Enter = timeline.events.find((e) => e.question_id === "specimen-q2" && e.type === "question.enter");
+    expect(q1Enter).toBeDefined();
+    expect(q2Enter).toBeDefined();
+    expect(q2Enter!.at_seconds).toBeGreaterThan(q1Enter!.at_seconds);
 
-      // 6. Source layer handoff verification
-      const sourceCss = applyTransitionSourceHandoff(resolvedInstance, {
-        outgoingSelector: "#quiz-q1",
-        incomingSelector: "#quiz-q2",
-      });
-      expect(sourceCss).toContain("/* Transition source handoff for specimen-q1 */");
-      expect(sourceCss).toContain("#quiz-q1");
-      expect(sourceCss).toContain("#quiz-q2");
-      expect(sourceCss).toContain("--transition-boundary:");
+    // 6. Source layer handoff verification
+    const sourceCss = applyTransitionSourceHandoff(resolvedInstance, {
+      outgoingSelector: "#quiz-q1",
+      incomingSelector: "#quiz-q2",
+    });
+    expect(sourceCss).toContain("/* Transition source handoff for specimen-q1 */");
+    expect(sourceCss).toContain("#quiz-q1");
+    expect(sourceCss).toContain("#quiz-q2");
+    expect(sourceCss).toContain("--transition-boundary:");
   });
 
   it("preserves explicit pre-resolved transition instances passed via input", () => {

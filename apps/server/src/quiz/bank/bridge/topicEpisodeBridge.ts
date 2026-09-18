@@ -1,10 +1,5 @@
 import path from "node:path";
-import {
-  makeId,
-  nowIso,
-  type Episode,
-  type QuizQuestion,
-} from "@studio/shared";
+import { makeId, nowIso, type Episode, type QuizQuestion } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../../repository.js";
 import type { TaskManager } from "../../../tasks.js";
 import type { LLMClient } from "../../../utils/promptSanitizer.js";
@@ -18,10 +13,7 @@ import {
 import { localizeProductContent } from "../localization/productLocalization.js";
 import { resolveBoundTopicSources } from "./boundSourceResolver.js";
 import { convertBankQuestionToQuizQuestionLossless } from "./bankQuestionConverter.js";
-import {
-  resolveRenderAspect,
-  triggerPipelineTask,
-} from "./bootstrapperHelpers.js";
+import { resolveRenderAspect, triggerPipelineTask } from "./bootstrapperHelpers.js";
 import { withTopicConfirmationLock } from "./topicConfirmationLock.js";
 import { stageAndPublishTopicEpisodeFiles } from "./episodeStagingPublisher.js";
 import {
@@ -31,10 +23,7 @@ import {
   buildConfiguredEpisode,
   buildSourcesMarkdown,
 } from "./topicEpisodeConfig.js";
-import type {
-  CreateEpisodeFromTopicWithBankInput,
-  CreateEpisodeFromTopicWithBankResult,
-} from "./bankEpisodeBootstrapper.js";
+import type { CreateEpisodeFromTopicWithBankInput, CreateEpisodeFromTopicWithBankResult } from "./bankEpisodeBootstrapper.js";
 
 /**
  * Handles replay of previously completed confirmation receipts, verifying integrity and reconciling state.
@@ -301,9 +290,7 @@ export async function createEpisodeFromTopicWithBank(deps: {
   input: CreateEpisodeFromTopicWithBankInput;
   llmClient?: LLMClient | null;
 }): Promise<CreateEpisodeFromTopicWithBankResult> {
-  return withTopicConfirmationLock(deps.channelId, deps.input.topic_id, () =>
-    executeEpisodeConfirmation(deps),
-  );
+  return withTopicConfirmationLock(deps.channelId, deps.input.topic_id, () => executeEpisodeConfirmation(deps));
 }
 
 export const createEpisodeFromTopicCandidate = createEpisodeFromTopicWithBank;

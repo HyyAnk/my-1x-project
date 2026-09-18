@@ -3,17 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  ChannelSchema,
-  EpisodeSchema,
-  QuizAssetPlanSchema,
-  QuizAssetResolutionSchema,
-  QuizV2Schema,
-  type DirectorPlan,
-  type QuizAssetPlan,
-  type QuizAssetResolution,
-  type QuizV2,
-} from "@studio/shared";
+import { ChannelSchema, EpisodeSchema, QuizV2Schema, type DirectorPlan, type QuizAssetResolution } from "@studio/shared";
 import { RepositoryService } from "../src/repository.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -70,12 +60,7 @@ function fakeWav(seconds = 6): Uint8Array {
  * Generates local diagnostic fixture images with circle distortion cues,
  * grid lines, corner markers, and dimensional labels.
  */
-async function generateDiagnosticImage(
-  width: number,
-  height: number,
-  label: string,
-  bgColor = "#1e293b",
-): Promise<Buffer> {
+async function generateDiagnosticImage(width: number, height: number, label: string, bgColor = "#1e293b"): Promise<Buffer> {
   const radius = Math.min(width, height) * 0.28;
   const cx = width / 2;
   const cy = height / 2;
@@ -403,7 +388,7 @@ describe("quizImageSizingProductionParity", () => {
     expect(context.html).toContain(".layout-visual_choices_three");
     expect(context.html).toContain("--slot-viewport-width: 432px");
     expect(context.html).toContain(".layout-split_versus_two");
-    expect(context.html).toContain("--slot-viewport-width: 622px");
+    expect(context.html).toContain("--slot-viewport-width: 674px");
     expect(context.html).toContain(".layout-media_left_choices_right");
     expect(context.html).toContain("--slot-hero-viewport-width: 696px");
 

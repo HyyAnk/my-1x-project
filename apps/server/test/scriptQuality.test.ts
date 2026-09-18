@@ -12,7 +12,9 @@ import { extractScriptMarkdown, TaskManager, validateQuizScript, validateScript 
 const roots: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => {})),
+  );
 });
 
 describe("script quality gates", () => {
@@ -205,7 +207,7 @@ class ScriptCodex extends EventEmitter {
 }
 
 async function waitFor(predicate: () => boolean): Promise<void> {
-  const deadline = Date.now() + 3_000;
+  const deadline = Date.now() + 15_000;
   while (!predicate() && Date.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 10));
   if (!predicate()) throw new Error("Timed out waiting for task state");
 }

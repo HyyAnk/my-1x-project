@@ -82,11 +82,7 @@ export function sequenceMultipleTracks(
   return placements;
 }
 
-export function planBgmSchedule(
-  available: BgmTrack[],
-  totalDurationSeconds: number,
-  options?: ResolveBgmOptions,
-): BgmPlacement[] {
+export function planBgmSchedule(available: BgmTrack[], totalDurationSeconds: number, options?: ResolveBgmOptions): BgmPlacement[] {
   if (available.length === 0) return [];
 
   const startSeconds = options?.startSeconds ?? 0;

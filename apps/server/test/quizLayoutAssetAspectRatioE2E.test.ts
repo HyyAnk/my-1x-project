@@ -5,8 +5,6 @@ import sharp from "sharp";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   type DirectorPlan,
-  getQuizPreviewLayoutCapability,
-  QUIZ_LAYOUT_CATALOG,
   type QuizLayoutAssetAspectRatio,
   type QuizPreviewLayoutId,
   type QuizV2,
@@ -114,7 +112,6 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       // 2. Prompt Compiler
       const compiled = compileQuizAssetPrompt(hero!);
       expect(compiled.prompt).toContain("Output framing: 4:3.");
-      expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
 
       // 3. Provider Target Sizing
       const gpti2Size = resolveImageDimensions(hero?.aspect_ratio, "gpt-image-2");
@@ -124,10 +121,10 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
 
       // 4. Image Optimizer Target Metrics
       const dims = getOptimalAssetDimensions("hero", "media_left_choices_right");
-      expect(dims).toEqual({ maxWidth: 1056, maxHeight: 792, aspectRatio: "4:3" });
+      expect(dims).toEqual({ maxWidth: 1120, maxHeight: 840, aspectRatio: "4:3" });
     });
 
-    it("executes full pipeline for '16:9' layout: verdict_true_false", () => {
+    it("executes full pipeline for '4:3' layout: verdict_true_false", () => {
       const quiz = buildTestQuiz([
         {
           id: "q-tf",
@@ -176,71 +173,13 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const plan = planQuizAssets(quiz, director);
       const hero = plan.assets.find((a) => a.purpose === "hero_question_image");
       expect(hero).toBeDefined();
-      expect(hero?.aspect_ratio).toBe("16:9");
+      expect(hero?.aspect_ratio).toBe("4:3");
 
       const compiled = compileQuizAssetPrompt(hero!);
-      expect(compiled.prompt).toContain("Output framing: 16:9.");
+      expect(compiled.prompt).toContain("Output framing: 4:3.");
 
       const dims = getOptimalAssetDimensions("hero", "verdict_true_false");
-      expect(dims).toEqual({ maxWidth: 1408, maxHeight: 792, aspectRatio: "16:9" });
-    });
-
-    it("executes full pipeline for '16:9' layout: clue_deduction", () => {
-      const quiz = buildTestQuiz([
-        {
-          id: "q-clue",
-          number: 1,
-          format: "image_guess",
-          difficulty: 2,
-          question: "Which profession uses these tools?",
-          choices: [
-            { id: "c-1", text: "Astronomer" },
-            { id: "c-2", text: "Geologist" },
-            { id: "c-3", text: "Botanist" },
-          ],
-          correct_choice_id: "c-1",
-          explanation: "Telescopes and star maps belong to astronomers.",
-          fun_fact: "Astronomers study celestial bodies.",
-          source_ids: ["S-03"],
-          visual_opportunity: "A brass telescope pointed towards starry night skies",
-          validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
-        },
-      ]);
-
-      const director = buildTestDirectorPlan([
-        {
-          question_id: "q-clue",
-          archetype: "clue_deduction",
-          layout_id: "clue_deduction",
-          energy: "curious",
-          visual_density: "focused",
-          palette_id: "grape",
-          motion_id: "enter.pop",
-          transition_id: "bubble_splash",
-          thinking_bar_style: "auto",
-          question_counter_style: "auto",
-          question_box_style: "auto",
-          answer_card_style: "auto",
-          background_style: "auto",
-          thinking_seconds: 7,
-          beat_intents: ["question_enter", "choice_reveal", "thinking", "answer_reveal"],
-          asset_intents: ["question_illustration"],
-          mascot_state: "celebrate",
-          sfx_intents: ["countdown_tick", "correct_small"],
-          transition_intent: "cut",
-          reward_intensity: "small",
-        },
-      ]);
-
-      const plan = planQuizAssets(quiz, director);
-      const hero = plan.assets.find((a) => a.purpose === "hero_question_image");
-      expect(hero?.aspect_ratio).toBe("16:9");
-
-      const compiled = compileQuizAssetPrompt(hero!);
-      expect(compiled.prompt).toContain("Output framing: 16:9.");
-
-      const dims = getOptimalAssetDimensions("hero", "clue_deduction");
-      expect(dims).toEqual({ maxWidth: 896, maxHeight: 504, aspectRatio: "16:9" });
+      expect(dims).toEqual({ maxWidth: 1216, maxHeight: 912, aspectRatio: "4:3" });
     });
 
     it("executes full pipeline for '1:1' layout: visual_choices_three and visual_choices_three_pure", () => {
@@ -295,28 +234,27 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       expect(choiceAssets).toHaveLength(3);
 
       for (const choice of choiceAssets) {
-        expect(choice.aspect_ratio).toBe("4:3");
+        expect(choice.aspect_ratio).toBe("1:1");
         expect(choice.transparent_background).toBe(true);
 
         const compiled = compileQuizAssetPrompt(choice);
-        expect(compiled.prompt).toContain("Output framing: 4:3.");
-        expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
+        expect(compiled.prompt).toContain("Output framing: 1:1.");
 
         const gpti2Size = resolveImageDimensions(choice.aspect_ratio, "gpt-image-2");
-        expect(gpti2Size).toEqual({ size: "1024x768", aspect_ratio: "4:3" });
+        expect(gpti2Size).toEqual({ size: "1024x1024", aspect_ratio: "1:1" });
 
         const nanoSize = resolveImageDimensions(choice.aspect_ratio, "nano-banana-2");
-        expect(nanoSize).toEqual({ size: "2K", aspect_ratio: "4:3" });
+        expect(nanoSize).toEqual({ size: "2K", aspect_ratio: "1:1" });
       }
 
       // Check visual_choices_three optimizer dimensions
       const optChoices = getOptimalAssetDimensions("choice_thumbnail", "visual_choices_three");
-      expect(optChoices).toEqual({ maxWidth: 672, maxHeight: 504, aspectRatio: "4:3" });
+      expect(optChoices).toEqual({ maxWidth: 664, maxHeight: 664, aspectRatio: "1:1" });
 
       // Check visual_choices_three_pure resolution & optimizer
-      expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option")).toBe("1:1");
+      expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option")).toBe("3:4");
       const optPure = getOptimalAssetDimensions("choice_thumbnail", "visual_choices_three_pure");
-      expect(optPure).toEqual({ maxWidth: 728, maxHeight: 728, aspectRatio: "1:1" });
+      expect(optPure).toEqual({ maxWidth: 648, maxHeight: 864, aspectRatio: "3:4" });
     });
 
     it("executes full pipeline for '16:9' and '4:3' hybrid layout: split_versus_two", () => {
@@ -327,7 +265,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       expect(heroDims).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
 
       const choiceDims = getOptimalAssetDimensions("answer_option", "split_versus_two");
-      expect(choiceDims).toEqual({ maxWidth: 1024, maxHeight: 576, aspectRatio: "16:9" });
+      expect(choiceDims).toEqual({ maxWidth: 1152, maxHeight: 648, aspectRatio: "16:9" });
     });
 
     it("executes full pipeline for '16:9' layout: mystery_reveal and baseline", () => {
@@ -336,13 +274,10 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
           id: "q-mystery",
           number: 1,
           format: "image_guess",
+          answer_mode: "single_reveal",
           difficulty: 1,
           question: "Can you guess what this is?",
-          choices: [
-            { id: "c-1", text: "Giraffe" },
-            { id: "c-2", text: "Zebra" },
-            { id: "c-3", text: "Horse" },
-          ],
+          choices: [{ id: "c-1", text: "Giraffe" }],
           correct_choice_id: "c-1",
           explanation: "The tall neck reveals the giraffe.",
           fun_fact: "Giraffes have blue tongues.",
@@ -384,13 +319,12 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
 
       const compiled = compileQuizAssetPrompt(hero!);
       expect(compiled.prompt).toContain("Output framing: 16:9.");
-      expect(compiled.prompt).toContain("16:9 widescreen landscape framing");
 
       const gpti2Size = resolveImageDimensions(hero?.aspect_ratio, "gpt-image-2");
       expect(gpti2Size).toEqual({ size: "1280x720", aspect_ratio: "16:9" });
 
       const dims = getOptimalAssetDimensions("hero", "mystery_reveal");
-      expect(dims).toEqual({ maxWidth: 768, maxHeight: 432, aspectRatio: "16:9" });
+      expect(dims).toEqual({ maxWidth: 1408, maxHeight: 792, aspectRatio: "16:9" });
 
       // Baseline preview layout
       expect(resolveQuizLayoutAssetAspectRatio("baseline", "hero_question_image")).toBe("16:9");
@@ -400,9 +334,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
 
     it("executes full pipeline for '3:4' portrait card aspect ratio", () => {
       const framing = framingRules("3:4", "hero_question_image");
-      expect(framing).toBe(
-        "Composition: 3:4 portrait card canvas. Center the focal subject vertically and horizontally with balanced top/bottom and side margins to avoid edge-clipping, tailored for card containers.",
-      );
+      expect(framing).toContain("Output aspect ratio: 3:4.");
 
       const gpti2 = resolveImageDimensions("3:4", "gpt-image-2");
       expect(gpti2).toEqual({ size: "768x1024", aspect_ratio: "3:4" });
@@ -427,7 +359,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       };
       const compiledPrompt = compileQuizAssetPrompt(mockAssetReq);
       expect(compiledPrompt.prompt).toContain("Output framing: 3:4.");
-      expect(compiledPrompt.prompt).toContain("3:4 portrait card canvas");
+      expect(compiledPrompt.prompt).toContain("Output aspect ratio: 3:4.");
     });
   });
 
@@ -463,7 +395,6 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const layouts: QuizPreviewLayoutId[] = [
         "media_left_choices_right",
         "verdict_true_false",
-        "clue_deduction",
         "visual_choices_three",
         "visual_choices_three_pure",
         "split_versus_two",
@@ -586,8 +517,8 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       });
 
       expect(res4_3.optimized).toBe(true);
-      expect(res4_3.targetWidth).toBe(1056);
-      expect(res4_3.targetHeight).toBe(792);
+      expect(res4_3.targetWidth).toBe(1120);
+      expect(res4_3.targetHeight).toBe(840);
 
       // 2. 1:1 Choice Image optimization
       const src1_1 = path.join(tempDir, "sample_1_1.png");
@@ -602,12 +533,12 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
         sourcePath: src1_1,
         targetPath: out1_1,
         purpose: "choice_thumbnail",
-        layout: "visual_choices_three_pure",
+        layout: "visual_choices_three",
       });
 
       expect(res1_1.optimized).toBe(true);
-      expect(res1_1.targetWidth).toBe(728);
-      expect(res1_1.targetHeight).toBe(728);
+      expect(res1_1.targetWidth).toBe(664);
+      expect(res1_1.targetHeight).toBe(664);
 
       // 3. 3:4 Card Image optimization
       const src3_4 = path.join(tempDir, "sample_3_4.png");
@@ -621,21 +552,19 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const res3_4 = await optimizeRenderImage({
         sourcePath: src3_4,
         targetPath: out3_4,
-        maxWidth: 768,
-        maxHeight: 1024,
+        purpose: "choice_thumbnail",
+        layout: "visual_choices_three_pure",
       });
 
       expect(res3_4.optimized).toBe(true);
-      expect(res3_4.targetWidth).toBe(768);
-      expect(res3_4.targetHeight).toBe(1024);
+      expect(res3_4.targetWidth).toBe(648);
+      expect(res3_4.targetHeight).toBe(864);
     });
   });
 
   describe("6. Provider Adapter Multi-Ratio Dispatch & Authentic Identity", () => {
     it("verifies provider adapters accept and handle all 5 aspect ratios deterministically", async () => {
-      const { resolveImageDimensions, getStandardDimensionsForAspectRatio } = await import(
-        "../src/providers/gpti2Dimensions.js"
-      );
+      const { resolveImageDimensions, getStandardDimensionsForAspectRatio } = await import("../src/providers/gpti2Dimensions.js");
 
       const ratios = ["16:9", "4:3", "1:1", "3:4", "9:16"] as const;
 

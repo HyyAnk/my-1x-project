@@ -82,7 +82,7 @@ describe("image provider fallback engine", () => {
         .png()
         .toBuffer(),
     );
-    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, _init) => {
       const urlStr = String(url);
       if (urlStr.includes("api/v1/images/generate")) {
         return {

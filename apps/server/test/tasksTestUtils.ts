@@ -25,6 +25,7 @@ export class FakeCodex extends EventEmitter {
   private turnNumber = 0;
   activeTurns = 0;
   maxActiveTurns = 0;
+  turnDelayMs = 40;
   prompts: string[] = [];
   connect(): Promise<void> {
     this.emit("status", "connected");
@@ -123,7 +124,7 @@ export class FakeCodex extends EventEmitter {
       this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta } });
       this.activeTurns -= 1;
       this.emit("notification", { method: "turn/completed", params: { turn: { id: turnId, status: "completed" } } });
-    }, 30);
+    }, this.turnDelayMs);
     return Promise.resolve(turnId);
   }
   interruptTurn(): Promise<void> {

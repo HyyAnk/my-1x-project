@@ -235,10 +235,9 @@ describe("useSandboxPresets", () => {
       syncFromPreset: vi.fn(),
     };
 
-    const { result } = renderHook(
-      () => useSandboxPresets({ design: mockDesign, mascot: mockMascot, transition: mockTransition }),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSandboxPresets({ design: mockDesign, mascot: mockMascot, transition: mockTransition }), {
+      wrapper,
+    });
 
     act(() => {
       result.current.setNewPresetName("Transition Preset");
@@ -277,4 +276,3 @@ describe("useSandboxPresets", () => {
     expect(mockTransition.syncFromPreset).toHaveBeenCalledWith(result.current.customPresets[0]);
   });
 });
-

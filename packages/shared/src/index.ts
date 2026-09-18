@@ -24,7 +24,15 @@ export * from "./shortReel/index.js";
 export * from "./transitions/index.js";
 export * from "./sampleImages.js";
 export * from "./quizImageSizing/index.js";
-export { hashBankQuestionSource, sourceCanonicalJsonStringify, sourceSha256Hex, canonicalJsonStringify, sha256Hex } from "./utils/contentHash.js";
+export {
+  hashBankQuestionSource,
+  sourceCanonicalJsonStringify,
+  sourceSha256Hex,
+  canonicalJsonStringify,
+  sha256Hex,
+} from "./utils/contentHash.js";
+export * from "./quizLayoutGeometry/index.js";
 export { QuestionContentTypeSchema, inferQuestionHistoryContentType } from "./schemas/config.js";
 export type { QuestionContentType } from "./schemas/config.js";
-
+export * from "./quizAnswerMode.js";
+export * from "./quizRevealTiming.js";

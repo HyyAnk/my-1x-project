@@ -70,7 +70,7 @@ async function discoverBatchFiles(candidateRoots: string[]): Promise<DiscoveredB
 
   for (const bankRoot of candidateRoots) {
     await assertSafeBankFilesystemPath(bankRoot, bankRoot);
-    let archetypes: string[] = [];
+    let archetypes: string[];
     try {
       archetypes = (await readdir(bankRoot, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
     } catch {
@@ -80,7 +80,7 @@ async function discoverBatchFiles(candidateRoots: string[]): Promise<DiscoveredB
     for (const arch of archetypes) {
       assertSafeBankPathSegments([arch], ["archetype"]);
       const archPath = path.join(bankRoot, arch);
-      let domains: string[] = [];
+      let domains: string[];
       try {
         domains = (await readdir(archPath, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
       } catch {
@@ -90,7 +90,7 @@ async function discoverBatchFiles(candidateRoots: string[]): Promise<DiscoveredB
       for (const dom of domains) {
         assertSafeBankPathSegments([dom], ["domain"]);
         const domPath = path.join(archPath, dom);
-        let batchNames: string[] = [];
+        let batchNames: string[];
         try {
           batchNames = (await readdir(domPath, { withFileTypes: true }))
             .filter((f) => f.isFile() && f.name.endsWith(".json"))
@@ -129,7 +129,9 @@ async function parseAndValidateBatchFile(file: DiscoveredBatchFile): Promise<Ban
   try {
     content = JSON.parse(rawContent);
   } catch (err) {
-    throw new RepositoryError(`Malformed JSON in batch file ${file.filePath}: ${(err as Error).message}`, "BANK_BATCH_CORRUPT", { cause: err });
+    throw new RepositoryError(`Malformed JSON in batch file ${file.filePath}: ${(err as Error).message}`, "BANK_BATCH_CORRUPT", {
+      cause: err,
+    });
   }
 
   const parsed = BankSubtopicBatchSchema.safeParse(content);
@@ -160,7 +162,11 @@ async function parseAndValidateBatchFile(file: DiscoveredBatchFile): Promise<Ban
   }
 
   for (const q of data.questions) {
-    if (q.domain_id !== data.domain_id || q.subtopic_id !== data.subtopic_id || !matchesArchetypeFilter(data.archetype_id, q.archetype_id)) {
+    if (
+      q.domain_id !== data.domain_id ||
+      q.subtopic_id !== data.subtopic_id ||
+      !matchesArchetypeFilter(data.archetype_id, q.archetype_id)
+    ) {
       throw new RepositoryError(`Question membership does not match batch ${file.filePath}`, "BANK_BATCH_INCONSISTENT");
     }
   }
@@ -168,11 +174,7 @@ async function parseAndValidateBatchFile(file: DiscoveredBatchFile): Promise<Ban
   return data;
 }
 
-function persistSyncedBatch(
-  db: ReturnType<typeof getBankSqliteDb>,
-  rows: BankQuestionRow[],
-  files: DiscoveredBatchFile[],
-): void {
+function persistSyncedBatch(db: ReturnType<typeof getBankSqliteDb>, rows: BankQuestionRow[], files: DiscoveredBatchFile[]): void {
   const insertQuestionStmt = db.prepare(`
     INSERT INTO bank_questions (
       id, entity_id, archetype_id, domain_id, subtopic_id, language, question,

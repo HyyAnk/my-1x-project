@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { affectedReelUnits, computeDependencyFingerprint, invalidatedDownstreamSegments } from "../src/shortReel/dependencyPolicy.js";
+import { affectedReelUnits, invalidatedDownstreamSegments } from "../src/shortReel/dependencyPolicy.js";
 import { generateReelStyleReferences } from "../src/shortReel/styleImageService.js";
 import { packageImage } from "./helpers/shortReelPackageFixture.js";
 import { repairScript } from "./helpers/shortReelRepairFixture.js";

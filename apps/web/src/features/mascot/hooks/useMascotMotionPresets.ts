@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ALL_MASCOT_ACTIONS, type MascotActionType, type MascotProfile } from "@studio/shared";
+import { ALL_MASCOT_ACTIONS, type MascotActionType, type MascotProfile, type MascotRenderBundleV2 } from "@studio/shared";
 import type { Notice } from "../../../components/types";
 import {
   DEFAULT_ACTION_INTENSITIES,
@@ -8,6 +8,32 @@ import {
   type MascotMotionIntensity,
   type MascotMotionPreset,
 } from "../constants";
+
+function patchBundleActionMotion(
+  bundle: MascotRenderBundleV2 | undefined,
+  action: MascotActionType,
+  patch: Partial<{ preset: MascotMotionPreset; speed: number; intensity: MascotMotionIntensity }>,
+): MascotRenderBundleV2 | undefined {
+  if (!bundle) return bundle;
+  const existingAsset = bundle.assets?.actions?.[action];
+  if (!existingAsset) return bundle;
+  return {
+    ...bundle,
+    assets: {
+      ...bundle.assets,
+      actions: {
+        ...bundle.assets.actions,
+        [action]: {
+          ...existingAsset,
+          motion: {
+            ...existingAsset.motion,
+            ...patch,
+          },
+        },
+      },
+    },
+  };
+}
 
 export function useMascotMotionPresets(
   editingMascot: MascotProfile | null,
@@ -28,15 +54,19 @@ export function useMascotMotionPresets(
     const initialIntensities: Record<MascotActionType, MascotMotionIntensity> = { ...DEFAULT_ACTION_INTENSITIES };
 
     for (const act of ALL_MASCOT_ACTIONS) {
+      const bundleAction = editingMascot.render_bundle?.assets?.actions?.[act];
       const sprite = editingMascot.actions[act];
-      if (sprite?.motion_preset) {
-        initialMotions[act] = sprite.motion_preset;
+      const preset = bundleAction?.motion?.preset ?? sprite?.motion_preset;
+      if (preset) {
+        initialMotions[act] = preset;
       }
-      if (typeof sprite?.motion_speed === "number") {
-        initialSpeeds[act] = sprite.motion_speed;
+      const speed = bundleAction?.motion?.speed ?? sprite?.motion_speed;
+      if (typeof speed === "number") {
+        initialSpeeds[act] = speed;
       }
-      if (sprite?.motion_intensity) {
-        initialIntensities[act] = sprite.motion_intensity;
+      const intensity = bundleAction?.motion?.intensity ?? sprite?.motion_intensity;
+      if (intensity) {
+        initialIntensities[act] = intensity;
       }
     }
     setActionMotions(initialMotions);
@@ -64,12 +94,14 @@ export function useMascotMotionPresets(
             motion_speed: actionSpeeds[action] || 1.0,
             motion_intensity: actionIntensities[action] || "normal",
           };
+      const updatedRenderBundle = patchBundleActionMotion(editingMascot.render_bundle, action, { preset });
       setEditingMascot({
         ...editingMascot,
         actions: {
           ...editingMascot.actions,
           [action]: updatedAction,
         },
+        ...(updatedRenderBundle ? { render_bundle: updatedRenderBundle } : {}),
       });
     }
   };
@@ -78,18 +110,21 @@ export function useMascotMotionPresets(
     setActionSpeeds((prev) => ({ ...prev, [action]: speed }));
     if (editingMascot) {
       const existingAction = editingMascot.actions[action];
-      if (existingAction) {
-        setEditingMascot({
-          ...editingMascot,
-          actions: {
+      const updatedActions = existingAction
+        ? {
             ...editingMascot.actions,
             [action]: {
               ...existingAction,
               motion_speed: speed,
             },
-          },
-        });
-      }
+          }
+        : editingMascot.actions;
+      const updatedRenderBundle = patchBundleActionMotion(editingMascot.render_bundle, action, { speed });
+      setEditingMascot({
+        ...editingMascot,
+        actions: updatedActions,
+        ...(updatedRenderBundle ? { render_bundle: updatedRenderBundle } : {}),
+      });
     }
   };
 
@@ -97,18 +132,21 @@ export function useMascotMotionPresets(
     setActionIntensities((prev) => ({ ...prev, [action]: intensity }));
     if (editingMascot) {
       const existingAction = editingMascot.actions[action];
-      if (existingAction) {
-        setEditingMascot({
-          ...editingMascot,
-          actions: {
+      const updatedActions = existingAction
+        ? {
             ...editingMascot.actions,
             [action]: {
               ...existingAction,
               motion_intensity: intensity,
             },
-          },
-        });
-      }
+          }
+        : editingMascot.actions;
+      const updatedRenderBundle = patchBundleActionMotion(editingMascot.render_bundle, action, { intensity });
+      setEditingMascot({
+        ...editingMascot,
+        actions: updatedActions,
+        ...(updatedRenderBundle ? { render_bundle: updatedRenderBundle } : {}),
+      });
     }
   };
 
@@ -142,9 +180,37 @@ export function useMascotMotionPresets(
               motion_intensity: DEFAULT_ACTION_INTENSITIES[act],
             };
       }
+
+      let updatedRenderBundle = editingMascot.render_bundle;
+      if (updatedRenderBundle) {
+        const updatedActionAssets = { ...updatedRenderBundle.assets.actions };
+        for (const act of ALL_MASCOT_ACTIONS) {
+          const existingAsset = updatedActionAssets[act];
+          if (existingAsset) {
+            updatedActionAssets[act] = {
+              ...existingAsset,
+              motion: {
+                ...existingAsset.motion,
+                preset: DEFAULT_ACTION_MOTIONS[act],
+                speed: DEFAULT_ACTION_SPEEDS[act],
+                intensity: DEFAULT_ACTION_INTENSITIES[act],
+              },
+            };
+          }
+        }
+        updatedRenderBundle = {
+          ...updatedRenderBundle,
+          assets: {
+            ...updatedRenderBundle.assets,
+            actions: updatedActionAssets,
+          },
+        };
+      }
+
       setEditingMascot({
         ...editingMascot,
         actions: updatedActions,
+        ...(updatedRenderBundle ? { render_bundle: updatedRenderBundle } : {}),
       });
     }
     onNotice({ tone: "good", message: "Restored recommended motion presets!" });

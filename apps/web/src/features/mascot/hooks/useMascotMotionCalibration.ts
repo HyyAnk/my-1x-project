@@ -105,10 +105,40 @@ export function useMascotMotionCalibration(options: {
             };
       }
 
+      let nextRenderBundle = editingMascot.render_bundle;
+      if (nextRenderBundle) {
+        const nextActionAssets = { ...nextRenderBundle.assets.actions };
+        for (const act of ALL_MASCOT_ACTIONS) {
+          const preset = actionMotions[act] || DEFAULT_ACTION_MOTIONS[act];
+          const speed = actionSpeeds[act] || DEFAULT_ACTION_SPEEDS[act];
+          const intensity = actionIntensities[act] || DEFAULT_ACTION_INTENSITIES[act];
+          const existingAsset = nextActionAssets[act];
+          if (existingAsset) {
+            nextActionAssets[act] = {
+              ...existingAsset,
+              motion: {
+                ...existingAsset.motion,
+                preset,
+                speed,
+                intensity,
+              },
+            };
+          }
+        }
+        nextRenderBundle = {
+          ...nextRenderBundle,
+          assets: {
+            ...nextRenderBundle.assets,
+            actions: nextActionAssets,
+          },
+        };
+      }
+
       const identity = getIdentitySnapshot ? getIdentitySnapshot() : {};
       const res = await api.updateMascot(editingMascot.id, {
         ...identity,
         actions: updatedActions,
+        ...(nextRenderBundle ? { render_bundle: nextRenderBundle } : {}),
       });
       setEditingMascot(res.mascot);
 

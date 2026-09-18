@@ -90,4 +90,19 @@ describe("Atomic File System Utils", () => {
     const content = await readFile(targetFile, "utf8");
     expect(content).toBe("fallback success");
   });
+
+  it("handles concurrent directory removal gracefully without unhandled rejection", async () => {
+    const deletedDir = path.join(tmpDir, "deleted_parent");
+    const targetFile = path.join(deletedDir, "nested", "test.txt");
+
+    // Pre-create and then delete directory during write
+    const fakeRename = vi.fn(async () => {
+      await rm(deletedDir, { recursive: true, force: true }).catch(() => {});
+      const err = new Error("no such file or directory") as NodeJS.ErrnoException;
+      err.code = "ENOENT";
+      throw err;
+    });
+
+    await expect(writeTextAtomic(targetFile, "content", { renameFn: fakeRename })).resolves.not.toThrow();
+  });
 });

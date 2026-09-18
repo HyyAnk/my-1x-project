@@ -22,12 +22,7 @@ export function ProviderTestButton({
   spinnerSize = 16,
 }: ProviderTestButtonProps) {
   return (
-    <button
-      type="button"
-      className="quiet-button"
-      disabled={disabled || verifying}
-      onClick={() => void onVerify()}
-    >
+    <button type="button" className="quiet-button" disabled={disabled || verifying} onClick={() => void onVerify()}>
       {verifying ? (
         <>
           <CircleNotch size={spinnerSize} className="spin" />
@@ -63,9 +58,7 @@ export function ProviderVerificationBanner({ result }: ProviderVerificationBanne
         background: isSuccess ? "var(--soft-green)" : "var(--danger-surface)",
         color: isSuccess ? "var(--green)" : "var(--notice-error)",
         border: `1px solid ${
-          isSuccess
-            ? "color-mix(in srgb, var(--green) 35%, transparent)"
-            : "color-mix(in srgb, var(--notice-error) 35%, transparent)"
+          isSuccess ? "color-mix(in srgb, var(--green) 35%, transparent)" : "color-mix(in srgb, var(--notice-error) 35%, transparent)"
         }`,
       }}
     >

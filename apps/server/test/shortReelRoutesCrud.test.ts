@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type {
-  ConfirmShortReelTopicResponse,
-  CreateShortReelResponse,
-  GetShortReelResponse,
-  ListShortReelsResponse,
-  ShortReelRecord,
-} from "@studio/shared";
+import type { ConfirmShortReelTopicResponse, CreateShortReelResponse, GetShortReelResponse, ListShortReelsResponse } from "@studio/shared";
 import {
   buildShortReelTopicCandidate,
   buildTestApp,

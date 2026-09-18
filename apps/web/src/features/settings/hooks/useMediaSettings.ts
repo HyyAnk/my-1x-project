@@ -14,13 +14,7 @@ export type UseMediaSettingsProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function useMediaSettings({
-  appConfig,
-  onVideoSaved,
-  onImageSaved,
-  onImageFallbackSaved,
-  onNotice,
-}: UseMediaSettingsProps) {
+export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onImageFallbackSaved, onNotice }: UseMediaSettingsProps) {
   const videoState = useVideoSettingsState({ appConfig, onVideoSaved, onNotice });
   const imageState = useImageProviderSettingsState({ appConfig, onImageSaved, onNotice });
   const fallbackState = useImageFallbackSettingsState({

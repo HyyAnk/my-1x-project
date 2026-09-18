@@ -38,10 +38,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
   });
 
   it("renders matrix track title, counts, and percentage badge", () => {
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} />, "en");
 
     expect(screen.getByText("Taxonomy Matrix Coverage")).toBeDefined();
     expect(screen.getByText("320")).toBeDefined();
@@ -51,10 +48,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
   });
 
   it("renders deficit count with warning pill when combos are unfilled", () => {
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} />, "en");
 
     // 20,000 - 320 = 19,680 unfilled combos
     expect(screen.getByText("19,680 combos unfilled")).toBeDefined();
@@ -62,13 +56,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
 
   it("renders auto-fill button and triggers callback on click", () => {
     const handleAutoFill = vi.fn();
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack
-        matrixCoverage={mockPartialCoverage}
-        onOpenAiAutoFill={handleAutoFill}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} onOpenAiAutoFill={handleAutoFill} />, "en");
 
     const autoFillBtn = screen.getByRole("button", { name: "Auto-Fill Deficit" });
     expect(autoFillBtn).toBeDefined();
@@ -79,13 +67,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
 
   it("renders full matrix coverage status when all combos are covered", () => {
     const handleAutoFill = vi.fn();
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack
-        matrixCoverage={mockCompleteCoverage}
-        onOpenAiAutoFill={handleAutoFill}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={mockCompleteCoverage} onOpenAiAutoFill={handleAutoFill} />, "en");
 
     expect(screen.getByText("Full Matrix Coverage")).toBeDefined();
     expect(screen.getByText("100%")).toBeDefined();
@@ -94,10 +76,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
   });
 
   it("renders accessible progressbar attributes", () => {
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} />, "en");
 
     const progressBar = screen.getByRole("progressbar");
     expect(progressBar).toBeDefined();
@@ -109,10 +88,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
   });
 
   it("renders graceful fallback when matrix coverage is null or undefined", () => {
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack matrixCoverage={null} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={null} />, "en");
 
     expect(screen.getByText("Taxonomy Matrix Coverage")).toBeDefined();
     expect(screen.getByText("-- / -- Combos")).toBeDefined();
@@ -123,13 +99,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
   });
 
   it("hides deficit footer when isCollapsed is true", () => {
-    renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack
-        matrixCoverage={mockPartialCoverage}
-        isCollapsed={true}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} isCollapsed={true} />, "en");
 
     expect(screen.queryByText("19,680 combos unfilled")).toBeNull();
     expect(screen.getByRole("progressbar")).toBeDefined();
@@ -137,11 +107,7 @@ describe("QuestionBankMatrixCoverageTrack", () => {
 
   it("applies compact and custom className modifiers", () => {
     const { container } = renderWithLanguage(
-      <QuestionBankMatrixCoverageTrack
-        matrixCoverage={mockPartialCoverage}
-        compact={true}
-        className="custom-matrix-class"
-      />,
+      <QuestionBankMatrixCoverageTrack matrixCoverage={mockPartialCoverage} compact={true} className="custom-matrix-class" />,
       "en",
     );
 

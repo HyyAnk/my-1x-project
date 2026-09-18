@@ -33,11 +33,7 @@ describe("QuestionBankCompactSplitProgress (Stage 4 Container)", () => {
   it("renders container region, both tracks, and vertical split divider", () => {
     const progress = getMilestoneProgress(250);
     renderWithLanguage(
-      <QuestionBankCompactSplitProgress
-        currentTotal={250}
-        milestoneProgress={progress}
-        matrixCoverage={mockMatrixCoverage}
-      />,
+      <QuestionBankCompactSplitProgress currentTotal={250} milestoneProgress={progress} matrixCoverage={mockMatrixCoverage} />,
       "en",
     );
 
@@ -107,14 +103,7 @@ describe("QuestionBankCompactSplitProgress (Stage 4 Container)", () => {
 
   it("handles null matrixCoverage gracefully with skeleton placeholder", () => {
     const progress = getMilestoneProgress(250);
-    renderWithLanguage(
-      <QuestionBankCompactSplitProgress
-        currentTotal={250}
-        milestoneProgress={progress}
-        matrixCoverage={null}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankCompactSplitProgress currentTotal={250} milestoneProgress={progress} matrixCoverage={null} />, "en");
 
     expect(screen.getByText("-- / -- Combos")).toBeDefined();
     expect(screen.getByText("--%")).toBeDefined();

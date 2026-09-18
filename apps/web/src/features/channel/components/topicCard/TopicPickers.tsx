@@ -1,9 +1,4 @@
-import {
-  QUIZ_IMAGE_STYLE_LABELS,
-  QUIZ_MIN_QUESTION_COUNT,
-  type QuizImageStyle,
-  type TopicCandidate,
-} from "@studio/shared";
+import { QUIZ_IMAGE_STYLE_LABELS, QUIZ_MIN_QUESTION_COUNT, type QuizImageStyle, type TopicCandidate } from "@studio/shared";
 import { formatDurationHint } from "./topicCardHelpers";
 
 export interface TopicPickersProps {
@@ -62,9 +57,7 @@ export function TopicPickers({
           disabled={disabled || !canConfirm}
           onChange={(event) => setQuestionCount(Number(event.target.value))}
         />
-        <span aria-live="polite">
-          {formatDurationHint(questionCount, isQuestionCountValid, maxAllowedQuestions)}
-        </span>
+        <span aria-live="polite">{formatDurationHint(questionCount, isQuestionCountValid, maxAllowedQuestions)}</span>
       </div>
       <div className="topic-style-picker">
         <label htmlFor={styleSelectId}>Visual Style</label>

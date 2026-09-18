@@ -25,36 +25,6 @@ describe("SandboxGuidesOverlay (Stage 8 Visual & Safe-Zone Parity)", () => {
     expect(titleSafe.style.inset).toBe("108px 192px");
   });
 
-  it("renders 9:16 platform safe-zone boundaries matching candyArcadeStyles exactly", () => {
-    render(
-      <LanguageProvider>
-        <SandboxGuidesOverlay showSafeArea={true} showShortsGuide={false} aspectRatio="9:16" />
-      </LanguageProvider>,
-    );
-
-    const overlay9x16 = screen.getByTestId("sandbox-guides-overlay-9-16");
-    expect(overlay9x16).toBeTruthy();
-
-    // Top Platform Excluded Zone (180px)
-    const topZone = screen.getByTestId("safe-zone-platform-top");
-    expect(topZone.style.height).toBe("180px");
-
-    // Bottom Platform Excluded Zone (440px)
-    const bottomZone = screen.getByTestId("safe-zone-platform-bottom");
-    expect(bottomZone.style.height).toBe("440px");
-
-    // Right Action Rail (140px)
-    const rightZone = screen.getByTestId("safe-zone-platform-right");
-    expect(rightZone.style.width).toBe("140px");
-
-    // Active Safe Zone (top: 180px, bottom: 440px, right: 140px, left: 36px)
-    const activeZone = screen.getByTestId("safe-zone-platform-active");
-    expect(activeZone.style.top).toBe("180px");
-    expect(activeZone.style.bottom).toBe("440px");
-    expect(activeZone.style.right).toBe("140px");
-    expect(activeZone.style.left).toBe("36px");
-  });
-
   it("renders Shorts center-crop and proportional safe-zone preview in 16:9 mode", () => {
     render(
       <LanguageProvider>

@@ -5,9 +5,9 @@ export const DEFAULT_CONFIG: AppConfig = {
   mascot_stage: {
     default_placement: {
       position: "bottom_left",
-      scale: 1.84,
-      offset_x: 67,
-      offset_y: 90,
+      scale: 2.31,
+      offset_x: 127,
+      offset_y: 119,
       flip_x: false,
     },
   },

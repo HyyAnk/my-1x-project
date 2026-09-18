@@ -1,8 +1,14 @@
 import {
   MascotActionTypeSchema,
   MascotStateSchema,
+  resolveAnimationFrameAtTime,
+  resolveMascotRenderSpec,
+  type AtlasCssOffset,
+  type MascotActionType,
+  type MascotFrameRect,
   type MascotRenderActionOverride,
   type MascotRenderAspectRatio,
+  type MascotRenderBundleV2,
   type MascotRenderPhase,
   type MascotRevealOutcome,
   type QuizTimelineEventType,
@@ -131,4 +137,113 @@ function parseActionOverride(value: unknown): MascotRenderActionOverride | null 
   if (action.success) return action.data;
   const state = MascotStateSchema.safeParse(value);
   return state.success ? state.data : null;
+}
+
+export type ProductionTimelineResolvedFrame = {
+  timeSeconds: number;
+  marker: MascotMarker;
+  phase: MascotRenderPhase;
+  action: MascotActionType;
+  animationFrameIndex?: number;
+  animationFrame?: MascotFrameRect;
+  atlasOffsets?: AtlasCssOffset;
+  isClamped?: boolean;
+  seekTimeSeconds?: number;
+  transparentVideoUrl?: string;
+};
+
+/**
+ * Deterministically resolves the mascot timeline frame state at an exact timestamp.
+ * Adheres strictly to HyperFrames constraints (seekable from time alone, zero clocks).
+ */
+export function resolveProductionMascotTimelineAtTime(
+  options: ProductionMascotRenderOptions,
+  bundle: MascotRenderBundleV2,
+  timeSeconds: number,
+): ProductionTimelineResolvedFrame | null {
+  const clipStart = Number.isFinite(options.clipStartSeconds) ? Math.max(0, options.clipStartSeconds) : 0;
+  const clipDuration = Math.max(0.04, Number.isFinite(options.clipDurationSeconds) ? Math.max(0, options.clipDurationSeconds) : 0);
+  const targetTime = Number.isFinite(timeSeconds) ? Math.max(0, timeSeconds) : 0;
+
+  const markers = resolveProductionMascotMarkers(options, clipStart, clipDuration);
+  if (markers.length === 0) return null;
+
+  let activeMarker = markers[0];
+  for (let i = 0; i < markers.length; i++) {
+    if (markers[i].atSeconds <= targetTime) {
+      activeMarker = markers[i];
+    } else {
+      break;
+    }
+  }
+
+  const spec = resolveMascotRenderSpec(bundle, {
+    aspect_ratio: options.aspectRatio ?? "16:9",
+    phase: activeMarker.phase,
+    reveal_outcome: activeMarker.revealOutcome ?? null,
+    action_override: activeMarker.actionOverride ?? null,
+    timeline_time_seconds: targetTime,
+    playing: true,
+  });
+  if (!spec) return null;
+
+  if (activeMarker.phase === "reveal" && !bundle.assets.actions.celebrate?.image_url?.trim()) {
+    return null;
+  }
+  if (activeMarker.phase === "thinking" && !bundle.assets.actions.thinking?.image_url?.trim()) {
+    return null;
+  }
+
+  const result: ProductionTimelineResolvedFrame = {
+    timeSeconds: targetTime,
+    marker: activeMarker,
+    phase: activeMarker.phase,
+    action: spec.asset.action,
+  };
+
+  if (spec.asset.animation) {
+    const elapsedSeconds = Math.max(0, targetTime - activeMarker.atSeconds);
+    const resolved = resolveAnimationFrameAtTime(spec.asset.animation, elapsedSeconds);
+    result.animationFrameIndex = resolved.frameIndex;
+    result.animationFrame = resolved.frame;
+    result.atlasOffsets = resolved.atlasOffsets;
+    result.isClamped = resolved.isClamped;
+
+    if (spec.asset.animation.transparent_video_url) {
+      result.transparentVideoUrl = spec.asset.animation.transparent_video_url;
+      const isOneShot =
+        spec.asset.animation.loop_policy === "one_shot_rest" || (!spec.asset.animation.loop && spec.asset.animation.loop_policy !== "loop");
+      const cycle = spec.asset.animation.duration_ms
+        ? spec.asset.animation.duration_ms / 1000
+        : spec.asset.animation.frame_count / spec.asset.animation.fps;
+      const rawSeek = isOneShot ? Math.min(elapsedSeconds, cycle) : elapsedSeconds % cycle;
+      result.seekTimeSeconds = Number(rawSeek.toFixed(3));
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Resolves a sequence of deterministic mascot frames across the duration of a video clip.
+ */
+export function resolveProductionTimelineFrames(
+  options: ProductionMascotRenderOptions,
+  bundle: MascotRenderBundleV2,
+  fps = 8,
+): ProductionTimelineResolvedFrame[] {
+  const clipStart = Number.isFinite(options.clipStartSeconds) ? Math.max(0, options.clipStartSeconds) : 0;
+  const clipDuration = Math.max(0.04, Number.isFinite(options.clipDurationSeconds) ? Math.max(0, options.clipDurationSeconds) : 0);
+  const totalFrames = Math.ceil(clipDuration * fps);
+  const frames: ProductionTimelineResolvedFrame[] = [];
+
+  for (let i = 0; i < totalFrames; i++) {
+    const time = clipStart + i / fps;
+    const resolved = resolveProductionMascotTimelineAtTime(options, bundle, time);
+    if (resolved) {
+      frames.push(resolved);
+    }
+  }
+
+  return frames;
 }

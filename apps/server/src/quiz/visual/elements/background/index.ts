@@ -3,3 +3,8 @@ export * from "./registry.js";
 export * from "./semanticBackgroundLayer.js";
 export * from "./variants/candyRays.js";
 export * from "./variants/auroraGlow.js";
+export * from "./variants/comicBurst.js";
+export * from "./variants/constructionBlueprint.js";
+export * from "./variants/cosmicStarfield.js";
+export * from "./variants/floatingClouds.js";
+export * from "./variants/treasureMap.js";

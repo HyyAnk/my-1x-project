@@ -35,7 +35,7 @@ export function buildRemixPrompt(
         "TASK: Generate BRAND NEW, unique quiz questions to completely replace the specified target questions.",
         "",
         "CRITICAL RULES FOR REPLACING WITH NEW QUESTIONS:",
-        "1. GENERATE FRESH FACTS & ANSWERS: Create completely NEW question topics and knowledge facts matching the episode theme. Generate strictly 3 distinct choices (id: 'c1', 'c2', 'c3' for multiple choice, or exactly 2 for true/false) with one designated correct_choice_id. Provide a clear, educational explanation and fun_fact.",
+        "1. GENERATE FRESH FACTS & ANSWERS: Create completely NEW question topics and knowledge facts matching the episode theme. Generate strictly 3 distinct choices (id: 'c1', 'c2', 'c3' for multiple choice, exactly 2 for true/false, or strictly 1 for single_reveal / image_guess) with one designated correct_choice_id. Provide a clear, educational explanation and fun_fact.",
         "2. ANTI-DUPLICATION / ZERO COLLISION: The new questions MUST NOT duplicate or overlap with any other existing questions in this episode, nor any questions from past history.",
         "3. STRICT BREVITY & LENGTH: Question text MUST be 10 to 18 words maximum (ABSOLUTE MAXIMUM 120 CHARACTERS). Each choice text must be concise (under 30 characters).",
         "4. NO FILLER PREFIXES: Start directly with the natural question hook. NEVER use labels like 'Quiz:', 'Challenge:', 'Can you guess:', etc.",
@@ -44,8 +44,8 @@ export function buildRemixPrompt(
           " suited for age band " +
           episode.quiz_config.age_band +
           ".",
-        "6. PRESERVE METADATA: Keep the same id, number, format, and difficulty for each target question so it fits seamlessly into the episode.",
-        "7. VALID JSON SCHEMA: Return ONLY a valid JSON array or object containing the questions matching the schema: [{ id, number, format, difficulty, question, choices: [{ id, text }], correct_choice_id, explanation, fun_fact, source_ids, visual_opportunity }]. Use exactly 3 choices for multiple choice, image guess, and odd-one-out; use exactly 2 for true/false. Do NOT wrap in markdown code blocks.",
+        "6. PRESERVE METADATA: Keep the same id, number, format, answer_mode, and difficulty for each target question so it fits seamlessly into the episode.",
+        "7. VALID JSON SCHEMA: Return ONLY a valid JSON array or object containing the questions matching the schema: [{ id, number, format, answer_mode, difficulty, question, choices: [{ id, text }], correct_choice_id, explanation, fun_fact, source_ids, visual_opportunity }]. Use exactly 3 choices for multiple choice and odd-one-out; use exactly 2 for true/false; use exactly 1 choice for single_reveal / image_guess. Do NOT wrap in markdown code blocks.",
         "",
         "Target questions to replace with fresh facts:\n" + JSON.stringify(questionsToRemix, null, 2),
         otherQuestionsSummary,
@@ -68,7 +68,7 @@ export function buildRemixPrompt(
           " suited for age band " +
           episode.quiz_config.age_band +
           ".",
-        "6. VALID JSON SCHEMA: Return ONLY a valid JSON array or object containing the rephrased questions matching the schema: [{ id, number, format, difficulty, question, choices: [{ id, text }], correct_choice_id, explanation, fun_fact, source_ids, visual_opportunity }]. Preserve exactly 3 choices for multiple choice, image guess, and odd-one-out; preserve exactly 2 for true/false. Do NOT wrap in markdown code blocks or add conversational prose.",
+        "6. VALID JSON SCHEMA: Return ONLY a valid JSON array or object containing the rephrased questions matching the schema: [{ id, number, format, answer_mode, difficulty, question, choices: [{ id, text }], correct_choice_id, explanation, fun_fact, source_ids, visual_opportunity }]. Preserve exactly 3 choices for multiple choice and odd-one-out; preserve exactly 2 for true/false; preserve exactly 1 choice for single_reveal / image_guess. Do NOT wrap in markdown code blocks or add conversational prose.",
         "",
         "Questions to remix:\n" + JSON.stringify(questionsToRemix, null, 2),
       ].join("\n");

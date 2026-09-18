@@ -85,10 +85,7 @@ function initializeSchema(db: SqliteDatabase): void {
   `);
 }
 
-export async function withBankSqliteDb<T>(
-  runtimeBankRoot: string,
-  fn: (db: SqliteDatabase) => Promise<T> | T,
-): Promise<T> {
+export async function withBankSqliteDb<T>(runtimeBankRoot: string, fn: (db: SqliteDatabase) => Promise<T> | T): Promise<T> {
   const existing = asyncLocalStorage.getStore();
   if (existing && existing.root === runtimeBankRoot) {
     return await fn(existing.db);
@@ -111,10 +108,7 @@ export async function withBankSqliteDb<T>(
   }
 }
 
-export function withBankSqliteDbSync<T>(
-  runtimeBankRoot: string,
-  fn: (db: SqliteDatabase) => T,
-): T {
+export function withBankSqliteDbSync<T>(runtimeBankRoot: string, fn: (db: SqliteDatabase) => T): T {
   const existing = asyncLocalStorage.getStore();
   if (existing && existing.root === runtimeBankRoot) {
     return fn(existing.db);
@@ -164,7 +158,7 @@ export function closeBankSqliteDb(runtimeBankRoot: string): void {
 }
 
 export function closeAllBankSqliteDbs(): void {
-  for (const [root, db] of standalonePool.entries()) {
+  for (const db of standalonePool.values()) {
     try {
       db.close();
     } catch {

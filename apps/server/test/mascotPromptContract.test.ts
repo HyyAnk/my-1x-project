@@ -35,7 +35,7 @@ describe("mascotPromptContract", () => {
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
       expect(prompt).toContain("high contrast studio rim lighting");
-      expect(prompt).toContain("solid neutral light gray background (#E8E8E8)");
+      expect(prompt).toContain("solid flat chroma key green background (#00FF00)");
       expect(prompt).toContain("single standalone character only");
       expect(prompt).toContain("no character sheet");
       expect(prompt).toContain("no sprite sheet");
@@ -249,7 +249,7 @@ describe("mascotPromptContract", () => {
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
       expect(prompt).toContain("high contrast studio rim lighting");
-      expect(prompt).toContain("solid neutral light gray background (#E8E8E8)");
+      expect(prompt).toContain("solid flat chroma key green background (#00FF00)");
       expect(prompt).toContain("single standalone character only");
       expect(prompt).toContain("no character sheet");
       expect(prompt).toContain("no sprite sheet");

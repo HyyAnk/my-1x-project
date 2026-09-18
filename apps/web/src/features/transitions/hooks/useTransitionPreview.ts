@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type {
-  TransitionPreviewRequest,
-  TransitionPreviewSource,
-  TransitionSelection,
-} from "@studio/shared";
+import type { TransitionPreviewErrorCode, TransitionPreviewRequest, TransitionPreviewSource, TransitionSelection } from "@studio/shared";
 import {
   cancelTransitionJob,
   fetchTransitionJob,
@@ -11,10 +7,7 @@ import {
   getTransitionVideoUrl,
   requestTransitionPreview,
 } from "../services/transitionPreviewApi";
-import type {
-  LoadedArtifact,
-  TransitionPreviewState,
-} from "../types/transitionPlayer.types";
+import type { LoadedArtifact, TransitionPreviewState } from "../types/transitionPlayer.types";
 
 export type UseTransitionPreviewOptions = {
   selection: TransitionSelection;
@@ -119,14 +112,15 @@ export function useTransitionPreview(options: UseTransitionPreviewOptions): UseT
 
       // Queued or running: enter polling loop
       activeJobIdRef.current = initialStatus.jobId;
+      const isInitialRunning = initialStatus.status === "running";
       setState({
-        kind: initialStatus.status === "running" ? "rendering" : "queued",
+        kind: isInitialRunning ? "rendering" : "queued",
         jobId: initialStatus.jobId,
         requestId: initialStatus.requestId,
         revision: initialStatus.revision,
-        phase: (initialStatus as any).phase ?? "prepare",
-        completedFrames: (initialStatus as any).completedFrames ?? null,
-        totalFrames: (initialStatus as any).totalFrames ?? null,
+        phase: isInitialRunning ? initialStatus.phase : "prepare",
+        completedFrames: isInitialRunning ? initialStatus.completedFrames : null,
+        totalFrames: isInitialRunning ? initialStatus.totalFrames : null,
         staleArtifact,
       });
 
@@ -185,14 +179,15 @@ export function useTransitionPreview(options: UseTransitionPreviewOptions): UseT
           }
 
           // Still queued / running
+          const isCurrentRunning = currentJob.status === "running";
           setState({
-            kind: currentJob.status === "running" ? "rendering" : "queued",
+            kind: isCurrentRunning ? "rendering" : "queued",
             jobId: currentJob.jobId,
             requestId: currentJob.requestId,
             revision: currentJob.revision,
-            phase: (currentJob as any).phase ?? "prepare",
-            completedFrames: (currentJob as any).completedFrames ?? null,
-            totalFrames: (currentJob as any).totalFrames ?? null,
+            phase: isCurrentRunning ? currentJob.phase : "prepare",
+            completedFrames: isCurrentRunning ? currentJob.completedFrames : null,
+            totalFrames: isCurrentRunning ? currentJob.totalFrames : null,
             staleArtifact,
           });
 
@@ -203,7 +198,7 @@ export function useTransitionPreview(options: UseTransitionPreviewOptions): UseT
           setTimeout(() => {
             void pollJob();
           }, nextInterval);
-        } catch (err: any) {
+        } catch (_err: unknown) {
           if (ac.signal.aborted) return;
           // Retry poll after 2s on network failure
           setTimeout(() => {
@@ -216,14 +211,15 @@ export function useTransitionPreview(options: UseTransitionPreviewOptions): UseT
       setTimeout(() => {
         void pollJob();
       }, 500);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (ac.signal.aborted) return;
+      const errObj = err as { code?: TransitionPreviewErrorCode; message?: string } | undefined;
       setState({
         kind: "failed",
         requestId: clientRequestId,
         error: {
-          code: err?.code || "RENDER_FAILED",
-          message: err?.message || "Failed to request preview",
+          code: errObj?.code || "RENDER_FAILED",
+          message: errObj?.message || "Failed to request preview",
           retryable: true,
         },
         staleArtifact,

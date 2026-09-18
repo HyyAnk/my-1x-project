@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { CircleNotch, DownloadSimple, MagnifyingGlassPlus, PaintBrush } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
@@ -26,6 +27,19 @@ export function MascotConceptPreviewCard({
   onRemoveBackground,
 }: MascotConceptPreviewCardProps) {
   const { t } = useTranslation();
+
+  const masterRawUrl = useMemo(() => {
+    return (
+      editingMascot?.master_raw_image_url ||
+      (editingMascot?.master_image_url?.includes("master_concept_")
+        ? editingMascot.master_image_url.replace("master_concept_", "master_concept_raw_")
+        : null)
+    );
+  }, [editingMascot?.master_raw_image_url, editingMascot?.master_image_url]);
+
+  const sanitizedName = useMemo(() => {
+    return (editingMascot?.name || "mascot").toLowerCase().replace(/[^a-z0-9]/g, "_");
+  }, [editingMascot?.name]);
 
   return (
     <div className="wizard-card preview-card studio-preview-card">
@@ -116,32 +130,61 @@ export function MascotConceptPreviewCard({
             </div>
           </div>
 
-          <div
-            className="master-action-buttons-row"
-            style={{ marginTop: "14px", display: "grid", gridTemplateColumns: "1fr auto", gap: "8px" }}
-          >
+          <div className="master-action-buttons-row" style={{ marginTop: "14px", display: "flex", gap: "8px", alignItems: "center" }}>
             <button
               type="button"
               className="quiet-button compact"
               disabled={busyAction !== null}
               onClick={() => onRemoveBackground("master")}
-              style={{ justifyContent: "center" }}
+              style={{ flex: 1, justifyContent: "center" }}
               title={t("mascots.mattingMasterBtn")}
             >
               {busyAction === "matting-master" ? <CircleNotch className="spin" size={14} /> : <PaintBrush size={14} />}
               <span>{busyAction === "matting-master" ? t("mascots.mattingInProgress") : t("mascots.mattingMasterBtn")}</span>
             </button>
 
+            {masterRawUrl ? (
+              <a
+                href={masterRawUrl}
+                download={`${sanitizedName}_master_raw.png`}
+                className="icon-button"
+                title={t("mascots.downloadRawBtn")}
+                aria-label={t("mascots.downloadRawBtn")}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textDecoration: "none",
+                  gap: "2px",
+                  padding: "0 6px",
+                }}
+              >
+                <DownloadSimple size={14} weight="bold" />
+                <span style={{ fontSize: "9px", fontWeight: 700 }}>RAW</span>
+              </a>
+            ) : null}
+
             <a
               href={editingMascot.master_image_url}
-              download={`${editingMascot.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_master.png`}
+              download={`${sanitizedName}_master_cutout.png`}
               className="icon-button"
-              title={t("common.download")}
+              title={t("mascots.downloadCutoutBtn")}
+              aria-label={t("mascots.downloadCutoutBtn")}
               target="_blank"
               rel="noreferrer"
-              style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textDecoration: "none",
+                gap: "2px",
+                padding: "0 6px",
+              }}
             >
-              <DownloadSimple size={15} />
+              <DownloadSimple size={14} weight="bold" />
+              <span style={{ fontSize: "9px", fontWeight: 700 }}>PNG</span>
             </a>
           </div>
         </>

@@ -137,7 +137,14 @@ describe("failed build lifecycle", () => {
       await reloaded.finish(task.task_id, "COMPLETED", null);
     });
     await reloaded.load();
-    await vi.waitFor(() => expect(reloaded.get(interrupted.task_id).status).toBe("COMPLETED"));
+    await vi.waitFor(
+      async () => {
+        expect(reloaded.get(interrupted.task_id).status).toBe("COMPLETED");
+        const onDisk = TaskSchema.parse(JSON.parse(await readFile(taskPath, "utf8")));
+        expect(onDisk.status).toBe("COMPLETED");
+      },
+      { timeout: 10_000, interval: 20 },
+    );
     expect(dispatched).toHaveBeenCalledTimes(1);
     const persisted = TaskSchema.parse(JSON.parse(await readFile(taskPath, "utf8")));
     expect(persisted.status).toBe("COMPLETED");

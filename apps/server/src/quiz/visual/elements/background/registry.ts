@@ -7,6 +7,11 @@ import { getActiveStyleSnapshot, getStyleModuleAtRevision, getStyleSnapshotAtRev
 export const backgroundRegistry = new Map<QuizBackgroundVariantId, QuizBackgroundVariant>([
   ["candy_rays", BUILT_IN_BACKGROUND_MODULES[0].renderer],
   ["aurora_glow", BUILT_IN_BACKGROUND_MODULES[1].renderer],
+  ["comic_burst", BUILT_IN_BACKGROUND_MODULES[2].renderer],
+  ["construction_blueprint", BUILT_IN_BACKGROUND_MODULES[3].renderer],
+  ["cosmic_starfield", BUILT_IN_BACKGROUND_MODULES[4].renderer],
+  ["floating_clouds", BUILT_IN_BACKGROUND_MODULES[5].renderer],
+  ["treasure_map", BUILT_IN_BACKGROUND_MODULES[6].renderer],
 ]);
 
 export function resolveBackgroundVariant(style?: QuizBackgroundStyle | null, revision?: string): QuizBackgroundVariant {

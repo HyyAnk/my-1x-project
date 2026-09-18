@@ -154,4 +154,3 @@ export async function collectBatchFiles(root: string): Promise<string[]> {
   }
   return result.sort((a, b) => a.localeCompare(b));
 }
-

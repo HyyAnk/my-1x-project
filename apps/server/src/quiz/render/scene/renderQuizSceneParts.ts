@@ -41,6 +41,7 @@ export function renderQuizSceneThinkingPart(parts: QuizSceneParts, timing: QuizS
     clipStart: timing.start,
     questionNarrationStart: timing.questionNarrationStart,
     revealStart: timing.revealStart,
+    timerHideAt: timing.timerHideAt,
     thinkingStart: timing.thinkingStart,
     duration: timing.end - timing.start,
     questionNumber: parts.counter.questionNumber,

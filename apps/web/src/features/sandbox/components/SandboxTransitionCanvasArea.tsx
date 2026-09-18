@@ -8,11 +8,7 @@ export interface SandboxTransitionCanvasAreaProps {
   themeColors: { from: string; to: string };
 }
 
-export function SandboxTransitionCanvasArea({
-  transition,
-  aspectRatio,
-  themeColors,
-}: SandboxTransitionCanvasAreaProps) {
+export function SandboxTransitionCanvasArea({ transition, aspectRatio, themeColors }: SandboxTransitionCanvasAreaProps) {
   return (
     <div
       className="sandbox-transition-canvas-area"

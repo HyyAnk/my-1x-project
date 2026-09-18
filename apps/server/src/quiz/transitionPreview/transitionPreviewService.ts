@@ -9,10 +9,7 @@ import {
 } from "@studio/shared";
 import { getTransitionCatalogSnapshot } from "./transitionPreviewCatalog.js";
 import { resolveEpisodeTransitionPreview } from "./transitionPreviewEpisode.js";
-import {
-  buildTransitionPreviewSpecimen,
-  type PreparedTransitionSpecimenData,
-} from "./transitionPreviewSpecimen.js";
+import { buildTransitionPreviewSpecimen, type PreparedTransitionSpecimenData } from "./transitionPreviewSpecimen.js";
 import type {
   CallerContext,
   ClockPort,
@@ -22,14 +19,11 @@ import type {
   TransitionPreviewServiceDeps,
   TransitionPreviewStorePort,
 } from "./transitionPreview.types.js";
-import {
-  InternalRenderWork,
-  type InternalRenderWorkOptions,
-} from "./internalRenderWork.js";
+import { InternalRenderWork, type InternalRenderWorkOptions } from "./internalRenderWork.js";
 
 export { InternalRenderWork, type InternalRenderWorkOptions };
 
-type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
 type LeaseInit = DistributiveOmit<TransitionPreviewStatus, "jobId">;
 
@@ -63,10 +57,7 @@ export class TransitionPreviewService {
     return getTransitionCatalogSnapshot(sampleRevision);
   }
 
-  async request(
-    request: TransitionPreviewRequest,
-    caller: CallerContext,
-  ): Promise<TransitionPreviewStatus> {
+  async request(request: TransitionPreviewRequest, caller: CallerContext): Promise<TransitionPreviewStatus> {
     const currentCatalogRevision = computeCatalogRevision();
 
     if (request.catalogRevision !== currentCatalogRevision) {
@@ -112,12 +103,7 @@ export class TransitionPreviewService {
 
     const existingArtifact = await this.store.findArtifactByFingerprint(specimenData.fingerprint);
     if (existingArtifact) {
-      return this.recordReadyLease(
-        request.clientRequestId,
-        caller.callerId,
-        specimenData.fingerprint,
-        existingArtifact.artifactId,
-      );
+      return this.recordReadyLease(request.clientRequestId, caller.callerId, specimenData.fingerprint, existingArtifact.artifactId);
     }
 
     const existingWork = this.activeWorks.get(specimenData.fingerprint);
@@ -125,26 +111,17 @@ export class TransitionPreviewService {
       return this.attachToExistingWork(existingWork, request.clientRequestId, caller.callerId);
     }
 
-    return this.launchNewWork(
-      specimenData,
-      currentCatalogRevision,
-      request.clientRequestId,
-      caller.callerId,
-    );
+    return this.launchNewWork(specimenData, currentCatalogRevision, request.clientRequestId, caller.callerId);
   }
 
-  async status(jobId: string, caller?: CallerContext): Promise<TransitionPreviewStatus> {
-    return this.getAuthorizedLease(jobId, caller).lease;
+  status(jobId: string, caller?: CallerContext): Promise<TransitionPreviewStatus> {
+    return Promise.resolve(this.getAuthorizedLease(jobId, caller).lease);
   }
 
-  async cancel(jobId: string, caller: CallerContext): Promise<TransitionPreviewStatus> {
+  cancel(jobId: string, caller: CallerContext): Promise<TransitionPreviewStatus> {
     const record = this.getAuthorizedLease(jobId, caller);
-    if (
-      record.lease.status === "cancelled" ||
-      record.lease.status === "ready" ||
-      record.lease.status === "failed"
-    ) {
-      return record.lease;
+    if (record.lease.status === "cancelled" || record.lease.status === "ready" || record.lease.status === "failed") {
+      return Promise.resolve(record.lease);
     }
 
     const updatedLease: TransitionPreviewStatus = {
@@ -165,7 +142,7 @@ export class TransitionPreviewService {
       }
     }
 
-    return updatedLease;
+    return Promise.resolve(updatedLease);
   }
 
   private getAuthorizedLease(jobId: string, caller?: CallerContext): LeaseRecord {
@@ -176,20 +153,14 @@ export class TransitionPreviewService {
       throw error;
     }
     if (caller && record.callerId !== caller.callerId) {
-      const error = new Error(
-        `Unauthorized: lease does not belong to caller ${caller.callerId}`,
-      ) as Error & { statusCode?: number };
+      const error = new Error(`Unauthorized: lease does not belong to caller ${caller.callerId}`) as Error & { statusCode?: number };
       error.statusCode = 403;
       throw error;
     }
     return record;
   }
 
-  private attachToExistingWork(
-    work: InternalRenderWork,
-    requestId: string,
-    callerId: string,
-  ): TransitionPreviewStatus {
+  private attachToExistingWork(work: InternalRenderWork, requestId: string, callerId: string): TransitionPreviewStatus {
     const jobId = this.createJobId();
     work.addLease(jobId, callerId);
     const status = work.toStatus(jobId, requestId, 1);
@@ -247,7 +218,7 @@ export class TransitionPreviewService {
 
   private registerLease(callerId: string, lease: LeaseInit): TransitionPreviewStatus {
     const jobId = this.createJobId();
-    const fullLease = { ...lease, jobId } as TransitionPreviewStatus;
+    const fullLease = { ...lease, jobId };
     this.leases.set(jobId, { lease: fullLease, callerId, fingerprint: lease.fingerprint });
     return fullLease;
   }
@@ -268,12 +239,7 @@ export class TransitionPreviewService {
     });
   }
 
-  private recordReadyLease(
-    requestId: string,
-    callerId: string,
-    fingerprint: string,
-    artifactId: string,
-  ): TransitionPreviewStatus {
+  private recordReadyLease(requestId: string, callerId: string, fingerprint: string, artifactId: string): TransitionPreviewStatus {
     return this.registerLease(callerId, {
       status: "ready",
       requestId,

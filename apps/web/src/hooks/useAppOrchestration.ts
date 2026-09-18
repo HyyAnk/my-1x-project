@@ -11,7 +11,15 @@ import { formatTaskType } from "../lib/utils";
 
 export function useAppOrchestration() {
   const router = useRouter();
-  const { channelId: selectedChannelId, episodeId: selectedEpisodeId, shortReelId: selectedShortReelId, openPage } = router;
+  const {
+    channelId: selectedChannelId,
+    episodeId: selectedEpisodeId,
+    shortReelId: selectedShortReelId,
+    mascotId: selectedMascotId,
+    step: selectedStep,
+    openPage,
+    openMascot,
+  } = router;
   const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
   const systemUi = useSystemUiState();
@@ -121,6 +129,9 @@ export function useAppOrchestration() {
     selectedChannelId,
     selectedEpisodeId,
     selectedShortReelId,
+    selectedMascotId,
+    selectedStep,
+    openMascot,
     appConfig,
     setAppConfig,
     ...engineState,

@@ -12,6 +12,8 @@ import type {
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 
+import type { MascotAnimationRenderSnapshot } from "./animationRenderSnapshot.js";
+
 export type QuizRenderInput = {
   quiz: QuizV2;
   director: DirectorPlan;
@@ -35,6 +37,7 @@ export type QuizRenderInput = {
   transitionDurationSeconds?: number;
   transitionInstances?: Record<string, ResolvedTransitionInstance>;
   audioMode?: "use_video_audio" | "overlay_bgm";
+  mascotAnimationSnapshot?: MascotAnimationRenderSnapshot;
 };
 
 export type PreparedQuizRender = {
@@ -45,6 +48,7 @@ export type PreparedQuizRender = {
   styleCatalogRevision?: string;
   stylePresetRevision?: number;
   transitionInstances?: Record<string, ResolvedTransitionInstance>;
+  mascotAnimationSnapshot?: MascotAnimationRenderSnapshot;
 };
 export type QuizRenderResult = { composition: string; durationSeconds: number };
 

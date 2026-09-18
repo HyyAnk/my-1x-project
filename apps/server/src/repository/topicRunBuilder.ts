@@ -58,12 +58,7 @@ export function buildRunFromCandidates(candidates: TopicCandidate[]): TopicRun {
 
 export function buildTopicRun(candidatesOrRun: TopicCandidate[] | TopicRunResult): TopicRun {
   const isRunResult =
-    !Array.isArray(candidatesOrRun) &&
-    typeof candidatesOrRun === "object" &&
-    candidatesOrRun !== null &&
-    "candidates" in candidatesOrRun;
+    !Array.isArray(candidatesOrRun) && typeof candidatesOrRun === "object" && candidatesOrRun !== null && "candidates" in candidatesOrRun;
 
-  return isRunResult
-    ? buildRunFromResult(TopicRunResultSchema.parse(candidatesOrRun))
-    : buildRunFromCandidates(candidatesOrRun);
+  return isRunResult ? buildRunFromResult(TopicRunResultSchema.parse(candidatesOrRun)) : buildRunFromCandidates(candidatesOrRun);
 }

@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  type DirectorPlan,
-  type QuizV2,
-  QuizV2Schema,
-  resolveQuizLayoutAssetAspectRatio,
-} from "@studio/shared";
+import { type DirectorPlan, type QuizV2, QuizV2Schema, resolveQuizLayoutAssetAspectRatio } from "@studio/shared";
 import { assetFingerprint } from "../src/quiz/assets/assetFingerprint.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
@@ -108,10 +103,10 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     // Verify prompt compilation incorporates the 4:3 framing
     const compiled = compileQuizAssetPrompt(heroAsset!);
     expect(compiled.prompt).toContain("Output framing: 4:3.");
-    expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
+    expect(compiled.prompt).toContain("The image will be displayed in a landscape hero card on the left side of the quiz frame.");
   });
 
-  it("plans aspect_ratio: '16:9' for hero question image when layout is verdict_true_false", () => {
+  it("plans aspect_ratio: '4:3' for hero question image when layout is verdict_true_false", () => {
     const quiz = buildTestQuiz([
       {
         id: "q-verdict-tf",
@@ -161,10 +156,11 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     const heroAsset = plan.assets.find((asset) => asset.purpose === "hero_question_image");
 
     expect(heroAsset).toBeDefined();
-    expect(heroAsset?.aspect_ratio).toBe("16:9");
+    expect(heroAsset?.aspect_ratio).toBe("4:3");
 
     const compiled = compileQuizAssetPrompt(heroAsset!);
-    expect(compiled.prompt).toContain("Output framing: 16:9.");
+    expect(compiled.prompt).toContain("Output framing: 4:3.");
+    expect(compiled.prompt).toContain("The image will be displayed in a verdict question card on the left side of the quiz frame.");
   });
 
   it("plans aspect_ratio: '16:9' for hero question image when layout is mystery_reveal", () => {
@@ -173,13 +169,10 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
         id: "q-mystery",
         number: 1,
         format: "image_guess",
+        answer_mode: "single_reveal",
         difficulty: 1,
         question: "Guess the hidden creature!",
-        choices: [
-          { id: "c-1", text: "Chameleon" },
-          { id: "c-2", text: "Gecko" },
-          { id: "c-3", text: "Iguana" },
-        ],
+        choices: [{ id: "c-1", text: "Chameleon" }],
         correct_choice_id: "c-1",
         explanation: "It is a chameleon blending in.",
         fun_fact: "",
@@ -223,7 +216,7 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
 
     const compiled = compileQuizAssetPrompt(heroAsset!);
     expect(compiled.prompt).toContain("Output framing: 16:9.");
-    expect(compiled.prompt).toContain("16:9 widescreen landscape framing");
+    expect(compiled.prompt).toContain("The image will be displayed in a centered mystery stage.");
   });
 
   it("plans aspect_ratio: '1:1' for answer options when layout is visual_choices_three", () => {
@@ -278,34 +271,33 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
 
     expect(optionAssets.length).toBe(3);
     for (const option of optionAssets) {
-      expect(option.aspect_ratio).toBe("4:3");
+      expect(option.aspect_ratio).toBe("1:1");
       expect(option.transparent_background).toBe(true);
 
       const compiled = compileQuizAssetPrompt(option);
-      expect(compiled.prompt).toContain("Output framing: 4:3.");
-      expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
+      expect(compiled.prompt).toContain("Output framing: 1:1.");
+      expect(compiled.prompt).toContain("The image will be displayed in a square visual choice card with an answer label below it.");
     }
   });
 
   it("correctly resolves aspect ratio with resolveQuizLayoutAssetAspectRatio helper directly", () => {
     expect(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "hero_question_image")).toBe("4:3");
-    expect(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image")).toBe("16:9");
-    expect(resolveQuizLayoutAssetAspectRatio("clue_deduction", "hero_question_image")).toBe("16:9");
+    expect(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image")).toBe("4:3");
     expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "hero_question_image")).toBe("4:3");
     expect(resolveQuizLayoutAssetAspectRatio("mystery_reveal", "hero_question_image")).toBe("16:9");
     expect(resolveQuizLayoutAssetAspectRatio("baseline", "hero_question_image")).toBe("16:9");
-    expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "answer_option")).toBe("4:3");
-    expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option")).toBe("1:1");
+    expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "answer_option")).toBe("1:1");
+    expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option")).toBe("3:4");
     expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "answer_option")).toBe("16:9");
   });
 
   it("compiles authentic character identities verbatim without censorship across 16:9, 4:3, 1:1, 3:4, and 9:16", () => {
     const authenticSubjects = [
-      { name: "Pikachu with red electric cheeks", ratio: "16:9" as const, framing: "16:9 widescreen landscape framing" },
-      { name: "Spider-Man perching on a brick wall", ratio: "4:3" as const, framing: "4:3 standard horizontal canvas" },
-      { name: "Mario in blue overalls with mustache", ratio: "1:1" as const, framing: "1:1 square canvas" },
-      { name: "Elsa creating crystalline snowflakes", ratio: "3:4" as const, framing: "3:4 portrait card canvas" },
-      { name: "Goku in orange martial arts gi", ratio: "9:16" as const, framing: "9:16 vertical portrait framing" },
+      { name: "Pikachu with red electric cheeks", ratio: "16:9" as const },
+      { name: "Spider-Man perching on a brick wall", ratio: "4:3" as const },
+      { name: "Mario in blue overalls with mustache", ratio: "1:1" as const },
+      { name: "Elsa creating crystalline snowflakes", ratio: "3:4" as const },
+      { name: "Goku in orange martial arts gi", ratio: "9:16" as const },
     ];
 
     for (const item of authenticSubjects) {
@@ -326,17 +318,14 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
       expect(compiled.prompt).toContain(`Subject: ${item.name}.`);
       // Verify correct aspect ratio framing
       expect(compiled.prompt).toContain(`Output framing: ${item.ratio}.`);
-      expect(compiled.prompt).toContain(item.framing);
-      // Verify safe margins and edge-clipping prevention
-      expect(compiled.prompt).toMatch(/safe margins|margins on all sides|top\/bottom and side margins/);
-      expect(compiled.prompt).toMatch(/edge-clipping/);
+      expect(compiled.prompt).toContain(`Output aspect ratio: ${item.ratio}.`);
+      // Verify safe margins and safe region
+      expect(compiled.prompt).toMatch(/safe region/);
     }
   });
 
   it("resolves canonical 720p base dimensions deterministically for all supported aspect ratios", async () => {
-    const { getStandardDimensionsForAspectRatio, STANDARD_ASPECT_RATIO_DIMENSIONS } = await import(
-      "../src/providers/gpti2Dimensions.js"
-    );
+    const { getStandardDimensionsForAspectRatio, STANDARD_ASPECT_RATIO_DIMENSIONS } = await import("../src/providers/gpti2Dimensions.js");
 
     expect(getStandardDimensionsForAspectRatio("16:9")).toEqual({ width: 1280, height: 720, dimensions: "1280x720" });
     expect(getStandardDimensionsForAspectRatio("4:3")).toEqual({ width: 960, height: 720, dimensions: "960x720" });

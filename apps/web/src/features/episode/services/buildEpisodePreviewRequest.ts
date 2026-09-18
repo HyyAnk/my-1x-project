@@ -36,15 +36,24 @@ function buildStyleRequest({ override, resolved }: BuildEpisodePreviewRequestInp
   };
 }
 
-function buildQuestionRequest({ override, question, resolved }: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
+function buildQuestionRequest({ override, question, resolved, episode }: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
+  const isMystery = question?.layoutId === "mystery_reveal" || question?.archetype === "mystery_reveal";
+  const rawChoices = question?.choices ?? [];
+  const normalizedChoices = isMystery
+    ? (rawChoices.length > 0 ? [rawChoices[question?.correctChoiceIndex ?? 0] ?? rawChoices[0]] : ["Answer"])
+    : question?.choices;
+  const correctChoiceIndex = isMystery ? 0 : question?.correctChoiceIndex;
+
   return {
+    episode_id: episode?.episode_id || (episode as { id?: string } | null | undefined)?.id,
+    question_id: question?.id,
     layout_id: question?.layoutId ?? "media_left_choices_right",
     question_format: question?.questionFormat,
     archetype: question?.archetype,
     phase: "choices",
     question_text: question?.text,
-    choices: question?.choices,
-    correct_choice_index: question?.correctChoiceIndex,
+    choices: normalizedChoices,
+    correct_choice_index: correctChoiceIndex,
     question_number: question?.number ?? 1,
     total_questions: override.totalQuestions ?? question?.totalQuestions ?? resolved.totalQuestions,
     fact_card_text: question?.factText,

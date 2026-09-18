@@ -5,7 +5,7 @@ import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPla
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 
-const twoSpriteMascot: MascotProfile = {
+const baseTwoSpriteMascot: MascotProfile = {
   id: "two-sprite-mascot",
   name: "Two Sprite Mascot",
   description: "Mascot with only thinking and celebrate sprites",
@@ -58,6 +58,44 @@ const mascotConfig: ChannelMascotConfig = {
   show_in_intro: false,
   show_in_outro: false,
   show_in_question: true,
+};
+
+const twoSpriteMascot: MascotProfile = {
+  ...baseTwoSpriteMascot,
+  styles: [
+    {
+      id: "core",
+      name: "Core Style",
+      keyword: "core",
+      anchor_image_url: "/api/mascots/two-sprite-mascot/assets/master_concept.png",
+      is_default: true,
+      states: {
+        thinking: [
+          {
+            id: "t1",
+            slot_index: 1,
+            image_url: "/api/mascots/two-sprite-mascot/assets/thinking_sprite.png",
+            motion_preset: "sway",
+            motion_speed: 1.2,
+            motion_intensity: "normal",
+          },
+        ],
+        celebrate: [
+          {
+            id: "c1",
+            slot_index: 1,
+            image_url: "/api/mascots/two-sprite-mascot/assets/celebrate_sprite.png",
+            motion_preset: "jump",
+            motion_speed: 1.0,
+            motion_intensity: "dynamic",
+          },
+        ],
+      },
+      created_at: "2026-08-30T00:00:00.000Z",
+      updated_at: "2026-08-30T00:00:00.000Z",
+    },
+  ],
+  render_bundle: adaptMascotV1ToV2(baseTwoSpriteMascot, mascotConfig)!,
 };
 
 const threeQuestionQuiz = QuizV2Schema.parse({
@@ -189,5 +227,30 @@ describe("Mascot Multi-Question Lifecycle & Global Timeline", () => {
       // Verify that the celebrate state starts at the global reveal time
       expect(html).toContain(`--mascot-state-delay:${reveal.at_seconds}s`);
     }
+  });
+
+  it("resolves render spec directly from canonical render_bundle without relying on legacy actions", () => {
+    const bundle = twoSpriteMascot.render_bundle!;
+    expect(bundle).toBeDefined();
+
+    const specThinking = resolveMascotRenderSpec(bundle, {
+      aspect_ratio: "16:9",
+      phase: "thinking",
+      timeline_time_seconds: 3.0,
+      playing: true,
+    });
+    expect(specThinking?.asset.action).toBe("thinking");
+    expect(specThinking?.asset.image_url).toBe("/api/mascots/two-sprite-mascot/assets/thinking_sprite.png");
+    expect(specThinking?.placement.anchor).toBe("bottom_left");
+
+    const specReveal = resolveMascotRenderSpec(bundle, {
+      aspect_ratio: "16:9",
+      phase: "reveal",
+      reveal_outcome: "correct",
+      timeline_time_seconds: 7.0,
+      playing: true,
+    });
+    expect(specReveal?.asset.action).toBe("celebrate");
+    expect(specReveal?.asset.image_url).toBe("/api/mascots/two-sprite-mascot/assets/celebrate_sprite.png");
   });
 });

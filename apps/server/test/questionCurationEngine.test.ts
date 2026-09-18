@@ -104,8 +104,8 @@ describe("questionCurationEngine", () => {
     });
 
     it("falls back to suggested_layout when archetype is absent", () => {
-      const topic = makeTopic({ archetype: undefined, suggested_layout: "clue_deduction" });
-      expect(resolveTargetArchetype(topic)).toBe("clue_deduction");
+      const topic = makeTopic({ archetype: undefined, suggested_layout: "mystery_reveal" });
+      expect(resolveTargetArchetype(topic)).toBe("mystery_reveal");
     });
 
     it("falls back to quiz_format when both archetype and layout are absent", () => {

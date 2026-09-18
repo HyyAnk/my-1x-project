@@ -1,0 +1,450 @@
+/* ==========================================================================
+   Step 3: Animation Processing Slot Card & Grid Styles
+   ========================================================================== */
+
+.anim-slot-card {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.anim-slot-card.is-drag-over {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 16px rgba(6, 182, 212, 0.25);
+}
+
+.anim-slot-card.status-empty {
+  border-style: dashed;
+  background: var(--surface-hover);
+}
+
+.anim-slot-card.status-ready {
+  border-color: var(--line);
+}
+
+.anim-slot-card.is-processing {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 1.5px var(--accent),
+    0 0 12px rgba(6, 182, 212, 0.2);
+}
+
+.anim-slot-card.status-failed,
+.anim-slot-card.status-qa_failed {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.anim-slot-card.status-queued {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.04);
+}
+
+.anim-slot-card.status-cancelled {
+  border-color: rgba(161, 161, 170, 0.4);
+}
+
+.anim-slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.anim-slot-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.anim-slot-number {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.anim-attempt-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+}
+
+.anim-slot-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.anim-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 9999px;
+}
+
+.anim-status-badge.is-ready {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.anim-status-badge.is-processing {
+  background: rgba(6, 182, 212, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.anim-status-badge.is-queued {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.anim-status-badge.is-failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.anim-status-badge.is-empty {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+/* Canvas Wrap & Preview */
+.anim-slot-canvas-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-sm);
+  background: #09090b;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.anim-slot-preview-box {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: repeating-conic-gradient(#18181b 0% 25%, #27272a 0% 50%) 50% / 14px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anim-slot-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.anim-step2-ref-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 38px;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: var(--shadow-sm);
+  background: #000;
+}
+
+.anim-step2-ref-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Processing Overlay */
+.anim-slot-processing-box {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.anim-spinner {
+  color: var(--accent);
+}
+
+.anim-progress-bar-wrap {
+  width: 75%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.anim-progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease-in-out;
+}
+
+.anim-progress-bar-fill.is-queued {
+  background: #f59e0b;
+}
+
+.anim-progress-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.anim-progress-text {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.anim-cancel-btn {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #f87171;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.anim-cancel-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Failed Box */
+.anim-slot-failed-box {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.anim-failed-icon {
+  color: #f87171;
+}
+
+.anim-error-code-badge {
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.anim-error-description {
+  font-size: 11px;
+  color: var(--muted);
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty Box */
+.anim-slot-empty-box {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.anim-empty-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.anim-empty-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.anim-empty-hint {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.anim-empty-source-bg {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.anim-empty-source-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+  filter: grayscale(40%);
+}
+
+.anim-empty-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(9, 9, 11, 0.45);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.anim-empty-overlay:hover {
+  background: rgba(9, 9, 11, 0.25);
+}
+
+/* Actions Footer */
+.anim-slot-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.anim-action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.anim-action-btn:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.anim-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.anim-action-btn.is-upload {
+  border-color: var(--accent);
+  background: rgba(6, 182, 212, 0.08);
+  color: var(--accent);
+}
+
+.anim-action-btn.is-upload:hover:not(:disabled) {
+  background: rgba(6, 182, 212, 0.18);
+}
+
+.anim-action-btn.is-replace {
+  color: var(--foreground);
+}
+
+.anim-failed-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.anim-action-btn.is-retry {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+}
+
+.anim-action-btn.is-retry:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.18);
+}
+
+.anim-processing-indicator {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 5px;
+}
+
+/* Step 3 Header Ready Counter */
+.anim-ready-counter-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  gap: 2px;
+}
+
+.anim-counter-number {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.anim-counter-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.anim-all-ready-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #4ade80;
+  margin-top: 2px;
+}

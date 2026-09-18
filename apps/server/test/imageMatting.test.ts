@@ -66,7 +66,12 @@ describe("Image Matting & Background Removal Engine", () => {
     }
 
     const originalPng = encodeRgbaToPng({ width, height, data });
-    const transparentPng = await removeImageBackground(originalPng, { tolerance: 10, feather: 5, preferAi: false });
+    const transparentPng = await removeImageBackground(originalPng, {
+      tolerance: 10,
+      feather: 5,
+      preferAi: false,
+      removeEnclosedCavities: false,
+    });
 
     const decoded = decodePngToRgba(transparentPng);
 
@@ -161,6 +166,82 @@ describe("Image Matting & Background Removal Engine", () => {
     // Verify border is transparent
     const borderIdx = (0 * width + 0) * 4;
     expect(resultDecoded.data[borderIdx + 3]).toBe(0);
+  });
+
+  it("removes green chroma key background, extracts enclosed cavities, and applies despill", async () => {
+    const { removeImageBackgroundRgba } = await import("../src/utils/imageMatting.js");
+    const width = 64;
+    const height = 64;
+    const data = new Uint8Array(width * height * 4);
+
+    // 1. Fill entire image with green chroma key [10, 240, 20]
+    for (let i = 0; i < width * height; i++) {
+      data[i * 4] = 10;
+      data[i * 4 + 1] = 240;
+      data[i * 4 + 2] = 20;
+      data[i * 4 + 3] = 255;
+    }
+
+    // 2. Draw an orange character body (e.g. orange dragon [240, 120, 20])
+    for (let y = 10; y < 54; y++) {
+      for (let x = 10; x < 54; x++) {
+        const idx = (y * width + x) * 4;
+        data[idx] = 240;
+        data[idx + 1] = 120;
+        data[idx + 2] = 20;
+        data[idx + 3] = 255;
+      }
+    }
+
+    // 3. Draw an enclosed cavity inside the character filled with green background
+    // (e.g. gap between wing and neck at x: 20-30, y: 35-45)
+    for (let y = 35; y < 45; y++) {
+      for (let x = 20; x < 30; x++) {
+        const idx = (y * width + x) * 4;
+        data[idx] = 10;
+        data[idx + 1] = 238;
+        data[idx + 2] = 22;
+        data[idx + 3] = 255;
+      }
+    }
+
+    // 4. Draw white eye sclera and dark pupil inside character
+    for (let y = 18; y < 26; y++) {
+      for (let x = 20; x < 28; x++) {
+        const idx = (y * width + x) * 4;
+        data[idx] = 255; // White eye sclera
+        data[idx + 1] = 255;
+        data[idx + 2] = 255;
+        data[idx + 3] = 255;
+      }
+    }
+    // Pupil
+    const pupilIdx = (22 * width + 24) * 4;
+    data[pupilIdx] = 10;
+    data[pupilIdx + 1] = 10;
+    data[pupilIdx + 2] = 10;
+
+    // 5. Run removeImageBackgroundRgba without manually passing removeEnclosedCavities
+    const matted = removeImageBackgroundRgba({ width, height, data });
+
+    // Border background should be fully transparent
+    expect(matted.data[0 + 3]).toBe(0);
+
+    // Enclosed cavity should be fully transparent
+    const cavityIdx = (40 * width + 25) * 4;
+    expect(matted.data[cavityIdx + 3]).toBe(0);
+
+    // Eye sclera should be fully preserved (255 alpha, white color)
+    const scleraIdx = (20 * width + 22) * 4;
+    expect(matted.data[scleraIdx + 3]).toBe(255);
+    expect(matted.data[scleraIdx]).toBe(255);
+    expect(matted.data[scleraIdx + 1]).toBe(255);
+    expect(matted.data[scleraIdx + 2]).toBe(255);
+
+    // Orange body should be fully preserved
+    const bodyIdx = (30 * width + 40) * 4;
+    expect(matted.data[bodyIdx + 3]).toBe(255);
+    expect(matted.data[bodyIdx]).toBe(240);
   });
 
   it("handles non-PNG data gracefully without throwing", async () => {

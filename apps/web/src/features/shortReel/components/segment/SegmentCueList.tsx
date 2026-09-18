@@ -9,13 +9,7 @@ export interface SegmentCueListProps {
   onUpdateCueTiming: (cueIndex: number, field: "start_seconds" | "end_seconds", rawVal: string) => void;
 }
 
-export function SegmentCueList({
-  segmentIndex,
-  durationSeconds,
-  cues,
-  onUpdateCueText,
-  onUpdateCueTiming,
-}: SegmentCueListProps) {
+export function SegmentCueList({ segmentIndex, durationSeconds, cues, onUpdateCueText, onUpdateCueTiming }: SegmentCueListProps) {
   return (
     <div className="short-reel-form-group">
       <label className="short-reel-label">

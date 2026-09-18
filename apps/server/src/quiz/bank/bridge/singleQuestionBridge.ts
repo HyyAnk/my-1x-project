@@ -14,17 +14,9 @@ import type { LLMClient } from "../../../utils/promptSanitizer.js";
 import { localizeProductContent, normalizeTargetLanguage } from "../localization/productLocalization.js";
 import { convertBankQuestionToQuizQuestionLossless } from "./bankQuestionConverter.js";
 import { buildSingleQuestionDirectorPlan } from "./bankDirectorPlanFactory.js";
-import {
-  buildEpisodeRecord,
-  resolveEpisodeVisualStyles,
-  resolveRenderAspect,
-  triggerPipelineTask,
-} from "./bootstrapperHelpers.js";
+import { buildEpisodeRecord, resolveEpisodeVisualStyles, resolveRenderAspect, triggerPipelineTask } from "./bootstrapperHelpers.js";
 import { stageAndPublishSingleQuestionEpisodeFiles } from "./episodeStagingPublisher.js";
-import type {
-  CreateEpisodeFromQuestionBankInput,
-  CreateEpisodeFromQuestionBankResult,
-} from "./bankEpisodeBootstrapper.js";
+import type { CreateEpisodeFromQuestionBankInput, CreateEpisodeFromQuestionBankResult } from "./bankEpisodeBootstrapper.js";
 
 /** Validates question existence and checks cooldown constraints. */
 function validateQuestionAvailability(

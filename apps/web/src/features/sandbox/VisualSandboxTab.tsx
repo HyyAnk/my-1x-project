@@ -1,6 +1,6 @@
-import { useState } from "react";
 import type { Channel } from "@studio/shared";
 import type { Notice } from "../../components/types";
+import { useRouteTab } from "../../hooks/router/useRouteTab";
 import { useSandboxChannelSync } from "./hooks/useSandboxChannelSync";
 import { useSandboxDesignState } from "./hooks/useSandboxDesignState";
 import { useSandboxMascotState } from "./hooks/useSandboxMascotState";
@@ -11,7 +11,7 @@ import { useSandboxQuestionState } from "./hooks/useSandboxQuestionState";
 import { useSandboxTimelineState } from "./hooks/useSandboxTimelineState";
 import { useSandboxViewportState } from "./hooks/useSandboxViewportState";
 import { useSandboxLayoutSync } from "./hooks/useSandboxLayoutSync";
-import { useSandboxTransitionState, type SandboxTransitionState } from "./hooks/useSandboxTransitionState";
+import { useSandboxTransitionState } from "./hooks/useSandboxTransitionState";
 import { PALETTES } from "./constants";
 import {
   SandboxCanvasArea,
@@ -29,12 +29,21 @@ export function VisualSandboxTab({
   channels = [],
   onNotice,
   onRefreshChannels,
+  activeTab,
+  onTabChange,
 }: {
   channels?: Channel[];
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
+  activeTab?: string | null;
+  onTabChange?: (tab: string) => void;
 }) {
-  const [activeInspectorTab, setActiveInspectorTab] = useState<SandboxInspectorTabId>("design");
+  const [activeInspectorTab, setActiveInspectorTab] = useRouteTab({
+    value: activeTab,
+    allowedTabs: ["design", "mascot", "content", "transition"] as const,
+    fallback: "design",
+    onChange: onTabChange,
+  });
 
   const viewport = useSandboxViewportState();
   const design = useSandboxDesignState();
@@ -124,13 +133,7 @@ export function VisualSandboxTab({
         />
       </div>
 
-      <SandboxModalsContainer
-        channels={channels}
-        presets={presets}
-        channelSync={channelSync}
-        mascot={mascot}
-        design={design}
-      />
+      <SandboxModalsContainer channels={channels} presets={presets} channelSync={channelSync} mascot={mascot} design={design} />
     </section>
   );
 }

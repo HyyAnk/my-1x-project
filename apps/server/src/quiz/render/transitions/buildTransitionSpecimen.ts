@@ -24,15 +24,12 @@ export type BuiltTransitionSpecimen = {
   sampleRevision: string;
 };
 
-export function buildTransitionSpecimen(
-  input: PreparedTransitionSpecimen | PrepareTransitionSpecimenOptions,
-): BuiltTransitionSpecimen {
+export function buildTransitionSpecimen(input: PreparedTransitionSpecimen | PrepareTransitionSpecimenOptions): BuiltTransitionSpecimen {
   const prepared = "compositionInput" in input ? input : prepareTransitionSpecimen(input);
 
   const bundle = buildCandyArcadeCompositionBundle(prepared.compositionInput);
 
-  const resolvedInstance =
-    bundle.transitionInstances?.[prepared.boundaryId] ?? prepared.resolvedInstance;
+  const resolvedInstance = bundle.transitionInstances?.[prepared.boundaryId] ?? prepared.resolvedInstance;
 
   const fpsVal = prepared.fps.numerator / prepared.fps.denominator;
   const totalDurationSeconds = prepared.compositionInput.timeline.duration_seconds;
@@ -41,10 +38,7 @@ export function buildTransitionSpecimen(
   const inspectionFrames = Math.round(0.75 * fpsVal);
   const reviewWindow = {
     firstFrame: Math.max(0, resolvedInstance.startFrame - inspectionFrames),
-    lastFrameInclusive: Math.min(
-      Math.max(0, totalDurationFrames - 1),
-      resolvedInstance.endFrameExclusive - 1 + inspectionFrames,
-    ),
+    lastFrameInclusive: Math.min(Math.max(0, totalDurationFrames - 1), resolvedInstance.endFrameExclusive - 1 + inspectionFrames),
     boundaryFrame: resolvedInstance.boundaryFrame,
   };
 

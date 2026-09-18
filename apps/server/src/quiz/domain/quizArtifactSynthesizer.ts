@@ -19,10 +19,14 @@ export function synthesizeScriptMarkdown(quiz: QuizV2, topicTitle?: string): str
     lines.push("");
     lines.push(`${question.question}`);
     lines.push("");
-    question.choices.forEach((choice, choiceIndex) => {
-      const label = String.fromCharCode(65 + choiceIndex);
-      lines.push(`- ${label}: ${choice.text}`);
-    });
+    if (question.answer_mode === "single_reveal" || question.choices.length === 1) {
+      lines.push(`- Revealed Answer: ${answerText}`);
+    } else {
+      question.choices.forEach((choice, choiceIndex) => {
+        const label = String.fromCharCode(65 + choiceIndex);
+        lines.push(`- ${label}: ${choice.text}`);
+      });
+    }
     lines.push("");
     lines.push("Take a guess and think carefully!");
     lines.push("");
@@ -124,6 +128,7 @@ export function synthesizeScenesFromQuiz(quiz: QuizV2): Scene[] {
         answer: answerText,
         explanation: question.explanation,
         image_prompt: prompt,
+        answer_mode: question.answer_mode ?? (question.choices.length === 1 ? "single_reveal" : "choice_selection"),
       },
       audio_asset_path: null,
       audio_generated_at: null,

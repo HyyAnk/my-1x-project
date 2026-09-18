@@ -31,6 +31,7 @@ function createTestQuiz(layoutId: string, format: QuizQuestionFormat, choiceText
         id: `q-${layoutId}`,
         number: 1,
         format,
+        answer_mode: layoutId === "mystery_reveal" ? "single_reveal" : "choice_selection",
         difficulty: 1,
         question: `Test question for ${layoutId}?`,
         choices: choiceTexts.map((text, idx) => ({ id: `c-${idx + 1}`, text })),
@@ -45,14 +46,18 @@ function createTestQuiz(layoutId: string, format: QuizQuestionFormat, choiceText
   });
 }
 
-function renderClipHtml(layoutId: QuizPreviewLayoutId, format: QuizQuestionFormat, isFinal: boolean = false): string {
-  const choices = ["Option A", "Option B", "Option C"];
+function renderClipHtml(layoutId: QuizPreviewLayoutId, format: QuizQuestionFormat, _isFinal: boolean = false): string {
+  const isMystery = layoutId === "mystery_reveal";
+  const choices = isMystery ? ["Hidden Answer"] : ["Option A", "Option B", "Option C"];
   const effectiveChoices = format === "true_false" ? choices.slice(0, 2) : choices;
   const quiz = createTestQuiz(layoutId, format, effectiveChoices);
   const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
   director.beats[0].layout_id = layoutId;
 
-  if (layoutId.startsWith("visual_")) {
+  if (isMystery) {
+    director.beats[0].archetype = "image_guess";
+    director.beats[0].asset_intents = ["question_illustration"];
+  } else if (layoutId.startsWith("visual_")) {
     director.beats[0].archetype = "visual_multiple_choice";
     director.beats[0].asset_intents = ["choice_illustration"];
   } else if (format === "true_false") {
@@ -270,14 +275,23 @@ describe("Stage 5: Explanation & Reward FX Lifecycle Parity", () => {
         expect(isUnifiedQuizFrame(layoutId, "16:9")).toBe(true);
 
         const is2Choice = layoutId === "split_versus_two" || layoutId === "verdict_true_false";
-        const format: QuizQuestionFormat = is2Choice ? "true_false" : layoutId === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
-        const choices = is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
+        const isMystery = layoutId === "mystery_reveal";
+        const format: QuizQuestionFormat = isMystery
+          ? "image_guess"
+          : is2Choice
+            ? "true_false"
+            : layoutId === "visual_choices_three_pure"
+              ? "odd_one_out"
+              : "multiple_choice";
+        const choices = isMystery ? ["Hidden Answer"] : is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
 
         // Production clip
         const clipHtml = renderClipHtml(layoutId, format);
         expect(clipHtml).toContain("quiz-frame-unified");
-        expect(clipHtml).toContain('class="quiz-fact-anchor" data-quiz-fixed="fact"');
-        expect(clipHtml).toContain('class="fact-card" data-layout-allow-occlusion');
+        if (!isMystery) {
+          expect(clipHtml).toContain('class="quiz-fact-anchor" data-quiz-fixed="fact"');
+          expect(clipHtml).toContain('class="fact-card" data-layout-allow-occlusion');
+        }
 
         // Sandbox rehearsal composition
         const rehearsal = buildSandboxComposition({
@@ -285,13 +299,16 @@ describe("Stage 5: Explanation & Reward FX Lifecycle Parity", () => {
           aspect_ratio: "16:9",
           mode: "rehearsal",
           question_format: format,
+          answer_mode: isMystery ? "single_reveal" : "choice_selection",
           choices,
           correct_choice_index: 0,
           fact_card_text: "Shared fact text across layouts.",
         });
         expect(rehearsal.html).toContain("quiz-frame-unified");
-        expect(rehearsal.html).toContain('class="quiz-fact-anchor" data-quiz-fixed="fact"');
-        expect(rehearsal.html).toContain('class="fact-card sandbox-explain-card" data-layout-allow-occlusion');
+        if (!isMystery) {
+          expect(rehearsal.html).toContain('class="quiz-fact-anchor" data-quiz-fixed="fact"');
+          expect(rehearsal.html).toContain('class="fact-card sandbox-explain-card" data-layout-allow-occlusion');
+        }
 
         // Sandbox snapshot composition
         const snapshot = buildSandboxComposition({
@@ -299,13 +316,16 @@ describe("Stage 5: Explanation & Reward FX Lifecycle Parity", () => {
           aspect_ratio: "16:9",
           phase: "explain",
           question_format: format,
+          answer_mode: isMystery ? "single_reveal" : "choice_selection",
           choices,
           correct_choice_index: 0,
           fact_card_text: "Shared fact text across layouts.",
         });
         expect(snapshot.html).toContain("quiz-frame-unified");
-        expect(snapshot.html).toContain('class="quiz-fact-anchor" data-quiz-fixed="fact"');
-        expect(snapshot.html).toContain('class="fact-card sandbox-explain-card" data-layout-allow-occlusion');
+        if (!isMystery) {
+          expect(snapshot.html).toContain('class="quiz-fact-anchor" data-quiz-fixed="fact"');
+          expect(snapshot.html).toContain('class="fact-card sandbox-explain-card" data-layout-allow-occlusion');
+        }
       }
     });
 
@@ -366,10 +386,18 @@ describe("Stage 5: Explanation & Reward FX Lifecycle Parity", () => {
 
       expect(portraitCss).toContain('#stage[data-aspect-ratio="9:16"]');
       expect(portraitCss).toContain('#stage[data-aspect-ratio="9:16"] .phase-region {');
-      expect(portraitCss).toContain('#stage[data-aspect-ratio="9:16"] .phase-region > .fact-card { width: 100%; left: 0; transform: none; }');
-      expect(portraitCss).toContain('#stage[data-aspect-ratio="9:16"] .phase-region.portrait-phase-embedded { position: relative; left: auto; right: auto; bottom: auto; top: auto; width: 100%; transform: none; }');
-      expect(portraitCss).toContain('#stage[data-aspect-ratio="9:16"] .phase-region.portrait-phase-embedded > .fact-card { position: relative; bottom: auto; left: auto; transform: none; width: 100%; margin: 0 auto; }');
-      expect(portraitCss).toContain('#stage[data-aspect-ratio="9:16"] .phase-region.portrait-phase-embedded > .thinking-bar { position: relative; bottom: auto; left: auto; transform: none; width: 100%; margin: 0 auto; }');
+      expect(portraitCss).toContain(
+        '#stage[data-aspect-ratio="9:16"] .phase-region > .fact-card { width: 100%; left: 0; transform: none; }',
+      );
+      expect(portraitCss).toContain(
+        '#stage[data-aspect-ratio="9:16"] .phase-region.portrait-phase-embedded { position: relative; left: auto; right: auto; bottom: auto; top: auto; width: 100%; transform: none; }',
+      );
+      expect(portraitCss).toContain(
+        '#stage[data-aspect-ratio="9:16"] .phase-region.portrait-phase-embedded > .fact-card { position: relative; bottom: auto; left: auto; transform: none; width: 100%; margin: 0 auto; }',
+      );
+      expect(portraitCss).toContain(
+        '#stage[data-aspect-ratio="9:16"] .phase-region.portrait-phase-embedded > .thinking-bar { position: relative; bottom: auto; left: auto; transform: none; width: 100%; margin: 0 auto; }',
+      );
     });
   });
 });

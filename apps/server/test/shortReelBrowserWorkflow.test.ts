@@ -59,9 +59,9 @@ it("creates a real draft from its card, reopens it, and reconnects without dupli
       visual_style: "flat_vector" as const,
     };
     await app.repository.saveTopicRun(channel.channel_id, [
-      { ...episode, topic_id: "ep-1" },
-      { ...episode, topic_id: "ep-2" },
-      { ...episode, topic_id: "ep-3" },
+      { ...episode, topic_id: "ep-1", title: "Episode Concept 1" },
+      { ...episode, topic_id: "ep-2", title: "Episode Concept 2" },
+      { ...episode, topic_id: "ep-3", title: "Episode Concept 3" },
       topic,
       { ...topic, topic_id: "second-reel", title: "Another comparison" },
     ]);
@@ -72,9 +72,8 @@ it("creates a real draft from its card, reopens it, and reconnects without dupli
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(`${address}/#/channels/${channel.channel_id}?tab=topics`);
     await page
-      .locator("article.topic-card")
+      .locator("article.topic-card-short-reel")
       .filter({ has: page.getByRole("heading", { name: "Speed comparison", exact: true }) })
-      .getByRole("button", { name: "Create Short-Reel", exact: true })
       .click();
     await page.waitForURL(/short-reels\/sreel_/);
     await page.getByTestId("short-reel-source-question").waitFor();

@@ -14,6 +14,13 @@ export type LandscapeFrameGeometry = Readonly<{
   fact: FrameRect;
   arena: FrameRect;
   timerProtection: FrameRect;
-  counter: Readonly<{ centerX: number; top: number }>;
+  counter: Readonly<{
+    x: number;
+    top: number;
+    width: number;
+    height: number;
+    centerX: number;
+    bodyCenterY: number;
+  }>;
   brand: Readonly<{ centerX: number; top: number; width: number }>;
 }>;

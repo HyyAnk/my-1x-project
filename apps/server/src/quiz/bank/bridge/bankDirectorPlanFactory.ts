@@ -21,8 +21,6 @@ export function mapToDirectorArchetype(archetypeId?: string, fallback: DirectorA
   switch (archetypeId) {
     case "mystery_reveal":
       return "mystery_reveal";
-    case "clue_deduction":
-      return "clue_deduction";
     case "versus_faceoff":
     case "visual_identification":
       return "visual_multiple_choice";
@@ -52,8 +50,6 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
     switch (topic.archetype) {
       case "mystery_reveal":
         return "mystery_reveal";
-      case "clue_deduction":
-        return "clue_deduction";
       case "verdict_true_false":
       case "verdict_fact_myth":
         return "verdict_true_false";
@@ -96,7 +92,7 @@ export function buildSingleQuestionDirectorPlan(params: BuildSingleQuestionDirec
   const { episodeId, quizQuestion, archetypeId, channel, targetLayout } = params;
   const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
   const directorArchetype = mapToDirectorArchetype(archetypeId, "text_multiple_choice");
-  const isRevealArchetype = archetypeId === "mystery_reveal" || archetypeId === "clue_deduction";
+  const isRevealArchetype = archetypeId === "mystery_reveal";
 
   const directorBeat: DirectorBeat = {
     question_id: quizQuestion.id,
@@ -153,7 +149,7 @@ export function buildTopicDirectorPlan(
 ): DirectorPlan {
   const basePlan = createDefaultDirectorPlan(quiz, aspectRatio);
   const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
-  const isReveal = topic.archetype === "mystery_reveal" || topic.archetype === "clue_deduction";
+  const isReveal = topic.archetype === "mystery_reveal";
 
   return DirectorPlanSchema.parse({
     ...basePlan,

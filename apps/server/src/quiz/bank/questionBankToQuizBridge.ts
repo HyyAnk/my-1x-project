@@ -25,10 +25,7 @@ export {
   type StageAndPublishTopicParams,
 } from "./bridge/episodeStagingPublisher.js";
 
-export {
-  createEpisodeFromQuestionBank,
-  createEpisodeFromBankQuestions,
-} from "./bridge/singleQuestionBridge.js";
+export { createEpisodeFromQuestionBank, createEpisodeFromBankQuestions } from "./bridge/singleQuestionBridge.js";
 
 export {
   createEpisodeFromTopicWithBank,
@@ -37,8 +34,4 @@ export {
   handleExistingConfirmationReceipt,
 } from "./bridge/topicEpisodeBridge.js";
 
-export {
-  withTopicConfirmationLock,
-  isTopicConfirmationLocked,
-  clearAllTopicConfirmationLocks,
-} from "./bridge/topicConfirmationLock.js";
+export { withTopicConfirmationLock, isTopicConfirmationLocked, clearAllTopicConfirmationLocks } from "./bridge/topicConfirmationLock.js";

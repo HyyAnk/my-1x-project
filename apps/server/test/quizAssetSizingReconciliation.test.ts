@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  type DirectorPlan,
-  type QuizV2,
-  QuizV2Schema,
-} from "@studio/shared";
+import { type DirectorPlan, type QuizV2, QuizV2Schema } from "@studio/shared";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { reconcileQuizAssetSizing } from "../src/quiz/assets/reconcileQuizAssetSizing.js";
@@ -30,7 +26,7 @@ function buildTestDirectorPlan(beats: DirectorPlan["beats"]): DirectorPlan {
 }
 
 describe("quizAssetSizingReconciliation", () => {
-  it("plans 4:3 answer options for visual_choices_three and compiles prompt without square frame wording", () => {
+  it("plans 1:1 answer options for visual_choices_three and compiles prompt with layout-specific framing", () => {
     const quiz = buildTestQuiz([
       {
         id: "q-vc3",
@@ -79,13 +75,13 @@ describe("quizAssetSizingReconciliation", () => {
 
     const plan = planQuizAssets(quiz, director);
     const options = plan.assets.filter((a) => a.purpose === "answer_option");
-    expect(options.map((a) => a.aspect_ratio)).toEqual(["4:3", "4:3", "4:3"]);
-    expect(options[0].sizing?.recommended_width).toBe(672);
-    expect(options[0].sizing?.recommended_height).toBe(504);
+    expect(options.map((a) => a.aspect_ratio)).toEqual(["1:1", "1:1", "1:1"]);
+    expect(options[0].sizing?.recommended_width).toBe(664);
+    expect(options[0].sizing?.recommended_height).toBe(664);
 
     const compiled = compileQuizAssetPrompt(options[0], plan.consistency_groups[0]);
-    expect(compiled.prompt).toContain("Output framing: 4:3.");
-    expect(compiled.prompt).not.toContain("square frame");
+    expect(compiled.prompt).toContain("Output framing: 1:1.");
+    expect(compiled.prompt).toContain("square visual choice card");
   });
 
   it("preserves hand-edited subjects during reconciliation and is idempotent on repeat execution", () => {
@@ -135,7 +131,7 @@ describe("quizAssetSizingReconciliation", () => {
       },
     ]);
 
-    // Construct an older plan with 1:1 square ratio and custom edited subject
+    // Construct an older plan with 4:3 ratio and custom edited subject
     const originalPlan = {
       schema_version: 2 as const,
       episode_id: quiz.episode_id,
@@ -146,7 +142,7 @@ describe("quizAssetSizingReconciliation", () => {
           subject: "Custom majestic male lion with golden mane in sunset savanna",
           purpose: "answer_option" as const,
           style: "cute_illustration" as const,
-          aspect_ratio: "1:1" as const,
+          aspect_ratio: "4:3" as const,
           transparent_background: true,
           required: true,
           semantic_key: "q-reconcile:choice:c-1",
@@ -158,7 +154,7 @@ describe("quizAssetSizingReconciliation", () => {
           subject: "Tiger",
           purpose: "answer_option" as const,
           style: "cute_illustration" as const,
-          aspect_ratio: "1:1" as const,
+          aspect_ratio: "4:3" as const,
           transparent_background: true,
           required: true,
           semantic_key: "q-reconcile:choice:c-2",
@@ -170,7 +166,7 @@ describe("quizAssetSizingReconciliation", () => {
           subject: "Bear",
           purpose: "answer_option" as const,
           style: "cute_illustration" as const,
-          aspect_ratio: "1:1" as const,
+          aspect_ratio: "4:3" as const,
           transparent_background: true,
           required: true,
           semantic_key: "q-reconcile:choice:c-3",
@@ -185,16 +181,17 @@ describe("quizAssetSizingReconciliation", () => {
 
     // Preserves hand-authored subject!
     expect(updatedPlan.assets[0].subject).toBe(originalPlan.assets[0].subject);
-    expect(updatedPlan.assets[0].aspect_ratio).toBe("4:3");
-    expect(updatedPlan.assets[0].sizing?.recommended_width).toBe(672);
+    expect(updatedPlan.assets[0].aspect_ratio).toBe("1:1");
+    expect(updatedPlan.assets[0].sizing?.recommended_width).toBe(664);
+    expect(updatedPlan.assets[0].sizing?.recommended_height).toBe(664);
 
-    // Changes were classified as generation_affecting because ratio shifted from 1:1 to 4:3
+    // Changes were classified as generation_affecting because ratio shifted from 4:3 to 1:1
     expect(reconciliation.changes).toHaveLength(3);
     expect(reconciliation.changes[0]).toEqual({
       assetId: "asset-q-reconcile-c-1",
       kind: "generation_affecting",
-      previousRatio: "1:1",
-      currentRatio: "4:3",
+      previousRatio: "4:3",
+      currentRatio: "1:1",
     });
 
     // Reconciling twice is a complete no-op!
@@ -280,7 +277,8 @@ describe("quizAssetSizingReconciliation", () => {
         currentRatio: "4:3",
       },
     ]);
-    expect(result.plan.assets[0].sizing?.recommended_width).toBe(1056);
+    expect(result.plan.assets[0].sizing?.recommended_width).toBe(1120);
+    expect(result.plan.assets[0].sizing?.recommended_height).toBe(840);
   });
 
   it("produces NO choice images for full_stack_list and split_versus_two in text mode", () => {

@@ -11,6 +11,7 @@ import {
   resolveMascotRenderGeometry,
   resolveMascotRenderSpec,
   type MascotProfile,
+  type MascotRenderBundleV2,
   type MascotSpriteAction,
 } from "@studio/shared";
 import { RepositoryService } from "../src/repository.js";
@@ -210,6 +211,129 @@ describe("Mascot V2 core engine", () => {
     expect(Math.abs(resolveMascotMotionTransform({ ...motion, intensity: "dynamic" }, 0.75).translate_x)).toBeGreaterThan(
       Math.abs(first.translate_x),
     );
+  });
+});
+
+describe("Canonical V2 Render Bundle native resolution", () => {
+  const nativeV2Bundle: MascotRenderBundleV2 = {
+    config: {
+      version: 2,
+      placements: {
+        "16:9": {
+          anchor: "bottom_right",
+          scale: 1.5,
+          offset_x: 25,
+          offset_y: 40,
+          flip_x: false,
+        },
+        "9:16": {
+          anchor: "bottom_right",
+          scale: 1.2,
+          offset_x: 10,
+          offset_y: 20,
+          flip_x: true,
+        },
+      },
+      visibility: {
+        enabled: true,
+        phase_rules: {
+          intro: { visible: false, action: "wave", enter_transition: "fade", exit_transition: "fade" },
+          question: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
+          choices: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
+          thinking: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
+          reveal: { visible: true, action: "celebrate", enter_transition: "pop", exit_transition: "fade" },
+          explain: { visible: true, action: "celebrate", enter_transition: "fade", exit_transition: "fade" },
+          outro: { visible: true, action: "wave", enter_transition: "fade", exit_transition: "fade" },
+        },
+        reveal_outcome_actions: { correct: "celebrate", wrong: "oops", timeout: "oops" },
+      },
+    },
+    assets: {
+      actions: {
+        thinking: {
+          version: 2,
+          action: "thinking",
+          image_url: "/v2/assets/thinking.png",
+          registration: {
+            source_width: 512,
+            source_height: 512,
+            content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+            pivot: { x: 256, y: 512 },
+            offset_x: 15,
+            offset_y: -10,
+          },
+          motion: { preset: "sway", speed: 1.3, intensity: "normal" },
+        },
+        celebrate: {
+          version: 2,
+          action: "celebrate",
+          image_url: "/v2/assets/celebrate.png",
+          registration: {
+            source_width: 512,
+            source_height: 512,
+            content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+            pivot: { x: 256, y: 512 },
+            offset_x: 0,
+            offset_y: 0,
+          },
+          motion: { preset: "jump", speed: 1.5, intensity: "dynamic" },
+        },
+      },
+      master: {
+        version: 2,
+        image_url: "/v2/assets/master.png",
+        registration: {
+          source_width: 512,
+          source_height: 512,
+          content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+          pivot: { x: 256, y: 512 },
+          offset_x: 0,
+          offset_y: 0,
+        },
+      },
+    },
+  };
+
+  it("resolves canonical V2 render spec directly from bundle without V1 intermediate adapter", () => {
+    const spec = resolveMascotRenderSpec(nativeV2Bundle, {
+      aspect_ratio: "16:9",
+      phase: "thinking",
+      timeline_time_seconds: 2.0,
+      playing: true,
+    });
+
+    expect(spec).not.toBeNull();
+    expect(spec?.asset.action).toBe("thinking");
+    expect(spec?.asset.image_url).toBe("/v2/assets/thinking.png");
+    expect(spec?.placement.anchor).toBe("bottom_right");
+    expect(spec?.placement.scale).toBe(1.5);
+    expect(spec?.motion).toMatchObject({ preset: "sway", speed: 1.3, intensity: "normal" });
+
+    const geometry = resolveMascotRenderGeometry(spec!);
+    expect(geometry.box_width).toBeCloseTo(330);
+    expect(geometry.box_height).toBeCloseTo(330);
+  });
+
+  it("respects native V2 placement and orientation per aspect ratio", () => {
+    const landscapeSpec = resolveMascotRenderSpec(nativeV2Bundle, {
+      aspect_ratio: "16:9",
+      phase: "reveal",
+      reveal_outcome: "correct",
+      timeline_time_seconds: 4.0,
+      playing: true,
+    });
+    expect(landscapeSpec?.placement.scale).toBe(1.5);
+    expect(landscapeSpec?.placement.flip_x).toBe(false);
+
+    const portraitSpec = resolveMascotRenderSpec(nativeV2Bundle, {
+      aspect_ratio: "9:16",
+      phase: "reveal",
+      reveal_outcome: "correct",
+      timeline_time_seconds: 4.0,
+      playing: true,
+    });
+    expect(portraitSpec?.placement.scale).toBe(1.2);
+    expect(portraitSpec?.placement.flip_x).toBe(true);
   });
 });
 
@@ -475,17 +599,16 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
 
     const adapted = adaptMascotForQuestion(mascotWithAnchor, "cyberpunk-anchor", 0);
     expect(adapted).toBeDefined();
-    const thinking = adapted!.actions.thinking;
-    expect(thinking?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(thinking?.motion_preset).toBe("sway");
-    expect(thinking?.motion_speed).toBe(1.0);
-    expect(thinking?.motion_intensity).toBe("normal");
+    const fallbackActions = adapted?.render_bundle?.assets.actions;
+    expect(fallbackActions?.thinking?.image_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(fallbackActions?.thinking?.motion?.preset).toBe("sway");
+    expect(fallbackActions?.thinking?.motion?.speed).toBe(1.0);
+    expect(fallbackActions?.thinking?.motion?.intensity).toBe("normal");
 
-    const celebrate = adapted!.actions.celebrate;
-    expect(celebrate?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(celebrate?.motion_preset).toBe("jump");
-    expect(celebrate?.motion_speed).toBe(1.0);
-    expect(celebrate?.motion_intensity).toBe("normal");
+    expect(fallbackActions?.celebrate?.image_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(fallbackActions?.celebrate?.motion?.preset).toBe("jump");
+    expect(fallbackActions?.celebrate?.motion?.speed).toBe(1.0);
+    expect(fallbackActions?.celebrate?.motion?.intensity).toBe("normal");
 
     // Also verify render_bundle adaptation when render_bundle is present
     const bundleMascot: MascotProfile = {
@@ -531,8 +654,8 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
     };
 
     const adapted = adaptMascotForQuestion(mascotWithBoth, "style-with-both", 0);
-    expect(adapted?.actions.thinking?.sprite_url).toBe("/assets/slot-thinking.png");
-    expect(adapted?.actions.celebrate?.sprite_url).toBe("/assets/slot-celebrate.png");
+    expect(adapted?.render_bundle?.assets.actions.thinking?.image_url).toBe("/assets/slot-thinking.png");
+    expect(adapted?.render_bundle?.assets.actions.celebrate?.image_url).toBe("/assets/slot-celebrate.png");
   });
 
   it("includes all style anchor URLs in getMascotPreloadUrls", () => {

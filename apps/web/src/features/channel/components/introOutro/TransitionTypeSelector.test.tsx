@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { registerTransition, resetTransitionRegistry, type IntroOutroTransitionType } from "@studio/shared";
+import { registerTransition, resetTransitionRegistry } from "@studio/shared";
 import { TransitionTypeSelector } from "./TransitionTypeSelector";
 
 describe("TransitionTypeSelector", () => {

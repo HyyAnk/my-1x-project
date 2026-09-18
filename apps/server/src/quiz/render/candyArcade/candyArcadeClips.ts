@@ -1,33 +1,9 @@
-import type {
-  ChannelMascotConfig,
-  DirectorArchetype,
-  MascotProfile,
-  MascotRenderAspectRatio,
-  QuizAnswerCardStyle,
-  QuizBackgroundStyle,
-  QuizLayoutResolutionResult,
-  QuizQuestion,
-  QuizQuestionBoxStyle,
-  QuizQuestionCounterStyle,
-  QuizThinkingBarStyle,
-  ResolvedQuizLayoutId,
-} from "@studio/shared";
-import {
-  getTransitionDefinition,
-  resolveChannelMascotPlacement,
-  serializeQuizPaletteInlineStyle,
-  type ResolvedTransitionInstance,
-} from "@studio/shared";
-import { renderResolvedTransitionClip } from "../transitions/renderTransitionClip.js";
-import { ambientPhaseSeconds, motionCssClass, textLayout } from "../../visual/candyArcade.js";
-import type { QuizTemplateScene } from "../../visual/types.js";
-import { esc, escAttr, illustrationDataUri } from "./candyArcadeSvg.js";
+import type { ChannelMascotConfig, MascotProfile, MascotRenderAspectRatio } from "@studio/shared";
+import { resolveChannelMascotPlacement } from "@studio/shared";
+import { motionCssClass } from "../../visual/candyArcade.js";
+import { esc } from "./candyArcadeSvg.js";
 import { source } from "./candyArcadeAudio.js";
-import {
-  renderProductionMascotHtmlLayer,
-  type ProductionMascotRenderOptions,
-  type ProductionMascotTimelineEvent,
-} from "../productionMascotRenderer.js";
+import { renderProductionMascotHtmlLayer, type ProductionMascotRenderOptions } from "../productionMascotRenderer.js";
 import { adaptProductionQuizScene } from "../scene/productionSceneAdapter.js";
 import { buildQuizSceneParts } from "../scene/buildQuizSceneParts.js";
 import {
@@ -37,83 +13,31 @@ import {
   renderStableQuizSceneParts,
 } from "../scene/renderQuizSceneParts.js";
 import { renderQuizLayoutBody } from "../layouts/registry.js";
-import { isUnifiedQuizFrame, renderQuizPhaseSlots } from "../frame/renderQuizFrameBody.js";
-import { renderCandyRaysDecorations } from "../../visual/elements/background/variants/candyRays.js";
+import { isUnifiedQuizFrame } from "../frame/renderQuizFrameBody.js";
+import { renderQuizScenePhaseParts } from "../scene/renderQuizScenePhaseParts.js";
 import type { QuizSceneTiming } from "../scene/quizScene.types.js";
-import { calculateThinkingBarTiming } from "../../visual/elements/thinkingBar/types.js";
+import type { Copy } from "./quizCopy.js";
+import { rewardFx, styleAttributes } from "./candyArcadeClipElements.js";
+import type { QuestionClipInput } from "./candyArcadeClipTypes.js";
 
-export type SubComposition = {
-  id: string;
-  start: string;
-  duration: string;
-  trackIndex: string;
-  revealAt?: string;
-  transitionInstance?: string;
-  className?: string;
-  html: string;
-};
-
-export type Copy = ReturnType<typeof quizCopy>;
-
-export function quizCopy(_language?: string) {
-  return {
-    ready: "Ready to play?",
-    questions: (count: number) => (count === 1 ? "question" : "questions to explore"),
-    question: "Question",
-    getReady: "Look closely and get ready!",
-    choose: "Choose one",
-    time: "Final seconds!",
-    correct: "That's right!",
-    why: "Did you know?",
-    funFact: "Did you know?",
-    final: "Final challenge",
-    scorePrompt: "How many did you get right?",
-    playAgain: "Play again soon",
-    exploreMore: "Many more questions to explore",
-    ctaComment: "Comment",
-    ctaLike: "Like",
-    ctaSubscribe: "Subscribe",
-  };
-}
-
-export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRatio = "16:9"): SubComposition {
-  const openingTag = clip.match(/^<section\b[^>]*>/)?.[0];
-  if (!openingTag) throw new Error("Candy Arcade clip must start with a section element");
-  const id = requiredAttribute(openingTag, "id");
-  const start = requiredAttribute(openingTag, "data-start");
-  const duration = requiredAttribute(openingTag, "data-duration");
-  const trackIndex = requiredAttribute(openingTag, "data-track-index");
-  const revealAt = openingTag.match(/\sdata-reveal-at="([^"]+)"/)?.[1];
-  const transitionInstance = openingTag.match(/\sdata-transition-instance="([^"]+)"/)?.[1];
-  const className = openingTag.match(/\sclass="([^"]+)"/)?.[1];
-  const sceneRoot = openingTag
-    .replace(/\sdata-start="[^"]*"/g, "")
-    .replace(/\sdata-duration="[^"]*"/g, "")
-    .replace(/\sdata-track-index="[^"]*"/g, "")
-    .replace(
-      />$/,
-      ` data-composition-id="${id}" data-no-timeline data-width="${aspectRatio === "9:16" ? 1080 : 1920}" data-height="${aspectRatio === "9:16" ? 1920 : 1080}" data-aspect-ratio="${aspectRatio}">`,
-    );
-  const body = rootRelativeSubCompositionAssets(clip.replace(openingTag, sceneRoot));
-  return { id, start, duration, trackIndex, revealAt, transitionInstance, className, html: `<template id="${id}-template">${body}</template>` };
-}
-
-export function requiredAttribute(tag: string, name: string): string {
-  const value = tag.match(new RegExp(`\\s${name}="([^"]+)"`))?.[1];
-  if (!value) throw new Error(`Candy Arcade clip is missing ${name}`);
-  return value;
-}
-
-export function rootRelativeSubCompositionAssets(html: string): string {
-  return html.replace(/\b(src|poster)="\.\//g, '$1="').replace(/url\((['"]?)\.\//g, "url($1");
-}
-
-export function subCompositionMount(scene: SubComposition): string {
-  const revealAttr = scene.revealAt ? ` data-reveal-at="${scene.revealAt}"` : "";
-  const instanceAttr = scene.transitionInstance ? ` data-transition-instance="${scene.transitionInstance}"` : "";
-  const classAttr = scene.className ? ` class="sub-composition ${scene.className}"` : ' class="sub-composition"';
-  return `<div id="${scene.id}-mount"${classAttr} data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}"${revealAttr}${instanceAttr} data-no-timeline></div>`;
-}
+export { quizCopy, type Copy } from "./quizCopy.js";
+export {
+  toSubComposition,
+  requiredAttribute,
+  rootRelativeSubCompositionAssets,
+  subCompositionMount,
+  type SubComposition,
+} from "./subCompositionParser.js";
+export { rewardFx, imageCard, revealPanel, sceneDecorations, styleAttributes } from "./candyArcadeClipElements.js";
+export { transitionClip, type TransitionClipInput } from "./transitionClip.js";
+export {
+  customIntroVideoClip,
+  customOutroVideoClip,
+  calculateIntroTransitionTiming,
+  renderIntroTransitionOverlay,
+  resolveTransitionDefinition,
+} from "./customVideoClips.js";
+export type { QuestionClipInput } from "./candyArcadeClipTypes.js";
 
 export function mascotElement(
   mascot: MascotProfile | null | undefined,
@@ -164,49 +88,14 @@ export function outroClip(
   return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(0.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
-export {
-  customIntroVideoClip,
-  customOutroVideoClip,
-  calculateIntroTransitionTiming,
-  renderIntroTransitionOverlay,
-  resolveTransitionDefinition,
-} from "./customVideoClips.js";
-
-export function questionClip(input: {
-  start: number;
-  questionNarrationStart?: number;
-  choicesStart: number;
-  thinkingStart: number;
-  revealStart: number;
-  rewardStart: number;
-  end: number;
-  question: QuizQuestion;
-  archetype: DirectorArchetype;
-  layoutResolution: Extract<QuizLayoutResolutionResult<ResolvedQuizLayoutId>, { ok: true }>;
-  questionIndex: number;
-  count: number;
-  visual: QuizTemplateScene;
-  copy: Copy;
-  assets: Record<string, string>;
-  isFinal: boolean;
-  mascot?: MascotProfile | null;
-  mascotConfig?: ChannelMascotConfig | null;
-  mascotEvents?: readonly ProductionMascotTimelineEvent[];
-  thinkingBarStyle?: QuizThinkingBarStyle | null;
-  questionBoxStyle?: QuizQuestionBoxStyle | null;
-  answerCardStyle?: QuizAnswerCardStyle | null;
-  counterStyle?: QuizQuestionCounterStyle | null;
-  backgroundStyle?: QuizBackgroundStyle | null;
-  aspectRatio?: MascotRenderAspectRatio;
-  channelBrandName?: string | null;
-  styleCatalogRevision?: string;
-}): string {
+export function questionClip(input: QuestionClipInput): string {
   const { question, visual } = input;
   const timing: QuizSceneTiming = {
     start: input.start,
     questionNarrationStart: input.questionNarrationStart,
     choicesStart: input.choicesStart,
     thinkingStart: input.thinkingStart,
+    timerHideAt: input.timerHideAt,
     revealStart: input.revealStart,
     rewardStart: input.rewardStart,
     end: input.end,
@@ -257,6 +146,7 @@ export function questionClip(input: {
     input.revealStart,
     input.rewardStart,
     input.end,
+    input.timerHideAt,
   );
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });
@@ -277,7 +167,12 @@ export function questionClip(input: {
     .join(" ");
   const thinkingHtml = renderQuizSceneThinkingPart(parts, timing);
   const factHtml = `<div class="fact-card" data-layout-allow-occlusion><p>${esc(parts.phase.factText)}</p></div>`;
-  const phaseHtml = isUnified ? renderQuizPhaseSlots(thinkingHtml, factHtml) : `${thinkingHtml}${factHtml}`;
+  const phaseHtml = renderQuizScenePhaseParts({
+    layoutId: model.layout.id,
+    aspectRatio: "16:9",
+    thinkingHtml,
+    factHtml,
+  });
   const layoutBody = renderQuizLayoutBody(model.layout.id, {
     questionBoxHtml: stableParts.questionBoxHtml,
     heroHtml: stableParts.heroHtml,
@@ -287,84 +182,4 @@ export function questionClip(input: {
   const body = `<div class="game-stage" data-layout-allow-overflow>${layoutBody}</div>`;
   const revealAtSeconds = Math.max(0, input.revealStart - input.start).toFixed(3);
   return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0" data-reveal-at="${revealAtSeconds}">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-quiz-fixed="counter" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
-}
-
-export function transitionClip(input: {
-  start: number;
-  end: number;
-  visual: QuizTemplateScene;
-  nextPalette: QuizTemplateScene["palette"];
-  instanceId?: string;
-  instance?: ResolvedTransitionInstance;
-}): string {
-  if (input.end - input.start < 0.04) return "";
-  if (input.instance) {
-    return renderResolvedTransitionClip(input.instance, {
-      visual: input.visual,
-      nextPalette: input.nextPalette,
-    });
-  }
-  try {
-    const def = getTransitionDefinition(input.visual.transitionId);
-    if (def.id === "cut") return "";
-    const body = def.renderMarkup({
-      instanceId: input.instanceId ?? `trans-${Math.round(input.start * 1000)}`,
-      placement: "scene",
-      fps: { numerator: 30, denominator: 1 },
-      startFrame: Math.round(input.start * 30),
-      boundaryFrame: Math.round(((input.start + input.end) / 2) * 30),
-      availableEndFrameExclusive: Math.round(input.end * 30),
-      width: 1920,
-      height: 1080,
-      fromColor: input.visual.palette.accent,
-      toColor: input.nextPalette.backgroundPrimary,
-      inkColor: input.visual.palette.text,
-    });
-    const instanceAttr = input.instanceId ? ` data-transition-instance="${input.instanceId}"` : "";
-    return `<section id="candy-transition-${Math.round(input.start * 1000)}" class="clip candy-transition transition-${input.visual.transitionId}"${instanceAttr} data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow style="--from:${input.visual.palette.accent};--to:${input.nextPalette.backgroundPrimary};--ink:${input.visual.palette.text};--clip-start:${input.start.toFixed(3)}s;--trans-dur:${(input.end - input.start).toFixed(3)}s;--trans-start:0s" data-start="${input.start.toFixed(3)}" data-duration="${(input.end - input.start).toFixed(3)}" data-track-index="1">${body}</section>`;
-  } catch {
-    const isBrush = input.visual.transitionId === "lightning_brush" || input.visual.transitionId === "brush_wave";
-    const mark = input.visual.transitionId === "lightning_brush" ? `<div class="transition-mark" data-layout-ignore aria-hidden="true">✦</div>` : "";
-    const body = isBrush
-      ? `<div class="brush brush-one" data-layout-allow-occlusion data-layout-allow-overflow></div><div class="brush brush-two" data-layout-allow-occlusion data-layout-allow-overflow></div>${mark}`
-      : `<div class="splash-bed" data-layout-allow-occlusion data-layout-allow-overflow></div><i class="splash-bubble splash-bubble-a" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-b" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-c" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-d" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-e" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-f" data-layout-allow-occlusion data-layout-allow-overflow></i><div class="splash-brand" data-layout-ignore aria-hidden="true">✦</div><div class="splash-particles" data-layout-ignore aria-hidden="true"><i>✦</i><i>•</i><i>✦</i><i>•</i></div><div class="splash-release" data-layout-allow-occlusion data-layout-allow-overflow></div>`;
-    const instanceAttr = input.instanceId ? ` data-transition-instance="${input.instanceId}"` : "";
-    return `<section id="candy-transition-${Math.round(input.start * 1000)}" class="clip candy-transition transition-${input.visual.transitionId}"${instanceAttr} data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow style="--from:${input.visual.palette.accent};--to:${input.nextPalette.backgroundPrimary};--ink:${input.visual.palette.text};--clip-start:${input.start.toFixed(3)}s;--trans-dur:${(input.end - input.start).toFixed(3)}s;--trans-start:0s" data-start="${input.start.toFixed(3)}" data-duration="${(input.end - input.start).toFixed(3)}" data-track-index="1">${body}</section>`;
-  }
-}
-
-export function rewardFx(intensity: "small" | "big"): string {
-  const particles = intensity === "big" ? ["★", "✦", "★", "✦", "★", "✦", "★", "✦", "★"] : ["✦", "★", "✦", "★", "✦", "★", "✦"];
-  return `<div class="reward-fx reward-${intensity}" data-layout-ignore aria-hidden="true">${particles.map((particle) => `<i>${particle}</i>`).join("")}</div>`;
-}
-
-export function imageCard(asset: string | null, subject: string, className: string, seed: number): string {
-  return `<figure class="image-card ${className}" data-layout-allow-overflow><img src="${escAttr(asset ?? illustrationDataUri(subject, seed))}" alt="${escAttr(subject)}"><span class="image-shine"></span></figure>`;
-}
-
-export function revealPanel(input: { question: QuizQuestion; copy: Copy; isFinal: boolean }): string {
-  return `<div class="fact-card" data-layout-allow-occlusion><p>${esc(input.question.fun_fact || input.question.explanation)}</p></div>`;
-}
-
-export function sceneDecorations(questionIndex: number): string {
-  return renderCandyRaysDecorations(questionIndex);
-}
-
-export function styleAttributes(
-  visual: QuizTemplateScene,
-  layout: ReturnType<typeof textLayout>,
-  clipStart: number,
-  choicesStart: number,
-  thinkingStart: number,
-  revealStart: number,
-  rewardStart: number,
-  clipEnd: number,
-): string {
-  const paletteInline = serializeQuizPaletteInlineStyle(visual.palette);
-  const thinkingTiming = calculateThinkingBarTiming({
-    clipStart,
-    revealStart,
-    thinkingStart,
-  });
-  return `style="${paletteInline}--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--timer-start:${thinkingTiming.timerStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${thinkingTiming.duration.toFixed(3)}s;--query-hold-duration:${thinkingTiming.queryHoldDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
 }

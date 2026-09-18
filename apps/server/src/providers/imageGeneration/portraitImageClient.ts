@@ -1,11 +1,7 @@
 import { GenerationError } from "../../shortReel/generationErrors.js";
 import { Gpti2PortraitAdapter } from "./gpti2PortraitAdapter.js";
 import { ImgStudioPortraitAdapter } from "./imgstudioPortraitAdapter.js";
-import type {
-  GeneratedImageBytes,
-  PortraitImageClient,
-  PortraitImageRequest,
-} from "./imageGeneration.types.js";
+import type { GeneratedImageBytes, PortraitImageClient, PortraitImageRequest } from "./imageGeneration.types.js";
 
 export interface PortraitImageClientConfig {
   enabled?: boolean;
@@ -33,10 +29,12 @@ class UnsupportedPortraitAdapter implements PortraitImageClient {
 
   constructor(private readonly provider: string) {}
 
-  async generate(_request: PortraitImageRequest): Promise<GeneratedImageBytes> {
-    throw new GenerationError(
-      "REFERENCE_INPUT_UNSUPPORTED",
-      `Image provider "${this.provider}" does not support reference image conditioning. Configure gpti2 in Settings to generate Short-Reel visual assets.`,
+  generate(_request: PortraitImageRequest): Promise<GeneratedImageBytes> {
+    return Promise.reject(
+      new GenerationError(
+        "REFERENCE_INPUT_UNSUPPORTED",
+        `Image provider "${this.provider}" does not support reference image conditioning. Configure gpti2 in Settings to generate Short-Reel visual assets.`,
+      ),
     );
   }
 }
@@ -48,8 +46,7 @@ class FallbackResilientPortraitAdapter implements PortraitImageClient {
     private readonly primary: PortraitImageClient,
     private readonly fallback?: PortraitImageClient,
   ) {
-    this.supportsReferenceImage =
-      primary.supportsReferenceImage || (fallback?.supportsReferenceImage ?? false);
+    this.supportsReferenceImage = primary.supportsReferenceImage || (fallback?.supportsReferenceImage ?? false);
   }
 
   async generate(request: PortraitImageRequest): Promise<GeneratedImageBytes> {
@@ -89,8 +86,7 @@ export function createPortraitImageClient(
   }
 
   const isFallbackEnabled =
-    fallbackConfig?.enabled !== false &&
-    Boolean((fallbackConfig?.api_key || process.env.IMGSTUDIO_API_KEY || "").trim());
+    fallbackConfig?.enabled !== false && Boolean((fallbackConfig?.api_key || process.env.IMGSTUDIO_API_KEY || "").trim());
 
   if (isFallbackEnabled) {
     const fallbackAdapter = new ImgStudioPortraitAdapter({
@@ -106,9 +102,4 @@ export function createPortraitImageClient(
   return primaryAdapter;
 }
 
-export type {
-  GeneratedImageBytes,
-  ImageReferenceInput,
-  PortraitImageClient,
-  PortraitImageRequest,
-} from "./imageGeneration.types.js";
+export type { GeneratedImageBytes, ImageReferenceInput, PortraitImageClient, PortraitImageRequest } from "./imageGeneration.types.js";

@@ -1,4 +1,5 @@
 import type { MascotActionType, MascotMotionIntensity, MascotMotionPreset, MascotPosition, MascotState } from "../enums.js";
+import type { MascotPublishedAnimationAsset } from "./animation/animationTypes.js";
 
 export type MascotRenderAspectRatio = "16:9" | "9:16";
 
@@ -53,8 +54,15 @@ export type MascotActionAssetV2 = {
    * compatibility adapter. New V2 assets omit this field.
    */
   legacy_animation?: MascotLegacyAnimationV1;
+  /**
+   * Dedicated 12-frame mascot animation asset (V1) providing state-specific motion.
+   */
+  animation?: MascotPublishedAnimationAsset;
 };
 
+/**
+ * @deprecated Legacy V1 multi-frame animation format. Use `MascotPublishedAnimationAsset` instead.
+ */
 export type MascotLegacyAnimationV1 = {
   frames_count: number;
   fps: number;

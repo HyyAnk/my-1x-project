@@ -15,10 +15,7 @@ export const REQUEST_TIMEOUT_MS = 120_000;
  * Canonical 720p base dimensions for standard video and layout aspect ratios:
  * 16:9 (1280x720), 4:3 (960x720), 1:1 (720x720), 3:4 (720x960), 9:16 (720x1280).
  */
-export const STANDARD_ASPECT_RATIO_DIMENSIONS: Record<
-  SupportedAspectRatio,
-  { width: number; height: number; dimensions: string }
-> = {
+export const STANDARD_ASPECT_RATIO_DIMENSIONS: Record<SupportedAspectRatio, { width: number; height: number; dimensions: string }> = {
   "16:9": { width: 1280, height: 720, dimensions: "1280x720" },
   "4:3": { width: 960, height: 720, dimensions: "960x720" },
   "1:1": { width: 720, height: 720, dimensions: "720x720" },
@@ -28,9 +25,7 @@ export const STANDARD_ASPECT_RATIO_DIMENSIONS: Record<
   "2:3": { width: 720, height: 1080, dimensions: "720x1080" },
 };
 
-export function getStandardDimensionsForAspectRatio(
-  aspectRatio: string = "16:9",
-): { width: number; height: number; dimensions: string } {
+export function getStandardDimensionsForAspectRatio(aspectRatio: string = "16:9"): { width: number; height: number; dimensions: string } {
   const norm = (aspectRatio.trim() || "16:9") as SupportedAspectRatio;
   return STANDARD_ASPECT_RATIO_DIMENSIONS[norm] || STANDARD_ASPECT_RATIO_DIMENSIONS["16:9"];
 }
@@ -43,8 +38,10 @@ export function resolveImageDimensions(
 
   if (model.startsWith("nano-banana")) {
     const validNanoRatios = new Set(["1:1", "16:9", "9:16", "4:3", "3:4", "2:3", "3:2"]);
-    const ratio = validNanoRatios.has(normRatio) ? normRatio : "16:9";
-    return { aspect_ratio: ratio, size: "2K" };
+    if (!validNanoRatios.has(normRatio)) {
+      throw new RepositoryError(`Unsupported aspect ratio '${aspectRatio}' for model ${model}`, "UNSUPPORTED_ASPECT_RATIO");
+    }
+    return { aspect_ratio: normRatio, size: "2K" };
   }
 
   // gpt-image-2 exact supported sizes on gpti2.store (quality: low)
@@ -58,7 +55,10 @@ export function resolveImageDimensions(
     "2:3": "1024x1536",
   };
 
-  const size = sizeMap[normRatio] || "1280x720";
+  const size = sizeMap[normRatio];
+  if (!size) {
+    throw new RepositoryError(`Unsupported aspect ratio '${aspectRatio}' for model ${model}`, "UNSUPPORTED_ASPECT_RATIO");
+  }
   return { size, aspect_ratio: normRatio };
 }
 

@@ -14,12 +14,7 @@ describe("SandboxPhaseScrubber", () => {
 
     render(
       <LanguageProvider>
-        <SandboxPhaseScrubber
-          phase="thinking"
-          setPhase={setPhase}
-          setUseScrubber={setUseScrubber}
-          useScrubber={false}
-        />
+        <SandboxPhaseScrubber phase="thinking" setPhase={setPhase} setUseScrubber={setUseScrubber} useScrubber={false} />
       </LanguageProvider>,
     );
 
@@ -60,12 +55,7 @@ describe("SandboxPhaseScrubber", () => {
 
     const { rerender } = render(
       <LanguageProvider>
-        <SandboxPhaseScrubber
-          phase="thinking"
-          setPhase={setPhase}
-          setUseScrubber={setUseScrubber}
-          useScrubber={false}
-        />
+        <SandboxPhaseScrubber phase="thinking" setPhase={setPhase} setUseScrubber={setUseScrubber} useScrubber={false} />
       </LanguageProvider>,
     );
 
@@ -77,12 +67,7 @@ describe("SandboxPhaseScrubber", () => {
 
     rerender(
       <LanguageProvider>
-        <SandboxPhaseScrubber
-          phase="thinking"
-          setPhase={setPhase}
-          setUseScrubber={setUseScrubber}
-          useScrubber={true}
-        />
+        <SandboxPhaseScrubber phase="thinking" setPhase={setPhase} setUseScrubber={setUseScrubber} useScrubber={true} />
       </LanguageProvider>,
     );
     expect(toggleBtn.textContent).toContain("Scrubber Active");

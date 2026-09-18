@@ -3,11 +3,29 @@ import { MascotActionTypeSchema, MascotMotionIntensitySchema, MascotMotionPreset
 import { ChannelMascotConfigSchema, MascotPlacementPresetSchema, MascotProfileSchema, MascotStyleSchema } from "../schemas.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
-  offset_x: z.number().min(-5000).max(5000).optional().default(0),
-  offset_y: z.number().min(-5000).max(5000).optional().default(0),
-  motion_preset: z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "pulse", "float", "none"]).optional(),
+  offset_x: z.number().min(-5000).max(5000).optional(),
+  offset_y: z.number().min(-5000).max(5000).optional(),
+  pivot: z.object({ x: z.number(), y: z.number() }).optional(),
+  pivot_x: z.number().optional(),
+  pivot_y: z.number().optional(),
+  registration_offset: z
+    .object({
+      x: z.number().optional(),
+      y: z.number().optional(),
+      offset_x: z.number().optional(),
+      offset_y: z.number().optional(),
+    })
+    .optional(),
+  motion: z
+    .object({
+      preset: MascotMotionPresetSchema.optional(),
+      speed: z.number().min(0.1).max(5).optional(),
+      intensity: MascotMotionIntensitySchema.optional(),
+    })
+    .optional(),
+  motion_preset: MascotMotionPresetSchema.optional(),
   motion_speed: z.number().min(0.1).max(5).optional(),
-  motion_intensity: z.enum(["subtle", "normal", "dynamic"]).optional(),
+  motion_intensity: MascotMotionIntensitySchema.optional(),
   fps: z.number().min(1).max(60).optional(),
   loop: z.boolean().optional(),
 });
@@ -109,6 +127,7 @@ export const GenerateMascotSlotInputSchema = z.object({
   state: z.enum(["thinking", "celebrate"]),
   slot_index: z.number().int().min(1).max(10),
   prompt_modifier: z.string().optional(),
+  composition: z.enum(["full_body", "half_body_16_9"]).default("half_body_16_9").optional(),
 });
 
 export type GenerateMascotSlotInput = z.infer<typeof GenerateMascotSlotInputSchema>;
@@ -125,6 +144,8 @@ export const UpdateMascotSlotInputSchema = z.object({
   state: z.enum(["thinking", "celebrate"]),
   slot_index: z.number().int().min(1).max(10),
   image_url: z.string().optional(),
+  raw_image_url: z.string().optional(),
+  transparent_image_url: z.string().optional(),
   prompt_modifier: z.string().optional(),
   motion_preset: MascotMotionPresetSchema.optional(),
   motion_speed: z.number().optional(),
@@ -143,6 +164,10 @@ export type GenerateMascotStyleConceptRequest = z.infer<typeof GenerateMascotSty
 export const GenerateMascotStyleConceptResponseSchema = z.object({
   style: MascotStyleSchema,
   mascot: MascotProfileSchema,
+  anchor_image_url: z.string().optional(),
+  raw_anchor_image_url: z.string().optional(),
+  placeholder: z.boolean().optional(),
+  prompt_used: z.string().optional(),
 });
 
 export type GenerateMascotStyleConceptResponse = z.infer<typeof GenerateMascotStyleConceptResponseSchema>;

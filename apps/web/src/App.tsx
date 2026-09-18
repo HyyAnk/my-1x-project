@@ -109,6 +109,9 @@ function AppContent() {
           selectedChannel={orch.selectedChannel}
           selectedEpisodeId={orch.selectedEpisodeId}
           selectedShortReelId={orch.selectedShortReelId}
+          selectedMascotId={orch.selectedMascotId}
+          selectedStep={orch.selectedStep}
+          openMascot={orch.openMascot}
           tasks={orch.tasks}
           activeTasks={orch.activeTasks}
           taskClock={orch.taskClock}

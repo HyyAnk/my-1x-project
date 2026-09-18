@@ -1,26 +1,17 @@
 import { QuizLayoutIdSchema } from "./enums.js";
-import type { QuizLayoutAssetAspectRatio, QuizLayoutAssetMetrics, QuizLayoutCapability } from "./quizLayouts.types.js";
+import type {
+  QuizLayoutAssetAspectRatio,
+  QuizLayoutAssetMetrics,
+  QuizLayoutCapability,
+  ResolvedQuizLayoutId,
+} from "./quizLayouts.types.js";
 import { z } from "zod";
-import {
-  getQuizImageSlotGeometry,
-  recommendImageSizing,
-  type ImageSlotPurpose,
-} from "./quizImageSizing/index.js";
+import { getQuizImageSlotGeometry, recommendImageSizing, type ImageSlotPurpose } from "./quizImageSizing/index.js";
 
 export const ResolvedQuizLayoutIdSchema = QuizLayoutIdSchema.exclude(["auto"]);
-export type ResolvedQuizLayoutId = z.infer<typeof ResolvedQuizLayoutIdSchema>;
+export type { ResolvedQuizLayoutId };
 
-export const QUIZ_LANDSCAPE_LAYOUT_IDS = [
-  "media_left_choices_right",
-  "visual_choices_three",
-  "visual_choices_three_pure",
-  "split_versus_two",
-  "verdict_true_false",
-  "full_stack_list",
-  "mystery_reveal",
-  "clue_deduction",
-] as const;
-export type QuizLandscapeLayoutId = (typeof QUIZ_LANDSCAPE_LAYOUT_IDS)[number];
+export { QUIZ_LANDSCAPE_LAYOUT_IDS, type QuizLandscapeLayoutId } from "./quizLayoutGeometry/index.js";
 
 export const QuizPreviewLayoutIdSchema = z.union([ResolvedQuizLayoutIdSchema, z.literal("baseline")]);
 export type QuizPreviewLayoutId = z.infer<typeof QuizPreviewLayoutIdSchema>;
@@ -42,8 +33,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 840, height: 580, itemCount: 1 },
-      assets: { question: { maxWidth: 1056, maxHeight: 792, aspectRatio: "4:3" } },
+      render: { width: 720, height: 570, itemCount: 1 },
+      assets: { question: { maxWidth: 1120, maxHeight: 840, aspectRatio: "4:3" } },
     },
   },
   visual_choices_three: {
@@ -55,8 +46,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["choice"], required: ["choice"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 501, height: 500, itemCount: 3 },
-      assets: { choice: { maxWidth: 672, maxHeight: 504, aspectRatio: "4:3" } },
+      render: { width: 452, height: 586, itemCount: 3 },
+      assets: { choice: { maxWidth: 664, maxHeight: 664, aspectRatio: "1:1" } },
     },
   },
   visual_choices_three_pure: {
@@ -68,8 +59,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["choice"], required: ["choice"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 501, height: 580, itemCount: 3 },
-      assets: { choice: { maxWidth: 728, maxHeight: 728, aspectRatio: "1:1" } },
+      render: { width: 452, height: 608, itemCount: 3 },
+      assets: { choice: { maxWidth: 648, maxHeight: 864, aspectRatio: "3:4" } },
     },
   },
   split_versus_two: {
@@ -81,9 +72,9 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["choice", "question"], required: [] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 720, height: 600, itemCount: 2 },
+      render: { width: 698, height: 578, itemCount: 2 },
       assets: {
-        choice: { maxWidth: 1024, maxHeight: 576, aspectRatio: "16:9" },
+        choice: { maxWidth: 1152, maxHeight: 648, aspectRatio: "16:9" },
         question: { maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" },
       },
     },
@@ -97,8 +88,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 920, height: 580, itemCount: 1 },
-      assets: { question: { maxWidth: 1408, maxHeight: 792, aspectRatio: "16:9" } },
+      render: { width: 820, height: 565, itemCount: 1 },
+      assets: { question: { maxWidth: 1216, maxHeight: 912, aspectRatio: "4:3" } },
     },
   },
   full_stack_list: {
@@ -110,34 +101,21 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: [], required: [] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 1440, height: 720, itemCount: 1 },
+      render: { width: 1280, height: 528, itemCount: 1 },
       assets: {},
     },
   },
   mystery_reveal: {
     id: "mystery_reveal",
     supportedPresentations: ["text"],
-    supportedChoiceCounts: [0, 1, 2, 3],
-    supportedFormats: ["multiple_choice", "image_guess", "odd_one_out", "true_false"],
+    supportedChoiceCounts: [1],
+    supportedFormats: ["multiple_choice", "image_guess"],
     recommendedFormats: ["image_guess"],
-    media: { supported: ["question", "choice"], required: ["question"] },
+    media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
-      render: { width: 980, height: 620, itemCount: 1 },
-      assets: { question: { maxWidth: 768, maxHeight: 432, aspectRatio: "16:9" } },
-    },
-  },
-  clue_deduction: {
-    id: "clue_deduction",
-    supportedPresentations: ["text"],
-    supportedChoiceCounts: [0, 1, 2, 3],
-    supportedFormats: ["multiple_choice", "image_guess", "odd_one_out", "true_false"],
-    recommendedFormats: ["image_guess", "multiple_choice"],
-    media: { supported: ["question", "choice"], required: ["question"] },
-    supportedAspectRatios: supportedLandscapeAspectRatios,
-    metrics: {
-      render: { width: 980, height: 620, itemCount: 1 },
-      assets: { question: { maxWidth: 896, maxHeight: 504, aspectRatio: "16:9" } },
+      render: { width: 920, height: 540, itemCount: 1 },
+      assets: { question: { maxWidth: 1408, maxHeight: 792, aspectRatio: "16:9" } },
     },
   },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutCapability<ResolvedQuizLayoutId>>;
@@ -178,7 +156,7 @@ export function isResolvedQuizLayoutId(layoutId: string): layoutId is ResolvedQu
 
 export function resolveQuizLayoutAssetAspectRatio(
   layoutId: string,
-  purpose: "hero_question_image" | "answer_option" | string,
+  purpose: string,
   context?: { presentation?: "text" | "visual"; choiceCount?: number },
 ): QuizLayoutAssetAspectRatio {
   const normalizedPurpose: ImageSlotPurpose | null =
@@ -189,12 +167,8 @@ export function resolveQuizLayoutAssetAspectRatio(
         : null;
 
   if (normalizedPurpose && isResolvedQuizLayoutId(layoutId)) {
-    const presentation =
-      context?.presentation ??
-      (QUIZ_LAYOUT_CATALOG[layoutId]?.supportedPresentations[0] ?? "visual");
-    const choiceCount =
-      context?.choiceCount ??
-      (QUIZ_LAYOUT_CATALOG[layoutId]?.supportedChoiceCounts[0] ?? 3);
+    const presentation = context?.presentation ?? QUIZ_LAYOUT_CATALOG[layoutId]?.supportedPresentations[0] ?? "visual";
+    const choiceCount = context?.choiceCount ?? QUIZ_LAYOUT_CATALOG[layoutId]?.supportedChoiceCounts[0] ?? 3;
 
     const geometry = getQuizImageSlotGeometry({
       layoutId,

@@ -1,10 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React, { useState } from "react";
 import { render, act } from "@testing-library/react";
-import type {
-  TransitionArtifactManifest,
-  TransitionPreviewStatus,
-} from "@studio/shared";
+import type { TransitionArtifactManifest, TransitionPreviewStatus } from "@studio/shared";
 import { useTransitionPreview } from "./useTransitionPreview";
 import * as api from "../services/transitionPreviewApi";
 

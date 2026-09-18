@@ -1,12 +1,4 @@
-import {
-  CheckCircle,
-  CircleNotch,
-  Clock,
-  Hourglass,
-  ListChecks,
-  WarningCircle,
-  XCircle,
-} from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch, Clock, Hourglass, ListChecks, WarningCircle, XCircle } from "@phosphor-icons/react";
 import type { Task } from "@studio/shared";
 import { formatTaskStatus } from "../../../lib/utils";
 

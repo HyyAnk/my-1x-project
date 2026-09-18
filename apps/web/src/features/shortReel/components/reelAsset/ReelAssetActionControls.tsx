@@ -1,10 +1,7 @@
 import { ArrowClockwise } from "@phosphor-icons/react";
 import type { ReelAssetActionButtonProps, ReelAssetRetryButtonProps } from "./reelAsset.types";
 
-export function ReelAssetActionButton({
-  actionButton,
-  isGenerating = false,
-}: ReelAssetActionButtonProps) {
+export function ReelAssetActionButton({ actionButton, isGenerating = false }: ReelAssetActionButtonProps) {
   if (!actionButton) return null;
 
   return (
@@ -21,10 +18,7 @@ export function ReelAssetActionButton({
   );
 }
 
-export function ReelAssetRetryButton({
-  retryButton,
-  isGenerating = false,
-}: ReelAssetRetryButtonProps) {
+export function ReelAssetRetryButton({ retryButton, isGenerating = false }: ReelAssetRetryButtonProps) {
   if (!retryButton) return null;
 
   return (

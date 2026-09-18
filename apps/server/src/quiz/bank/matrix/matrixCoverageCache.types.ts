@@ -60,7 +60,7 @@ export interface IMatrixCoverageCache {
   warmUpFromSqlite(rows: SqliteAggregationRow[], targetTotal?: number): void;
   getStats(): BankIndex;
   getMatrixCoverage(): MatrixCoverageStats;
-  getComboVariantCount(archetypeId: BankGameplayArchetypeId | string, entityId: string): number;
+  getComboVariantCount(archetypeId: BankGameplayArchetypeId | (string & {}), entityId: string): number;
   getComboMap(): ReadonlyMap<string, number>;
   onQuestionSaved(question: BankQuestion, previousMeta?: QuestionMutationMeta | null): void;
   onQuestionDeleted(questionId: string, meta: QuestionMutationMeta): void;

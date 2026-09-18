@@ -24,13 +24,19 @@ export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean
         text: copy.question(question.number, question.question),
         duration_seconds: null,
       }),
-      withPhrases({
-        segment_id: question.id + ":choice",
-        role: "choice",
-        question_id: question.id,
-        text: copy.choices(question.choices.map((choice) => choice.text)),
-        duration_seconds: null,
-      }),
+    );
+    if (question.answer_mode !== "single_reveal") {
+      segments.push(
+        withPhrases({
+          segment_id: question.id + ":choice",
+          role: "choice",
+          question_id: question.id,
+          text: copy.choices(question.choices.map((choice) => choice.text)),
+          duration_seconds: null,
+        }),
+      );
+    }
+    segments.push(
       withPhrases({
         segment_id: question.id + ":thinking",
         role: "thinking_prompt",
@@ -49,20 +55,9 @@ export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean
         segment_id: question.id + ":explanation",
         role: "explanation",
         question_id: question.id,
-        text: copy.explanation(question.explanation),
+        text: copy.explanation(question.explanation || question.fun_fact),
         duration_seconds: null,
       }),
-      ...(question.fun_fact
-        ? [
-            withPhrases({
-              segment_id: question.id + ":fact",
-              role: "fun_fact" as const,
-              question_id: question.id,
-              text: copy.fact(question.fun_fact),
-              duration_seconds: null,
-            }),
-          ]
-        : []),
     );
   });
   if (!options?.skipOutro) {

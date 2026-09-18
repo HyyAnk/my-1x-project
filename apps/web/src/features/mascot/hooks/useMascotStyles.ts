@@ -3,9 +3,11 @@ import type { Notice } from "../../../components/types";
 import { useMascotStyleCrud, type UseMascotStyleCrudResult } from "./useMascotStyleCrud";
 import { useMascotBatchGeneration, type UseMascotBatchGenerationResult } from "./useMascotBatchGeneration";
 import { useMascotSlotModal, type UseMascotSlotModalResult } from "./useMascotSlotModal";
+import { useMascotStyleQueue, type UseMascotStyleQueueResult } from "./styleQueue";
 
 export type { BatchProgressState } from "./useMascotBatchGeneration";
 export type { EditingSlotInfo } from "./useMascotSlotModal";
+export type { StyleQueueProgressState } from "./styleQueue";
 
 export type UseMascotStylesProps = {
   mascot: MascotProfile | null;
@@ -13,14 +15,23 @@ export type UseMascotStylesProps = {
   onNotice: (notice: Notice) => void;
 };
 
-export type UseMascotStylesResult = UseMascotStyleCrudResult & UseMascotBatchGenerationResult & UseMascotSlotModalResult;
+export type UseMascotStylesResult = UseMascotStyleCrudResult &
+  UseMascotBatchGenerationResult &
+  UseMascotSlotModalResult &
+  UseMascotStyleQueueResult;
 
 /**
- * Coordinator hook for Mascot Styles, poses, and multi-state variant workflows.
- * Composes CRUD operations, batch variant generation, and slot modal management.
+ * Coordinator hook for Mascot Styles, poses, multi-state variant workflows, and style concept queue.
+ * Composes CRUD operations, batch variant generation, style concept queueing, and slot modal management.
  */
 export function useMascotStyles({ mascot, onMascotUpdated, onNotice }: UseMascotStylesProps): UseMascotStylesResult {
   const styleCrud = useMascotStyleCrud({
+    mascot,
+    onMascotUpdated,
+    onNotice,
+  });
+
+  const styleQueue = useMascotStyleQueue({
     mascot,
     onMascotUpdated,
     onNotice,
@@ -44,6 +55,7 @@ export function useMascotStyles({ mascot, onMascotUpdated, onNotice }: UseMascot
 
   return {
     ...styleCrud,
+    ...styleQueue,
     ...batchGen,
     ...slotModal,
   };

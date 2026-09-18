@@ -1,4 +1,5 @@
 import type { FrameRect, LandscapeFrameGeometry } from "./quizFrame.types.js";
+import { FIXED_FRAME_GEOMETRY, QUIZ_LAYOUT_GEOMETRY, type QuizLandscapeLayoutId } from "@studio/shared";
 
 export const REFERENCE_THINKING_RECT: FrameRect = Object.freeze({
   x: 470,
@@ -22,28 +23,10 @@ export const REFERENCE_BRAND_RECT: FrameRect = Object.freeze({
 });
 
 export const LANDSCAPE_FRAME: LandscapeFrameGeometry = Object.freeze({
-  canvas: Object.freeze({
-    width: 1920,
-    height: 1080,
-  }),
-  question: Object.freeze({
-    x: 380,
-    y: 53,
-    width: 1420,
-    height: 168,
-  }),
-  thinking: Object.freeze({
-    x: 470,
-    y: 882,
-    width: 1240,
-    height: 84,
-  }),
-  fact: Object.freeze({
-    x: 470,
-    y: 846,
-    width: 1240,
-    height: 156,
-  }),
+  canvas: FIXED_FRAME_GEOMETRY.canvas,
+  question: FIXED_FRAME_GEOMETRY.question,
+  thinking: FIXED_FRAME_GEOMETRY.thinking,
+  fact: FIXED_FRAME_GEOMETRY.factAfter,
   arena: Object.freeze({
     x: 380,
     y: 253,
@@ -56,13 +39,16 @@ export const LANDSCAPE_FRAME: LandscapeFrameGeometry = Object.freeze({
     width: 1480,
     height: 240,
   }),
-  counter: Object.freeze({
-    centerX: 180,
-    top: 0,
-  }),
-  brand: Object.freeze({
-    centerX: 180,
-    top: 390,
-    width: 320,
-  }),
+  counter: FIXED_FRAME_GEOMETRY.counter,
+  brand: FIXED_FRAME_GEOMETRY.brand,
+});
+
+export const LAYOUT_ARENA_GEOMETRY: Readonly<Record<QuizLandscapeLayoutId, FrameRect>> = Object.freeze({
+  media_left_choices_right: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.arena,
+  visual_choices_three: QUIZ_LAYOUT_GEOMETRY.visual_choices_three.arena,
+  visual_choices_three_pure: QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.arena,
+  split_versus_two: QUIZ_LAYOUT_GEOMETRY.split_versus_two.arena,
+  verdict_true_false: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.arena,
+  full_stack_list: QUIZ_LAYOUT_GEOMETRY.full_stack_list.arena,
+  mystery_reveal: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.arena,
 });

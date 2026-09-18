@@ -26,7 +26,9 @@ export const glassNeonVariant: AnswerCardSkin = {
   z-index: 2;
 }
 .ac-glass-neon > b,
-.ac-glass-neon .choice-label {
+.ac-glass-neon .choice-label,
+.skin-glass_neon .choice-label,
+.choice-card.skin-glass_neon .choice-label {
   border: 5px solid rgba(255, 255, 255, 0.95);
   border-radius: 24px;
   background: var(--choice-badge-grad, linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%));
@@ -38,7 +40,9 @@ export const glassNeonVariant: AnswerCardSkin = {
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 .ac-glass-neon > b::after,
-.ac-glass-neon .choice-label::after {
+.ac-glass-neon .choice-label::after,
+.skin-glass_neon .choice-label::after,
+.choice-card.skin-glass_neon .choice-label::after {
   display: none;
 }
 .ac-glass-neon span,
@@ -84,7 +88,9 @@ export const glassNeonVariant: AnswerCardSkin = {
 .choice-card.answer-correct .ac-glass-neon > b,
 .choice-card.answer-correct .ac-glass-neon .choice-label,
 .visual-answer-card.answer-correct .ac-glass-neon > b,
-.visual-answer-card.answer-correct .ac-glass-neon .choice-label {
+.visual-answer-card.answer-correct .ac-glass-neon .choice-label,
+.choice-card.answer-correct.skin-glass_neon .choice-label,
+.visual-answer-card.answer-correct.skin-glass_neon .choice-label {
   background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   border-color: #DCFCE7;
   box-shadow: 0 0 28px rgba(34, 197, 94, 0.9), 0 8px 24px rgba(16, 185, 129, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.9);
@@ -97,7 +103,9 @@ export const glassNeonVariant: AnswerCardSkin = {
 .choice-card.answer-reveal-correct .ac-glass-neon > b,
 .choice-card.answer-reveal-correct .ac-glass-neon .choice-label,
 .visual-answer-card.answer-reveal-correct .ac-glass-neon > b,
-.visual-answer-card.answer-reveal-correct .ac-glass-neon .choice-label {
+.visual-answer-card.answer-reveal-correct .ac-glass-neon .choice-label,
+.choice-card.answer-reveal-correct.skin-glass_neon .choice-label,
+.visual-answer-card.answer-reveal-correct.skin-glass_neon .choice-label {
   animation: ac-glass-neon-badge-pop 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: transform;
 }
@@ -117,10 +125,14 @@ export const glassNeonVariant: AnswerCardSkin = {
 }
 
 /* Visual choice option image neon halo */
-.skin-glass_neon.choice-card-visual.answer-correct .option-image,
-.skin-glass_neon.choice-card-visual.answer-reveal-correct .option-image {
+.skin-glass_neon.choice-card-visual.answer-correct .option-image {
   border-color: #22C55E;
   box-shadow: 0 0 32px rgba(34, 197, 94, 0.8), inset 0 0 16px rgba(34, 197, 94, 0.35);
+}
+
+.skin-glass_neon.choice-card-visual.answer-reveal-correct .option-image {
+  animation: visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow;
 }
 
 /* === Reveal State: Incorrect Answer (Clean Settle & Dimming) === */

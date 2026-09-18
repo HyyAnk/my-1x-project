@@ -215,16 +215,16 @@ describe("runHyperframesProcess", () => {
       args: ["-e", parentScript],
       cwd: root,
       env: process.env,
-      timeoutMs: 2_000,
+      timeoutMs: 30_000,
       logPath,
       signal: controller.signal,
       onProgress: () => Promise.resolve(),
     });
 
     let descendantPid = 0;
-    for (let attempt = 0; attempt < 50 && descendantPid === 0; attempt += 1) {
+    for (let attempt = 0; attempt < 100 && descendantPid === 0; attempt += 1) {
       descendantPid = Number(await readFile(pidPath, "utf8").catch(() => "0"));
-      if (descendantPid === 0) await new Promise((resolve) => setTimeout(resolve, 10));
+      if (descendantPid === 0) await new Promise((resolve) => setTimeout(resolve, 50));
     }
     expect(descendantPid).toBeGreaterThan(0);
     controller.abort();

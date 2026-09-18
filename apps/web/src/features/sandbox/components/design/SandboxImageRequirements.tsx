@@ -63,8 +63,8 @@ export function SandboxImageRequirements({
     const derivedFit: ImageFit | undefined =
       "geometry" in recommendation && recommendation.geometry?.viewports?.[0]?.fit
         ? recommendation.geometry.viewports[0].fit
-        : "fit" in recommendation && typeof (recommendation as SandboxRecommendationLike).fit === "string"
-          ? (recommendation as SandboxRecommendationLike).fit
+        : "fit" in recommendation && typeof recommendation.fit === "string"
+          ? recommendation.fit
           : undefined;
 
     items.push({

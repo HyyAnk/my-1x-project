@@ -7,6 +7,7 @@
 @import "./mascot/canvas.css";
 @import "./mascot/actions.css";
 @import "./mascot/animations.css";
+@import "./mascot/animationStudio.css";
 @import "./mascot/stageStudio.css";
 @import "./mascot/calibration.css";
 
@@ -269,6 +270,37 @@
   border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
+.style-anchor-badge.badge-generating {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent, #06b6d4);
+  border: 1px solid var(--accent, #06b6d4);
+}
+
+.style-anchor-badge.badge-queued {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.style-anchor-card.is-generating {
+  border-color: var(--accent, #06b6d4);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+}
+
+.style-anchor-card.is-queued {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.is-queued-btn {
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+.style-queue-deck {
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 4px 18px rgba(6, 182, 212, 0.1);
+}
+
 .style-anchor-canvas {
   position: relative;
   width: 100%;
@@ -318,6 +350,62 @@
 
 .style-anchor-thumb-wrap:hover .style-anchor-zoom-hint {
   opacity: 1;
+}
+
+.style-anchor-hover-actions {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  z-index: 5;
+}
+
+.style-anchor-thumb-wrap:hover .style-anchor-hover-actions,
+.style-anchor-thumb-wrap:focus-within .style-anchor-hover-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.style-anchor-action-btn {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f1f5f9;
+  border-radius: 5px;
+  padding: 3px 6px;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.style-anchor-action-btn:hover {
+  background: rgba(15, 23, 42, 0.98);
+  border-color: var(--primary, #06b6d4);
+  color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.style-anchor-action-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.95;
+}
+
+.style-anchor-action-btn.style-anchor-zoom-btn {
+  padding: 3px 5px;
 }
 
 .style-anchor-empty-placeholder {

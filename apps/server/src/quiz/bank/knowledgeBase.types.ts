@@ -40,4 +40,3 @@ export interface KnowledgeBaseLoaderOptions {
   baseDir?: string;
   forceReload?: boolean;
 }
-

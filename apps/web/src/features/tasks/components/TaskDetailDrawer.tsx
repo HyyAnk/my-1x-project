@@ -47,13 +47,7 @@ export function TaskDetailDrawer({
           <TaskDrawerExecutionInfo task={targetTask} item={item} now={now} />
         </div>
 
-        <TaskDrawerFooterActions
-          task={targetTask}
-          onCancel={onCancel}
-          onRetry={onRetry}
-          onOpenEpisode={onOpenEpisode}
-          onClose={onClose}
-        />
+        <TaskDrawerFooterActions task={targetTask} onCancel={onCancel} onRetry={onRetry} onOpenEpisode={onOpenEpisode} onClose={onClose} />
       </aside>
     </div>
   );

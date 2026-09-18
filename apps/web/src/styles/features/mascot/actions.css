@@ -15,3 +15,5 @@
 @import "./actions/variantSlotCard.css";
 @import "./actions/slotOverlaysModals.css";
 @import "./actions/batchProgressDeck.css";
+@import "./actions/animationProcessingSlotCard.css";
+@import "./actions/stagePlacementPreview.css";

@@ -28,6 +28,7 @@ describe("Terminal Logger (scripts/lib/terminalLogger.mjs)", () => {
     expect(output).toContain("[STEP:INIT]");
     expect(output).toContain("Starting execution");
     // Should NOT contain ANSI escape codes
+    // eslint-disable-next-line no-control-regex
     expect(output).not.toMatch(/\u001b\[\d+m/);
     // Should contain valid ISO timestamp
     expect(output).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
@@ -47,6 +48,7 @@ describe("Terminal Logger (scripts/lib/terminalLogger.mjs)", () => {
       expect(output).toContain("[STEP:DONE]");
       expect(output).toContain("Task finished successfully");
       // Must contain ANSI styling
+      // eslint-disable-next-line no-control-regex
       expect(output).toMatch(/\u001b\[\d+m/);
     } finally {
       if (originalNoColor !== undefined) {
@@ -66,6 +68,7 @@ describe("Terminal Logger (scripts/lib/terminalLogger.mjs)", () => {
 
       const output = stream.getOutput();
       expect(output).toContain("[WARN]");
+      // eslint-disable-next-line no-control-regex
       expect(output).not.toMatch(/\u001b\[\d+m/);
     } finally {
       if (originalNoColor !== undefined) {

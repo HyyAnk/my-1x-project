@@ -24,6 +24,7 @@ export class HyperframesRenderer implements QuizRenderer {
       transitionDurationSeconds: input.transitionDurationSeconds,
       transitionInstances: input.transitionInstances,
       audioMode: input.audioMode,
+      mascotAnimationSnapshot: input.mascotAnimationSnapshot,
     });
     return Promise.resolve({
       html: composition.html,
@@ -33,6 +34,7 @@ export class HyperframesRenderer implements QuizRenderer {
       styleCatalogRevision: input.styleContext.styleCatalogRevision ?? getActiveStyleSnapshot().revision,
       stylePresetRevision: input.styleContext.stylePresetRevision ?? undefined,
       transitionInstances: composition.transitionInstances,
+      mascotAnimationSnapshot: composition.mascotAnimationSnapshot,
     });
   }
 

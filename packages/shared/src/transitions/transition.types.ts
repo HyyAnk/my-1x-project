@@ -45,9 +45,7 @@ export type ResolvedTransitionInstance = Readonly<{
   timingAdjustment: TransitionTimingAdjustment;
 }>;
 
-export type TransitionHandoff =
-  | { kind: "cut" }
-  | { kind: "cover" | "fade-black"; progress: number };
+export type TransitionHandoff = { kind: "cut" } | { kind: "cover" | "fade-black"; progress: number };
 
 export type TransitionImplementation = Readonly<{
   id: string;

@@ -5,7 +5,8 @@ import { api } from "../api";
 import { PageTitle } from "./AppChrome";
 import type { Notice } from "./types";
 import { useTranslation } from "../i18n";
-import { getNavProps } from "../hooks/useRouter";
+import { buildHash, getNavProps } from "../hooks/useRouter";
+import { useRouteTab } from "../hooks/router/useRouteTab";
 import { EngineSettingsTab } from "../features/settings/EngineSettingsTab";
 import { VoiceSettingsTab } from "../features/settings/VoiceSettingsTab";
 import { MediaSettingsTab } from "../features/settings/MediaSettingsTab";
@@ -13,6 +14,7 @@ import { SystemSettingsTab } from "../features/settings/SystemSettingsTab";
 import { StorageSetupModal } from "../features/settings/StorageSetupModal";
 
 export type SettingsTab = "engines" | "voice" | "media" | "system";
+const SETTINGS_TABS: readonly SettingsTab[] = ["engines", "voice", "media", "system"];
 
 export { StorageSetupModal };
 
@@ -63,20 +65,13 @@ export function SettingsView({
   onSimplifyChange,
 }: SettingsViewProps) {
   const { t } = useTranslation();
-  const initialTab: SettingsTab =
-    activeTab === "engines" || activeTab === "voice" || activeTab === "media" || activeTab === "system" ? activeTab : "engines";
-  const [currentTab, setCurrentTab] = useState<SettingsTab>(initialTab);
+  const [currentTab, switchTab] = useRouteTab({
+    value: activeTab,
+    allowedTabs: SETTINGS_TABS,
+    fallback: "engines",
+    onChange: onTabChange,
+  });
   const [voices, setVoices] = useState<VoiceProfile[]>([]);
-
-  useEffect(() => {
-    if (
-      activeTab &&
-      (activeTab === "engines" || activeTab === "voice" || activeTab === "media" || activeTab === "system") &&
-      activeTab !== currentTab
-    ) {
-      setCurrentTab(activeTab);
-    }
-  }, [activeTab]);
 
   useEffect(() => {
     void api
@@ -84,11 +79,6 @@ export function SettingsView({
       .then((response) => setVoices(response.voices))
       .catch((error: Error) => onNotice({ tone: "bad", message: error.message }));
   }, [onNotice]);
-
-  const switchTab = (tab: SettingsTab) => {
-    setCurrentTab(tab);
-    onTabChange?.(tab);
-  };
 
   return (
     <section className="page-wrap">
@@ -100,7 +90,7 @@ export function SettingsView({
           role="tab"
           aria-selected={currentTab === "engines"}
           className={`channel-group-tab ${currentTab === "engines" ? "is-selected" : ""}`}
-          {...getNavProps("#/settings?tab=engines", () => switchTab("engines"))}
+          {...getNavProps(buildHash({ page: "settings", tab: "engines" }), () => switchTab("engines"))}
         >
           <TerminalWindow size={18} weight={currentTab === "engines" ? "fill" : "regular"} />
           <span>{t("settings.tabEngines")}</span>
@@ -110,7 +100,7 @@ export function SettingsView({
           role="tab"
           aria-selected={currentTab === "voice"}
           className={`channel-group-tab ${currentTab === "voice" ? "is-selected" : ""}`}
-          {...getNavProps("#/settings?tab=voice", () => switchTab("voice"))}
+          {...getNavProps(buildHash({ page: "settings", tab: "voice" }), () => switchTab("voice"))}
         >
           <SpeakerHigh size={18} weight={currentTab === "voice" ? "fill" : "regular"} />
           <span>{t("settings.tabVoice")}</span>
@@ -121,7 +111,7 @@ export function SettingsView({
           role="tab"
           aria-selected={currentTab === "media"}
           className={`channel-group-tab ${currentTab === "media" ? "is-selected" : ""}`}
-          {...getNavProps("#/settings?tab=media", () => switchTab("media"))}
+          {...getNavProps(buildHash({ page: "settings", tab: "media" }), () => switchTab("media"))}
         >
           <VideoCamera size={18} weight={currentTab === "media" ? "fill" : "regular"} />
           <span>{t("settings.tabMedia")}</span>
@@ -131,7 +121,7 @@ export function SettingsView({
           role="tab"
           aria-selected={currentTab === "system"}
           className={`channel-group-tab ${currentTab === "system" ? "is-selected" : ""}`}
-          {...getNavProps("#/settings?tab=system", () => switchTab("system"))}
+          {...getNavProps(buildHash({ page: "settings", tab: "system" }), () => switchTab("system"))}
         >
           <HardDrives size={18} weight={currentTab === "system" ? "fill" : "regular"} />
           <span>{t("settings.tabSystem")}</span>

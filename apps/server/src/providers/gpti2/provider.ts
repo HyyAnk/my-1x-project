@@ -2,6 +2,7 @@ import type { ImageProvider } from "../index.js";
 import { type RepositoryService } from "../../repository.js";
 import { generateIdempotencyKey } from "../gpti2Dimensions.js";
 import { generateGpti2ImageBytes } from "./generator.js";
+import { validateReturnedImageDimensions } from "../../quiz/assets/imageDimensionValidator.js";
 
 export type Gpti2ImageTarget = {
   channelId: string;
@@ -10,6 +11,7 @@ export type Gpti2ImageTarget = {
   variant?: number;
   assetId?: string;
   fingerprint?: string;
+  taskId?: string;
 };
 
 export class Gpti2ImageProvider implements ImageProvider {
@@ -30,9 +32,10 @@ export class Gpti2ImageProvider implements ImageProvider {
     const bundleNumber = this.target.bundleNumber ?? 1;
     const variant = this.target.variant ?? 0;
     const aspectRatio = this.options.aspectRatio || "16:9";
+    const taskSalt = this.target.taskId || Date.now().toString();
     const idempotencyKey = generateIdempotencyKey(
       "bundle",
-      `${this.target.channelId}:${this.target.episodeId}:bundle-${bundleNumber}:${variant}:${aspectRatio}:${prompt}`,
+      `${this.target.channelId}:${this.target.episodeId}:bundle-${bundleNumber}:${variant}:${aspectRatio}:${prompt}:${taskSalt}`,
     );
 
     const result = await generateGpti2ImageBytes(prompt, {
@@ -96,6 +99,8 @@ export class Gpti2QuizImageProvider {
       idempotencyKey,
       cancellationSignal,
     });
+
+    validateReturnedImageDimensions(result.bytes, aspectRatio, result.size);
 
     const assetPath = await this.repository.writeQuizImageAsset(
       this.target.channelId,

@@ -182,25 +182,25 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
       mascotConfig,
     });
 
-    // Question 0: think-0 and celeb-0
+    // Question 1: think-2 and celeb-0
     const q1Html = getQuestionHtml(bundle, 1);
     expect(q1Html).toBeDefined();
-    expect(q1Html).toContain("/assets/think-0.png");
+    expect(q1Html).toContain("/assets/think-2.png");
     expect(q1Html).toContain("/assets/celeb-0.png");
+    expect(q1Html).not.toContain("/assets/think-0.png");
     expect(q1Html).not.toContain("/assets/think-1.png");
-    expect(q1Html).not.toContain("/assets/think-2.png");
     expect(q1Html).not.toContain("/assets/celeb-1.png");
 
-    // Question 1: think-1 and celeb-1
+    // Question 2: think-0 and celeb-1
     const q2Html = getQuestionHtml(bundle, 2);
     expect(q2Html).toBeDefined();
-    expect(q2Html).toContain("/assets/think-1.png");
+    expect(q2Html).toContain("/assets/think-0.png");
     expect(q2Html).toContain("/assets/celeb-1.png");
-    expect(q2Html).not.toContain("/assets/think-0.png");
+    expect(q2Html).not.toContain("/assets/think-1.png");
     expect(q2Html).not.toContain("/assets/think-2.png");
     expect(q2Html).not.toContain("/assets/celeb-0.png");
 
-    // Question 2: think-2 and celeb-0 (modulo wrap for celebrate)
+    // Question 3: think-2 and celeb-0
     const q3Html = getQuestionHtml(bundle, 3);
     expect(q3Html).toBeDefined();
     expect(q3Html).toContain("/assets/think-2.png");
@@ -209,7 +209,7 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
     expect(q3Html).not.toContain("/assets/think-1.png");
     expect(q3Html).not.toContain("/assets/celeb-1.png");
 
-    // Question 3: think-0 and celeb-1 (modulo wrap for thinking)
+    // Question 4: think-0 and celeb-1
     const q4Html = getQuestionHtml(bundle, 4);
     expect(q4Html).toBeDefined();
     expect(q4Html).toContain("/assets/think-0.png");
@@ -218,7 +218,7 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
     expect(q4Html).not.toContain("/assets/think-2.png");
     expect(q4Html).not.toContain("/assets/celeb-0.png");
 
-    // Question 4: think-1 and celeb-0
+    // Question 5: think-1 (advanced from natural 0 to avoid repeating Question 4) and celeb-0
     const q5Html = getQuestionHtml(bundle, 5);
     expect(q5Html).toBeDefined();
     expect(q5Html).toContain("/assets/think-1.png");
@@ -536,8 +536,8 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
         multiVariantMascot,
       );
 
-      expect(preview.html).toContain("/assets/think-2.png");
-      expect(preview.html).toContain("/assets/celeb-0.png");
+      expect(preview.html).toContain("/assets/think-0.png");
+      expect(preview.html).toContain("/assets/celeb-1.png");
     });
   });
 });

@@ -34,14 +34,14 @@ test("generateSampleImageSvg produces valid SVG with dimensions and labels", () 
   const spec = SAMPLE_IMAGE_SPECS["4:3"];
   const svg = generateSampleImageSvg(spec, {
     slotLabel: "QUESTION HERO",
-    subLabel: "1080x810 - Clue Deduction",
+    subLabel: "1080x810 - Sample 4:3",
   });
 
   assert.ok(svg.startsWith("<svg"));
   assert.ok(svg.endsWith("</svg>"));
   assert.ok(svg.includes('viewBox="0 0 1080 810"'));
   assert.ok(svg.includes("QUESTION HERO"));
-  assert.ok(svg.includes("1080x810 - Clue Deduction"));
+  assert.ok(svg.includes("1080x810 - Sample 4:3"));
   assert.ok(svg.includes("SAFE AREA (84%)"));
 });
 

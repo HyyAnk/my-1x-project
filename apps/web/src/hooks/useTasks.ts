@@ -26,17 +26,22 @@ export function useTasks(onTerminal?: (task: Task) => void, onPruned?: (episodeI
     }
     return response;
   }, []);
+  const onPrunedRef = useRef(onPruned);
+  onPrunedRef.current = onPruned;
+  const onTerminalRef = useRef(onTerminal);
+  onTerminalRef.current = onTerminal;
+
   useEffect(() => {
     return subscribeEvents(
       (event: TaskEvent) => {
         if (event.status) setCodexStatus(event.status);
         if (event.task) upsertTask(event.task);
         if (event.type === "tasks.pruned") {
-          onPruned?.(event.episode_ids ?? []);
+          onPrunedRef.current?.(event.episode_ids ?? []);
           void refresh();
         }
         if (event.type === "task.updated" && event.task && isTaskTerminal(event.task)) {
-          onTerminal?.(event.task);
+          onTerminalRef.current?.(event.task);
           void refresh();
         }
       },
@@ -45,7 +50,7 @@ export function useTasks(onTerminal?: (task: Task) => void, onPruned?: (episodeI
         if (status === "connected") void refresh();
       },
     );
-  }, [onPruned, onTerminal, refresh, upsertTask]);
+  }, [refresh, upsertTask]);
   const activeTasks = tasks.filter(isTaskActive);
   useEffect(() => {
     setNow(Date.now());

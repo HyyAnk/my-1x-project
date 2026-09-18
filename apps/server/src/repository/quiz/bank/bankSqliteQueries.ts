@@ -40,9 +40,7 @@ export function queryBankQuestionsSqlite(
 }
 
 export function getBankQuestionByIdSqlite(db: SqliteDatabase, id: string): BankQuestion | null {
-  const row = db.prepare("SELECT * FROM bank_questions WHERE id = ? LIMIT 1;").get(id) as unknown as
-    | BankQuestionRow
-    | undefined;
+  const row = db.prepare("SELECT * FROM bank_questions WHERE id = ? LIMIT 1;").get(id) as unknown as BankQuestionRow | undefined;
   if (!row) return null;
   return rowToBankQuestion(row);
 }

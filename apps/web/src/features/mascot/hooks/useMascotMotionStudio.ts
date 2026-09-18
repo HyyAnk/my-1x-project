@@ -78,22 +78,26 @@ export function useMascotMotionStudio({
   useEffect(() => {
     if (!editingMascot || !isVariantAction(activePreviewAction)) return;
     const existing = editingMascot.actions[activePreviewAction];
-    if (selectedVariant?.motion_preset || existing?.motion_preset) {
+    const existingBundleAction = editingMascot.render_bundle?.assets?.actions?.[activePreviewAction];
+    const targetPreset = selectedVariant?.motion_preset ?? existingBundleAction?.motion?.preset ?? existing?.motion_preset;
+    if (targetPreset) {
       presets.setActionMotions((prev) => ({
         ...prev,
-        [activePreviewAction]: selectedVariant?.motion_preset ?? existing?.motion_preset ?? prev[activePreviewAction],
+        [activePreviewAction]: targetPreset,
       }));
     }
-    if (typeof selectedVariant?.motion_speed === "number" || typeof existing?.motion_speed === "number") {
+    const targetSpeed = selectedVariant?.motion_speed ?? existingBundleAction?.motion?.speed ?? existing?.motion_speed;
+    if (typeof targetSpeed === "number") {
       presets.setActionSpeeds((prev) => ({
         ...prev,
-        [activePreviewAction]: selectedVariant?.motion_speed ?? existing?.motion_speed ?? prev[activePreviewAction],
+        [activePreviewAction]: targetSpeed,
       }));
     }
-    if (selectedVariant?.motion_intensity || existing?.motion_intensity) {
+    const targetIntensity = selectedVariant?.motion_intensity ?? existingBundleAction?.motion?.intensity ?? existing?.motion_intensity;
+    if (targetIntensity) {
       presets.setActionIntensities((prev) => ({
         ...prev,
-        [activePreviewAction]: selectedVariant?.motion_intensity ?? existing?.motion_intensity ?? prev[activePreviewAction],
+        [activePreviewAction]: targetIntensity,
       }));
     }
   }, [editingMascot?.id, activePreviewAction, selectedVariant?.id]);

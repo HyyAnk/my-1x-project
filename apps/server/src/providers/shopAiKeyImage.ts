@@ -72,8 +72,7 @@ function validateSizeRatio(explicitSize: string, detectedAspectRatio: string): v
 
 function resolveTargetDimensions(prompt: string, options?: OpenAiCompatibleImageOptions, primaryModel?: string): string {
   const promptRatioMatch =
-    prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) ||
-    prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
+    prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
   const detectedAspectRatio = options?.aspectRatio || (promptRatioMatch ? promptRatioMatch[1] : undefined);
   const resolvedDefaultSize = detectedAspectRatio
     ? resolveImageDimensions(detectedAspectRatio, primaryModel || DEFAULT_MODELS[0]).size

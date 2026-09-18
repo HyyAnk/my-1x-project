@@ -46,12 +46,7 @@ export function useShortReelActions({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const executeUpdate = useCallback(
-    async (
-      prefix: string,
-      command: UpdateShortReelRequest["command"],
-      successMsg: string,
-      onSaved: (updated: ShortReelRecord) => void,
-    ) => {
+    async (prefix: string, command: UpdateShortReelRequest["command"], successMsg: string, onSaved: (updated: ShortReelRecord) => void) => {
       if (!reel) return;
       setIsSaving(true);
       try {
@@ -98,12 +93,7 @@ export function useShortReelActions({
 
   const savePublishing = useCallback(
     (publishing: ReelPublishingPayload) =>
-      executeUpdate(
-        "save-pub",
-        { kind: "update_publishing", publishing },
-        "Publishing details saved successfully.",
-        markPublishingSaved,
-      ),
+      executeUpdate("save-pub", { kind: "update_publishing", publishing }, "Publishing details saved successfully.", markPublishingSaved),
     [executeUpdate, markPublishingSaved],
   );
 

@@ -1,22 +1,91 @@
 import type { QuizAssetRequirement } from "@studio/shared";
 
-export function framingRules(aspectRatio: QuizAssetRequirement["aspect_ratio"], _purpose: QuizAssetRequirement["purpose"]): string {
-  if (aspectRatio === "1:1") {
-    return "Composition: 1:1 square canvas. Center the focal subject perfectly with balanced breathing room and safe margins on all sides to avoid edge-clipping, so it fits cleanly inside an answer card box.";
+export interface FramingRulesOptions {
+  layoutId?: string;
+}
+
+export function framingRules(
+  aspectRatio: QuizAssetRequirement["aspect_ratio"],
+  purpose: QuizAssetRequirement["purpose"],
+  options?: FramingRulesOptions,
+): string {
+  const layoutId = options?.layoutId;
+
+  if (layoutId === "media_left_choices_right" || (purpose === "hero_question_image" && aspectRatio === "4:3" && !layoutId?.startsWith("verdict"))) {
+    return [
+      "Output aspect ratio: 4:3.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region: 8% from the left and right, and 6% from the top and bottom.",
+      "The image will be displayed in a landscape hero card on the left side of the quiz frame.",
+      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+    ].join("\n");
   }
+
+  if (layoutId === "visual_choices_three" || (purpose === "answer_option" && aspectRatio === "1:1")) {
+    return [
+      "Output aspect ratio: 1:1.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region: 6% from the left and right, and 10% from the top and bottom.",
+      "The image will be displayed in a square visual choice card with an answer label below it.",
+      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+    ].join("\n");
+  }
+
+  if (layoutId === "visual_choices_three_pure" || (purpose === "answer_option" && aspectRatio === "3:4")) {
+    return [
+      "Output aspect ratio: 3:4.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region: 6% from the left and right, 8% from the top, and 14% from the bottom.",
+      "The image will be displayed in a portrait choice card with a badge overlapping its lower center.",
+      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+    ].join("\n");
+  }
+
+  if (layoutId === "split_versus_two" || (purpose === "answer_option" && aspectRatio === "16:9")) {
+    return [
+      "Output aspect ratio: 16:9.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region: 12% from the left and right, and 6% from the top and bottom.",
+      "The image will be displayed in a split-versus competition card with a central VS emblem.",
+      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+    ].join("\n");
+  }
+
+  if (layoutId === "verdict_true_false") {
+    return [
+      "Output aspect ratio: 4:3.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region: 6% from the left and right, and 10% from the top and bottom.",
+      "The image will be displayed in a verdict question card on the left side of the quiz frame.",
+      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+    ].join("\n");
+  }
+
+  if (layoutId === "mystery_reveal" || (purpose === "hero_question_image" && aspectRatio === "16:9")) {
+    return [
+      "Output aspect ratio: 16:9.",
+      "Create one large, clearly recognizable subject with a complete silhouette on a clean background.",
+      "Keep critical identifying details inside the safe region: 6% from each edge (left, right, top, bottom).",
+      "The image will be displayed in a centered mystery stage. Concealment, mosaic blurring, and reveal are runtime effects; do not generate a pre-blurred, pixelated, or mosaic image.",
+      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+    ].join("\n");
+  }
+
   if (aspectRatio === "9:16") {
-    return "Composition: 9:16 vertical portrait framing. Position the primary subject centrally with generous vertical headroom, safe margins, and no edge-clipping or horizontal cutoffs.";
+    return [
+      "Output aspect ratio: 9:16.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region: 8% from the left and right, and 12% from the top and bottom.",
+      "Do not draw card borders, captions, watermarks, or interface elements.",
+    ].join("\n");
   }
-  if (aspectRatio === "16:9") {
-    return "Composition: 16:9 widescreen landscape framing. Broad horizontal perspective with centered focal subject, balanced breathing room, and generous margins on all sides to avoid edge-clipping, suited for video background, header, or hero illustration.";
-  }
-  if (aspectRatio === "4:3") {
-    return "Composition: 4:3 standard horizontal canvas. Center the focal subject with balanced breathing room and ample margins on all sides to avoid edge-clipping, optimized for split-column and media-left quiz containers.";
-  }
-  if (aspectRatio === "3:4") {
-    return "Composition: 3:4 portrait card canvas. Center the focal subject vertically and horizontally with balanced top/bottom and side margins to avoid edge-clipping, tailored for card containers.";
-  }
-  return `Composition: ${aspectRatio} aspect ratio canvas. Center the focal subject with balanced breathing room and safe margins on all sides to avoid edge-clipping.`;
+
+  return [
+    `Output aspect ratio: ${aspectRatio}.`,
+    "Create one large, clearly recognizable subject with a complete silhouette.",
+    "Keep critical identifying details inside the safe region: 8% from all edges.",
+    "Do not draw card borders, captions, watermarks, or interface elements.",
+  ].join("\n");
 }
 
 export function purposeRules(purpose: QuizAssetRequirement["purpose"]): string {

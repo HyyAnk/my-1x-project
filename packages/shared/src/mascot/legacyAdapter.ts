@@ -17,15 +17,7 @@ import type {
   MascotRenderConfigV2,
   MascotRenderPhase,
 } from "./renderTypes.js";
-import { MascotRenderBundleV2Schema } from "./renderSchema.js";
-import {
-  adaptActionAsset,
-  adaptMasterAsset,
-  clampFinite,
-  cloneRenderAssets,
-  cloneRenderConfig,
-  phaseRuleWithVisibility,
-} from "./legacyCloners.js";
+import { adaptActionAsset, adaptMasterAsset, clampFinite, phaseRuleWithVisibility } from "./legacyCloners.js";
 
 export type LegacyMascotConfigInput = Partial<ChannelMascotConfig> | ChannelMascotConfig | null | undefined;
 export type LegacyMascotPhase = MascotRenderPhase | "explanation";
@@ -37,14 +29,19 @@ export function normalizeMascotRenderPhase(phase: LegacyMascotPhase): MascotRend
 /**
  * Converts the persisted V1 profile and channel settings into a V2 render
  * bundle without writing or mutating any persisted data.
+ *
+ * @deprecated Legacy adapter. Prefer direct usage of canonical V2 `MascotRenderBundleV2`.
+ * When `mascot.render_bundle` already exists, acts as a zero-overhead pass-through.
  */
 export function adaptMascotV1ToV2(mascot: MascotProfile | null | undefined, config?: LegacyMascotConfigInput): MascotRenderBundleV2 | null {
   if (!mascot) return null;
-  const persistedBundle = mascot.render_bundle ? MascotRenderBundleV2Schema.safeParse(mascot.render_bundle) : null;
-  if (persistedBundle?.success) {
+  if (mascot.render_bundle) {
+    if (!config) {
+      return mascot.render_bundle;
+    }
     return {
-      config: config === undefined ? cloneRenderConfig(persistedBundle.data.config) : adaptMascotConfigV1ToV2(config),
-      assets: cloneRenderAssets(persistedBundle.data.assets),
+      config: adaptMascotConfigV1ToV2(config),
+      assets: mascot.render_bundle.assets,
     };
   }
   return {
@@ -53,6 +50,11 @@ export function adaptMascotV1ToV2(mascot: MascotProfile | null | undefined, conf
   };
 }
 
+/**
+ * Converts legacy channel mascot configuration into a V2 render config.
+ *
+ * @deprecated Legacy configuration adapter. Use canonical V2 `MascotRenderConfigV2` directly.
+ */
 export function adaptMascotConfigV1ToV2(config?: LegacyMascotConfigInput): MascotRenderConfigV2 {
   const legacy = ChannelMascotConfigSchema.parse(config ?? {});
   const placements = Object.fromEntries(
@@ -85,10 +87,15 @@ export function adaptMascotConfigV1ToV2(config?: LegacyMascotConfigInput): Masco
   };
 }
 
+/**
+ * Adapts legacy V1 mascot profile actions and master image into a V2 asset catalog.
+ *
+ * @deprecated Legacy asset adapter. Use canonical V2 `MascotRenderAssetCatalogV2` directly.
+ */
 export function adaptMascotAssetsV1ToV2(mascot: MascotProfile): MascotRenderAssetCatalogV2 {
   const actions: MascotRenderAssetCatalogV2["actions"] = {};
   for (const action of Object.keys(MASCOT_ACTION_META) as MascotActionType[]) {
-    const legacyAction = mascot.actions[action];
+    const legacyAction = mascot.actions?.[action];
     if (legacyAction?.sprite_url?.trim()) actions[action] = adaptActionAsset(action, legacyAction);
   }
   return {

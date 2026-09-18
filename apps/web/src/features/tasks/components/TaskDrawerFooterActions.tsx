@@ -10,13 +10,7 @@ export interface TaskDrawerFooterActionsProps {
   onClose: () => void;
 }
 
-export function TaskDrawerFooterActions({
-  task,
-  onCancel,
-  onRetry,
-  onOpenEpisode,
-  onClose,
-}: TaskDrawerFooterActionsProps) {
+export function TaskDrawerFooterActions({ task, onCancel, onRetry, onOpenEpisode, onClose }: TaskDrawerFooterActionsProps) {
   const isFailed = task.status === "FAILED";
   const isCancelled = task.status === "CANCELLED";
 

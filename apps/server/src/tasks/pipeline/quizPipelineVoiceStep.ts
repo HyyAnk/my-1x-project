@@ -1,89 +1,12 @@
-import type { Task, ThumbnailLayoutType } from "@studio/shared";
-import type { StudioLogger } from "../../logger.js";
+import type { Task } from "@studio/shared";
 import type { TaskManagerRuntime } from "../runtime.js";
-import type { QuizVoicePacingClamp } from "../../quiz/audio/voiceSynthesis.js";
 import { quizVoicePlanNeedsRegeneration, quizVoiceTargetWordsPerSecond } from "../../quiz/audio/voicePolicy.js";
 import { healQuizVoicePacingWithLLM } from "../../quiz/audio/voicePacingHealer.js";
 import { generateVoice, resolveAssets, runQa, readQuizArtifacts } from "../../quiz/pipeline/orchestrator.js";
 import { RepositoryError } from "../../repository.js";
 import { hasValidNarrationAsset } from "./pipelineHelpers.js";
 
-export function handleVoicePacingClamp(logger: StudioLogger, channelId: string, taskId: string, details: QuizVoicePacingClamp): void {
-  logger.warn(`Quiz voice pacing clamp hit ${JSON.stringify(details)}`, {
-    profileId: channelId,
-    workerId: taskId,
-    step: "voice_pacing_clamp",
-  });
-}
-
-export function createQuizPipelineInput(
-  runtime: TaskManagerRuntime,
-  task: Task,
-  isParallelMode: () => boolean,
-  options?: {
-    customHookText?: string;
-    layoutOverride?: ThumbnailLayoutType;
-    badgeOverride?: string;
-  },
-) {
-  let assetState = { completed: 0, total: 0, reused: false };
-  let voiceState = { completed: 0, total: 0, reused: false };
-
-  const updateParallelProgress = async () => {
-    if (isParallelMode()) {
-      const assetRatio = assetState.total > 0 ? assetState.completed / assetState.total : 1;
-      const voiceRatio = voiceState.total > 0 ? voiceState.completed / voiceState.total : 1;
-      const progress_percent = 30 + Math.round(assetRatio * 14 + voiceRatio * 11);
-      const assetLabel = `assets ${assetState.completed}/${Math.max(1, assetState.total)}`;
-      const voiceLabel = `voice ${voiceState.completed}/${Math.max(1, voiceState.total)}`;
-      await runtime.update(task.task_id, {
-        progress_message: `Quiz · ${assetLabel} | ${voiceLabel}`,
-        progress_percent,
-      });
-    }
-  };
-
-  return {
-    repository: runtime.repository,
-    config: {
-      audio_generation: runtime.audioConfig,
-      image_generation: runtime.imageConfig,
-      image_fallback: runtime.imageFallbackConfig,
-    },
-    channelId: task.channel_id,
-    episodeId: task.episode_id!,
-    activeEngine: runtime.activeEngine,
-    antigravityClient: runtime.antigravity,
-    customHookText: options?.customHookText,
-    layoutOverride: options?.layoutOverride,
-    badgeOverride: options?.badgeOverride,
-    onAssetProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
-      assetState = { completed, total, reused };
-      if (isParallelMode()) {
-        await updateParallelProgress();
-      } else {
-        await runtime.update(task.task_id, {
-          progress_message: `Quiz · resolving assets ${completed}/${total}${reused ? " · reused" : ""}`,
-          progress_percent: 30 + Math.round((completed / Math.max(1, total)) * 14),
-        });
-      }
-    },
-    onVoiceProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
-      voiceState = { completed, total, reused };
-      if (isParallelMode()) {
-        await updateParallelProgress();
-      } else {
-        await runtime.update(task.task_id, {
-          progress_message: `Quiz · ${reused ? "reusing" : "generating"} voice ${completed}/${total}`,
-          progress_percent: 44 + Math.round((completed / Math.max(1, total)) * 11),
-        });
-      }
-    },
-    onVoicePacingClamp: (details: QuizVoicePacingClamp) => {
-      handleVoicePacingClamp(runtime.logger, task.channel_id, task.task_id, details);
-    },
-  };
-}
+export { handleVoicePacingClamp, createQuizPipelineInput } from "./voiceProgressTracker.js";
 
 export async function shouldRegenerateQuizVoice(
   runtime: TaskManagerRuntime,
@@ -178,14 +101,13 @@ export async function executeQuizHealingCycle(
       progress_message: `Quiz · auto-retrying assets & voice pacing (${cycle}/${maxHealingCycles})`,
       progress_percent: 58,
     });
-    const healVoiceTask = async () => {
-      await healQuizVoicePacingWithAI(runtime, task, input, artifacts);
-    };
-    const healAssetsTask = async () => {
-      await resolveAssets(input);
-      await runtime.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["assessment"]);
-    };
-    await Promise.all([healAssetsTask(), healVoiceTask()]);
+    await Promise.all([
+      (async () => {
+        await resolveAssets(input);
+        await runtime.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["assessment"]);
+      })(),
+      healQuizVoicePacingWithAI(runtime, task, input, artifacts),
+    ]);
     return;
   }
 

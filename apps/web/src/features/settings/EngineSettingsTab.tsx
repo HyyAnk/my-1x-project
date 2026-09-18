@@ -25,25 +25,15 @@ export function EngineSettingsTab({
   onAntigravitySaved,
   onNotice,
 }: EngineSettingsTabProps) {
-  const {
-    transport,
-    setTransport,
-    baseUrl,
-    setBaseUrl,
-    apiKey,
-    setApiKey,
-    savingCodex,
-    saveCodex,
-    savingAntigravity,
-    saveAntigravity,
-  } = useEngineSettings({
-    appConfig,
-    codex,
-    antigravity,
-    onCodexSaved,
-    onAntigravitySaved,
-    onNotice,
-  });
+  const { transport, setTransport, baseUrl, setBaseUrl, apiKey, setApiKey, savingCodex, saveCodex, savingAntigravity, saveAntigravity } =
+    useEngineSettings({
+      appConfig,
+      codex,
+      antigravity,
+      onCodexSaved,
+      onAntigravitySaved,
+      onNotice,
+    });
 
   return (
     <div className="settings-grid">

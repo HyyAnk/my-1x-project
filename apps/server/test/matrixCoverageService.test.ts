@@ -164,17 +164,17 @@ describe("Matrix Coverage Service", () => {
     expect(map.size).toBe(2);
   });
 
-  it("calculates matrix coverage statistics across all 22,072 combos", () => {
+  it("calculates matrix coverage statistics across all 19,313 combos", () => {
     const stats = calculateMatrixCoverageStats(mockSampleQuestions);
-    expect(stats.total_combos).toBe(22072); // 2,759 entities * 8 archetypes = 22,072 combos
+    expect(stats.total_combos).toBe(19313); // 2,759 entities * 7 archetypes = 19,313 combos
     expect(stats.covered_combos).toBe(2);
     expect(stats.total_variants).toBe(2);
-    expect(stats.coverage_percent).toBeCloseTo((2 / 22072) * 100, 1);
+    expect(stats.coverage_percent).toBeCloseTo((2 / 19313) * 100, 1);
 
     // Check domain breakdown
     expect(stats.by_domain.nature_animals).toBeDefined();
     expect(stats.by_domain.nature_animals.total_entities).toBe(343);
-    expect(stats.by_domain.nature_animals.total_combos).toBe(343 * 8); // 2,744
+    expect(stats.by_domain.nature_animals.total_combos).toBe(343 * 7); // 2,401
     expect(stats.by_domain.nature_animals.covered_combos).toBe(2);
 
     // Check archetype breakdown

@@ -10,7 +10,7 @@ import {
   QuizThinkingBarStyleSchema,
   QuizVisualThemeSchema,
 } from "../enums.js";
-import { QUIZ_MAX_CHOICES_PER_QUESTION } from "../schemas.js";
+import { QUIZ_MAX_CHOICES_PER_QUESTION, RECOMMENDED_MASCOT_PLACEMENT_PRESET } from "../schemas.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { QuizPreviewLayoutIdSchema } from "../quizLayouts.js";
 import { sandboxPreviewLayoutIssues } from "../sandboxPreviewLayoutPolicy.js";
@@ -52,11 +52,11 @@ export const SandboxPreviewInputBaseSchema = z.object({
   mascot_style_id: z.string().nullable().optional(),
   mascot_enabled: z.boolean().optional().default(true),
   mascot_action: MascotActionTypeSchema.optional().default("thinking"),
-  mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default("bottom_left"),
-  mascot_scale: z.number().optional().default(1.0),
-  mascot_offset_x: z.number().optional().default(0),
-  mascot_offset_y: z.number().optional().default(0),
-  mascot_flip_x: z.boolean().optional().default(false),
+  mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),
+  mascot_scale: z.number().optional().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale),
+  mascot_offset_x: z.number().optional().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x),
+  mascot_offset_y: z.number().optional().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y),
+  mascot_flip_x: z.boolean().optional().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.flip_x),
   mascot_phase: z.enum(["intro", "question", "choices", "thinking", "reveal", "explain", "outro"]).optional(),
   mascot_reveal_outcome: z.enum(["correct", "wrong", "timeout"]).optional().default("correct"),
   mascot_timeline_time_seconds: z.number().min(0).max(3600).optional(),
@@ -67,6 +67,8 @@ export const SandboxPreviewInputBaseSchema = z.object({
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional().default(""),
   mode: z.enum(["snapshot", "rehearsal"]).optional().default("snapshot"),
   style_catalog_revision: z.string().trim().min(1).optional(),
+  episode_id: z.string().nullable().optional(),
+  question_id: z.string().nullable().optional(),
 });
 
 export const SandboxPreviewInputSchema = SandboxPreviewInputBaseSchema.superRefine((input, ctx) => {
@@ -76,6 +78,22 @@ export const SandboxPreviewInputSchema = SandboxPreviewInputBaseSchema.superRefi
       path: ["correct_choice_index"],
       message: "Correct choice must reference a visible choice",
     });
+  }
+  if (input.layout_id === "mystery_reveal") {
+    if (input.choices.length !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["choices"],
+        message: `Mystery Reveal requires exactly one choice, received ${input.choices.length}`,
+      });
+    }
+    if (input.correct_choice_index !== 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["correct_choice_index"],
+        message: "Mystery Reveal requires correct_choice_index to be 0",
+      });
+    }
   }
   for (const layoutIssue of sandboxPreviewLayoutIssues(input)) {
     ctx.addIssue({

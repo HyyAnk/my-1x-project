@@ -1,24 +1,4 @@
 {
   "version": 1,
-  "files": {
-    "apps/server/src/config/configWriter.ts": "3aa2220765d065b0994cffb802e9deba05f03697657de648af1e010a53edb3e3",
-    "apps/server/src/providers/imageGeneration/gpti2PortraitAdapter.ts": "3c3229e7ed7fe6b0c7a8598e4de9f454c56d206cb7ec1b68c3ea156a0b3e6118",
-    "apps/server/src/providers/imageGeneration/portraitImageClient.ts": "cfc6160bfd43dcb18018f23614d256f1d7540070598f7bb676d3baefde3fb893",
-    "apps/server/src/providers/shopAiKeyImage.ts": "de787da7b74d39499eea24ca60735f9b1b2bf85d164bfbad559372dd923dd03f",
-    "apps/server/src/quiz/bank/knowledgeBase.types.ts": "136cc6f976c0d4c63749809c0a05a9658f6620cf0cca181f39782bd0e736cfd0",
-    "apps/server/src/routes/questionBank/queryRoutes.ts": "e9a6def5eec359ff44b58254c70f2be5413937a403c83f3b14cc9989ef9bbbfa",
-    "apps/server/src/routes/quizV2.ts": "2fda6d679a0ed32d767af7f567649d4666141a6fce93ee4018cd84025377b00d",
-    "apps/server/src/tasks/shortReelRunner.ts": "4e04a9f16be23ad4ac1067f7c4fde193495809d65e787fde449c803c7912e893",
-    "apps/server/src/tasks/video/mascotLocalization.ts": "5027d68def8316b285767821181aea0111ddcf152357c505a977d247ce6a832a",
-    "apps/server/test/curatedEntityStorageConfig.test.ts": "09b8db9fe555794e5059ca84a192f92a1f14b88c126f2ce57eb9fecb17f13e23",
-    "apps/server/test/curatedEntityVariantRegistry.test.ts": "b7579d5474f647e7243392eb5e3340a18a81a5fc529c48cf0dacab60a7f61266",
-    "apps/server/test/mascotLocalizationV2.test.ts": "1f1b8959f08cc515d80fbad90c9f3591915122717cbe96cb80a4de1fd52e6855",
-    "apps/server/test/quizAssetPlannerDynamicResolution.test.ts": "277928f10a50ea0902a0a58d5cf9ee7c0151de403fe8628865ecdc36277e68cf",
-    "apps/server/test/quizPunctuationNormalizer.test.ts": "1de31b1dc588e6a672006e8ea3ebadf6dfbc8e3ac041239197a3cebe3c10162c",
-    "apps/server/test/soundtrackDucking.test.ts": "d1614f220cdd2b78ded82c982f295073fb80f09713bfd926504c57e3f23ab871",
-    "apps/web/src/features/episode/ShotPlanSection.tsx": "f77a966c32b908fe63eebe18139a90ee79c56b34358a114a5e10214f43d335d1",
-    "apps/web/src/features/episode/components/BundleImagesPanel.tsx": "87385b3ed7309182820c0cb8a70712d638260af10660cab7ad49ebe655ab1272",
-    "apps/web/src/features/episode/components/SequenceDivider.tsx": "5c3ef4f36d5618dcbb8abbba2731febc0441b4e45217127de562853258fb6160",
-    "apps/web/src/features/episode/hooks/useVideoDescription.ts": "8042663f29227c64ddeffdfb3a82ff61b4c2898ccd8d3bad1869e0484a29b022"
-  }
+  "files": {}
 }

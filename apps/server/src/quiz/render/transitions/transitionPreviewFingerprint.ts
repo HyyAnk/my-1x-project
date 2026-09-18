@@ -44,23 +44,32 @@ export function fingerprintTransitionPreview(input: TransitionPreviewFingerprint
     })),
     definitionHashes: Object.keys(input.definitionHashes || {})
       .sort()
-      .reduce((acc, key) => {
-        acc[key] = input.definitionHashes[key]!;
-        return acc;
-      }, {} as Record<string, string>),
+      .reduce(
+        (acc, key) => {
+          acc[key] = input.definitionHashes[key]!;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
     compositionHtml: input.compositionHtml,
     compositionFiles: Object.keys(input.compositionFiles || {})
       .sort()
-      .reduce((acc, key) => {
-        acc[key] = input.compositionFiles![key]!;
-        return acc;
-      }, {} as Record<string, string>),
+      .reduce(
+        (acc, key) => {
+          acc[key] = input.compositionFiles![key]!;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
     assetHashes: Object.keys(input.assetHashes || {})
       .sort()
-      .reduce((acc, key) => {
-        acc[key] = input.assetHashes![key]!;
-        return acc;
-      }, {} as Record<string, string>),
+      .reduce(
+        (acc, key) => {
+          acc[key] = input.assetHashes![key]!;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
     sourceKind: input.sourceKind,
     boundaryId: input.boundaryId ?? null,
   };

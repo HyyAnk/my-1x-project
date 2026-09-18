@@ -75,6 +75,8 @@ export function ChannelsView({
       <ShortReelStudio
         channel={selectedChannel}
         reelId={selectedShortReelId}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
         onBack={() => openChannel(selectedChannel.channel_id)}
         onNotice={onNotice}
         onNavigateHome={onNavigateHome}

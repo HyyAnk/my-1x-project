@@ -1,0 +1,797 @@
+[
+  {
+    "fixtureId": "media_left_3_choice",
+    "layoutId": "media_left_choices_right",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\media_left_3_choice.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 1140,
+            "y": 274,
+            "width": 660,
+            "height": 132
+          },
+          "label": {
+            "x": 1190,
+            "y": 288,
+            "width": 104,
+            "height": 104
+          },
+          "media": null,
+          "text": {
+            "x": 1308,
+            "y": 305.44,
+            "width": 450,
+            "height": 69.11
+          }
+        },
+        {
+          "card": {
+            "x": 1140,
+            "y": 442,
+            "width": 660,
+            "height": 132
+          },
+          "label": {
+            "x": 1190,
+            "y": 456,
+            "width": 104,
+            "height": 104
+          },
+          "media": null,
+          "text": {
+            "x": 1308,
+            "y": 473.44,
+            "width": 450,
+            "height": 69.11
+          }
+        },
+        {
+          "card": {
+            "x": 1140,
+            "y": 610,
+            "width": 660,
+            "height": 132
+          },
+          "label": {
+            "x": 1190,
+            "y": 624,
+            "width": 104,
+            "height": 104
+          },
+          "media": null,
+          "text": {
+            "x": 1308,
+            "y": 641.44,
+            "width": 450,
+            "height": 69.11
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "media_left_2_choice",
+    "layoutId": "media_left_choices_right",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\media_left_2_choice.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 1140,
+            "y": 336,
+            "width": 660,
+            "height": 152
+          },
+          "label": {
+            "x": 1190,
+            "y": 356,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 1316,
+            "y": 377.44,
+            "width": 442,
+            "height": 69.11
+          }
+        },
+        {
+          "card": {
+            "x": 1140,
+            "y": 528,
+            "width": 660,
+            "height": 152
+          },
+          "label": {
+            "x": 1190,
+            "y": 548,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 1316,
+            "y": 569.44,
+            "width": 442,
+            "height": 69.11
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "visual_choices_three",
+    "layoutId": "visual_choices_three",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\visual_choices_three.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 380,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "label": {
+            "x": 401,
+            "y": 647,
+            "width": 88,
+            "height": 88
+          },
+          "media": {
+            "x": 380,
+            "y": 253,
+            "width": 452,
+            "height": 356
+          },
+          "text": {
+            "x": 505,
+            "y": 674.8,
+            "width": 306,
+            "height": 32.39
+          }
+        },
+        {
+          "card": {
+            "x": 864,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "label": {
+            "x": 885,
+            "y": 647,
+            "width": 88,
+            "height": 88
+          },
+          "media": {
+            "x": 864,
+            "y": 253,
+            "width": 452,
+            "height": 356
+          },
+          "text": {
+            "x": 989,
+            "y": 674.8,
+            "width": 306,
+            "height": 32.39
+          }
+        },
+        {
+          "card": {
+            "x": 1348,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "label": {
+            "x": 1369,
+            "y": 647,
+            "width": 88,
+            "height": 88
+          },
+          "media": {
+            "x": 1348,
+            "y": 253,
+            "width": 452,
+            "height": 356
+          },
+          "text": {
+            "x": 1473,
+            "y": 674.8,
+            "width": 306,
+            "height": 32.39
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "visual_choices_three_pure",
+    "layoutId": "visual_choices_three_pure",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\visual_choices_three_pure.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 380,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "label": {
+            "x": 396,
+            "y": 269,
+            "width": 88,
+            "height": 88
+          },
+          "media": {
+            "x": 380,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "text": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "card": {
+            "x": 864,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "label": {
+            "x": 880,
+            "y": 269,
+            "width": 88,
+            "height": 88
+          },
+          "media": {
+            "x": 864,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "text": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "card": {
+            "x": 1348,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "label": {
+            "x": 1364,
+            "y": 269,
+            "width": 88,
+            "height": 88
+          },
+          "media": {
+            "x": 1348,
+            "y": 253,
+            "width": 452,
+            "height": 504
+          },
+          "text": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "split_versus_two_visual",
+    "layoutId": "split_versus_two",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\split_versus_two_visual.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 380,
+            "y": 253,
+            "width": 646,
+            "height": 504
+          },
+          "label": {
+            "x": 354,
+            "y": 622,
+            "width": 116,
+            "height": 116
+          },
+          "media": {
+            "x": 380,
+            "y": 253,
+            "width": 646,
+            "height": 366
+          },
+          "text": {
+            "x": 486,
+            "y": 649.2,
+            "width": 508,
+            "height": 61.59
+          }
+        },
+        {
+          "card": {
+            "x": 1154,
+            "y": 253,
+            "width": 646,
+            "height": 504
+          },
+          "label": {
+            "x": 1128,
+            "y": 622,
+            "width": 116,
+            "height": 116
+          },
+          "media": {
+            "x": 1154,
+            "y": 253,
+            "width": 646,
+            "height": 366
+          },
+          "text": {
+            "x": 1260,
+            "y": 649.2,
+            "width": 508,
+            "height": 61.59
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "split_versus_two_text",
+    "layoutId": "split_versus_two",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\split_versus_two_text.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 380,
+            "y": 253,
+            "width": 646,
+            "height": 504
+          },
+          "label": {
+            "x": 633,
+            "y": 295,
+            "width": 140,
+            "height": 140
+          },
+          "media": null,
+          "text": {
+            "x": 542.16,
+            "y": 473,
+            "width": 321.67,
+            "height": 242
+          }
+        },
+        {
+          "card": {
+            "x": 1154,
+            "y": 253,
+            "width": 646,
+            "height": 504
+          },
+          "label": {
+            "x": 1407,
+            "y": 295,
+            "width": 140,
+            "height": 140
+          },
+          "media": null,
+          "text": {
+            "x": 1298.78,
+            "y": 473,
+            "width": 356.42,
+            "height": 242
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "verdict_true_false",
+    "layoutId": "verdict_true_false",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\verdict_true_false.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 1240,
+            "y": 322,
+            "width": 560,
+            "height": 164
+          },
+          "label": {
+            "x": 1294,
+            "y": 348,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 1420,
+            "y": 372.38,
+            "width": 332,
+            "height": 63.23
+          }
+        },
+        {
+          "card": {
+            "x": 1240,
+            "y": 530,
+            "width": 560,
+            "height": 164
+          },
+          "label": {
+            "x": 1294,
+            "y": 556,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 1420,
+            "y": 580.38,
+            "width": 332,
+            "height": 63.23
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "full_stack_list_3_choice",
+    "layoutId": "full_stack_list",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\full_stack_list_3_choice.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 450,
+            "y": 275,
+            "width": 1280,
+            "height": 140
+          },
+          "label": {
+            "x": 502,
+            "y": 289,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 628,
+            "y": 310.44,
+            "width": 1058,
+            "height": 69.11
+          }
+        },
+        {
+          "card": {
+            "x": 450,
+            "y": 443,
+            "width": 1280,
+            "height": 140
+          },
+          "label": {
+            "x": 502,
+            "y": 457,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 628,
+            "y": 478.44,
+            "width": 1058,
+            "height": 69.11
+          }
+        },
+        {
+          "card": {
+            "x": 450,
+            "y": 611,
+            "width": 1280,
+            "height": 140
+          },
+          "label": {
+            "x": 502,
+            "y": 625,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 628,
+            "y": 646.44,
+            "width": 1058,
+            "height": 69.11
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "full_stack_list_2_choice",
+    "layoutId": "full_stack_list",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\full_stack_list_2_choice.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 450,
+            "y": 329,
+            "width": 1280,
+            "height": 164
+          },
+          "label": {
+            "x": 502,
+            "y": 355,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 628,
+            "y": 376.44,
+            "width": 1058,
+            "height": 69.11
+          }
+        },
+        {
+          "card": {
+            "x": 450,
+            "y": 533,
+            "width": 1280,
+            "height": 164
+          },
+          "label": {
+            "x": 502,
+            "y": 559,
+            "width": 112,
+            "height": 112
+          },
+          "media": null,
+          "text": {
+            "x": 628,
+            "y": 580.44,
+            "width": 1058,
+            "height": 69.11
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "mystery_reveal_3_choice_baseline",
+    "layoutId": "mystery_reveal",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\mystery_reveal_3_choice_baseline.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 380,
+            "y": 637,
+            "width": 452,
+            "height": 120
+          },
+          "label": {
+            "x": 403,
+            "y": 661,
+            "width": 72,
+            "height": 72
+          },
+          "media": null,
+          "text": {
+            "x": 489,
+            "y": 651.09,
+            "width": 320,
+            "height": 91.81
+          }
+        },
+        {
+          "card": {
+            "x": 864,
+            "y": 637,
+            "width": 452,
+            "height": 120
+          },
+          "label": {
+            "x": 887,
+            "y": 661,
+            "width": 72,
+            "height": 72
+          },
+          "media": null,
+          "text": {
+            "x": 973,
+            "y": 674.05,
+            "width": 320,
+            "height": 45.91
+          }
+        },
+        {
+          "card": {
+            "x": 1348,
+            "y": 637,
+            "width": 452,
+            "height": 120
+          },
+          "label": {
+            "x": 1371,
+            "y": 661,
+            "width": 72,
+            "height": 72
+          },
+          "media": null,
+          "text": {
+            "x": 1457,
+            "y": 674.05,
+            "width": 320,
+            "height": 45.91
+          }
+        }
+      ]
+    }
+  },
+  {
+    "fixtureId": "mystery_reveal_single",
+    "layoutId": "mystery_reveal",
+    "status": "captured",
+    "screenshotPath": "D:\\1a Cursor Project\\My 1x Project\\docs\\quiz-layout-upgrade-v2\\evidence\\baseline-frames\\mystery_reveal_single.png",
+    "measurements": {
+      "question": null,
+      "fact": null,
+      "timer": {
+        "x": 470,
+        "y": 946,
+        "width": 1240,
+        "height": 84
+      },
+      "hero": null,
+      "choices": [
+        {
+          "card": {
+            "x": 630,
+            "y": 637,
+            "width": 920,
+            "height": 120
+          },
+          "label": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "media": null,
+          "text": {
+            "x": 670,
+            "y": 667.31,
+            "width": 840,
+            "height": 59.36
+          }
+        }
+      ]
+    }
+  }
+]

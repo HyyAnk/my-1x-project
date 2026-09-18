@@ -107,9 +107,9 @@ export function useEpisodePipeline({
 
   const prerequisites: Record<ArtifactName, boolean> = {
     "research.md": true,
-    "treatment.md": readiness.research,
-    "script.md": readiness.treatment,
-    "visual_bible.md": readiness.script,
+    "treatment.md": true,
+    "script.md": true,
+    "visual_bible.md": true,
   };
 
   return {

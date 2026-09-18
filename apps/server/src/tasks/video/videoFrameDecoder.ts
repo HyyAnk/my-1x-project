@@ -23,7 +23,7 @@ export async function decodeVideoFrameToPng(options: DecodeVideoFrameOptions): P
     if (fileStat.size === 0) {
       throw new TransitionDomainError("DECODE_FAILED", `Video file is empty: ${videoPath}`);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err instanceof TransitionDomainError) throw err;
     throw new TransitionDomainError("DECODE_FAILED", `Cannot access video file: ${videoPath}`);
   }
@@ -92,9 +92,7 @@ export async function decodeVideoFrameToPng(options: DecodeVideoFrameOptions): P
       if (timedOut) return;
 
       if (code !== 0) {
-        return reject(
-          new TransitionDomainError("DECODE_FAILED", `FFmpeg decode exited with code ${code}: ${stderr.slice(-500)}`),
-        );
+        return reject(new TransitionDomainError("DECODE_FAILED", `FFmpeg decode exited with code ${code}: ${stderr.slice(-500)}`));
       }
 
       const buffer = Buffer.concat(chunks);
@@ -120,11 +118,7 @@ export async function decodeVideoFrameToPng(options: DecodeVideoFrameOptions): P
   });
 }
 
-export async function decodeVideoFrameToRawRgba(
-  videoPath: string,
-  frameIndex: number,
-  signal?: AbortSignal,
-): Promise<Buffer> {
+export async function decodeVideoFrameToRawRgba(videoPath: string, frameIndex: number, signal?: AbortSignal): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const args = [
       "-v",

@@ -15,6 +15,14 @@ vi.mock("../../../api", () => ({
     generateMascotStyleBatch: vi.fn(),
     updateMascotSlot: vi.fn(),
     generateStyleConcept: vi.fn(),
+    queueSlotGeneration: vi.fn(),
+    getSlotGenerationStatus: vi.fn(),
+    cancelSlotGeneration: vi.fn(),
+    queueStyleGeneration: vi.fn(),
+    getStyleGenerationStatus: vi.fn(),
+    cancelStyleGeneration: vi.fn(),
+    mascot: vi.fn(),
+    getMascot: vi.fn(),
   },
 }));
 
@@ -91,6 +99,17 @@ describe("useMascotStyles", () => {
     vi.clearAllMocks();
     onMascotUpdated = vi.fn();
     onNotice = vi.fn<(notice: Notice) => void>();
+    vi.mocked(api.getSlotGenerationStatus).mockResolvedValue({
+      active_batch: null,
+      queued_slot_keys: [],
+      active_slot_keys: [],
+    });
+    vi.mocked(api.getStyleGenerationStatus).mockResolvedValue({
+      active_batch: null,
+      queued_style_ids: [],
+      active_style_ids: [],
+    });
+    vi.mocked(api.mascot).mockResolvedValue({ mascot: mockMascot });
   });
 
   it("resolves the initial active style and allows switching style tabs", () => {
@@ -296,7 +315,7 @@ describe("useMascotStyles", () => {
   });
 
   it("handles slot generation with busy indicators and success notice", async () => {
-    const generatedVariant = {
+    const _generatedVariant = {
       id: "var_t2",
       slot_index: 2,
       image_url: "https://example.com/think2.png",
@@ -306,11 +325,37 @@ describe("useMascotStyles", () => {
       ...mockMascot,
     };
 
-    vi.mocked(api.generateMascotStyleSlot).mockResolvedValue({
-      mascot: updatedMascot,
-      slot: generatedVariant,
-      prompt_used: "prompt",
+    const singleBatch = {
+      id: "batch_single",
+      mascot_id: "mascot_1",
+      style_id: "core",
+      status: "completed" as const,
+      total_slots: 1,
+      completed_count: 1,
+      failed_count: 0,
+      active_slot_keys: [],
+      items: [
+        {
+          id: "job_single",
+          mascot_id: "mascot_1",
+          style_id: "core",
+          state: "thinking" as const,
+          slot_index: 2,
+          status: "completed" as const,
+          prompt_used: "reading book",
+          created_at: "2026-09-01T00:00:00.000Z",
+        },
+      ],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    };
+    vi.mocked(api.queueSlotGeneration).mockResolvedValue(singleBatch);
+    vi.mocked(api.getSlotGenerationStatus).mockResolvedValue({
+      active_batch: singleBatch,
+      queued_slot_keys: [],
+      active_slot_keys: [],
     });
+    vi.mocked(api.mascot).mockResolvedValue({ mascot: updatedMascot });
 
     const { result } = renderHook(() =>
       useMascotStyles({
@@ -326,27 +371,74 @@ describe("useMascotStyles", () => {
       await result.current.handleGenerateSlot("thinking", 2, "reading book");
     });
 
-    expect(api.generateMascotStyleSlot).toHaveBeenCalledWith("mascot_1", "core", {
+    expect(api.queueSlotGeneration).toHaveBeenCalledWith("mascot_1", "core", {
       style_id: "core",
-      state: "thinking",
-      slot_index: 2,
-      prompt_modifier: "reading book",
+      mode: "single",
+      slots: [
+        {
+          state: "thinking",
+          slot_index: 2,
+          prompt_modifier: "reading book",
+        },
+      ],
     });
     expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
     expect(result.current.busySlotKey).toBeNull();
     expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
   });
 
+  it("queues and processes sequential slot generation calls without dropping requests", async () => {
+    vi.mocked(api.queueSlotGeneration).mockResolvedValue({
+      id: "batch_slot_seq",
+      mascot_id: "mascot_1",
+      style_id: "core",
+      status: "completed",
+      total_slots: 1,
+      completed_count: 1,
+      failed_count: 0,
+      active_slot_keys: [],
+      items: [],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    });
+
+    const { result } = renderHook(() =>
+      useMascotStyles({
+        mascot: mockMascot,
+        onMascotUpdated,
+        onNotice,
+      }),
+    );
+
+    await act(async () => {
+      await result.current.handleGenerateSlot("thinking", 1);
+      await result.current.handleGenerateSlot("thinking", 2);
+    });
+
+    expect(api.queueSlotGeneration).toHaveBeenCalledTimes(2);
+  });
+
   it("orchestrates real-time batch slot generation across concurrent streams", async () => {
     const updatedMascot: MascotProfile = { ...mockMascot };
-    vi.mocked(api.generateMascotStyleSlot).mockResolvedValue({
-      mascot: updatedMascot,
-      slot: {
-        id: "var_t2",
-        slot_index: 2,
-        image_url: "https://example.com/think2.png",
-      },
-      prompt_used: "Concentrated thought",
+    vi.mocked(api.mascot).mockResolvedValue({ mascot: updatedMascot });
+    const batchResult = {
+      id: "batch_full_test",
+      mascot_id: "mascot_1",
+      style_id: "core",
+      status: "completed" as const,
+      total_slots: 9,
+      completed_count: 9,
+      failed_count: 0,
+      active_slot_keys: [],
+      items: [],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    };
+    vi.mocked(api.queueSlotGeneration).mockResolvedValue(batchResult);
+    vi.mocked(api.getSlotGenerationStatus).mockResolvedValue({
+      active_batch: batchResult,
+      queued_slot_keys: [],
+      active_slot_keys: [],
     });
 
     const { result } = renderHook(() =>
@@ -361,8 +453,14 @@ describe("useMascotStyles", () => {
       await result.current.handleBatchGenerateStyle("thinking");
     });
 
-    // Thinking slots 2..10 (9 empty slots) are generated in real-time
-    expect(api.generateMascotStyleSlot).toHaveBeenCalledTimes(9);
+    expect(api.queueSlotGeneration).toHaveBeenCalledWith(
+      "mascot_1",
+      "core",
+      expect.objectContaining({
+        style_id: "core",
+        mode: "batch_empty",
+      }),
+    );
     expect(onMascotUpdated).toHaveBeenCalled();
     expect(result.current.busySlotKey).toBeNull();
     expect(result.current.batchProgress).toBeNull();
@@ -372,6 +470,44 @@ describe("useMascotStyles", () => {
   });
 
   it("supports stopping batch generation early by aborting the batch", async () => {
+    const cancelledBatch = {
+      id: "batch_cancel",
+      mascot_id: "mascot_1",
+      style_id: "core",
+      status: "cancelled" as const,
+      total_slots: 9,
+      completed_count: 2,
+      failed_count: 0,
+      active_slot_keys: [],
+      items: [],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    };
+    vi.mocked(api.cancelSlotGeneration).mockResolvedValue({
+      ok: true,
+      batch: cancelledBatch,
+    });
+    vi.mocked(api.queueSlotGeneration).mockResolvedValue({
+      id: "batch_cancel",
+      mascot_id: "mascot_1",
+      style_id: "core",
+      status: "processing",
+      total_slots: 9,
+      completed_count: 2,
+      failed_count: 0,
+      active_slot_keys: ["thinking_3"],
+      items: [],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    });
+    vi.mocked(api.getSlotGenerationStatus)
+      .mockResolvedValueOnce({ active_batch: null, queued_slot_keys: [], active_slot_keys: [] })
+      .mockResolvedValueOnce({
+        active_batch: cancelledBatch,
+        queued_slot_keys: [],
+        active_slot_keys: [],
+      });
+
     const { result } = renderHook(() =>
       useMascotStyles({
         mascot: mockMascot,
@@ -380,17 +516,13 @@ describe("useMascotStyles", () => {
       }),
     );
 
-    vi.mocked(api.generateMascotStyleSlot).mockImplementation(() => {
-      act(() => {
-        result.current.handleStopBatchGeneration();
-      });
-      throw new DOMException("The operation was aborted", "AbortError");
-    });
-
     await act(async () => {
-      await result.current.handleBatchGenerateStyle("thinking");
+      const p = result.current.handleBatchGenerateStyle("thinking");
+      result.current.handleStopBatchGeneration();
+      await p;
     });
 
+    expect(api.cancelSlotGeneration).toHaveBeenCalledWith("mascot_1", "core");
     expect(result.current.busySlotKey).toBeNull();
     expect(result.current.batchProgress).toBeNull();
     expect(onNotice).toHaveBeenCalled();
@@ -399,7 +531,7 @@ describe("useMascotStyles", () => {
   });
 
   it("shows an error notice when all batch slots fail", async () => {
-    vi.mocked(api.generateMascotStyleSlot).mockRejectedValue(new Error("Batch failed"));
+    vi.mocked(api.queueSlotGeneration).mockRejectedValue(new Error("Batch failed"));
 
     const { result } = renderHook(() =>
       useMascotStyles({
@@ -471,8 +603,7 @@ describe("useMascotStyles", () => {
 
   it("handles errors gracefully and displays error notice on API failures", async () => {
     vi.mocked(api.createMascotStyle).mockRejectedValue(new Error("Network timeout"));
-    vi.mocked(api.generateMascotStyleSlot).mockRejectedValue(new Error("GPU out of memory"));
-    vi.mocked(api.generateMascotStyleBatch).mockRejectedValue(new Error("Batch failed"));
+    vi.mocked(api.queueSlotGeneration).mockRejectedValue(new Error("GPU out of memory"));
 
     const { result } = renderHook(() =>
       useMascotStyles({
@@ -493,6 +624,7 @@ describe("useMascotStyles", () => {
     expect(result.current.busySlotKey).toBeNull();
     expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "bad", message: "GPU out of memory" }));
 
+    vi.mocked(api.queueSlotGeneration).mockRejectedValueOnce(new Error("Batch failed"));
     await act(async () => {
       await result.current.handleBatchGenerateStyle("all");
     });

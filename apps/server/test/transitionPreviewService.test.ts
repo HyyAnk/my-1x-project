@@ -4,16 +4,12 @@ import { TransitionPreviewService } from "../src/quiz/transitionPreview/transiti
 import { SPECIMEN_SAMPLE_REVISION } from "../src/quiz/render/transitions/prepareTransitionSpecimen.js";
 import type {
   CallerContext,
-  TransitionPreviewLimiterPort,
   TransitionPreviewRepositoryPort,
   TransitionPreviewRunnerInput,
   TransitionPreviewRunnerPort,
   TransitionPreviewStorePort,
 } from "../src/quiz/transitionPreview/transitionPreview.types.js";
-import type {
-  PublishedPreviewArtifact,
-  VerifiedPreviewArtifact,
-} from "../src/quiz/transitionPreview/transitionPreviewStore.js";
+import type { PublishedPreviewArtifact, VerifiedPreviewArtifact } from "../src/quiz/transitionPreview/transitionPreviewStore.js";
 
 class FakeTransitionPreviewStore implements TransitionPreviewStorePort {
   private readonly artifacts = new Map<string, VerifiedPreviewArtifact>();
@@ -166,7 +162,7 @@ describe("Task 5: TransitionPreviewService", () => {
 
     const request = createSampleRequest();
     // First request renders and publishes
-    const first = await service.request(request, caller);
+    const _first = await service.request(request, caller);
     await new Promise((r) => setTimeout(r, 15));
     expect(runner.invocationCount).toBe(1);
 

@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import type { GenerateShortReelRequest, ReelKey, ReelStageProgress, Task } from "@studio/shared";
+import { describe, expect, it } from "vitest";
+import type { ReelStageProgress, Task } from "@studio/shared";
 import { runShortReelTask, isShortReelTask } from "../src/tasks/shortReelRunner.js";
 import { createUpgradeFixture } from "./helpers/shortReelUpgradeFixture.js";
 import { repairScript, repairSource } from "./helpers/shortReelRepairFixture.js";

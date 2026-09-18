@@ -15,7 +15,9 @@ export const minimalSoftVariant: AnswerCardSkin = {
   box-shadow: 0 10px 24px rgba(13, 35, 71, 0.14), inset 0 2px 0 rgba(255, 255, 255, 1);
 }
 .ac-minimal-soft > b,
-.ac-minimal-soft .choice-label {
+.ac-minimal-soft .choice-label,
+.skin-minimal_soft .choice-label,
+.choice-card.skin-minimal_soft .choice-label {
   border: 4px solid #FFFFFF;
   border-radius: 50%;
   background: var(--choice-badge-grad, linear-gradient(135deg, #6366F1 0%, #4F46E5 100%));
@@ -26,7 +28,9 @@ export const minimalSoftVariant: AnswerCardSkin = {
   line-height: 1;
 }
 .ac-minimal-soft > b::after,
-.ac-minimal-soft .choice-label::after {
+.ac-minimal-soft .choice-label::after,
+.skin-minimal_soft .choice-label::after,
+.choice-card.skin-minimal_soft .choice-label::after {
   display: none;
 }
 .ac-minimal-soft span,
@@ -59,7 +63,9 @@ export const minimalSoftVariant: AnswerCardSkin = {
 .choice-card.answer-correct .ac-minimal-soft > b,
 .choice-card.answer-correct .ac-minimal-soft .choice-label,
 .visual-answer-card.answer-correct .ac-minimal-soft > b,
-.visual-answer-card.answer-correct .ac-minimal-soft .choice-label {
+.visual-answer-card.answer-correct .ac-minimal-soft .choice-label,
+.choice-card.answer-correct.skin-minimal_soft .choice-label,
+.visual-answer-card.answer-correct.skin-minimal_soft .choice-label {
   background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
   border-color: #FFFFFF;
   box-shadow: 0 8px 20px rgba(34, 197, 94, 0.45);
@@ -71,7 +77,9 @@ export const minimalSoftVariant: AnswerCardSkin = {
 .choice-card.answer-reveal-correct .ac-minimal-soft > b,
 .choice-card.answer-reveal-correct .ac-minimal-soft .choice-label,
 .visual-answer-card.answer-reveal-correct .ac-minimal-soft > b,
-.visual-answer-card.answer-reveal-correct .ac-minimal-soft .choice-label {
+.visual-answer-card.answer-reveal-correct .ac-minimal-soft .choice-label,
+.choice-card.answer-reveal-correct.skin-minimal_soft .choice-label,
+.visual-answer-card.answer-reveal-correct.skin-minimal_soft .choice-label {
   animation: ac-minimal-soft-badge-pop 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: transform;
 }
@@ -90,10 +98,14 @@ export const minimalSoftVariant: AnswerCardSkin = {
 }
 
 /* Visual choice option image celebration border */
-.skin-minimal_soft.choice-card-visual.answer-correct .option-image,
-.skin-minimal_soft.choice-card-visual.answer-reveal-correct .option-image {
+.skin-minimal_soft.choice-card-visual.answer-correct .option-image {
   border-color: #22C55E;
   box-shadow: 0 14px 32px rgba(34, 197, 94, 0.28);
+}
+
+.skin-minimal_soft.choice-card-visual.answer-reveal-correct .option-image {
+  animation: visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow;
 }
 
 /* === Reveal State: Incorrect Answer (Clean Settle & Dimming) === */

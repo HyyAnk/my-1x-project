@@ -1,10 +1,4 @@
-import {
-  nowIso,
-  type GenerateShortReelRequest,
-  type ReelKey,
-  type ReelStageProgress,
-  type Task,
-} from "@studio/shared";
+import { nowIso, type GenerateShortReelRequest, type ReelKey, type ReelStageProgress, type Task } from "@studio/shared";
 import type { TaskManagerRuntime } from "./runtime.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 import { createPortraitImageClient } from "../providers/imageGeneration/portraitImageClient.js";
@@ -39,10 +33,7 @@ export async function runShortReelTask(runtime: TaskManagerRuntime, task: Task):
       progress_percent: null,
     });
 
-    const llmClient: LLMClient =
-      runtime.activeEngine === "antigravity" && runtime.antigravity
-        ? runtime.antigravity
-        : runtime.codex;
+    const llmClient: LLMClient = runtime.activeEngine === "antigravity" && runtime.antigravity ? runtime.antigravity : runtime.codex;
 
     const imageClient: PortraitImageClient =
       (runtime as unknown as { portraitImageClient?: PortraitImageClient }).portraitImageClient ??
@@ -80,10 +71,7 @@ export async function runShortReelTask(runtime: TaskManagerRuntime, task: Task):
       });
     };
 
-    const rawTarget =
-      runtime.shortReelTargets.get(task.task_id) ??
-      task.short_reel_request?.target ??
-      "package";
+    const rawTarget = runtime.shortReelTargets.get(task.task_id) ?? task.short_reel_request?.target ?? "package";
 
     const reel = await runtime.repository.getShortReel(key);
 
@@ -94,73 +82,7 @@ export async function runShortReelTask(runtime: TaskManagerRuntime, task: Task):
       mode: task.short_reel_request?.mode,
     };
 
-    if (rawTarget === "cover") {
-      if (imageClient && reel.units.references.state === "ready" && reel.units.script.state === "ready") {
-        await executeReelGeneration(runtime.repository, key, request, {
-          imageClient,
-          llmClient,
-          signal: controller.signal,
-          onProgress,
-        });
-      } else {
-        const imageProvider = runtime.createImageProvider?.({
-          channelId: task.channel_id,
-          episodeId: task.reel_id,
-          bundleNumber: 1,
-          variant: 1,
-        });
-        const { generateReelCover } = await import("../shortReel/packageService.js");
-        const { randomUUID } = await import("node:crypto");
-        await generateReelCover(runtime.repository, key, `cover-${randomUUID()}`, {
-          imageProvider,
-          signal: controller.signal,
-        });
-      }
-    } else if (rawTarget === "references") {
-      if (reel.script && reel.units.script.state === "ready") {
-        await executeReelGeneration(runtime.repository, key, request, {
-          imageClient,
-          llmClient,
-          signal: controller.signal,
-          onProgress,
-        });
-      } else {
-        const { generateReelReferencesUnit } = await import("../shortReel/packageService.js");
-        const { randomUUID } = await import("node:crypto");
-        await generateReelReferencesUnit(runtime.repository, key, `references-${randomUUID()}`);
-      }
-    } else if (rawTarget === "publishing") {
-      const { generateReelPublishingUnit } = await import("../shortReel/packageService.js");
-      const { randomUUID } = await import("node:crypto");
-      await generateReelPublishingUnit(runtime.repository, key, `publishing-${randomUUID()}`, {
-        llmClient,
-        signal: controller.signal,
-      });
-    } else if (rawTarget.startsWith("segment_")) {
-      const { generateReelSegmentUnit } = await import("../shortReel/packageService.js");
-      const { randomUUID } = await import("node:crypto");
-      await generateReelSegmentUnit(
-        runtime.repository,
-        key,
-        Number(rawTarget.slice(-1)) as 1 | 2 | 3,
-        `${rawTarget}-${randomUUID()}`,
-        llmClient,
-        { signal: controller.signal },
-      );
-    } else if (rawTarget === "script") {
-      const { generateReelScriptUnit } = await import("../shortReel/packageService.js");
-      const { randomUUID } = await import("node:crypto");
-      await generateReelScriptUnit(runtime.repository, key, `script-${randomUUID()}`, llmClient, {
-        signal: controller.signal,
-      });
-    } else {
-      await executeReelGeneration(runtime.repository, key, request, {
-        imageClient,
-        llmClient,
-        signal: controller.signal,
-        onProgress,
-      });
-    }
+    await executeShortReelTarget(runtime, key, task, rawTarget, request, imageClient, llmClient, controller, onProgress);
 
     if (!controller.signal.aborted && runtime.get(task.task_id).status !== "CANCELLED") {
       await runtime.finish(task.task_id, "COMPLETED", null);
@@ -174,4 +96,100 @@ export async function runShortReelTask(runtime: TaskManagerRuntime, task: Task):
     runtime.activeShortReelControllers.delete(task.task_id);
     runtime.shortReelTargets.delete(task.task_id);
   }
+}
+
+async function executeShortReelTarget(
+  runtime: TaskManagerRuntime,
+  key: ReelKey,
+  task: Task,
+  rawTarget: string,
+  request: GenerateShortReelRequest,
+  imageClient: PortraitImageClient,
+  llmClient: LLMClient,
+  controller: AbortController,
+  onProgress: (progress: ReelGenerationProgress) => Promise<void>,
+): Promise<void> {
+  const reel = await runtime.repository.getShortReel(key);
+
+  if (rawTarget === "cover") {
+    if (imageClient && reel.units.references.state === "ready" && reel.units.script.state === "ready") {
+      await executeReelGeneration(runtime.repository, key, request, {
+        imageClient,
+        llmClient,
+        signal: controller.signal,
+        onProgress,
+      });
+    } else {
+      const imageProvider = runtime.createImageProvider?.({
+        channelId: task.channel_id,
+        episodeId: task.reel_id as string,
+        bundleNumber: 1,
+        variant: 1,
+      });
+      const { generateReelCover } = await import("../shortReel/packageService.js");
+      const { randomUUID } = await import("node:crypto");
+      await generateReelCover(runtime.repository, key, `cover-${randomUUID()}`, {
+        imageProvider,
+        signal: controller.signal,
+        llmClient,
+      });
+    }
+    return;
+  }
+
+  if (rawTarget === "references") {
+    if (reel.script && reel.units.script.state === "ready") {
+      await executeReelGeneration(runtime.repository, key, request, {
+        imageClient,
+        llmClient,
+        signal: controller.signal,
+        onProgress,
+      });
+    } else {
+      const { generateReelReferencesUnit } = await import("../shortReel/packageService.js");
+      const { randomUUID } = await import("node:crypto");
+      await generateReelReferencesUnit(runtime.repository, key, `references-${randomUUID()}`);
+    }
+    return;
+  }
+
+  if (rawTarget === "publishing") {
+    const { generateReelPublishingUnit } = await import("../shortReel/packageService.js");
+    const { randomUUID } = await import("node:crypto");
+    await generateReelPublishingUnit(runtime.repository, key, `publishing-${randomUUID()}`, {
+      llmClient,
+      signal: controller.signal,
+    });
+    return;
+  }
+
+  if (rawTarget.startsWith("segment_")) {
+    const { generateReelSegmentUnit } = await import("../shortReel/packageService.js");
+    const { randomUUID } = await import("node:crypto");
+    await generateReelSegmentUnit(
+      runtime.repository,
+      key,
+      Number(rawTarget.slice(-1)) as 1 | 2 | 3,
+      `${rawTarget}-${randomUUID()}`,
+      llmClient,
+      { signal: controller.signal },
+    );
+    return;
+  }
+
+  if (rawTarget === "script") {
+    const { generateReelScriptUnit } = await import("../shortReel/packageService.js");
+    const { randomUUID } = await import("node:crypto");
+    await generateReelScriptUnit(runtime.repository, key, `script-${randomUUID()}`, llmClient, {
+      signal: controller.signal,
+    });
+    return;
+  }
+
+  await executeReelGeneration(runtime.repository, key, request, {
+    imageClient,
+    llmClient,
+    signal: controller.signal,
+    onProgress,
+  });
 }

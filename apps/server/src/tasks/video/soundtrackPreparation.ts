@@ -39,14 +39,9 @@ export async function prepareSoundtrack({
   )?.at_seconds;
 
   const bgmStartSeconds =
-    introOutro?.introVideoPath && typeof firstQuestionStart === "number"
-      ? Math.max(0, firstQuestionStart)
-      : firstQuestionStart;
+    introOutro?.introVideoPath && typeof firstQuestionStart === "number" ? Math.max(0, firstQuestionStart) : firstQuestionStart;
 
-  const bgmOutroStartSeconds =
-    introOutro?.outroVideoPath && typeof outroStart === "number"
-      ? outroStart
-      : outroStart;
+  const bgmOutroStartSeconds = introOutro?.outroVideoPath && typeof outroStart === "number" ? outroStart : outroStart;
 
   const renderSoundtrackPath = path.join(renderRoot, "soundtrack.wav");
   const soundtrackCheckpointPath = path.join(renderRoot, "soundtrack-checkpoint.json");

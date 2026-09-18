@@ -135,9 +135,9 @@ export function useQuestionBankActivityBar({
   // If dismissed or stale finished job, mark as not visible
   const isStale = Boolean(
     currentJob &&
-      currentJob.status !== "running" &&
-      currentJob.completedAt &&
-      Date.now() - new Date(currentJob.completedAt).getTime() > 15_000,
+    currentJob.status !== "running" &&
+    currentJob.completedAt &&
+    Date.now() - new Date(currentJob.completedAt).getTime() > 15_000,
   );
 
   const isLocallyDismissed = isDismissed || Boolean(currentJob?.jobId && dismissedJobIdsRef.current.has(currentJob.jobId));

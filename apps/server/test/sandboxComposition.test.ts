@@ -284,8 +284,10 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(resLeft.html).toContain(
         ".has-mascot { --mascot-content-width: 1420px; --question-card-width: 1440px; --question-card-left-edge: 360px; }",
       );
+      expect(resLeft.html).toContain(".quiz-frame-unified .game-header {");
+      expect(resLeft.html).toContain("width: 380px;");
       expect(resLeft.html).toContain(
-        ".has-mascot .game-header { left: calc(var(--question-card-left-edge) / 2); transform: translateX(-50%); }",
+        "margin-top: calc((168px - var(--counter-badge-body-height, 150px)) / 2 - var(--counter-badge-mount-height, 64px));",
       );
       expect(resLeft.html).toContain(".has-mascot .game-stage { width: var(--mascot-content-width); margin-right: 40px; }");
       expect(resLeft.html).toContain(
@@ -386,7 +388,8 @@ describe("buildSandboxComposition Preview Engine", () => {
     it("includes font readiness contract across all layouts including pure visual", () => {
       for (const layout of QUIZ_LAYOUTS) {
         const is2Choice = layout.id === "verdict_true_false" || layout.id === "split_versus_two";
-        const choices = is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
+        const choices =
+          layout.id === "mystery_reveal" ? ["Option A"] : is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
         const questionFormat =
           layout.id === "verdict_true_false" ? "true_false" : layout.id === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
         const aspectRatio = layout.supportedAspectRatios[0];
@@ -394,6 +397,7 @@ describe("buildSandboxComposition Preview Engine", () => {
         const res = buildSandboxComposition({
           layout_id: layout.id,
           choices,
+          correct_choice_index: 0,
           question_format: questionFormat,
           aspect_ratio: aspectRatio,
         });
@@ -404,25 +408,26 @@ describe("buildSandboxComposition Preview Engine", () => {
     });
 
     it("renders standardized specimen sample images with explicit aspect ratios and dimensions", () => {
-      // 4:3 Hero Image in media_left_choices_right
+      // 4:3 Hero Image in media_left_choices_right (1120 x 840 px in V2)
       const mediaLeftRes = buildSandboxComposition({
         layout_id: "media_left_choices_right",
         choices: ["Option A", "Option B", "Option C"],
       });
       expect(mediaLeftRes.html).toContain("hero-image");
       expect(mediaLeftRes.html).toContain("4%3A3%20HERO");
-      expect(mediaLeftRes.html).toContain("1056%20%C3%97%20792%20px");
+      expect(mediaLeftRes.html).toContain("1120%20%C3%97%20840%20px");
 
-      // 16:9 Hero Banner in mystery_reveal
+      // 16:9 Hero Banner in mystery_reveal (1408 x 792 px in V2)
       const mysteryRes = buildSandboxComposition({
         layout_id: "mystery_reveal",
-        choices: ["Option A", "Option B", "Option C"],
+        choices: ["Option A"],
+        correct_choice_index: 0,
       });
       expect(mysteryRes.html).toContain("hero-image");
       expect(mysteryRes.html).toContain("16%3A9%20HERO");
-      expect(mysteryRes.html).toContain("768%20%C3%97%20432%20px");
+      expect(mysteryRes.html).toContain("1408%20%C3%97%20792%20px");
 
-      // 4:3 Choice Cards in visual_choices_three
+      // Visual Choice Cards in visual_choices_three (664 x 664 px, 1:1)
       const visualRes = buildSandboxComposition({
         layout_id: "visual_choices_three",
         choices: ["Apple", "Banana", "Cherry"],
@@ -431,15 +436,15 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(visualRes.html).toContain("CHOICE%20A");
       expect(visualRes.html).toContain("CHOICE%20B");
       expect(visualRes.html).toContain("CHOICE%20C");
-      expect(visualRes.html).toContain("672%20%C3%97%20504%20px");
+      expect(visualRes.html).toContain("664%20%C3%97%20664%20px");
 
-      // 1:1 Choice Cards in visual_choices_three_pure
+      // 3:4 Choice Cards in visual_choices_three_pure (648 x 864 px in V2)
       const pureVisualRes = buildSandboxComposition({
         layout_id: "visual_choices_three_pure",
         choices: ["Apple", "Banana", "Cherry"],
         question_format: "odd_one_out",
       });
-      expect(pureVisualRes.html).toContain("728%20%C3%97%20728%20px");
+      expect(pureVisualRes.html).toContain("648%20%C3%97%20864%20px");
     });
   });
 
@@ -563,20 +568,212 @@ describe("buildSandboxComposition Preview Engine", () => {
     });
 
     it("ensures CSS animation keyframes and fill mode prevent flicker and disappearing frames during seeking", () => {
-      const res = buildSandboxComposition({
-        mode: "rehearsal",
-        aspect_ratio: "16:9",
-        mascot_id: "mascot_test_123",
-        mascot_enabled: true,
-      }, mockMascotProfile);
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_test_123",
+          mascot_enabled: true,
+        },
+        mockMascotProfile,
+      );
 
       // Verify forwards fill mode so state layers stay opacity 0 before delay and hold 100% after duration
-      expect(res.css).toContain("animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 forwards;");
+      expect(res.css).toContain(
+        "animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 forwards;",
+      );
 
       // Verify 0% keyframe has opacity 1 so active layer is immediately visible at currentTime = delay
       expect(res.css).toContain("0%, 99.9% { opacity: 1; }");
       expect(res.css).toContain("100% { opacity: 0; }");
     });
   });
-});
 
+  describe("Visual Sandbox & Preview Surfaces Parity (Phase 5)", () => {
+    const multiVariantMascot = {
+      id: "mascot_sync_preview",
+      name: "Sync Fox",
+      description: "Fox with multiple styles and slots",
+      visual_style: "pixar_3d" as const,
+      master_prompt: "cute sync fox",
+      master_image_url: "/api/mascots/mascot_sync_preview/assets/concept.png",
+      color_theme: "#f97316",
+      actions: {
+        thinking: {
+          action: "thinking" as const,
+          sprite_url: "/api/mascots/mascot_sync_preview/assets/legacy_thinking.png",
+          frames_count: 1,
+          fps: 8,
+          loop: true,
+          motion_preset: "sway" as const,
+        },
+        celebrate: {
+          action: "celebrate" as const,
+          sprite_url: "/api/mascots/mascot_sync_preview/assets/legacy_celebrate.png",
+          frames_count: 1,
+          fps: 8,
+          loop: true,
+          motion_preset: "jump" as const,
+        },
+      },
+      styles: [
+        {
+          id: "core",
+          name: "Core Style",
+          keyword: "core",
+          is_default: true,
+          states: {
+            thinking: [
+              {
+                id: "var_core_think_1",
+                slot_index: 1,
+                image_url: "/api/mascots/mascot_sync_preview/styles/core/thinking/1/render.png",
+                status: "ready",
+              },
+              {
+                id: "var_core_think_2",
+                slot_index: 2,
+                image_url: "/api/mascots/mascot_sync_preview/styles/core/thinking/2/render.png",
+                status: "ready",
+                animation: {
+                  version: 1,
+                  state: "thinking" as const,
+                  manifest_url: "/api/mascots/mascot_sync_preview/styles/core/animations/thinking/2/manifest.json",
+                  frame_count: 192,
+                  fps: 24,
+                  loop: true,
+                  transparent_video_url:
+                    "/api/mascots/mascot_sync_preview/styles/core/animations/thinking/2/artifacts/video_transparent.webm",
+                  registration: {
+                    source_width: 1280,
+                    source_height: 720,
+                    content_bounds: { x: 250, y: 10, width: 780, height: 700 },
+                    pivot: { x: 640, y: 710 },
+                    offset_x: 0,
+                    offset_y: 0,
+                  },
+                  content_fingerprint: "cf_sync_2",
+                  source_fingerprint: "sf_sync_2",
+                },
+              },
+            ],
+            celebrate: [
+              {
+                id: "var_core_celeb_1",
+                slot_index: 1,
+                image_url: "/api/mascots/mascot_sync_preview/styles/core/celebrate/1/render.png",
+                status: "ready",
+              },
+            ],
+          },
+        },
+        {
+          id: "police",
+          name: "Police Uniform",
+          keyword: "police officer",
+          is_default: false,
+          states: {
+            thinking: [],
+            celebrate: [],
+          },
+        },
+      ],
+      assigned_channel_ids: [],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    it("deterministically rotates variants when shifting question_number from 1 to 2 in visual sandbox", () => {
+      // Question 1 (index 0 -> sandbox_q_0) selects Slot 1 (image)
+      const q1Res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_sync_preview",
+          mascot_enabled: true,
+          question_number: 1,
+          total_questions: 5,
+        },
+        multiVariantMascot,
+      );
+
+      expect(q1Res.html).toContain("/api/mascots/mascot_sync_preview/styles/core/thinking/1/render.png");
+      expect(q1Res.html).not.toContain("video_transparent.webm");
+
+      // Question 2 (index 1 -> sandbox_q_1) selects Slot 2 (video)
+      const q2Res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_sync_preview",
+          mascot_enabled: true,
+          question_number: 2,
+          total_questions: 5,
+        },
+        multiVariantMascot,
+      );
+
+      expect(q2Res.html).toContain("video_transparent.webm");
+      expect(q2Res.html).toContain("<video");
+    });
+
+    it("renders native transparent WebM video element for Slot 2 thinking state in sandbox preview", () => {
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_sync_preview",
+          mascot_enabled: true,
+          question_number: 2,
+        },
+        multiVariantMascot,
+      );
+
+      expect(res.html).toContain('<video class="mascot-v2-frame mascot-v2-animation-art mascot-v2-animation-video"');
+      expect(res.html).toContain(
+        'src="/api/mascots/mascot_sync_preview/styles/core/animations/thinking/2/artifacts/video_transparent.webm"',
+      );
+      expect(res.html).toContain("autoplay");
+      expect(res.html).toContain("loop");
+      expect(res.html).toContain("muted");
+      expect(res.html).toContain("playsinline");
+    });
+
+    it("cleanly omits mascot without errors or mock fixtures when secondary style has zero variants", () => {
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_sync_preview",
+          mascot_enabled: true,
+          mascot_style_id: "police",
+          question_number: 1,
+        },
+        multiVariantMascot,
+      );
+
+      // Verify no mascot container element rendered in DOM
+      expect(res.html).not.toContain('<div class="candy-mascot-container');
+      expect(res.html).not.toContain("fixture");
+      expect(res.html).not.toContain("placeholder");
+    });
+
+    it("propagates explicit episode_id and question_id for 100% parity with candyArcadeComposition", () => {
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_sync_preview",
+          mascot_enabled: true,
+          episode_id: "episode_preview_test",
+          question_id: "question_sync_abc",
+          question_number: 1,
+        },
+        multiVariantMascot,
+      );
+
+      expect(res.html).toBeTruthy();
+      expect(res.html).toContain("mascot-v2-container");
+    });
+  });
+});

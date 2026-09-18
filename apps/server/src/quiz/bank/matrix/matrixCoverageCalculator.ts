@@ -9,7 +9,6 @@ export const ALL_MATRIX_ARCHETYPES: readonly BankGameplayArchetypeId[] = [
   "visual_spotting",
   "visual_identification",
   "mystery_reveal",
-  "clue_deduction",
 ] as const;
 
 export interface MatrixCoverageServiceOptions {

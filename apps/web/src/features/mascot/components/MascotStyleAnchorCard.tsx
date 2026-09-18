@@ -1,18 +1,18 @@
 import { useMemo } from "react";
-import {
-  MagicWand,
-  ArrowCounterClockwise,
-  Trash,
-  Lock,
-  CheckCircle,
-  WarningCircle,
-  CircleNotch,
-  MagnifyingGlassPlus,
-  Sparkle,
-} from "@phosphor-icons/react";
 import type { MascotProfile, MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
+import { MascotStyleAnchorHeader } from "./MascotStyleAnchorHeader";
+import { MascotStyleAnchorCanvas } from "./MascotStyleAnchorCanvas";
+import { MascotStyleAnchorActions } from "./MascotStyleAnchorActions";
+import {
+  isCoreStyle,
+  resolveAnchorImageUrl,
+  resolveRawImageUrl,
+  parseKeywordsList,
+  countFilledPoses,
+  sanitizeIdentifier,
+} from "../utils/mascotStyleAnchorHelpers";
 
 export interface MascotStyleAnchorCardProps {
   style: MascotStyle;
@@ -23,181 +23,71 @@ export interface MascotStyleAnchorCardProps {
 
 export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpenLightbox }: MascotStyleAnchorCardProps) {
   const { t } = useTranslation();
-  const isCore = style.id === "core" || Boolean(style.is_default);
-  const imageUrl = isCore ? style.anchor_image_url || editingMascot.master_image_url : style.anchor_image_url;
-  const isThisGenerating = stylesState?.generatingConceptStyleId === style.id;
-  const isAnyConceptGenerating = Boolean(stylesState?.generatingConceptStyleId);
-  const isBusy = isAnyConceptGenerating || (stylesState?.busySlotKey !== null && stylesState?.busySlotKey !== undefined);
+  const isCore = isCoreStyle(style);
+  const imageUrl = resolveAnchorImageUrl(style, editingMascot);
+
+  const isThisGenerating = stylesState?.generatingConceptStyleId === style.id || Boolean(stylesState?.activeStyleIds?.includes(style.id));
+  const isThisQueued = Boolean(stylesState?.queuedStyleIds?.includes(style.id));
+  const queuePosition = stylesState?.queuedStyleIds ? stylesState.queuedStyleIds.indexOf(style.id) + 1 : 0;
+  const isCardActionLocked = isThisGenerating || isThisQueued || Boolean(stylesState?.generatingConceptStyleId);
   const hasImage = Boolean(imageUrl);
 
-  const keywordsList = useMemo(() => {
-    if (isCore || !style.keyword) return [];
-    return style.keyword
-      .split(/[,\n;]+/)
-      .map((k) => k.trim())
-      .filter(Boolean);
-  }, [isCore, style.keyword]);
+  const keywordsList = useMemo(() => parseKeywordsList(style.keyword, isCore), [isCore, style.keyword]);
+  const filledPosesCount = useMemo(() => countFilledPoses(style.states), [style.states]);
+  const sanitizedMascotName = useMemo(() => sanitizeIdentifier(editingMascot?.name, "mascot"), [editingMascot?.name]);
+  const sanitizedStyleName = useMemo(() => sanitizeIdentifier(style.name || style.id), [style.name, style.id]);
+  const rawImageUrl = useMemo(() => resolveRawImageUrl(style, editingMascot), [style, editingMascot]);
 
-  const filledPosesCount = useMemo(() => {
-    const thinking = (style.states?.thinking || []).filter((v) => Boolean(v.image_url)).length;
-    const celebrate = (style.states?.celebrate || []).filter((v) => Boolean(v.image_url)).length;
-    return thinking + celebrate;
-  }, [style.states]);
+  const handleGenerate = () => {
+    if (stylesState?.handleQueueStyle) {
+      void stylesState.handleQueueStyle(style.id);
+    } else {
+      void stylesState?.handleGenerateStyleConcept(style.id);
+    }
+  };
+  const handleDelete = () => {
+    if (window.confirm(t("mascots.deleteStyleConfirm"))) void stylesState?.handleDeleteStyle(style.id);
+  };
 
   return (
     <div
-      className={`style-anchor-card ${isCore ? "is-core" : "is-custom"} ${hasImage ? "has-anchor" : "missing-anchor"} ${isThisGenerating ? "is-generating" : ""}`}
+      className={`style-anchor-card ${isCore ? "is-core" : "is-custom"} ${hasImage ? "has-anchor" : "missing-anchor"} ${isThisGenerating ? "is-generating" : ""} ${isThisQueued ? "is-queued" : ""}`}
       data-style-id={style.id}
     >
-      <div className="style-anchor-header">
-        <div className="style-anchor-header-left">
-          <span className="style-anchor-name">{style.name}</span>
-          {keywordsList.length > 0 ? (
-            <div className="style-anchor-keywords-list">
-              {keywordsList.slice(0, 2).map((kw, i) => (
-                <span key={i} className="style-anchor-keyword-chip" title={kw}>
-                  {kw}
-                </span>
-              ))}
-              {keywordsList.length > 2 ? (
-                <span className="style-anchor-keyword-more" title={keywordsList.slice(2).join(", ")}>
-                  +{keywordsList.length - 2}
-                </span>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-        <div className="style-anchor-header-right">
-          {isCore ? (
-            <div className="style-anchor-badge-group">
-              <span className="style-anchor-badge badge-core">{t("mascots.styleAnchorCoreBadge")}</span>
-              <span className="style-anchor-badge badge-locked">
-                <Lock size={12} weight="bold" />
-                <span>{t("mascots.styleAnchorStatusLocked")}</span>
-              </span>
-            </div>
-          ) : (
-            <div className="style-anchor-badge-group">
-              {hasImage ? (
-                <span className="style-anchor-badge badge-locked">
-                  <CheckCircle size={12} weight="fill" />
-                  <span>{t("mascots.styleAnchorLockedBadge")}</span>
-                </span>
-              ) : (
-                <span className="style-anchor-badge badge-missing">
-                  <WarningCircle size={12} weight="fill" />
-                  <span>{t("mascots.styleAnchorMissingBadge")}</span>
-                </span>
-              )}
-              {filledPosesCount > 0 ? (
-                <span className="style-anchor-badge badge-poses">{t("mascots.styleAnchorPosesCount", { count: filledPosesCount })}</span>
-              ) : null}
-            </div>
-          )}
-        </div>
-      </div>
+      <MascotStyleAnchorHeader
+        style={style}
+        isCore={isCore}
+        hasImage={hasImage}
+        keywordsList={keywordsList}
+        filledPosesCount={filledPosesCount}
+        isGenerating={isThisGenerating}
+        isQueued={isThisQueued}
+        queuePosition={queuePosition}
+      />
 
-      <div className="style-anchor-canvas">
-        {isThisGenerating ? (
-          <div className="style-anchor-generating-overlay">
-            <CircleNotch size={24} className="spin" />
-            <span>{t("mascots.generatingConceptBtn")}</span>
-          </div>
-        ) : hasImage && imageUrl ? (
-          <div
-            className="style-anchor-thumb-wrap"
-            onClick={() => onOpenLightbox?.(imageUrl)}
-            role="button"
-            tabIndex={0}
-            aria-label={t("mascots.zoomPreviewBtn")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onOpenLightbox?.(imageUrl);
-              }
-            }}
-          >
-            <img src={imageUrl} alt={style.name} className="style-anchor-thumb" loading="lazy" />
-            <div className="style-anchor-zoom-hint">
-              <MagnifyingGlassPlus size={16} />
-            </div>
-          </div>
-        ) : (
-          <div
-            className={`style-anchor-empty-placeholder ${!isBusy ? "is-clickable" : "is-busy"}`}
-            onClick={() => {
-              if (!isBusy) {
-                void stylesState?.handleGenerateStyleConcept(style.id);
-              }
-            }}
-            role="button"
-            tabIndex={isBusy ? -1 : 0}
-            aria-disabled={isBusy}
-            title={!isBusy ? t("mascots.styleAnchorGeneratePrompt") : undefined}
-            onKeyDown={(e) => {
-              if (!isBusy && (e.key === "Enter" || e.key === " ")) {
-                e.preventDefault();
-                void stylesState?.handleGenerateStyleConcept(style.id);
-              }
-            }}
-          >
-            <Sparkle size={24} className="style-anchor-empty-icon" />
-            <span className="style-anchor-empty-text">{t("mascots.styleAnchorMissingBadge")}</span>
-            <span className="style-anchor-empty-subtext">
-              {!isBusy ? t("mascots.styleAnchorGeneratePrompt") : t("mascots.generatingConceptBtn")}
-            </span>
-          </div>
-        )}
-      </div>
+      <MascotStyleAnchorCanvas
+        style={style}
+        imageUrl={imageUrl}
+        rawImageUrl={rawImageUrl}
+        sanitizedMascotName={sanitizedMascotName}
+        sanitizedStyleName={sanitizedStyleName}
+        hasImage={hasImage}
+        isThisGenerating={isThisGenerating}
+        isBusy={isCardActionLocked}
+        onOpenLightbox={onOpenLightbox}
+        onGenerate={handleGenerate}
+      />
 
-      {isCore ? (
-        <div className="style-anchor-actions is-core-actions">
-          <span className="style-anchor-core-note">
-            <Lock size={12} weight="bold" />
-            <span>{t("mascots.styleAnchorCoreNote")}</span>
-          </span>
-        </div>
-      ) : (
-        <div className="style-anchor-actions">
-          {hasImage ? (
-            <button
-              type="button"
-              className="quiet-button compact"
-              onClick={() => stylesState?.handleGenerateStyleConcept(style.id)}
-              disabled={isBusy}
-              title={t("mascots.rerollConceptBtn")}
-            >
-              {isThisGenerating ? <CircleNotch size={14} className="spin" /> : <ArrowCounterClockwise size={14} />}
-              <span>{t("mascots.rerollConceptBtn")}</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="primary-button compact"
-              onClick={() => stylesState?.handleGenerateStyleConcept(style.id)}
-              disabled={isBusy}
-              title={t("mascots.generateStyleConceptBtn")}
-            >
-              {isThisGenerating ? <CircleNotch size={14} className="spin" /> : <MagicWand size={14} weight="bold" />}
-              <span>{t("mascots.generateStyleConceptBtn")}</span>
-            </button>
-          )}
-
-          <button
-            type="button"
-            className="quiet-button compact danger-icon-btn"
-            onClick={() => {
-              if (window.confirm(t("mascots.deleteStyleConfirm"))) {
-                void stylesState?.handleDeleteStyle(style.id);
-              }
-            }}
-            disabled={isBusy}
-            title={t("mascots.deleteStyleBtn")}
-          >
-            <Trash size={14} />
-          </button>
-        </div>
-      )}
+      <MascotStyleAnchorActions
+        isCore={isCore}
+        hasImage={hasImage}
+        isThisGenerating={isThisGenerating}
+        isThisQueued={isThisQueued}
+        isCardActionLocked={isCardActionLocked}
+        queuePosition={queuePosition}
+        onGenerate={handleGenerate}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

@@ -54,7 +54,13 @@ function makeMockSceneModel(questionText: string, format: "multiple_choice" | "t
     mascot: { occupied: false, anchor: null },
     assets: { hero: { source: null, altText: "Arcade", fallback: { subject: "Arcade", seed: 1 } } },
     palette: { accent: "#FF5722", primary: "#2196F3", secondary: "#4CAF50", surface: "#FFFFFF", background: "#121212", text: "#FFFFFF" },
-    styles: { questionBox: "candy_pop", counter: "pill_modern", answerCard: "retro_arcade", thinkingBar: "star_slider", background: "arcade_grid" },
+    styles: {
+      questionBox: "candy_pop",
+      counter: "pill_modern",
+      answerCard: "retro_arcade",
+      thinkingBar: "star_slider",
+      background: "arcade_grid",
+    },
     styleCatalogRevision: "rev_1",
     visual: {} as any,
     channelBrandName: "Retro Arcade Lab",
@@ -128,9 +134,7 @@ describe("normalizeQuestionPunctuation", () => {
     });
 
     it("handles True or False prefix statements", () => {
-      expect(normalizeQuestionPunctuation("True or False: Sharks are mammals.", "true_false")).toBe(
-        "True or False: Sharks are mammals?",
-      );
+      expect(normalizeQuestionPunctuation("True or False: Sharks are mammals.", "true_false")).toBe("True or False: Sharks are mammals?");
     });
   });
 
@@ -142,9 +146,7 @@ describe("normalizeQuestionPunctuation", () => {
     });
 
     it("preserves internal sentence punctuation across multi-sentence prompts", () => {
-      expect(normalizeQuestionPunctuation("Look closely. Which animal runs faster.")).toBe(
-        "Look closely. Which animal runs faster?",
-      );
+      expect(normalizeQuestionPunctuation("Look closely. Which animal runs faster.")).toBe("Look closely. Which animal runs faster?");
     });
 
     it("handles non-English interrogatives", () => {
@@ -164,7 +166,9 @@ describe("Prompt Builder Hardening Contract Tests", () => {
       quizSourceMinimum: 3,
     });
 
-    expect(contract).toContain("Question phrasing & punctuation: Every question MUST always be an interrogative sentence ending with a question mark '?'");
+    expect(contract).toContain(
+      "Question phrasing & punctuation: Every question MUST always be an interrogative sentence ending with a question mark '?'",
+    );
     expect(contract).toContain("Never omit the question mark or end with a period");
     expect(contract).toContain("Ultra-concise child-friendly question ending with '?'");
   });

@@ -24,7 +24,6 @@ const ARCHETYPE_CHIPS: Array<{ id: string; defaultLabel: string; icon: string }>
   { id: "visual_spotting", defaultLabel: "Visual Spotting", icon: "👁️" },
   { id: "visual_identification", defaultLabel: "Visual ID", icon: "🔍" },
   { id: "mystery_reveal", defaultLabel: "Mystery Reveal", icon: "🎭" },
-  { id: "clue_deduction", defaultLabel: "Clue Deduction", icon: "🕵️" },
 ];
 
 export function QuestionBankHeaderStats({
@@ -95,8 +94,7 @@ export function QuestionBankHeaderStats({
       {!isCollapsed && (
         <div className="qb-archetypes-chip-bar" role="tablist" aria-label="Archetype Filters">
           {ARCHETYPE_CHIPS.map(({ id: archId, defaultLabel, icon }) => {
-            const isActive =
-              selectedArchetype === archId || (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
+            const isActive = selectedArchetype === archId || (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
             const count =
               archId === "verdict_true_false"
                 ? (stats?.by_archetype?.["verdict_true_false"] ?? 0) + (stats?.by_archetype?.["verdict_fact_myth"] ?? 0)

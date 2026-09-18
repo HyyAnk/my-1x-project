@@ -10,7 +10,17 @@ type FontAwareWindow = Window & {
 };
 
 export async function verifyPreviewFonts(frame: HTMLIFrameElement, timeoutMs = 15_000): Promise<void> {
-  const frameWindow: FontAwareWindow | null = frame.contentWindow;
+  let frameWindow: FontAwareWindow | null = frame.contentWindow;
+
+  if (!frameWindow?.__fontReadyPromise && frame.contentDocument && frame.contentDocument.readyState !== "complete") {
+    const graceLimit = Math.min(timeoutMs, 1500);
+    const start = Date.now();
+    while (Date.now() - start < graceLimit && !frameWindow?.__fontReadyPromise) {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      frameWindow = frame.contentWindow;
+    }
+  }
+
   if (!frameWindow?.__fontReadyPromise) throw new Error("Preview font readiness contract is missing");
 
   let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -22,8 +32,16 @@ export async function verifyPreviewFonts(frame: HTMLIFrameElement, timeoutMs = 1
       }),
     ]);
     if (status.state !== "ready" || frameWindow.__fontStatus?.state !== "ready") {
-      throw new Error(status.message || "Preview fonts are unavailable");
+      throw new Error(status.message || frameWindow.__fontStatus?.message || "Preview fonts are unavailable");
     }
+  } catch (err) {
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null && "message" in err && typeof err.message === "string"
+          ? (err as { message: string }).message
+          : frameWindow?.__fontStatus?.message || String(err);
+    throw new Error(message || "Preview fonts are unavailable", { cause: err });
   } finally {
     if (timeout) clearTimeout(timeout);
   }

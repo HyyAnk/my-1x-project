@@ -34,7 +34,7 @@ Bank generation/seeding modules exist separately from source-backed allocation. 
 
 ```text
 verdict_true_false  speed_blitz  deep_trivia  versus_faceoff
-visual_spotting  visual_identification  mystery_reveal  clue_deduction
+visual_spotting  visual_identification  mystery_reveal
 ```
 
 The matrix combines entities with archetypes; do not describe it as only a difficulty grid. [matrixDeficitPlanner.ts](../apps/server/src/quiz/bank/matrix/matrixDeficitPlanner.ts) owns deficit selection. [quizArchetypes.ts](../packages/shared/src/quizArchetypes.ts) describes gameplay blueprints; bank IDs, question formats and layout IDs are related but distinct contracts.

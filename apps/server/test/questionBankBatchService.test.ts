@@ -192,7 +192,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressEvents.length).toBe(1);
     expect(progressEvents[0].completedCount).toBe(1);
     expect(result.matrixCoverage).toBeDefined();
-    expect(result.matrixCoverage?.total_combos).toBe(22072);
+    expect(result.matrixCoverage?.total_combos).toBe(19313);
   });
 
   it.each(["fr", "vi", "unknown", undefined, "English"])(
@@ -313,7 +313,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressReports[1].chunkSize).toBe(5);
 
     expect(result.matrixCoverage).toBeDefined();
-    expect(result.matrixCoverage?.total_combos).toBe(22072);
+    expect(result.matrixCoverage?.total_combos).toBe(19313);
   });
 
   it("rotates domain and archetype across multi-chunk auto generation", async () => {
@@ -376,7 +376,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
 
     const mockLlmClient: LLMClient = {
       connect: () => Promise.resolve(),
-      generateContent: async () => {
+      generateContent: async (request?: unknown) => {
         callCounter++;
         const currentId = callCounter;
         const qText = distinctQuestions[(currentId - 1) % distinctQuestions.length];
@@ -388,16 +388,21 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
         await new Promise((res) => setTimeout(res, 5));
         activeCalls--;
 
+        const isMystery = JSON.stringify(request ?? "").includes("mystery_reveal");
+        const choices = isMystery
+          ? [{ id: "A", text: "Choice A", is_correct: true }]
+          : [
+              { id: "A", text: "Choice A", is_correct: true },
+              { id: "B", text: "Choice B", is_correct: false },
+            ];
+
         return Promise.resolve({
           text: JSON.stringify([
             {
               entity_id: `ENT-ANI-00${currentId}`,
               question: qText,
               format: "multiple_choice",
-              choices: [
-                { id: "A", text: "Choice A", is_correct: true },
-                { id: "B", text: "Choice B", is_correct: false },
-              ],
+              choices,
               correct_choice_id: "A",
               explanation: "Clear explanation text for test.",
               visual_spec: { intent: "none" },

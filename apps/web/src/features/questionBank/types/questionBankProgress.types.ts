@@ -1,9 +1,5 @@
 import type { MatrixCoverageStats } from "@studio/shared";
-import type {
-  MilestoneProgressResult,
-  MilestoneTier,
-  MilestoneTrackNode,
-} from "../utils/questionBankMilestones";
+import type { MilestoneProgressResult, MilestoneTier, MilestoneTrackNode } from "../utils/questionBankMilestones";
 
 /**
  * Props for QuestionBankMilestoneTrack component.
@@ -60,9 +56,4 @@ export interface QuestionBankCompactSplitProgressProps {
   className?: string;
 }
 
-export type {
-  MatrixCoverageStats,
-  MilestoneProgressResult,
-  MilestoneTier,
-  MilestoneTrackNode,
-};
+export type { MatrixCoverageStats, MilestoneProgressResult, MilestoneTier, MilestoneTrackNode };

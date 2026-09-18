@@ -62,8 +62,10 @@ function createMockStylesState() {
     handleDeleteStyle: vi.fn(),
     handleUpdateStyleKeyword: vi.fn(),
     busySlotKey: null,
+    queuedSlotKeys: [],
     handleGenerateSlot: vi.fn(),
     handleBatchGenerateStyle: vi.fn(),
+    handleRegenerateSelectedSlots: vi.fn(),
     batchProgress: null,
     handleStopBatchGeneration: vi.fn(),
     editingSlot: null,
@@ -124,5 +126,143 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
 
     const manageBtn = container.querySelector(".mascot-style-tab-manage");
     expect(manageBtn).toHaveProperty("disabled", true);
+  });
+
+  it("renders selection toolbar and handles multi-select variant regeneration", async () => {
+    const handleRegenerateSelectedSlots = vi.fn().mockResolvedValue(undefined);
+    const styleWithFilledSlots: MascotStyle = {
+      ...mockCoreStyle,
+      states: {
+        thinking: [
+          {
+            id: "t_1",
+            slot_index: 1,
+            image_url: "https://example.com/t1.png",
+            prompt_modifier: "pondering deeply",
+          },
+          {
+            id: "t_2",
+            slot_index: 2,
+            image_url: "https://example.com/t2.png",
+            prompt_modifier: "scratching chin",
+          },
+        ],
+        celebrate: [],
+      },
+    };
+
+    const stylesState = {
+      ...createMockStylesState(),
+      activeStyle: styleWithFilledSlots,
+      handleRegenerateSelectedSlots,
+    };
+
+    const mascotWithFilledStyle: MascotProfile = {
+      ...mockMascot,
+      styles: [styleWithFilledSlots, mockCustomStyle],
+    };
+
+    renderActionsStep({
+      editingMascot: mascotWithFilledStyle,
+      stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"],
+    });
+
+    // Checkbox on slot 1
+    const slot1Checkbox = screen.getByRole("checkbox", { name: "Select thinking slot 1" });
+    const slot2Checkbox = screen.getByRole("checkbox", { name: "Select thinking slot 2" });
+    expect(slot1Checkbox).toBeDefined();
+    expect(slot2Checkbox).toBeDefined();
+
+    // Select slot 1 individually
+    fireEvent.click(slot1Checkbox);
+    expect(screen.getByText("1 selected")).toBeDefined();
+
+    // Select All button
+    const selectAllBtn = screen.getByRole("button", { name: "Select all filled Thinking slots" });
+    expect(selectAllBtn).toBeDefined();
+
+    // Click Select All
+    fireEvent.click(selectAllBtn);
+    expect(screen.getByText("2 selected")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Deselect all Thinking slots" })).toBeDefined();
+
+    // Regenerate Selected button
+    const regenBtn = screen.getByRole("button", {
+      name: "Regenerate 2 selected thinking slots",
+    });
+    expect(regenBtn).toBeDefined();
+    expect(regenBtn).toHaveProperty("disabled", false);
+
+    // Click Regenerate Selected
+    fireEvent.click(regenBtn);
+
+    expect(handleRegenerateSelectedSlots).toHaveBeenCalledTimes(1);
+    expect(handleRegenerateSelectedSlots).toHaveBeenCalledWith([
+      { state: "thinking", slotIndex: 1, promptModifier: "pondering deeply" },
+      { state: "thinking", slotIndex: 2, promptModifier: "scratching chin" },
+    ]);
+  });
+
+  it("disables 'Regenerate Selected' button when generation queue is active", () => {
+    const styleWithFilledSlots: MascotStyle = {
+      ...mockCoreStyle,
+      states: {
+        thinking: [
+          {
+            id: "t_1",
+            slot_index: 1,
+            image_url: "https://example.com/t1.png",
+          },
+        ],
+        celebrate: [],
+      },
+    };
+
+    const stylesState = {
+      ...createMockStylesState(),
+      activeStyle: styleWithFilledSlots,
+      busySlotKey: "batch",
+      batchProgress: {
+        total: 5,
+        completed: 1,
+        failed: 0,
+        activeSlotKeys: ["thinking_1"],
+        statusMessage: "Generating...",
+        startTime: Date.now(),
+        isStopping: false,
+      },
+    };
+
+    renderActionsStep({
+      editingMascot: { ...mockMascot, styles: [styleWithFilledSlots] },
+      stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"],
+    });
+
+    const selectAllBtn = screen.getByRole("button", { name: "Select all filled Thinking slots" });
+    expect(selectAllBtn).toHaveProperty("disabled", true);
+  });
+
+  it("attaches beforeunload listener when batch generation is active", () => {
+    const addEventListenerSpy = vi.spyOn(window, "addEventListener");
+
+    const stylesState = {
+      ...createMockStylesState(),
+      busySlotKey: "batch",
+      batchProgress: {
+        total: 5,
+        completed: 1,
+        failed: 0,
+        activeSlotKeys: ["thinking_1"],
+        statusMessage: "Generating...",
+        startTime: Date.now(),
+        isStopping: false,
+      },
+    };
+
+    renderActionsStep({
+      stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"],
+    });
+
+    expect(addEventListenerSpy).toHaveBeenCalledWith("beforeunload", expect.any(Function));
   });
 });

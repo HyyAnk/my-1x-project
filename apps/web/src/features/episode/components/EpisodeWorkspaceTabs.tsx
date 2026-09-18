@@ -2,7 +2,7 @@ import type React from "react";
 import type { Channel, Episode, Scene } from "@studio/shared";
 import type { BundleImage } from "../../../api";
 import { parseContinuityBundles } from "../../../lib/continuity";
-import { artifactConfig, isReady } from "../types";
+import { artifactConfig } from "../types";
 import type { useEpisodePipeline } from "../hooks/useEpisodePipeline";
 import { QuestionRemixPanel } from "../../../components/QuestionRemixPanel";
 import { ArtifactPanel } from "./ArtifactPanel";
@@ -54,12 +54,12 @@ export function EpisodeWorkspaceTabs({
         sceneCount={scenes.length}
       />
 
-      {/* Stage 1: Script & Plan */}
+      {/* Stage 1: Script */}
       {pipeline.workflowTab === "script" && !simplifyMode ? (
         <div className="artifact-stack">
           {artifactConfig
             .filter((c) => c.filename !== "visual_bible.md")
-            .map((config, index) => {
+            .map((config) => {
               const artifact = pipeline.artifactValues[config.filename];
               const task = pipeline.episodeTasks.find((t) => t.task_type === config.taskType);
               return (
@@ -75,7 +75,7 @@ export function EpisodeWorkspaceTabs({
                     Boolean(pipeline.activeEpisodeTask && pipeline.activeEpisodeTask.task_id !== task?.task_id)
                   }
                   saving={pipeline.busy === config.filename}
-                  defaultOpen={config.filename === "script.md" || (!isReady(artifact.value) && index === 0)}
+                  defaultOpen={true}
                   onGenerate={() => void pipeline.createTask(config.taskType)}
                   onSave={(content) => void pipeline.saveArtifact(config.filename, content)}
                 />

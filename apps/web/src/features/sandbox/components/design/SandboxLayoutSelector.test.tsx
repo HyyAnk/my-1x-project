@@ -1,11 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LanguageProvider } from "../../../../i18n/LanguageContext";
-import {
-  SandboxLayoutSelector,
-  LANDSCAPE_LAYOUT_IDS,
-  getCompatibleLayoutForAspectRatio,
-} from "./SandboxLayoutSelector";
+import { SandboxLayoutSelector, LANDSCAPE_LAYOUT_IDS, getCompatibleLayoutForAspectRatio } from "./SandboxLayoutSelector";
 
 afterEach(() => {
   cleanup();
@@ -43,14 +39,14 @@ describe("SandboxLayoutSelector", () => {
         <SandboxLayoutSelector layoutId="visual_choices_three" setLayoutId={vi.fn()} aspectRatio="16:9" />
       </LanguageProvider>,
     );
-    expect(screen.getByText(/Choices: 4:3/i)).toBeTruthy();
+    expect(screen.getByText(/Choices:\s*1:1/i)).toBeTruthy();
 
     rerender(
       <LanguageProvider>
         <SandboxLayoutSelector layoutId="visual_choices_three_pure" setLayoutId={vi.fn()} aspectRatio="16:9" />
       </LanguageProvider>,
     );
-    expect(screen.getByText(/Choices: 1:1/i)).toBeTruthy();
+    expect(screen.getByText(/Choices:\s*3:4/i)).toBeTruthy();
 
     rerender(
       <LanguageProvider>

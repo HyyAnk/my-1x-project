@@ -1,0 +1,1167 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    {
+      "path": "packages/shared/src/quizImageSizing/geometry.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/quizImageSizing/policy.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/quizImageSizing/types.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/quizLayouts.catalog.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/quizLayouts.types.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/index.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/frame/landscapeFrameGeometry.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/frame/quizFrame.types.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/frame/quizFrameStyles.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/frame/renderQuizFrameBody.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/layoutContentGeometry.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/imageSlotStyles.ts",
+      "area": "geometry",
+      "phases": [2, 3],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/renderChoiceGroup.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/choiceGroup.types.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/baseChoiceStyles.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/choiceTextFitScript.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/choiceTextFitPolicy.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/choiceStateStyles.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/choiceTypographyStyles.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/visual/elements/answerCard/types.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/visual/elements/answerCard/registry.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/mediaLeftChoicesRight.ts",
+      "area": "text-layouts",
+      "phases": [5],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/fullStackList.ts",
+      "area": "text-layouts",
+      "phases": [5],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/visualChoicesThree.ts",
+      "area": "visual-layouts",
+      "phases": [6],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/visualChoicesThreePure/visualChoicesThreePureCardStyles.ts",
+      "area": "visual-layouts",
+      "phases": [6],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/visualChoicesThreePure/visualChoicesThreePureBaseStyles.ts",
+      "area": "visual-layouts",
+      "phases": [6],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/visualChoicesThreePure/visualChoicesThreePureAnimationStyles.ts",
+      "area": "visual-layouts",
+      "phases": [6],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/splitVersusTwo.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/splitVersusTwo/splitVersusTwoChoiceStyles.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/splitVersusTwo/splitVersusTwoBaseStyles.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/splitVersusTwo/splitVersusTwoAnimationStyles.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/verdictTrueFalse/verdictTrueFalseBaseStyles.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/verdictTrueFalse/verdictTrueFalseButtonStyles.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/verdictTrueFalse/verdictTrueFalseAnimationStyles.ts",
+      "area": "binary-layouts",
+      "phases": [7],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/quiz/quizQuestions.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/questionBank.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/common.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/episode.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/config.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/api/sandbox.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/sandboxPreviewLayoutPolicy.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/quizLayouts.policy.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/layoutCompatibility.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/domain/quiz.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/domain/quizArtifactSynthesizer.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/repository/scenes.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/repository/sceneCodec.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/qa/stages/assessSemanticQa.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/bridge/bankQuestionConverter.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/bridge/bankDirectorPlanFactory.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/bridge/singleQuestionBridge.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/bridge/topicEpisodeConfig.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/prompts/archetypePromptGuidelines.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/prompts/standardBatchPromptBuilder.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/prompts/reverseMatrixPromptBuilder.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/prompts/batchPromptOutputParser.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/bank/transcreation/transcreationPrompt.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/context/quizDirectPromptBuilder.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/pipeline/remix/remixPromptBuilder.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/pipeline/remix/questionParser.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/timing.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/quiz/quizTimings.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/audio/voicePlan.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/pipeline/stages/assetsVoiceStages.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/timeline/compilers/questionCompiler.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/timeline/compilers/question/compileChoicesBeat.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/timeline/compilers/question/compileThinkingCountdownBeat.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/timeline/compilers/question/compileAnswerRevealBeat.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/timeline/compilers/question/compileExplanationBeat.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/visual/elements/thinkingBar/types.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/candyArcade/candyArcadeQuestionTimeline.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/candyArcade/candyArcadeClips.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/quizScene.types.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/quizSceneState.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/buildQuizSceneRenderModel.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/buildQuizSceneParts.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/renderQuizSceneParts.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/productionSceneAdapter.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/productionSceneStateAdapter.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/sandboxSceneAdapter.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/sandboxSceneStateAdapter.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/sandboxComposition.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/sandbox/sandboxRehearsalScript.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/mysteryReveal.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/mysteryReveal/mysteryRevealBaseStyles.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/mysteryReveal/mysteryRevealChoiceStyles.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/mysteryReveal/mysteryRevealPhaseStyles.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/mysteryReveal/mysteryRevealStageStyles.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/mysteryReveal/mysteryRevealRevealMotionStyles.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/render/layouts/styles/mysteryReveal/mysteryRevealAnimationStyles.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/assets/assetPlanner.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/assets/promptCompiler.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/assets/promptFramingRules.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/assets/assetFingerprint.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/assets/ensureQuizAssetSizing.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/quiz/assets/reconcileQuizAssetSizing.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/schemas/quiz/quizAssets.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/tasks/imageRunner.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/providers/gpti2Dimensions.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/providers/gpti2/generator.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/providers/gpti2/provider.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/providers/imgstudio/provider.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/providers/imgstudio/types.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/providers/codexImage.ts",
+      "area": "assets",
+      "phases": [10],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxLayoutSync.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxQuestionState.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxPreviewRenderer.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxTimelineState.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxTimelineHelpers.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxAudioCues.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/components/content/SandboxChoicesEditor.tsx",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/components/content/SandboxQuestionInputs.tsx",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/components/design/sandboxLayoutRequirements.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/components/design/SandboxImageRequirements.tsx",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/components/preview/SandboxGuidesOverlay.tsx",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/quizLayouts/quizLayoutUiCatalog.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/quizLayouts/components/QuizLayoutWireframe.tsx",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/channel/constants/layoutPreviewCatalog.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/episode/services/buildEpisodePreviewRequest.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/episode/utils/episodePreviewQuestions.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/questionBank/components/QuestionBankChoicesEditor.tsx",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/questionBank/utils/questionBankFormBuilder.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/features/questionBank/utils/questionBankFormValidation.ts",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/web/src/styles/features/mascot/stageStudio/layoutMiniature.css",
+      "area": "ui",
+      "phases": [11],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/test/quizImageSizing.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/test/quizLayouts.catalog.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/test/quizLayouts.policy.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/test/timing.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizFrameGeometry.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizFrameAnchors.browser.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizLayoutContentGeometry.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizLayoutContent.browser.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizImageSlotSizing.browser.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizImageSizingProviderContract.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizImageSizingProductionParity.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizLayoutAssetAspectRatioE2E.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizChoiceGroupRenderer.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/choiceTextFit.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/answerCardSkinStyles.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/questionBankSchema.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/batchPromptOutputParser.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizV2Schema.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizPacing.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/sandboxComposition.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizPixelVisualRegression.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/helpers/visualSnapshotHarness.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/helpers/imageSlotMeasurement.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/sandboxVideoRenderParityHarnessStage9.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizAllLayoutsEndToEnd.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/test/quizLayoutsPortrait.test.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/tasks/video/videoInvocation.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "apps/server/src/tasks/video/videoLayoutChecker.ts",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "scripts/audit-quiz-choice-count.mjs",
+      "area": "qa",
+      "phases": [1, 12],
+      "kind": "existing",
+      "action": "inspect_and_update_as_required"
+    },
+    {
+      "path": "packages/shared/src/quizLayoutGeometry/types.ts",
+      "area": "geometry",
+      "phases": [2],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "packages/shared/src/quizLayoutGeometry/frame.ts",
+      "area": "geometry",
+      "phases": [2],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "packages/shared/src/quizLayoutGeometry/layouts.ts",
+      "area": "geometry",
+      "phases": [2],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "packages/shared/src/quizLayoutGeometry/choiceGeometry.ts",
+      "area": "geometry",
+      "phases": [2],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "packages/shared/src/quizLayoutGeometry/index.ts",
+      "area": "geometry",
+      "phases": [2],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "packages/shared/src/quizAnswerMode.ts",
+      "area": "mystery-contract",
+      "phases": [8],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "packages/shared/src/quizRevealTiming.ts",
+      "area": "timeline",
+      "phases": [9],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/choiceSurfaceMarkup.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "apps/server/src/quiz/render/choices/detachedChoiceStyles.ts",
+      "area": "answers",
+      "phases": [4],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "apps/server/src/quiz/render/scene/renderQuizScenePhaseParts.ts",
+      "area": "timeline",
+      "phases": [3, 9],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "apps/server/test/quizMysterySingleReveal.test.ts",
+      "area": "qa",
+      "phases": [8, 9, 12],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "apps/server/test/quizLayoutUpgrade.browser.test.ts",
+      "area": "qa",
+      "phases": [12],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    },
+    {
+      "path": "apps/web/src/features/sandbox/hooks/useSandboxLayoutSync.test.ts",
+      "area": "qa",
+      "phases": [11, 12],
+      "kind": "proposed",
+      "action": "create_if_no_equivalent_seam_exists"
+    }
+  ]
+}

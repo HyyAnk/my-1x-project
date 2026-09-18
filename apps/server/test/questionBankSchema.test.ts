@@ -15,7 +15,7 @@ import {
 } from "@studio/shared";
 
 describe("Question Bank Schemas", () => {
-  it("validates BankGameplayArchetypeIdSchema with all 8 archetypes", () => {
+  it("validates BankGameplayArchetypeIdSchema with all valid archetypes", () => {
     const validArchetypes = [
       "deep_trivia",
       "visual_spotting",
@@ -25,7 +25,6 @@ describe("Question Bank Schemas", () => {
       "visual_identification",
       "speed_blitz",
       "mystery_reveal",
-      "clue_deduction",
     ];
 
     for (const id of validArchetypes) {
@@ -102,8 +101,7 @@ describe("Question Bank Schemas", () => {
       expect(bankRequiredChoiceCountForArchetype("visual_spotting")).toBe(3);
       expect(bankRequiredChoiceCountForArchetype("visual_identification")).toBe(3);
       expect(bankRequiredChoiceCountForArchetype("speed_blitz")).toBe(3);
-      expect(bankRequiredChoiceCountForArchetype("mystery_reveal")).toBe(3);
-      expect(bankRequiredChoiceCountForArchetype("clue_deduction")).toBe(3);
+      expect(bankRequiredChoiceCountForArchetype("mystery_reveal")).toBe(1);
     });
 
     it("rejects 2-choice archetypes when given 3 choices", () => {

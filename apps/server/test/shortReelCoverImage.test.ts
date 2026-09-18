@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { generateReelCoverPayload } from "../src/shortReel/coverImageService.js";
 import { buildReelCoverPrompt } from "../src/shortReel/coverPrompt.js";
-import { GenerationError } from "../src/shortReel/generationErrors.js";
 import { generateReelStyleReferences } from "../src/shortReel/styleImageService.js";
 import { packageImage } from "./helpers/shortReelPackageFixture.js";
 import { createUpgradeFixture, fakePortraitClient } from "./helpers/shortReelUpgradeFixture.js";
@@ -190,6 +189,109 @@ describe("ShortReel cover image generation", () => {
 
       const currentReel = await f.repo.getShortReel(f.key);
       expect(currentReel.units.cover.last_accepted_payload).toBeNull();
+    } finally {
+      await f.cleanup();
+    }
+  });
+
+  it("generateReelCoverPayload enriches prompt with dynamic persona when llmClient is supplied", async () => {
+    const f = await createFixtureWithReadyReferences();
+    try {
+      const generateSpy = vi.fn(async () => ({
+        bytes: await packageImage("blue", 720, 1280),
+        provider: "test",
+        model: "fixture-model",
+      }));
+      const client = {
+        supportsReferenceImage: true,
+        generate: generateSpy,
+      };
+
+      const mockLlm = {
+        connect: vi.fn(async () => {}),
+        generateContent: vi.fn(async () =>
+          JSON.stringify({
+            variations: [
+              {
+                id: 1,
+                archetypeId: 4,
+                archetypeName: "The Cheeky Challenger / Secret Keeper",
+                role: "Quiz Trickster",
+                costume: "mysterious hooded velvet cloak",
+                prop: "enigmatic riddle scroll",
+                expression: "knowing sly smirk with raised eyebrow",
+                poseDescription: "holding scroll partially open toward viewer",
+                dramaticHook: "Concealing the secret answer",
+              },
+            ],
+          }),
+        ),
+      };
+
+      const cover = await generateReelCoverPayload(f.repo, f.key, f.snapshotWithReadyReferences, client as any, "cover-llm-op", f.signal, {
+        llmClient: mockLlm as any,
+      });
+
+      expect(cover.width).toBe(1080);
+      expect(cover.height).toBe(1920);
+      expect(generateSpy).toHaveBeenCalledOnce();
+      const calledPrompt = generateSpy.mock.calls[0][0].prompt;
+      expect(calledPrompt).toContain("The Cheeky Challenger / Secret Keeper");
+      expect(calledPrompt).toContain("Quiz Trickster");
+      expect(calledPrompt).toContain("mysterious hooded velvet cloak");
+      expect(calledPrompt).toContain("enigmatic riddle scroll");
+      expect(calledPrompt).toContain("knowing sly smirk with raised eyebrow");
+      expect(calledPrompt).toContain("9:16 vertical portrait");
+    } finally {
+      await f.cleanup();
+    }
+  });
+
+  it("generates distinct prompt archetypes across successive cover regenerations", async () => {
+    const f = await createFixtureWithReadyReferences();
+    try {
+      const generatedPrompts: string[] = [];
+      const client = {
+        supportsReferenceImage: true,
+        generate: vi.fn(async (opts: { prompt: string }) => {
+          generatedPrompts.push(opts.prompt);
+          return {
+            bytes: await packageImage("blue", 720, 1280),
+            provider: "test",
+            model: "fixture-model",
+          };
+        }),
+      };
+
+      const persona1 = {
+        archetypeId: 1,
+        archetypeName: "The Mind-Blown / Shocked Reactor",
+        role: "Shocked Explorer",
+        expression: "jaw dropped in absolute shock",
+        poseDescription: "recoiling backward in amazement",
+      };
+      const persona2 = {
+        archetypeId: 2,
+        archetypeName: "The Deep Investigator / Deduction Master",
+        role: "Clue Detective",
+        expression: "squinting with intense scrutiny",
+        poseDescription: "examining an artifact through a magnifying glass",
+      };
+
+      await generateReelCoverPayload(f.repo, f.key, f.snapshotWithReadyReferences, client as any, "cover-op-1", f.signal, {
+        personaOverride: persona1,
+      });
+
+      await generateReelCoverPayload(f.repo, f.key, f.snapshotWithReadyReferences, client as any, "cover-op-2", f.signal, {
+        personaOverride: persona2,
+      });
+
+      expect(generatedPrompts.length).toBe(2);
+      expect(generatedPrompts[0]).not.toBe(generatedPrompts[1]);
+      expect(generatedPrompts[0]).toContain("The Mind-Blown / Shocked Reactor");
+      expect(generatedPrompts[1]).toContain("The Deep Investigator / Deduction Master");
+      expect(generatedPrompts[0]).toContain("recoiling backward in amazement");
+      expect(generatedPrompts[1]).toContain("magnifying glass");
     } finally {
       await f.cleanup();
     }

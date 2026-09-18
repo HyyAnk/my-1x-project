@@ -1,8 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  AdaptiveRateLimiter,
-  isRateLimitError,
-} from "../src/quiz/bank/batch/adaptiveRateLimiter.js";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { AdaptiveRateLimiter, isRateLimitError } from "../src/quiz/bank/batch/adaptiveRateLimiter.js";
 
 describe("AdaptiveRateLimiter", () => {
   let limiter: AdaptiveRateLimiter;
@@ -169,6 +166,33 @@ describe("AdaptiveRateLimiter", () => {
 
       await expect(waitPromise).rejects.toThrow("AdaptiveRateLimiter was disposed");
       await expect(limiter.acquire(1)).rejects.toThrow("AdaptiveRateLimiter is disposed");
+    });
+  });
+
+  describe("wrap and record aliases", () => {
+    it("wraps successful async action and records success", async () => {
+      limiter = new AdaptiveRateLimiter({ capacity: 5 });
+      const result = await limiter.wrap(async () => "success-val");
+      expect(result).toBe("success-val");
+      expect(limiter.getStats().totalRequests).toBe(1);
+    });
+
+    it("wraps failing async action and records error", async () => {
+      limiter = new AdaptiveRateLimiter({ capacity: 5 });
+      await expect(
+        limiter.wrap(async () => {
+          throw new Error("429 Too Many Requests");
+        }),
+      ).rejects.toThrow("429 Too Many Requests");
+      expect(limiter.getStats().consecutiveErrors).toBe(1);
+    });
+
+    it("supports recordError and recordSuccess aliases", () => {
+      limiter = new AdaptiveRateLimiter({ capacity: 5 });
+      limiter.recordError(new Error("429 Rate Limit"));
+      expect(limiter.getStats().consecutiveErrors).toBe(1);
+      limiter.recordSuccess();
+      expect(limiter.getStats().consecutiveErrors).toBe(0);
     });
   });
 });

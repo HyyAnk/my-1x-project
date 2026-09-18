@@ -1,14 +1,6 @@
-import {
-  createEnglishSourceSnapshot,
-  type QuizQuestion,
-  type ShortReelRecord,
-  type TopicCandidate,
-} from "@studio/shared";
+import { createEnglishSourceSnapshot, type QuizQuestion, type ShortReelRecord, type TopicCandidate } from "@studio/shared";
 import type { RepositoryService } from "../repository/service.js";
-import {
-  saveShortReelLocalizationArtifact,
-  type ProductLocalizationArtifact,
-} from "../quiz/bank/localization/productLocalization.js";
+import { saveShortReelLocalizationArtifact, type ProductLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
 import { resolveMascotReference } from "./mascotReferenceService.js";
 import { adoptVisualContext } from "./visualContextService.js";
 import type { TopicConfirmationOptions } from "../repository/topicConfirmationReceipts.js";

@@ -82,14 +82,7 @@ describe("topicSuggestionMatrix", () => {
     expect(contentKinds).toEqual(["episode", "episode", "episode", "short_reel", "short_reel", "short_reel"]);
 
     const archetypes = plan.slots.map((s) => s.archetype);
-    expect(archetypes).toEqual([
-      "deep_trivia",
-      "mystery_reveal",
-      "verdict_true_false",
-      "versus_faceoff",
-      "deep_trivia",
-      "versus_faceoff",
-    ]);
+    expect(archetypes).toEqual(["deep_trivia", "mystery_reveal", "verdict_true_false", "versus_faceoff", "deep_trivia", "versus_faceoff"]);
 
     const layouts = plan.slots.map((s) => s.suggestedLayout);
     expect(layouts).toEqual([

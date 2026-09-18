@@ -114,7 +114,8 @@ describe("BGM Registry and Audio Pipeline", () => {
       narrationDurationSeconds: timeline.duration_seconds,
     });
 
-    const firstStart = timeline.events.find((event) => event.question_id === quiz.questions[0].id && event.type === "question.enter")?.at_seconds ?? 0;
+    const firstStart =
+      timeline.events.find((event) => event.question_id === quiz.questions[0].id && event.type === "question.enter")?.at_seconds ?? 0;
     const outroStart = timeline.events.find((event) => event.segment_id === "outro")?.at_seconds ?? timeline.duration_seconds;
     const expectedBgmDuration = outroStart - firstStart;
 
