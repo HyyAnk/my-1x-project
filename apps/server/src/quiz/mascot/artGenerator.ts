@@ -4,7 +4,7 @@
  */
 
 export { generateMascotAiImageBytes } from "./services/mascotAiImageClient.js";
-export { loadMascotAssetBase64ByUrl } from "./services/mascotAssetLoader.js";
+export { loadMascotAssetBase64ByUrl, loadMasterReferenceImageBase64 } from "./services/mascotAssetLoader.js";
 export { generateMascotStyleBatch } from "./services/mascotBatchScheduler.js";
 
 export {

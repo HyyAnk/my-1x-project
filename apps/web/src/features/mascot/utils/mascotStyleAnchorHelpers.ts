@@ -8,12 +8,21 @@ export function isCoreStyle(style: MascotStyle): boolean {
 }
 
 /**
+ * Checks whether a mascot profile originates from a user-uploaded concept.
+ */
+export function isUploadedConcept(editingMascot?: MascotProfile | null): boolean {
+  return editingMascot?.concept_origin === "user_uploaded";
+}
+
+/**
  * Resolves the display anchor image URL for a style.
  * For core styles, falls back to the master mascot concept image.
  */
 export function resolveAnchorImageUrl(style: MascotStyle, editingMascot?: MascotProfile | null): string | null | undefined {
   const isCore = isCoreStyle(style);
-  return isCore ? style.anchor_image_url || editingMascot?.master_image_url : style.anchor_image_url;
+  return isCore
+    ? style.anchor_image_url || editingMascot?.master_image_url || editingMascot?.master_raw_image_url
+    : style.anchor_image_url;
 }
 
 /**

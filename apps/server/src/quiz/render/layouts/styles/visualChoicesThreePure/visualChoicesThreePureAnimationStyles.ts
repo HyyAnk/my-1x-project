@@ -22,30 +22,75 @@ export function visualChoicesThreePureAnimationStyles(): string {
 }
 
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(1),
-.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(1) {
+.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(1),
+.layout-visual_choices_three_pure .choice-card:nth-child(1),
+.layout-visual_choices_three_pure .visual-answer-card:nth-child(1) {
   animation: visual-pure-card-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
-             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
+             visual-card-float-1 4.3s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
   will-change: transform, opacity;
 }
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(2),
-.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(2) {
+.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(2),
+.layout-visual_choices_three_pure .choice-card:nth-child(2),
+.layout-visual_choices_three_pure .visual-answer-card:nth-child(2) {
   animation: visual-pure-card-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.12s) both,
-             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.66s) infinite alternate both;
+             visual-card-float-2 4.7s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.66s) infinite alternate both;
   will-change: transform, opacity;
 }
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(3),
-.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(3) {
+.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(3),
+.layout-visual_choices_three_pure .choice-card:nth-child(3),
+.layout-visual_choices_three_pure .visual-answer-card:nth-child(3) {
   animation: visual-pure-card-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.24s) both,
-             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.78s) infinite alternate both;
+             visual-card-float-3 4.0s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.78s) infinite alternate both;
   will-change: transform, opacity;
 }
 
 @keyframes visual-card-float {
   0% {
-    transform: translateY(0);
+    transform: translateY(0px) rotate(-1.35deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.35deg) scale(1.011);
   }
   100% {
-    transform: translateY(-6px);
+    transform: translateY(-3px) rotate(-0.9deg) scale(1.003);
+  }
+}
+
+@keyframes visual-card-float-1 {
+  0% {
+    transform: translateY(0px) rotate(-1.65deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.35deg) scale(1.011);
+  }
+  100% {
+    transform: translateY(-3px) rotate(-1.05deg) scale(1.003);
+  }
+}
+
+@keyframes visual-card-float-2 {
+  0% {
+    transform: translateY(0px) rotate(1.65deg);
+  }
+  50% {
+    transform: translateY(-13.5px) rotate(-1.35deg) scale(1.011);
+  }
+  100% {
+    transform: translateY(-3.75px) rotate(1.05deg) scale(1.003);
+  }
+}
+
+@keyframes visual-card-float-3 {
+  0% {
+    transform: translateY(0px) rotate(-1.35deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.65deg) scale(1.011);
+  }
+  100% {
+    transform: translateY(-2.25px) rotate(-0.9deg) scale(1.003);
   }
 }
 
@@ -107,7 +152,6 @@ export function visualChoicesThreePureAnimationStyles(): string {
 .layout-visual_choices_three_pure .visual-answer-card.answer-reveal-correct,
 .layout-visual_choices_three_pure .choice-card-visual.answer-reveal-correct,
 .layout-visual_choices_three_pure .choice-card.answer-reveal-correct {
-  animation: visual-correct-card-reveal 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   z-index: 6;
 }
 
@@ -196,7 +240,7 @@ export function visualChoicesThreePureAnimationStyles(): string {
 .layout-visual_choices_three_pure .visual-answer-card.answer-reveal-incorrect,
 .layout-visual_choices_three_pure .choice-card-visual.answer-reveal-incorrect,
 .layout-visual_choices_three_pure .choice-card.answer-reveal-incorrect {
-  animation: incorrect-card-settle-vcp 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  z-index: 1;
 }
 
 .layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,

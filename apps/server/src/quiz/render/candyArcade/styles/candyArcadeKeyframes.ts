@@ -5,7 +5,7 @@
 export function candyArcadeKeyframesCss(): string {
   return `
 @keyframes hero-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes visual-card-float { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
+@keyframes visual-card-float { 0% { transform: translateY(0) rotate(-1deg); } 100% { transform: translateY(-10px) rotate(1deg); } }
 @keyframes answer-float { 50% { transform: translateY(-4px) rotate(.25deg); } }
 @keyframes visual-choice-float { 0% { transform: translateY(0px) rotate(-0.8deg) scale(1); } 50% { transform: translateY(-7px) rotate(1deg) scale(1.012); } 100% { transform: translateY(-2px) rotate(-0.5deg) scale(1.004); } }
 @keyframes question-card-enter { from { opacity: 0; transform: translateY(24px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }

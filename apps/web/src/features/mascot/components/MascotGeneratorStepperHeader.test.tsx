@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { MascotProfile } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotGeneratorStepperHeader } from "./MascotGeneratorStepperHeader";
 
@@ -89,5 +90,47 @@ describe("MascotGeneratorStepperHeader", () => {
     expect(screen.getByText("12s")).toBeTruthy();
     expect(screen.getByText("45%")).toBeTruthy();
     expect(screen.getByText("Synthesizing mascot artwork...")).toBeTruthy();
+  });
+
+  it("unlocks Step 2 and Step 3 when editingMascot has uploaded concept image", () => {
+    const onSelectStep = vi.fn();
+    const uploadedMascot: MascotProfile = {
+      id: "uploaded_mascot",
+      name: "Uploaded Mascot",
+      description: "Uploaded description",
+      master_prompt: "",
+      concept_origin: "user_uploaded",
+      master_image_url: "/uploads/uploaded_cutout.png",
+      styles: [],
+      visual_style: "pixar_3d",
+      color_theme: "#06b6d4",
+      actions: {},
+      assigned_channel_ids: [],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    };
+
+    render(
+      <LanguageProvider>
+        <MascotGeneratorStepperHeader
+          generatorStep={1}
+          onSelectStep={onSelectStep}
+          editingMascot={uploadedMascot}
+          busyAction={null}
+          overallProgress={0}
+          generationElapsed={0}
+          currentStageMessage=""
+        />
+      </LanguageProvider>,
+    );
+
+    const step2Btn = screen.getByRole("button", { name: /2/i });
+    const step3Btn = screen.getByRole("button", { name: /3/i });
+
+    expect(step2Btn.hasAttribute("disabled")).toBe(false);
+    expect(step3Btn.hasAttribute("disabled")).toBe(false);
+
+    fireEvent.click(step2Btn);
+    expect(onSelectStep).toHaveBeenCalledWith(2);
   });
 });

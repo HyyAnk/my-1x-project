@@ -8,6 +8,7 @@ export interface MascotStyleAnchorActionsProps {
   isThisQueued: boolean;
   isCardActionLocked: boolean;
   queuePosition: number;
+  isUploadedConcept?: boolean;
   onGenerate: () => void;
   onDelete: () => void;
 }
@@ -19,6 +20,7 @@ export function MascotStyleAnchorActions({
   isThisQueued,
   isCardActionLocked,
   queuePosition,
+  isUploadedConcept = false,
   onGenerate,
   onDelete,
 }: MascotStyleAnchorActionsProps) {
@@ -29,7 +31,7 @@ export function MascotStyleAnchorActions({
       <div className="style-anchor-actions is-core-actions">
         <span className="style-anchor-core-note">
           <Lock size={12} weight="bold" />
-          <span>{t("mascots.styleAnchorCoreNote")}</span>
+          <span>{isUploadedConcept ? t("mascots.coreStyleUploadedNote") : t("mascots.styleAnchorCoreNote")}</span>
         </span>
       </div>
     );

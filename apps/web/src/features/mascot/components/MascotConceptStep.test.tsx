@@ -228,4 +228,42 @@ describe("MascotConceptStep (2-Tier Studio Layout)", () => {
     fireEvent.click(closeBtn);
     expect(setLightboxImage).toHaveBeenCalledWith(null);
   });
+
+  it("switches to Upload Master Concept mode when clicking mode button", () => {
+    renderConceptStep();
+    expect(screen.getByTestId("mode-ai-prompt-btn")).toBeTruthy();
+    expect(screen.getByTestId("mode-upload-concept-btn")).toBeTruthy();
+
+    // Initially in AI Prompt mode
+    expect(screen.getByDisplayValue("Captain Quill")).toBeTruthy();
+
+    // Click Upload Master Concept mode button
+    fireEvent.click(screen.getByTestId("mode-upload-concept-btn"));
+
+    // Dropzone should now be visible
+    expect(screen.getByTestId("concept-dropzone")).toBeTruthy();
+    expect(screen.getByTestId("concept-file-input")).toBeTruthy();
+  });
+
+  it("defaults to Upload Master Concept mode when editingMascot concept_origin is user_uploaded", () => {
+    const uploadedMascot: MascotProfile = {
+      ...mockMascotWithMaster,
+      concept_origin: "user_uploaded",
+    };
+
+    renderConceptStep({ editingMascot: uploadedMascot });
+
+    // Mode button should be active for upload
+    const uploadModeBtn = screen.getByTestId("mode-upload-concept-btn");
+    expect(uploadModeBtn.classList.contains("is-active")).toBe(true);
+
+    // Dropzone should be visible
+    expect(screen.getByTestId("concept-dropzone")).toBeTruthy();
+
+    // Preview card should display the custom uploaded badge
+    const badge = screen.getByTestId("uploaded-origin-badge");
+    expect(badge).toBeTruthy();
+    expect(badge.textContent).toContain("Custom Uploaded Concept");
+  });
 });
+

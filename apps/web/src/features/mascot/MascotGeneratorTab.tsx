@@ -24,6 +24,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
     generatorStep,
     setGeneratorStep,
     editingMascot,
+    setEditingMascot,
     genName,
     setGenName,
     genDescription,
@@ -101,7 +102,8 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
       <MascotGeneratorStepperHeader
         generatorStep={generatorStep}
         onSelectStep={setGeneratorStep}
-        hasMasterImage={Boolean(editingMascot?.master_image_url)}
+        hasMasterImage={Boolean(editingMascot?.master_image_url || editingMascot?.master_raw_image_url)}
+        editingMascot={editingMascot}
         busyAction={busyAction}
         overallProgress={overallProgress}
         generationElapsed={generationElapsed}
@@ -143,6 +145,8 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
           onSaveIdentity={handleSaveIdentity}
           onRemoveBackground={handleRemoveBackground}
           onNextStep={() => setGeneratorStep(2)}
+          setEditingMascot={setEditingMascot}
+          onNotice={onNotice}
         />
       ) : null}
 

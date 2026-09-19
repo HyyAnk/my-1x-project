@@ -11,6 +11,8 @@ export interface MascotStyleAnchorCanvasProps {
   hasImage: boolean;
   isThisGenerating: boolean;
   isBusy: boolean;
+  isCore?: boolean;
+  isUploadedConcept?: boolean;
   onOpenLightbox?: (url: string) => void;
   onGenerate: () => void;
 }
@@ -24,6 +26,8 @@ export function MascotStyleAnchorCanvas({
   hasImage,
   isThisGenerating,
   isBusy,
+  isCore = false,
+  isUploadedConcept = false,
   onOpenLightbox,
   onGenerate,
 }: MascotStyleAnchorCanvasProps) {
@@ -91,18 +95,30 @@ export function MascotStyleAnchorCanvas({
         </div>
       ) : (
         <div
-          className={`style-anchor-empty-placeholder ${!isBusy ? "is-clickable" : "is-busy"}`}
-          onClick={() => !isBusy && onGenerate()}
+          className={`style-anchor-empty-placeholder ${!isBusy && !isCore ? "is-clickable" : "is-busy"}`}
+          onClick={() => !isBusy && !isCore && onGenerate()}
           role="button"
-          tabIndex={isBusy ? -1 : 0}
-          aria-disabled={isBusy}
-          title={!isBusy ? t("mascots.styleAnchorGeneratePrompt") : undefined}
-          onKeyDown={(e) => !isBusy && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onGenerate())}
+          tabIndex={isBusy || isCore ? -1 : 0}
+          aria-disabled={isBusy || isCore}
+          title={!isBusy && !isCore ? t("mascots.styleAnchorGeneratePrompt") : undefined}
+          onKeyDown={(e) => !isBusy && !isCore && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onGenerate())}
         >
           <Sparkle size={24} className="style-anchor-empty-icon" />
-          <span className="style-anchor-empty-text">{t("mascots.styleAnchorMissingBadge")}</span>
+          <span className="style-anchor-empty-text">
+            {isCore && isUploadedConcept
+              ? t("mascots.coreStyleUploadedMissing")
+              : isCore
+                ? t("mascots.styleAnchorCoreBadge")
+                : t("mascots.styleAnchorMissingBadge")}
+          </span>
           <span className="style-anchor-empty-subtext">
-            {!isBusy ? t("mascots.styleAnchorGeneratePrompt") : t("mascots.generatingConceptBtn")}
+            {isCore && isUploadedConcept
+              ? t("mascots.coreStyleUploadedNote")
+              : isCore
+                ? t("mascots.styleAnchorCoreNote")
+                : !isBusy
+                  ? t("mascots.styleAnchorGeneratePrompt")
+                  : t("mascots.generatingConceptBtn")}
           </span>
         </div>
       )}

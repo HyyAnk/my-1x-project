@@ -16,12 +16,16 @@ function StyleAnchorWithImage({
   effectiveAnchorImage,
   readiness,
   totalPoses,
+  isCore,
+  isUploaded,
   onOpenLightbox,
 }: {
   style: MascotStyle;
   effectiveAnchorImage: string;
   readiness: ReturnType<typeof getMascotStyleReadiness>;
   totalPoses: number;
+  isCore: boolean;
+  isUploaded: boolean;
   onOpenLightbox?: (url: string) => void;
 }) {
   const { t } = useTranslation();
@@ -55,6 +59,16 @@ function StyleAnchorWithImage({
             <span>{t("mascots.styleAnchorPinTitle")}</span>
           </span>
 
+          {isCore && isUploaded ? (
+            <span className="style-anchor-pin-badge badge-uploaded">
+              {t("mascots.coreStyleUploadedBadge")}
+            </span>
+          ) : !isCore && isUploaded ? (
+            <span className="style-anchor-pin-badge badge-uploaded-ref" title={t("mascots.customStyleUploadedAnchorTooltip")}>
+              {t("mascots.customStyleUploadedAnchorRef")}
+            </span>
+          ) : null}
+
           {readiness === "fully_expressive" ? (
             <span className="style-anchor-pin-badge badge-fully-expressive">
               <CheckCircle size={12} weight="fill" />
@@ -82,11 +96,13 @@ function StyleAnchorMissingWarning({
   styleId,
   isBusy,
   isThisGenerating,
+  isUploaded,
   onGenerate,
 }: {
   styleId: string;
   isBusy: boolean;
   isThisGenerating: boolean;
+  isUploaded: boolean;
   onGenerate?: (styleId: string) => void;
 }) {
   const { t } = useTranslation();
@@ -106,7 +122,9 @@ function StyleAnchorMissingWarning({
           </span>
           <span className="style-anchor-pin-badge badge-warning">{t("mascots.styleAnchorMissingBadge") || "Anchor Missing"}</span>
         </div>
-        <p className="style-anchor-pin-desc">{t("mascots.styleAnchorPinDesc")}</p>
+        <p className="style-anchor-pin-desc">
+          {isUploaded ? t("mascots.styleAnchorPinMissingUploadedDesc") : t("mascots.styleAnchorPinMissingDesc")}
+        </p>
       </div>
 
       <div className="style-anchor-pin-actions">
@@ -140,7 +158,9 @@ function StyleAnchorMissingWarning({
  */
 export function StyleAnchorReferencePin({ style, editingMascot, stylesState, onOpenLightbox }: StyleAnchorReferencePinProps) {
   const isCore = style?.id === "core" || Boolean(style?.is_default);
-  const effectiveAnchorImage = style?.anchor_image_url || (isCore ? editingMascot?.master_image_url : null);
+  const isUploaded = editingMascot?.concept_origin === "user_uploaded";
+  const effectiveAnchorImage =
+    style?.anchor_image_url || (isCore ? editingMascot?.master_image_url || editingMascot?.master_raw_image_url : null);
 
   const effectiveStyle = useMemo(() => {
     if (!style) return null;
@@ -165,6 +185,8 @@ export function StyleAnchorReferencePin({ style, editingMascot, stylesState, onO
         effectiveAnchorImage={effectiveAnchorImage}
         readiness={readiness}
         totalPoses={totalPoses}
+        isCore={isCore}
+        isUploaded={isUploaded}
         onOpenLightbox={onOpenLightbox}
       />
     );
@@ -175,6 +197,7 @@ export function StyleAnchorReferencePin({ style, editingMascot, stylesState, onO
       styleId={style.id}
       isBusy={isBusy}
       isThisGenerating={isThisGenerating}
+      isUploaded={isUploaded}
       onGenerate={stylesState ? (id) => stylesState.handleGenerateStyleConcept(id) : undefined}
     />
   );

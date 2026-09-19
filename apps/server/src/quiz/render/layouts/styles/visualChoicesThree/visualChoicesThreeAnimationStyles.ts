@@ -7,23 +7,23 @@ export function visualChoicesThreeAnimationStyles(_aspectRatio?: MascotRenderAsp
   return `
 /* === Visual Choices Three Layout: Motion & Reveal === */
 
-/* Staggered Cascading Entrances */
+/* Staggered Cascading Entrances & Organic Floating Sway */
 .layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(1),
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(1) {
   animation: visual-choice-pop-in 0.52s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
-             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.52s) infinite alternate both;
+             visual-card-float-1 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.52s) infinite alternate both;
   will-change: transform, opacity;
 }
 .layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(2),
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(2) {
   animation: visual-choice-pop-in 0.52s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
-             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.66s) infinite alternate both;
+             visual-card-float-2 4.0s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.66s) infinite alternate both;
   will-change: transform, opacity;
 }
 .layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(3),
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(3) {
   animation: visual-choice-pop-in 0.52s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.28s) both,
-             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.80s) infinite alternate both;
+             visual-card-float-3 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.80s) infinite alternate both;
   will-change: transform, opacity;
 }
 
@@ -40,10 +40,37 @@ export function visualChoicesThreeAnimationStyles(_aspectRatio?: MascotRenderAsp
 
 @keyframes visual-card-float {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(-1deg);
   }
   100% {
-    transform: translateY(-6px);
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes visual-card-float-1 {
+  0% {
+    transform: translateY(0) rotate(-1.2deg);
+  }
+  100% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes visual-card-float-2 {
+  0% {
+    transform: translateY(0) rotate(1.2deg);
+  }
+  100% {
+    transform: translateY(-11px) rotate(-1deg);
+  }
+}
+
+@keyframes visual-card-float-3 {
+  0% {
+    transform: translateY(0) rotate(-0.8deg);
+  }
+  100% {
+    transform: translateY(-10px) rotate(1.2deg);
   }
 }
 

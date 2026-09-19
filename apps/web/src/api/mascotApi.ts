@@ -1,4 +1,6 @@
 import type {
+  AnalyzeMascotConceptInput,
+  AnalyzeMascotConceptResponse,
   AssignMascotInput,
   BatchGenerateStyleSlotsInput,
   CalibrateMascotActionRequest,
@@ -20,6 +22,8 @@ import type {
   UpdateMascotInput,
   UpdateMascotSlotInput,
   UpdateMascotStyleInput,
+  UploadMascotConceptInput,
+  UploadMascotConceptResponse,
   UploadMascotSpriteInput,
 } from "@studio/shared";
 import { request } from "./client";
@@ -47,6 +51,22 @@ export const mascotApi = {
       {
         method: "POST",
         body: JSON.stringify(body ?? {}),
+      },
+    ),
+  uploadMascotConcept: (mascotId: string | null | undefined, input: UploadMascotConceptInput) =>
+    request<UploadMascotConceptResponse>(
+      mascotId ? `/api/mascots/${encodeURIComponent(mascotId)}/upload-concept` : "/api/mascots/upload-concept",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
+    ),
+  analyzeMascotConcept: (mascotId: string, input?: AnalyzeMascotConceptInput) =>
+    request<AnalyzeMascotConceptResponse>(
+      `/api/mascots/${encodeURIComponent(mascotId)}/analyze-concept`,
+      {
+        method: "POST",
+        body: JSON.stringify(input ?? {}),
       },
     ),
   generateMascotAction: (id: string, body: GenerateMascotSpriteInput) =>

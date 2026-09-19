@@ -161,6 +161,7 @@ export const commonEn = {
     mascotNameRequired: "Please enter a mascot name!",
     generatingConcept: "Generating Master Concept…",
     conceptGenerated: "Master Concept generated successfully!",
+    conceptUploaded: "Master Concept uploaded successfully!",
     conceptFailed: "Failed to generate concept",
     generatingSprite: "Generating action image for {action}…",
     spriteCompleted: "Action image ready for {action}!",

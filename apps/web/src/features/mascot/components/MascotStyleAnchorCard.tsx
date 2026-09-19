@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Sparkle } from "@phosphor-icons/react";
 import type { MascotProfile, MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
@@ -7,6 +8,7 @@ import { MascotStyleAnchorCanvas } from "./MascotStyleAnchorCanvas";
 import { MascotStyleAnchorActions } from "./MascotStyleAnchorActions";
 import {
   isCoreStyle,
+  isUploadedConcept,
   resolveAnchorImageUrl,
   resolveRawImageUrl,
   parseKeywordsList,
@@ -24,6 +26,7 @@ export interface MascotStyleAnchorCardProps {
 export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpenLightbox }: MascotStyleAnchorCardProps) {
   const { t } = useTranslation();
   const isCore = isCoreStyle(style);
+  const isUploaded = isUploadedConcept(editingMascot);
   const imageUrl = resolveAnchorImageUrl(style, editingMascot);
 
   const isThisGenerating = stylesState?.generatingConceptStyleId === style.id || Boolean(stylesState?.activeStyleIds?.includes(style.id));
@@ -63,6 +66,7 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
         isGenerating={isThisGenerating}
         isQueued={isThisQueued}
         queuePosition={queuePosition}
+        isUploadedConcept={isUploaded}
       />
 
       <MascotStyleAnchorCanvas
@@ -74,9 +78,21 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
         hasImage={hasImage}
         isThisGenerating={isThisGenerating}
         isBusy={isCardActionLocked}
+        isCore={isCore}
+        isUploadedConcept={isUploaded}
         onOpenLightbox={onOpenLightbox}
         onGenerate={handleGenerate}
       />
+
+      {!isCore && isUploaded ? (
+        <div
+          className="style-anchor-uploaded-ref-hint"
+          title={t("mascots.customStyleUploadedAnchorTooltip")}
+        >
+          <Sparkle size={12} weight="fill" />
+          <span>{t("mascots.customStyleUploadedAnchorHint")}</span>
+        </div>
+      ) : null}
 
       <MascotStyleAnchorActions
         isCore={isCore}
@@ -85,6 +101,7 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
         isThisQueued={isThisQueued}
         isCardActionLocked={isCardActionLocked}
         queuePosition={queuePosition}
+        isUploadedConcept={isUploaded}
         onGenerate={handleGenerate}
         onDelete={handleDelete}
       />

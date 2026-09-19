@@ -116,4 +116,45 @@ describe("MascotStyleAnchorCard", () => {
     const rawDownloadBtn = screen.getByTitle("Download Original (Raw Background)");
     expect(rawDownloadBtn.getAttribute("href")).toBe("/api/mascots/mascot_test/assets/style_steampunk_anchor_raw_789.png");
   });
+
+  it("renders Master Concept (Uploaded) badge and uploaded note for core style when concept_origin is user_uploaded", () => {
+    const uploadedMascot: MascotProfile = {
+      ...mockMascot,
+      concept_origin: "user_uploaded",
+      master_image_url: "/uploads/custom_owl_cutout.png",
+      master_raw_image_url: "/uploads/custom_owl_raw.png",
+    };
+
+    const coreStyle: MascotStyle = {
+      id: "core",
+      name: "Core Style",
+      keyword: "",
+      is_default: true,
+      anchor_image_url: "/uploads/custom_owl_cutout.png",
+      raw_anchor_image_url: "/uploads/custom_owl_raw.png",
+      states: { thinking: [], celebrate: [] },
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    };
+
+    render(<MascotStyleAnchorCard style={coreStyle} editingMascot={uploadedMascot} />, { wrapper });
+
+    expect(screen.getByText("Master Concept (Uploaded)")).toBeDefined();
+    expect(screen.getByText("Anchored directly to uploaded master concept")).toBeDefined();
+    expect(screen.queryByTitle("Generate Style Concept")).toBeNull();
+    expect(screen.queryByTitle("Re-roll Concept")).toBeNull();
+  });
+
+  it("renders uploaded master anchor reference chip and hint on custom style cards when concept_origin is user_uploaded", () => {
+    const uploadedMascot: MascotProfile = {
+      ...mockMascot,
+      concept_origin: "user_uploaded",
+      master_image_url: "/uploads/custom_owl_cutout.png",
+    };
+
+    render(<MascotStyleAnchorCard style={mockCustomStyleWithRaw} editingMascot={uploadedMascot} />, { wrapper });
+
+    expect(screen.getByText("Anchor: Uploaded Master")).toBeDefined();
+    expect(screen.getByText("Anchored to uploaded master concept reference")).toBeDefined();
+  });
 });

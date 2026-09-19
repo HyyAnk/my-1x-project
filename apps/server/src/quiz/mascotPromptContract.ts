@@ -1,6 +1,7 @@
 import {
   MASCOT_ACTION_META,
   type MascotActionType,
+  type MascotConceptOrigin,
   type MascotProfile,
   type MascotStyle,
   type QuizImageStyle,
@@ -77,13 +78,25 @@ export function buildMascotConceptPrompt(
  * the master character identity (@1 reference) while applying the style costume.
  */
 export function buildMascotStyleConceptPrompt(
-  mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme">,
+  mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme"> & {
+    concept_origin?: MascotConceptOrigin;
+    master_image_url?: string | null;
+  },
   style: Pick<MascotStyle, "name" | "keyword">,
   overridePrompt?: string,
 ): string {
-  const continuityDirective = `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
+  const isUserUploaded =
+    mascot.concept_origin === "user_uploaded" ||
+    (Boolean(mascot.master_image_url) && !mascot.master_prompt?.trim());
 
   const costumeTarget = style.keyword?.trim() || style.name;
+  const keywordsDesc = style.keyword?.trim() ? ` (${style.keyword.trim()})` : "";
+  const styleThemeDesc = `${style.name}${keywordsDesc}`;
+
+  const continuityDirective = isUserUploaded
+    ? `Strictly preserve character identity from @1 for "${mascot.name}": Preserve the exact character identity, color palette, and recognizable anatomical features from the reference image, while re-imagining the character in the specified theme/style: ${styleThemeDesc}. Face, fur/skin tone, eye shape, and proportions matching the master reference image.`
+    : `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
+
   const costumeDirective = `Theme & Costume: Styled in authentic ${costumeTarget} attire, costume, and accessories.`;
 
   const customDirective = overridePrompt?.trim()
@@ -160,7 +173,10 @@ export interface MascotPromptBuildOptions {
  * Builds the canonical action state prompt for Step 2 (Expressive Studio)
  */
 export function buildMascotActionPrompt(
-  mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme">,
+  mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme"> & {
+    concept_origin?: MascotConceptOrigin;
+    master_image_url?: string | null;
+  },
   action: MascotActionType,
   options: MascotPromptBuildOptions = {},
 ): string {
@@ -168,6 +184,10 @@ export function buildMascotActionPrompt(
   const meta = MASCOT_ACTION_META[action] || MASCOT_ACTION_META.idle;
   const styleDesc = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
   const baseDesc = mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly companion`;
+
+  const isUserUploaded =
+    mascot.concept_origin === "user_uploaded" ||
+    (Boolean(mascot.master_image_url) && !mascot.master_prompt?.trim());
 
   const fallbackPose =
     options.slotIndex !== undefined && (action === "thinking" || action === "celebrate")
@@ -185,7 +205,9 @@ export function buildMascotActionPrompt(
 
   if (options.hasReferenceImage) {
     if (options.hasStyleAnchor) {
-      const continuityDirective = `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`;
+      const continuityDirective = isUserUploaded
+        ? `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". Maintain strict fidelity to the reference image character identity, color palette, and recognizable anatomical features. The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`
+        : `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`;
 
       if (isHalfBody) {
         const compositionDirective = `Composition: Large half-body subject on a 16:9 widescreen canvas (1280x720), centered and neutral with respect to final placement. Positioned in lower-middle frame with generous upper headroom: top one-third of the frame must remain empty flat chroma key green background to allow character animation jumps and vertical motions without clipping. The lower torso continues beyond the bottom edge of the frame; head, ears, and hands remain within safe margins below the top one-third boundary line. Strictly no corner placement, no bottom-left anchoring, no floor, no pedestal, no scenery.`;
@@ -196,7 +218,9 @@ export function buildMascotActionPrompt(
       return parts.join(" ");
     }
 
-    const continuityDirective = `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
+    const continuityDirective = isUserUploaded
+      ? `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image. Maintain strong fidelity to the reference image character identity, color palette, and recognizable anatomical features while performing the pose: ${actionText}.`
+      : `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
 
     if (isHalfBody) {
       const compositionDirective = `Composition: Large half-body subject on a 16:9 widescreen canvas (1280x720), centered and neutral with respect to final placement. Positioned in lower-middle frame with generous upper headroom: top one-third of the frame must remain empty flat chroma key green background to allow character animation jumps and vertical motions without clipping. The lower torso continues beyond the bottom edge of the frame; head, ears, and hands remain within safe margins below the top one-third boundary line. Strictly no corner placement, no bottom-left anchoring, no floor, no pedestal, no scenery.`;
@@ -242,6 +266,18 @@ export function buildMascotActionPrompt(
     isolationTags,
     `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no turnaround, no collage.`,
   ].join(" ");
+}
+
+/**
+ * Builds the canonical prompt for a mascot style state slot (Thinking, Celebrate, Idle, etc.).
+ * When concept_origin is "user_uploaded", enforces strong reference image fidelity.
+ */
+export function buildMascotSlotPrompt(
+  mascot: Parameters<typeof buildMascotActionPrompt>[0],
+  action: MascotActionType,
+  options: MascotPromptBuildOptions = {},
+): string {
+  return buildMascotActionPrompt(mascot, action, options);
 }
 
 /**

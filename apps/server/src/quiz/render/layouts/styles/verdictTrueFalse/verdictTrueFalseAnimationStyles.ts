@@ -13,10 +13,10 @@ export function verdictTrueFalseAnimationStyles(): string {
 
 @keyframes visual-card-float {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(-0.8deg);
   }
   100% {
-    transform: translateY(-6px);
+    transform: translateY(-10px) rotate(0.8deg);
   }
 }
 

@@ -36,3 +36,21 @@ export { QuestionContentTypeSchema, inferQuestionHistoryContentType } from "./sc
 export type { QuestionContentType } from "./schemas/config.js";
 export * from "./quizAnswerMode.js";
 export * from "./quizRevealTiming.js";
+export {
+  MascotConceptOriginSchema,
+  type MascotConceptOrigin,
+  MascotUploadMimeTypeSchema,
+  type MascotUploadMimeType,
+  UploadMascotConceptInputSchema,
+  type UploadMascotConceptInput,
+  type UploadMascotConceptRequest,
+  UploadMascotConceptResponseSchema,
+  type UploadMascotConceptResponse,
+  MascotVisionAnalysisResultSchema,
+  type MascotVisionAnalysisResult,
+  AnalyzeMascotConceptInputSchema,
+  type AnalyzeMascotConceptInput,
+  AnalyzeMascotConceptResponseSchema,
+  type AnalyzeMascotConceptResponse,
+} from "./schemas/mascot.js";
+

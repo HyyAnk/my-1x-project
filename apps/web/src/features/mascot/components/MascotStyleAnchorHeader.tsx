@@ -13,6 +13,7 @@ export interface MascotStyleAnchorHeaderProps {
   isQueued?: boolean;
   queuePosition?: number;
   isGenerating?: boolean;
+  isUploadedConcept?: boolean;
 }
 
 export function MascotStyleAnchorHeader({
@@ -26,6 +27,7 @@ export function MascotStyleAnchorHeader({
   isQueued = false,
   queuePosition = 0,
   isGenerating = false,
+  isUploadedConcept = false,
 }: MascotStyleAnchorHeaderProps) {
   const { t } = useTranslation();
 
@@ -52,7 +54,13 @@ export function MascotStyleAnchorHeader({
       <div className="style-anchor-header-right">
         {isCore ? (
           <div className="style-anchor-badge-group">
-            <span className="style-anchor-badge badge-core">{t("mascots.styleAnchorCoreBadge")}</span>
+            {isUploadedConcept ? (
+              <span className="style-anchor-badge badge-uploaded" title={t("mascots.coreStyleUploadedTooltip")}>
+                {t("mascots.coreStyleUploadedBadge")}
+              </span>
+            ) : (
+              <span className="style-anchor-badge badge-core">{t("mascots.styleAnchorCoreBadge")}</span>
+            )}
             <span className="style-anchor-badge badge-locked">
               <Lock size={12} weight="bold" />
               <span>{t("mascots.styleAnchorStatusLocked")}</span>
@@ -60,6 +68,14 @@ export function MascotStyleAnchorHeader({
           </div>
         ) : (
           <div className="style-anchor-badge-group">
+            {isUploadedConcept ? (
+              <span
+                className="style-anchor-badge badge-uploaded-ref"
+                title={t("mascots.customStyleUploadedAnchorTooltip")}
+              >
+                {t("mascots.customStyleUploadedAnchorRef")}
+              </span>
+            ) : null}
             {isGenerating ? (
               <span
                 className="style-anchor-badge badge-generating"

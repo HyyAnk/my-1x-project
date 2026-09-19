@@ -68,6 +68,13 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
         </div>
       </div>
 
+      {editingMascot?.concept_origin === "user_uploaded" ? (
+        <div className="style-concept-uploaded-banner" role="status">
+          <Sparkle size={15} weight="fill" className="uploaded-banner-icon" />
+          <span>{t("mascots.derivedFromUploadedMasterNotice")}</span>
+        </div>
+      ) : null}
+
       {stylesState?.styleQueueProgress ? (
         <MascotStyleQueueProgressCard
           styleQueueProgress={stylesState.styleQueueProgress}

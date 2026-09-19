@@ -1,16 +1,18 @@
+import type { MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import { getLocalizedActionMeta } from "../constants";
 
 export interface MascotGeneratorStepperHeaderProps {
   generatorStep: number;
   onSelectStep: (step: 1 | 2 | 3 | 4) => void;
-  hasMasterImage: boolean;
+  hasMasterImage?: boolean;
   busyAction: string | null;
   overallProgress: number;
   generationElapsed: number;
   currentStageMessage: string;
   batchTotal?: number;
   batchState?: { total?: number } | null;
+  editingMascot?: MascotProfile | null;
 }
 
 function getBannerTitle(busyAction: string, t: ReturnType<typeof useTranslation>["t"], batchTotal?: number): string {
@@ -29,15 +31,24 @@ function getBannerTitle(busyAction: string, t: ReturnType<typeof useTranslation>
 export function MascotGeneratorStepperHeader({
   generatorStep,
   onSelectStep,
-  hasMasterImage,
+  hasMasterImage = false,
   busyAction,
   overallProgress,
   generationElapsed,
   currentStageMessage,
   batchTotal,
   batchState,
+  editingMascot,
 }: MascotGeneratorStepperHeaderProps) {
   const { t } = useTranslation();
+
+  const isMasterReady =
+    Boolean(hasMasterImage) ||
+    Boolean(
+      editingMascot?.master_image_url ||
+      editingMascot?.master_raw_image_url ||
+      editingMascot?.styles?.some((s) => (s.id === "core" || s.is_default) && s.anchor_image_url),
+    );
 
   return (
     <>
@@ -56,7 +67,7 @@ export function MascotGeneratorStepperHeader({
           type="button"
           className={`wizard-step-btn ${generatorStep === 2 ? "is-active" : generatorStep > 2 ? "is-done" : ""}`}
           onClick={() => onSelectStep(2)}
-          disabled={!hasMasterImage}
+          disabled={!isMasterReady}
         >
           <span className="step-num">2</span>
           <span className="step-label">{t("mascots.generatorStep2")}</span>
@@ -66,7 +77,7 @@ export function MascotGeneratorStepperHeader({
           type="button"
           className={`wizard-step-btn ${generatorStep === 3 ? "is-active" : generatorStep > 3 ? "is-done" : ""}`}
           onClick={() => onSelectStep(3)}
-          disabled={!hasMasterImage}
+          disabled={!isMasterReady}
         >
           <span className="step-num">3</span>
           <span className="step-label">{t("mascots.generatorStep3")}</span>
@@ -76,7 +87,7 @@ export function MascotGeneratorStepperHeader({
           type="button"
           className={`wizard-step-btn ${generatorStep === 4 ? "is-active" : ""}`}
           onClick={() => onSelectStep(4)}
-          disabled={!hasMasterImage}
+          disabled={!isMasterReady}
         >
           <span className="step-num">4</span>
           <span className="step-label">{t("mascots.generatorStep4")}</span>

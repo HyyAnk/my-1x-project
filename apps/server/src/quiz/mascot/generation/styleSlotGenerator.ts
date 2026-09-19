@@ -1,7 +1,7 @@
 import type { AppConfig, GenerateMascotSlotInput, MascotProfile, MascotStateVariant } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import type { StudioLogger } from "../../../logger.js";
-import { buildMascotActionPrompt } from "../../mascotPromptContract.js";
+import { buildMascotSlotPrompt } from "../../mascotPromptContract.js";
 import { generateProceduralStateArt } from "../proceduralArt.js";
 import { generateMascotArtWithFallback } from "../services/mascotAiImageClient.js";
 import { deletePreviousMascotAsset, resolveSlotPromptModifier, resolveSlotReferenceImage } from "./artGeneratorHelpers.js";
@@ -26,9 +26,9 @@ export async function generateMascotStyleSlot(
   const isHalfBody16x9 = effectiveComposition === "half_body_16_9";
 
   const effectivePromptModifier = resolveSlotPromptModifier(style, input.state, input.slot_index, input.prompt_modifier);
-  const { referenceImageBase64, hasStyleAnchor } = await resolveSlotReferenceImage(repository, mascot, style.anchor_image_url, logger);
+  const { referenceImageBase64, hasStyleAnchor } = await resolveSlotReferenceImage(repository, mascot, style, logger);
 
-  const fullPrompt = buildMascotActionPrompt(mascot, input.state, {
+  const fullPrompt = buildMascotSlotPrompt(mascot, input.state, {
     prompt: effectivePromptModifier,
     keyword: style.keyword,
     hasReferenceImage: Boolean(referenceImageBase64),

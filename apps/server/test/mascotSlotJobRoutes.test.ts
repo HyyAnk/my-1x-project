@@ -9,7 +9,7 @@ import { createMascotSlotJobManager, createMascotSlotJobRepository } from "../sr
 const roots: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })));
 });
 
 async function setupTestApp(customSlotGenerator?: Parameters<typeof createMascotSlotJobManager>[0]["slotGenerator"]) {

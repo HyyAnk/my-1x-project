@@ -40,7 +40,9 @@ export function visualChoicesThreePureCardStyles(): string {
 }
 
 .quiz-frame-unified.layout-visual_choices_three_pure .choice-media,
-.quiz-frame-unified.layout-visual_choices_three_pure .option-image {
+.quiz-frame-unified.layout-visual_choices_three_pure .option-image,
+.layout-visual_choices_three_pure .choice-media,
+.layout-visual_choices_three_pure .option-image {
   position: relative;
   width: 100%;
   height: var(--slot-media-height, 564px);
@@ -57,6 +59,7 @@ export function visualChoicesThreePureCardStyles(): string {
     0 0 24px rgba(255, 215, 0, 0.12),
     inset 0 3px 0 rgba(255, 255, 255, 0.85);
   transition: transform 0.3s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  animation: none;
 }
 
 .quiz-frame-unified.layout-visual_choices_three_pure .option-image img {

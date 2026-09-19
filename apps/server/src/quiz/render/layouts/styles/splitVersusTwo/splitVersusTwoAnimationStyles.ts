@@ -6,20 +6,20 @@ export function splitVersusTwoAnimationStyles(): string {
 /* --- Phase 2: Challenger Entrance Animations --- */
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1) {
   animation: split-versus-enter-left 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
-             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
+             answer-float 3.55s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
 }
 
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2) {
   animation: split-versus-enter-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
-             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
+             answer-float 4.15s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.91s) infinite alternate both;
 }
 
-/* Contender Image Floating Motion */
+/* Contender Image Floating Sway Motion */
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1) .choice-media,
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1) .option-image,
 .layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(1) .choice-media,
 .layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(1) .option-image {
-  animation: visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
+  animation: split-versus-float-left 3.7s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite both;
   will-change: transform;
 }
 
@@ -27,16 +27,46 @@ export function splitVersusTwoAnimationStyles(): string {
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2) .option-image,
 .layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(2) .choice-media,
 .layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(2) .option-image {
-  animation: visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
+  animation: split-versus-float-right 4.35s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.91s) infinite both;
   will-change: transform;
 }
 
 @keyframes visual-card-float {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(-1deg);
   }
   100% {
-    transform: translateY(-6px);
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes split-versus-float-left {
+  0% {
+    transform: translateY(-2px) rotate(-1.1deg) scale(1);
+  }
+  38% {
+    transform: translateY(-13px) rotate(0.7deg) scale(1.007);
+  }
+  72% {
+    transform: translateY(-5px) rotate(-0.35deg) scale(1.002);
+  }
+  100% {
+    transform: translateY(-2px) rotate(-1.1deg) scale(1);
+  }
+}
+
+@keyframes split-versus-float-right {
+  0% {
+    transform: translateY(-7px) rotate(0.8deg) scale(1.003);
+  }
+  27% {
+    transform: translateY(-1px) rotate(0.3deg) scale(1);
+  }
+  64% {
+    transform: translateY(-14px) rotate(-0.9deg) scale(1.008);
+  }
+  100% {
+    transform: translateY(-7px) rotate(0.8deg) scale(1.003);
   }
 }
 
@@ -85,7 +115,7 @@ export function splitVersusTwoAnimationStyles(): string {
 .layout-split_versus_two .choice-card:nth-child(1).answer-reveal-correct {
   animation:
     split-versus-enter-left 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
-    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both,
+    answer-float 3.55s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both,
     split-versus-winner-coronation 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   background: transparent;
   border: 0;
@@ -98,7 +128,7 @@ export function splitVersusTwoAnimationStyles(): string {
 .layout-split_versus_two .choice-card:nth-child(1).answer-reveal-incorrect {
   animation:
     split-versus-enter-left 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
-    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both,
+    answer-float 3.55s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both,
     split-versus-loser-defeat 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: opacity, filter;
   background: transparent;
@@ -110,7 +140,7 @@ export function splitVersusTwoAnimationStyles(): string {
 .layout-split_versus_two .choice-card:nth-child(2).answer-reveal-correct {
   animation:
     split-versus-enter-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
-    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both,
+    answer-float 4.15s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.91s) infinite alternate both,
     split-versus-winner-coronation 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   background: transparent;
   border: 0;
@@ -122,7 +152,7 @@ export function splitVersusTwoAnimationStyles(): string {
 .layout-split_versus_two .choice-card:nth-child(2).answer-reveal-incorrect {
   animation:
     split-versus-enter-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
-    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both,
+    answer-float 4.15s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.91s) infinite alternate both,
     split-versus-loser-defeat 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: opacity, filter;
   background: transparent;

@@ -88,6 +88,9 @@ export type MascotStyle = Omit<z.infer<typeof MascotStyleSchema>, "anchor_image_
   raw_anchor_image_url?: string | null;
 };
 
+export const MascotConceptOriginSchema = z.enum(["ai_generated", "user_uploaded"]);
+export type MascotConceptOrigin = z.infer<typeof MascotConceptOriginSchema>;
+
 export const MascotProfileSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -97,6 +100,7 @@ export const MascotProfileSchema = z.object({
   master_image_url: z.string().nullable().default(null),
   master_raw_image_url: z.string().nullable().optional().default(null),
   color_theme: z.string().default("#06b6d4"),
+  concept_origin: MascotConceptOriginSchema.optional(),
   /**
    * @deprecated Legacy V1 sprite actions map. Retained for backwards compatibility.
    * Canonical V2 mascot assets reside in `render_bundle` and `styles`.
@@ -119,6 +123,7 @@ export type MascotProfile = Omit<z.infer<typeof MascotProfileSchema>, "styles" |
   master_raw_image_url?: string | null;
   /** Canonical V2 visual styles with state variants. */
   styles?: MascotStyle[];
+  concept_origin?: MascotConceptOrigin;
 };
 
 function buildSynthesizedStateVariant(
@@ -299,3 +304,61 @@ export function resolveMascotStageDefaultPlacement(
 
   return { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS[aspectRatio] };
 }
+
+export const MascotUploadMimeTypeSchema = z.enum(["image/png", "image/jpeg", "image/webp"]);
+export type MascotUploadMimeType = z.infer<typeof MascotUploadMimeTypeSchema>;
+
+export const UploadMascotConceptInputSchema = z.object({
+  image_data: z.string().min(1),
+  mime_type: MascotUploadMimeTypeSchema.optional(),
+  auto_matting: z.boolean().default(true).optional(),
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  color_theme: z.string().optional(),
+  visual_style: QuizImageStyleSchema.optional(),
+});
+
+export type UploadMascotConceptInput = z.infer<typeof UploadMascotConceptInputSchema>;
+export type UploadMascotConceptRequest = z.input<typeof UploadMascotConceptInputSchema>;
+
+export const UploadMascotConceptResponseSchema = z.object({
+  mascot: MascotProfileSchema,
+  master_image_url: z.string(),
+  master_raw_image_url: z.string().optional().nullable(),
+  extracted_color: z.string().optional(),
+  extracted_tags: z.array(z.string()).optional(),
+});
+
+export type UploadMascotConceptResponse = z.infer<typeof UploadMascotConceptResponseSchema>;
+
+export const MascotVisionAnalysisResultSchema = z.object({
+  subject: z.string(),
+  dominant_color: z.string(),
+  palette: z.array(z.string()).default([]),
+  tags: z.array(z.string()).default([]),
+  suggested_master_prompt: z.string().default(""),
+  suggested_visual_style: QuizImageStyleSchema.default("pixar_3d"),
+  source: z.enum(["ai_vision", "local_fallback"]),
+  confidence: z.number().min(0).max(1).optional(),
+});
+
+export type MascotVisionAnalysisResult = z.infer<typeof MascotVisionAnalysisResultSchema>;
+
+export const AnalyzeMascotConceptInputSchema = z
+  .object({
+    force_ai: z.boolean().optional(),
+    save: z.boolean().optional(),
+  })
+  .optional();
+
+export type AnalyzeMascotConceptInput = z.infer<typeof AnalyzeMascotConceptInputSchema>;
+
+export const AnalyzeMascotConceptResponseSchema = z.object({
+  mascot_id: z.string(),
+  analysis: MascotVisionAnalysisResultSchema,
+  extracted_color: z.string(),
+  extracted_tags: z.array(z.string()),
+});
+
+export type AnalyzeMascotConceptResponse = z.infer<typeof AnalyzeMascotConceptResponseSchema>;
+

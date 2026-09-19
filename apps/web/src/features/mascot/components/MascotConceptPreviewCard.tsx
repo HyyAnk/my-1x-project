@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CircleNotch, DownloadSimple, MagnifyingGlassPlus, PaintBrush } from "@phosphor-icons/react";
+import { CircleNotch, DownloadSimple, MagnifyingGlassPlus, PaintBrush, UploadSimple } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 
@@ -46,6 +46,16 @@ export function MascotConceptPreviewCard({
       <div className="wizard-card-header-flex">
         <div>
           <h3>{t("mascots.masterPreviewTitle")}</h3>
+          {editingMascot?.concept_origin === "user_uploaded" ? (
+            <span
+              className="uploaded-origin-badge"
+              data-testid="uploaded-origin-badge"
+              style={{ marginTop: "6px" }}
+            >
+              <UploadSimple size={12} weight="bold" />
+              {t("mascots.uploadedOriginBadge")}
+            </span>
+          ) : null}
         </div>
         {editingMascot?.master_image_url && !busyAction ? (
           <button
@@ -124,6 +134,15 @@ export function MascotConceptPreviewCard({
               <span>{t("common.status")}:</span>
               <strong style={{ color: "var(--green)" }}>{t("mascots.statusIdentityLocked")}</strong>
             </div>
+            {editingMascot.concept_origin === "user_uploaded" ? (
+              <div className="concept-meta-item" data-testid="meta-concept-origin">
+                <span>{t("mascots.originLabel")}:</span>
+                <span className="uploaded-origin-badge">
+                  <UploadSimple size={12} weight="bold" />
+                  {t("mascots.uploadedOriginBadge")}
+                </span>
+              </div>
+            ) : null}
             <div className="concept-meta-item">
               <span>{t("mascots.statusStyle")}</span>
               <strong>{QUIZ_IMAGE_STYLE_LABELS[editingMascot.visual_style]}</strong>
@@ -138,6 +157,7 @@ export function MascotConceptPreviewCard({
               onClick={() => onRemoveBackground("master")}
               style={{ flex: 1, justifyContent: "center" }}
               title={t("mascots.mattingMasterBtn")}
+              data-testid="matting-master-btn"
             >
               {busyAction === "matting-master" ? <CircleNotch className="spin" size={14} /> : <PaintBrush size={14} />}
               <span>{busyAction === "matting-master" ? t("mascots.mattingInProgress") : t("mascots.mattingMasterBtn")}</span>
@@ -150,6 +170,7 @@ export function MascotConceptPreviewCard({
                 className="icon-button"
                 title={t("mascots.downloadRawBtn")}
                 aria-label={t("mascots.downloadRawBtn")}
+                data-testid="download-raw-btn"
                 target="_blank"
                 rel="noreferrer"
                 style={{
@@ -172,6 +193,7 @@ export function MascotConceptPreviewCard({
               className="icon-button"
               title={t("mascots.downloadCutoutBtn")}
               aria-label={t("mascots.downloadCutoutBtn")}
+              data-testid="download-cutout-btn"
               target="_blank"
               rel="noreferrer"
               style={{
