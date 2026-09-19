@@ -38,6 +38,17 @@ function extractMetadataErrorCode(error: Error): string | null {
   return null;
 }
 
+function extractNonRetryableProviderError(error: unknown): { code?: string; message: string } | null {
+  if (!error || typeof error !== "object" || (error as { retryable?: unknown }).retryable !== false) {
+    return null;
+  }
+  const candidate = error as { code?: unknown; message?: unknown };
+  return {
+    code: typeof candidate.code === "string" ? candidate.code : undefined,
+    message: typeof candidate.message === "string" ? candidate.message : "non-retryable provider error",
+  };
+}
+
 export function classifyAssetError(
   request: QuizAssetPlan["assets"][number],
   error: unknown,
@@ -85,6 +96,21 @@ export function classifyAssetError(
         ),
       };
     }
+  }
+
+  const nonRetryableError = extractNonRetryableProviderError(error);
+  if (nonRetryableError) {
+    const errorLabel = nonRetryableError.code ? ` (${nonRetryableError.code})` : "";
+    return {
+      terminal: true,
+      issue: createQuizAssetIssue(
+        request,
+        "asset_generation_failed",
+        "blocker",
+        `Image generation failed for ${request.asset_id}${errorLabel}: ${nonRetryableError.message}`,
+        "Review the provider error, update its configuration if needed, then retry generation.",
+      ),
+    };
   }
 
   if (round === maxRounds) {

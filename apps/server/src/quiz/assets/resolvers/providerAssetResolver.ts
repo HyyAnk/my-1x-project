@@ -3,6 +3,10 @@ import { RepositoryError } from "../../../repository.js";
 import { Gpti2QuizImageProvider } from "../../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../../providers/shopAiKeyImage.js";
 import { ImgStudioQuizImageProvider } from "../../../providers/imgstudio/index.js";
+import {
+  describeImgStudioModel,
+  resolveImgStudioFallbackModels,
+} from "../../../providers/imgstudio/fallbackModels.js";
 import { getRecommendationForAssetRequirement, validateQuizImageBytes } from "../imageMetadataValidator.js";
 import type { ProviderAssetInput, ProviderAssetOutput } from "./types/providerAsset.types.js";
 import {
@@ -98,42 +102,74 @@ async function validateAndEnrichAsset(
 }
 
 /**
- * Resolves a quiz asset with the configured primary provider and automatic ImgStudio tier fallback.
+ * Resolves a quiz asset with the configured primary provider and two-tier ImgStudio fallback.
  */
 export async function resolveProviderAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
   const { channelId, episodeId, request, imageFallbackConfig, logger } = input;
+  const fallbackModels = resolveImgStudioFallbackModels(imageFallbackConfig?.model);
   const isFallbackEnabled =
     imageFallbackConfig?.enabled !== false &&
     ImgStudioQuizImageProvider.isConfigured(imageFallbackConfig?.api_key);
+  input.cancellationSignal?.throwIfAborted();
 
   try {
     const primaryResult = await attemptPrimaryProvider(input);
+    input.cancellationSignal?.throwIfAborted();
     return await validateAndEnrichAsset(input, primaryResult);
   } catch (primaryError) {
+    if (input.cancellationSignal?.aborted) throw primaryError;
     if (!isFallbackEnabled) {
       throw primaryError;
     }
 
     const reason = primaryError instanceof Error ? primaryError.message : String(primaryError);
     logger.warn(
-      `Primary image provider failed for asset ${request.asset_id} (${reason}). Initiating automatic fallback to ImgStudio...`,
+      `Primary image provider failed for asset ${request.asset_id} (${reason}). Starting ImgStudio Level 1 with ${describeImgStudioModel(fallbackModels.level1)}.`,
       { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_TRIGGERED" },
     );
 
     try {
-      const fallbackResult = await generateImgStudioAsset(input);
+      const fallbackResult = await generateImgStudioAsset(input, {
+        modelOverride: fallbackModels.level1,
+        fallbackTier: 1,
+        idempotencyScope: "fallback-level-1",
+      });
+      input.cancellationSignal?.throwIfAborted();
       const validatedFallback = await validateAndEnrichAsset(input, fallbackResult);
       logger.info(
-        `Asset ${request.asset_id} successfully recovered via ImgStudio fallback (${validatedFallback.entry.path}).`,
+        `Asset ${request.asset_id} successfully recovered via ImgStudio Level 1 fallback (${validatedFallback.entry.path}).`,
         { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_SUCCESS" },
       );
       return validatedFallback;
-    } catch (fallbackError) {
-      logger.error(
-        `ImgStudio fallback generation also failed for asset ${request.asset_id}: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`,
-        { profileId: channelId, workerId: episodeId },
+    } catch (fallback1Error) {
+      if (input.cancellationSignal?.aborted) throw fallback1Error;
+      const fb1Reason = fallback1Error instanceof Error ? fallback1Error.message : String(fallback1Error);
+      logger.warn(
+        `ImgStudio Level 1 failed for asset ${request.asset_id} (${fb1Reason}). Starting Level 2 with ${describeImgStudioModel(fallbackModels.level2)}.`,
+        { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_L2_TRIGGERED" },
       );
-      throw primaryError;
+
+      try {
+        const fallback2Result = await generateImgStudioAsset(input, {
+          modelOverride: fallbackModels.level2,
+          fallbackTier: 2,
+          idempotencyScope: "fallback-level-2",
+        });
+        input.cancellationSignal?.throwIfAborted();
+        const validatedFallback2 = await validateAndEnrichAsset(input, fallback2Result);
+        logger.info(
+          `Asset ${request.asset_id} successfully recovered via ImgStudio Level 2 fallback (${validatedFallback2.entry.path}).`,
+          { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_L2_SUCCESS" },
+        );
+        return validatedFallback2;
+      } catch (fallback2Error) {
+        if (input.cancellationSignal?.aborted) throw fallback2Error;
+        logger.error(
+          `ImgStudio Level 2 failed for asset ${request.asset_id}: ${fallback2Error instanceof Error ? fallback2Error.message : String(fallback2Error)}`,
+          { profileId: channelId, workerId: episodeId },
+        );
+        throw fallback2Error;
+      }
     }
   }
 }

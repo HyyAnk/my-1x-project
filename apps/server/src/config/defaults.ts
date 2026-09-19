@@ -1,4 +1,4 @@
-import type { AppConfig } from "@studio/shared";
+import { IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, type AppConfig } from "@studio/shared";
 
 export const DEFAULT_CONFIG: AppConfig = {
   active_engine: "codex",
@@ -40,7 +40,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     provider: "imgstudio",
     base_url: "https://imgstudio.site",
     api_key: "",
-    model: "2d059365-a09a-4fd5-aa9e-b5335d09bbe9",
+    model: IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
     resolution: "2K",
     quality: "standard",
   },

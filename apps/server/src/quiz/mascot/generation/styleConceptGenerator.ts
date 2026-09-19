@@ -42,7 +42,7 @@ export async function generateMascotStyleConcept(
       size: "1024x1024",
       referenceImageBase64,
       background: "opaque",
-      cancellationSignal: options.signal ?? AbortSignal.timeout(90_000),
+      cancellationSignal: options.signal,
       idempotencyKey: `mascot_${mascot.id}_${styleId}_anchor_${timestamp}`,
     },
     logger,
@@ -50,13 +50,17 @@ export async function generateMascotStyleConcept(
     actionLabel: `mascot style concept for ${mascot.name} style ${style.name} (${styleId})`,
     fallbackArt: () => generateProceduralMascotArt(mascot.name, mascot.color_theme, `style_${styleId}`),
   });
+  options.signal?.throwIfAborted();
 
   const { anchor_image_url, raw_image_url } = await withMascotWriteLock(mascot.id, async () => {
+    options.signal?.throwIfAborted();
     deletePreviousMascotAsset(repository, mascot.id, style.anchor_image_url, mattedFilename);
     deletePreviousMascotAsset(repository, mascot.id, style.anchor_image_url?.replace("_anchor_", "_anchor_raw_"), rawFilename);
 
     const savedAnchorUrl = await repository.saveMascotAsset(mascot.id, mattedFilename, mattedBytes);
+    options.signal?.throwIfAborted();
     const savedRawUrl = await repository.saveMascotAsset(mascot.id, rawFilename, rawBytes);
+    options.signal?.throwIfAborted();
 
     if (typeof repository.getMascot === "function" && typeof repository.saveMascot === "function") {
       const latest = await repository.getMascot(mascot.id).catch(() => mascot);
@@ -65,6 +69,7 @@ export async function generateMascotStyleConcept(
           ? { ...s, anchor_image_url: savedAnchorUrl, raw_anchor_image_url: savedRawUrl, updated_at: new Date().toISOString() }
           : s,
       );
+      options.signal?.throwIfAborted();
       await repository.saveMascot({ ...latest, styles: updatedStyles, updated_at: new Date().toISOString() });
     }
 

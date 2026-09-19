@@ -125,8 +125,9 @@ export function choiceStateStyles(): string {
 .quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct .option-image,
 .quiz-question-clip .choice-card-visual:nth-child(n).answer-correct .option-image,
 .quiz-question-clip .choice-card-visual:nth-child(n).answer-reveal-correct .option-image {
-  animation: visual-correct-border .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
-  will-change: border-color, box-shadow;
+  animation: visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--item-phase, 0s)) infinite alternate both,
+             visual-correct-border .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow, transform;
 }
 
 .visual-answer-card.answer-correct .visual-answer-label,

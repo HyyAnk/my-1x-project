@@ -71,10 +71,17 @@ export function generateIdempotencyKey(prefix: string, seed: string): string {
   return `${prefix}_${hash}`;
 }
 
-export async function downloadImageUrl(url: string, cancellationSignal?: AbortSignal): Promise<Uint8Array> {
+export async function downloadImageUrl(
+  url: string,
+  cancellationSignal?: AbortSignal,
+  headers?: Record<string, string>,
+): Promise<Uint8Array> {
   const signal = cancellationSignal ? AbortSignal.any([cancellationSignal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000);
 
-  const response = await fetch(url, { signal });
+  const response = await fetch(url, {
+    signal,
+    headers: headers ? { ...headers } : undefined,
+  });
   if (!response.ok) {
     throw new RepositoryError(`Failed to download generated image (${response.status})`, "IMAGE_PROVIDER_FAILED");
   }

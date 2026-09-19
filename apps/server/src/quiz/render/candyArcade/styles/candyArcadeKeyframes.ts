@@ -36,8 +36,8 @@ export function candyArcadeKeyframesCss(): string {
 @keyframes correct-surface-reveal { 0% { } 55% { border-color: #4ADE80; box-shadow: 0 18px 0 #15803D, 0 0 40px rgba(74,222,128,.8), inset 0 4px 0 rgba(255,255,255,.95); } 76% { } 100% { border-color: #22C55E; box-shadow: 0 16px 0 #15803D, 0 0 36px rgba(74,222,128,.75), inset 0 4px 0 rgba(255,255,255,.95); } }
 @keyframes correct-badge-reveal { 0% { transform: scale(1); } 55% { transform: scale(1.14); } 100% { transform: scale(1.06); } }
 @keyframes visual-correct-card-reveal { 0% { transform: translateY(0) scale(1); } 55% { transform: translateY(-12px) scale(1.06); } 100% { transform: translateY(-4px) scale(1.03); } }
-@keyframes visual-correct-border { 0% { border-color: #fff; } 55% { border-color: #22C55E; box-shadow: 0 18px 0 #15803D, 0 0 40px rgba(74,222,128,.8), inset 0 4px 8px rgba(255,255,255,.95); } 100% { border-color: #22C55E; box-shadow: 0 16px 0 #15803D, 0 0 36px rgba(74,222,128,.75), inset 0 4px 8px rgba(255,255,255,.95); } }
-@keyframes visual-correct-label-reveal { 0% { border-color: #fff; } 55% { border-color: #22C55E; box-shadow: 0 12px 0 #15803D, 0 0 28px rgba(74,222,128,.7); } 100% { border-color: #22C55E; box-shadow: 0 10px 0 #15803D, 0 0 24px rgba(74,222,128,.65); } }
+@keyframes visual-correct-border { 0% { } 55% { border-color: #22C55E; box-shadow: 0 18px 0 #15803D, 0 0 40px rgba(74,222,128,.8), inset 0 4px 8px rgba(255,255,255,.95); } 100% { border-color: #22C55E; box-shadow: 0 16px 0 #15803D, 0 0 36px rgba(74,222,128,.75), inset 0 4px 8px rgba(255,255,255,.95); } }
+@keyframes visual-correct-label-reveal { 0% { } 55% { border-color: #22C55E; box-shadow: 0 12px 0 #15803D, 0 0 28px rgba(74,222,128,.7); } 100% { border-color: #22C55E; box-shadow: 0 10px 0 #15803D, 0 0 24px rgba(74,222,128,.65); } }
 @keyframes incorrect-card-settle { from { opacity: 1; transform: scale(1); filter: grayscale(0%) contrast(1) brightness(1); } to { opacity: .35; transform: scale(.94); filter: grayscale(78%) contrast(0.95) brightness(0.92); } }
 @keyframes status-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
 @keyframes cross-pop { 0% { transform: scale(0); } 65% { transform: scale(1.15); } 100% { transform: scale(1); } }
@@ -49,7 +49,6 @@ export function candyArcadeKeyframesCss(): string {
 @keyframes star-burst { from { opacity: 0; transform: translateY(28px) scale(.2) rotate(-28deg); } to { opacity: 1; transform: translateY(0) scale(1) rotate(0); } }
 @keyframes quizProgressStarTwinkle { 0%, 100% { opacity: 0.65; transform: translate(-50%, -50%) scale(0.95); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); } }
 @keyframes quizProgressMarkerPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); } 25% { transform: translate(-50%, -50%) scale(1.12) rotate(4deg); } 55% { transform: translate(-50%, -50%) scale(0.96) rotate(-3deg); } 75% { transform: translate(-50%, -50%) scale(1.05) rotate(1deg); } }
-@keyframes reveal-impact { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.45); } 25% { opacity: .95; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.12); } }
 @keyframes progress-pop { 0% { transform: scale(1); } 58% { transform: scale(1.08); } 100% { transform: scale(1); } }
 @keyframes phase-exit { to { opacity: 0; } }
 

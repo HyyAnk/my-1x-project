@@ -1,11 +1,12 @@
 export type ImgStudioAspectRatio = "1:1" | "16:9" | "9:16" | "4:3" | "3:4" | "2:3" | "3:2";
 
 export interface ImgStudioGenerationRequest {
-  model: string;
+  provider_id: string;
   prompt: string;
   aspect_ratio: string;
   resolution: string;
   quality: "standard" | "high" | (string & {});
+  /** Raw base64 PNG or an image data URL. Requests with this field use the native edit endpoint. */
   image?: string;
 }
 
@@ -14,10 +15,21 @@ export interface ImgStudioGenerationResponseItem {
   b64_json?: string;
   revised_prompt?: string;
   price_vnd?: number;
-  [key: string]: unknown;
 }
 
 export interface ImgStudioGenerationResponse {
+  id?: string;
+  status?: "completed" | "processing" | "failed" | (string & {});
+  prompt?: string;
+  provider_name?: string;
+  model?: string;
+  aspect_ratio?: string;
+  resolution?: string;
+  quality?: string;
+  cost_vnd?: number;
+  balance_vnd?: number;
+  created_at?: string;
+  reused?: boolean;
   code?: number;
   message?: string;
   data?: ImgStudioGenerationResponseItem | ImgStudioGenerationResponseItem[];
@@ -27,9 +39,7 @@ export interface ImgStudioGenerationResponse {
   error?: {
     message?: string;
     code?: string | number;
-    [key: string]: unknown;
   };
-  [key: string]: unknown;
 }
 
 export interface ImgStudioImageResult {

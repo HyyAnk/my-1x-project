@@ -4,7 +4,7 @@ import { isContentFilterError } from "../../../../utils/promptSanitizer.js";
 import type { ProviderAssetInput, ProviderAssetOutput } from "../types/providerAsset.types.js";
 import { trackShopAiKeyUsage } from "../utils/assetPricingTracker.js";
 
-const MAX_GENERATION_ATTEMPTS = 3;
+const MAX_GENERATION_ATTEMPTS = 2; // Initial attempt + max 1 retry
 
 /**
  * Strategy for generating quiz image assets using the ShopAiKey / Custom OpenAI-compatible provider.

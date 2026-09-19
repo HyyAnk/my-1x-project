@@ -173,24 +173,26 @@ export function visualChoicesThreePureAnimationStyles(): string {
 }
 
 .layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-incorrect,
-.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card-visual:nth-child(n).answer-reveal-incorrect,
-.layout-visual_choices_three_pure.quiz-question-clip .choice-card-visual:nth-child(n).answer-incorrect,
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
-.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
 .layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card.answer-reveal-incorrect,
-.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card.answer-incorrect,
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card-visual.answer-reveal-incorrect,
-.layout-visual_choices_three_pure.quiz-question-clip .choice-card-visual.answer-incorrect,
 .layout-visual_choices_three_pure.quiz-question-clip .choice-card.answer-reveal-incorrect,
-.layout-visual_choices_three_pure.quiz-question-clip .choice-card.answer-incorrect,
-.layout-visual_choices_three_pure .visual-answer-card.answer-incorrect,
-.layout-visual_choices_three_pure .choice-card-visual.answer-incorrect,
-.layout-visual_choices_three_pure .choice-card.answer-incorrect,
 .layout-visual_choices_three_pure .visual-answer-card.answer-reveal-incorrect,
 .layout-visual_choices_three_pure .choice-card-visual.answer-reveal-incorrect,
 .layout-visual_choices_three_pure .choice-card.answer-reveal-incorrect {
   animation: incorrect-card-settle-vcp 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+}
+
+.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card-visual:nth-child(n).answer-incorrect,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
+.layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card.answer-incorrect,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card-visual.answer-incorrect,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card.answer-incorrect,
+.layout-visual_choices_three_pure .visual-answer-card.answer-incorrect,
+.layout-visual_choices_three_pure .choice-card-visual.answer-incorrect,
+.layout-visual_choices_three_pure .choice-card.answer-incorrect {
   opacity: 0.35;
   filter: grayscale(78%) contrast(0.95) brightness(0.92);
 }

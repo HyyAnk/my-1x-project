@@ -1,7 +1,7 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { generateMascotStyleBatch, generateMascotStyleSlot } from "../src/quiz/mascot/artGenerator.js";
 import { validateMascotPromptContract } from "../src/quiz/mascotPromptContract.js";
@@ -9,6 +9,7 @@ import { decodePngToRgba, encodeRgbaToPng } from "../src/utils/imageMatting.js";
 import { parseStyleSlotTarget, removeMascotAssetBackground } from "../src/quiz/mascot/backgroundRemover.js";
 import type { AppConfig, MascotProfile, MascotStyle } from "@studio/shared";
 import { getMascotPoses } from "@studio/shared";
+import type { RepositoryService } from "../src/repository.js";
 
 const testImageConfig: AppConfig["image_generation"] = {
   enabled: false,
@@ -24,6 +25,59 @@ afterEach(async () => {
 });
 
 describe("Mascot Style Slot Generation Pipeline", () => {
+  it("stops before later slot assets and metadata persistence when cancelled after the first asset write", async () => {
+    const controller = new AbortController();
+    const mascot: MascotProfile = {
+      id: "mascot_cancel_slot",
+      name: "Circuit Owl",
+      visual_style: "pixar_3d",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      actions: {},
+      styles: [
+        {
+          id: "style_circuit",
+          name: "Circuit Gear",
+          keyword: "circuit gear",
+          is_default: false,
+          anchor_image_url: null,
+          states: { thinking: [], celebrate: [] },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ],
+    };
+    const saveMascotAsset = vi.fn().mockImplementation(async (mascotId: string, filename: string) => {
+      controller.abort(new Error("Cancelled after first slot asset"));
+      return `/api/mascots/${mascotId}/assets/${filename}`;
+    });
+    const updateMascotSlot = vi.fn();
+    const repository = {
+      saveMascotAsset,
+      updateMascotSlot,
+      deleteMascotAssetFile: vi.fn().mockResolvedValue(undefined),
+    } as unknown as RepositoryService;
+
+    await expect(
+      generateMascotStyleSlot(
+        repository,
+        mascot,
+        "style_circuit",
+        {
+          style_id: "style_circuit",
+          state: "thinking",
+          slot_index: 1,
+        },
+        testImageConfig,
+        undefined,
+        { signal: controller.signal },
+      ),
+    ).rejects.toThrow("Cancelled after first slot asset");
+
+    expect(saveMascotAsset).toHaveBeenCalledTimes(1);
+    expect(updateMascotSlot).not.toHaveBeenCalled();
+  });
+
   it("generates a single style slot with reference image continuity, costume keyword, and studio isolation tags", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "mascot-slot-gen-"));
     roots.push(root);

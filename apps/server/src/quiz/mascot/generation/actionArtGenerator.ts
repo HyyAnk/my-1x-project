@@ -67,7 +67,6 @@ export async function generateMascotActionArt(
       size: framesCount === 1 ? "1024x1024" : "1280x720",
       referenceImageBase64,
       background: "opaque",
-      cancellationSignal: AbortSignal.timeout(90_000),
     },
     logger,
     logContext: { profileId: mascot.id },

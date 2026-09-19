@@ -33,6 +33,8 @@ export interface ProviderAssetInput {
   antigravityClient?: AntigravityClient;
   imageConfig?: ProviderAssetImageConfig;
   imageFallbackConfig?: ProviderAssetImageFallbackConfig;
+  imgStudioRunId?: string;
+  cancellationSignal?: AbortSignal;
   logger: StudioLogger;
 }
 

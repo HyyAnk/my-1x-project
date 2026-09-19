@@ -1,7 +1,6 @@
 import { calculateThinkingBarTiming, type ThinkingBarRenderInput, type ThinkingBarVariant } from "../types.js";
 import { treasureTrailMotionCss } from "./treasureTrailMotion.js";
-
-const DESTINATION_TREASURE_SVG = `<svg class="destination-island-svg" viewBox="0 0 140 140" aria-hidden="true" data-layout-ignore><defs><radialGradient id="destGlowGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(253,224,71,0.6)" /><stop offset="60%" stop-color="rgba(217,119,6,0.3)" /><stop offset="100%" stop-color="rgba(0,0,0,0)" /></radialGradient><linearGradient id="sandBeachGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FEF08A" /><stop offset="50%" stop-color="#FDE047" /><stop offset="100%" stop-color="#D97706" /></linearGradient><linearGradient id="chestWoodGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#78350F" /><stop offset="50%" stop-color="#451A03" /><stop offset="100%" stop-color="#1C0B02" /></linearGradient><linearGradient id="chestGoldTrimGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFBEB" /><stop offset="30%" stop-color="#FDE047" /><stop offset="70%" stop-color="#D97706" /><stop offset="100%" stop-color="#78350F" /></linearGradient></defs><circle cx="70" cy="70" r="66" fill="url(#destGlowGrad)" /><ellipse cx="70" cy="112" rx="52" ry="15" fill="url(#sandBeachGrad)" stroke="#78350F" stroke-width="2.5" /><path d="M42 108 L54 118 M54 108 L42 118" stroke="#DC2626" stroke-width="4" stroke-linecap="round" /><path d="M45 74 L49 100 Q49 104 53 104 L97 104 Q101 104 101 100 L105 74 Z" fill="url(#chestWoodGrad)" stroke="#1C0B02" stroke-width="2.8" /><rect x="56" y="74" width="7" height="30" fill="url(#chestGoldTrimGrad)" stroke="#78350F" stroke-width="1.2" /><rect x="87" y="74" width="7" height="30" fill="url(#chestGoldTrimGrad)" stroke="#78350F" stroke-width="1.2" /><ellipse cx="68" cy="72" rx="7" ry="4" fill="#FDE047" stroke="#B45309" stroke-width="1.4" /><ellipse cx="82" cy="71" rx="8" ry="4.5" fill="#FACC15" stroke="#B45309" stroke-width="1.4" /><ellipse cx="58" cy="74" rx="6" ry="3.5" fill="#FEF08A" stroke="#B45309" stroke-width="1.4" /><ellipse cx="92" cy="73" rx="6.5" ry="3.5" fill="#FDE047" stroke="#B45309" stroke-width="1.4" /><ellipse cx="75" cy="68" rx="7.5" ry="4" fill="#FFFBEB" stroke="#B45309" stroke-width="1.4" /><polygon points="75,61 79,66 75,71 71,66" fill="#EF4444" stroke="#7F1D1D" stroke-width="1" /><polygon points="63,65 67,69 63,73 59,69" fill="#10B981" stroke="#064E3B" stroke-width="1" /><polygon points="87,63 91,67 87,71 83,67" fill="#38BDF8" stroke="#0369A1" stroke-width="1" /><path d="M42 63 Q75 42 108 63 L105 71 Q75 51 45 71 Z" fill="url(#chestWoodGrad)" stroke="#1C0B02" stroke-width="2.5" /><path d="M53 56 Q75 45 97 56" stroke="url(#chestGoldTrimGrad)" stroke-width="2.8" fill="none" /><circle cx="75" cy="76" r="4.5" fill="url(#chestGoldTrimGrad)" stroke="#1C0B02" stroke-width="1.5" /></svg>`;
+import { DESTINATION_TREASURE_SVG } from "./treasureTrailDestination.js";
 
 const WAYPOINT_ANCHOR_SVG = `<svg viewBox="0 0 24 24" class="trail-waypoint-svg" aria-hidden="true"><circle cx="12" cy="5" r="2.5" fill="none" stroke="#FDE047" stroke-width="2" /><line x1="12" y1="7.5" x2="12" y2="20" stroke="#FDE047" stroke-width="2" stroke-linecap="round" /><line x1="7" y1="10" x2="17" y2="10" stroke="#FDE047" stroke-width="2" stroke-linecap="round" /><path d="M5 15 C5 19.5 19 19.5 19 15" fill="none" stroke="#FDE047" stroke-width="2" stroke-linecap="round" /></svg>`;
 
@@ -37,16 +36,16 @@ export const treasureTrailVariant: ThinkingBarVariant = {
 
 .thinking-bar-treasure-trail .trail-destination {
   position: absolute;
-  left: -26px;
+  left: -60px;
   top: 50%;
   transform: translateY(-50%);
-  width: 86px;
-  height: 86px;
+  width: 172px;
+  height: 172px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 5;
-  filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.65)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 0 24px rgba(245, 158, 11, 0.75)) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.6));
   animation: expeditionDestinationSignal var(--timer-duration) ease-in-out var(--timer-start) both;
 }
 

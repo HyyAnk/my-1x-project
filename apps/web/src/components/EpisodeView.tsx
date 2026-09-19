@@ -101,7 +101,7 @@ export function EpisodeDetail({
           now={pipeline.episodeClock}
           progressLabel="Production pipeline progress"
           variant="hero"
-          onCancel={pipeline.handleCancelActiveTask}
+          onCancel={() => void pipeline.handleCancelActiveTask(pipeline.pipelineTask)}
         />
       ) : null}
 

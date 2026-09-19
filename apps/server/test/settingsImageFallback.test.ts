@@ -1,9 +1,9 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
-import { IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_MODELS } from "@studio/shared";
+import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, IMGSTUDIO_MODELS } from "@studio/shared";
 
 describe("image fallback settings routes", () => {
   let root: string;
@@ -31,11 +31,26 @@ describe("image fallback settings routes", () => {
     expect(body.settings).toBeDefined();
     expect(body.settings.enabled).toBe(true);
     expect(body.settings.provider).toBe("imgstudio");
-    expect(body.settings.model).toBe(IMGSTUDIO_DEFAULT_MODEL_ID);
+    expect(body.settings.model).toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
     expect(body.settings.api_key).toBe("");
     expect(body.settings.has_api_key).toBe(false);
-    expect(body.models).toEqual(IMGSTUDIO_MODELS);
-    expect(body.default_model).toBe(IMGSTUDIO_DEFAULT_MODEL_ID);
+    expect(body.level_1_model).toBe(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID);
+    expect(body.models).toEqual(IMGSTUDIO_MODELS.filter((model) => model.id !== IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID));
+    expect(body.default_model).toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+  });
+
+  it("normalizes Gemini Level 1 when submitted as the Level 2 model", async () => {
+    const res = await app.server.inject({
+      method: "POST",
+      url: "/api/image-fallback/settings",
+      payload: { model: IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().settings.model).toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+
+    const persisted = JSON.parse(await readFile(path.join(root, ".quiz-studio", "image.local.json"), "utf8"));
+    expect(persisted.image_fallback.model).toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
   });
 
   it("updates fallback settings and masks api key in response", async () => {

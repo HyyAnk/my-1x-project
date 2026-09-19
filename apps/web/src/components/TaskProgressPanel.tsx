@@ -81,7 +81,10 @@ function TaskProgressHead({
           <button
             type="button"
             className="danger-button compact stop-icon-btn"
-            onClick={onCancel}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCancel();
+            }}
             title="Stop task"
             aria-label={`Stop ${title}`}
           >

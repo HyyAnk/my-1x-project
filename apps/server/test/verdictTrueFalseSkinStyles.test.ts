@@ -75,4 +75,13 @@ describe("Verdict True/False Answer Card Skin Styles", () => {
     expect(css).toContain(".layout-verdict_true_false .choice-card.skin-minimal_soft.answer-reveal-correct .choice-card-surface");
     expect(css).toContain(".layout-verdict_true_false .choice-card.skin-minimal_soft.answer-reveal-incorrect .choice-text");
   });
+
+  it("provides high-legibility headline typography and uppercase text for comic_chunky skin", () => {
+    const css = verdictTrueFalseLayout.css();
+    expect(css).toContain(".layout-verdict_true_false .skin-comic_chunky .choice-text");
+    expect(css).toContain('font-family: var(--font-display, "SVN-Hello Headline", "Fredoka", "Baloo 2", sans-serif);');
+    expect(css).toContain("text-transform: uppercase;");
+    expect(css).not.toContain("Comic Sans MS");
+    expect(css).not.toContain("Bangers");
+  });
 });

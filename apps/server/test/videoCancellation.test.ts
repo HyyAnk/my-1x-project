@@ -72,4 +72,49 @@ describe("video task cancellation", () => {
     expect(cancelled.status).toBe("CANCELLED");
     expect(finish).toHaveBeenCalledWith(task.task_id, "CANCELLED", "Cancelled by user");
   });
+
+  it("finishes running pipeline tasks as CANCELLED and cancels in-flight children", async () => {
+    let task = TaskSchema.parse({
+      task_id: "pipeline-task-1",
+      task_type: "GENERATE_PIPELINE",
+      channel_id: "channel-1",
+      episode_id: "episode-1",
+      status: "RUNNING",
+      created_at: "2026-09-01T00:00:00.000Z",
+      started_at: "2026-09-01T00:00:01.000Z",
+      lock_key: "episode-1:pipeline",
+      progress_message: "Quiz · resolving assets",
+      progress_percent: 30,
+    });
+    const finish = vi.fn((_id: string, status: Task["status"], error: string | null) => {
+      task = TaskSchema.parse({ ...task, status, error, completed_at: "2026-09-01T00:00:02.000Z" });
+      return Promise.resolve();
+    });
+    const cancelChild = vi.fn().mockResolvedValue({});
+    const pipelineRun = { cancelled: false, children: new Set(["child-1"]) };
+    const runtime = {
+      get: () => task,
+      update: (_id: string, patch: Partial<Task>) => {
+        task = TaskSchema.parse({ ...task, ...patch });
+        return Promise.resolve();
+      },
+      finish,
+      cancel: cancelChild,
+      active: new Map(),
+      activeAudio: new Set(),
+      activeImageControllers: new Map(),
+      activeVideoControllers: new Map(),
+      activeShortReelControllers: new Map(),
+      pipelineRuns: new Map([[task.task_id, pipelineRun]]),
+      imageVariants: new Map(),
+      topicHints: new Map(),
+    } as unknown as TaskManagerRuntime;
+
+    const cancelled = await cancelTask(runtime, task.task_id);
+
+    expect(pipelineRun.cancelled).toBe(true);
+    expect(cancelChild).toHaveBeenCalledWith("child-1");
+    expect(cancelled.status).toBe("CANCELLED");
+    expect(finish).toHaveBeenCalledWith(task.task_id, "CANCELLED", "Cancelled by user");
+  });
 });

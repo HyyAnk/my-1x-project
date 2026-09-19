@@ -1,4 +1,4 @@
-import { type ImgStudioModelDefinition, IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
+import { type ImgStudioModelDefinition, IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID } from "@studio/shared";
 
 export interface FallbackModelConfigFieldsProps {
   fallbackModel: string;
@@ -22,17 +22,16 @@ export function FallbackModelConfigFields({
   return (
     <>
       <label>
-        Fallback Model
+        Level 2 Model
         <select value={fallbackModel} onChange={(event) => setFallbackModel(event.target.value)}>
-          {availableModels.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name} ({item.id === IMGSTUDIO_DEFAULT_MODEL_ID ? "Default · " : ""}Max {item.max_resolution})
-            </option>
-          ))}
+          {availableModels
+            .filter((item) => item.id !== IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID)
+            .map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name} ({item.id === IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID ? "Default · " : ""}Max {item.max_resolution})
+              </option>
+            ))}
         </select>
-        <small className="field-help">
-          Default fallback model is Qwen Image 3.0 Pro, providing high visual fidelity and robust prompt adherence.
-        </small>
       </label>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { resolveImgStudioFallbackLevel2Model } from "../constants/imgstudioModels.js";
 import { EngineIdSchema, ImageProviderIdSchema } from "../enums.js";
 import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { KnowledgeBaseSettingsSchema } from "../schemas/config.js";
@@ -36,7 +37,7 @@ export const ImageFallbackSettingsInputSchema = z.object({
   enabled: z.boolean().optional(),
   provider: z.literal("imgstudio").optional(),
   base_url: z.string().trim().max(2000).optional(),
-  model: z.string().trim().max(160).optional(),
+  model: z.string().trim().max(160).transform(resolveImgStudioFallbackLevel2Model).optional(),
   api_key: z.string().max(4000).optional(),
   resolution: z.enum(["1K", "2K", "4K"]).optional(),
   quality: z.enum(["standard", "high"]).optional(),

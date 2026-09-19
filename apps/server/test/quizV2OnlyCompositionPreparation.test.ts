@@ -87,6 +87,7 @@ describe("quizV2OnlyCompositionPreparation", () => {
         runtime,
         repository,
         taskId: "task-test",
+        signal: new AbortController().signal,
         channel,
         episode,
         scenes: [],

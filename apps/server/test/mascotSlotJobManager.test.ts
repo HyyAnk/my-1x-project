@@ -1,7 +1,7 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AppConfig, MascotProfile } from "@studio/shared";
 import { buildApp } from "../src/app.js";
 import {
@@ -322,7 +322,7 @@ describe("Mascot Slot Job Repository & Concurrency Manager", () => {
   });
 
   describe("Cancellation: Graceful Abort and Queue Cleanup", () => {
-    it("cancels active batch, aborting in-flight worker and marking queued slots cancelled", async () => {
+    it("keeps cancelled slots cancelled when an in-flight generator returns success late", async () => {
       const root = await mkdtemp(path.join(os.tmpdir(), "mascot-slot-cancellation-"));
       roots.push(root);
       const app = await buildApp(root);
@@ -340,7 +340,15 @@ describe("Mascot Slot Job Repository & Concurrency Manager", () => {
 
       const jobRepo = new MascotSlotJobRepository(app.repository);
 
-      // Generator that respects cancellation signal
+      let markGeneratorStarted!: () => void;
+      const generatorStarted = new Promise<void>((resolve) => {
+        markGeneratorStarted = resolve;
+      });
+      let releaseGenerator!: () => void;
+      const generatorGate = new Promise<void>((resolve) => {
+        releaseGenerator = resolve;
+      });
+
       const mockSlotGenerator = async (
         _repo: unknown,
         _mascot: MascotProfile,
@@ -348,15 +356,10 @@ describe("Mascot Slot Job Repository & Concurrency Manager", () => {
         _input: unknown,
         _imageConfig: unknown,
         _logger: unknown,
-        options?: { signal?: AbortSignal },
+        _options?: { signal?: AbortSignal },
       ) => {
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(resolve, 300);
-          options?.signal?.addEventListener("abort", () => {
-            clearTimeout(timeout);
-            reject(new Error("Aborted by signal"));
-          });
-        });
+        markGeneratorStarted();
+        await generatorGate;
 
         return {
           mascot: mascot,
@@ -386,9 +389,7 @@ describe("Mascot Slot Job Repository & Concurrency Manager", () => {
           { state: "thinking", slot_index: 3 },
         ],
       });
-
-      // Allow slot 1 to start executing
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await generatorStarted;
 
       // Cancel the batch
       const cancelledBatch = await manager.cancelBatch(mascot.id, {
@@ -410,6 +411,16 @@ describe("Mascot Slot Job Repository & Concurrency Manager", () => {
       // Verify getActiveBatch returns null
       const active = await manager.getActiveBatch(mascot.id, style.id);
       expect(active).toBeNull();
+
+      releaseGenerator();
+      await vi.waitFor(() => expect(manager.getActiveSlotGenerationsCount()).toBe(0));
+
+      const persisted = await jobRepo.getBatch(mascot.id, batch.id);
+      expect(persisted?.status).toBe("cancelled");
+      expect(persisted?.completed_count).toBe(0);
+      for (const item of persisted?.items || []) {
+        expect(item.status).toBe("cancelled");
+      }
 
       manager.destroy();
     });

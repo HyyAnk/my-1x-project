@@ -114,9 +114,10 @@ export function verdictTrueFalseButtonStyles(): string {
 
 .layout-verdict_true_false .skin-comic_chunky .choice-text,
 .layout-verdict_true_false .ac-comic-chunky .choice-text {
-  font-family: var(--font-display, "Comic Sans MS", "Bangers", cursive, sans-serif);
+  font-family: var(--font-display, "SVN-Hello Headline", "Fredoka", "Baloo 2", sans-serif);
   font-weight: 900;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   color: #FFFFFF;
   -webkit-text-stroke: 3px #111827;
   paint-order: stroke fill;

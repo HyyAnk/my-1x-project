@@ -4,7 +4,7 @@ import { isContentFilterError } from "../../../../utils/promptSanitizer.js";
 import type { ProviderAssetInput, ProviderAssetOutput } from "../types/providerAsset.types.js";
 import { trackGpti2Usage } from "../utils/assetPricingTracker.js";
 
-const MAX_GENERATION_ATTEMPTS = 3;
+const MAX_GENERATION_ATTEMPTS = 2; // Initial attempt + max 1 retry
 
 /**
  * Strategy for generating quiz image assets using the GPT-I2 provider.

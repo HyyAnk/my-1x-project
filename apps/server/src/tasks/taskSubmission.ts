@@ -128,6 +128,9 @@ export function submitTask(
 
 export async function cancelTask(runtime: TaskManagerRuntime, taskId: string): Promise<Task> {
   const task = runtime.get(taskId);
+  if (task.status === "CANCELLED" || task.status === "COMPLETED" || task.status === "FAILED") {
+    return task;
+  }
   if (task.status === "QUEUED") {
     runtime.activeVideoControllers.get(taskId)?.abort();
     await runtime.update(taskId, { status: "CANCELLED", completed_at: nowIso(), progress_message: "Cancelled before start" });
@@ -164,6 +167,7 @@ export async function cancelTask(runtime: TaskManagerRuntime, taskId: string): P
       pipeline.cancelled = true;
       await Promise.all([...pipeline.children].map((childId) => runtime.cancel(childId).catch(() => undefined)));
     }
+    await runtime.finish(taskId, "CANCELLED", "Cancelled by user");
   }
   return runtime.get(taskId);
 }

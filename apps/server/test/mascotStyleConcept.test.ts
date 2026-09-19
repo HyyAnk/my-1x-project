@@ -115,6 +115,93 @@ describe("Mascot Style Concept Generation", () => {
         "Style missing_style not found",
       );
     });
+
+    it("stops before later assets and profile persistence when cancelled after the first asset write", async () => {
+      const controller = new AbortController();
+      const mockMascot: MascotProfile = {
+        id: "mascot_cancel_assets",
+        name: "Signal Fox",
+        visual_style: "pixar_3d",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        actions: {},
+        styles: [
+          {
+            id: "style_signal",
+            name: "Signal Suit",
+            keyword: "signal suit",
+            is_default: false,
+            anchor_image_url: null,
+            states: { thinking: [], celebrate: [] },
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      };
+      const saveMascotAsset = vi.fn().mockImplementation(async (mascotId: string, filename: string) => {
+        controller.abort(new Error("Cancelled after first mascot asset"));
+        return `/api/mascots/${mascotId}/assets/${filename}`;
+      });
+      const saveMascot = vi.fn();
+      const mockRepository = {
+        getMascotAssetFile: vi.fn().mockRejectedValue(new Error("File not found")),
+        saveMascotAsset,
+        getMascot: vi.fn().mockResolvedValue(mockMascot),
+        saveMascot,
+        deleteMascotAssetFile: vi.fn().mockResolvedValue(undefined),
+      } as unknown as RepositoryService;
+
+      await expect(
+        generateMascotStyleConcept(mockRepository, mockMascot, "style_signal", testImageConfig, { signal: controller.signal }),
+      ).rejects.toThrow("Cancelled after first mascot asset");
+
+      expect(saveMascotAsset).toHaveBeenCalledTimes(1);
+      expect(saveMascot).not.toHaveBeenCalled();
+    });
+
+    it("rechecks cancellation immediately before saving the mascot profile", async () => {
+      const controller = new AbortController();
+      const mockMascot: MascotProfile = {
+        id: "mascot_cancel_profile",
+        name: "Guard Bear",
+        visual_style: "pixar_3d",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        actions: {},
+        styles: [
+          {
+            id: "style_guard",
+            name: "Guard Gear",
+            keyword: "guard gear",
+            is_default: false,
+            anchor_image_url: null,
+            states: { thinking: [], celebrate: [] },
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      };
+      const saveMascot = vi.fn();
+      const mockRepository = {
+        getMascotAssetFile: vi.fn().mockRejectedValue(new Error("File not found")),
+        saveMascotAsset: vi.fn().mockImplementation(async (mascotId: string, filename: string) => {
+          return `/api/mascots/${mascotId}/assets/${filename}`;
+        }),
+        getMascot: vi.fn().mockImplementation(async () => {
+          controller.abort(new Error("Cancelled before mascot profile save"));
+          return mockMascot;
+        }),
+        saveMascot,
+        deleteMascotAssetFile: vi.fn().mockResolvedValue(undefined),
+      } as unknown as RepositoryService;
+
+      await expect(
+        generateMascotStyleConcept(mockRepository, mockMascot, "style_guard", testImageConfig, { signal: controller.signal }),
+      ).rejects.toThrow("Cancelled before mascot profile save");
+
+      expect(mockRepository.saveMascotAsset).toHaveBeenCalledTimes(2);
+      expect(saveMascot).not.toHaveBeenCalled();
+    });
   });
 
   describe("with live repository integration", () => {

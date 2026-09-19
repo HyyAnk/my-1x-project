@@ -2,7 +2,7 @@ const TRANSIENT_ERROR_PATTERN =
   /(?:429|resource[_\s]?exhausted|rate[_\s]?limit|too many requests|502|503|504|bad gateway|service unavailable|gateway timeout|econnreset|econnrefused|etimedout|socket hang up)/i;
 
 export interface RetryWithBackoffOptions {
-  /** Total attempts including the first one. Defaults to 3. */
+  /** Total attempts including the first one. Defaults to 2 (1 initial + max 1 retry). */
   attempts?: number;
   /** Delay before the first retry in ms. Defaults to 2000. */
   baseDelayMs?: number;
@@ -30,7 +30,7 @@ function isTransientError(error: unknown): boolean {
  * Aborts and non-transient errors are rethrown immediately.
  */
 export async function retryWithBackoff<T>(operation: () => Promise<T>, options: RetryWithBackoffOptions = {}): Promise<T> {
-  const attempts = Math.max(1, options.attempts ?? 3);
+  const attempts = Math.max(1, options.attempts ?? 2);
   const baseDelayMs = options.baseDelayMs ?? 2_000;
   const backoffMultiplier = options.backoffMultiplier ?? 2;
   const maxDelayMs = options.maxDelayMs ?? 15_000;

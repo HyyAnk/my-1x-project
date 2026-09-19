@@ -6,9 +6,11 @@ import {
   type MascotRenderAspectRatio,
   type QuizAssetPlan,
   type QuizAssetResolution,
+  type QuizIssue,
   type QuizPreviewLayoutId,
   type QuizV2,
 } from "@studio/shared";
+import { RepositoryError } from "../../repository.js";
 import { resolveQuizAssets } from "../../quiz/assets/resolveQuizAssets.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { optimizeRenderImage } from "./imageOptimizer.js";
@@ -23,6 +25,7 @@ export interface PrepareVideoAssetsOptions {
   quiz: QuizV2;
   director: DirectorPlan;
   aspectRatio: MascotRenderAspectRatio;
+  signal: AbortSignal;
   onProgress: (message: string, percent: number) => Promise<void>;
 }
 
@@ -31,38 +34,51 @@ export interface PrepareVideoAssetsResult {
   assetSources: Record<string, string>;
 }
 
+function throwForAssetBlockers(issues: QuizIssue[]): void {
+  const blockers = issues.filter((issue) => issue.severity === "blocker");
+  if (blockers.length === 0) return;
+
+  const detail = blockers.map((issue) => issue.message).join(" | ");
+  throw new RepositoryError(`Quiz asset generation blocked video preparation: ${detail}`, "QUIZ_ASSET_GENERATION_FAILED");
+}
+
 export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Promise<PrepareVideoAssetsResult> {
-  const { runtime, channelId, episodeId, renderRoot, assetPlan, onProgress } = options;
+  const { runtime, channelId, episodeId, renderRoot, assetPlan, onProgress, signal } = options;
+  signal.throwIfAborted();
   let assetResolution = options.assetResolution;
 
   if (!assetResolution) {
     await onProgress("Quiz · preparing visual assets", 10);
-    assetResolution = (
-      await resolveQuizAssets({
-        repository: runtime.repository,
-        channelId,
-        episodeId,
-        plan: assetPlan,
-        activeEngine: runtime.activeEngine,
-        antigravityClient: runtime.antigravity,
-        imageConfig: {
-          api_key: runtime.imageConfig.api_key,
-          model: runtime.imageConfig.model,
-          provider: runtime.imageConfig.provider,
-          base_url: runtime.imageConfig.base_url,
-          quality: runtime.imageConfig.quality,
-        },
-        imageFallbackConfig: runtime.imageFallbackConfig,
-      })
-    ).resolution;
+    const result = await resolveQuizAssets({
+      repository: runtime.repository,
+      channelId,
+      episodeId,
+      plan: assetPlan,
+      activeEngine: runtime.activeEngine,
+      antigravityClient: runtime.antigravity,
+      imageConfig: {
+        api_key: runtime.imageConfig.api_key,
+        model: runtime.imageConfig.model,
+        provider: runtime.imageConfig.provider,
+        base_url: runtime.imageConfig.base_url,
+        quality: runtime.imageConfig.quality,
+      },
+      imageFallbackConfig: runtime.imageFallbackConfig,
+      cancellationSignal: signal,
+    });
+    throwForAssetBlockers(result.issues);
+    signal.throwIfAborted();
+    assetResolution = result.resolution;
   }
 
   // HyperFrames only discovers local media inside the composition directory.
+  signal.throwIfAborted();
   const renderAssetDirectory = path.join(renderRoot, "quiz-images");
   await mkdir(renderAssetDirectory, { recursive: true });
 
   const resolvedAssetEntries: Array<readonly [string, string] | null> = await Promise.all(
     (assetResolution?.assets ?? []).map(async (asset) => {
+      signal.throwIfAborted();
       const requirement = assetPlan.assets.find((r) => r.asset_id === asset.asset_id);
       try {
         const sourcePath = await runtime.repository.resolveQuizAssetPath(channelId, episodeId, asset.path);
@@ -84,6 +100,7 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         }
         return [asset.asset_id, `./quiz-images/${renderFilename}`] as const;
       } catch (error) {
+        if (signal.aborted) throw error;
         if (requirement?.required) {
           throw new Error(
             `Required render asset "${asset.asset_id}" failed preparation for episode ${episodeId}: ${
@@ -104,6 +121,7 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
   const assetSources: Record<string, string> = Object.fromEntries(
     resolvedAssetEntries.filter((entry): entry is readonly [string, string] => entry !== null),
   );
+  signal.throwIfAborted();
 
   return {
     assetResolution,

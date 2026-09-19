@@ -56,15 +56,9 @@ export function ImageProviderFallbackCard({
   onClearFallbackKey,
   onVerifyFallbackConnection,
 }: ImageProviderFallbackCardProps) {
-  const placeholderText = hasFallbackApiKey
-    ? showFallbackKey
-      ? "Stored securely in local settings (enter new key to replace)"
-      : "•••••••••••••••••••••••••••••••• (Key saved & active)"
-    : "Paste ImgStudio API key";
+  const placeholderText = hasFallbackApiKey ? "Enter a new key to replace" : "Paste ImgStudio API key";
 
-  const helpText = hasFallbackApiKey
-    ? "API key is securely stored in local settings. To update it, enter a new key above and click Save Fallback Settings. Click the trash icon to remove it."
-    : "Obtain your API key from https://imgstudio.site/docs/api. Key is securely stored in local untracked config.";
+  const helpText = hasFallbackApiKey ? "Leave blank to keep the saved key." : "Create a key at https://imgstudio.site/docs/api.";
 
   const handleApiKeyChange = (nextKey: string) => {
     setFallbackApiKey(nextKey);
@@ -75,17 +69,13 @@ export function ImageProviderFallbackCard({
 
   return (
     <section className="panel image-fallback-panel">
-      <ImageFallbackCardHeader fallbackEnabled={fallbackEnabled} hasFallbackApiKey={hasFallbackApiKey} fallbackModel={fallbackModel} />
+      <ImageFallbackCardHeader fallbackEnabled={fallbackEnabled} fallbackModel={fallbackModel} />
 
       <form className="codex-form" onSubmit={(event) => void onSaveFallback(event)}>
         <label className="toggle-field">
           <input type="checkbox" checked={fallbackEnabled} onChange={(event) => setFallbackEnabled(event.target.checked)} />
           <span>Enable automatic fallback to ImgStudio</span>
         </label>
-        <small className="field-help" style={{ marginTop: "-6px", marginBottom: "8px" }}>
-          When any image in a batch fails on the primary provider (e.g., content filter rejection, timeout, or quota limit), that specific
-          image is immediately generated via ImgStudio so the video creation workflow continues without disruption.
-        </small>
 
         <FallbackModelConfigFields
           fallbackModel={fallbackModel}

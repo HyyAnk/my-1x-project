@@ -65,7 +65,7 @@ export function useEpisodeActions({
   };
 
   const handleCancelActiveTask = async (taskToCancel?: Task | null) => {
-    const target = taskToCancel || activeEpisodeTask;
+    const target = taskToCancel ?? activeEpisodeTask;
     if (!target) return;
     try {
       setCancelling(true);

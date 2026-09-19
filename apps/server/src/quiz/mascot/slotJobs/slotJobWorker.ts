@@ -62,6 +62,7 @@ export async function executeSlotJob(ctx: SlotJobWorkerContext, runtime: BatchRu
     );
 
     if (ctx.isDestroyed()) return;
+    runtime.abortController.signal.throwIfAborted();
     await handleCompletedJob(ctx, runtime, job, result.prompt_used);
   } catch (err: unknown) {
     if (ctx.isDestroyed()) return;

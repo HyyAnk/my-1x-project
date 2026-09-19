@@ -1,7 +1,7 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ImageProviderFallbackCard } from "./ImageProviderFallbackCard";
-import { IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_MODELS } from "@studio/shared";
+import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, IMGSTUDIO_MODELS } from "@studio/shared";
 
 afterEach(cleanup);
 
@@ -9,7 +9,7 @@ describe("ImageProviderFallbackCard", () => {
   const defaultProps = {
     fallbackEnabled: true,
     setFallbackEnabled: vi.fn(),
-    fallbackModel: IMGSTUDIO_DEFAULT_MODEL_ID,
+    fallbackModel: IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
     setFallbackModel: vi.fn(),
     fallbackResolution: "2K" as const,
     setFallbackResolution: vi.fn(),
@@ -28,13 +28,18 @@ describe("ImageProviderFallbackCard", () => {
     onVerifyFallbackConnection: vi.fn(),
   };
 
-  it("renders correctly with Qwen Image 3.0 Pro as active model", () => {
+  it("shows Gemini at fallback level 1 and Qwen at fallback level 2", () => {
     render(<ImageProviderFallbackCard {...defaultProps} />);
 
     expect(screen.getByText("Image Provider Fallback")).toBeDefined();
     expect(screen.getByText("Active (Auto-failover on primary failure)")).toBeDefined();
+    expect(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID).not.toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+    expect(screen.getByText("Gemini-3.1-Flash-Image")).toBeDefined();
     expect(screen.getByText("Qwen Image 3.0 Pro")).toBeDefined();
     expect(screen.getByDisplayValue("Qwen Image 3.0 Pro (Default · Max 2K)")).toBeDefined();
+    const level2Select = screen.getByRole("combobox", { name: "Level 2 Model" });
+    expect(level2Select).toBeDefined();
+    expect(within(level2Select).queryByRole("option", { name: /Gemini-3\.1-Flash-Image/ })).toBeNull();
   });
 
   it("triggers setFallbackEnabled when toggle is clicked", () => {
@@ -50,7 +55,7 @@ describe("ImageProviderFallbackCard", () => {
     const setFallbackModel = vi.fn();
     render(<ImageProviderFallbackCard {...defaultProps} setFallbackModel={setFallbackModel} />);
 
-    const select = screen.getByDisplayValue("Qwen Image 3.0 Pro (Default · Max 2K)");
+    const select = screen.getByRole("combobox", { name: "Level 2 Model" });
     fireEvent.change(select, { target: { value: "686ef278-e903-49a0-9e3c-2401fd396d22" } });
     expect(setFallbackModel).toHaveBeenCalledWith("686ef278-e903-49a0-9e3c-2401fd396d22");
   });
@@ -73,13 +78,14 @@ describe("ImageProviderFallbackCard", () => {
     expect(onSaveFallback).toHaveBeenCalled();
   });
 
-  it("displays Key Saved & Active badge and masked placeholder when API key is configured", () => {
+  it("shows one saved-key status and a concise replacement hint", () => {
     render(<ImageProviderFallbackCard {...defaultProps} hasFallbackApiKey={true} fallbackApiKey="" />);
 
     expect(screen.getByText("Key Saved & Active")).toBeDefined();
-    expect(screen.getByText("Configured & Active")).toBeDefined();
-    const input = screen.getByPlaceholderText("•••••••••••••••••••••••••••••••• (Key saved & active)");
+    expect(screen.queryByText("Configured & Active")).toBeNull();
+    const input = screen.getByPlaceholderText("Enter a new key to replace");
     expect(input).toBeDefined();
+    expect(screen.getByText("Leave blank to keep the saved key.")).toBeDefined();
   });
 
   it("displays verificationResult banner when present", () => {

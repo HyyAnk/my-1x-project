@@ -112,4 +112,43 @@ describe("answerCardPresentationContract.browser", () => {
       expect(measured.surfaceZIndex).toBe(contract.surfaceZIndex);
     },
   );
+
+  describe("Pure Visual Card Straddling Badge (visual_choices_three_pure)", () => {
+    it.each(ALL_ANSWER_CARD_STYLES)("centers the straddling badge at the bottom edge of the media box for %s across all cards", async (skinId) => {
+      await loadAnswerCard("visual_choices_three_pure", 3, skinId);
+      const cardsMeasured = await page.evaluate(() => {
+        const cards = Array.from(document.querySelectorAll<HTMLElement>(".choice-card.choice-pure-visual"));
+        if (cards.length === 0) throw new Error("Pure visual cards are missing");
+
+        return cards.map((card) => {
+          const media = card.querySelector<HTMLElement>(".choice-media");
+          const badge = card.querySelector<HTMLElement>(".choice-badge-pure");
+          if (!media || !badge) throw new Error("Pure visual card parts are missing");
+
+          const cardRect = card.getBoundingClientRect();
+          const mediaRect = media.getBoundingClientRect();
+          const badgeRect = badge.getBoundingClientRect();
+          const computedStyle = getComputedStyle(badge);
+
+          return {
+            position: computedStyle.position,
+            badgeWidth: Math.round(badgeRect.width),
+            badgeHeight: Math.round(badgeRect.height),
+            mediaBottom: mediaRect.bottom - cardRect.top,
+            badgeCenterY: badgeRect.top + badgeRect.height / 2 - cardRect.top,
+            badgeCenterX: badgeRect.left + badgeRect.width / 2 - cardRect.left,
+            cardCenterX: cardRect.width / 2,
+          };
+        });
+      });
+
+      for (const measured of cardsMeasured) {
+        expect(measured.position).toBe("absolute");
+        expect(measured.badgeWidth).toBe(88);
+        expect(measured.badgeHeight).toBe(88);
+        expect(measured.badgeCenterY).toBeCloseTo(measured.mediaBottom, 1);
+        expect(measured.badgeCenterX).toBeCloseTo(measured.cardCenterX, 1);
+      }
+    });
+  });
 });

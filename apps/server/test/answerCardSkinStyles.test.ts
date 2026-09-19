@@ -172,6 +172,36 @@ describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
       expect(css).toContain(".skin-comic_chunky.choice-card-visual.answer-correct .option-image");
       expect(css).toContain(".visual-answer-card.answer-correct .ac-comic-chunky");
     });
+
+    it("preserves centered straddling badge with translateX(-50%) on pure visual cards without transform: none override", () => {
+      // Ensure generic and nth-child choice-label rules do not wipe out layout transforms
+      expect(css).not.toMatch(/\.choice-card\.skin-comic_chunky:nth-child\(\d+\)\s+\.choice-label\s*\{[^}]*transform:\s*none/i);
+      expect(css).not.toMatch(/\.skin-comic_chunky\s+\.choice-label\s*\{[^}]*transform:\s*none/i);
+
+      // Dedicated pure visual straddling badge centering
+      expect(css).toContain(".choice-card-visual.choice-pure-visual.skin-comic_chunky .choice-badge-pure");
+      expect(css).toContain("transform: translateX(-50%)");
+
+      // Keyframes preserve translateX(-50%) across animation phases
+      expect(css).toContain("@keyframes comic-pure-badge-bounce");
+      const pureBounceIdx = css.indexOf("@keyframes comic-pure-badge-bounce");
+      expect(pureBounceIdx).toBeGreaterThan(-1);
+      const pureBounceSnippet = css.slice(pureBounceIdx, pureBounceIdx + 350);
+      expect(pureBounceSnippet).toContain("transform: translateX(-50%) scale(1)");
+      expect(pureBounceSnippet).toContain("transform: translateX(-50%) scale(1.22)");
+      expect(pureBounceSnippet).toContain("transform: translateX(-50%) scale(1.1)");
+    });
+
+    it("renders comic_chunky in visual_choices_three_pure with choice-badge-pure markup", () => {
+      const input = createInput("comic_chunky", {
+        layoutId: "visual_choices_three_pure",
+        presentation: "visual",
+      });
+      const html = renderChoiceGroup(input);
+      expect(html).toContain("skin-comic_chunky");
+      expect(html).toContain("choice-badge-pure");
+      expect(html).toContain("choice-pure-visual");
+    });
   });
 
   describe("Steel Beam Plate Skin (steelBeamPlate.ts)", () => {
@@ -286,6 +316,48 @@ describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
       expect(decorations?.beforeLabelHtml).toContain("marshmallow-inner-glow");
       expect(decorations?.beforeLabelHtml).toContain("marshmallow-sprinkle");
       expect(decorations?.labelSuffixHtml).toContain("marshmallow-badge-swirl");
+    });
+
+    it("preserves centered straddling badge with translateX(-50%) on pure visual cards without position: relative override", () => {
+      // Ensure choice-label rules do not override position to relative
+      expect(css).not.toMatch(/\.choice-card\.skin-pastel_marshmallow\s+\.choice-label\s*\{[^}]*position:\s*relative/i);
+      expect(css).not.toMatch(/\.skin-pastel_marshmallow\s+\.choice-label\s*\{[^}]*position:\s*relative/i);
+
+      // Dedicated pure visual straddling badge centering
+      expect(css).toContain(".choice-card-visual.choice-pure-visual.skin-pastel_marshmallow .choice-badge-pure");
+      expect(css).toContain("transform: translateX(-50%)");
+
+      // Keyframes preserve translateX(-50%) across animation phases
+      expect(css).toContain("@keyframes ac-pastel-marshmallow-pure-badge-jiggle");
+      const pureBounceIdx = css.indexOf("@keyframes ac-pastel-marshmallow-pure-badge-jiggle");
+      expect(pureBounceIdx).toBeGreaterThan(-1);
+      const pureBounceSnippet = css.slice(pureBounceIdx, pureBounceIdx + 500);
+      expect(pureBounceSnippet).toContain("transform: translateX(-50%) scale(1)");
+      expect(pureBounceSnippet).toContain("transform: translateX(-50%) scale(1.24)");
+      expect(pureBounceSnippet).toContain("transform: translateX(-50%) scale(1.1)");
+    });
+
+    it("renders pastel_marshmallow in visual_choices_three_pure with choice-badge-pure markup", () => {
+      const input = createInput("pastel_marshmallow", {
+        layoutId: "visual_choices_three_pure",
+        presentation: "visual",
+      });
+      const html = renderChoiceGroup(input);
+      expect(html).toContain("skin-pastel_marshmallow");
+      expect(html).toContain("choice-badge-pure");
+      expect(html).toContain("choice-pure-visual");
+    });
+
+    it("does not leak reveal colors or box-shadow at 0% keyframe for pure visual badge in pastelMarshmallow", () => {
+      const pureSlamIdx = css.indexOf("@keyframes ac-pastel-marshmallow-pure-badge-jiggle");
+      expect(pureSlamIdx).toBeGreaterThan(-1);
+      const pureSlamSnippet = css.slice(pureSlamIdx, pureSlamIdx + 300);
+      const zeroPercent = pureSlamSnippet.match(/0%\s*\{([^}]*)\}/);
+      expect(zeroPercent).toBeTruthy();
+      expect(zeroPercent![1]).toContain("translateX(-50%)");
+      expect(zeroPercent![1]).not.toContain("border-color");
+      expect(zeroPercent![1]).not.toContain("box-shadow");
+      expect(zeroPercent![1]).not.toContain("background");
     });
   });
 

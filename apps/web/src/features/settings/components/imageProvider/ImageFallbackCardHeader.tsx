@@ -1,22 +1,17 @@
 import { ShieldCheck } from "@phosphor-icons/react";
-import { resolveImgStudioModelName } from "@studio/shared";
+import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, resolveImgStudioModelName } from "@studio/shared";
 import { StatusLine } from "../../../../components/AppChrome";
-import { ProviderApiKeyStatusLine } from "./ProviderApiKeyStatusLine";
 
 export interface ImageFallbackCardHeaderProps {
   fallbackEnabled: boolean;
-  hasFallbackApiKey: boolean;
   fallbackModel: string;
 }
 
-export function ImageFallbackCardHeader({ fallbackEnabled, hasFallbackApiKey, fallbackModel }: ImageFallbackCardHeaderProps) {
+export function ImageFallbackCardHeader({ fallbackEnabled, fallbackModel }: ImageFallbackCardHeaderProps) {
   return (
     <>
       <div className="panel-heading">
-        <div>
-          <p className="eyebrow">Automatic Disaster Recovery</p>
-          <h2>Image Provider Fallback</h2>
-        </div>
+        <h2>Image Provider Fallback</h2>
         <ShieldCheck size={22} />
       </div>
 
@@ -34,8 +29,8 @@ export function ImageFallbackCardHeader({ fallbackEnabled, hasFallbackApiKey, fa
           )
         }
       />
-      <ProviderApiKeyStatusLine hasApiKey={hasFallbackApiKey} />
-      <StatusLine label="Active Fallback Model" value={resolveImgStudioModelName(fallbackModel)} />
+      <StatusLine label="Level 1 Model" value={resolveImgStudioModelName(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID)} />
+      <StatusLine label="Level 2 Model" value={resolveImgStudioModelName(fallbackModel)} />
     </>
   );
 }

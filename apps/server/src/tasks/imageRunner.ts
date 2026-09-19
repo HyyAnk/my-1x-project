@@ -4,10 +4,12 @@ import { CodexImageProvider } from "../providers/codexImage.js";
 import { ShopAiKeyImageProvider } from "../providers/shopAiKeyImage.js";
 import { AntigravityImageChainProvider } from "../providers/antigravityImageChain.js";
 import { Gpti2ImageProvider } from "../providers/gpti2Image.js";
+import { ImgStudioApiError } from "../providers/imgstudio/errors.js";
 import { ImgStudioImageProvider } from "../providers/imgstudio/index.js";
 import type { ImageProvider } from "../providers/index.js";
 import { parseContinuityBundles } from "../visualBundles.js";
 import { isContentFilterError } from "../utils/promptSanitizer.js";
+import { generateContinuityImgStudioFallback } from "./imageFallback/continuityImgStudioFallback.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
 function tryCreateExplicitProvider(
@@ -82,7 +84,7 @@ export async function generateBundleImageWithSafetyRetry(
   output?: string,
   _visualBibleContent?: string,
 ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }> {
-  const maxAttempts = 2;
+  const maxAttempts = 1; // Initial attempt + max 1 retry
   let lastError: unknown = null;
 
   for (let attempt = 0; attempt <= maxAttempts; attempt++) {
@@ -103,6 +105,7 @@ export async function generateBundleImageWithSafetyRetry(
     } catch (err) {
       lastError = err;
       if (signal?.aborted || this.get(task.task_id).status === "CANCELLED") throw err;
+      if (err instanceof ImgStudioApiError && !err.retryable) break;
       if (isContentFilterError(err)) {
         throw err;
       }
@@ -119,38 +122,20 @@ export async function generateBundleImageWithSafetyRetry(
     }
   }
 
-  const fallbackConfig = this.imageFallbackConfig;
-  if (fallbackConfig && fallbackConfig.enabled !== false && ImgStudioImageProvider.isConfigured(fallbackConfig.api_key)) {
-    this.logger.warn(
-      `Primary image provider failed for bundle CB-${String(imageTarget.bundleNumber).padStart(2, "0")} (${(lastError as Error)?.message}). Initiating fallback to ImgStudio...`,
-      { profileId: imageTarget.channelId, step: "IMAGE_FALLBACK_TRIGGERED" },
-    );
-    try {
-      const fallbackProvider = new ImgStudioImageProvider(this.repository, imageTarget, {
-        apiKey: fallbackConfig.api_key,
-        baseUrl: fallbackConfig.base_url,
-        model: fallbackConfig.model,
-        resolution: fallbackConfig.resolution,
-        quality: fallbackConfig.quality,
-      });
-      const image = await fallbackProvider.generateReference(initialPrompt, signal);
-      await this.repository
-        .recordImageUsage({
-          channelId: imageTarget.channelId,
-          episodeId: imageTarget.episodeId,
-          provider: "imgstudio",
-          model: fallbackConfig.model,
-          count: 1,
-          note: `Continuity bundle image CB-${String(imageTarget.bundleNumber).padStart(2, "0")} (fallback)`,
-        })
-        .catch(() => undefined);
-      return { image };
-    } catch (fallbackErr) {
-      this.logger.error(
-        `ImgStudio fallback generation also failed for bundle CB-${String(imageTarget.bundleNumber).padStart(2, "0")}: ${(fallbackErr as Error)?.message}`,
-        { profileId: imageTarget.channelId },
-      );
-    }
+  const fallbackResult = await generateContinuityImgStudioFallback(
+    {
+      repository: this.repository,
+      logger: this.logger,
+      config: this.imageFallbackConfig,
+      target: { ...imageTarget, taskId: imageTarget.taskId || task.task_id },
+      prompt: initialPrompt,
+      signal,
+      isCancelled: () => this.get(task.task_id).status === "CANCELLED",
+    },
+    lastError,
+  );
+  if (fallbackResult) {
+    return fallbackResult;
   }
 
   if (lastError instanceof Error) {

@@ -1,11 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID } from "@studio/shared";
 import { packageImage } from "./helpers/shortReelPackageFixture.js";
 import { generateGpti2ImageBytes } from "../src/providers/gpti2Image.js";
+import { generateImgStudioImageBytes } from "../src/providers/imgstudio/generator.js";
 import { createPortraitImageClient } from "../src/providers/imageGeneration/portraitImageClient.js";
+import { ImgStudioPortraitAdapter } from "../src/providers/imageGeneration/imgstudioPortraitAdapter.js";
 
 vi.mock("../src/providers/gpti2Image.js", () => ({
   generateGpti2ImageBytes: vi.fn(),
   resolveImageDimensions: vi.fn().mockReturnValue({ size: "720x1280", aspect_ratio: "9:16" }),
+}));
+
+vi.mock("../src/providers/imgstudio/generator.js", () => ({
+  generateImgStudioImageBytes: vi.fn(),
 }));
 
 describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I07)", () => {
@@ -346,5 +353,120 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
     expect(result.bytes).toEqual(generatedBytes);
     expect(fakeRepo.getEpisode).not.toHaveBeenCalled();
     expect(fakeRepo.writeBundleImage).not.toHaveBeenCalled();
+  });
+
+  describe("two-tier fallback resilience", () => {
+    it("separates portrait idempotency keys when resolution or quality changes", async () => {
+      const referenceBytes = await packageImage("red", 200, 200);
+      const generatedBytes = await packageImage("green", 720, 1280);
+      const mockedImgStudio = vi.mocked(generateImgStudioImageBytes);
+      mockedImgStudio.mockResolvedValue({
+        bytes: generatedBytes,
+        model: IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+        aspect_ratio: "9:16",
+        resolution: "2K",
+      });
+      const request = {
+        prompt: "A stable mascot portrait",
+        aspectRatio: "9:16" as const,
+        reference: { bytes: referenceBytes, mimeType: "image/png" },
+        operationId: "stable-operation",
+        dependencyFingerprint: "stable-fingerprint",
+        signal: new AbortController().signal,
+      };
+
+      await new ImgStudioPortraitAdapter({
+        apiKey: "fallback-key",
+        model: IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+        resolution: "1K",
+        quality: "standard",
+      }).generate(request);
+      await new ImgStudioPortraitAdapter({
+        apiKey: "fallback-key",
+        model: IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+        resolution: "1K",
+        quality: "high",
+      }).generate(request);
+      await new ImgStudioPortraitAdapter({
+        apiKey: "fallback-key",
+        model: IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+        resolution: "2K",
+        quality: "standard",
+      }).generate(request);
+
+      const calls = mockedImgStudio.mock.calls.map((call) => call[1]);
+      expect(calls.map((call) => call?.idempotencyKey)).toEqual([expect.any(String), expect.any(String), expect.any(String)]);
+      expect(calls[1]?.idempotencyKey).not.toBe(calls[0]?.idempotencyKey);
+      expect(calls[2]?.idempotencyKey).not.toBe(calls[0]?.idempotencyKey);
+      expect(calls.map((call) => [call?.resolution, call?.quality])).toEqual([
+        ["1K", "standard"],
+        ["1K", "high"],
+        ["2K", "standard"],
+      ]);
+    });
+
+    it("tries Gemini at Level 1 before the configured Qwen Level 2 model", async () => {
+      const referenceBytes = await packageImage("red", 200, 200);
+      const level2Bytes = await packageImage("green", 720, 1280);
+
+      const mockedGpti2 = vi.mocked(generateGpti2ImageBytes);
+      mockedGpti2.mockRejectedValue(new Error("Gpti2 network disconnect"));
+
+      const mockedImgStudio = vi.mocked(generateImgStudioImageBytes);
+      mockedImgStudio.mockImplementation(async (_prompt, opts) => {
+        if (opts?.model === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID) {
+          throw new Error("Level 1 offline");
+        }
+        if (opts?.model === IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID) {
+          return {
+            bytes: level2Bytes,
+            model: IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+            aspect_ratio: "9:16",
+            resolution: "2K",
+            price_vnd: 120,
+          };
+        }
+        throw new Error(`Unexpected model: ${opts?.model}`);
+      });
+
+      const client = createPortraitImageClient(
+        {
+          provider: "gpti2",
+          api_key: "primary-key",
+          model: "gpt-image-2",
+        },
+        {
+          enabled: true,
+          provider: "imgstudio",
+          api_key: "fallback-key",
+          model: IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+          resolution: "2K",
+          quality: "standard",
+        },
+      );
+
+      const result = await client.generate({
+        prompt: "A resilient mascot portrait",
+        aspectRatio: "9:16",
+        reference: { bytes: referenceBytes, mimeType: "image/png" },
+        operationId: "op-fallback-test",
+        dependencyFingerprint: "fingerprint-fallback",
+        signal: new AbortController().signal,
+      });
+
+      expect(mockedGpti2).toHaveBeenCalledTimes(1);
+      expect(mockedImgStudio).toHaveBeenCalledTimes(2);
+      expect(mockedImgStudio.mock.calls.map((call) => call[1]?.model)).toEqual([
+        IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+        IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+      ]);
+      const idempotencyKeys = mockedImgStudio.mock.calls.map((call) => call[1]?.idempotencyKey);
+      expect(idempotencyKeys[0]).toBeTruthy();
+      expect(idempotencyKeys[1]).not.toBe(idempotencyKeys[0]);
+
+      expect(result.bytes).toEqual(level2Bytes);
+      expect(result.provider).toBe("imgstudio");
+      expect(result.model).toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+    });
   });
 });

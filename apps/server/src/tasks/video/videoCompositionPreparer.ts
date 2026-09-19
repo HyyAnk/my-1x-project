@@ -41,6 +41,7 @@ export async function prepareVideoComposition(options: {
   runtime: TaskManagerRuntime;
   repository: RepositoryService;
   taskId: string;
+  signal: AbortSignal;
   channel: Channel;
   episode: Episode;
   scenes: Scene[];
@@ -77,6 +78,7 @@ export async function prepareVideoComposition(options: {
     quiz: artifacts.quiz,
     director: artifacts.director,
     aspectRatio: mascotAspectRatio,
+    signal: options.signal,
     onProgress,
   });
 

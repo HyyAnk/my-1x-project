@@ -64,16 +64,18 @@ export function visualChoicesThreeAnimationStyles(_aspectRatio?: MascotRenderAsp
 
 /* Settle Contrast Hardening (opacity: 0.35, grayscale: 78%) */
 .layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
-.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-incorrect,
-.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
 .layout-visual_choices_three.quiz-question-clip .choice-card.answer-reveal-incorrect,
-.layout-visual_choices_three.quiz-question-clip .choice-card.answer-incorrect,
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-reveal-incorrect,
-.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-incorrect,
-.layout-visual_choices_three .visual-answer-card.answer-incorrect,
 .layout-visual_choices_three .visual-answer-card.answer-reveal-incorrect {
   animation: incorrect-card-settle-visual-three 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+}
+
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card.answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-incorrect,
+.layout-visual_choices_three .visual-answer-card.answer-incorrect {
   opacity: 0.35;
   filter: grayscale(78%) contrast(0.95) brightness(0.92);
 }

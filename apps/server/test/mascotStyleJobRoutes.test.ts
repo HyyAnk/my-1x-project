@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { MascotProfile, MascotStyleBatchJob, StyleBatchStatusResponse } from "@studio/shared";
 import { buildApp } from "../src/app.js";
 import { createMascotStyleJobManager, createMascotStyleJobRepository } from "../src/quiz/mascot/styleJobs/index.js";
@@ -177,22 +177,37 @@ describe("Mascot Style Job Routes Integration", () => {
     await app.close();
   });
 
-  it("cancels an active batch and marks items as cancelled", async () => {
-    const blocker = new Promise<void>(() => {}); // Never resolves
+  it("keeps a cancelled job cancelled when an in-flight generator returns success late", async () => {
+    let markGeneratorStarted!: () => void;
+    const generatorStarted = new Promise<void>((resolve) => {
+      markGeneratorStarted = resolve;
+    });
+    let releaseGenerator!: () => void;
+    const blocker = new Promise<void>((resolve) => {
+      releaseGenerator = resolve;
+    });
     const customGen = async () => {
+      markGeneratorStarted();
       await blocker;
-      return { anchor_image_url: "", raw_image_url: "", prompt_used: "", placeholder: false };
+      return {
+        anchor_image_url: "/api/mascots/assets/late-anchor.png",
+        raw_image_url: "/api/mascots/assets/late-anchor-raw.png",
+        prompt_used: "late success",
+        placeholder: false,
+      };
     };
 
     const { app, mascot, style1 } = await setupTestApp(customGen);
 
-    await app.server.inject({
+    const queueRes = await app.server.inject({
       method: "POST",
       url: `/api/mascots/${mascot.id}/styles/jobs/queue`,
       payload: {
         styles: [{ style_id: style1.id, style_name: style1.name }],
       },
     });
+    const queued = queueRes.json<MascotStyleBatchJob>();
+    await generatorStarted;
 
     const cancelRes = await app.server.inject({
       method: "POST",
@@ -204,6 +219,15 @@ describe("Mascot Style Job Routes Integration", () => {
     const cancelled = cancelRes.json<{ ok: boolean; batch: MascotStyleBatchJob }>();
     expect(cancelled.ok).toBe(true);
     expect(cancelled.batch.status).toBe("cancelled");
+
+    releaseGenerator();
+    await vi.waitFor(() => expect(app.mascotStyleJobManager.getActiveWorkerCount()).toBe(0));
+
+    const persisted = await app.mascotStyleJobManager.getBatch(mascot.id, queued.id);
+    expect(persisted?.status).toBe("cancelled");
+    expect(persisted?.completed_count).toBe(0);
+    expect(persisted?.items[0]?.status).toBe("cancelled");
+    expect(persisted?.items[0]?.anchor_image_url).toBeFalsy();
 
     await app.close();
   });

@@ -178,9 +178,13 @@ export const rusticWoodPlankVariant: AnswerCardSkin = {
   border-color: #F59E0B;
   box-shadow: 0 14px 0 #854D0E, 0 0 32px rgba(245, 158, 11, 0.8), inset 0 3px 6px rgba(254, 240, 138, 0.6);
 }
-.skin-rustic_wood_plank.choice-card-visual.answer-reveal-correct .option-image {
-  animation: visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
-  will-change: border-color, box-shadow;
+.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .option-image,
+.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .option-image,
+.skin-rustic_wood_plank.choice-card-visual.answer-reveal-correct .option-image,
+.choice-card.answer-reveal-correct.skin-rustic_wood_plank .option-image {
+  animation: visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--item-phase, 0s)) infinite alternate both,
+             visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow, transform;
 }
 
 /* === Reveal State: Correct Answer (Golden Treasure Glory) === */
@@ -203,6 +207,12 @@ export const rusticWoodPlankVariant: AnswerCardSkin = {
   z-index: 6;
 }
 
+.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .ac-rustic-wood-plank,
+.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .ac-rustic-wood-plank,
+.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .visual-answer-label,
+.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .visual-answer-label,
+.choice-card.answer-reveal-correct.skin-rustic_wood_plank .ac-rustic-wood-plank,
+.visual-answer-card.answer-reveal-correct.skin-rustic_wood_plank .ac-rustic-wood-plank,
 .ac-rustic-wood-plank.answer-reveal-correct,
 .choice-card.answer-reveal-correct .ac-rustic-wood-plank,
 .visual-answer-card.answer-reveal-correct .ac-rustic-wood-plank {
@@ -230,16 +240,34 @@ export const rusticWoodPlankVariant: AnswerCardSkin = {
   animation: ac-wood-seal-slam 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
 }
 
+.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-label,
+.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-label,
+.choice-card.answer-reveal-correct.skin-rustic_wood_plank .choice-label,
+.visual-answer-card.answer-reveal-correct.skin-rustic_wood_plank .choice-label,
 .ac-rustic-wood-plank.answer-reveal-correct > b,
 .choice-card.answer-reveal-correct .ac-rustic-wood-plank .choice-label,
-.visual-answer-card.answer-reveal-correct .ac-rustic-wood-plank .choice-label,
-.choice-card.answer-reveal-correct.skin-rustic_wood_plank .choice-label,
-.visual-answer-card.answer-reveal-correct.skin-rustic_wood_plank .choice-label {
+.visual-answer-card.answer-reveal-correct .ac-rustic-wood-plank .choice-label {
   animation: ac-wood-seal-slam 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: transform;
 }
 
+/* Pure Visual Straddling Badge Centering */
+.choice-card-visual.choice-pure-visual.skin-rustic_wood_plank .choice-badge-pure,
+.choice-card-visual.choice-pure-visual.skin-rustic_wood_plank .choice-label,
+.layout-visual_choices_three_pure .choice-card.skin-rustic_wood_plank .choice-badge-pure,
+.layout-visual_choices_three_pure .choice-card.skin-rustic_wood_plank .choice-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 /* Pure Visual Straddling Badge Reveal (Preserves translateX(-50%)) */
+.quiz-question-clip .choice-card-visual.choice-pure-visual:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-badge-pure,
+.quiz-question-clip .choice-card-visual.choice-pure-visual:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-label,
+.quiz-question-clip .visual-answer-card.choice-pure-visual:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-badge-pure,
+.quiz-question-clip .visual-answer-card.choice-pure-visual:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-label,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-badge-pure,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct.skin-rustic_wood_plank .choice-label,
 .choice-card-visual.choice-pure-visual.answer-reveal-correct.skin-rustic_wood_plank .choice-badge-pure,
 .choice-card-visual.choice-pure-visual.answer-reveal-correct.skin-rustic_wood_plank .choice-label,
 .layout-visual_choices_three_pure .choice-card.answer-reveal-correct.skin-rustic_wood_plank .choice-badge-pure,
@@ -248,6 +276,12 @@ export const rusticWoodPlankVariant: AnswerCardSkin = {
   will-change: transform;
 }
 
+.quiz-question-clip .choice-card-visual.choice-pure-visual:nth-child(n).answer-correct.skin-rustic_wood_plank .choice-badge-pure,
+.quiz-question-clip .choice-card-visual.choice-pure-visual:nth-child(n).answer-correct.skin-rustic_wood_plank .choice-label,
+.quiz-question-clip .visual-answer-card.choice-pure-visual:nth-child(n).answer-correct.skin-rustic_wood_plank .choice-badge-pure,
+.quiz-question-clip .visual-answer-card.choice-pure-visual:nth-child(n).answer-correct.skin-rustic_wood_plank .choice-label,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-correct.skin-rustic_wood_plank .choice-badge-pure,
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(n).answer-correct.skin-rustic_wood_plank .choice-label,
 .choice-card-visual.choice-pure-visual.answer-correct.skin-rustic_wood_plank .choice-badge-pure,
 .choice-card-visual.choice-pure-visual.answer-correct.skin-rustic_wood_plank .choice-label,
 .layout-visual_choices_three_pure .choice-card.answer-correct.skin-rustic_wood_plank .choice-badge-pure,

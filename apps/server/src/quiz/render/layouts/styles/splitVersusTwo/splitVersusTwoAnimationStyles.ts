@@ -52,30 +52,75 @@ export function splitVersusTwoAnimationStyles(): string {
   }
 }
 
-/* --- Phase 4: Answer Reveal Duel Climax --- */
-.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
-.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-correct,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-correct,
-.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-reveal-correct,
-.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-correct,
-.layout-split_versus_two.quiz-question-clip .choice-card.answer-reveal-correct,
-.layout-split_versus_two.quiz-question-clip .choice-card.answer-correct,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-reveal-correct,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-correct,
-.layout-split_versus_two.quiz-question-clip .answer-card.answer-reveal-correct,
-.layout-split_versus_two.quiz-question-clip .answer-card.answer-correct,
-.layout-split_versus_two .choice-card.answer-reveal-correct,
-.layout-split_versus_two .choice-card.answer-correct,
-.layout-split_versus_two .visual-answer-card.answer-reveal-correct,
-.layout-split_versus_two .visual-answer-card.answer-correct,
-.layout-split_versus_two .answer-card.answer-reveal-correct,
-.layout-split_versus_two .answer-card.answer-correct {
-  animation: split-versus-winner-coronation 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+/* --- Phase 4: Answer Reveal Duel Climax (Chained with Entrances for Parity & Kinetic Integrity) --- */
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1).answer-reveal-correct,
+.layout-split_versus_two .choice-card:nth-child(1).answer-reveal-correct {
+  animation:
+    split-versus-enter-left 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
+    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both,
+    split-versus-winner-coronation 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   background: transparent;
   border: 0;
   box-shadow: none;
   z-index: 8;
+}
+
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1).answer-reveal-incorrect,
+.layout-split_versus_two .choice-card.answer-reveal-incorrect,
+.layout-split_versus_two .choice-card:nth-child(1).answer-reveal-incorrect {
+  animation:
+    split-versus-enter-left 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
+    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both,
+    split-versus-loser-defeat 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: opacity, filter;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2).answer-reveal-correct,
+.layout-split_versus_two .choice-card:nth-child(2).answer-reveal-correct {
+  animation:
+    split-versus-enter-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
+    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both,
+    split-versus-winner-coronation 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  z-index: 8;
+}
+
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2).answer-reveal-incorrect,
+.layout-split_versus_two .choice-card:nth-child(2).answer-reveal-incorrect {
+  animation:
+    split-versus-enter-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
+    answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both,
+    split-versus-loser-defeat 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: opacity, filter;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+/* Static snapshot classes (for non-scheduled snapshot mode) */
+.layout-split_versus_two .choice-card.answer-correct,
+.layout-split_versus_two .visual-answer-card.answer-correct,
+.layout-split_versus_two .answer-card.answer-correct {
+  transform: scale(1.035) translateY(-4px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  z-index: 8;
+}
+
+.layout-split_versus_two .choice-card.answer-incorrect,
+.layout-split_versus_two .visual-answer-card.answer-incorrect,
+.layout-split_versus_two .answer-card.answer-incorrect {
+  opacity: 0.35;
+  filter: grayscale(78%) contrast(0.95) brightness(0.92);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .layout-split_versus_two .choice-card.answer-reveal-correct .choice-card-surface,
@@ -92,40 +137,8 @@ export function splitVersusTwoAnimationStyles(): string {
   box-shadow: 0 16px 0 #15803D, 0 0 50px rgba(74, 222, 128, 0.85), 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-incorrect,
-.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-reveal-incorrect,
-.layout-split_versus_two.quiz-question-clip .choice-card.answer-reveal-incorrect,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-reveal-incorrect,
-.layout-split_versus_two.quiz-question-clip .answer-card.answer-reveal-incorrect,
-.layout-split_versus_two .choice-card.answer-reveal-incorrect,
-.layout-split_versus_two .visual-answer-card.answer-reveal-incorrect,
-.layout-split_versus_two .answer-card.answer-reveal-incorrect {
-  animation: split-versus-loser-defeat 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
-  will-change: opacity, filter;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-}
-
-.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
-.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-incorrect,
-.layout-split_versus_two.quiz-question-clip .choice-card.answer-incorrect,
-.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-incorrect,
-.layout-split_versus_two.quiz-question-clip .answer-card.answer-incorrect,
-.layout-split_versus_two .choice-card.answer-incorrect,
-.layout-split_versus_two .visual-answer-card.answer-incorrect,
-.layout-split_versus_two .answer-card.answer-incorrect {
-  opacity: 0.35;
-  filter: grayscale(78%) contrast(0.95) brightness(0.92);
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-}
-
 @keyframes split-versus-winner-coronation {
-  0% { transform: scale(1); }
+  0% { }
   45% {
     transform: scale(1.06) translateY(-8px);
   }
@@ -135,9 +148,7 @@ export function splitVersusTwoAnimationStyles(): string {
 }
 
 @keyframes split-versus-surface-win {
-  0% {
-    transform: scale(1);
-  }
+  0% { }
   45% {
     border-color: #4ADE80;
     box-shadow: 0 18px 0 #15803D, 0 0 70px rgba(74, 222, 128, 0.95), 0 24px 48px rgba(0, 0, 0, 0.35);
@@ -149,7 +160,7 @@ export function splitVersusTwoAnimationStyles(): string {
 }
 
 @keyframes split-versus-loser-defeat {
-  0% { opacity: 1; transform: scale(1); filter: grayscale(0%); }
+  0% { opacity: 1; filter: grayscale(0%); }
   100% {
     opacity: 0.35;
     transform: scale(0.95) translateY(4px);
@@ -160,11 +171,14 @@ export function splitVersusTwoAnimationStyles(): string {
 }
 
 /* VS Badge Victory Flare in Phase 4 */
-.layout-split_versus_two.quiz-question-clip .answer-grid:has(.answer-reveal-correct)::after,
-.layout-split_versus_two.quiz-question-clip .visual-answer-grid:has(.answer-reveal-correct)::after,
 .layout-split_versus_two .answer-grid:has(.answer-reveal-correct)::after,
-.layout-split_versus_two .visual-answer-grid:has(.answer-reveal-correct)::after {
-  animation: split-versus-badge-victory 0.6s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+.layout-split_versus_two .visual-answer-grid:has(.answer-reveal-correct)::after,
+.layout-split_versus_two.quiz-question-clip .answer-grid:has(.answer-reveal-correct)::after,
+.layout-split_versus_two.quiz-question-clip .visual-answer-grid:has(.answer-reveal-correct)::after {
+  animation:
+    split-versus-badge-slam 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.28s) both,
+    split-versus-badge-pulse 2s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.82s) infinite alternate both,
+    split-versus-badge-victory 0.6s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   will-change: transform, filter;
 }
 
@@ -177,7 +191,7 @@ export function splitVersusTwoAnimationStyles(): string {
 }
 
 @keyframes split-versus-badge-victory {
-  0% { transform: scale(1) rotate(-4deg); }
+  0% { }
   50% { transform: scale(1.28) rotate(12deg); filter: brightness(1.6); }
   100% {
     transform: scale(1.15) rotate(-2deg);

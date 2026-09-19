@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
+import { resolveImgStudioResolution } from "../imgstudio/dimensions.js";
 import { generateImgStudioImageBytes } from "../imgstudio/generator.js";
+import { createImgStudioIdempotencyKey } from "../imgstudio/idempotency.js";
 import { GenerationError } from "../../shortReel/generationErrors.js";
 import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
 import type { GeneratedImageBytes, PortraitImageClient, PortraitImageRequest } from "./imageGeneration.types.js";
@@ -10,6 +12,7 @@ export interface ImgStudioPortraitAdapterOptions {
   model?: string;
   resolution?: "1K" | "2K" | "4K";
   quality?: "standard" | "high";
+  idempotencyScope?: string;
 }
 
 export class ImgStudioPortraitAdapter implements PortraitImageClient {
@@ -31,10 +34,24 @@ export class ImgStudioPortraitAdapter implements PortraitImageClient {
     }
 
     const model = (this.options.model || IMGSTUDIO_DEFAULT_MODEL_ID).trim();
+    const resolution = resolveImgStudioResolution(model, this.options.resolution);
+    const quality = this.options.quality || "standard";
     const promptHash = createHash("sha256").update(request.prompt).digest("hex").slice(0, 16);
     const refHash = createHash("sha256").update(request.reference.bytes).digest("hex").slice(0, 16);
-    const seed = `${request.operationId}:${request.dependencyFingerprint}:${model}:${request.aspectRatio}:${refHash}:${promptHash}`;
-    const idempotencyKey = `ptrt_img_${createHash("sha256").update(seed).digest("hex").slice(0, 24)}`;
+    const idempotencyKey = createImgStudioIdempotencyKey({
+      workflow: "portrait-image",
+      runId: request.operationId,
+      resource: JSON.stringify({
+        dependencyFingerprint: request.dependencyFingerprint,
+        aspectRatio: request.aspectRatio,
+        referenceHash: refHash,
+        promptHash,
+        resolution,
+        quality,
+      }),
+      tier: this.options.idempotencyScope || "primary",
+      model,
+    });
     const referenceImage = Buffer.from(request.reference.bytes).toString("base64");
 
     try {
@@ -42,8 +59,8 @@ export class ImgStudioPortraitAdapter implements PortraitImageClient {
         apiKey,
         baseUrl: this.options.baseUrl,
         model,
-        resolution: this.options.resolution || "2K",
-        quality: this.options.quality || "standard",
+        resolution,
+        quality,
         aspect_ratio: request.aspectRatio,
         referenceImage,
         idempotencyKey,

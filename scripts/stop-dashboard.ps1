@@ -1,11 +1,12 @@
 param(
   [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
-  [int]$DelayMilliseconds = 0
+  [int]$DelayMilliseconds = 0,
+  [switch]$DashboardOnly
 )
 
 $ErrorActionPreference = "SilentlyContinue"
 $worker = "stop-dashboard"
-$ports = @(4310, 2244, 2233, 8890)
+$ports = if ($DashboardOnly) { @(4310, 2244) } else { @(4310, 2244, 2233, 8890) }
 $resolvedRoot = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd("\").ToLowerInvariant()
 $startedAt = Get-Date
 $stopped = 0
@@ -23,7 +24,8 @@ function Write-Log {
   Write-Host ("[{0}] [{1}] [T:{2}] [STEP:{3}] {4}" -f $timestamp, $Level, $worker, $Step, $Message) -ForegroundColor $Color
 }
 
-Write-Log "INFO" "startup" ("root={0} | ports={1} | mode=local-only | automation=process" -f $resolvedRoot, ($ports -join ","))
+$shutdownMode = if ($DashboardOnly) { "dashboard-only" } else { "all-local-services" }
+Write-Log "INFO" "startup" ("root={0} | ports={1} | mode={2} | automation=process" -f $resolvedRoot, ($ports -join ","), $shutdownMode)
 if ($DelayMilliseconds -gt 0) {
   Write-Log "STEP" "delay" ("Waiting {0}ms for the shutdown response to finish" -f $DelayMilliseconds) ([ConsoleColor]::Blue)
   Start-Sleep -Milliseconds $DelayMilliseconds

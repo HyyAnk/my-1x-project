@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { AppConfig, ImageFallbackConfig } from "@studio/shared";
-import { IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_MODELS } from "@studio/shared";
+import { IMGSTUDIO_MODELS, resolveImgStudioFallbackLevel2Model } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 
@@ -17,7 +17,7 @@ export type UseImageFallbackSettingsProps = {
 
 export function useImageFallbackSettingsState({ appConfig, onFallbackSaved, onNotice }: UseImageFallbackSettingsProps) {
   const [fallbackEnabled, setFallbackEnabled] = useState(appConfig?.image_fallback?.enabled ?? true);
-  const [fallbackModel, setFallbackModel] = useState(appConfig?.image_fallback?.model ?? IMGSTUDIO_DEFAULT_MODEL_ID);
+  const [fallbackModel, setFallbackModel] = useState(resolveImgStudioFallbackLevel2Model(appConfig?.image_fallback?.model));
   const [fallbackResolution, setFallbackResolution] = useState<"1K" | "2K" | "4K">(appConfig?.image_fallback?.resolution ?? "2K");
   const [fallbackQuality, setFallbackQuality] = useState<"standard" | "high">(appConfig?.image_fallback?.quality ?? "standard");
   const [fallbackApiKey, setFallbackApiKey] = useState(appConfig?.image_fallback?.api_key ?? "");
@@ -34,7 +34,7 @@ export function useImageFallbackSettingsState({ appConfig, onFallbackSaved, onNo
   useEffect(() => {
     if (appConfig?.image_fallback) {
       setFallbackEnabled(appConfig.image_fallback.enabled);
-      setFallbackModel(appConfig.image_fallback.model || IMGSTUDIO_DEFAULT_MODEL_ID);
+      setFallbackModel(resolveImgStudioFallbackLevel2Model(appConfig.image_fallback.model));
       setFallbackResolution(appConfig.image_fallback.resolution || "2K");
       setFallbackQuality(appConfig.image_fallback.quality || "standard");
       setFallbackBaseUrl(appConfig.image_fallback.base_url || "https://imgstudio.site");
@@ -100,9 +100,11 @@ export function useImageFallbackSettingsState({ appConfig, onFallbackSaved, onNo
     setVerifyingFallback(true);
     setVerificationResult(null);
     try {
+      const apiKey = fallbackApiKey.trim();
+      const baseUrl = fallbackBaseUrl.trim();
       const result = await api.verifyImageFallback({
-        api_key: fallbackApiKey.trim(),
-        base_url: fallbackBaseUrl.trim(),
+        ...(apiKey ? { api_key: apiKey } : {}),
+        ...(baseUrl ? { base_url: baseUrl } : {}),
       });
       if (result.ok) {
         const msg = `Connected successfully to ImgStudio API (${result.models?.length ?? 10} models verified).`;

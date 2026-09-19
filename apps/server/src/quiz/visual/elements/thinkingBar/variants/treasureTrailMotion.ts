@@ -94,10 +94,10 @@ export function treasureTrailMotionCss(): string {
 }
 
 @keyframes expeditionDestinationSignal {
-  0%, 58% { transform: translateY(-50%) scale(0.96); filter: drop-shadow(0 0 11px rgba(245, 158, 11, 0.42)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5)); }
-  76% { transform: translateY(-50%) scale(1.02); filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.7)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.48)); }
-  90% { transform: translateY(-50%) scale(1.12) rotate(-2deg); filter: drop-shadow(0 0 34px rgba(253, 224, 71, 0.95)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.42)); }
-  100% { transform: translateY(-50%) scale(1.06); filter: drop-shadow(0 0 27px rgba(245, 158, 11, 0.86)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45)); }
+  0%, 58% { transform: translateY(-50%) scale(0.96); filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.45)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.55)); }
+  76% { transform: translateY(-50%) scale(1.02); filter: drop-shadow(0 0 28px rgba(245, 158, 11, 0.75)) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5)); }
+  90% { transform: translateY(-50%) scale(1.12) rotate(-2deg); filter: drop-shadow(0 0 42px rgba(253, 224, 71, 0.95)) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45)); }
+  100% { transform: translateY(-50%) scale(1.06); filter: drop-shadow(0 0 32px rgba(245, 158, 11, 0.9)) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.48)); }
 }
 
 @keyframes expeditionRouteMarch { from { background-position: 0 50%; } to { background-position: -620px 50%; } }
@@ -125,7 +125,7 @@ export function treasureTrailMotionCss(): string {
 @media (max-width: 640px) {
   .thinking-bar-treasure-trail .trail-track { height: 58px; }
   .thinking-bar-treasure-trail .trail-channel { height: 32px; margin-left: 28px; }
-  .thinking-bar-treasure-trail .trail-destination { left: -22px; width: 70px; height: 70px; }
+  .thinking-bar-treasure-trail .trail-destination { left: -48px; width: 140px; height: 140px; }
   .thinking-bar-treasure-trail .trail-ship-marker { width: 142px; height: 142px; }
   .thinking-bar-treasure-trail .trail-waypoint-svg { width: 18px; height: 18px; }
   .thinking-bar-treasure-trail .helm-needle-overlay { height: 68px; }

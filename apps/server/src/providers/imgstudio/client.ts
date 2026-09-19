@@ -1,80 +1,78 @@
+import { randomUUID } from "node:crypto";
 import { RepositoryError } from "../../repository.js";
+import { createImgStudioHttpError, ImgStudioApiError, isRetryableImgStudioError } from "./errors.js";
+import {
+  createUnavailableError,
+  IMGSTUDIO_CONNECTIVITY_TIMEOUT_MS,
+  IMGSTUDIO_MAX_PROCESSING_POLLS,
+  IMGSTUDIO_MAX_TRANSIENT_RETRIES,
+  IMGSTUDIO_MIN_PROCESSING_POLL_INTERVAL_MS,
+  IMGSTUDIO_OPERATION_TIMEOUT_MS,
+  IMGSTUDIO_PROCESSING_POLL_INTERVAL_MS,
+  IMGSTUDIO_REQUEST_TIMEOUT_MS,
+  operationTimeoutError,
+  resolveRetryDelayMs,
+  translateTransportError,
+  waitWithSignal,
+} from "./transportPolicy.js";
 import type {
   ImgStudioCallOptions,
   ImgStudioConnectivityResult,
   ImgStudioGenerationRequest,
   ImgStudioGenerationResponse,
 } from "./types.js";
+import {
+  createRequestPayload,
+  extractErrorMessage,
+  IMGSTUDIO_MAX_REFERENCE_IMAGE_BYTES,
+  parseGenerationResponse,
+  parseJsonSafe,
+} from "./wireProtocol.js";
 
 export const DEFAULT_IMGSTUDIO_BASE_URL = "https://imgstudio.site";
-export const IMGSTUDIO_REQUEST_TIMEOUT_MS = 90_000;
-export const IMGSTUDIO_CONNECTIVITY_TIMEOUT_MS = 15_000;
 
-function parseJsonSafe(text: string): Record<string, unknown> | undefined {
-  try {
-    const parsed: unknown = JSON.parse(text);
-    return typeof parsed === "object" && parsed !== null ? (parsed as Record<string, unknown>) : undefined;
-  } catch {
-    return undefined;
-  }
+export {
+  IMGSTUDIO_CONNECTIVITY_TIMEOUT_MS,
+  IMGSTUDIO_MAX_PROCESSING_POLLS,
+  IMGSTUDIO_MAX_REFERENCE_IMAGE_BYTES,
+  IMGSTUDIO_MAX_TRANSIENT_RETRIES,
+  IMGSTUDIO_MIN_PROCESSING_POLL_INTERVAL_MS,
+  IMGSTUDIO_OPERATION_TIMEOUT_MS,
+  IMGSTUDIO_PROCESSING_POLL_INTERVAL_MS,
+  IMGSTUDIO_REQUEST_TIMEOUT_MS,
+  ImgStudioApiError,
+  isRetryableImgStudioError,
+};
+
+const PROCESSING_STATUSES = new Set(["pending", "processing", "queued"]);
+const SUCCESS_STATUSES = new Set(["completed", "succeeded"]);
+const FAILURE_STATUSES = new Set(["cancelled", "canceled", "error", "failed", "rejected"]);
+
+function createTerminalStatusError(
+  response: Response,
+  rawText: string,
+  payload: Record<string, unknown>,
+  parsedResponse: ImgStudioGenerationResponse,
+): ImgStudioApiError {
+  const status = parsedResponse.status || "unknown";
+  const detail = parsedResponse.error?.message?.trim() || parsedResponse.message?.trim() || extractErrorMessage(rawText, payload);
+  return new ImgStudioApiError(
+    `ImgStudio API returned terminal generation status '${status}': ${detail}`,
+    "IMAGE_PROVIDER_FAILED",
+    false,
+    response.status,
+  );
 }
 
-function extractErrorMessage(rawText: string, payload?: Record<string, unknown>): string {
-  if (payload) {
-    if (typeof payload.error === "object" && payload.error !== null) {
-      const errObj = payload.error as { message?: unknown };
-      if (typeof errObj.message === "string" && errObj.message.trim()) {
-        return errObj.message.trim();
-      }
-    }
-    if (typeof payload.error === "string" && payload.error.trim()) {
-      return payload.error.trim();
-    }
-    if (typeof payload.message === "string" && payload.message.trim()) {
-      return payload.message.trim();
-    }
-    if (typeof payload.detail === "string" && payload.detail.trim()) {
-      return payload.detail.trim();
-    }
-  }
-  return rawText.slice(0, 300).trim() || "Unknown error";
+async function waitForReplay(response: Response, operationSignal: AbortSignal, minimumMs = 0): Promise<void> {
+  await waitWithSignal(resolveRetryDelayMs(response, IMGSTUDIO_PROCESSING_POLL_INTERVAL_MS, minimumMs), operationSignal);
 }
 
-function handleApiHttpError(status: number, errorMsg: string): never {
-  const isContentFilter =
-    (status === 400 || status === 422) && /(?:content filter|safety|moderation|policy|prohibited|inappropriate|violat)/i.test(errorMsg);
-
-  if (isContentFilter) {
-    throw new RepositoryError(`ImgStudio API content filter rejection (${status}): ${errorMsg}`, "IMAGE_CONTENT_FILTER_REJECTED");
-  }
-
-  if (status === 401) {
-    throw new RepositoryError(`ImgStudio API authentication failed (401): ${errorMsg}`, "IMAGE_PROVIDER_AUTH_ERROR");
-  }
-
-  if (status === 403) {
-    throw new RepositoryError(`ImgStudio API access forbidden (403): ${errorMsg}`, "IMAGE_PROVIDER_AUTH_ERROR");
-  }
-
-  if (status === 429) {
-    throw new RepositoryError(`ImgStudio API rate limit exceeded (429): ${errorMsg}`, "RATE_LIMIT_EXCEEDED");
-  }
-
-  if (status >= 500) {
-    throw new RepositoryError(`ImgStudio API server error (${status}): ${errorMsg}`, "IMAGE_PROVIDER_SERVER_ERROR");
-  }
-
-  throw new RepositoryError(`ImgStudio API failed (${status}): ${errorMsg}`, "IMAGE_PROVIDER_FAILED");
+function canRetry(error: unknown, retries: number): boolean {
+  return retries < IMGSTUDIO_MAX_TRANSIENT_RETRIES && isRetryableImgStudioError(error);
 }
 
-/**
- * Sends image generation request to the ImgStudio API endpoint.
- *
- * Headers:
- * - Authorization: Bearer <key>
- * - Content-Type: application/json
- * - Idempotency-Key: <key>
- */
+/** Sends one idempotent image operation and polls the native endpoint until it completes. */
 export async function callImgStudioApi(
   request: ImgStudioGenerationRequest,
   options: ImgStudioCallOptions,
@@ -88,68 +86,102 @@ export async function callImgStudioApi(
   }
 
   const baseUrl = (options.baseUrl?.trim() || DEFAULT_IMGSTUDIO_BASE_URL).replace(/\/+$/, "");
-  const endpoint = `${baseUrl}/api/v1/images/generate`;
-
+  const requestPayload = createRequestPayload(request);
+  const endpoint = `${baseUrl}${requestPayload.endpointPath}`;
   const headers: Record<string, string> = {
     Authorization: `Bearer ${apiKey}`,
-    "Content-Type": "application/json",
+    "Content-Type": requestPayload.contentType,
+    "Idempotency-Key": options.idempotencyKey || randomUUID(),
   };
-  if (options.idempotencyKey) {
-    headers["Idempotency-Key"] = options.idempotencyKey;
-  }
+  const operationTimeoutSignal = AbortSignal.timeout(IMGSTUDIO_OPERATION_TIMEOUT_MS);
+  const operationSignal = options.cancellationSignal
+    ? AbortSignal.any([options.cancellationSignal, operationTimeoutSignal])
+    : operationTimeoutSignal;
+  let processingPolls = 0;
+  let transientRetries = 0;
 
-  const body: Record<string, unknown> = {
-    model: request.model,
-    prompt: request.prompt,
-    aspect_ratio: request.aspect_ratio,
-    resolution: request.resolution,
-    quality: request.quality,
-  };
-  if (request.image) {
-    body.image = request.image;
-  }
-
-  const requestSignal = options.cancellationSignal
-    ? AbortSignal.any([options.cancellationSignal, AbortSignal.timeout(IMGSTUDIO_REQUEST_TIMEOUT_MS)])
-    : AbortSignal.timeout(IMGSTUDIO_REQUEST_TIMEOUT_MS);
-
-  let response: Response;
-  try {
-    response = await fetch(endpoint, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-      signal: requestSignal,
-    });
-  } catch (error) {
-    if (options.cancellationSignal?.aborted) {
-      throw new Error("ImgStudio image generation was cancelled", { cause: error });
+  while (true) {
+    const requestSignal = AbortSignal.any([operationSignal, AbortSignal.timeout(IMGSTUDIO_REQUEST_TIMEOUT_MS)]);
+    let response: Response;
+    try {
+      response = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body: requestPayload.body,
+        signal: requestSignal,
+      });
+    } catch (error) {
+      const transportError = translateTransportError(error, options.cancellationSignal, operationTimeoutSignal);
+      if (!canRetry(transportError, transientRetries)) {
+        throw transportError;
+      }
+      transientRetries += 1;
+      try {
+        await waitWithSignal(IMGSTUDIO_PROCESSING_POLL_INTERVAL_MS, operationSignal);
+      } catch (waitError) {
+        throw translateTransportError(waitError, options.cancellationSignal, operationTimeoutSignal);
+      }
+      continue;
     }
-    throw new RepositoryError(
-      `Failed to connect to ImgStudio API: ${error instanceof Error ? error.message : String(error)}`,
-      "IMAGE_PROVIDER_UNAVAILABLE",
-      { cause: error },
-    );
+
+    let rawText: string;
+    try {
+      rawText = await response.text();
+    } catch (error) {
+      const transportError = translateTransportError(error, options.cancellationSignal, operationTimeoutSignal);
+      if (!canRetry(transportError, transientRetries)) {
+        throw transportError;
+      }
+      transientRetries += 1;
+      try {
+        await waitWithSignal(IMGSTUDIO_PROCESSING_POLL_INTERVAL_MS, operationSignal);
+      } catch (waitError) {
+        throw translateTransportError(waitError, options.cancellationSignal, operationTimeoutSignal);
+      }
+      continue;
+    }
+
+    const payload = parseJsonSafe(rawText);
+    if (!response.ok) {
+      const apiError = createImgStudioHttpError(response.status, extractErrorMessage(rawText, payload));
+      if (!canRetry(apiError, transientRetries)) throw apiError;
+      transientRetries += 1;
+      try {
+        await waitForReplay(response, operationSignal);
+      } catch (waitError) {
+        throw translateTransportError(waitError, options.cancellationSignal, operationTimeoutSignal);
+      }
+      continue;
+    }
+
+    if (!payload) {
+      throw new ImgStudioApiError("ImgStudio API returned malformed or non-JSON response", "IMAGE_PROVIDER_FAILED", false, response.status);
+    }
+
+    const parsedResponse = parseGenerationResponse(payload);
+    const status = parsedResponse.status?.trim().toLowerCase();
+    if (status && FAILURE_STATUSES.has(status)) {
+      throw createTerminalStatusError(response, rawText, payload, parsedResponse);
+    }
+    if (status && SUCCESS_STATUSES.has(status)) return parsedResponse;
+
+    if (response.status === 202 || (status && PROCESSING_STATUSES.has(status))) {
+      processingPolls += 1;
+      if (processingPolls > IMGSTUDIO_MAX_PROCESSING_POLLS) throw operationTimeoutError();
+      try {
+        await waitForReplay(response, operationSignal, IMGSTUDIO_MIN_PROCESSING_POLL_INTERVAL_MS);
+      } catch (waitError) {
+        throw translateTransportError(waitError, options.cancellationSignal, operationTimeoutSignal);
+      }
+      continue;
+    }
+
+    if (status) throw createTerminalStatusError(response, rawText, payload, parsedResponse);
+    return parsedResponse;
   }
-
-  const rawText = await response.text();
-  const payload = parseJsonSafe(rawText);
-
-  if (!response.ok) {
-    const errorMsg = extractErrorMessage(rawText, payload);
-    handleApiHttpError(response.status, errorMsg);
-  }
-
-  if (!payload) {
-    throw new RepositoryError("ImgStudio API returned malformed or non-JSON response", "IMAGE_PROVIDER_FAILED");
-  }
-
-  return payload;
 }
 
-/**
- * Checks connectivity and verifies API key validity against ImgStudio models endpoint.
- */
+/** Checks connectivity and verifies API key validity against the ImgStudio models endpoint. */
 export async function checkImgStudioConnectivity(apiKey: string, baseUrl?: string): Promise<ImgStudioConnectivityResult> {
   const trimmedKey = apiKey?.trim();
   if (!trimmedKey) {
@@ -158,8 +190,9 @@ export async function checkImgStudioConnectivity(apiKey: string, baseUrl?: strin
 
   const normalizedBaseUrl = (baseUrl?.trim() || DEFAULT_IMGSTUDIO_BASE_URL).replace(/\/+$/, "");
   const endpoint = `${normalizedBaseUrl}/api/v1/models`;
-
+  const timeoutSignal = AbortSignal.timeout(IMGSTUDIO_CONNECTIVITY_TIMEOUT_MS);
   let response: Response;
+  let rawText: string;
   try {
     response = await fetch(endpoint, {
       method: "GET",
@@ -167,31 +200,40 @@ export async function checkImgStudioConnectivity(apiKey: string, baseUrl?: strin
         Authorization: `Bearer ${trimmedKey}`,
         "Content-Type": "application/json",
       },
-      signal: AbortSignal.timeout(IMGSTUDIO_CONNECTIVITY_TIMEOUT_MS),
+      signal: timeoutSignal,
     });
+    rawText = await response.text();
   } catch (error) {
-    throw new RepositoryError(
-      `Failed to connect to ImgStudio API: ${error instanceof Error ? error.message : String(error)}`,
-      "IMAGE_PROVIDER_UNAVAILABLE",
-      { cause: error },
+    throw createUnavailableError(error);
+  }
+
+  const payload = parseJsonSafe(rawText);
+  if (!response.ok) {
+    throw createImgStudioHttpError(response.status, extractErrorMessage(rawText, payload));
+  }
+  if (!payload) {
+    throw new ImgStudioApiError(
+      "ImgStudio models endpoint returned malformed or non-JSON response",
+      "IMAGE_PROVIDER_FAILED",
+      false,
+      response.status,
     );
   }
 
-  const rawText = await response.text();
-  const payload = parseJsonSafe(rawText);
-
-  if (!response.ok) {
-    const errorMsg = extractErrorMessage(rawText, payload);
-    handleApiHttpError(response.status, errorMsg);
-  }
-
-  const models = Array.isArray(payload?.data)
+  const models = Array.isArray(payload.data)
     ? payload.data
-    : Array.isArray(payload?.models)
+    : Array.isArray(payload.models)
       ? payload.models
       : Array.isArray(payload)
         ? payload
-        : [];
-
+        : undefined;
+  if (!models) {
+    throw new ImgStudioApiError(
+      "ImgStudio models endpoint returned an unexpected response schema",
+      "IMAGE_PROVIDER_FAILED",
+      false,
+      response.status,
+    );
+  }
   return { ok: true, models };
 }

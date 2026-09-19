@@ -6,7 +6,7 @@ import { trackAntigravityUsage } from "../utils/assetPricingTracker.js";
 import { generateShopAiKeyAsset } from "./shopAiKeyStrategy.js";
 import { generateGoogleImagenAsset } from "./googleImagenStrategy.js";
 
-const MAX_GENERATION_ATTEMPTS = 3;
+const MAX_GENERATION_ATTEMPTS = 2; // Initial attempt + max 1 retry
 
 /**
  * Strategy for generating quiz image assets using the Antigravity multi-step image chain.

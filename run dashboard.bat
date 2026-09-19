@@ -186,34 +186,20 @@ if errorlevel 1 (
 )
 call :log OK T:setup audio "Chatterbox sidecar is ready"
 
-call :log STEP T:setup launch "Checking local server and web app versions"
-set "SERVER_READY=0"
-set "WEB_READY=0"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $config = Invoke-RestMethod -UseBasicParsing -Uri 'http://127.0.0.1:4310/api/config' -TimeoutSec 2; if ($null -ne $config.audio_generation) { exit 0 }; exit 2 } catch { exit 1 }" >nul 2>nul
-if not errorlevel 1 set "SERVER_READY=1"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $page = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:!DASHBOARD_WEB_PORT!/' -TimeoutSec 2; if ($page.Content -match '<title>AI Quiz Studio</title>') { exit 0 }; exit 2 } catch { exit 1 }" >nul 2>nul
-if not errorlevel 1 set "WEB_READY=1"
-
-if "!SERVER_READY!"=="1" if "!WEB_READY!"=="1" (
-  call :log OK T:setup launch "Local server and web app are already running"
-  goto wait_for_dashboard
+call :log STEP T:setup launch "Restarting dashboard server and web app to load the latest workspace code"
+powershell -NoProfile -ExecutionPolicy Bypass -File "!ROOT!\scripts\stop-dashboard.ps1" -ProjectRoot "!ROOT!" -DashboardOnly
+if errorlevel 1 (
+  call :log ERROR T:setup launch "Existing dashboard processes could not be stopped safely"
+  exit /b 1
 )
-
-if "!SERVER_READY!"=="0" (
-  call :log STEP T:setup launch "Stopping stale local server before starting the current version"
-  powershell -NoProfile -ExecutionPolicy Bypass -Command "$connections = Get-NetTCPConnection -LocalPort 4310 -State Listen -ErrorAction SilentlyContinue; foreach ($connection in $connections) { Stop-Process -Id $connection.OwningProcess -Force -ErrorAction SilentlyContinue }" >nul 2>nul
-  start "AI Quiz Studio" /D "%ROOT%" cmd /k "pnpm dev"
-) else if "!WEB_READY!"=="0" (
-  call :log STEP T:setup launch "Local server is running; starting the web app"
-  start "AI Quiz Studio Web" /D "%ROOT%" cmd /k "pnpm --filter @studio/web dev"
-)
+start "AI Quiz Studio" /D "%ROOT%" cmd /k "pnpm dev"
 
 :wait_for_dashboard
 call :log STEP T:setup wait "Waiting for http://127.0.0.1:!DASHBOARD_WEB_PORT!"
 for /l %%I in (1,1,30) do (
   powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $config = Invoke-RestMethod -UseBasicParsing -Uri 'http://127.0.0.1:4310/api/config' -TimeoutSec 2; if ($null -eq $config.audio_generation) { exit 1 }; Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:!DASHBOARD_WEB_PORT!/' -TimeoutSec 2 | Out-Null; exit 0 } catch { exit 1 }" >nul 2>nul
   if not errorlevel 1 goto dashboard_ready
-  timeout /t 1 /nobreak >nul
+  powershell -NoProfile -Command "Start-Sleep -Seconds 1" >nul 2>nul
 )
 call :log WARN T:setup wait "Dashboard did not answer within 30 seconds; opening the URL anyway"
 

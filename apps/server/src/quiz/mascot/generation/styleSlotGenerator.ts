@@ -50,7 +50,7 @@ export async function generateMascotStyleSlot(
       size: isHalfBody16x9 ? "1280x720" : "1024x1024",
       referenceImageBase64,
       background: "opaque",
-      cancellationSignal: options.signal ?? AbortSignal.timeout(90_000),
+      cancellationSignal: options.signal,
       idempotencyKey: `mascot_${mascot.id}_${styleId}_${input.state}_s${input.slot_index}_${timestamp}`,
     },
     logger,
@@ -58,13 +58,16 @@ export async function generateMascotStyleSlot(
     actionLabel: `mascot style slot for ${mascot.name} style ${styleId} (${input.state} slot ${input.slot_index})`,
     fallbackArt: () => generateProceduralStateArt(mascot.name, mascot.color_theme, input.state, 1, { composition: effectiveComposition }),
   });
+  options.signal?.throwIfAborted();
 
   const existingSlot = style.states[input.state]?.find((s) => s.slot_index === input.slot_index);
   deletePreviousMascotAsset(repository, mascot.id, existingSlot?.image_url, filename);
   deletePreviousMascotAsset(repository, mascot.id, existingSlot?.raw_image_url, rawFilename);
 
   const assetUrl = await repository.saveMascotAsset(mascot.id, filename, mattedBytes);
+  options.signal?.throwIfAborted();
   const rawAssetUrl = await repository.saveMascotAsset(mascot.id, rawFilename, rawBytes);
+  options.signal?.throwIfAborted();
   const updatedMascot = await repository.updateMascotSlot(mascot.id, {
     style_id: styleId,
     state: input.state,

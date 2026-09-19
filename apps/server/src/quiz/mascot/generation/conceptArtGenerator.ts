@@ -28,7 +28,6 @@ export async function generateMascotConceptArt(
       aspectRatio: "1:1",
       size: "1024x1024",
       background: "opaque",
-      cancellationSignal: AbortSignal.timeout(90_000),
     },
     logger,
     logContext: { profileId: mascot.id },

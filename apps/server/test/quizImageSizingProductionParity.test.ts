@@ -374,6 +374,7 @@ describe("quizImageSizingProductionParity", () => {
       runtime,
       repository,
       taskId: "task-parity-render",
+      signal: new AbortController().signal,
       channel,
       episode,
       scenes: [],

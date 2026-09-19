@@ -1,6 +1,8 @@
 import type { QuizAssetPlan, QuizAssetResolution, QuizImageStyle, QuizIssue } from "@studio/shared";
+import { setTimeout as delay } from "node:timers/promises";
 import { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
+import { createImgStudioRunId } from "../../providers/imgstudio/idempotency.js";
 import { assetFingerprint } from "./assetFingerprint.js";
 import { compileQuizAssetPrompt } from "./promptCompiler.js";
 import { runConcurrent } from "../../utils/concurrency.js";
@@ -45,6 +47,7 @@ export type ResolveQuizAssetsInput = {
   };
   onProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   maxRounds?: number;
+  cancellationSignal?: AbortSignal;
 };
 
 async function resolveSingleAsset(params: {
@@ -56,12 +59,14 @@ async function resolveSingleAsset(params: {
   consistencyGroups: Map<string, QuizAssetPlan["consistency_groups"][number]>;
   logger: StudioLogger;
   activeEngine: "codex" | "antigravity";
+  imgStudioRunId: string;
 }): Promise<{
   entry?: QuizAssetResolution["assets"][number];
   issue?: QuizIssue;
   reused: boolean;
 }> {
-  const { request, round, maxRounds, input, byFingerprint, consistencyGroups, logger, activeEngine } = params;
+  const { request, round, maxRounds, input, byFingerprint, consistencyGroups, logger, activeEngine, imgStudioRunId } = params;
+  input.cancellationSignal?.throwIfAborted();
   const compiled = compileQuizAssetPrompt(
     request,
     request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
@@ -115,8 +120,11 @@ async function resolveSingleAsset(params: {
     antigravityClient: input.antigravityClient,
     imageConfig: input.imageConfig,
     imageFallbackConfig: input.imageFallbackConfig,
+    imgStudioRunId,
+    cancellationSignal: input.cancellationSignal,
     logger,
   });
+  input.cancellationSignal?.throwIfAborted();
 
   let issue: QuizIssue | undefined;
   if (generated.tier3Fallback) {
@@ -137,6 +145,8 @@ async function resolveSingleAsset(params: {
 export async function resolveQuizAssets(
   input: ResolveQuizAssetsInput,
 ): Promise<{ resolution: QuizAssetResolution; issues: QuizIssue[] }> {
+  input.cancellationSignal?.throwIfAborted();
+  const imgStudioRunId = createImgStudioRunId();
   const existing = await input.repository.readQuizAssetResolution(input.channelId, input.episodeId);
   const byFingerprint = new Map(existing?.assets.map((asset) => [asset.fingerprint, asset]) ?? []);
   const issues: QuizIssue[] = [];
@@ -174,6 +184,7 @@ export async function resolveQuizAssets(
   const terminalFailed = new Set<string>();
 
   for (let round = 1; round <= maxRounds; round++) {
+    input.cancellationSignal?.throwIfAborted();
     const pendingRequests = input.plan.assets.filter(
       (req) => !resolvedMap.has(req.asset_id) && !terminalFailed.has(req.asset_id),
     );
@@ -185,7 +196,7 @@ export async function resolveQuizAssets(
         workerId: input.episodeId,
         step: "retry_quiz_assets",
       });
-      await new Promise((resolve) => setTimeout(resolve, round * 500));
+      await delay(round * 500, undefined, { signal: input.cancellationSignal });
     } else if (resolvedMap.size > 0) {
       await input.onProgress?.({ completed: resolvedMap.size, total: input.plan.assets.length, reused: true });
     }
@@ -208,6 +219,7 @@ export async function resolveQuizAssets(
           consistencyGroups,
           logger,
           activeEngine,
+          imgStudioRunId,
         });
         if (result.entry) {
           resolvedMap.set(request.asset_id, result.entry);
@@ -217,6 +229,9 @@ export async function resolveQuizAssets(
         }
         reused = result.reused;
       } catch (error) {
+        if (input.cancellationSignal?.aborted) {
+          throw error;
+        }
         const classified = classifyAssetError(request, error, round, maxRounds);
         if (classified) {
           if (classified.terminal) {

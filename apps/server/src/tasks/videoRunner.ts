@@ -106,6 +106,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       runtime: this,
       repository: this.repository,
       taskId: task.task_id,
+      signal: controller.signal,
       channel,
       episode,
       scenes,

@@ -1,14 +1,17 @@
+import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
 import type { ImageProvider } from "../index.js";
 import { type RepositoryService } from "../../repository.js";
-import { generateIdempotencyKey } from "../gpti2Dimensions.js";
-import { resolveImgStudioAspectRatio } from "./dimensions.js";
+import { resolveImgStudioAspectRatio, resolveImgStudioResolution } from "./dimensions.js";
 import { generateImgStudioImageBytes } from "./generator.js";
+import { createImgStudioIdempotencyKey, createImgStudioRunId } from "./idempotency.js";
 import { validateReturnedImageDimensions } from "../../quiz/assets/imageDimensionValidator.js";
 import type { ImgStudioImageTarget } from "./types.js";
 
 export { type ImgStudioImageTarget };
 
 export class ImgStudioQuizImageProvider {
+  private readonly runId: string;
+
   static isConfigured(apiKey?: string): boolean {
     return Boolean((apiKey || process.env.IMGSTUDIO_API_KEY || "").trim());
   }
@@ -22,8 +25,12 @@ export class ImgStudioQuizImageProvider {
       model?: string;
       resolution?: string;
       quality?: string;
+      runId?: string;
+      idempotencyScope?: string;
     } = {},
-  ) {}
+  ) {
+    this.runId = options.runId?.trim() || createImgStudioRunId();
+  }
 
   async generateAsset(
     input: { assetId: string; fingerprint: string; prompt: string; aspect_ratio?: string },
@@ -36,23 +43,39 @@ export class ImgStudioQuizImageProvider {
     resolution?: string;
   }> {
     const aspectRatio = resolveImgStudioAspectRatio(input.aspect_ratio);
-    const idempotencyKey = generateIdempotencyKey(
-      "quiz_std",
-      `${this.target.channelId}:${this.target.episodeId}:${input.assetId}:${input.fingerprint}:${aspectRatio}`,
-    );
+    const model = (this.options.model || IMGSTUDIO_DEFAULT_MODEL_ID).trim();
+    const resolution = resolveImgStudioResolution(model, this.options.resolution);
+    const quality = this.options.quality || "standard";
+    const idempotencyKey = createImgStudioIdempotencyKey({
+      workflow: "quiz-image",
+      runId: this.runId,
+      resource: JSON.stringify({
+        channelId: this.target.channelId,
+        episodeId: this.target.episodeId,
+        assetId: input.assetId,
+        fingerprint: input.fingerprint,
+        aspectRatio,
+        resolution,
+        quality,
+      }),
+      tier: this.options.idempotencyScope || "primary",
+      model,
+    });
 
     const result = await generateImgStudioImageBytes(input.prompt, {
       apiKey: this.options.apiKey,
       baseUrl: this.options.baseUrl,
-      model: this.options.model,
+      model,
       aspect_ratio: aspectRatio,
-      resolution: this.options.resolution,
-      quality: this.options.quality,
+      resolution,
+      quality,
       idempotencyKey,
       cancellationSignal,
     });
+    cancellationSignal?.throwIfAborted();
 
     validateReturnedImageDimensions(result.bytes, aspectRatio, result.resolution);
+    cancellationSignal?.throwIfAborted();
 
     const assetPath = await this.repository.writeQuizImageAsset(
       this.target.channelId,
@@ -68,6 +91,7 @@ export class ImgStudioQuizImageProvider {
         provider: "imgstudio",
       },
     );
+    cancellationSignal?.throwIfAborted();
 
     const costVnd = result.price_vnd ?? 150;
     const costUsd = Number((costVnd / 25000).toFixed(4));
@@ -95,6 +119,8 @@ export class ImgStudioQuizImageProvider {
 }
 
 export class ImgStudioImageProvider implements ImageProvider {
+  private readonly runId: string;
+
   static isConfigured(apiKey?: string): boolean {
     return Boolean((apiKey || process.env.IMGSTUDIO_API_KEY || "").trim());
   }
@@ -109,8 +135,12 @@ export class ImgStudioImageProvider implements ImageProvider {
       aspectRatio?: string;
       resolution?: string;
       quality?: string;
+      runId?: string;
+      idempotencyScope?: string;
     } = {},
-  ) {}
+  ) {
+    this.runId = options.runId?.trim() || target.taskId?.trim() || createImgStudioRunId();
+  }
 
   async generateReference(
     prompt: string,
@@ -125,22 +155,37 @@ export class ImgStudioImageProvider implements ImageProvider {
     const bundleNumber = this.target.bundleNumber ?? 1;
     const variant = this.target.variant ?? 0;
     const aspectRatio = resolveImgStudioAspectRatio(this.options.aspectRatio, "16:9");
-    const taskSalt = this.target.taskId || Date.now().toString();
-    const idempotencyKey = generateIdempotencyKey(
-      "bundle_std",
-      `${this.target.channelId}:${this.target.episodeId}:bundle-${bundleNumber}:${variant}:${aspectRatio}:${prompt}:${taskSalt}`,
-    );
+    const model = (this.options.model || IMGSTUDIO_DEFAULT_MODEL_ID).trim();
+    const resolution = resolveImgStudioResolution(model, this.options.resolution);
+    const quality = this.options.quality || "standard";
+    const idempotencyKey = createImgStudioIdempotencyKey({
+      workflow: "bundle-image",
+      runId: this.runId,
+      resource: JSON.stringify({
+        channelId: this.target.channelId,
+        episodeId: this.target.episodeId,
+        bundleNumber,
+        variant,
+        aspectRatio,
+        prompt,
+        resolution,
+        quality,
+      }),
+      tier: this.options.idempotencyScope || "primary",
+      model,
+    });
 
     const result = await generateImgStudioImageBytes(prompt, {
       apiKey: this.options.apiKey,
       baseUrl: this.options.baseUrl,
-      model: this.options.model,
+      model,
       aspect_ratio: aspectRatio,
-      resolution: this.options.resolution,
-      quality: this.options.quality,
+      resolution,
+      quality,
       idempotencyKey,
       cancellationSignal,
     });
+    cancellationSignal?.throwIfAborted();
 
     const assetPath = await this.repository.writeBundleImage(
       this.target.channelId,
@@ -156,6 +201,7 @@ export class ImgStudioImageProvider implements ImageProvider {
         provider: "imgstudio",
       },
     );
+    cancellationSignal?.throwIfAborted();
 
     const costVnd = result.price_vnd ?? 150;
     const costUsd = Number((costVnd / 25000).toFixed(4));

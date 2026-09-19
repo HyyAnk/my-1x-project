@@ -2,7 +2,7 @@ import { z } from "zod";
 import { EngineIdSchema, TaskTypeSchema } from "../enums.js";
 import { MascotStageSettingsSchema } from "./mascot.js";
 import { IsoDate, QUIZ_MAX_CHOICES_PER_QUESTION } from "./common.js";
-import { IMGSTUDIO_DEFAULT_MODEL_ID } from "../constants/imgstudioModels.js";
+import { IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, resolveImgStudioFallbackLevel2Model } from "../constants/imgstudioModels.js";
 
 export const ImageFallbackConfigSchema = z.object({
   enabled: z.boolean().default(true),
@@ -10,7 +10,7 @@ export const ImageFallbackConfigSchema = z.object({
   base_url: z.string().default("https://imgstudio.site"),
   api_key: z.string().default(""),
   has_api_key: z.boolean().optional(),
-  model: z.string().default(IMGSTUDIO_DEFAULT_MODEL_ID),
+  model: z.string().transform(resolveImgStudioFallbackLevel2Model).default(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID),
   resolution: z.enum(["1K", "2K", "4K"]).default("2K"),
   quality: z.enum(["standard", "high"]).default("standard"),
 });

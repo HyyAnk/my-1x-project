@@ -3,8 +3,9 @@ import {
   AudioSettingsInputSchema,
   ImageSettingsInputSchema,
   ImageFallbackSettingsInputSchema,
+  IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
   IMGSTUDIO_MODELS,
-  IMGSTUDIO_DEFAULT_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
   MascotStageSettingsInputSchema,
   SaveHistorySettingsInputSchema,
   VideoSettingsInputSchema,
@@ -142,8 +143,9 @@ function registerImageSettingsRoutes(server: FastifyInstance, deps: SettingsRout
       api_key: "",
       has_api_key: Boolean(state.config.image_fallback.api_key),
     },
-    models: IMGSTUDIO_MODELS,
-    default_model: IMGSTUDIO_DEFAULT_MODEL_ID,
+    level_1_model: IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+    models: IMGSTUDIO_MODELS.filter((model) => model.id !== IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID),
+    default_model: IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
   }));
 
   server.post("/api/image-fallback/settings", async (request) => {

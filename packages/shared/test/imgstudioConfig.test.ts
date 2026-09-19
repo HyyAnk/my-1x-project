@@ -4,7 +4,12 @@ import {
   AppConfigSchema,
   ImageFallbackConfigSchema,
   IMGSTUDIO_DEFAULT_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+  IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
   IMGSTUDIO_MODELS,
+  IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
+  resolveImgStudioFallbackLevel2Model,
   resolveImgStudioModelName,
   isSupportedImgStudioResolution,
   type ImageFallbackConfig,
@@ -22,12 +27,35 @@ const it = (name: string, testCase: TestCallback): void => {
 
 describe("ImgStudio Fallback Configuration & Catalog Tests", () => {
   describe("Model Catalog & Constants", () => {
-    it("exports the default model ID matching Qwen Image 3.0 Pro", () => {
+    it("preserves Qwen Image 3.0 Pro as the generic ImgStudio default", () => {
       assert.equal(IMGSTUDIO_DEFAULT_MODEL_ID, "2d059365-a09a-4fd5-aa9e-b5335d09bbe9");
+      assert.equal(IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID);
       const defaultModel = IMGSTUDIO_MODELS.find((m) => m.id === IMGSTUDIO_DEFAULT_MODEL_ID);
       assert.ok(defaultModel, "Default model must exist in the catalog");
       assert.equal(defaultModel.name, "Qwen Image 3.0 Pro");
       assert.equal(defaultModel.max_resolution, "2K");
+    });
+
+    it("uses Gemini 3.1 Flash for fallback level 1 and Qwen Image 3.0 Pro for level 2", () => {
+      assert.equal(IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID, "c604136c-0756-49a0-a826-cfc72b68cb9a");
+      assert.equal(IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID, "2d059365-a09a-4fd5-aa9e-b5335d09bbe9");
+      assert.equal(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID);
+      assert.equal(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID);
+
+      const level1Model = IMGSTUDIO_MODELS.find((m) => m.id === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID);
+      const level2Model = IMGSTUDIO_MODELS.find((m) => m.id === IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+      assert.ok(level1Model, "Fallback level 1 model must exist in the catalog");
+      assert.ok(level2Model, "Fallback level 2 model must exist in the catalog");
+      assert.equal(level1Model.name, "Gemini-3.1-Flash-Image");
+      assert.equal(level2Model.name, "Qwen Image 3.0 Pro");
+      assert.equal(level1Model.max_resolution, "2K");
+      assert.equal(level2Model.max_resolution, "2K");
+    });
+
+    it("keeps fallback levels distinct when legacy settings selected Gemini for level 2", () => {
+      assert.equal(resolveImgStudioFallbackLevel2Model(), IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+      assert.equal(resolveImgStudioFallbackLevel2Model(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID), IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
+      assert.equal(resolveImgStudioFallbackLevel2Model("custom-provider-model"), "custom-provider-model");
     });
 
     it("defines exactly 10 supported models with expected IDs and resolutions", () => {
@@ -156,7 +184,7 @@ describe("ImgStudio Fallback Configuration & Catalog Tests", () => {
       assert.equal(parsed.provider, "imgstudio");
       assert.equal(parsed.base_url, "https://imgstudio.site");
       assert.equal(parsed.api_key, "");
-      assert.equal(parsed.model, "2d059365-a09a-4fd5-aa9e-b5335d09bbe9");
+      assert.equal(parsed.model, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
       assert.equal(parsed.resolution, "2K");
       assert.equal(parsed.quality, "standard");
     });
@@ -200,7 +228,7 @@ describe("ImgStudio Fallback Configuration & Catalog Tests", () => {
       assert.equal(parsed.image_fallback.enabled, true);
       assert.equal(parsed.image_fallback.provider, "imgstudio");
       assert.equal(parsed.image_fallback.base_url, "https://imgstudio.site");
-      assert.equal(parsed.image_fallback.model, "2d059365-a09a-4fd5-aa9e-b5335d09bbe9");
+      assert.equal(parsed.image_fallback.model, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
       assert.equal(parsed.image_fallback.resolution, "2K");
       assert.equal(parsed.image_fallback.quality, "standard");
     });

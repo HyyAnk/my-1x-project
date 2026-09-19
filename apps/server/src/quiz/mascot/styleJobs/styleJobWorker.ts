@@ -55,6 +55,7 @@ export async function executeStyleJob(ctx: StyleJobWorkerContext, runtime: Style
     );
 
     if (ctx.isDestroyed()) return;
+    runtime.abortController.signal.throwIfAborted();
     await handleCompletedJob(ctx, runtime, job, result.anchor_image_url, result.raw_anchor_image_url, result.prompt_used);
   } catch (err: unknown) {
     if (ctx.isDestroyed()) return;

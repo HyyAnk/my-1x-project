@@ -123,7 +123,6 @@ export const comicChunkyVariant: AnswerCardSkin = {
   -webkit-text-stroke: 3.5px #111827;
   paint-order: stroke fill;
   text-shadow: 0 3px 0 #111827;
-  transform: none;
   overflow: hidden;
 }
 
@@ -136,7 +135,6 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .ac-comic-chunky:nth-child(1) > b,
 .ac-comic-chunky:nth-child(1) .choice-label {
   background: var(--comic-badge-0, linear-gradient(180deg, #FFE600 0%, #FF9500 100%));
-  transform: none;
 }
 .ac-comic-chunky.comic-card-1 > b,
 .ac-comic-chunky.comic-card-1 .choice-label,
@@ -147,7 +145,6 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .ac-comic-chunky:nth-child(2) > b,
 .ac-comic-chunky:nth-child(2) .choice-label {
   background: var(--comic-badge-1, linear-gradient(180deg, #FF5E97 0%, #E60049 100%));
-  transform: none;
 }
 .ac-comic-chunky.comic-card-2 > b,
 .ac-comic-chunky.comic-card-2 .choice-label,
@@ -158,7 +155,6 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .ac-comic-chunky:nth-child(3) > b,
 .ac-comic-chunky:nth-child(3) .choice-label {
   background: var(--comic-badge-2, linear-gradient(180deg, #00D2FF 0%, #0066FF 100%));
-  transform: none;
 }
 .ac-comic-chunky.comic-card-3 > b,
 .ac-comic-chunky.comic-card-3 .choice-label,
@@ -169,7 +165,33 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .ac-comic-chunky:nth-child(4) > b,
 .ac-comic-chunky:nth-child(4) .choice-label {
   background: var(--comic-badge-3, linear-gradient(180deg, #38EF7D 0%, #11998E 100%));
-  transform: none;
+}
+
+/* Pure Visual Straddling Badge Centering & Reveal */
+.choice-card-visual.choice-pure-visual.skin-comic_chunky .choice-badge-pure,
+.choice-card-visual.choice-pure-visual.skin-comic_chunky .choice-label,
+.layout-visual_choices_three_pure .choice-card.skin-comic_chunky .choice-badge-pure,
+.layout-visual_choices_three_pure .choice-card.skin-comic_chunky .choice-label {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.choice-card-visual.choice-pure-visual.answer-reveal-correct.skin-comic_chunky .choice-badge-pure,
+.choice-card-visual.choice-pure-visual.answer-reveal-correct.skin-comic_chunky .choice-label,
+.layout-visual_choices_three_pure .choice-card.answer-reveal-correct.skin-comic_chunky .choice-badge-pure,
+.layout-visual_choices_three_pure .choice-card.answer-reveal-correct.skin-comic_chunky .choice-label {
+  animation: comic-pure-badge-bounce 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: transform;
+}
+
+.choice-card-visual.choice-pure-visual.answer-correct.skin-comic_chunky .choice-badge-pure,
+.choice-card-visual.choice-pure-visual.answer-correct.skin-comic_chunky .choice-label,
+.layout-visual_choices_three_pure .choice-card.answer-correct.skin-comic_chunky .choice-badge-pure,
+.layout-visual_choices_three_pure .choice-card.answer-correct.skin-comic_chunky .choice-label {
+  transform: translateX(-50%) scale(1.1);
+  background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%);
+  border-color: #0F5132;
+  box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95);
 }
 
 /* Gloss Glare on Badge */
@@ -246,8 +268,9 @@ export const comicChunkyVariant: AnswerCardSkin = {
 }
 
 .skin-comic_chunky.choice-card-visual.answer-reveal-correct .option-image {
-  animation: visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
-  will-change: border-color, box-shadow;
+  animation: visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--item-phase, 0s)) infinite alternate both,
+             visual-correct-border 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: border-color, box-shadow, transform;
 }
 
 /* Reveal State: Incorrect Answer */
@@ -277,6 +300,12 @@ export const comicChunkyVariant: AnswerCardSkin = {
   0% { transform: scale(1); }
   50% { transform: scale(1.22); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
   100% { transform: scale(1.1); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
+}
+
+@keyframes comic-pure-badge-bounce {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.22); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
+  100% { transform: translateX(-50%) scale(1.1); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
 }
 
 @keyframes comic-dud-settle {

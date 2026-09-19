@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { QuizAssetPlan } from "@studio/shared";
+import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, type QuizAssetPlan } from "@studio/shared";
 import { ContextEngine } from "../src/context.js";
 import { StudioLogger } from "../src/logger.js";
 import { RepositoryService, RepositoryError } from "../src/repository.js";
@@ -12,9 +12,19 @@ import { executeBundleImageTask } from "../src/tasks/imageRunner.js";
 import { generateAssetWithProvider } from "../src/quiz/assets/resolvers/providerAssetResolver.js";
 import { resolveQuizAssets } from "../src/quiz/assets/resolveQuizAssets.js";
 import { Gpti2QuizImageProvider } from "../src/providers/gpti2Image.js";
+import { ImgStudioApiError } from "../src/providers/imgstudio/errors.js";
+import { ImgStudioImageProvider } from "../src/providers/imgstudio/provider.js";
 import * as promptSanitizer from "../src/utils/promptSanitizer.js";
 
 const roots: string[] = [];
+
+function readImgStudioProviderModel(provider: ImgStudioImageProvider): string {
+  const options: unknown = Reflect.get(provider, "options");
+  if (!options || typeof options !== "object" || !("model" in options) || typeof options.model !== "string") {
+    throw new Error("ImgStudio provider model was not configured");
+  }
+  return options.model;
+}
 
 class FakeLLMClient extends EventEmitter {
   connectCalled = 0;
@@ -157,6 +167,67 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
       expect(fakeCodex.generateContentCalled).toBe(0);
       expect(saveEpisodeFile).not.toHaveBeenCalledWith(expect.anything(), expect.anything(), "visual_bible.md", expect.anything());
       expect(recordImageUsage).not.toHaveBeenCalled();
+    });
+
+    it("stops a terminal ImgStudio primary retry and continues through Gemini Level 1 to Qwen Level 2", async () => {
+      const { repository, logger, channel, episode, visualBible } = await setupTestEnvironment();
+      const manager = new TaskManager(
+        repository,
+        new ContextEngine(repository, logger),
+        new FakeLLMClient() as never,
+        1,
+        8,
+        logger,
+        undefined,
+        undefined,
+        { enabled: true, images_per_bundle: 1, max_concurrent_tasks: 0 },
+      );
+      manager.updateImageFallbackConfig({
+        enabled: true,
+        provider: "imgstudio",
+        base_url: "https://imgstudio.site",
+        api_key: "test-key",
+        model: IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+        resolution: "1K",
+        quality: "high",
+      });
+      await manager.load();
+
+      const task = manager.submit("GENERATE_BUNDLE_IMAGE", channel.channel_id, episode.episode_id, 1);
+      await manager.update(task.task_id, {});
+      const rejection = new ImgStudioApiError(
+        "ImgStudio API idempotent task failed (409): previous task failed",
+        "IMAGE_PROVIDER_IDEMPOTENCY_FAILED",
+        false,
+        409,
+      );
+      const primaryGenerate = vi.fn().mockRejectedValue(rejection);
+      vi.spyOn(manager, "createImageProvider").mockReturnValue({ generateReference: primaryGenerate } as never);
+      const attemptedFallbackModels: string[] = [];
+      const fallbackGenerate = vi.spyOn(ImgStudioImageProvider.prototype, "generateReference").mockImplementation(async function (
+        this: ImgStudioImageProvider,
+      ) {
+        const model = readImgStudioProviderModel(this);
+        attemptedFallbackModels.push(model);
+        if (model === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID) {
+          throw new Error("Gemini Level 1 unavailable");
+        }
+        return { asset_path: "channels/test/episodes/test/qwen-level-2.png" };
+      });
+
+      const result = await manager.generateBundleImageWithSafetyRetry(
+        task,
+        { channelId: channel.channel_id, episodeId: episode.episode_id, bundleNumber: 1, variant: 0 },
+        "Simba standing on a bright rock",
+        undefined,
+        undefined,
+        visualBible,
+      );
+
+      expect(result.image.asset_path).toContain("qwen-level-2.png");
+      expect(primaryGenerate).toHaveBeenCalledTimes(1);
+      expect(fallbackGenerate).toHaveBeenCalledTimes(2);
+      expect(attemptedFallbackModels).toEqual([IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID]);
     });
 
     it("Workflow 2: Quiz Asset Resolution rejects terminal content filter error immediately without LLM rewrite", async () => {
