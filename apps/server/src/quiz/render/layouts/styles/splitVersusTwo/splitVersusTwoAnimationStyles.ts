@@ -14,6 +14,32 @@ export function splitVersusTwoAnimationStyles(): string {
              answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
 }
 
+/* Contender Image Floating Motion */
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1) .choice-media,
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1) .option-image,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(1) .choice-media,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(1) .option-image {
+  animation: visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
+  will-change: transform;
+}
+
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2) .choice-media,
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2) .option-image,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(2) .choice-media,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(2) .option-image {
+  animation: visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
+  will-change: transform;
+}
+
+@keyframes visual-card-float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
+}
+
 .layout-split_versus_two.quiz-question-clip .answer-grid::after,
 .layout-split_versus_two.quiz-question-clip .visual-answer-grid::after,
 .layout-split_versus_two.quiz-question-clip .vs-badge {
@@ -53,6 +79,8 @@ export function splitVersusTwoAnimationStyles(): string {
 }
 
 /* --- Phase 4: Answer Reveal Duel Climax (Chained with Entrances for Parity & Kinetic Integrity) --- */
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct,
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1).answer-reveal-correct,
 .layout-split_versus_two .choice-card:nth-child(1).answer-reveal-correct {
   animation:

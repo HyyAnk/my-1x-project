@@ -3,6 +3,23 @@
  */
 export function verdictTrueFalseAnimationStyles(): string {
   return `
+/* Hero Image Entrance & Floating Motion */
+.quiz-frame-unified.layout-verdict_true_false.quiz-question-clip .hero-image,
+.layout-verdict_true_false.quiz-question-clip .hero-image {
+  animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both,
+             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + 0.66s) infinite alternate both;
+  will-change: transform;
+}
+
+@keyframes visual-card-float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
+}
+
 /* Phase 2: Kinetic Staggered Entrance (Tied to choices-at) */
 .layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(1) {
   animation: enter-from-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,

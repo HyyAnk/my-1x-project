@@ -21,17 +21,32 @@ export function visualChoicesThreePureAnimationStyles(): string {
   }
 }
 
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(1),
 .layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(1) {
   animation: visual-pure-card-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
-             visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
+             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
+  will-change: transform, opacity;
 }
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(2),
 .layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(2) {
   animation: visual-pure-card-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.12s) both,
-             visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.66s) infinite alternate both;
+             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.66s) infinite alternate both;
+  will-change: transform, opacity;
 }
+.layout-visual_choices_three_pure.quiz-question-clip .choice-card:nth-child(3),
 .layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(3) {
   animation: visual-pure-card-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.24s) both,
-             visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.78s) infinite alternate both;
+             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.78s) infinite alternate both;
+  will-change: transform, opacity;
+}
+
+@keyframes visual-card-float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
 }
 
 /* ==========================================================================

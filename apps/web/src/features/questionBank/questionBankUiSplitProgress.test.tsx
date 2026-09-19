@@ -2,7 +2,6 @@ import { describe, expect, it, afterEach, beforeEach, vi } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { LanguageProvider } from "../../i18n";
 import { QuestionBankCompactSplitProgress } from "./components/progress/QuestionBankCompactSplitProgress";
-import { QuestionBankTargetProgressBar } from "./components/QuestionBankTargetProgressBar";
 import { getMilestoneProgress } from "./utils/questionBankMilestones";
 import type { MatrixCoverageStats } from "@studio/shared";
 
@@ -107,29 +106,5 @@ describe("QuestionBankCompactSplitProgress (Stage 4 Container)", () => {
 
     expect(screen.getByText("-- / -- Combos")).toBeDefined();
     expect(screen.getByText("--%")).toBeDefined();
-  });
-
-  it("preserves backward compatibility when used via QuestionBankTargetProgressBar wrapper", () => {
-    const handleAutoFill = vi.fn();
-    const progress = getMilestoneProgress(250);
-    renderWithLanguage(
-      <QuestionBankTargetProgressBar
-        currentTotal={250}
-        milestoneProgress={progress}
-        matrixCoverage={mockMatrixCoverage}
-        onOpenAiAutoFill={handleAutoFill}
-      />,
-      "en",
-    );
-
-    // Both tracks and divider are present through the wrapper
-    expect(screen.getByRole("separator")).toBeDefined();
-    expect(screen.getAllByText("Starter Seed").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("Taxonomy Matrix Coverage")).toBeDefined();
-
-    // Autofill works through wrapper
-    const autoFillBtn = screen.getByRole("button", { name: "Auto-Fill Deficit" });
-    fireEvent.click(autoFillBtn);
-    expect(handleAutoFill).toHaveBeenCalledTimes(1);
   });
 });

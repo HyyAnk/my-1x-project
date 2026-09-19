@@ -43,7 +43,7 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Unit and integration tests
+      - name: Fast tests
         run: pnpm test
 
       - name: Transition parity tests

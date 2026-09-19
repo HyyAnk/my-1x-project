@@ -170,7 +170,7 @@ describe("MascotStyleDropdown", () => {
     expect(screen.getByText("Cycle All Styles")).toBeDefined();
   });
 
-  it("renders popover options list with Core Style, custom styles with keyword badge, and Cycle option", () => {
+  it("renders popover options list with Core Style, custom styles, and Cycle option without redundant badges", () => {
     render(
       <MascotStyleDropdown
         channel={mockChannelWithMascot}
@@ -184,9 +184,9 @@ describe("MascotStyleDropdown", () => {
 
     expect(screen.getAllByText("Core Style (Default)").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Military Squad")).toBeDefined();
-    expect(screen.getByText("military")).toBeDefined();
+    expect(screen.queryByText("military")).toBeNull();
     expect(screen.getByText("Cyber Neon")).toBeDefined();
-    expect(screen.getByText("cyberpunk")).toBeDefined();
+    expect(screen.queryByText("cyberpunk")).toBeNull();
     expect(screen.getByText("Cycle All Styles")).toBeDefined();
   });
 
@@ -245,7 +245,7 @@ describe("MascotStyleDropdown", () => {
     expect(onSave).toHaveBeenCalledWith("cycle");
   });
 
-  it("renders style thumbnail avatars and readiness chips when anchor_image_url and poses are present", () => {
+  it("renders style thumbnail avatars without redundant readiness chips", () => {
     const stylesWithAnchors: MascotStyle[] = [
       {
         id: "core",
@@ -303,11 +303,9 @@ describe("MascotStyleDropdown", () => {
     expect(steampunkImg).toBeDefined();
     expect(steampunkImg.getAttribute("src")).toBe("https://example.com/steampunk-anchor.png");
 
-    // Verify readiness chips
-    // Core has 20 poses => "20 Poses"
-    expect(screen.getByText("20 Poses")).toBeDefined();
-    // Steampunk has anchor but 0 poses => "Concept Locked"
-    expect(screen.getByText("Concept Locked")).toBeDefined();
+    // Verify readiness chips are omitted
+    expect(screen.queryByText("20 Poses")).toBeNull();
+    expect(screen.queryByText("Concept Locked")).toBeNull();
   });
 });
 

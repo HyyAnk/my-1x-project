@@ -146,7 +146,7 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
   {
     id: "celebrate_golden_trophy_lift",
     label: "Golden Trophy Lift",
-    prompt: "Holding a shiny golden trophy cup proudly above head, sparkling confetti",
+    prompt: "Holding a shiny golden trophy cup proudly above head, beaming with proud triumph",
     category: "Classic Victory",
   },
   {
@@ -170,9 +170,9 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
 
   // Festive Vibes
   {
-    id: "celebrate_confetti_toss",
-    label: "Confetti Toss",
-    prompt: "Throwing colorful confetti into the air with energetic joyful dance",
+    id: "celebrate_jumping_high_five",
+    label: "Jumping High-Five",
+    prompt: "Leaping excitedly with one arm reaching high for a celebratory high-five, radiant open smile",
     category: "Festive Vibes",
   },
   {
@@ -194,9 +194,9 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
     category: "Festive Vibes",
   },
   {
-    id: "celebrate_colorful_balloons",
-    label: "Colorful Balloons",
-    prompt: "Holding a buoyant cluster of colorful celebration balloons, bouncing happily",
+    id: "celebrate_rhythm_victory_dance",
+    label: "Rhythm Victory Dance",
+    prompt: "Grooving cheerfully in an energetic celebration dance, arms swaying with joyful rhythm",
     category: "Festive Vibes",
   },
 
@@ -242,7 +242,7 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
   {
     id: "celebrate_double_peace_signs",
     label: "Double Peace Signs",
-    prompt: "Playful wink with double victory V-signs, festive confetti fluttering",
+    prompt: "Playful wink with double victory V-signs, beaming with joyful charming energy",
     category: "Swagger & High-Energy",
   },
   {
@@ -280,10 +280,10 @@ export const MASCOT_THINKING_SLOT_PRESETS: Record<number, string> = {
 
 export const MASCOT_CELEBRATE_SLOT_PRESETS: Record<number, string> = {
   1: "Joyful jump with both arms raised high in triumphant victory, big radiant smile",
-  2: "Holding a shiny golden trophy cup proudly above head, sparkling confetti",
-  3: "Playful wink with double victory V-signs, festive confetti fluttering",
+  2: "Holding a shiny golden trophy cup proudly above head, beaming with proud triumph",
+  3: "Playful wink with double victory V-signs, beaming with joyful charming energy",
   4: "Both thumbs up enthusiastically with wide cheerful grin, celebratory sparkles",
-  5: "Throwing colorful confetti into the air with energetic joyful dance",
+  5: "Leaping excitedly with one arm reaching high for a celebratory high-five, radiant open smile",
   6: "Punching the air excitedly in triumph, standing tall with proud champion stance",
   7: "Blowing a party horn with ribbon streamers and joyful glittering star accents",
   8: "Making a big cute heart shape with both hands, happy closed-eye smile",

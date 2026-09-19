@@ -23,7 +23,7 @@ export const mascotsEn = {
     actionPointDesc: "Pointing hand or pointer stick at question / explanation",
     actionPointUsage: "Answer explanation & Fact Card",
     actionCelebrate: "Celebrate (Joyful Jump)",
-    actionCelebrateDesc: "Jumping with joy, clapping or celebratory confetti",
+    actionCelebrateDesc: "Jumping with joy, clapping or triumphant celebration",
     actionCelebrateUsage: "Correct answer reveal moment",
     actionOops: "Oops (Confused / Time Out)",
     actionOopsDesc: "Scratching head or shrugging with playful disappointment",

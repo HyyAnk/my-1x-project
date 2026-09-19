@@ -7,11 +7,9 @@ import {
   computeDisplayValue,
   createFallbackCoreStyle,
   resolveStyleThumbnail,
-  KEYWORD_BADGE_STYLE,
 } from "../../utils/mascotDropdownHelpers";
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
-import { ReadinessChip } from "./ReadinessChip";
 import { StyleOptionRow } from "./StyleOptionRow";
 import { StyleThumbnail } from "./StyleThumbnail";
 
@@ -98,10 +96,7 @@ export function MascotStyleDropdown({
           <label className={`style-option-row ${isCoreSelected ? "is-checked" : ""}`} onClick={() => onSaveMascotStyle?.(null)}>
             <input type="radio" name="mascot_style_choice" checked={isCoreSelected} onChange={() => onSaveMascotStyle?.(null)} />
             <StyleThumbnail thumbUrl={coreThumbnail} altText="Core Style" />
-            <span className="style-option-label">
-              Core Style (Default)
-              <ReadinessChip style={coreStyle} />
-            </span>
+            <span className="style-option-label">Core Style (Default)</span>
             {isCoreSelected ? <Check size={14} weight="bold" className="style-option-check" /> : null}
           </label>
           {customStyles.map((style) => {
@@ -115,15 +110,7 @@ export function MascotStyleDropdown({
               >
                 <input type="radio" name="mascot_style_choice" checked={isChecked} onChange={() => onSaveMascotStyle?.(style.id)} />
                 <StyleThumbnail thumbUrl={thumbUrl} altText={style.name} />
-                <span className="style-option-label">
-                  {style.name}
-                  {style.keyword ? (
-                    <span className="mascot-style-keyword-badge" style={KEYWORD_BADGE_STYLE}>
-                      {style.keyword}
-                    </span>
-                  ) : null}
-                  <ReadinessChip style={style} />
-                </span>
+                <span className="style-option-label">{style.name}</span>
                 {isChecked ? <Check size={14} weight="bold" className="style-option-check" /> : null}
               </label>
             );

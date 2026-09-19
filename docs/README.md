@@ -9,6 +9,7 @@ Reviewed against the working tree. Source, schemas, and executable tests take pr
 1. [Architecture](architecture.md): responsibilities, data flow and persistence boundaries.
 2. [System map](system-map.md): source entry points.
 3. [Development workflow](workflow.md): change safety, verification and publishing.
+4. [Testing strategy](testing.md): test tiers, commands and retention rules.
 
 ## Domain guides
 

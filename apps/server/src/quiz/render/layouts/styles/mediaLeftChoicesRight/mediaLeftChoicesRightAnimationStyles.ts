@@ -1,4 +1,4 @@
-﻿import type { MascotRenderAspectRatio } from "@studio/shared";
+import type { MascotRenderAspectRatio } from "@studio/shared";
 
 /**
  * Media Left Choices Right Layout - Motion & Reveal Polish Styles.
@@ -8,8 +8,20 @@ export function mediaLeftChoicesRightAnimationStyles(_aspectRatio?: MascotRender
   return `
 /* === Media Left Choices Right Layout: Motion & Reveal === */
 
-.quiz-frame-unified.layout-media_left_choices_right.quiz-question-clip .hero-image {
-  animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both;
+.quiz-frame-unified.layout-media_left_choices_right.quiz-question-clip .hero-image,
+.layout-media_left_choices_right.quiz-question-clip .hero-image {
+  animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both,
+             visual-card-float 3.8s ease-in-out calc(var(--clip-start, 0s) + 0.66s) infinite alternate both;
+  will-change: transform;
+}
+
+@keyframes visual-card-float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
 }
 
 /* Staggered Choice Entrance */
