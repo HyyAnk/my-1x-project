@@ -405,9 +405,12 @@ describe("Question Bank Schemas", () => {
       expect(normalizeLanguageCode("ENGLISH")).toBe("en");
       expect(normalizeLanguageCode("Spanish")).toBe("es");
       expect(normalizeLanguageCode("Japanese")).toBe("ja");
+      expect(normalizeLanguageCode("Chinese")).toBe("zh");
+      expect(normalizeLanguageCode("zh-CN")).toBe("zh");
       expect(isSameLanguage("spanish", "ES")).toBe(true);
       expect(isSameLanguage("en", "Vietnamese")).toBe(true);
       expect(getLanguageDisplayLabel("es")).toContain("Español");
+      expect(getLanguageDisplayLabel("zh")).toContain("Chinese");
     });
 
     it("verifies optional language falls back to 'en' via normalizeLanguageCode", () => {

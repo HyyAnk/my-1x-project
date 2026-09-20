@@ -26,6 +26,7 @@ const LANGUAGE_PATTERN_RULES: readonly LanguagePatternRule[] = [
   { code: "fr", substrings: ["french", "français", "francais"] },
   { code: "ja", substrings: ["japan", "nihon"] },
   { code: "ko", substrings: ["korea", "hangul"] },
+  { code: "zh", substrings: ["chinese", "mandarin", "zhongwen"] },
   { code: "es", substrings: ["span", "español"] },
 ];
 
@@ -34,6 +35,8 @@ const SCRIPT_HEURISTIC_RULES: readonly { readonly regex: RegExp; readonly code: 
   { regex: /[\u3040-\u309f\u30a0-\u30ff]/, code: "ja" },
   // Korean Hangul check
   { regex: /[\uac00-\ud7af\u1100-\u11ff]/, code: "ko" },
+  // Chinese Han script check after Japanese kana and Korean Hangul checks
+  { regex: /[\u3400-\u4dbf\u4e00-\u9fff]/, code: "zh" },
 ];
 
 function matchLanguageCodeOrKeywords(lang: string): SupportedLanguage | null {

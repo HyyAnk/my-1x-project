@@ -6,6 +6,7 @@ import { buildMascotStyleConceptPrompt } from "../../mascotPromptContract.js";
 import { generateProceduralMascotArt } from "../proceduralArt.js";
 import { generateMascotArtWithFallback } from "../services/mascotAiImageClient.js";
 import { loadMasterReferenceImageBase64 } from "../services/mascotAssetLoader.js";
+import { hasMeaningfulPngTransparency } from "../../../utils/imageMatting.js";
 import { deletePreviousMascotAsset } from "./artGeneratorHelpers.js";
 
 export async function generateMascotStyleConcept(
@@ -51,6 +52,10 @@ export async function generateMascotStyleConcept(
     fallbackArt: () => generateProceduralMascotArt(mascot.name, mascot.color_theme, `style_${styleId}`),
   });
   options.signal?.throwIfAborted();
+
+  if (!hasMeaningfulPngTransparency(mattedBytes)) {
+    throw new Error("Style concept background removal did not produce a transparent PNG cutout");
+  }
 
   const { anchor_image_url, raw_image_url } = await withMascotWriteLock(mascot.id, async () => {
     options.signal?.throwIfAborted();

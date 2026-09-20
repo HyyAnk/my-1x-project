@@ -121,6 +121,26 @@ describe("useChannelFilterSort", () => {
     expect(result.current.filteredChannels[0].channel_id).toBe("ch_ja");
   });
 
+  it("matches China channels to the Chinese locale by country ID", () => {
+    const channelZh = createMockChannel({
+      channel_id: "ch_zh",
+      display_name: "Chinese Channel",
+      language: "",
+      country: "CN",
+    });
+    const { result } = renderHook(() =>
+      useChannelFilterSort({
+        channels: [channelZh],
+        orderedChannels: [channelZh],
+        isReordering: false,
+      }),
+    );
+
+    expect(result.current.languageCounts.Chinese).toBe(1);
+    act(() => result.current.setLanguageFilter("Chinese"));
+    expect(result.current.filteredChannels.map((channel) => channel.channel_id)).toEqual(["ch_zh"]);
+  });
+
   it("sorts by episodes descending when sortBy is 'episodes'", () => {
     const { result } = renderHook(() =>
       useChannelFilterSort({

@@ -820,6 +820,19 @@
 }
 
 @media (max-width: 640px) {
+  .style-concept-manager-header {
+    flex-direction: column;
+  }
+
+  .style-concept-queue-all-btn,
+  .style-anchor-actions {
+    width: 100%;
+  }
+
+  .style-anchor-cards-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .style-anchor-name-action {
     width: 44px;
     height: 44px;

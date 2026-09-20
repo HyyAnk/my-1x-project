@@ -13,7 +13,10 @@ export function MascotStyleQueueProgressCard({ styleQueueProgress, onStopQueue, 
 
   if (!styleQueueProgress) return null;
 
-  const percentage = Math.min(100, Math.round((styleQueueProgress.completed / Math.max(1, styleQueueProgress.total)) * 100));
+  const percentage = Math.min(
+    100,
+    Math.round(((styleQueueProgress.completed + styleQueueProgress.failed) / Math.max(1, styleQueueProgress.total)) * 100),
+  );
   const queuedCount = Math.max(0, styleQueueProgress.total - styleQueueProgress.completed - styleQueueProgress.failed);
   const isAllSettled = styleQueueProgress.completed + styleQueueProgress.failed >= styleQueueProgress.total;
 

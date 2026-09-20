@@ -16,6 +16,7 @@ export interface UseMascotStyleQueueProps {
   mascot: MascotProfile | null;
   onMascotUpdated: (mascot: MascotProfile) => void;
   onNotice: (notice: Notice) => void;
+  onActivityChange?: () => void;
 }
 
 export interface MascotStyleQueueStateReturn {
@@ -37,6 +38,7 @@ export interface StyleQueueRefs {
   mascotRef: React.MutableRefObject<MascotProfile | null>;
   onMascotUpdatedRef: React.MutableRefObject<(mascot: MascotProfile) => void>;
   onNoticeRef: React.MutableRefObject<(notice: Notice) => void>;
+  onActivityChangeRef: React.MutableRefObject<() => void>;
   activeBatchIdRef: React.MutableRefObject<string | null>;
   lastCompletedCountRef: React.MutableRefObject<number>;
 }

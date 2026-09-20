@@ -7,6 +7,7 @@ export interface UseMascotAnimationProcessingProps {
   mascotId?: string | null;
   styleId?: string | null;
   onNotice?: (notice: { tone: "good" | "bad" | "neutral"; message: string }) => void;
+  onActivityChange?: () => void;
 }
 
 export interface UseMascotAnimationProcessingReturn {
@@ -29,6 +30,7 @@ export function useMascotAnimationProcessing({
   mascotId,
   styleId,
   onNotice,
+  onActivityChange,
 }: UseMascotAnimationProcessingProps): UseMascotAnimationProcessingReturn {
   const { slots, activeJobs, isLoading, error, setError, refreshSlots } = useSlotPolling({
     mascotId,
@@ -39,6 +41,7 @@ export function useMascotAnimationProcessing({
     mascotId,
     styleId,
     onNotice,
+    onActivityChange,
     refreshSlots,
     setError,
   });

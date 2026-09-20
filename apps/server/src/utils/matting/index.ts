@@ -6,3 +6,4 @@ export * from "./cavityDetector.js";
 export * from "./proceduralMatting.js";
 export * from "./aiMatting.js";
 export * from "./mosaicMatting.js";
+export * from "./imageFormatNormalizer.js";

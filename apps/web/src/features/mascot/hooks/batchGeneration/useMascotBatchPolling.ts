@@ -18,6 +18,7 @@ export interface UseMascotBatchPollingProps {
 export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProps) {
   const pollingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isPollingInFlightRef = useRef(false);
+  const { setQueuedSlotKeys, setBusySlotKey, setBatchProgress, resetBatchState } = state;
 
   const stopPolling = useCallback(() => {
     if (pollingTimerRef.current) {
@@ -53,15 +54,19 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
       const activeKeys = statusRes.active_slot_keys.length > 0 ? statusRes.active_slot_keys : activeBatch.active_slot_keys || [];
       const queuedKeys = statusRes.queued_slot_keys || [];
       const targetState = inferBatchTargetState(activeBatch);
+      const styleName = refs.mascotRef.current?.styles?.find((style) => style.id === styleId)?.name;
 
-      state.setQueuedSlotKeys(formatQueuedKeys(queuedKeys, styleId));
+      setQueuedSlotKeys(formatQueuedKeys(queuedKeys, styleId));
       if (activeBatch.total_slots === 1 && activeKeys.length > 0) {
-        state.setBusySlotKey(activeKeys[0] ?? null);
+        setBusySlotKey(activeKeys[0] ?? null);
       } else {
-        state.setBusySlotKey("batch");
+        setBusySlotKey("batch");
       }
 
-      state.setBatchProgress((prev) => ({
+      setBatchProgress((prev) => ({
+        batchId: activeBatch.id,
+        styleId,
+        styleName,
         total: activeBatch.total_slots,
         completed: activeBatch.completed_count,
         failed: activeBatch.failed_count,
@@ -73,7 +78,7 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
         mode: prev?.mode ?? (activeBatch.total_slots === 1 ? "single" : "batch_empty"),
       }));
     },
-    [refs, state],
+    [refs, setBatchProgress, setBusySlotKey, setQueuedSlotKeys],
   );
 
   const handleTerminalBatchCleanup = useCallback(
@@ -105,12 +110,13 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
 
       refs.activeBatchIdRef.current = null;
       refs.lastCompletedCountRef.current = 0;
+      refs.trackedStyleIdRef.current = null;
 
       if (!isInitialMount) {
-        state.resetBatchState();
+        resetBatchState();
       }
     },
-    [refs, state, stopPolling],
+    [refs, resetBatchState, stopPolling],
   );
 
   const pollBatchStatus = useCallback(
@@ -119,7 +125,7 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
       const currentMascot = refs.mascotRef.current;
       if (!currentMascot?.id) return;
       const mascotId = currentMascot.id;
-      const styleId = refs.activeStyleIdRef.current;
+      const styleId = refs.trackedStyleIdRef.current ?? refs.activeStyleIdRef.current;
 
       try {
         isPollingInFlightRef.current = true;
@@ -128,7 +134,8 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
 
         const activeBatch = statusRes.active_batch;
         if (activeBatch && (activeBatch.status === "queued" || activeBatch.status === "processing")) {
-          await handleActiveBatchUpdate(activeBatch, statusRes, mascotId, styleId);
+          refs.trackedStyleIdRef.current = activeBatch.style_id;
+          await handleActiveBatchUpdate(activeBatch, statusRes, mascotId, activeBatch.style_id);
         } else {
           await handleTerminalBatchCleanup(activeBatch, statusRes, mascotId, isInitialMount);
         }

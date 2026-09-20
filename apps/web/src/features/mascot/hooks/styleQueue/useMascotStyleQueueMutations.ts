@@ -10,6 +10,8 @@ export interface UseMascotStyleQueueMutationsProps {
 }
 
 export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBatchStatus }: UseMascotStyleQueueMutationsProps) {
+  const { activeBatch, setActiveBatch, setQueuedStyleIds, setActiveStyleIds, setQueueProgress } = state;
+
   const handleQueueStyle = useCallback(
     async (styleId: string, prompt?: string) => {
       const mascot = refs.mascotRef.current;
@@ -25,11 +27,12 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         });
 
         refs.activeBatchIdRef.current = batch.id;
-        state.setActiveBatch(batch);
-        state.setQueuedStyleIds(batch.items.filter((j) => j.status === "queued").map((j) => j.style_id));
-        state.setActiveStyleIds(batch.items.filter((j) => j.status === "generating").map((j) => j.style_id));
+        refs.lastCompletedCountRef.current = batch.completed_count;
+        setActiveBatch(batch);
+        setQueuedStyleIds(batch.items.filter((j) => j.status === "queued").map((j) => j.style_id));
+        setActiveStyleIds(batch.items.filter((j) => j.status === "generating").map((j) => j.style_id));
 
-        state.setQueueProgress({
+        setQueueProgress({
           total: batch.total_styles,
           completed: batch.completed_count,
           failed: batch.failed_count,
@@ -40,6 +43,7 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
           startTime: Date.now(),
         });
 
+        refs.onActivityChangeRef.current();
         startPolling();
       } catch (err: unknown) {
         const error = err as Error;
@@ -49,7 +53,7 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         });
       }
     },
-    [refs, startPolling, state],
+    [refs, setActiveBatch, setActiveStyleIds, setQueueProgress, setQueuedStyleIds, startPolling],
   );
 
   const handleQueueAllMissingStyles = useCallback(async () => {
@@ -73,11 +77,12 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
       });
 
       refs.activeBatchIdRef.current = batch.id;
-      state.setActiveBatch(batch);
-      state.setQueuedStyleIds(batch.items.filter((j) => j.status === "queued").map((j) => j.style_id));
-      state.setActiveStyleIds(batch.items.filter((j) => j.status === "generating").map((j) => j.style_id));
+      refs.lastCompletedCountRef.current = batch.completed_count;
+      setActiveBatch(batch);
+      setQueuedStyleIds(batch.items.filter((j) => j.status === "queued").map((j) => j.style_id));
+      setActiveStyleIds(batch.items.filter((j) => j.status === "generating").map((j) => j.style_id));
 
-      state.setQueueProgress({
+      setQueueProgress({
         total: batch.total_styles,
         completed: batch.completed_count,
         failed: batch.failed_count,
@@ -88,6 +93,7 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         startTime: Date.now(),
       });
 
+      refs.onActivityChangeRef.current();
       startPolling();
     } catch (err: unknown) {
       const error = err as Error;
@@ -96,16 +102,17 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         message: error?.message || "Failed to queue missing style concepts",
       });
     }
-  }, [refs, startPolling, state]);
+  }, [refs, setActiveBatch, setActiveStyleIds, setQueueProgress, setQueuedStyleIds, startPolling]);
 
   const handleStopStyleQueue = useCallback(async () => {
     const mascot = refs.mascotRef.current;
     if (!mascot) return;
 
-    state.setQueueProgress((prev) => (prev ? { ...prev, isStopping: true, statusMessage: "Stopping queue..." } : null));
+    setQueueProgress((prev) => (prev ? { ...prev, isStopping: true, statusMessage: "Stopping queue..." } : null));
 
     try {
       await api.cancelStyleGeneration(mascot.id);
+      refs.onActivityChangeRef.current();
       await pollBatchStatus();
     } catch (err: unknown) {
       const error = err as Error;
@@ -114,11 +121,11 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         message: error?.message || "Failed to stop style concept generation",
       });
     }
-  }, [pollBatchStatus, refs, state]);
+  }, [pollBatchStatus, refs, setQueueProgress]);
 
   const handleRetryFailedStyles = useCallback(async () => {
     const mascot = refs.mascotRef.current;
-    const currentBatch = state.activeBatch;
+    const currentBatch = activeBatch;
     if (!mascot || !currentBatch) return;
 
     const failedItems = currentBatch.items.filter((j) => j.status === "failed");
@@ -131,11 +138,12 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
       });
 
       refs.activeBatchIdRef.current = batch.id;
-      state.setActiveBatch(batch);
-      state.setQueuedStyleIds(batch.items.filter((j) => j.status === "queued").map((j) => j.style_id));
-      state.setActiveStyleIds(batch.items.filter((j) => j.status === "generating").map((j) => j.style_id));
+      refs.lastCompletedCountRef.current = batch.completed_count;
+      setActiveBatch(batch);
+      setQueuedStyleIds(batch.items.filter((j) => j.status === "queued").map((j) => j.style_id));
+      setActiveStyleIds(batch.items.filter((j) => j.status === "generating").map((j) => j.style_id));
 
-      state.setQueueProgress({
+      setQueueProgress({
         total: batch.total_styles,
         completed: batch.completed_count,
         failed: batch.failed_count,
@@ -146,6 +154,7 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         startTime: Date.now(),
       });
 
+      refs.onActivityChangeRef.current();
       startPolling();
     } catch (err: unknown) {
       const error = err as Error;
@@ -154,7 +163,7 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
         message: error?.message || "Failed to retry style concepts",
       });
     }
-  }, [refs, startPolling, state]);
+  }, [activeBatch, refs, setActiveBatch, setActiveStyleIds, setQueueProgress, setQueuedStyleIds, startPolling]);
 
   return {
     handleQueueStyle,

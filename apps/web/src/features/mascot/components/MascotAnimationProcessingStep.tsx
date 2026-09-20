@@ -13,6 +13,7 @@ export interface MascotAnimationProcessingStepProps {
   onBackStep: () => void;
   onNextStep: () => void;
   onNotice?: (notice: Notice) => void;
+  onActivityChange?: () => void;
 }
 
 export function MascotAnimationProcessingStep({
@@ -21,6 +22,7 @@ export function MascotAnimationProcessingStep({
   onBackStep,
   onNextStep,
   onNotice,
+  onActivityChange,
 }: MascotAnimationProcessingStepProps) {
   const { activeStyleId, setActiveStyleId, activeStyle } = stylesState;
 
@@ -34,6 +36,7 @@ export function MascotAnimationProcessingStep({
     mascotId,
     styleId,
     onNotice,
+    onActivityChange,
   });
 
   // Calculate readiness count

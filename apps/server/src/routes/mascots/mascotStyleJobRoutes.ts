@@ -22,7 +22,7 @@ import type { MascotsRouteDeps } from "./mascotTypes.js";
 /**
  * Resolves the MascotStyleJobManager from route dependencies or creates a fallback instance.
  */
-function resolveStyleJobManager(deps: MascotsRouteDeps): MascotStyleJobManager {
+export function resolveStyleJobManager(deps: MascotsRouteDeps): MascotStyleJobManager {
   if (deps.mascotStyleJobManager) {
     return deps.mascotStyleJobManager;
   }

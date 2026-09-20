@@ -9,7 +9,7 @@ export type MascotBatchProgressCardProps = {
 export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBatchProgressCardProps) {
   if (!batchProgress) return null;
 
-  const percentage = Math.min(100, Math.round((batchProgress.completed / Math.max(1, batchProgress.total)) * 100));
+  const percentage = Math.min(100, Math.round(((batchProgress.completed + batchProgress.failed) / Math.max(1, batchProgress.total)) * 100));
   const queuedCount = Math.max(0, batchProgress.total - batchProgress.completed - batchProgress.failed);
 
   const isRegenerating = batchProgress.mode === "regenerate_selected" || batchProgress.statusMessage.toLowerCase().includes("selected");
@@ -21,7 +21,7 @@ export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBa
         : "Celebrate "
       : "";
 
-  const title =
+  const operationTitle =
     batchProgress.total === 1
       ? isRegenerating
         ? `Regenerating ${targetStateLabel}Variant`
@@ -29,6 +29,7 @@ export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBa
       : isRegenerating
         ? `Regenerating ${targetStateLabel}Variants (3 Concurrent Streams)`
         : `Generating ${targetStateLabel || "Style "}Variants (3 Concurrent Streams)`;
+  const title = batchProgress.styleName ? `${operationTitle} · ${batchProgress.styleName}` : operationTitle;
 
   return (
     <div

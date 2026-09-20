@@ -15,7 +15,7 @@ import type { MascotsRouteDeps } from "../mascotTypes.js";
 /**
  * Resolves the MascotSlotJobManager from route dependencies or creates a fallback instance.
  */
-function resolveSlotJobManager(deps: MascotsRouteDeps): MascotSlotJobManager {
+export function resolveSlotJobManager(deps: MascotsRouteDeps): MascotSlotJobManager {
   if (deps.mascotSlotJobManager) {
     return deps.mascotSlotJobManager;
   }

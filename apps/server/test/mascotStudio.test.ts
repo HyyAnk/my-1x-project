@@ -11,6 +11,7 @@ import {
   type MascotProfile,
   type MascotRenderBundleV2,
   type MascotSpriteAction,
+  type MascotStudioActivityStatusResponse,
   type MascotStyle,
   QuizV2Schema,
 } from "@studio/shared";
@@ -66,6 +67,15 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       const listData = listRes.json<{ mascots: MascotProfile[] }>();
       expect(listData.mascots.length).toBe(1);
       expect(listData.mascots[0]?.id).toBe(createdMascot.id);
+
+      const activityRes = await app.server.inject({
+        method: "GET",
+        url: `/api/mascots/${createdMascot.id}/activity`,
+      });
+      expect(activityRes.statusCode).toBe(200);
+      const activityData = activityRes.json<MascotStudioActivityStatusResponse>();
+      expect(activityData.mascot_id).toBe(createdMascot.id);
+      expect(activityData.styles.map((style) => style.style_id)).toEqual(createdMascot.styles?.map((style) => style.id));
 
       // 4. Generate Master Concept Art (Procedural fallback when no API key)
       const conceptRes = await app.server.inject({
@@ -676,7 +686,9 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(conceptBody.anchor_image_url).toContain(`/api/mascots/${mascot.id}/assets/style_${style.id}_anchor_`);
       expect(conceptBody.style.anchor_image_url).toBe(conceptBody.anchor_image_url);
       expect(conceptBody.placeholder).toBe(true);
-      expect(conceptBody.prompt_used).toContain("Cyberpunk Ninja");
+      expect(conceptBody.prompt_used).toContain("Cyber Neon Pulse");
+      expect(conceptBody.prompt_used).toContain("neon visor cyber katana");
+      expect(conceptBody.prompt_used).toContain("Rendering style lock");
 
       // Verify persistence in repository
       const refreshedMascot = await app.repository.getMascot(mascot.id);

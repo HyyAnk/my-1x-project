@@ -1,12 +1,14 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
 import { useTranslation } from "../../i18n";
 import { MascotConceptStep } from "./components/MascotConceptStep";
 import { MascotActionsStep } from "./components/MascotActionsStep";
 import { MascotAnimationProcessingStep } from "./components/MascotAnimationProcessingStep";
 import { MascotGeneratorStepperHeader } from "./components/MascotGeneratorStepperHeader";
+import { MascotGeneratorActivity } from "./components/MascotGeneratorActivity";
 import { useMascotGenerator } from "./hooks/useMascotGenerator";
 import { useMascotStyles } from "./hooks/useMascotStyles";
+import { useMascotStudioActivity } from "./hooks/activity";
 import type { Notice } from "../../components/types";
 
 const MascotMotionAnimationStep = lazy(() =>
@@ -85,6 +87,11 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
     handleFinishMascot,
   } = generatorState;
 
+  const activityState = useMascotStudioActivity(editingMascot?.id);
+  const handleActivityChange = useCallback(() => {
+    void activityState.refresh();
+  }, [activityState.refresh]);
+
   const mascotStylesState = useMascotStyles({
     mascot: editingMascot,
     onMascotUpdated: (updatedMascot) => {
@@ -95,6 +102,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
         onNotice(notice);
       }
     },
+    onActivityChange: handleActivityChange,
   });
 
   return (
@@ -109,6 +117,14 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
         generationElapsed={generationElapsed}
         currentStageMessage={currentStageMessage}
         batchState={batchState}
+      />
+
+      <MascotGeneratorActivity
+        generatorStep={generatorStep}
+        onSelectStep={setGeneratorStep}
+        stylesState={mascotStylesState}
+        activityState={activityState}
+        onRefresh={handleActivityChange}
       />
 
       {/* Step 1: Identity & Master Concept */}
@@ -169,6 +185,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
           onBackStep={() => setGeneratorStep(2)}
           onNextStep={() => setGeneratorStep(4)}
           onNotice={onNotice}
+          onActivityChange={handleActivityChange}
         />
       ) : null}
 

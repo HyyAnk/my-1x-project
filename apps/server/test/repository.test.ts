@@ -162,19 +162,20 @@ describe("RepositoryService", () => {
   it("supports target country flags and language labels", async () => {
     const repository = await fixture();
     const channel = await repository.createChannel({
-      name: "Kids Science VN",
-      description: "Science quiz for kids in Vietnam",
+      name: "Kids Science China",
+      description: "Science quiz for kids in China",
       target_audience: "Children and families",
-      language: "Vietnamese",
-      country: "VN",
+      language: "Chinese",
+      country: "CN",
       dna_mode: "example",
     });
 
-    expect(channel.language).toBe("Vietnamese");
-    expect(channel.country).toBe("VN");
-    expect(getCountryFlag(channel.country)).toBe("🇻🇳");
-    expect(getCountryName(channel.country)).toBe("Vietnam");
-    expect(getLanguageDisplay(channel.language)).toBe("Vietnamese");
+    expect(channel.language).toBe("Chinese");
+    expect(channel.country).toBe("CN");
+    expect(channel.market).toBe("CN");
+    expect(getCountryFlag(channel.country)).toBe("🇨🇳");
+    expect(getCountryName(channel.country)).toBe("China");
+    expect(getLanguageDisplay(channel.language)).toBe("Chinese");
 
     const updated = await repository.updateChannel(channel.channel_id, {
       country: "JP",
@@ -192,16 +193,28 @@ describe("RepositoryService", () => {
     expect(getCountryName("GLOBAL")).toBe("Global");
     expect(getCountryFlag("US")).toBe("🇺🇸");
 
-    // TARGET_COUNTRY_LANGUAGES has exactly 10 distinct synced languages from 20 countries
-    expect(TARGET_COUNTRY_LANGUAGES).toHaveLength(10);
+    // TARGET_COUNTRY_LANGUAGES has 11 distinct synced languages from 20 countries
+    expect(TARGET_COUNTRY_LANGUAGES).toHaveLength(11);
     const langKeys = TARGET_COUNTRY_LANGUAGES.map((l) => l.key);
-    expect(langKeys).toEqual(["English", "German", "Norwegian", "Dutch", "Danish", "Swedish", "Finnish", "French", "Korean", "Japanese"]);
+    expect(langKeys).toEqual([
+      "English",
+      "German",
+      "Norwegian",
+      "Dutch",
+      "Danish",
+      "Swedish",
+      "Finnish",
+      "French",
+      "Korean",
+      "Japanese",
+      "Chinese",
+    ]);
     const countryCodes = TARGET_COUNTRY_LANGUAGES.map((l) => l.primaryCountryCode);
-    expect(countryCodes).toEqual(["US", "DE", "NO", "NL", "DK", "SE", "FI", "FR", "KR", "JP"]);
+    expect(countryCodes).toEqual(["US", "DE", "NO", "NL", "DK", "SE", "FI", "FR", "KR", "JP", "CN"]);
 
     // Language matching tests
     expect(matchChannelLanguage(channel, "all")).toBe(true);
-    expect(matchChannelLanguage(channel, "Vietnamese")).toBe(true);
+    expect(matchChannelLanguage(channel, "Chinese")).toBe(true);
     expect(matchChannelLanguage(updated, "Japanese")).toBe(true);
     expect(matchChannelLanguage(updated, "German")).toBe(false);
 
@@ -209,6 +222,7 @@ describe("RepositoryService", () => {
     expect(matchChannelLanguage({ country: "US" }, "English")).toBe(true);
     expect(matchChannelLanguage({ country: "DE" }, "German")).toBe(true);
     expect(matchChannelLanguage({ country: "JP" }, "Japanese")).toBe(true);
+    expect(matchChannelLanguage({ country: "CN" }, "Chinese")).toBe(true);
   });
 });
 

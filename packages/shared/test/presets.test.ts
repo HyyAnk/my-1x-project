@@ -29,6 +29,7 @@ test("BUILT_IN_PRESETS exposes an extensible registry with full metadata", () =>
     assert.ok(preset.id, "preset id must be defined");
     assert.ok(preset.name, "preset name must be defined");
     assert.ok(preset.description, "preset description must be defined");
+    assert.ok(preset.mascot_style_prompt, "preset mascot_style_prompt must be defined");
     assert.ok(preset.icon, "preset icon must be defined");
     assert.equal(preset.theme, "candy_arcade");
     assert.ok(preset.palette_id, "preset palette_id must be defined");

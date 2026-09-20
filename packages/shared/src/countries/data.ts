@@ -11,6 +11,7 @@ export const TARGET_LANGUAGE_OPTIONS: TargetLanguageOption[] = [
   { code: "fr", name: "French", nativeName: "Français" },
   { code: "ko", name: "Korean", nativeName: "한국어" },
   { code: "ja", name: "Japanese", nativeName: "日本語" },
+  { code: "zh", name: "Chinese", nativeName: "\u4e2d\u6587" },
 ];
 
 export const TARGET_COUNTRY_OPTIONS: TargetCountryOption[] = [
@@ -206,13 +207,13 @@ export const TARGET_COUNTRY_OPTIONS: TargetCountryOption[] = [
   },
   {
     rank: 20,
-    code: "AE",
-    name: "United Arab Emirates (UAE)",
-    nameVi: "United Arab Emirates",
-    nameEn: "United Arab Emirates",
-    flag: "🇦🇪",
-    defaultLanguage: "English",
-    languageNameVi: "English",
+    code: "CN",
+    name: "China",
+    nameVi: "China",
+    nameEn: "China",
+    flag: "🇨🇳",
+    defaultLanguage: "Chinese",
+    languageNameVi: "Chinese",
   },
 ];
 
@@ -227,6 +228,7 @@ export const PREFERRED_LANGUAGE_FLAGS: Record<string, string> = {
   Danish: "🇩🇰",
   Swedish: "🇸🇪",
   Finnish: "🇫🇮",
+  Chinese: "🇨🇳",
 };
 
 export const PREFERRED_LANGUAGE_COUNTRIES: Record<string, string> = {
@@ -240,4 +242,5 @@ export const PREFERRED_LANGUAGE_COUNTRIES: Record<string, string> = {
   Danish: "DK",
   Swedish: "SE",
   Finnish: "FI",
+  Chinese: "CN",
 };

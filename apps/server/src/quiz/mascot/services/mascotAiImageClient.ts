@@ -12,7 +12,7 @@ import {
   createImgStudioRunId,
 } from "../../../providers/imgstudio/idempotency.js";
 import type { StudioLogger } from "../../../logger.js";
-import { removeImageBackground } from "../../../utils/imageMatting.js";
+import { normalizeImageToPng, removeImageBackground } from "../../../utils/imageMatting.js";
 import { retryWithBackoff } from "../../../utils/retryWithBackoff.js";
 import { validateMascotPromptContract } from "../../mascotPromptContract.js";
 
@@ -241,6 +241,23 @@ async function applyMattingWithFallback(
   }
 }
 
+async function normalizeGeneratedImage(
+  raw: Uint8Array,
+  actionLabel: string,
+  logger: MascotArtFallbackParams["logger"],
+  logContext: Record<string, unknown>,
+): Promise<Uint8Array> {
+  try {
+    return await normalizeImageToPng(raw);
+  } catch (error) {
+    logger?.warn(
+      `${actionLabel} image format normalization failed: ${error instanceof Error ? error.message : String(error)}`,
+      logContext,
+    );
+    return raw;
+  }
+}
+
 /**
  * Unified helper that asserts the prompt contract, executes primary image generation with bounded retry,
  * performs matting or background removal with fallback to raw bytes, attempts both ImgStudio fallback levels,
@@ -295,12 +312,15 @@ export async function generateMascotArtWithFallback(params: MascotArtFallbackPar
 
   if (raw) {
     options.cancellationSignal?.throwIfAborted();
-    const matted = await applyMattingWithFallback(raw, actionLabel, logger, logContext);
+    const normalizedRaw = await normalizeGeneratedImage(raw, actionLabel, logger, logContext);
+    const matted = await applyMattingWithFallback(normalizedRaw, actionLabel, logger, logContext);
     options.cancellationSignal?.throwIfAborted();
-    return { mattedBytes: matted, rawBytes: raw, placeholder: false };
+    return { mattedBytes: matted, rawBytes: normalizedRaw, placeholder: false };
   }
 
   options.cancellationSignal?.throwIfAborted();
   const fallback = fallbackArt();
-  return { mattedBytes: fallback, rawBytes: fallback, placeholder: true };
+  const normalizedFallback = await normalizeGeneratedImage(fallback, actionLabel, logger, logContext);
+  const mattedFallback = await applyMattingWithFallback(normalizedFallback, actionLabel, logger, logContext);
+  return { mattedBytes: mattedFallback, rawBytes: normalizedFallback, placeholder: true };
 }

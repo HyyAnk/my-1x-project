@@ -1,8 +1,11 @@
 import { VoicePlanSchema, type QuizV2, type VoicePhrase, type VoiceSegmentRole, type VoicePlan } from "@studio/shared";
 import { sanitizeTextForSpeech, splitSmartPunctuationPhrases, canSplitBetweenWords } from "../../utils/speechSanitizer.js";
+import { resolveQuizVoiceCopy } from "./voiceCopy.js";
+
+export { CHINESE_OUTRO_CLOSING_VARIANTS, ENGLISH_OUTRO_CLOSING_VARIANTS, resolveOutroClosing } from "./voiceCopy.js";
 
 export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean; skipOutro?: boolean }): VoicePlan {
-  const copy = voiceCopy(quiz.language, quiz.episode_id);
+  const copy = resolveQuizVoiceCopy(quiz.language, quiz.episode_id);
   const segments: VoicePlan["segments"] = [];
   if (!options?.skipIntro) {
     segments.push({
@@ -162,35 +165,4 @@ export function splitChoicePhrases(text: string): string[] {
 
 export function splitPunctuationPhrases(text: string): string[] {
   return splitSmartPunctuationPhrases(text);
-}
-
-export const ENGLISH_OUTRO_CLOSING_VARIANTS = [
-  "See you next time for even more fun! Bye bye!",
-  "Catch you on the next challenge! Bye bye!",
-  "See you next time, everybody! Bye bye!",
-  "We'll see you on the next adventure! Bye bye!",
-] as const;
-
-export function resolveOutroClosing(language: string, seed?: string): string {
-  if (!seed) return ENGLISH_OUTRO_CLOSING_VARIANTS[0];
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  }
-  return ENGLISH_OUTRO_CLOSING_VARIANTS[hash % ENGLISH_OUTRO_CLOSING_VARIANTS.length];
-}
-
-function voiceCopy(language: string, seed?: string) {
-  const closing = resolveOutroClosing(language, seed);
-  return {
-    intro: "Hey friends! Ready to test your brain? Let's jump right in!",
-    question: (_number: number, text: string) => text,
-    choices: (choices: string[]) => (choices.length < 2 ? choices[0] : `${choices.slice(0, -1).join(", ")}, or ${choices.at(-1)}?`),
-    thinking: ["Pick fast!", "Which one?", "What's your guess?", "Choose now!"],
-    reveal: (answer: string) => `That's right! It's ${answer}!`,
-    explanation: (text: string) => text,
-    fact: (text: string) => text,
-    midpoint: "",
-    outro: `How many did you get right? Leave your score in the comments below! Remember to like and subscribe for more fun quizzes. ${closing}`,
-  };
 }

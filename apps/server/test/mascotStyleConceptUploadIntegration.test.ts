@@ -157,14 +157,18 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
     // Verify prompt incorporates reference preservation cues and adheres to contract
     assert.ok(result.prompt_used.includes("@1"), "Concept prompt must reference master concept via @1");
     assert.ok(
-      result.prompt_used.includes('Strictly preserve character identity from @1 for "Cyber Lynx"'),
+      result.prompt_used.includes('Strictly preserve the exact character identity from @1 for "Cyber Lynx"'),
       "Prompt must include character identity directive",
     );
     assert.ok(
       result.prompt_used.includes(
-        "Preserve the exact character identity, color palette, and recognizable anatomical features from the reference image, while re-imagining the character in the specified theme/style: Cyberpunk (neon cyber armor glowing visor)",
+        "Keep the same species, face, fur or skin colors, eye shape and size, anatomy, silhouette, and head-to-body proportions from the master reference",
       ),
       "Prompt must inject explicit reference preservation instructions for user_uploaded mascot",
+    );
+    assert.ok(
+      result.prompt_used.includes('Theme wardrobe for "Cyberpunk": neon cyber armor glowing visor'),
+      "Prompt must scope the requested theme to wardrobe and accessories",
     );
     assert.ok(validateMascotPromptContract(result.prompt_used, true), "Generated prompt must satisfy the mascot prompt contract");
 

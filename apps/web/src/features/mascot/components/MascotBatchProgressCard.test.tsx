@@ -60,7 +60,7 @@ describe("MascotBatchProgressCard Component", () => {
     // total: 10, completed: 4, failed: 1 => queued: 10 - 4 - 1 = 5
     render(<MascotBatchProgressCard batchProgress={defaultProgress} onStopBatch={vi.fn()} />);
 
-    const counter = screen.getByText(/4 \/ 10 completed \(40%\) • 5 queued • 1 failed/);
+    const counter = screen.getByText(/4 \/ 10 completed \(50%\) • 5 queued • 1 failed/);
     expect(counter).toBeDefined();
   });
 

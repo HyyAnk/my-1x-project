@@ -12,6 +12,7 @@ export interface UseSlotMutationsProps {
   mascotId?: string | null;
   styleId?: string | null;
   onNotice?: (notice: { tone: "good" | "bad" | "neutral"; message: string }) => void;
+  onActivityChange?: () => void;
   refreshSlots: () => Promise<void>;
   setError: (error: string | null) => void;
 }
@@ -29,7 +30,14 @@ export interface UseSlotMutationsReturn {
   handleCancelJob: (jobId: string) => Promise<void>;
 }
 
-export function useSlotMutations({ mascotId, styleId, onNotice, refreshSlots, setError }: UseSlotMutationsProps): UseSlotMutationsReturn {
+export function useSlotMutations({
+  mascotId,
+  styleId,
+  onNotice,
+  onActivityChange,
+  refreshSlots,
+  setError,
+}: UseSlotMutationsProps): UseSlotMutationsReturn {
   const [busySlots, setBusySlots] = useState<Record<string, boolean>>({});
   const isMountedRef = useRef<boolean>(true);
 
@@ -54,6 +62,7 @@ export function useSlotMutations({ mascotId, styleId, onNotice, refreshSlots, se
         setError(null);
 
         const result = await action();
+        onActivityChange?.();
         if (onNotice) {
           const message = typeof successNotice === "function" ? successNotice(result) : successNotice;
           onNotice({ tone: "neutral", message });
@@ -74,7 +83,7 @@ export function useSlotMutations({ mascotId, styleId, onNotice, refreshSlots, se
         }
       }
     },
-    [onNotice, refreshSlots, setError],
+    [onActivityChange, onNotice, refreshSlots, setError],
   );
 
   const uploadVideo = useCallback(
@@ -148,6 +157,7 @@ export function useSlotMutations({ mascotId, styleId, onNotice, refreshSlots, se
       if (!mascotId) return;
       try {
         await mascotAnimationApi.cancelProcessingJob(mascotId, jobId, "User cancelled processing");
+        onActivityChange?.();
         if (onNotice) {
           onNotice({ tone: "neutral", message: "Processing job cancelled." });
         }
@@ -160,7 +170,7 @@ export function useSlotMutations({ mascotId, styleId, onNotice, refreshSlots, se
         setError(msg);
       }
     },
-    [mascotId, onNotice, refreshSlots, setError],
+    [mascotId, onActivityChange, onNotice, refreshSlots, setError],
   );
 
   const isBusySlot = useCallback(

@@ -229,6 +229,7 @@ describe("mascotPromptContract", () => {
     const testStyle = {
       name: "Cyber Ninja",
       keyword: "stealth cyber armor katana holographic visor",
+      built_in_preset_id: "preset_cyber_neon",
     };
 
     it("builds canonical style concept prompt without overridePrompt (@1 continuity, costume directive, concept pose, studio isolation)", () => {
@@ -237,15 +238,18 @@ describe("mascotPromptContract", () => {
       expect(prompt).toContain("@1");
       expect(prompt).toContain('Strictly preserve character identity from @1 for "Pip the Penguin"');
       expect(prompt).toContain(
-        "face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image",
+        "keep the same face, fur or skin colors, eye shape and size, anatomy, silhouette, and head-to-body proportions",
       );
       expect(prompt).toContain(
-        "Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.",
+        `Rendering style lock: match @1 exactly and retain the configured base medium: ${MASCOT_STYLE_PROMPTS.pixar_3d}`,
       );
-      expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Cyber Ninja style.');
+      expect(prompt).toContain('Theme wardrobe for "Cyber Neon Pulse": futuristic techwear outfit with cyan and magenta emissive trim');
+      expect(prompt).toContain("stealth cyber armor katana holographic visor");
       expect(prompt).toContain(
-        "Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression.",
+        'Full-body single character concept illustration of "Pip the Penguin" wearing the "Cyber Neon Pulse" themed outfit.',
       );
+      expect(prompt).toContain("Preserve the exact proportions, facial geometry, eye scale, and recognizable body features shown in @1");
+      expect(prompt).toContain("Do not change the art medium, rendering technique, facial design language, or character proportions.");
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
       expect(prompt).toContain("high contrast studio rim lighting");
@@ -262,11 +266,32 @@ describe("mascotPromptContract", () => {
       const prompt = buildMascotStyleConceptPrompt(testMascot, { name: "Victorian Detective" });
 
       expect(prompt).toContain("@1");
-      expect(prompt).toContain("Theme & Costume: Styled in authentic Victorian Detective attire, costume, and accessories.");
+      expect(prompt).toContain('Theme wardrobe for "Victorian Detective": Victorian Detective.');
       expect(prompt).toContain(
-        'Full-body single character concept illustration of "Pip the Penguin" dressed in Victorian Detective style.',
+        'Full-body single character concept illustration of "Pip the Penguin" wearing the "Victorian Detective" themed outfit.',
       );
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
+    });
+
+    it("keeps an uploaded 3D mascot medium locked while applying a built-in wardrobe preset", () => {
+      const prompt = buildMascotStyleConceptPrompt(
+        {
+          ...testMascot,
+          concept_origin: "user_uploaded",
+          master_image_url: "/api/mascots/novy/assets/master.png",
+        },
+        {
+          name: "Renamed Cyber Outfit",
+          keyword: "",
+          built_in_preset_id: "preset_cyber_neon",
+        },
+      );
+
+      expect(prompt).toContain("Strictly preserve the exact character identity from @1");
+      expect(prompt).toContain(MASCOT_STYLE_PROMPTS.pixar_3d);
+      expect(prompt).toContain('The "Cyber Neon Pulse" preset changes wardrobe, materials, accent colors, and accessories only.');
+      expect(prompt).toContain("futuristic techwear outfit with cyan and magenta emissive trim");
+      expect(prompt).not.toContain("cute chibi proportions (1:2 head-to-body)");
     });
 
     it("incorporates overridePrompt into concept pose when provided", () => {
@@ -274,11 +299,12 @@ describe("mascotPromptContract", () => {
       const prompt = buildMascotStyleConceptPrompt(testMascot, testStyle, override);
 
       expect(prompt).toContain("@1");
-      expect(prompt).toContain(override);
-      expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Cyber Ninja style.');
+      expect(prompt).toContain(`Additional user wardrobe or accessory direction: ${override}.`);
       expect(prompt).toContain(
-        "Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.",
+        'Full-body single character concept illustration of "Pip the Penguin" wearing the "Cyber Neon Pulse" themed outfit.',
       );
+      expect(prompt).toContain('Theme wardrobe for "Cyber Neon Pulse": futuristic techwear outfit with cyan and magenta emissive trim');
+      expect(prompt).toContain("This direction must not override the identity or rendering style locks.");
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
       expect(validateMascotPromptContract(prompt, true)).toBe(true);

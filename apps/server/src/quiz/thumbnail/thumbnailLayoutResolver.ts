@@ -27,27 +27,54 @@ const LAYOUT_MATCH_RULES: readonly LayoutMatchRule[] = [
     layout: "split_vs",
     formatExact: ["versus"],
     formatSubstrings: ["vs"],
-    topicSubstrings: ["would you rather", " vs ", "pick one", "どっち", "2択"],
+    topicSubstrings: [
+      "would you rather",
+      " vs ",
+      "pick one",
+      "どっち",
+      "2択",
+      "\u4e8c\u9009\u4e00",
+      "\u4f60\u4f1a\u9009\u54ea\u4e2a",
+      "\u9009\u4e00\u4e2a",
+    ],
   },
   {
     layout: "mystery_silhouette",
     formatSubstrings: ["guess", "silhouette"],
-    topicSubstrings: ["who is", "guess the", "誰", "シルエット", "mystery"],
+    topicSubstrings: ["who is", "guess the", "誰", "シルエット", "mystery", "\u8fd9\u662f\u8c01", "\u731c\u731c", "\u526a\u5f71"],
   },
   {
     layout: "odd_one_out",
     formatSubstrings: ["odd", "spot"],
-    topicSubstrings: ["odd one", "spot the difference", "間違い探し", "仲間外れ", "imposter"],
+    topicSubstrings: [
+      "odd one",
+      "spot the difference",
+      "間違い探し",
+      "仲間外れ",
+      "imposter",
+      "\u627e\u51fa\u4e0d\u540c",
+      "\u627e\u4e0d\u540c",
+      "\u54ea\u4e00\u4e2a\u4e0d\u540c",
+    ],
   },
   {
     layout: "difficulty_tier",
     formatSubstrings: ["tier", "level"],
-    topicSubstrings: ["iq test", "level 1", "難易度", "iqテスト"],
+    topicSubstrings: ["iq test", "level 1", "難易度", "iqテスト", "\u7b2c1\u5173", "\u96be\u5ea6", "\u667a\u5546\u6d4b\u8bd5"],
   },
   {
     layout: "true_false",
     formatSubstrings: ["true_false"],
-    topicSubstrings: ["true or false", "ウソ", "ホント", "○✕", "myths"],
+    topicSubstrings: [
+      "true or false",
+      "ウソ",
+      "ホント",
+      "○✕",
+      "myths",
+      "\u662f\u771f\u662f\u5047",
+      "\u5bf9\u8fd8\u662f\u9519",
+      "\u771f\u6216\u5047",
+    ],
   },
 ];
 
@@ -91,7 +118,9 @@ export function determineThumbnailLayout(
       topicLower.includes("would you rather") ||
       topicLower.includes("pick one") ||
       topicLower.includes("どっち") ||
-      topicLower.includes("2択");
+      topicLower.includes("2択") ||
+      topicLower.includes("\u4e8c\u9009\u4e00") ||
+      topicLower.includes("\u4f60\u4f1a\u9009\u54ea\u4e2a");
 
     layout = isComparison ? "split_vs" : "mystery_silhouette";
   }

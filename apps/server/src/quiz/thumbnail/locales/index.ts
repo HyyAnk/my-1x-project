@@ -10,6 +10,7 @@ import { koLocale } from "./ko.js";
 import { nlLocale } from "./nl.js";
 import { noLocale } from "./no.js";
 import { svLocale } from "./sv.js";
+import { zhLocale } from "./zh.js";
 
 export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocalization> = {
   nl: nlLocale,
@@ -21,6 +22,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
   fr: frLocale,
   ja: jaLocale,
   ko: koLocale,
+  zh: zhLocale,
   es: esLocale,
   en: enLocale,
 };
@@ -39,3 +41,4 @@ export * from "./ko.js";
 export * from "./nl.js";
 export * from "./no.js";
 export * from "./sv.js";
+export * from "./zh.js";

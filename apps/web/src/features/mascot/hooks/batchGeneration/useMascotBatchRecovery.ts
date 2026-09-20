@@ -1,9 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { MascotProfile, MascotSlotBatchJob, MascotStyle, SlotBatchStatusResponse } from "@studio/shared";
 import { api } from "../../../../api";
 import { inferBatchTargetState, formatSlotStreamMessage, formatQueuedKeys } from "../../utils/mascotBatchHelpers";
 import { createReconnectedNotice, createCatchUpCompletedNotice } from "../../services/mascotQueueNotices";
 import { isBatchAcknowledgedInSession, acknowledgeBatchInSession, isBatchRecent } from "../../utils/mascotSessionStorage";
+import { emitBatchOutcome } from "./batchOutcomeEmitter";
 import type { BatchStateRefs, MascotBatchStateReturn } from "./types";
 
 export interface UseMascotBatchRecoveryProps {
@@ -16,10 +17,11 @@ export interface UseMascotBatchRecoveryProps {
   stopPolling: () => void;
 }
 
-/**
- * Handles mount recovery: reconnecting to in-flight batch jobs (F5 recovery)
- * and catching up on recently completed batches while user was away.
- */
+interface StyleStatusResult {
+  styleId: string;
+  status: SlotBatchStatusResponse;
+}
+
 export function useMascotBatchRecovery({
   mascot,
   activeStyle,
@@ -29,27 +31,31 @@ export function useMascotBatchRecovery({
   startPolling,
   stopPolling,
 }: UseMascotBatchRecoveryProps): void {
-  const restoreMountActiveBatch = useCallback(
-    async (
-      activeBatch: MascotSlotBatchJob,
-      statusRes: SlotBatchStatusResponse,
-      mascotId: string,
-      styleId: string,
-      isCancelled: () => boolean,
-    ) => {
+  const recoveryAttemptRef = useRef(0);
+  const { setQueuedSlotKeys, setBusySlotKey, setBatchProgress } = state;
+  const mascotId = mascot?.id;
+  const styleIds = Array.from(
+    new Set([...(mascot?.styles || []).map((style) => style.id), activeStyle?.id, activeStyleId].filter(Boolean) as string[]),
+  );
+  const styleIdsKey = styleIds.join("|");
+
+  const restoreActiveBatch = useCallback(
+    async (activeBatch: MascotSlotBatchJob, status: SlotBatchStatusResponse, styleId: string, canCommit: () => boolean) => {
       refs.activeBatchIdRef.current = activeBatch.id;
-      const activeKeys = statusRes.active_slot_keys.length > 0 ? statusRes.active_slot_keys : activeBatch.active_slot_keys || [];
-      const queuedKeys = statusRes.queued_slot_keys || [];
-      const targetState = inferBatchTargetState(activeBatch);
+      refs.trackedStyleIdRef.current = styleId;
+      refs.lastCompletedCountRef.current = activeBatch.completed_count;
+      refs.onActiveStyleRecoveredRef.current(styleId);
 
-      state.setQueuedSlotKeys(formatQueuedKeys(queuedKeys, styleId));
-      if (activeBatch.total_slots === 1 && activeKeys.length > 0) {
-        state.setBusySlotKey(activeKeys[0] ?? null);
-      } else {
-        state.setBusySlotKey("batch");
-      }
+      const activeKeys = status.active_slot_keys.length > 0 ? status.active_slot_keys : activeBatch.active_slot_keys || [];
+      const queuedKeys = status.queued_slot_keys || [];
+      const styleName = refs.mascotRef.current?.styles?.find((style) => style.id === styleId)?.name;
 
-      state.setBatchProgress({
+      setQueuedSlotKeys(formatQueuedKeys(queuedKeys, styleId));
+      setBusySlotKey(activeBatch.total_slots === 1 && activeKeys.length > 0 ? (activeKeys[0] ?? null) : "batch");
+      setBatchProgress({
+        batchId: activeBatch.id,
+        styleId,
+        styleName,
         total: activeBatch.total_slots,
         completed: activeBatch.completed_count,
         failed: activeBatch.failed_count,
@@ -57,82 +63,102 @@ export function useMascotBatchRecovery({
         statusMessage: formatSlotStreamMessage(activeKeys, activeBatch.total_slots, false),
         startTime: new Date(activeBatch.created_at).getTime() || Date.now(),
         isStopping: false,
-        targetState,
+        targetState: inferBatchTargetState(activeBatch),
         mode: activeBatch.total_slots === 1 ? "single" : "batch_empty",
       });
 
-      refs.lastCompletedCountRef.current = activeBatch.completed_count;
       startPolling();
-
       try {
-        const res = await api.mascot(mascotId);
-        if (!isCancelled() && refs.isMountedRef.current && res?.mascot) {
-          refs.onMascotUpdatedRef.current(res.mascot);
-        }
+        const response = await api.mascot(activeBatch.mascot_id);
+        if (canCommit() && response?.mascot) refs.onMascotUpdatedRef.current(response.mascot);
       } catch {
-        // Non-fatal mascot refresh error on mount
+        // The activity poll will retry this non-critical refresh.
       }
 
-      refs.onNoticeRef.current(createReconnectedNotice(activeBatch.completed_count, activeBatch.total_slots, activeKeys.length));
+      if (canCommit()) {
+        refs.onNoticeRef.current(createReconnectedNotice(activeBatch.completed_count, activeBatch.total_slots, activeKeys.length));
+      }
     },
-    [refs, startPolling, state],
+    [refs, setBatchProgress, setBusySlotKey, setQueuedSlotKeys, startPolling],
   );
 
-  const handleMountRecentBatchCatchUp = useCallback(
-    async (recentBatch: MascotSlotBatchJob | undefined, mascotId: string, isCancelled: () => boolean) => {
-      if (
-        !recentBatch ||
-        (recentBatch.status !== "completed" && recentBatch.completed_count === 0) ||
-        !isBatchRecent(recentBatch.updated_at || recentBatch.created_at)
-      ) {
+  const catchUpRecentBatch = useCallback(
+    async (batch: MascotSlotBatchJob, canCommit: () => boolean) => {
+      if (batch.completed_count > 0) {
+        try {
+          const response = await api.mascot(batch.mascot_id);
+          if (canCommit() && response?.mascot) refs.onMascotUpdatedRef.current(response.mascot);
+        } catch {
+          // The activity poll will retry this non-critical refresh.
+        }
+      }
+
+      if (!canCommit() || isBatchAcknowledgedInSession(batch.id)) return;
+      if (batch.status === "completed" && batch.failed_count === 0) {
+        acknowledgeBatchInSession(batch.id);
+        refs.onNoticeRef.current(createCatchUpCompletedNotice(batch.completed_count, batch.total_slots));
         return;
       }
-
-      try {
-        const res = await api.mascot(mascotId);
-        if (!isCancelled() && refs.isMountedRef.current && res?.mascot) {
-          refs.onMascotUpdatedRef.current(res.mascot);
-        }
-      } catch {
-        // Non-fatal mascot refresh error
-      }
-
-      if (!isBatchAcknowledgedInSession(recentBatch.id)) {
-        acknowledgeBatchInSession(recentBatch.id);
-        refs.onNoticeRef.current(createCatchUpCompletedNotice(recentBatch.completed_count, recentBatch.total_slots));
-      }
+      emitBatchOutcome(batch, refs.onNoticeRef.current);
     },
     [refs],
   );
 
   useEffect(() => {
-    const currentMascot = mascot;
-    if (!currentMascot?.id) return;
-    const mascotId = currentMascot.id;
-    const styleId = activeStyle?.id || activeStyleId || "core";
-    let isCancelled = false;
+    if (!mascotId || !styleIdsKey) return;
+    const recoveryAttempt = ++recoveryAttemptRef.current;
+    let cancelled = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    const canCommit = () => !cancelled && recoveryAttemptRef.current === recoveryAttempt && refs.isMountedRef.current;
 
-    async function checkInitialStatus() {
-      try {
-        const statusRes = await api.getSlotGenerationStatus(mascotId, styleId);
-        if (isCancelled || !refs.isMountedRef.current) return;
+    const recover = async (retriesRemaining: number) => {
+      const ids = styleIdsKey.split("|").filter(Boolean);
+      const results = await Promise.allSettled(
+        ids.map(async (styleId): Promise<StyleStatusResult> => ({
+          styleId,
+          status: await api.getSlotGenerationStatus(mascotId, styleId),
+        })),
+      );
+      if (!canCommit()) return;
 
-        const activeBatch = statusRes.active_batch;
-        if (activeBatch && (activeBatch.status === "queued" || activeBatch.status === "processing")) {
-          await restoreMountActiveBatch(activeBatch, statusRes, mascotId, styleId, () => isCancelled);
-        } else {
-          await handleMountRecentBatchCatchUp(statusRes.recent_batches?.[0], mascotId, () => isCancelled);
-        }
-      } catch {
-        // Status check failed silently on initial render
+      const statuses = results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
+      const selectedStyleId = refs.activeStyleIdRef.current;
+      const activeStatuses = statuses
+        .filter(({ status }) => status.active_batch && ["queued", "processing"].includes(status.active_batch.status))
+        .sort((left, right) => {
+          if (left.styleId === selectedStyleId) return -1;
+          if (right.styleId === selectedStyleId) return 1;
+          return (
+            new Date(right.status.active_batch?.created_at || 0).getTime() - new Date(left.status.active_batch?.created_at || 0).getTime()
+          );
+        });
+
+      const active = activeStatuses[0];
+      if (active?.status.active_batch) {
+        await restoreActiveBatch(active.status.active_batch, active.status, active.styleId, canCommit);
+        return;
       }
-    }
 
-    void checkInitialStatus();
+      const recent = statuses
+        .flatMap(({ status }) => status.recent_batches || [])
+        .filter((batch) => isBatchRecent(batch.updated_at || batch.created_at))
+        .sort((left, right) => new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime())[0];
+      if (recent) await catchUpRecentBatch(recent, canCommit);
+
+      if (results.some((result) => result.status === "rejected") && retriesRemaining > 0 && canCommit()) {
+        retryTimer = setTimeout(() => void recover(retriesRemaining - 1), 1_500);
+      }
+    };
+
+    const recoverWhenOnline = () => void recover(1);
+    window.addEventListener("online", recoverWhenOnline);
+    void recover(2);
 
     return () => {
-      isCancelled = true;
+      cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
+      window.removeEventListener("online", recoverWhenOnline);
       stopPolling();
     };
-  }, [mascot?.id, activeStyle?.id, activeStyleId, restoreMountActiveBatch, handleMountRecentBatchCatchUp, refs, stopPolling]);
+  }, [catchUpRecentBatch, mascotId, refs, restoreActiveBatch, stopPolling, styleIdsKey]);
 }

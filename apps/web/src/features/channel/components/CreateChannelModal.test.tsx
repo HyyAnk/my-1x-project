@@ -60,14 +60,13 @@ describe("CreateChannelModal", () => {
 
     fireEvent.change(screen.getByLabelText("Channel Name"), { target: { value: "World Quiz" } });
     fireEvent.click(screen.getByRole("button", { name: "Target Country / Region" }));
-    // Choose Germany (DE) which should automatically set German
-    fireEvent.click(screen.getByRole("button", { name: /Germany.*DE.*German/i }));
+    fireEvent.click(screen.getByRole("button", { name: /China.*CN.*Chinese/i }));
 
-    expect(screen.getByLabelText<HTMLInputElement>("Target Language").value).toBe("German");
+    expect(screen.getByLabelText<HTMLInputElement>("Target Language").value).toBe("Chinese");
     fireEvent.click(screen.getByRole("button", { name: "Create channel" }));
 
     await waitFor(() => expect(create).toHaveBeenCalledTimes(1));
-    expect(create.mock.calls[0][0]).toEqual(expect.objectContaining({ country: "DE", language: "German", dna_mode: "ai" }));
+    expect(create.mock.calls[0][0]).toEqual(expect.objectContaining({ country: "CN", language: "Chinese", dna_mode: "ai" }));
   });
 
   it("prevents duplicate submission while the request is pending", async () => {

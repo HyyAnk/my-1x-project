@@ -174,6 +174,72 @@ describe("useMascotBatchGeneration hook", () => {
     );
   });
 
+  it("finds an active batch owned by a non-selected style after reload", async () => {
+    const cyberStyle: MascotStyle = {
+      ...mockStyle,
+      id: "style-cyber",
+      name: "Cyber Neon Pulse",
+      is_default: false,
+    };
+    const mascotWithTwoStyles: MascotProfile = {
+      ...mockMascot,
+      styles: [mockStyle, cyberStyle],
+    };
+    const activeBatch: MascotSlotBatchJob = {
+      id: "batch-cyber-recovery",
+      mascot_id: mockMascot.id,
+      style_id: cyberStyle.id,
+      status: "processing",
+      total_slots: 4,
+      completed_count: 1,
+      failed_count: 0,
+      active_slot_keys: ["celebrate_2"],
+      items: [
+        {
+          id: "job-cyber-2",
+          mascot_id: mockMascot.id,
+          style_id: cyberStyle.id,
+          state: "celebrate",
+          slot_index: 2,
+          status: "generating",
+          created_at: "2026-09-20T00:00:00.000Z",
+        },
+      ],
+      created_at: "2026-09-20T00:00:00.000Z",
+      updated_at: "2026-09-20T00:00:01.000Z",
+    };
+
+    vi.spyOn(api, "getSlotGenerationStatus").mockImplementation(async (_mascotId, styleId) =>
+      styleId === cyberStyle.id
+        ? {
+            active_batch: activeBatch,
+            queued_slot_keys: ["celebrate_3"],
+            active_slot_keys: ["celebrate_2"],
+          }
+        : { active_batch: null, queued_slot_keys: [], active_slot_keys: [] },
+    );
+    vi.spyOn(api, "mascot").mockResolvedValue({ mascot: mascotWithTwoStyles });
+    const onActiveStyleRecovered = vi.fn();
+
+    const { result } = renderHook(() =>
+      useMascotBatchGeneration({
+        mascot: mascotWithTwoStyles,
+        activeStyleId: "core",
+        activeStyle: mockStyle,
+        onMascotUpdated: vi.fn(),
+        onNotice: vi.fn(),
+        onActiveStyleRecovered,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.batchProgress?.styleId).toBe(cyberStyle.id));
+    expect(result.current.batchProgress?.batchId).toBe(activeBatch.id);
+    expect(result.current.batchProgress?.styleName).toBe(cyberStyle.name);
+    expect(onActiveStyleRecovered).toHaveBeenCalledWith(cyberStyle.id);
+    expect(api.getSlotGenerationStatus).toHaveBeenCalledWith(mockMascot.id, "core");
+    expect(api.getSlotGenerationStatus).toHaveBeenCalledWith(mockMascot.id, cyberStyle.id);
+  });
+
   it("polls until completion, updates mascot in real-time, and clears state", async () => {
     let pollCount = 0;
     const initialBatch: MascotSlotBatchJob = {

@@ -13,6 +13,7 @@ export type UseMascotStylesProps = {
   mascot: MascotProfile | null;
   onMascotUpdated: (mascot: MascotProfile) => void;
   onNotice: (notice: Notice) => void;
+  onActivityChange?: () => void;
 };
 
 export type UseMascotStylesResult = UseMascotStyleCrudResult &
@@ -24,7 +25,7 @@ export type UseMascotStylesResult = UseMascotStyleCrudResult &
  * Coordinator hook for Mascot Styles, poses, multi-state variant workflows, and style concept queue.
  * Composes CRUD operations, batch variant generation, style concept queueing, and slot modal management.
  */
-export function useMascotStyles({ mascot, onMascotUpdated, onNotice }: UseMascotStylesProps): UseMascotStylesResult {
+export function useMascotStyles({ mascot, onMascotUpdated, onNotice, onActivityChange }: UseMascotStylesProps): UseMascotStylesResult {
   const styleCrud = useMascotStyleCrud({
     mascot,
     onMascotUpdated,
@@ -35,6 +36,7 @@ export function useMascotStyles({ mascot, onMascotUpdated, onNotice }: UseMascot
     mascot,
     onMascotUpdated,
     onNotice,
+    onActivityChange,
   });
 
   const batchGen = useMascotBatchGeneration({
@@ -43,6 +45,8 @@ export function useMascotStyles({ mascot, onMascotUpdated, onNotice }: UseMascot
     activeStyle: styleCrud.activeStyle,
     onMascotUpdated,
     onNotice,
+    onActivityChange,
+    onActiveStyleRecovered: styleCrud.setActiveStyleId,
   });
 
   const slotModal = useMascotSlotModal({

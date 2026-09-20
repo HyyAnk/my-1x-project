@@ -75,6 +75,8 @@ describe("Stage 4: Product Localization and English Source Invariants", () => {
       expect(normalizeTargetLanguage("es-MX")).toBe("es");
       expect(normalizeTargetLanguage("en-US")).toBe("en");
       expect(normalizeTargetLanguage("en")).toBe("en");
+      expect(normalizeTargetLanguage("Chinese")).toBe("zh");
+      expect(normalizeTargetLanguage("zh-CN")).toBe("zh");
     });
 
     it("strictly rejects vi, vi-VN, and unknown languages with UNSUPPORTED_TARGET_LANGUAGE", () => {

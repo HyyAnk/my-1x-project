@@ -10,6 +10,7 @@ import { koLocale } from "./ko.js";
 import { nlLocale } from "./nl.js";
 import { noLocale } from "./no.js";
 import { svLocale } from "./sv.js";
+import { zhLocale } from "./zh.js";
 
 const QUESTION_COUNT_LOCALES = {
   nl: nlLocale,
@@ -21,6 +22,7 @@ const QUESTION_COUNT_LOCALES = {
   fr: frLocale,
   ja: jaLocale,
   ko: koLocale,
+  zh: zhLocale,
   es: esLocale,
   en: enLocale,
 };
@@ -30,6 +32,7 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
     en: "99% FAIL! 🔥",
     ja: "99%が間違える! 🔥",
     ko: "99%가 틀리는 퀴즈! 🔥",
+    zh: "99%\u90fd\u4f1a\u7b54\u9519\uff01\ud83d\udd25",
     de: "99% SCHEITERN! 🔥",
     fr: "99% ÉCHOUENT ! 🔥",
     nl: "99% FAALT! 🔥",
@@ -43,6 +46,7 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
     en: "GENIUS ONLY 🧠",
     ja: "天才専用 🧠",
     ko: "천재 전용 🧠",
+    zh: "\u5929\u624d\u4e13\u5c5e \ud83e\udde0",
     de: "NUR FÜR GENIES 🧠",
     fr: "RÉSERVÉ AUX GÉNIES 🧠",
     nl: "ALLEEN VOOR GENIEËN 🧠",
@@ -56,6 +60,7 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
     en: "IQ 140+ TEST ⚡",
     ja: "IQ140+ 診断 ⚡",
     ko: "IQ 140+ 테스트 ⚡",
+    zh: "IQ 140+\u6d4b\u8bd5 \u26a1",
     de: "IQ 140+ TEST ⚡",
     fr: "TEST DE QI 140+ ⚡",
     nl: "IQ 140+ TEST ⚡",
@@ -69,6 +74,7 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
     en: "CAN YOU PASS? 🎯",
     ja: "全問正解できる？ 🎯",
     ko: "만점 가능할까? 🎯",
+    zh: "\u4f60\u80fd\u901a\u5173\u5417\uff1f\ud83c\udfaf",
     de: "SCHAFFST DU ES? 🎯",
     fr: "PEUX-TU RÉUSSIR ? 🎯",
     nl: "KUN JIJ DIT? 🎯",
@@ -82,6 +88,7 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
     en: "ONLY 1% KNOW! 🏆",
     ja: "正解率1% 🏆",
     ko: "정답률 1% 🏆",
+    zh: "\u53ea\u67091%\u77e5\u9053\uff01\ud83c\udfc6",
     de: "NUR 1% WEISS ES! 🏆",
     fr: "SEULEMENT 1% SAIT ! 🏆",
     nl: "SLECHTS 1% WEET HET! 🏆",

@@ -20,7 +20,7 @@ export const channelsEn = {
     channelNamePlaceholder: "e.g. Brain Bites Kids",
     countryFieldLabel: "Target Country / Region",
     languageFieldLabel: "Target Language",
-    languageFieldPlaceholder: "e.g. English, Tiếng Việt",
+    languageFieldPlaceholder: "e.g. English, Chinese",
     marketFieldLabel: "Market (optional)",
     marketFieldPlaceholder: "e.g. Southeast Asia",
     noCountriesFound: "No matching countries found",

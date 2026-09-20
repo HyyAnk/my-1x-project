@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, act } from "@testing-library/react";
 import type { MascotProfile, MascotStyle } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
-import { MascotStyleAnchorCard } from "./MascotStyleAnchorCard";
+import { MascotStyleAnchorCard, type MascotStyleAnchorCardState } from "./MascotStyleAnchorCard";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvider>{children}</LanguageProvider>;
 
@@ -37,6 +37,19 @@ const mockCustomStyleWithRaw: MascotStyle = {
   created_at: "2026-09-01T00:00:00.000Z",
   updated_at: "2026-09-01T00:00:00.000Z",
 };
+
+function createStylesState(overrides: Partial<MascotStyleAnchorCardState> = {}): MascotStyleAnchorCardState {
+  return {
+    generatingConceptStyleId: null,
+    activeStyleIds: [],
+    queuedStyleIds: [],
+    handleQueueStyle: vi.fn(async () => undefined),
+    handleGenerateStyleConcept: vi.fn(async () => undefined),
+    handleUpdateStyle: vi.fn(async () => undefined),
+    handleDeleteStyle: vi.fn(async () => undefined),
+    ...overrides,
+  };
+}
 
 describe("MascotStyleAnchorCard", () => {
   it("renders both RAW and PNG download buttons when raw image is present", () => {
@@ -156,5 +169,67 @@ describe("MascotStyleAnchorCard", () => {
 
     expect(screen.getByText("Anchor: Uploaded Master")).toBeDefined();
     expect(screen.getByText("Anchored to uploaded master concept reference")).toBeDefined();
+  });
+
+  it("passes a trimmed prompt to the style generation queue", () => {
+    const handleQueueStyle = vi.fn();
+    const styleWithoutAnchor: MascotStyle = {
+      ...mockCustomStyleWithRaw,
+      built_in_preset_id: "preset_cyber_neon",
+      anchor_image_url: null,
+      raw_anchor_image_url: null,
+    };
+    const stylesState = createStylesState({ handleQueueStyle });
+
+    render(<MascotStyleAnchorCard style={styleWithoutAnchor} editingMascot={mockMascot} stylesState={stylesState} />, {
+      wrapper,
+    });
+
+    const promptInput = screen.getByLabelText("Style prompt for Cyberpunk");
+    fireEvent.change(promptInput, { target: { value: "  chrome flight suit with cyan light strips  " } });
+    fireEvent.click(screen.getByTitle("Generate Style Concept"));
+
+    expect(handleQueueStyle).toHaveBeenCalledWith("cyberpunk", "chrome flight suit with cyan light strips");
+  });
+
+  it("uses the current prompt when regenerating an existing style concept", () => {
+    const handleQueueStyle = vi.fn();
+    const stylesState = createStylesState({ handleQueueStyle });
+
+    render(<MascotStyleAnchorCard style={mockCustomStyleWithRaw} editingMascot={mockMascot} stylesState={stylesState} />, {
+      wrapper,
+    });
+
+    fireEvent.change(screen.getByLabelText("Style prompt for Cyberpunk"), {
+      target: { value: "sleek carbon-fiber armor" },
+    });
+    fireEvent.click(screen.getByTitle("Regenerate Style Concept"));
+
+    expect(handleQueueStyle).toHaveBeenCalledWith("cyberpunk", "sleek carbon-fiber armor");
+  });
+
+  it("acknowledges a pending request immediately and prevents duplicate generation", async () => {
+    let resolveRequest: (() => void) | undefined;
+    const handleQueueStyle = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveRequest = resolve;
+        }),
+    );
+    const stylesState = createStylesState({ handleQueueStyle });
+
+    render(<MascotStyleAnchorCard style={mockCustomStyleWithRaw} editingMascot={mockMascot} stylesState={stylesState} />, {
+      wrapper,
+    });
+
+    const regenerateButton = screen.getByTitle("Regenerate Style Concept");
+    fireEvent.click(regenerateButton);
+    fireEvent.click(regenerateButton);
+
+    expect(handleQueueStyle).toHaveBeenCalledOnce();
+    expect((regenerateButton as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getAllByText("Generating Concept…").length).toBeGreaterThan(0);
+
+    await act(async () => resolveRequest?.());
   });
 });

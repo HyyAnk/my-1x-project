@@ -225,6 +225,31 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(jaPrompt).toContain("全15問");
   });
 
+  it("generates localized Chinese thumbnail text for China channels", () => {
+    const zhGrid = resolveThumbnailLayout({
+      topicTitle: "\u7efc\u5408\u77e5\u8bc6\u6311\u6218",
+      questionCount: 15,
+      language: "Chinese",
+      mascotProfile: sampleMascot,
+    });
+    expect(zhGrid.layout).toBe("mega_grid");
+    expect(zhGrid.hookText).toBe("\u7efc\u5408\u77e5\u8bc6\u6311\u6218");
+    expect(zhGrid.badgeText).toBe("15\u9053\u9898");
+
+    const zhVs = resolveThumbnailLayout({
+      topicTitle: "\u4e8c\u9009\u4e00\uff1a\u4f60\u4f1a\u9009\u54ea\u4e2a\uff1f",
+      language: "zh-CN",
+      mascotProfile: sampleMascot,
+    });
+    expect(zhVs.layout).toBe("split_vs");
+    expect(zhVs.hookText).toBe("\u4f60\u4f1a\u9009\u54ea\u4e2a\uff1f");
+    expect(zhVs.badgeText).toContain("\u4e8c\u9009\u4e00");
+
+    const zhPrompt = compileThumbnailPrompt(zhGrid, "16:9", sampleMascot);
+    expect(zhPrompt).toContain("\u7efc\u5408\u77e5\u8bc6\u6311\u6218");
+    expect(zhPrompt).toContain("15\u9053\u9898");
+  });
+
   it("strictly generates authentic German and French thumbnail text for German and French channels", () => {
     // 1. German Mega Grid
     const deGrid = resolveThumbnailLayout({

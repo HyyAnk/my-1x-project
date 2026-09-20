@@ -95,6 +95,20 @@ export function resolveMascotAnimationServices(deps: MascotsRouteDeps): Resolved
       packagingService,
     });
 
+  deps.animationRepository = animRepo;
+  deps.animationJobService = jobService;
+  deps.animationPublishService = publishService;
+  deps.animationStorageAdapter = storageAdapter;
+  deps.ffmpegAdapter = ffmpegAdapter;
+  deps.videoUploadService = videoUploadService;
+  deps.videoProcessingRepository = videoProcessingRepo;
+  deps.videoProcessingOrchestrator = orchestrator;
+  deps.frameExtractionService = extractionService;
+  deps.mascotMattingAdapter = mattingAdapter;
+  deps.frameMattingService = mattingService;
+  deps.frameRegistrationService = registrationService;
+  deps.animationPackagingService = packagingService;
+
   return {
     sprite: {
       repository,

@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -7,6 +7,7 @@ import { buildApp } from "../src/app.js";
 import { generateMascotStyleConcept } from "../src/quiz/mascot/artGenerator.js";
 import { validateMascotPromptContract } from "../src/quiz/mascotPromptContract.js";
 import type { RepositoryService } from "../src/repository.js";
+import { hasMeaningfulPngTransparency } from "../src/utils/imageMatting.js";
 
 const testImageConfig: AppConfig["image_generation"] = {
   enabled: false,
@@ -72,10 +73,11 @@ describe("Mascot Style Concept Generation", () => {
       // Verify prompt construction and contract
       expect(result.prompt_used).toContain("@1");
       expect(result.prompt_used).toContain('Strictly preserve character identity from @1 for "Shadow Fox"');
+      expect(result.prompt_used).toContain('Theme wardrobe for "Cyber Ninja": sleek nano armor dual katanas neon visor.');
       expect(result.prompt_used).toContain(
-        "Theme & Costume: Styled in authentic sleek nano armor dual katanas neon visor attire, costume, and accessories.",
+        'Full-body single character concept illustration of "Shadow Fox" wearing the "Cyber Ninja" themed outfit.',
       );
-      expect(result.prompt_used).toContain('Full-body single character concept illustration of "Shadow Fox" dressed in Cyber Ninja style.');
+      expect(result.prompt_used).toContain("Rendering style lock: match @1 exactly");
       expect(result.prompt_used).toContain("floating character");
       expect(result.prompt_used).toContain("no ground shadow");
       expect(validateMascotPromptContract(result.prompt_used, false)).toBe(true);
@@ -244,8 +246,9 @@ describe("Mascot Style Concept Generation", () => {
       expect(result.prompt_used).toContain("@1");
       expect(result.prompt_used).toContain(customOverride);
       expect(result.prompt_used).toContain(
-        "Theme & Costume: Styled in authentic tricorn hat pirate coat brass telescope eye patch attire, costume, and accessories.",
+        'Theme wardrobe for "Cyber Neon Pulse": futuristic techwear outfit with cyan and magenta emissive trim',
       );
+      expect(result.prompt_used).toContain("tricorn hat pirate coat brass telescope eye patch");
       expect(validateMascotPromptContract(result.prompt_used, true)).toBe(true);
 
       // Verify files exist in repository asset storage
@@ -255,6 +258,9 @@ describe("Mascot Style Concept Generation", () => {
       const rawFile = await app.repository.getMascotAssetFile(mascot.id, rawFilename);
       expect(mattedFile.size).toBeGreaterThan(0);
       expect(rawFile.size).toBeGreaterThan(0);
+      const [mattedBytes, rawBytes] = await Promise.all([readFile(mattedFile.absolutePath), readFile(rawFile.absolutePath)]);
+      expect(hasMeaningfulPngTransparency(mattedBytes)).toBe(true);
+      expect(Array.from(rawBytes.subarray(0, 4))).toEqual([0x89, 0x50, 0x4e, 0x47]);
 
       // Verify reloaded mascot profile has anchor_image_url and raw_anchor_image_url set
       const reloadedMascot = await app.repository.getMascot(mascot.id);

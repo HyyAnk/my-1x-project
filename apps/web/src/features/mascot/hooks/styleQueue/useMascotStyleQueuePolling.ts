@@ -1,7 +1,9 @@
 import { useCallback, useRef, useEffect } from "react";
-import type { MascotStyleBatchJob } from "@studio/shared";
+import type { MascotStyleBatchJob, StyleBatchStatusResponse } from "@studio/shared";
 import { api } from "../../../../api";
 import { createStyleBatchOutcomeNotice, createStyleConceptSuccessNotice } from "../../services/mascotQueueNotices";
+import { acknowledgeBatchInSession } from "../../utils/mascotSessionStorage";
+import { findTrackedSettledBatch } from "./styleQueueBatchSelectors";
 import type { MascotStyleQueueStateReturn, StyleQueueRefs } from "./types";
 
 export interface UseMascotStyleQueuePollingProps {
@@ -12,6 +14,7 @@ export interface UseMascotStyleQueuePollingProps {
 export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueuePollingProps) {
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isPollingRef = useRef<boolean>(false);
+  const { setActiveBatch, setQueuedStyleIds, setActiveStyleIds, setQueueProgress } = state;
 
   const stopPolling = useCallback(() => {
     if (pollTimerRef.current) {
@@ -21,22 +24,30 @@ export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueueP
     isPollingRef.current = false;
   }, []);
 
-  const handleBatchSettled = useCallback(
-    async (batch: MascotStyleBatchJob, mascotId: string) => {
-      stopPolling();
-      state.setActiveBatch(batch);
-      state.setQueuedStyleIds([]);
-      state.setActiveStyleIds([]);
-      refs.activeBatchIdRef.current = null;
-
+  const refreshMascot = useCallback(
+    async (mascotId: string) => {
       try {
         const mascotRes = await api.mascot(mascotId);
         if (refs.isMountedRef.current && mascotRes?.mascot) {
           refs.onMascotUpdatedRef.current(mascotRes.mascot);
         }
       } catch {
-        // Non-critical mascot refresh error
+        // A later visibility or recovery poll can retry this non-critical refresh.
       }
+    },
+    [refs],
+  );
+
+  const handleBatchSettled = useCallback(
+    async (batch: MascotStyleBatchJob, mascotId: string) => {
+      stopPolling();
+      setActiveBatch(batch);
+      setQueuedStyleIds([]);
+      setActiveStyleIds([]);
+      refs.activeBatchIdRef.current = null;
+      acknowledgeBatchInSession(batch.id);
+
+      await refreshMascot(mascotId);
 
       const isAborted = batch.status === "cancelled";
       refs.onNoticeRef.current(createStyleBatchOutcomeNotice(isAborted, batch.completed_count, batch.failed_count, batch.total_styles));
@@ -44,11 +55,11 @@ export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueueP
       if (batch.failed_count === 0 && !isAborted) {
         setTimeout(() => {
           if (refs.isMountedRef.current && !refs.activeBatchIdRef.current) {
-            state.setQueueProgress(null);
+            setQueueProgress(null);
           }
         }, 3500);
       } else {
-        state.setQueueProgress((prev) =>
+        setQueueProgress((prev) =>
           prev
             ? {
                 ...prev,
@@ -60,7 +71,29 @@ export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueueP
         );
       }
     },
-    [refs, state, stopPolling],
+    [refreshMascot, refs, setActiveBatch, setActiveStyleIds, setQueueProgress, setQueuedStyleIds, stopPolling],
+  );
+
+  const handleNoActiveBatch = useCallback(
+    async (status: StyleBatchStatusResponse, mascotId: string) => {
+      const trackedBatchId = refs.activeBatchIdRef.current;
+      if (!trackedBatchId) return;
+
+      const settledBatch = findTrackedSettledBatch(status.recent_batches, trackedBatchId);
+      if (settledBatch) {
+        await handleBatchSettled(settledBatch, mascotId);
+        return;
+      }
+
+      stopPolling();
+      refs.activeBatchIdRef.current = null;
+      setActiveBatch(null);
+      setQueuedStyleIds([]);
+      setActiveStyleIds([]);
+      setQueueProgress(null);
+      await refreshMascot(mascotId);
+    },
+    [handleBatchSettled, refreshMascot, refs, setActiveBatch, setActiveStyleIds, setQueueProgress, setQueuedStyleIds, stopPolling],
   );
 
   const pollBatchStatus = useCallback(async () => {
@@ -73,26 +106,20 @@ export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueueP
 
       const batch = statusRes.active_batch;
       if (!batch) {
-        if (refs.activeBatchIdRef.current) {
-          stopPolling();
-          refs.activeBatchIdRef.current = null;
-          state.setQueuedStyleIds([]);
-          state.setActiveStyleIds([]);
-          state.setQueueProgress(null);
-        }
+        await handleNoActiveBatch(statusRes, currentMascot.id);
         return;
       }
 
-      state.setActiveBatch(batch);
-      state.setQueuedStyleIds(statusRes.queued_style_ids || []);
-      state.setActiveStyleIds(statusRes.active_style_ids || []);
+      setActiveBatch(batch);
+      setQueuedStyleIds(statusRes.queued_style_ids || []);
+      setActiveStyleIds(statusRes.active_style_ids || []);
 
       const activeJobs = batch.items.filter((j) => j.status === "generating");
       const activeNames = activeJobs.map((j) => j.style_name || j.style_id);
       const activeDesc = activeNames.length > 0 ? activeNames.join(", ") : "Preparing...";
       const queuedCount = statusRes.queued_style_ids?.length || 0;
 
-      state.setQueueProgress((prev) => ({
+      setQueueProgress((prev) => ({
         total: batch.total_styles,
         completed: batch.completed_count,
         failed: batch.failed_count,
@@ -106,14 +133,7 @@ export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueueP
       // If new completions occurred since last poll, update mascot in real-time
       if (batch.completed_count > refs.lastCompletedCountRef.current) {
         refs.lastCompletedCountRef.current = batch.completed_count;
-        try {
-          const mascotRes = await api.mascot(currentMascot.id);
-          if (refs.isMountedRef.current && mascotRes?.mascot) {
-            refs.onMascotUpdatedRef.current(mascotRes.mascot);
-          }
-        } catch {
-          // Non-critical mascot refresh
-        }
+        await refreshMascot(currentMascot.id);
 
         const justFinishedJob = batch.items.find(
           (j) => j.status === "completed" && j.completed_at && Date.now() - new Date(j.completed_at).getTime() < 3000,
@@ -129,7 +149,16 @@ export function useMascotStyleQueuePolling({ state, refs }: UseMascotStyleQueueP
     } catch {
       // Polling network error handled silently on individual tick
     }
-  }, [handleBatchSettled, refs, state, stopPolling]);
+  }, [
+    handleBatchSettled,
+    handleNoActiveBatch,
+    refreshMascot,
+    refs,
+    setActiveBatch,
+    setActiveStyleIds,
+    setQueueProgress,
+    setQueuedStyleIds,
+  ]);
 
   const startPolling = useCallback(() => {
     stopPolling();

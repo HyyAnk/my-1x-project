@@ -3,17 +3,14 @@ import {
   type MascotConceptOrigin,
   type MascotProfile,
   type MascotStyle,
+  findBuiltInPresetById,
   getMascotPoses,
   getUnusedMascotPoses,
   pickRandomUnusedPose,
   pickShuffledUnusedPoses,
 } from "@studio/shared";
 import { buildMascotActionPrompt, type MascotPromptBuildOptions } from "./mascotActionPromptBuilder.js";
-import {
-  MASCOT_STEP2_SOURCE_ISOLATION_TAGS,
-  MASCOT_STUDIO_ISOLATION_TAGS,
-  MASCOT_STYLE_PROMPTS,
-} from "./mascotPromptConstants.js";
+import { MASCOT_STEP2_SOURCE_ISOLATION_TAGS, MASCOT_STUDIO_ISOLATION_TAGS, MASCOT_STYLE_PROMPTS } from "./mascotPromptConstants.js";
 
 export { getMascotPoses, getUnusedMascotPoses, pickRandomUnusedPose, pickShuffledUnusedPoses };
 export { buildMascotActionPrompt, MASCOT_STEP2_SOURCE_ISOLATION_TAGS, MASCOT_STUDIO_ISOLATION_TAGS, MASCOT_STYLE_PROMPTS };
@@ -49,33 +46,33 @@ export function buildMascotStyleConceptPrompt(
     concept_origin?: MascotConceptOrigin;
     master_image_url?: string | null;
   },
-  style: Pick<MascotStyle, "name" | "keyword">,
+  style: Pick<MascotStyle, "name" | "keyword" | "built_in_preset_id">,
   overridePrompt?: string,
 ): string {
-  const isUserUploaded =
-    mascot.concept_origin === "user_uploaded" ||
-    (Boolean(mascot.master_image_url) && !mascot.master_prompt?.trim());
+  const isUserUploaded = mascot.concept_origin === "user_uploaded" || (Boolean(mascot.master_image_url) && !mascot.master_prompt?.trim());
 
-  const costumeTarget = style.keyword?.trim() || style.name;
-  const keywordsDesc = style.keyword?.trim() ? ` (${style.keyword.trim()})` : "";
-  const styleThemeDesc = `${style.name}${keywordsDesc}`;
+  const baseRenderStyle = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
+  const builtInPreset = findBuiltInPresetById(style.built_in_preset_id);
+  const themeName = builtInPreset?.name || style.name;
+  const presetCostume = builtInPreset?.mascot_style_prompt?.trim();
+  const customKeywords = style.keyword?.trim();
+  const costumeDetails = [presetCostume, customKeywords].filter((value): value is string => Boolean(value)).join(", ") || themeName;
 
   const continuityDirective = isUserUploaded
-    ? `Strictly preserve character identity from @1 for "${mascot.name}": Preserve the exact character identity, color palette, and recognizable anatomical features from the reference image, while re-imagining the character in the specified theme/style: ${styleThemeDesc}. Face, fur/skin tone, eye shape, and proportions matching the master reference image.`
-    : `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
+    ? `Strictly preserve the exact character identity from @1 for "${mascot.name}". Keep the same species, face, fur or skin colors, eye shape and size, anatomy, silhouette, and head-to-body proportions from the master reference. Do not redesign or reinterpret the character.`
+    : `Strictly preserve character identity from @1 for "${mascot.name}": keep the same face, fur or skin colors, eye shape and size, anatomy, silhouette, and head-to-body proportions from the master reference.`;
 
-  const costumeDirective = `Theme & Costume: Styled in authentic ${costumeTarget} attire, costume, and accessories.`;
+  const renderStyleDirective = `Rendering style lock: match @1 exactly and retain the configured base medium: ${baseRenderStyle}. The "${themeName}" preset changes wardrobe, materials, accent colors, and accessories only. Do not change the art medium, rendering technique, facial design language, or character proportions.`;
+  const costumeDirective = `Theme wardrobe for "${themeName}": ${costumeDetails}. Keep all additions wearable and subordinate to the original character identity.`;
 
   const customDirective = overridePrompt?.trim()
-    ? overridePrompt.trim().endsWith(".")
-      ? overridePrompt.trim()
-      : `${overridePrompt.trim()}.`
+    ? `Additional user wardrobe or accessory direction: ${overridePrompt.trim().replace(/\.+$/, "")}. This direction must not override the identity or rendering style locks.`
     : "";
 
   const conceptPose = [
-    `Full-body single character concept illustration of "${mascot.name}" dressed in ${style.name} style.`,
+    `Full-body single character concept illustration of "${mascot.name}" wearing the "${themeName}" themed outfit.`,
     ...(customDirective ? [customDirective] : []),
-    `Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression.`,
+    `Single centered subject standing proudly facing camera. Preserve the exact proportions, facial geometry, eye scale, and recognizable body features shown in @1, with a friendly and joyful expression.`,
   ].join(" ");
 
   const isolationConstraints = [
@@ -83,7 +80,7 @@ export function buildMascotStyleConceptPrompt(
     `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no model sheet, no turnaround, no front-and-back poses, no multiple angles, no side-by-side poses, no duplicate characters, no grid, no split screen, no collage, no text, no watermark.`,
   ].join(" ");
 
-  return [continuityDirective, costumeDirective, conceptPose, isolationConstraints].join(" ");
+  return [continuityDirective, renderStyleDirective, costumeDirective, conceptPose, isolationConstraints].join(" ");
 }
 
 /**

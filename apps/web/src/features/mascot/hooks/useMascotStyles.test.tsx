@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import type { GenerateMascotStyleConceptResponse, MascotProfile, MascotStyle } from "@studio/shared";
 import { useMascotStyles } from "./useMascotStyles";
 import type { Notice } from "../../../components/types";
@@ -500,14 +500,6 @@ describe("useMascotStyles", () => {
       created_at: "2026-09-01T00:00:00.000Z",
       updated_at: "2026-09-01T00:00:00.000Z",
     });
-    vi.mocked(api.getSlotGenerationStatus)
-      .mockResolvedValueOnce({ active_batch: null, queued_slot_keys: [], active_slot_keys: [] })
-      .mockResolvedValueOnce({
-        active_batch: cancelledBatch,
-        queued_slot_keys: [],
-        active_slot_keys: [],
-      });
-
     const { result } = renderHook(() =>
       useMascotStyles({
         mascot: mockMascot,
@@ -515,6 +507,16 @@ describe("useMascotStyles", () => {
         onNotice,
       }),
     );
+
+    await waitFor(() => {
+      expect(api.getSlotGenerationStatus).toHaveBeenCalledTimes(2);
+    });
+    vi.mocked(api.getSlotGenerationStatus).mockResolvedValue({
+      active_batch: null,
+      queued_slot_keys: [],
+      active_slot_keys: [],
+      recent_batches: [cancelledBatch],
+    });
 
     await act(async () => {
       const p = result.current.handleBatchGenerateStyle("thinking");

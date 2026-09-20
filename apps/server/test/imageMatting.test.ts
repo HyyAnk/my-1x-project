@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { decodePngToRgba, encodeRgbaToPng, removeImageBackground } from "../src/utils/imageMatting.js";
+import sharp from "sharp";
+import { decodePngToRgba, encodeRgbaToPng, hasMeaningfulPngTransparency, removeImageBackground } from "../src/utils/imageMatting.js";
 
 describe("Image Matting & Background Removal Engine", () => {
   it("encodes and decodes PNG to and from RGBA correctly", () => {
@@ -242,6 +243,24 @@ describe("Image Matting & Background Removal Engine", () => {
     const bodyIdx = (30 * width + 40) * 4;
     expect(matted.data[bodyIdx + 3]).toBe(255);
     expect(matted.data[bodyIdx]).toBe(240);
+  });
+
+  it("normalizes WebP provider output to a transparent PNG before matting", async () => {
+    const webp = await sharp(
+      Buffer.from(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" fill="#00ff00"/><circle cx="48" cy="48" r="24" fill="#f97316"/></svg>',
+      ),
+    )
+      .webp({ lossless: true })
+      .toBuffer();
+
+    const transparentPng = await removeImageBackground(webp, { preferAi: false });
+    const decoded = decodePngToRgba(transparentPng);
+
+    expect(Array.from(transparentPng.slice(0, 4))).toEqual([0x89, 0x50, 0x4e, 0x47]);
+    expect(hasMeaningfulPngTransparency(transparentPng)).toBe(true);
+    expect(decoded.data[3]).toBe(0);
+    expect(decoded.data[(48 * decoded.width + 48) * 4 + 3]).toBe(255);
   });
 
   it("handles non-PNG data gracefully without throwing", async () => {

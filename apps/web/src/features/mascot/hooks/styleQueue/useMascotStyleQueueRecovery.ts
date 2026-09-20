@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react";
-import type { MascotProfile } from "@studio/shared";
+import type { MascotProfile, MascotStyleBatchJob } from "@studio/shared";
 import { api } from "../../../../api";
-import { createStyleCatchUpCompletedNotice, createStyleReconnectedNotice } from "../../services/mascotQueueNotices";
+import {
+  createStyleBatchOutcomeNotice,
+  createStyleCatchUpCompletedNotice,
+  createStyleReconnectedNotice,
+} from "../../services/mascotQueueNotices";
 import { isBatchAcknowledgedInSession, acknowledgeBatchInSession, isBatchRecent } from "../../utils/mascotSessionStorage";
 import type { MascotStyleQueueStateReturn, StyleQueueRefs } from "./types";
 
@@ -14,19 +18,68 @@ export interface UseMascotStyleQueueRecoveryProps {
 }
 
 export function useMascotStyleQueueRecovery({ mascot, state, refs, startPolling, stopPolling }: UseMascotStyleQueueRecoveryProps): void {
-  const recoveredMascotIdRef = useRef<string | null>(null);
+  const recoveryAttemptRef = useRef(0);
+  const mascotId = mascot?.id;
+  const { setActiveBatch, setQueuedStyleIds, setActiveStyleIds, setQueueProgress } = state;
 
   useEffect(() => {
-    if (!mascot) return;
-    if (recoveredMascotIdRef.current === mascot.id) return;
-    recoveredMascotIdRef.current = mascot.id;
-
+    if (!mascotId) return;
+    const recoveryAttempt = ++recoveryAttemptRef.current;
     let isCancelled = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let terminalTimer: ReturnType<typeof setTimeout> | null = null;
+    const canCommit = () => !isCancelled && recoveryAttemptRef.current === recoveryAttempt && refs.isMountedRef.current;
 
-    const recoverOnMount = async () => {
+    const refreshMascot = async () => {
       try {
-        const statusRes = await api.getStyleGenerationStatus(mascot.id);
-        if (isCancelled || !refs.isMountedRef.current) return;
+        const mascotRes = await api.mascot(mascotId);
+        if (canCommit() && mascotRes?.mascot) refs.onMascotUpdatedRef.current(mascotRes.mascot);
+      } catch {
+        // A later activity refresh can retry this non-critical request.
+      }
+    };
+
+    const restoreTerminalBatch = async (batch: MascotStyleBatchJob) => {
+      setActiveBatch(batch);
+      setQueuedStyleIds([]);
+      setActiveStyleIds([]);
+      setQueueProgress({
+        total: batch.total_styles,
+        completed: batch.completed_count,
+        failed: batch.failed_count,
+        activeStyleIds: [],
+        activeStyleNames: [],
+        statusMessage:
+          batch.status === "cancelled"
+            ? "Style concept generation stopped"
+            : batch.failed_count > 0
+              ? `${batch.failed_count} style concept(s) failed`
+              : "Style concept generation completed",
+        isStopping: false,
+        startTime: new Date(batch.created_at).getTime() || Date.now(),
+      });
+
+      if (batch.completed_count > 0) await refreshMascot();
+      if (!isBatchAcknowledgedInSession(batch.id)) {
+        acknowledgeBatchInSession(batch.id);
+        refs.onNoticeRef.current(
+          batch.status === "completed" && batch.failed_count === 0
+            ? createStyleCatchUpCompletedNotice(batch.completed_count, batch.total_styles)
+            : createStyleBatchOutcomeNotice(batch.status === "cancelled", batch.completed_count, batch.failed_count, batch.total_styles),
+        );
+      }
+
+      if (batch.failed_count === 0) {
+        terminalTimer = setTimeout(() => {
+          if (canCommit() && !refs.activeBatchIdRef.current) setQueueProgress(null);
+        }, 8_000);
+      }
+    };
+
+    const recoverOnMount = async (retriesRemaining: number) => {
+      try {
+        const statusRes = await api.getStyleGenerationStatus(mascotId);
+        if (!canCommit()) return;
 
         const activeBatch = statusRes.active_batch;
         if (activeBatch && (activeBatch.status === "queued" || activeBatch.status === "processing")) {
@@ -39,11 +92,11 @@ export function useMascotStyleQueueRecovery({ mascot, state, refs, startPolling,
           const activeNames = activeJobs.map((j) => j.style_name || j.style_id);
           const activeDesc = activeNames.length > 0 ? activeNames.join(", ") : "Preparing...";
 
-          state.setActiveBatch(activeBatch);
-          state.setQueuedStyleIds(queuedIds);
-          state.setActiveStyleIds(activeIds);
+          setActiveBatch(activeBatch);
+          setQueuedStyleIds(queuedIds);
+          setActiveStyleIds(activeIds);
 
-          state.setQueueProgress({
+          setQueueProgress({
             total: activeBatch.total_styles,
             completed: activeBatch.completed_count,
             failed: activeBatch.failed_count,
@@ -55,49 +108,33 @@ export function useMascotStyleQueueRecovery({ mascot, state, refs, startPolling,
           });
 
           startPolling();
-
-          try {
-            const mascotRes = await api.mascot(mascot.id);
-            if (!isCancelled && refs.isMountedRef.current && mascotRes?.mascot) {
-              refs.onMascotUpdatedRef.current(mascotRes.mascot);
-            }
-          } catch {
-            // Non-fatal
-          }
-
+          await refreshMascot();
+          if (!canCommit()) return;
           refs.onNoticeRef.current(createStyleReconnectedNotice(activeBatch.completed_count, activeBatch.total_styles, activeIds.length));
           return;
         }
 
-        // Catch-up if a recent batch finished while user was navigated away
         const recentBatch = statusRes.recent_batches?.[0];
-        if (
-          recentBatch &&
-          recentBatch.status === "completed" &&
-          isBatchRecent(recentBatch.updated_at || recentBatch.created_at) &&
-          !isBatchAcknowledgedInSession(recentBatch.id)
-        ) {
-          acknowledgeBatchInSession(recentBatch.id);
-          try {
-            const mascotRes = await api.mascot(mascot.id);
-            if (!isCancelled && refs.isMountedRef.current && mascotRes?.mascot) {
-              refs.onMascotUpdatedRef.current(mascotRes.mascot);
-            }
-          } catch {
-            // Non-fatal
-          }
-          refs.onNoticeRef.current(createStyleCatchUpCompletedNotice(recentBatch.completed_count, recentBatch.total_styles));
+        if (recentBatch && isBatchRecent(recentBatch.updated_at || recentBatch.created_at)) {
+          await restoreTerminalBatch(recentBatch);
         }
       } catch {
-        // Recovery error ignored on mount
+        if (canCommit() && retriesRemaining > 0) {
+          retryTimer = setTimeout(() => void recoverOnMount(retriesRemaining - 1), 1_500);
+        }
       }
     };
 
-    void recoverOnMount();
+    const recoverWhenOnline = () => void recoverOnMount(1);
+    window.addEventListener("online", recoverWhenOnline);
+    void recoverOnMount(2);
 
     return () => {
       isCancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
+      if (terminalTimer) clearTimeout(terminalTimer);
+      window.removeEventListener("online", recoverWhenOnline);
       stopPolling();
     };
-  }, [mascot?.id, refs, startPolling, state, stopPolling]);
+  }, [mascotId, refs, setActiveBatch, setActiveStyleIds, setQueueProgress, setQueuedStyleIds, startPolling, stopPolling]);
 }

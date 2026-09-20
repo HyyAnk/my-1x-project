@@ -327,12 +327,14 @@ const FLAG_SVG_MAP: Record<string, React.ReactNode> = {
       <rect x="426.6" width="213.4" height="480" fill="#ed2939" />
     </g>
   ),
-  AE: (
+  CN: (
     <g>
-      <rect width="160" height="480" fill="#ff0000" />
-      <rect x="160" width="480" height="160" fill="#00732f" />
-      <rect x="160" y="160" width="480" height="160" fill="#ffffff" />
-      <rect x="160" y="320" width="480" height="160" fill="#000000" />
+      <rect width="640" height="480" fill="#de2910" />
+      <polygon points="96,48 111,94 160,94 120,123 135,169 96,141 57,169 72,123 32,94 81,94" fill="#ffde00" />
+      <polygon points="190,42 196,60 215,60 200,71 206,89 190,78 175,89 181,71 166,60 185,60" fill="#ffde00" />
+      <polygon points="226,78 232,96 251,96 236,107 242,125 226,114 211,125 217,107 202,96 221,96" fill="#ffde00" />
+      <polygon points="226,130 232,148 251,148 236,159 242,177 226,166 211,177 217,159 202,148 221,148" fill="#ffde00" />
+      <polygon points="190,166 196,184 215,184 200,195 206,213 190,202 175,213 181,195 166,184 185,184" fill="#ffde00" />
     </g>
   ),
 };

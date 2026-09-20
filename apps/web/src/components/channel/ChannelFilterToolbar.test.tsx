@@ -11,7 +11,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvid
 describe("ChannelFilterToolbar", () => {
   const defaultProps = {
     totalChannels: 12,
-    languageCounts: { English: 5, Japanese: 3, German: 4 },
+    languageCounts: { English: 5, Japanese: 3, German: 4, Chinese: 2 },
     languageFilter: "all",
     onLanguageFilterChange: vi.fn(),
     sortBy: "latest" as const,
@@ -26,6 +26,7 @@ describe("ChannelFilterToolbar", () => {
 
     expect(screen.getByText("12")).toBeDefined();
     expect(screen.getByText("5")).toBeDefined();
+    expect(screen.getByTitle("Chinese")).toBeDefined();
   });
 
   it("calls onLanguageFilterChange when clicking a language pill", () => {

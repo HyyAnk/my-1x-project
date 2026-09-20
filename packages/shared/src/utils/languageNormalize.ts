@@ -52,6 +52,15 @@ const EXACT_LANGUAGE_CODE_MAP: Record<string, string> = {
   ko: "ko",
   kor: "ko",
   korean: "ko",
+  // Chinese
+  zh: "zh",
+  zho: "zh",
+  chi: "zh",
+  chinese: "zh",
+  mandarin: "zh",
+  "simplified chinese": "zh",
+  "zh-cn": "zh",
+  "zh-hans": "zh",
   // Indonesian
   id: "id",
   ind: "id",
@@ -77,6 +86,12 @@ const SUBSTRING_LANGUAGE_RULES: ReadonlyArray<{ readonly match: string; readonly
   { match: "suomi", code: "fi" },
   { match: "français", code: "fr" },
   { match: "한국", code: "ko" },
+  { match: "zh-", code: "zh" },
+  { match: "zh_", code: "zh" },
+  { match: "mandarin", code: "zh" },
+  { match: "\u4e2d\u6587", code: "zh" },
+  { match: "\u6c49\u8bed", code: "zh" },
+  { match: "\u666e\u901a\u8bdd", code: "zh" },
   { match: "indonesia", code: "id" },
 ];
 
@@ -110,6 +125,7 @@ export const SUPPORTED_TRANSLATION_LANGUAGES = [
   { code: "fr", name: "French", label: "Français", flag: "🇫🇷" },
   { code: "ko", name: "Korean", label: "한국어", flag: "🇰🇷" },
   { code: "ja", name: "Japanese", label: "日本語", flag: "🇯🇵" },
+  { code: "zh", name: "Chinese", label: "Chinese", flag: "🇨🇳" },
   { code: "es", name: "Spanish", label: "Español", flag: "🇪🇸" },
 ] as const;
 

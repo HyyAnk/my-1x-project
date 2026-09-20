@@ -1,0 +1,65 @@
+/* Style concept generation prompt */
+.style-anchor-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.style-anchor-prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.style-anchor-prompt-label {
+  color: var(--ink-secondary);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.style-anchor-prompt-count {
+  color: var(--muted);
+  font:
+    500 10px "JetBrains Mono",
+    monospace;
+}
+
+.style-anchor-prompt-input {
+  width: 100%;
+  min-height: 70px;
+  padding: 9px 10px;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.45;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.style-anchor-prompt-input::placeholder {
+  color: var(--muted);
+}
+
+.style-anchor-prompt-input:focus {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--soft-accent);
+  outline: none;
+}
+
+.style-anchor-prompt-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .style-anchor-prompt-input {
+    min-height: 88px;
+  }
+}

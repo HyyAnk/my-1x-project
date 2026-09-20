@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import type { MascotProfile, MascotStyleBatchJob } from "@studio/shared";
 import { api } from "../../../../api";
 import { useMascotStyleQueue } from "./useMascotStyleQueue";
@@ -210,6 +210,64 @@ describe("useMascotStyleQueue", () => {
         message: expect.stringContaining("Reconnected to background style generation"),
       }),
     );
+  });
+
+  it("recovers after the first Strict Mode effect is cleaned up before its request resolves", async () => {
+    const activeBatch: MascotStyleBatchJob = {
+      id: "batch-strict-recover",
+      mascot_id: mockMascot.id,
+      status: "processing",
+      total_styles: 1,
+      completed_count: 0,
+      failed_count: 0,
+      active_style_ids: ["style-cyber"],
+      items: [
+        {
+          id: "job-strict-recover",
+          mascot_id: mockMascot.id,
+          style_id: "style-cyber",
+          style_name: "Cyber Neon",
+          status: "generating",
+          created_at: "2026-09-18T10:00:00.000Z",
+        },
+      ],
+      created_at: "2026-09-18T10:00:00.000Z",
+      updated_at: "2026-09-18T10:00:00.000Z",
+    };
+    let resolveFirstRequest: (value: { active_batch: null; queued_style_ids: string[]; active_style_ids: string[] }) => void = () =>
+      undefined;
+
+    vi.mocked(api.getStyleGenerationStatus)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFirstRequest = resolve;
+          }),
+      )
+      .mockResolvedValue({
+        active_batch: activeBatch,
+        queued_style_ids: [],
+        active_style_ids: ["style-cyber"],
+      });
+    vi.mocked(api.mascot).mockResolvedValue({ mascot: mockMascot });
+
+    const { result, unmount } = renderHook(
+      () =>
+        useMascotStyleQueue({
+          mascot: mockMascot,
+          onMascotUpdated: vi.fn(),
+          onNotice: vi.fn(),
+        }),
+      { reactStrictMode: true },
+    );
+
+    await waitFor(() => expect(result.current.activeBatch?.id).toBe(activeBatch.id));
+    expect(vi.mocked(api.getStyleGenerationStatus).mock.calls.length).toBeGreaterThanOrEqual(2);
+
+    resolveFirstRequest({ active_batch: null, queued_style_ids: [], active_style_ids: [] });
+    await act(async () => Promise.resolve());
+    expect(result.current.activeBatch?.id).toBe(activeBatch.id);
+    unmount();
   });
 
   it("queues all missing styles in batch mode", async () => {

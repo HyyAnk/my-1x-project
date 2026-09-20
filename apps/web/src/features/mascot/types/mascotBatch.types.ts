@@ -3,6 +3,9 @@ import type { MascotProfile, MascotStyle } from "@studio/shared";
 import type { Notice } from "../../../components/types";
 
 export type BatchProgressState = {
+  batchId?: string;
+  styleId?: string;
+  styleName?: string;
   total: number;
   completed: number;
   failed: number;
@@ -35,6 +38,8 @@ export type UseMascotBatchGenerationProps = {
   activeStyle: MascotStyle | null;
   onMascotUpdated: (mascot: MascotProfile) => void;
   onNotice: (notice: Notice) => void;
+  onActivityChange?: () => void;
+  onActiveStyleRecovered?: (styleId: string) => void;
 };
 
 export type UseMascotBatchGenerationResult = {

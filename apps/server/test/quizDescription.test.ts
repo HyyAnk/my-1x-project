@@ -265,6 +265,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
 
       const esFallback = buildFallbackDescription("es", sampleEpisode, 5, tiers);
       expect(esFallback.hook_lines).toContain("¡Desafío de 5 preguntas!");
+
+      const zhFallback = buildFallbackDescription("zh", sampleEpisode, 5, tiers);
+      expect(zhFallback.hook_lines).toContain("5\u9053\u9898\u76ee\u6311\u6218");
     });
 
     it("throws RepositoryError for unsupported locale", () => {

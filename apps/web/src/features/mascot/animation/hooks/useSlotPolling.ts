@@ -41,6 +41,7 @@ export function useSlotPolling({ mascotId, styleId }: UseSlotPollingProps): UseS
   const [error, setError] = useState<string | null>(null);
 
   const isMountedRef = useRef<boolean>(true);
+  const refreshSequenceRef = useRef(0);
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -50,37 +51,41 @@ export function useSlotPolling({ mascotId, styleId }: UseSlotPollingProps): UseS
 
   const refreshSlots = useCallback(async () => {
     if (!mascotId || !styleId) return;
+    const refreshSequence = ++refreshSequenceRef.current;
 
     try {
       const res = await mascotAnimationApi.getStyleAnimationSlots(mascotId, styleId);
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current || refreshSequence !== refreshSequenceRef.current) return;
       setSlots(res.slots);
+      setError(null);
 
       const allSlots = [...res.slots.thinking, ...res.slots.celebrate];
-      const inFlightJobs = allSlots
-        .filter((s) => ["processing", "retrying", "replacing", "queued"].includes(s.status) && s.active_job_id)
-        .map((s) => s.active_job_id as string);
+      const inFlightJobs = Array.from(
+        new Set(
+          allSlots
+            .filter((s) => ["uploading", "processing", "retrying", "replacing", "queued"].includes(s.status) && s.active_job_id)
+            .map((s) => s.active_job_id as string),
+        ),
+      );
 
-      if (inFlightJobs.length > 0) {
-        const jobResults = await Promise.all(
-          inFlightJobs.map((jid) =>
-            mascotAnimationApi
-              .getProcessingJob(mascotId, jid)
-              .then((r) => r.job)
-              .catch(() => null),
-          ),
-        );
+      const jobResults = await Promise.all(
+        inFlightJobs.map((jid) =>
+          mascotAnimationApi
+            .getProcessingJob(mascotId, jid)
+            .then((r) => r.job)
+            .catch(() => null),
+        ),
+      );
 
-        if (isMountedRef.current) {
-          const nextJobs: Record<string, MascotVideoProcessingJob> = {};
-          for (const j of jobResults) {
-            if (j) nextJobs[j.id] = j;
-          }
-          setActiveJobs(nextJobs);
+      if (isMountedRef.current && refreshSequence === refreshSequenceRef.current) {
+        const nextJobs: Record<string, MascotVideoProcessingJob> = {};
+        for (const job of jobResults) {
+          if (job) nextJobs[job.id] = job;
         }
+        setActiveJobs(nextJobs);
       }
     } catch (err) {
-      if (isMountedRef.current) {
+      if (isMountedRef.current && refreshSequence === refreshSequenceRef.current) {
         setError(err instanceof Error ? err.message : "Failed to load animation slots");
       }
     }
@@ -107,6 +112,19 @@ export function useSlotPolling({ mascotId, styleId }: UseSlotPollingProps): UseS
 
     return () => clearInterval(timer);
   }, [hasInFlightProcessing, mascotId, styleId, refreshSlots]);
+
+  useEffect(() => {
+    if (!mascotId || !styleId) return;
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") void refreshSlots();
+    };
+    window.addEventListener("online", refreshWhenVisible);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    return () => {
+      window.removeEventListener("online", refreshWhenVisible);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, [mascotId, refreshSlots, styleId]);
 
   return {
     slots,

@@ -12,13 +12,14 @@ import type { UseMascotBatchMutationsProps } from "./types";
 export function useMascotBatchMutations({ state, refs, startPolling, pollBatchStatus }: UseMascotBatchMutationsProps) {
   const handleStopBatchGeneration = useCallback(() => {
     if (!refs.mascotRef.current?.id) return;
-    const styleId = refs.activeStyleIdRef.current;
+    const styleId = refs.trackedStyleIdRef.current ?? refs.activeStyleIdRef.current;
 
     state.setBatchProgress((prev) => (prev ? { ...prev, isStopping: true, statusMessage: "Stopping batch generation..." } : null));
 
     void api
       .cancelSlotGeneration(refs.mascotRef.current.id, styleId)
       .then(() => {
+        refs.onActivityChangeRef.current();
         void pollBatchStatus(false);
       })
       .catch((err: unknown) => {
@@ -34,7 +35,9 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
       const currentMascot = refs.mascotRef.current;
       if (!currentMascot) return;
       const styleId = refs.activeStyleIdRef.current;
+      const styleName = resolveMascotStyle(currentMascot, styleId)?.name;
       const slotKey = `${stateFilter}_${slotIndex}`;
+      refs.trackedStyleIdRef.current = styleId;
 
       state.setBusySlotKey((prev) => prev ?? slotKey);
       state.setQueuedSlotKeys((prev) => Array.from(new Set([...prev, slotKey, `${styleId}:${slotKey}`])));
@@ -48,6 +51,8 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
           };
         }
         return {
+          styleId,
+          styleName,
           total: 1,
           completed: 0,
           failed: 0,
@@ -69,7 +74,9 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
 
         if (batch?.id) {
           refs.activeBatchIdRef.current = batch.id;
+          state.setBatchProgress((current) => (current ? { ...current, batchId: batch.id } : null));
         }
+        refs.onActivityChangeRef.current();
         startPolling();
       } catch (err: unknown) {
         refs.onNoticeRef.current(createSlotErrorNotice(stateFilter, err));
@@ -86,6 +93,7 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
       const styleId = refs.activeStyleIdRef.current;
       const style = resolveMascotStyle(currentMascot, styleId);
       if (!style) return;
+      refs.trackedStyleIdRef.current = styleId;
 
       const slotsToGenerate = resolveSlotsToGenerate(style, stateFilter);
       if (slotsToGenerate.length === 0) {
@@ -100,6 +108,8 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
       state.setBusySlotKey("batch");
       state.setQueuedSlotKeys(formatQueuedKeys(slotKeys, styleId));
       state.setBatchProgress({
+        styleId,
+        styleName: style.name,
         total: slotsToGenerate.length,
         completed: 0,
         failed: 0,
@@ -124,10 +134,13 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
 
         if (batch?.id) {
           refs.activeBatchIdRef.current = batch.id;
+          state.setBatchProgress((current) => (current ? { ...current, batchId: batch.id } : null));
         }
         refs.lastCompletedCountRef.current = 0;
+        refs.onActivityChangeRef.current();
         startPolling();
       } catch (err: unknown) {
+        refs.trackedStyleIdRef.current = null;
         state.resetBatchState();
         refs.onNoticeRef.current({
           tone: "bad",
@@ -143,6 +156,8 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
       const currentMascot = refs.mascotRef.current;
       if (!currentMascot || slots.length === 0) return;
       const styleId = refs.activeStyleIdRef.current;
+      const styleName = resolveMascotStyle(currentMascot, styleId)?.name;
+      refs.trackedStyleIdRef.current = styleId;
 
       const slotKeys = slots.map((s) => `${s.state}_${s.slotIndex}`);
       const targetState = slots.every((s) => s.state === "thinking")
@@ -162,6 +177,8 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
           };
         }
         return {
+          styleId,
+          styleName,
           total: slots.length,
           completed: 0,
           failed: 0,
@@ -187,7 +204,9 @@ export function useMascotBatchMutations({ state, refs, startPolling, pollBatchSt
 
         if (batch?.id) {
           refs.activeBatchIdRef.current = batch.id;
+          state.setBatchProgress((current) => (current ? { ...current, batchId: batch.id } : null));
         }
+        refs.onActivityChangeRef.current();
         startPolling();
       } catch (err: unknown) {
         refs.onNoticeRef.current({

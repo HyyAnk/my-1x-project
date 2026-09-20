@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useBeforeUnloadWarning } from "./useBeforeUnloadWarning";
 import { useMascotBatchState, useMascotBatchPolling, useMascotBatchRecovery, useMascotBatchMutations } from "./batchGeneration";
 import type {
@@ -20,6 +20,8 @@ export function useMascotBatchGeneration({
   activeStyle,
   onMascotUpdated,
   onNotice,
+  onActivityChange,
+  onActiveStyleRecovered,
 }: UseMascotBatchGenerationProps): UseMascotBatchGenerationResult {
   const state = useMascotBatchState();
 
@@ -27,25 +29,36 @@ export function useMascotBatchGeneration({
 
   const mascotRef = useRef(mascot);
   const activeStyleIdRef = useRef(activeStyle?.id || activeStyleId || "core");
+  const trackedStyleIdRef = useRef<string | null>(null);
   const onMascotUpdatedRef = useRef(onMascotUpdated);
   const onNoticeRef = useRef(onNotice);
+  const onActivityChangeRef = useRef(onActivityChange ?? (() => undefined));
+  const onActiveStyleRecoveredRef = useRef(onActiveStyleRecovered ?? (() => undefined));
 
   useEffect(() => {
     mascotRef.current = mascot;
     activeStyleIdRef.current = activeStyle?.id || activeStyleId || "core";
     onMascotUpdatedRef.current = onMascotUpdated;
     onNoticeRef.current = onNotice;
-  }, [mascot, activeStyle?.id, activeStyleId, onMascotUpdated, onNotice]);
+    onActivityChangeRef.current = onActivityChange ?? (() => undefined);
+    onActiveStyleRecoveredRef.current = onActiveStyleRecovered ?? (() => undefined);
+  }, [mascot, activeStyle?.id, activeStyleId, onActiveStyleRecovered, onActivityChange, onMascotUpdated, onNotice]);
 
-  const refs = {
-    isMountedRef: state.isMountedRef,
-    mascotRef,
-    activeStyleIdRef,
-    onMascotUpdatedRef,
-    onNoticeRef,
-    activeBatchIdRef: state.activeBatchIdRef,
-    lastCompletedCountRef: state.lastCompletedCountRef,
-  };
+  const refs = useMemo(
+    () => ({
+      isMountedRef: state.isMountedRef,
+      mascotRef,
+      activeStyleIdRef,
+      trackedStyleIdRef,
+      onMascotUpdatedRef,
+      onNoticeRef,
+      onActivityChangeRef,
+      onActiveStyleRecoveredRef,
+      activeBatchIdRef: state.activeBatchIdRef,
+      lastCompletedCountRef: state.lastCompletedCountRef,
+    }),
+    [state.activeBatchIdRef, state.isMountedRef, state.lastCompletedCountRef],
+  );
 
   const { startPolling, stopPolling, pollBatchStatus } = useMascotBatchPolling({
     state,

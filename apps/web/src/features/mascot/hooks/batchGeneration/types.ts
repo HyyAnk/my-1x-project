@@ -7,8 +7,11 @@ export interface BatchStateRefs {
   isMountedRef: React.MutableRefObject<boolean>;
   mascotRef: React.MutableRefObject<MascotProfile | null>;
   activeStyleIdRef: React.MutableRefObject<string>;
+  trackedStyleIdRef: React.MutableRefObject<string | null>;
   onMascotUpdatedRef: React.MutableRefObject<(mascot: MascotProfile) => void>;
   onNoticeRef: React.MutableRefObject<(notice: Notice) => void>;
+  onActivityChangeRef: React.MutableRefObject<() => void>;
+  onActiveStyleRecoveredRef: React.MutableRefObject<(styleId: string) => void>;
   activeBatchIdRef: React.MutableRefObject<string | null>;
   lastCompletedCountRef: React.MutableRefObject<number>;
 }
