@@ -21,7 +21,7 @@ describe("Ember Trail thinking bar", () => {
     expect(THINKING_BAR_STYLE_DESCRIPTIONS.flame_fuse).toContain("charred trail");
   });
 
-  it("renders a readable ember trail with one in-marker query prompt before countdown", () => {
+  it("renders a readable animated ember trail with one in-marker query prompt before countdown", () => {
     const html = emberTrailVariant.renderHtml(renderInput);
 
     expect(html).toContain('class="thinking-bar thinking-bar-flame-fuse"');
@@ -31,12 +31,27 @@ describe("Ember Trail thinking bar", () => {
     expect(html).toContain('class="ember-trail-marker"');
     expect(html).toContain('class="ember-core"');
     expect(html).toContain('class="ember-particles"');
+    expect(html).toContain('class="ember-flames"');
+    expect(html).not.toContain('class="ember-smoke"');
+    expect(html).not.toContain('class="ember-trail-pulse-ring"');
     expect(html).toContain('role="img" aria-label="Quiz countdown from 5 to 1"');
     expect(html).toContain('class="marker-val val-query"');
     expect([...html.matchAll(/>\?</g)]).toHaveLength(1);
     expect(html).not.toContain("fuse-bomb-target");
     expect(html).not.toContain("<svg");
     expect(html).not.toMatch(/[✦★•]/u);
+  });
+
+  it("coordinates focused fuse, flame, and sparse spark motion from the timer origin", () => {
+    const css = emberTrailVariant.renderCss();
+
+    expect(css).toContain("quiz-timer-drain var(--timer-duration) linear var(--timer-start) both");
+    expect(css).toContain("quiz-timer-marker-slide var(--timer-duration) linear var(--timer-start) both");
+    expect(css).toContain("@keyframes emberTrailFlameDance");
+    expect(css).toContain("@keyframes emberTrailParticleBurst");
+    expect(css).toContain("@keyframes emberTrailCorePulse");
+    expect(css).not.toContain("emberTrailSmokePlume");
+    expect(css).not.toContain("emberTrailCountdownPulse");
   });
 
   it("removes decorative motion when reduced motion is requested", () => {
@@ -48,6 +63,7 @@ describe("Ember Trail thinking bar", () => {
     expect(reducedMotionCss).toContain("animation: none");
     expect(reducedMotionCss).toContain("animation-duration: var(--timer-duration) !important");
     expect(reducedMotionCss).toContain("animation-duration: 1s !important");
+    expect(reducedMotionCss).toContain(".thinking-bar-flame-fuse .ember-flames i");
   });
 
   it("claims the available width when rendered inside the flex thinking-bar container", () => {
