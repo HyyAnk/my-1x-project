@@ -67,6 +67,8 @@ export function QuizEpisodeView({
         onSaveBackgroundStyle={pipeline.saveBackgroundStyle}
         onSavePaletteId={pipeline.savePaletteId}
         onSaveThumbnailRatio={pipeline.saveThumbnailRatio}
+        onSaveMascotStyleSelection={pipeline.saveMascotStyleSelection}
+        onSaveIntroOutroSelection={pipeline.saveIntroOutroSelection}
         onApplyStylePreset={pipeline.applyStylePreset}
         setEpisode={setEpisode}
         onNotice={onNotice}

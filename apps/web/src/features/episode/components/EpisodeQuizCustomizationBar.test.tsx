@@ -51,6 +51,8 @@ describe("EpisodeQuizCustomizationBar", () => {
         onSaveCounterStyle={vi.fn()}
         onSaveBackgroundStyle={vi.fn()}
         onSavePaletteId={vi.fn()}
+        onSaveMascotStyleSelection={vi.fn()}
+        onSaveIntroOutroSelection={vi.fn()}
         onApplyStylePreset={vi.fn()}
       />,
       { wrapper },
@@ -84,6 +86,8 @@ describe("EpisodeQuizCustomizationBar", () => {
         onSaveCounterStyle={vi.fn()}
         onSaveBackgroundStyle={vi.fn()}
         onSavePaletteId={vi.fn()}
+        onSaveMascotStyleSelection={vi.fn()}
+        onSaveIntroOutroSelection={vi.fn()}
         onApplyStylePreset={vi.fn()}
       />,
       { wrapper },

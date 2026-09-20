@@ -1,4 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { QuizV2Schema, registerTransition } from "@studio/shared";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -348,6 +351,10 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
   });
 
   it("resolveAndCopyIntroOutro captures audio_mode from style and defaults cleanly", async () => {
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), "intro-outro-resolver-"));
+    const introPath = path.join(testRoot, "source-intro.mp4");
+    const outroPath = path.join(testRoot, "source-outro.mp4");
+    await Promise.all([writeFile(introPath, "intro"), writeFile(outroPath, "outro")]);
     const mockChannel = {
       channel_id: "chan-1",
       slug: "chan-slug",
@@ -361,27 +368,40 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
     const mockRepoDefault = {
       getChannelIntroOutroStyle: async () => ({
         style_id: "style-1",
+        intro: {},
+        outro: {},
         transition_type: "crossfade",
         transition_duration_seconds: 0.8,
       }),
-      resolvePath: () => "/non/existent/path.mp4",
+      listChannelIntroOutroStyles: async () => [],
+      getIntroOutroClipPath: async (_channelId: string, _styleId: string, kind: "intro" | "outro") =>
+        kind === "intro" ? introPath : outroPath,
     } as any;
 
-    const resDefault = await resolveAndCopyIntroOutro(mockRepoDefault, mockChannel, mockEpisode, "/tmp");
+    const defaultRenderRoot = path.join(testRoot, "default-render");
+    await mkdir(defaultRenderRoot);
+    const resDefault = await resolveAndCopyIntroOutro(mockRepoDefault, mockChannel, mockEpisode, defaultRenderRoot);
     expect(resDefault.audioMode).toBe("use_video_audio");
     expect(resDefault.transitionType).toBe("crossfade");
 
     const mockRepoOverlay = {
       getChannelIntroOutroStyle: async () => ({
         style_id: "style-1",
+        intro: {},
+        outro: {},
         transition_type: "stinger_swipe",
         transition_duration_seconds: 0.5,
         audio_mode: "overlay_bgm",
       }),
-      resolvePath: () => "/non/existent/path.mp4",
+      listChannelIntroOutroStyles: async () => [],
+      getIntroOutroClipPath: async (_channelId: string, _styleId: string, kind: "intro" | "outro") =>
+        kind === "intro" ? introPath : outroPath,
     } as any;
 
-    const resOverlay = await resolveAndCopyIntroOutro(mockRepoOverlay, mockChannel, mockEpisode, "/tmp");
+    const overlayRenderRoot = path.join(testRoot, "overlay-render");
+    await mkdir(overlayRenderRoot);
+    const resOverlay = await resolveAndCopyIntroOutro(mockRepoOverlay, mockChannel, mockEpisode, overlayRenderRoot);
     expect(resOverlay.audioMode).toBe("overlay_bgm");
+    await rm(testRoot, { recursive: true, force: true });
   });
 });

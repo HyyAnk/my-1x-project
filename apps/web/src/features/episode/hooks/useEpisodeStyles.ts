@@ -13,6 +13,8 @@ import {
   type QuizThinkingBarStyle,
   type VisualPresetItem,
   type ThumbnailRatioMode,
+  type IntroOutroSelection,
+  type MascotStyleSelection,
 } from "@studio/shared";
 
 import { api } from "../../../api";
@@ -148,6 +150,20 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles("thumbnailRatio", { thumbnail_aspect_ratio: ratio }, `Thumbnail mode set to: ${labelMap[ratio]}`);
   };
 
+  const saveIntroOutroSelection = async (selection: IntroOutroSelection) => {
+    if (!episode) return;
+    await saveQuizStyles(
+      "intro-outro-style",
+      { intro_outro_selection: selection, intro_outro_style_id: null },
+      "Intro/Outro selection updated",
+    );
+  };
+
+  const saveMascotStyleSelection = async (selection: MascotStyleSelection) => {
+    if (!episode) return;
+    await saveQuizStyles("mascot-style", { mascot_style_selection: selection, mascot_style_id: null }, "Mascot style selection updated");
+  };
+
   const saveDuration = async () => {
     if (!episode || durationDraft === episode.target_duration_minutes) return;
     setBusy("duration");
@@ -177,6 +193,8 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     saveBackgroundStyle,
     savePaletteId,
     saveThumbnailRatio,
+    saveMascotStyleSelection,
+    saveIntroOutroSelection,
     applyStylePreset,
     saveDuration,
   };

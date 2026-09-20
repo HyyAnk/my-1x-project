@@ -1,3 +1,5 @@
+import { createReadStream } from "node:fs";
+import { createHash } from "node:crypto";
 import { access, copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { IntroOutroStyleSchema, type IntroOutroClipMeta, type IntroOutroStyle } from "@studio/shared";
@@ -12,6 +14,17 @@ function getChannelStylesDir(repository: RepositoryRuntime, channelSlug: string)
 
 function getStyleDir(repository: RepositoryRuntime, channelSlug: string, styleId: string): string {
   return path.join(getChannelStylesDir(repository, channelSlug), styleId);
+}
+
+async function computeFileSha256(filePath: string): Promise<string> {
+  const hash = createHash("sha256");
+  await new Promise<void>((resolve, reject) => {
+    const stream = createReadStream(filePath);
+    stream.on("data", (chunk) => hash.update(chunk));
+    stream.on("end", resolve);
+    stream.on("error", reject);
+  });
+  return hash.digest("hex");
 }
 
 export async function listChannelIntroOutroStyles(this: RepositoryRuntime, channelId: string): Promise<IntroOutroStyle[]> {
@@ -110,6 +123,7 @@ export async function processAndStoreStyleClip(
     }
 
     await extractVideoThumbnail(targetVideoPath, targetThumbPath, probe.duration_seconds);
+    const sha256 = await computeFileSha256(targetVideoPath);
 
     let hasThumb = false;
     try {
@@ -127,6 +141,7 @@ export async function processAndStoreStyleClip(
       fps: probe.fps,
       has_audio: probe.has_audio,
       thumbnail_filename: hasThumb ? thumbFilename : undefined,
+      sha256,
     };
   } catch (error) {
     // If validation fails, clean up the written file

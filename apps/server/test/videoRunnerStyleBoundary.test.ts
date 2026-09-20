@@ -144,6 +144,7 @@ async function createFixture() {
     readQuizAssetResolution: () => Promise.resolve(resolution),
     readVoicePlan: () => Promise.resolve(voice),
     readQuizTimeline: () => Promise.resolve(timeline),
+    listChannelIntroOutroStyles: () => Promise.resolve([]),
     writeQuizAssessment: () => Promise.resolve("assessment.json"),
     readBgmHistory: () => Promise.resolve([]),
     writeRenderManifest: () => Promise.resolve("render-manifest.json"),

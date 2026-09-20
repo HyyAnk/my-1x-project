@@ -156,6 +156,12 @@ describe("renderManifestWriter", () => {
       engineSnapshot,
       artifactSha256: "sha256-hash-value",
       transitionInstances,
+      introOutro: {
+        selectionSource: "style_builtin",
+        stylePresetId: "preset_arcade_classic",
+        styleId: "pair-1",
+        selectionFingerprint: "intro-outro-fingerprint",
+      },
     });
 
     expect(writtenManifestJson).not.toBeNull();
@@ -175,6 +181,12 @@ describe("renderManifestWriter", () => {
       duration_seconds: number;
       question_count: number;
       format: string;
+      intro_outro: {
+        selection_source: string;
+        style_preset_id: string;
+        style_id: string;
+        selection_fingerprint: string;
+      };
     }
     const manifest = JSON.parse(writtenManifestJson!) as RenderManifestOutput;
 
@@ -200,6 +212,12 @@ describe("renderManifestWriter", () => {
     expect(manifest.engine_snapshot).toEqual(engineSnapshot);
     expect(manifest.artifact_sha256).toBe("sha256-hash-value");
     expect(manifest.transition_instances).toEqual(transitionInstances);
+    expect(manifest.intro_outro).toEqual({
+      selection_source: "style_builtin",
+      style_preset_id: "preset_arcade_classic",
+      style_id: "pair-1",
+      selection_fingerprint: "intro-outro-fingerprint",
+    });
 
     // Canvas, duration, format preserved
     expect(manifest.aspect_ratio).toBe("16:9");

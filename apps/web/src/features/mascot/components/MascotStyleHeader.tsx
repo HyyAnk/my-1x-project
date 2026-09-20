@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Trash, Lightning, Check, CircleNotch } from "@phosphor-icons/react";
-import type { MascotProfile, MascotStyle } from "@studio/shared";
+import { findBuiltInPresetById, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { StyleAnchorReferencePin } from "./StyleAnchorReferencePin";
@@ -30,6 +30,8 @@ export function MascotStyleHeader({
 }: MascotStyleHeaderProps) {
   const { t } = useTranslation();
   const { handleUpdateStyleKeyword, handleDeleteStyle, handleBatchGenerateStyle } = stylesState;
+  const builtInPreset = findBuiltInPresetById(resolvedActiveStyle?.built_in_preset_id);
+  const isManagedStyle = Boolean(resolvedActiveStyle?.built_in_preset_id);
 
   const [keywordInput, setKeywordInput] = useState<string>(resolvedActiveStyle?.keyword || "");
   const [isSavingKeyword, setIsSavingKeyword] = useState<boolean>(false);
@@ -62,21 +64,15 @@ export function MascotStyleHeader({
         <div className="active-style-banner-top">
           <div className="active-style-info-col">
             <div className="active-style-title-row">
-              <h4 className="active-style-name">
-                {resolvedActiveStyle?.is_default || resolvedActiveStyle?.id === "core" ? "Core Style (Default)" : resolvedActiveStyle?.name}
-              </h4>
+              <h4 className="active-style-name">{resolvedActiveStyle?.name}</h4>
               <span className={`style-type-badge ${isCoreStyle ? "is-core" : "is-custom"}`}>
-                {isCoreStyle ? "Default Style" : "Custom Style"}
+                {isCoreStyle ? "Default Style" : isManagedStyle ? "Built-in Style" : "Legacy Style"}
               </span>
+              {builtInPreset ? <span className="style-type-badge is-custom">Preset · {builtInPreset.name}</span> : null}
               <span className="style-completion-badge">
                 {totalFilledCount}/{totalSlots} slots generated
               </span>
             </div>
-            <p className="active-style-description">
-              {isCoreStyle
-                ? "Default mascot visual identity and signature wardrobe."
-                : "Custom wardrobe and thematic styling for this character."}
-            </p>
           </div>
 
           <div className="active-style-actions-col">
@@ -100,7 +96,7 @@ export function MascotStyleHeader({
               )}
             </button>
 
-            {!isCoreStyle ? (
+            {!isManagedStyle ? (
               <button
                 type="button"
                 className="quiet-button is-delete-style"

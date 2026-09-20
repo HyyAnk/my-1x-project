@@ -44,6 +44,8 @@ const mockEpisode: Episode = {
     visual_style: "mixed",
     resolved_visual_style: "pixar_3d",
     question_count: 8,
+    style_preset_id: "preset_arcade_classic",
+    mascot_style_selection: { mode: "style_builtin" },
     mascot_style_id: undefined,
   },
 } as unknown as Episode;
@@ -52,6 +54,7 @@ const mockStyles: MascotStyle[] = [
   {
     id: "core",
     name: "Core Style",
+    built_in_preset_id: "preset_arcade_classic",
     keyword: "",
     is_default: true,
     states: { thinking: [], celebrate: [] },
@@ -61,6 +64,7 @@ const mockStyles: MascotStyle[] = [
   {
     id: "style-military",
     name: "Military Squad",
+    built_in_preset_id: "preset_build_zone",
     keyword: "military",
     is_default: false,
     states: { thinking: [], celebrate: [] },
@@ -70,6 +74,7 @@ const mockStyles: MascotStyle[] = [
   {
     id: "style-cyber",
     name: "Cyber Neon",
+    built_in_preset_id: "preset_cyber_neon",
     keyword: "cyberpunk",
     is_default: false,
     states: { thinking: [], celebrate: [] },
@@ -123,7 +128,7 @@ describe("MascotStyleDropdown", () => {
     expect(screen.getByText("Disabled")).toBeDefined();
   });
 
-  it("shows 'Core Style (Default)' when no active style is selected", () => {
+  it("shows the preset-bound Built-in Style by default", () => {
     render(
       <MascotStyleDropdown
         channel={mockChannelWithMascot}
@@ -135,7 +140,7 @@ describe("MascotStyleDropdown", () => {
       { wrapper },
     );
 
-    expect(screen.getByText("Core Style (Default)")).toBeDefined();
+    expect(screen.getByText("Built-in Style · Core Style")).toBeDefined();
   });
 
   it("shows active style name when a custom style is selected", () => {
@@ -145,7 +150,7 @@ describe("MascotStyleDropdown", () => {
         episode={mockEpisode}
         isOpen={false}
         onToggle={vi.fn()}
-        mascotStyleId="style-military"
+        mascotStyleSelection={{ mode: "specific_style", style_id: "style-military" }}
         availableMascotStyles={mockStyles}
       />,
       { wrapper },
@@ -161,16 +166,16 @@ describe("MascotStyleDropdown", () => {
         episode={mockEpisode}
         isOpen={false}
         onToggle={vi.fn()}
-        mascotStyleId="cycle"
+        mascotStyleSelection={{ mode: "cycle" }}
         availableMascotStyles={mockStyles}
       />,
       { wrapper },
     );
 
-    expect(screen.getByText("Cycle All Styles")).toBeDefined();
+    expect(screen.getByText("Cycle Styles")).toBeDefined();
   });
 
-  it("renders popover options list with Core Style, custom styles, and Cycle option without redundant badges", () => {
+  it("renders Built-in, specific styles, and Cycle options without redundant badges", () => {
     render(
       <MascotStyleDropdown
         channel={mockChannelWithMascot}
@@ -182,15 +187,16 @@ describe("MascotStyleDropdown", () => {
       { wrapper },
     );
 
-    expect(screen.getAllByText("Core Style (Default)").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("Military Squad")).toBeDefined();
+    expect(screen.getAllByText("Built-in Style · Core Style").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("Specific · Core Style")).toBeDefined();
+    expect(screen.getByText("Specific · Military Squad")).toBeDefined();
     expect(screen.queryByText("military")).toBeNull();
-    expect(screen.getByText("Cyber Neon")).toBeDefined();
+    expect(screen.getByText("Specific · Cyber Neon")).toBeDefined();
     expect(screen.queryByText("cyberpunk")).toBeNull();
-    expect(screen.getByText("Cycle All Styles")).toBeDefined();
+    expect(screen.getByText("Cycle Styles")).toBeDefined();
   });
 
-  it("calls onSaveMascotStyle with null when Core Style is clicked", () => {
+  it("saves style_builtin when the preset-bound option is clicked", () => {
     const onSave = vi.fn();
     render(
       <MascotStyleDropdown
@@ -199,17 +205,17 @@ describe("MascotStyleDropdown", () => {
         isOpen={true}
         onToggle={vi.fn()}
         availableMascotStyles={mockStyles}
-        mascotStyleId="style-military"
-        onSaveMascotStyle={onSave}
+        mascotStyleSelection={{ mode: "specific_style", style_id: "style-military" }}
+        onSaveMascotStyleSelection={onSave}
       />,
       { wrapper },
     );
 
-    fireEvent.click(screen.getByText("Core Style (Default)"));
-    expect(onSave).toHaveBeenCalledWith(null);
+    fireEvent.click(screen.getByText("Built-in Style · Core Style"));
+    expect(onSave).toHaveBeenCalledWith({ mode: "style_builtin" });
   });
 
-  it("calls onSaveMascotStyle with style id when custom style is clicked", () => {
+  it("saves specific_style with the selected style id", () => {
     const onSave = vi.fn();
     render(
       <MascotStyleDropdown
@@ -218,16 +224,16 @@ describe("MascotStyleDropdown", () => {
         isOpen={true}
         onToggle={vi.fn()}
         availableMascotStyles={mockStyles}
-        onSaveMascotStyle={onSave}
+        onSaveMascotStyleSelection={onSave}
       />,
       { wrapper },
     );
 
-    fireEvent.click(screen.getByText("Military Squad"));
-    expect(onSave).toHaveBeenCalledWith("style-military");
+    fireEvent.click(screen.getByText("Specific · Military Squad"));
+    expect(onSave).toHaveBeenCalledWith({ mode: "specific_style", style_id: "style-military" });
   });
 
-  it("calls onSaveMascotStyle with 'cycle' when Cycle All Styles is clicked", () => {
+  it("saves cycle mode when Cycle Styles is clicked", () => {
     const onSave = vi.fn();
     render(
       <MascotStyleDropdown
@@ -236,13 +242,13 @@ describe("MascotStyleDropdown", () => {
         isOpen={true}
         onToggle={vi.fn()}
         availableMascotStyles={mockStyles}
-        onSaveMascotStyle={onSave}
+        onSaveMascotStyleSelection={onSave}
       />,
       { wrapper },
     );
 
-    fireEvent.click(screen.getByText("Cycle All Styles"));
-    expect(onSave).toHaveBeenCalledWith("cycle");
+    fireEvent.click(screen.getByText("Cycle Styles"));
+    expect(onSave).toHaveBeenCalledWith({ mode: "cycle" });
   });
 
   it("renders style thumbnail avatars without redundant readiness chips", () => {
@@ -295,11 +301,11 @@ describe("MascotStyleDropdown", () => {
     );
 
     // Verify thumbnail images
-    const coreImg = screen.getByAltText("Core Style");
+    const coreImg = screen.getByAltText("Built-in Core Style");
     expect(coreImg).toBeDefined();
     expect(coreImg.getAttribute("src")).toBe("https://example.com/core-anchor.png");
 
-    const steampunkImg = screen.getByAltText("Steampunk Explorer");
+    const steampunkImg = screen.getByAltText("Specific Steampunk Explorer");
     expect(steampunkImg).toBeDefined();
     expect(steampunkImg.getAttribute("src")).toBe("https://example.com/steampunk-anchor.png");
 
@@ -349,5 +355,17 @@ describe("buildEpisodePreviewRequest Mascot Style Forwarding", () => {
     });
 
     expect(request.mascot_style_id).toBeUndefined();
+  });
+
+  it("forwards a preview preset override so Built-in Style follows the hovered preset", () => {
+    const request = buildEpisodePreviewRequest({
+      channel: mockChannelWithMascot,
+      episode: mockEpisode,
+      override: { stylePresetId: "preset_cyber_neon" },
+      resolved: mockResolved,
+    });
+
+    expect(request.style_preset_id).toBe("preset_cyber_neon");
+    expect(request.mascot_style_selection).toEqual({ mode: "style_builtin" });
   });
 });

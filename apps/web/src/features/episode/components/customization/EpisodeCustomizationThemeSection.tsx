@@ -1,4 +1,13 @@
-import type { Channel, Episode, MascotStyle, QuizImageStyle, QuizPaletteId, VisualPresetItem } from "@studio/shared";
+import type {
+  Channel,
+  Episode,
+  IntroOutroSelection,
+  MascotStyle,
+  MascotStyleSelection,
+  QuizImageStyle,
+  QuizPaletteId,
+  VisualPresetItem,
+} from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
 import { PresetPickerDropdown } from "./PresetPickerDropdown";
@@ -20,11 +29,10 @@ export interface EpisodeCustomizationThemeSectionProps {
   onSaveVisualStyle: (style: QuizImageStyle | "mixed") => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
   onPreview: (candidate: EpisodePreviewCandidate | null) => void;
-  mascotStyleId?: string | null;
-  onSaveMascotStyle?: (styleId: string | null) => void;
+  mascotStyleSelection?: MascotStyleSelection;
+  onSaveMascotStyleSelection: (selection: MascotStyleSelection) => void;
   availableMascotStyles?: MascotStyle[];
-  introOutroStyleId?: string | null;
-  onSaveIntroOutroStyle?: (styleId: string | null) => void;
+  onSaveIntroOutroSelection: (selection: IntroOutroSelection) => void;
 }
 
 export function EpisodeCustomizationThemeSection({
@@ -39,11 +47,10 @@ export function EpisodeCustomizationThemeSection({
   onSaveVisualStyle,
   onSavePaletteId,
   onPreview,
-  mascotStyleId,
-  onSaveMascotStyle,
+  mascotStyleSelection,
+  onSaveMascotStyleSelection,
   availableMascotStyles,
-  introOutroStyleId,
-  onSaveIntroOutroStyle,
+  onSaveIntroOutroSelection,
 }: EpisodeCustomizationThemeSectionProps) {
   const { t } = useTranslation();
 
@@ -97,10 +104,10 @@ export function EpisodeCustomizationThemeSection({
           saving={isSaving("mascot-style")}
           isOpen={openDropdown === "mascotStyle"}
           onToggle={() => toggleDropdown("mascotStyle")}
-          mascotStyleId={mascotStyleId}
+          mascotStyleSelection={mascotStyleSelection}
           availableMascotStyles={availableMascotStyles}
-          onSaveMascotStyle={(styleId) => {
-            onSaveMascotStyle?.(styleId);
+          onSaveMascotStyleSelection={(selection) => {
+            onSaveMascotStyleSelection(selection);
             closeDropdown();
           }}
         />
@@ -111,9 +118,8 @@ export function EpisodeCustomizationThemeSection({
           saving={isSaving("intro-outro-style")}
           isOpen={openDropdown === "introOutroStyle"}
           onToggle={() => toggleDropdown("introOutroStyle")}
-          introOutroStyleId={introOutroStyleId}
-          onSaveIntroOutroStyle={(styleId) => {
-            onSaveIntroOutroStyle?.(styleId);
+          onSaveIntroOutroSelection={(selection) => {
+            onSaveIntroOutroSelection(selection);
             closeDropdown();
           }}
         />

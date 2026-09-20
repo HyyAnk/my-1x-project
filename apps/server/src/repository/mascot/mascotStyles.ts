@@ -1,6 +1,9 @@
 import {
+  findBuiltInPresetById,
+  findMascotStyleByBuiltInPreset,
+  isUncustomizedBuiltInMascotStyle,
   nowIso,
-  synthesizeLegacyCoreStyle,
+  reconcileMascotBuiltInStyles,
   type CreateMascotStyleInput,
   type MascotProfile,
   type MascotStateVariant,
@@ -13,21 +16,7 @@ import type { RepositoryRuntime } from "../runtime.js";
 import { withMascotWriteLock } from "./mascotLock.js";
 
 export function ensureMascotStyles(mascot: MascotProfile): MascotProfile {
-  if (!mascot.styles || mascot.styles.length === 0) {
-    const coreStyle = synthesizeLegacyCoreStyle(mascot);
-    return {
-      ...mascot,
-      styles: [coreStyle],
-      active_style_id: mascot.active_style_id || "core",
-    };
-  }
-  if (!mascot.active_style_id) {
-    return {
-      ...mascot,
-      active_style_id: mascot.styles.find((s) => s.is_default)?.id || mascot.styles[0]?.id || "core",
-    };
-  }
-  return mascot;
+  return reconcileMascotBuiltInStyles(mascot);
 }
 
 export async function createMascotStyle(
@@ -36,39 +25,29 @@ export async function createMascotStyle(
   input: CreateMascotStyleInput,
 ): Promise<{ mascot: MascotProfile; style: MascotStyle }> {
   return withMascotWriteLock(mascotId, async () => {
-    const mascot = await this.getMascot(mascotId);
+    const mascot = ensureMascotStyles(await this.getMascot(mascotId));
     const now = nowIso();
-    let styleId = `style_${Date.now()}`;
-    const existingIds = new Set((mascot.styles || []).map((s) => s.id));
-    if (existingIds.has(styleId)) {
-      styleId = `style_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    if (input.built_in_preset_id && !findBuiltInPresetById(input.built_in_preset_id)) {
+      throw new RepositoryError(`Built-in preset ${input.built_in_preset_id} not found`, "BUILT_IN_PRESET_NOT_FOUND");
+    }
+    const targetStyle = input.built_in_preset_id
+      ? findMascotStyleByBuiltInPreset(mascot, input.built_in_preset_id)
+      : mascot.styles?.find(isUncustomizedBuiltInMascotStyle);
+    if (!targetStyle) {
+      throw new RepositoryError("All Built-in Style slots are already configured", "MASCOT_STYLE_CAPACITY_REACHED");
     }
 
     const style: MascotStyle = {
-      id: styleId,
+      ...targetStyle,
       name: input.name,
       keyword: input.keyword || "",
-      is_default: false,
-      anchor_image_url: null,
-      states: {
-        thinking: Array.from({ length: 10 }, (_, i) => ({
-          id: `slot_${i + 1}`,
-          slot_index: i + 1,
-          image_url: "",
-        })),
-        celebrate: Array.from({ length: 10 }, (_, i) => ({
-          id: `slot_${i + 1}`,
-          slot_index: i + 1,
-          image_url: "",
-        })),
-      },
-      created_at: now,
+      style_revision: (targetStyle.style_revision ?? 1) + 1,
       updated_at: now,
     };
 
     const updatedMascot: MascotProfile = {
       ...mascot,
-      styles: [...(mascot.styles || []), style],
+      styles: (mascot.styles || []).map((candidate) => (candidate.id === style.id ? style : candidate)),
       updated_at: now,
     };
 
@@ -102,6 +81,7 @@ export async function updateMascotStyle(
       ...(input.name !== undefined ? { name: input.name } : {}),
       ...(input.keyword !== undefined ? { keyword: input.keyword } : {}),
       ...(input.anchor_image_url !== undefined ? { anchor_image_url: input.anchor_image_url } : {}),
+      style_revision: (existingStyle.style_revision ?? 1) + 1,
       updated_at: now,
     };
 
@@ -137,6 +117,7 @@ export async function saveMascotStyleConcept(
     const updatedStyle: MascotStyle = {
       ...existingStyle,
       anchor_image_url: anchorImageUrl,
+      style_revision: (existingStyle.style_revision ?? 1) + 1,
       updated_at: now,
     };
 
@@ -162,8 +143,8 @@ export async function deleteMascotStyle(this: RepositoryRuntime, mascotId: strin
       throw new RepositoryError(`Style ${styleId} not found`, "STYLE_NOT_FOUND");
     }
 
-    if (style.id === "core" || style.is_default === true) {
-      throw new RepositoryError("Cannot delete the default Core Style", "CANNOT_DELETE_DEFAULT_STYLE");
+    if (style.built_in_preset_id || style.id === "core" || style.is_default === true) {
+      throw new RepositoryError("Cannot delete a Built-in Style", "CANNOT_DELETE_MANAGED_STYLE");
     }
 
     const updatedStyles = styles.filter((s) => s.id !== styleId);
@@ -233,6 +214,7 @@ export async function updateMascotSlot(this: RepositoryRuntime, mascotId: string
         ...existingStyle.states,
         [input.state]: stateSlots,
       },
+      style_revision: (existingStyle.style_revision ?? 1) + 1,
       updated_at: now,
     };
 

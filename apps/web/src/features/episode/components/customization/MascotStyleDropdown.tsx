@@ -1,13 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check } from "@phosphor-icons/react";
-import type { Channel, Episode, MascotProfile, MascotStyle } from "@studio/shared";
+import {
+  BUILT_IN_PRESETS,
+  DEFAULT_BUILT_IN_PRESET_ID,
+  resolveBuiltInPresetCategoryId,
+  type Channel,
+  type Episode,
+  type MascotProfile,
+  type MascotStyle,
+  type MascotStyleSelection,
+} from "@studio/shared";
 import { api } from "../../../../api";
 import { useTranslation } from "../../../../i18n";
-import {
-  computeDisplayValue,
-  createFallbackCoreStyle,
-  resolveStyleThumbnail,
-} from "../../utils/mascotDropdownHelpers";
+import { createFallbackCoreStyle, resolveStyleThumbnail } from "../../utils/mascotDropdownHelpers";
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
 import { StyleOptionRow } from "./StyleOptionRow";
@@ -20,10 +25,18 @@ export type MascotStyleDropdownProps = {
   saving?: boolean;
   isOpen: boolean;
   onToggle: () => void;
-  mascotStyleId?: string | null;
-  onSaveMascotStyle?: (styleId: string | null) => void;
+  mascotStyleSelection?: MascotStyleSelection;
+  onSaveMascotStyleSelection?: (selection: MascotStyleSelection) => void;
   availableMascotStyles?: MascotStyle[];
 };
+
+function resolveSelection(episode: Episode, override?: MascotStyleSelection): MascotStyleSelection {
+  if (override) return override;
+  const legacyStyleId = episode.quiz_config?.mascot_style_id;
+  if (legacyStyleId === "cycle" || legacyStyleId === "all") return { mode: "cycle" };
+  if (legacyStyleId) return { mode: "specific_style", style_id: legacyStyleId === "default" ? "core" : legacyStyleId };
+  return episode.quiz_config?.mascot_style_selection ?? { mode: "style_builtin" };
+}
 
 export function MascotStyleDropdown({
   channel,
@@ -32,8 +45,8 @@ export function MascotStyleDropdown({
   saving = false,
   isOpen,
   onToggle,
-  mascotStyleId,
-  onSaveMascotStyle,
+  mascotStyleSelection,
+  onSaveMascotStyleSelection,
   availableMascotStyles,
 }: MascotStyleDropdownProps) {
   const { t } = useTranslation();
@@ -46,15 +59,14 @@ export function MascotStyleDropdown({
     const mascotId = channel.mascot_id;
     if (!mascotId || mascotId === "none") return;
     let cancelled = false;
-    api
+    void api
       .mascot(mascotId)
-      .then((res) => {
-        if (!cancelled && res?.mascot) {
-          setFetchedMascot(res.mascot);
-          if (availableMascotStyles === undefined && res.mascot.styles) setFetchedStyles(res.mascot.styles);
-        }
+      .then((response) => {
+        if (cancelled || !response?.mascot) return;
+        setFetchedMascot(response.mascot);
+        if (availableMascotStyles === undefined) setFetchedStyles(response.mascot.styles ?? []);
       })
-      .catch(() => {});
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
@@ -64,22 +76,36 @@ export function MascotStyleDropdown({
   const hasNoMascot = !channel.mascot_id || channel.mascot_id === "none";
   const isMascotDisabled = channel.mascot_config?.enabled === false;
   const isControlDisabled = Boolean(disabled || hasNoMascot || isMascotDisabled);
-
-  const currentStyleId = mascotStyleId !== undefined ? mascotStyleId : (episode.quiz_config?.mascot_style_id ?? null);
-  const displayValue = computeDisplayValue(hasNoMascot, isMascotDisabled, currentStyleId, styles);
-  const customStyles = styles.filter((s) => s.id !== "core");
+  const selection = resolveSelection(episode, mascotStyleSelection);
+  const presetId = resolveBuiltInPresetCategoryId(episode.quiz_config);
+  const preset = BUILT_IN_PRESETS.find((candidate) => candidate.id === presetId) ?? BUILT_IN_PRESETS[0];
 
   const coreStyle = useMemo(() => {
-    const fromList = styles.find((s) => s.id === "core");
+    const fromList = styles.find((style) => style.id === "core");
     if (fromList) return fromList;
-    if (fetchedMascot) {
-      return createFallbackCoreStyle(fetchedMascot.master_image_url, fetchedMascot.created_at, fetchedMascot.updated_at);
-    }
-    return null;
-  }, [styles, fetchedMascot]);
+    if (!fetchedMascot) return null;
+    return createFallbackCoreStyle(fetchedMascot.master_image_url, fetchedMascot.created_at, fetchedMascot.updated_at);
+  }, [fetchedMascot, styles]);
 
-  const isCoreSelected = !currentStyleId || currentStyleId === "core" || currentStyleId === "default";
-  const coreThumbnail = resolveStyleThumbnail(coreStyle, true, Boolean(channel.mascot_id), fetchedMascot?.master_image_url);
+  const builtInStyle =
+    styles.find((style) => style.built_in_preset_id === preset.id) ?? (preset.id === DEFAULT_BUILT_IN_PRESET_ID ? coreStyle : null);
+  const builtInLabel = `Built-in Style · ${builtInStyle?.name ?? preset.name}`;
+  const specificStyle = selection.mode === "specific_style" ? styles.find((style) => style.id === selection.style_id) : undefined;
+  const displayValue = hasNoMascot
+    ? "No Mascot"
+    : isMascotDisabled
+      ? "Disabled"
+      : selection.mode === "cycle"
+        ? "Cycle Styles"
+        : selection.mode === "specific_style"
+          ? (specificStyle?.name ?? "Specific Style")
+          : builtInLabel;
+  const builtInThumbnail = resolveStyleThumbnail(
+    builtInStyle,
+    builtInStyle?.id === "core",
+    Boolean(channel.mascot_id),
+    fetchedMascot?.master_image_url,
+  );
 
   return (
     <div className="customization-dropdown-item">
@@ -93,33 +119,46 @@ export function MascotStyleDropdown({
       />
       {isOpen && !isControlDisabled ? (
         <CustomizationPopover title={label}>
-          <label className={`style-option-row ${isCoreSelected ? "is-checked" : ""}`} onClick={() => onSaveMascotStyle?.(null)}>
-            <input type="radio" name="mascot_style_choice" checked={isCoreSelected} onChange={() => onSaveMascotStyle?.(null)} />
-            <StyleThumbnail thumbUrl={coreThumbnail} altText="Core Style" />
-            <span className="style-option-label">Core Style (Default)</span>
-            {isCoreSelected ? <Check size={14} weight="bold" className="style-option-check" /> : null}
+          <label className={`style-option-row ${selection.mode === "style_builtin" ? "is-checked" : ""}`}>
+            <input
+              type="radio"
+              name="mascot_style_choice"
+              checked={selection.mode === "style_builtin"}
+              onChange={() => onSaveMascotStyleSelection?.({ mode: "style_builtin" })}
+            />
+            <StyleThumbnail thumbUrl={builtInThumbnail} altText={`Built-in ${builtInStyle?.name ?? preset.name}`} />
+            <span className="style-option-label">{builtInLabel}</span>
+            {selection.mode === "style_builtin" ? <Check size={14} weight="bold" className="style-option-check" /> : null}
           </label>
-          {customStyles.map((style) => {
-            const isChecked = currentStyleId === style.id;
-            const thumbUrl = resolveStyleThumbnail(style, false, Boolean(channel.mascot_id));
+
+          {styles.map((style) => {
+            const isChecked = selection.mode === "specific_style" && selection.style_id === style.id;
+            const thumbnail = resolveStyleThumbnail(
+              style,
+              style.id === "core",
+              Boolean(channel.mascot_id),
+              fetchedMascot?.master_image_url,
+            );
             return (
-              <label
-                key={style.id}
-                className={`style-option-row ${isChecked ? "is-checked" : ""}`}
-                onClick={() => onSaveMascotStyle?.(style.id)}
-              >
-                <input type="radio" name="mascot_style_choice" checked={isChecked} onChange={() => onSaveMascotStyle?.(style.id)} />
-                <StyleThumbnail thumbUrl={thumbUrl} altText={style.name} />
-                <span className="style-option-label">{style.name}</span>
+              <label key={style.id} className={`style-option-row ${isChecked ? "is-checked" : ""}`}>
+                <input
+                  type="radio"
+                  name="mascot_style_choice"
+                  checked={isChecked}
+                  onChange={() => onSaveMascotStyleSelection?.({ mode: "specific_style", style_id: style.id })}
+                />
+                <StyleThumbnail thumbUrl={thumbnail} altText={`Specific ${style.name}`} />
+                <span className="style-option-label">Specific · {style.name}</span>
                 {isChecked ? <Check size={14} weight="bold" className="style-option-check" /> : null}
               </label>
             );
           })}
+
           <StyleOptionRow
             name="mascot_style_choice"
-            label="Cycle All Styles"
-            checked={currentStyleId === "cycle" || currentStyleId === "all"}
-            onSelect={() => onSaveMascotStyle?.("cycle")}
+            label="Cycle Styles"
+            checked={selection.mode === "cycle"}
+            onSelect={() => onSaveMascotStyleSelection?.({ mode: "cycle" })}
           />
         </CustomizationPopover>
       ) : null}

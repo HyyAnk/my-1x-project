@@ -204,6 +204,7 @@ export class DefaultAnimationRepository implements AnimationRepository {
 
       const updatedStyle = {
         ...style,
+        style_revision: (style.style_revision ?? 1) + 1,
         states: {
           ...style.states,
           [state]: stateSlots,

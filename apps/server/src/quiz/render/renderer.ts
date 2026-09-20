@@ -27,6 +27,7 @@ export type QuizRenderInput = {
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
+  mascotStyleId?: string | null;
   mascotConfig?: ChannelMascotConfig | null;
   premixedAudio?: boolean;
   /** Must match the renderer CLI --fps so markup and encoder stay in sync. */

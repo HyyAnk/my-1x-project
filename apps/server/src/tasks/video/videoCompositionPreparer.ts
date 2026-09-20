@@ -1,6 +1,13 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
-import type { Channel, Episode, MascotProfile, QuizAssetResolution, Scene } from "@studio/shared";
+import {
+  resolveMascotStyleIdForQuizConfig,
+  type Channel,
+  type Episode,
+  type MascotProfile,
+  type QuizAssetResolution,
+  type Scene,
+} from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { renderSourceFingerprint } from "../fingerprints.js";
@@ -35,7 +42,20 @@ export type VideoCompositionContext = {
   selectedBgmFilename: string | null;
   assetResolution: QuizAssetResolution | null;
   preflightAssessment: QuizPreflightAssessment;
+  introOutro: IntroOutroMediaResolution;
 };
+
+export function buildMascotRenderDependencies(mascot: MascotProfile | null, episode: Episode): string[] {
+  if (!mascot) return [];
+  const styleId = resolveMascotStyleIdForQuizConfig(mascot, episode.quiz_config);
+  const selectedStyles = styleId === "cycle" ? (mascot.styles ?? []) : (mascot.styles ?? []).filter((style) => style.id === styleId);
+  return [
+    `mascot-profile:${mascot.id}:${mascot.updated_at}`,
+    ...selectedStyles
+      .map((style) => `mascot-style:${style.id}:${style.built_in_preset_id ?? "legacy"}:${style.style_revision ?? 1}`)
+      .sort(),
+  ];
+}
 
 export async function prepareVideoComposition(options: {
   runtime: TaskManagerRuntime;
@@ -93,7 +113,7 @@ export async function prepareVideoComposition(options: {
 
   const bgmHistory = await repository.readBgmHistory(channel.channel_id);
   const mascotProfile: MascotProfile | null = await prepareLocalizedMascot(channel, repository, renderRoot);
-  const introOutro = await resolveAndCopyIntroOutro(repository, channel, episode, renderRoot);
+  const introOutro = await resolveAndCopyIntroOutro(repository, channel, episode, renderRoot, options.taskId);
 
   const { selectedBgmTrackId, selectedBgmFilename } = await prepareSoundtrack({
     renderRoot,
@@ -124,12 +144,17 @@ export async function prepareVideoComposition(options: {
   await writeCompositionFiles(renderRoot, compositionPath, html, compositionFiles);
 
   const { fontFingerprints } = await syncStaticMediaAssets(renderRoot, repository.rootDirectory);
+  const renderDependencies = [
+    ...fontFingerprints,
+    ...buildMascotRenderDependencies(mascotProfile, episode),
+    ...(introOutro.selectionFingerprint ? [`intro-outro:${introOutro.selectionFingerprint}`] : []),
+  ];
   const sourceFingerprint = renderSourceFingerprint(
     html,
     narration.modified_at,
     narration.size,
     assetResolution?.assets ?? [],
-    fontFingerprints,
+    renderDependencies,
     compositionFiles ?? {},
   );
   const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
@@ -145,5 +170,6 @@ export async function prepareVideoComposition(options: {
     selectedBgmFilename,
     assetResolution,
     preflightAssessment,
+    introOutro,
   };
 }

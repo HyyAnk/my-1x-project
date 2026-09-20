@@ -16,10 +16,7 @@ import type { StudioLogger } from "../../logger.js";
 import { withMascotWriteLock } from "../../repository/mascots.js";
 import { removeImageBackground } from "../../utils/imageMatting.js";
 import { deletePreviousMascotAsset } from "../../quiz/mascot/generation/artGeneratorHelpers.js";
-import {
-  analyzeMascotConceptImage,
-  type MascotVisionAiConfig,
-} from "../../quiz/mascot/services/mascotVisionAnalyzer.js";
+import { analyzeMascotConceptImage, type MascotVisionAiConfig } from "../../quiz/mascot/services/mascotVisionAnalyzer.js";
 
 export interface MascotUploadContext {
   logger?: StudioLogger;
@@ -30,7 +27,6 @@ export interface DecodedImageResult {
   rawPngBuffer: Buffer;
   extractedColor?: string;
 }
-
 
 function createHttpError(message: string, statusCode: number): Error {
   const error = new Error(message);
@@ -43,9 +39,15 @@ export async function extractDominantColor(buffer: Buffer): Promise<string | und
     const stats = await sharp(buffer).stats();
     const dominant = stats.dominant;
     if (dominant) {
-      const r = Math.min(255, Math.max(0, Math.round(dominant.r))).toString(16).padStart(2, "0");
-      const g = Math.min(255, Math.max(0, Math.round(dominant.g))).toString(16).padStart(2, "0");
-      const b = Math.min(255, Math.max(0, Math.round(dominant.b))).toString(16).padStart(2, "0");
+      const r = Math.min(255, Math.max(0, Math.round(dominant.r)))
+        .toString(16)
+        .padStart(2, "0");
+      const g = Math.min(255, Math.max(0, Math.round(dominant.g)))
+        .toString(16)
+        .padStart(2, "0");
+      const b = Math.min(255, Math.max(0, Math.round(dominant.b)))
+        .toString(16)
+        .padStart(2, "0");
       return `#${r}${g}${b}`;
     }
   } catch {
@@ -55,18 +57,9 @@ export async function extractDominantColor(buffer: Buffer): Promise<string | und
 }
 
 export function validateMagicBytes(buffer: Buffer): void {
-  const isPng =
-    buffer.length >= 8 &&
-    buffer[0] === 0x89 &&
-    buffer[1] === 0x50 &&
-    buffer[2] === 0x4e &&
-    buffer[3] === 0x47;
+  const isPng = buffer.length >= 8 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
 
-  const isJpeg =
-    buffer.length >= 3 &&
-    buffer[0] === 0xff &&
-    buffer[1] === 0xd8 &&
-    buffer[2] === 0xff;
+  const isJpeg = buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
 
   const isWebp =
     buffer.length >= 12 &&
@@ -84,10 +77,7 @@ export function validateMagicBytes(buffer: Buffer): void {
   }
 }
 
-export async function processAndValidateImagePayload(
-  imageData: string,
-  _declaredMimeType?: string,
-): Promise<DecodedImageResult> {
+export async function processAndValidateImagePayload(imageData: string, _declaredMimeType?: string): Promise<DecodedImageResult> {
   const dataUrlMatch = imageData.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.*)$/s);
   const base64Content = dataUrlMatch ? dataUrlMatch[2] : imageData;
   const sanitized = base64Content.replace(/\s+/g, "");
@@ -125,11 +115,7 @@ export async function processAndValidateImagePayload(
   return { rawPngBuffer, extractedColor };
 }
 
-export function syncCoreStyleWithMasterConcept(
-  mascot: MascotProfile,
-  masterImageUrl: string,
-  masterRawImageUrl: string,
-): MascotStyle[] {
+export function syncCoreStyleWithMasterConcept(mascot: MascotProfile, masterImageUrl: string, masterRawImageUrl: string): MascotStyle[] {
   const styles = mascot.styles && mascot.styles.length > 0 ? [...mascot.styles] : [];
   const coreIndex = styles.findIndex((s) => s.id === "core" || s.is_default === true);
 
@@ -139,6 +125,7 @@ export function syncCoreStyleWithMasterConcept(
       ...existingCore,
       anchor_image_url: masterImageUrl,
       raw_anchor_image_url: masterRawImageUrl,
+      style_revision: (existingCore.style_revision ?? 1) + 1,
       updated_at: new Date().toISOString(),
     };
   } else {
@@ -206,7 +193,8 @@ export async function handleExistingMascotConceptUpload(
   });
 
   const dominantColor = input.color_theme || visionAnalysis.dominant_color || localColor || existingMascot.color_theme;
-  const visualStyle = input.visual_style || (existingMascot.visual_style ? existingMascot.visual_style : visionAnalysis.suggested_visual_style);
+  const visualStyle =
+    input.visual_style || (existingMascot.visual_style ? existingMascot.visual_style : visionAnalysis.suggested_visual_style);
 
   return withMascotWriteLock(mascotId, async () => {
     const current = await repository.getMascot(mascotId).catch(() => existingMascot);
@@ -361,4 +349,3 @@ export async function handleAnalyzeExistingMascotConcept(
     extracted_tags: analysis.tags,
   };
 }
-

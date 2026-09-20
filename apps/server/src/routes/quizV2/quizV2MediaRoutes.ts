@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { SandboxPreviewInputBaseSchema, sandboxPreviewLayoutIssues } from "@studio/shared";
+import { SandboxPreviewInputBaseSchema, resolveMascotStyleIdForQuizConfig, sandboxPreviewLayoutIssues } from "@studio/shared";
 import { buildSandboxComposition } from "../../quiz/render/sandboxComposition.js";
 import { resolveCandyArcadeFont } from "../../quiz/render/candyArcade/candyArcadeFonts.js";
 import { defaultSfxCandidateDirectories, resolveSfxCandidatePath } from "../../quiz/audio/soundtrackSfxPlanner.js";
@@ -25,7 +25,18 @@ export function registerQuizV2MediaRoutes(server: FastifyInstance, deps: QuizV2R
       });
     }
     const mascot = input.mascot_id ? await repository.getMascot(input.mascot_id).catch(() => null) : null;
-    return buildSandboxComposition(input, mascot);
+    const mascotStyleId = resolveMascotStyleIdForQuizConfig(mascot, {
+      mascot_style_selection: input.mascot_style_selection,
+      mascot_style_id: input.mascot_style_id,
+      style_preset_id: input.style_preset_id,
+      palette_id: input.palette_id,
+      thinking_bar_style: input.thinking_bar_style,
+      question_box_style: input.question_box_style,
+      answer_card_style: input.answer_card_style,
+      question_counter_style: input.counter_style,
+      background_style: input.background_style,
+    });
+    return buildSandboxComposition({ ...input, mascot_style_id: mascotStyleId }, mascot);
   });
 
   server.get("/api/quiz/fonts/:fontId", async (request, reply) => {

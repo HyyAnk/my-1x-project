@@ -3,6 +3,7 @@ import { useTranslation } from "../../../i18n";
 
 export interface MascotStyleAnchorActionsProps {
   isCore: boolean;
+  isManaged: boolean;
   hasImage: boolean;
   isThisGenerating: boolean;
   isThisQueued: boolean;
@@ -15,6 +16,7 @@ export interface MascotStyleAnchorActionsProps {
 
 export function MascotStyleAnchorActions({
   isCore,
+  isManaged,
   hasImage,
   isThisGenerating,
   isThisQueued,
@@ -69,15 +71,17 @@ export function MascotStyleAnchorActions({
         <span>{actionLabel}</span>
       </button>
 
-      <button
-        type="button"
-        className="quiet-button compact danger-icon-btn"
-        onClick={onDelete}
-        disabled={isCardActionLocked}
-        title={t("mascots.deleteStyleBtn")}
-      >
-        <Trash size={14} />
-      </button>
+      {!isManaged ? (
+        <button
+          type="button"
+          className="quiet-button compact danger-icon-btn"
+          onClick={onDelete}
+          disabled={isCardActionLocked}
+          title={t("mascots.deleteStyleBtn")}
+        >
+          <Trash size={14} />
+        </button>
+      ) : null}
     </div>
   );
 }

@@ -34,11 +34,10 @@ export function EpisodeQuizCustomizationBar({
   onApplyStylePreset,
   setEpisode,
   onNotice,
-  mascotStyleId,
-  onSaveMascotStyle,
+  mascotStyleSelection,
+  onSaveMascotStyleSelection,
   availableMascotStyles,
-  introOutroStyleId,
-  onSaveIntroOutroStyle,
+  onSaveIntroOutroSelection,
 }: EpisodeQuizCustomizationBarProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,11 +89,10 @@ export function EpisodeQuizCustomizationBar({
             onSaveVisualStyle={onSaveVisualStyle}
             onSavePaletteId={onSavePaletteId}
             onPreview={dropdown.setCandidate}
-            mascotStyleId={mascotStyleId}
-            onSaveMascotStyle={onSaveMascotStyle}
+            mascotStyleSelection={mascotStyleSelection}
+            onSaveMascotStyleSelection={onSaveMascotStyleSelection}
             availableMascotStyles={availableMascotStyles}
-            introOutroStyleId={introOutroStyleId}
-            onSaveIntroOutroStyle={onSaveIntroOutroStyle}
+            onSaveIntroOutroSelection={onSaveIntroOutroSelection}
           />
 
           <EpisodeCustomizationElementsSection

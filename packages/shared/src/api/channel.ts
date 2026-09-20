@@ -10,7 +10,14 @@ import {
   QuizThinkingBarStyleSchema,
   QuizVisualThemeSchema,
 } from "../enums.js";
-import { ChannelMascotConfigSchema, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QuestionHistorySettingsSchema } from "../schemas.js";
+import {
+  ChannelMascotConfigSchema,
+  IntroOutroSelectionSchema,
+  MascotStyleSelectionSchema,
+  QUIZ_MAX_QUESTION_COUNT,
+  QUIZ_MIN_QUESTION_COUNT,
+  QuestionHistorySettingsSchema,
+} from "../schemas.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { EpisodeSchema } from "../schemas/episode.js";
 import { TaskSchema } from "../events.js";
@@ -144,6 +151,9 @@ export const EpisodeSettingsInputSchema = z.object({
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
   render_aspect_ratio: z.literal("16:9").optional(),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).optional(),
+  mascot_style_selection: MascotStyleSelectionSchema.optional(),
+  mascot_style_id: z.string().nullable().optional(),
+  intro_outro_selection: IntroOutroSelectionSchema.optional(),
   intro_outro_style_id: z.string().nullable().optional(),
 });
 

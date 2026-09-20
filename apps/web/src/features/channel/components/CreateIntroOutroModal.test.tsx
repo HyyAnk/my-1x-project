@@ -18,7 +18,7 @@ describe("CreateIntroOutroModal", () => {
 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeDefined();
-    expect(screen.getByText("Add Intro & Outro Style")).toBeDefined();
+    expect(screen.getByText("Upload Pair")).toBeDefined();
     expect(screen.getByText("1080p FHD")).toBeDefined();
     expect(screen.getAllByText("Intro Sequence").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Outro Sequence").length).toBeGreaterThanOrEqual(1);

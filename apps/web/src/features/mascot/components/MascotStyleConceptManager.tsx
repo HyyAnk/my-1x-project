@@ -1,11 +1,10 @@
 import { useMemo } from "react";
-import { Plus, Sparkle, MagicWand } from "@phosphor-icons/react";
-import { type MascotProfile, type MascotStyle, synthesizeLegacyCoreStyle } from "@studio/shared";
+import { Sparkle, MagicWand } from "@phosphor-icons/react";
+import { reconcileMascotBuiltInStyles, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { MascotStyleAnchorCard } from "./MascotStyleAnchorCard";
 import { MascotStyleQueueProgressCard } from "./MascotStyleQueueProgressCard";
-import { StyleCreateModal } from "./StyleCreateModal";
 
 export interface MascotStyleConceptManagerProps {
   editingMascot: MascotProfile;
@@ -17,16 +16,11 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
   const { t } = useTranslation();
 
   const allStyles: MascotStyle[] = useMemo(() => {
-    const rawStyles = editingMascot?.styles && editingMascot.styles.length > 0 ? [...editingMascot.styles] : [];
-    const hasCore = rawStyles.some((s) => s.id === "core" || s.is_default);
-    if (!hasCore) {
-      rawStyles.unshift(synthesizeLegacyCoreStyle(editingMascot));
-    }
-    return rawStyles;
+    return reconcileMascotBuiltInStyles(editingMascot).styles ?? [];
   }, [editingMascot]);
 
   const missingAnchorStylesCount = useMemo(() => {
-    return allStyles.filter((s) => s.id !== "core" && !s.is_default && !s.anchor_image_url).length;
+    return allStyles.filter((style) => style.built_in_preset_id && !style.is_default && !style.anchor_image_url).length;
   }, [allStyles]);
 
   return (
@@ -51,18 +45,6 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
             >
               <MagicWand size={14} weight="bold" />
               <span>{t("mascots.queueAllMissingBtn", { count: missingAnchorStylesCount })}</span>
-            </button>
-          ) : null}
-
-          {stylesState ? (
-            <button
-              type="button"
-              className="quiet-button compact style-concept-add-btn"
-              onClick={() => stylesState.setIsCreateModalOpen(true)}
-              title={t("mascots.addStyleBtn")}
-            >
-              <Plus size={14} weight="bold" />
-              <span>{t("mascots.addStyleBtn")}</span>
             </button>
           ) : null}
         </div>
@@ -93,32 +75,7 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
             onOpenLightbox={onOpenLightbox}
           />
         ))}
-
-        {stylesState ? (
-          <button
-            type="button"
-            className="style-anchor-card style-anchor-card-add-new"
-            onClick={() => stylesState.setIsCreateModalOpen(true)}
-            title={t("mascots.addStyleBtn")}
-          >
-            <div className="style-anchor-add-new-inner">
-              <div className="style-anchor-add-icon-circle">
-                <Plus size={22} weight="bold" />
-              </div>
-              <span className="style-anchor-add-title">{t("mascots.addStyleBtn")}</span>
-              <span className="style-anchor-add-desc">{t("mascots.addStyleCardDesc")}</span>
-            </div>
-          </button>
-        ) : null}
       </div>
-
-      {stylesState ? (
-        <StyleCreateModal
-          isOpen={stylesState.isCreateModalOpen}
-          onClose={() => stylesState.setIsCreateModalOpen(false)}
-          onCreate={stylesState.handleCreateStyle}
-        />
-      ) : null}
     </div>
   );
 }

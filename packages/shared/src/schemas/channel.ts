@@ -114,6 +114,22 @@ export const EpisodeTopicSchema = z.object({
   hook: z.string().min(1),
 });
 
+export const IntroOutroSelectionSchema = z.discriminatedUnion("mode", [
+  z.object({ mode: z.literal("style_builtin") }),
+  z.object({ mode: z.literal("specific_pair"), style_id: z.string().min(1) }),
+  z.object({ mode: z.literal("none") }),
+]);
+
+export type IntroOutroSelection = z.infer<typeof IntroOutroSelectionSchema>;
+
+export const MascotStyleSelectionSchema = z.discriminatedUnion("mode", [
+  z.object({ mode: z.literal("style_builtin") }),
+  z.object({ mode: z.literal("specific_style"), style_id: z.string().min(1) }),
+  z.object({ mode: z.literal("cycle") }),
+]);
+
+export type MascotStyleSelection = z.infer<typeof MascotStyleSelectionSchema>;
+
 export const QuizConfigSchema = z.object({
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).default(8),
   quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "true_false", "odd_one_out"]).default("knowledge"),
@@ -136,7 +152,11 @@ export const QuizConfigSchema = z.object({
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).default("auto"),
   archetype: TopicGameplayArchetypeSchema.optional(),
   target_layout: QuizLayoutIdSchema.optional(),
-  mascot_style_id: z.string().optional(),
+  mascot_style_selection: MascotStyleSelectionSchema.optional().default({ mode: "style_builtin" }),
+  /** @deprecated Use mascot_style_selection. Retained while legacy episodes migrate. */
+  mascot_style_id: z.string().nullable().optional(),
+  intro_outro_selection: IntroOutroSelectionSchema.optional().default({ mode: "style_builtin" }),
+  /** @deprecated Use intro_outro_selection. Retained while legacy episodes migrate. */
   intro_outro_style_id: z.string().nullable().optional(),
 });
 
@@ -150,6 +170,7 @@ export const IntroOutroClipMetaSchema = z.object({
   fps: z.number().positive(),
   has_audio: z.boolean(),
   thumbnail_filename: z.string().optional(),
+  sha256: z.string().length(64).optional(),
 });
 
 export type IntroOutroClipMeta = z.infer<typeof IntroOutroClipMetaSchema>;
@@ -158,9 +179,12 @@ export const IntroOutroTransitionTypeSchema = z.string().min(1);
 export type IntroOutroTransitionType = "stinger_swipe" | "crossfade" | "cut" | (string & {});
 
 export const IntroOutroStyleSchema = z.object({
+  schema_version: z.number().int().positive().default(1),
   style_id: z.string().min(1),
   channel_id: z.string().min(1),
+  style_preset_id: z.string().min(1).nullable().default(null),
   name: z.string().min(1).max(50),
+  status: z.enum(["active", "disabled"]).default("active"),
   intro: IntroOutroClipMetaSchema,
   outro: IntroOutroClipMetaSchema,
   transition_type: IntroOutroTransitionTypeSchema.default("stinger_swipe"),

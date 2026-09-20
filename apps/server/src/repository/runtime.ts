@@ -34,4 +34,5 @@ export interface RepositoryRuntime
   usageLedgerWrites: Map<string, Promise<void>>;
   artifactMutationQueues: Map<string, Promise<void>>;
   shortReelMutationQueues: Map<string, Promise<void>>;
+  introOutroSelectionWrites: Map<string, Promise<void>>;
 }

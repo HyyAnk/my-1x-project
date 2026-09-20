@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import nodeTest from "node:test";
 import {
   BUILT_IN_PRESETS,
+  DEFAULT_BUILT_IN_PRESET_ID,
   findBuiltInPresetById,
   getBuiltInPresets,
   matchVisualPreset,
+  resolveBuiltInPresetCategoryId,
   type QuizAnswerCardStyle,
   type QuizBackgroundStyle,
   type QuizQuestionBoxStyle,
@@ -18,9 +20,10 @@ const test = (name: string, testCase: TestCallback): void => {
   void nodeTest(name, testCase);
 };
 
-test("BUILT_IN_PRESETS contains exactly 7 built-in presets with full metadata", () => {
-  assert.equal(BUILT_IN_PRESETS.length, 7);
-  assert.equal(getBuiltInPresets().length, 7);
+test("BUILT_IN_PRESETS exposes an extensible registry with full metadata", () => {
+  assert.ok(BUILT_IN_PRESETS.length > 0);
+  assert.equal(getBuiltInPresets().length, BUILT_IN_PRESETS.length);
+  assert.ok(findBuiltInPresetById(DEFAULT_BUILT_IN_PRESET_ID), "Default built-in preset must exist");
 
   for (const preset of BUILT_IN_PRESETS) {
     assert.ok(preset.id, "preset id must be defined");
@@ -33,7 +36,7 @@ test("BUILT_IN_PRESETS contains exactly 7 built-in presets with full metadata", 
   }
 });
 
-test("Each built-in preset has a 100% unique 5-element suite across all 7 presets", () => {
+test("Each built-in preset has a unique 5-element suite", () => {
   const thinkingBarStyles = new Set<QuizThinkingBarStyle>();
   const questionBoxStyles = new Set<QuizQuestionBoxStyle>();
   const answerCardStyles = new Set<QuizAnswerCardStyle>();
@@ -54,11 +57,11 @@ test("Each built-in preset has a 100% unique 5-element suite across all 7 preset
     backgroundStyles.add(preset.background_style);
   }
 
-  assert.equal(thinkingBarStyles.size, 7, "Every preset must have a unique thinking_bar_style");
-  assert.equal(questionBoxStyles.size, 7, "Every preset must have a unique question_box_style");
-  assert.equal(answerCardStyles.size, 7, "Every preset must have a unique answer_card_style");
-  assert.equal(counterStyles.size, 7, "Every preset must have a unique counter_style");
-  assert.equal(backgroundStyles.size, 7, "Every preset must have a unique background_style");
+  assert.equal(thinkingBarStyles.size, BUILT_IN_PRESETS.length, "Every preset must have a unique thinking_bar_style");
+  assert.equal(questionBoxStyles.size, BUILT_IN_PRESETS.length, "Every preset must have a unique question_box_style");
+  assert.equal(answerCardStyles.size, BUILT_IN_PRESETS.length, "Every preset must have a unique answer_card_style");
+  assert.equal(counterStyles.size, BUILT_IN_PRESETS.length, "Every preset must have a unique counter_style");
+  assert.equal(backgroundStyles.size, BUILT_IN_PRESETS.length, "Every preset must have a unique background_style");
 });
 
 test("BUILT_IN_PRESETS binds each preset to its exact thematic 5-element suite", () => {
@@ -144,4 +147,11 @@ test("matchVisualPreset matches preset by complete and partial 5-element criteri
     background_style: "floating_clouds",
   });
   assert.equal(matchedPastel?.id, "preset_pastel_dream");
+});
+
+test("resolveBuiltInPresetCategoryId canonicalizes direct, legacy, and inferred presets", () => {
+  assert.equal(resolveBuiltInPresetCategoryId({ style_preset_id: "preset_cyber_neon" }), "preset_cyber_neon");
+  assert.equal(resolveBuiltInPresetCategoryId({ style_preset_id: "preset_visual_showcase" }), "preset_pastel_dream");
+  assert.equal(resolveBuiltInPresetCategoryId({ background_style: "treasure_map" }), "preset_treasure_quest");
+  assert.equal(resolveBuiltInPresetCategoryId(), "preset_arcade_classic");
 });

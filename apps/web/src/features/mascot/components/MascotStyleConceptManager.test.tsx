@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import type { MascotProfile } from "@studio/shared";
+import { BUILT_IN_PRESETS, type MascotProfile } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotStyleConceptManager } from "./MascotStyleConceptManager";
 
@@ -89,8 +89,8 @@ describe("MascotStyleConceptManager", () => {
     expect(screen.getByText("Anchored directly to uploaded master concept")).toBeDefined();
 
     // Custom style card displays anchor reference hint
-    expect(screen.getByText("Anchor: Uploaded Master")).toBeDefined();
-    expect(screen.getByText("Anchored to uploaded master concept reference")).toBeDefined();
+    expect(screen.getAllByText("Anchor: Uploaded Master").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Anchored to uploaded master concept reference").length).toBeGreaterThan(0);
   });
 
   it("does not render uploaded banner when concept_origin is ai_generated", () => {
@@ -102,7 +102,7 @@ describe("MascotStyleConceptManager", () => {
     expect(screen.queryByText("Master Concept (Uploaded)")).toBeNull();
   });
 
-  it("renders Add Style buttons and opens modal when stylesState is passed", () => {
+  it("derives its managed inventory from built-in presets without Add Style controls", () => {
     const setIsCreateModalOpen = vi.fn();
     const mockStylesState = {
       isCreateModalOpen: false,
@@ -114,11 +114,11 @@ describe("MascotStyleConceptManager", () => {
 
     render(<MascotStyleConceptManager editingMascot={mockMascotUploaded} stylesState={mockStylesState} />, { wrapper });
 
-    const addButtons = screen.getAllByTitle("Add Style");
-    expect(addButtons.length).toBeGreaterThan(0);
-
-    fireEvent.click(addButtons[0]);
-    expect(setIsCreateModalOpen).toHaveBeenCalledWith(true);
+    expect(screen.queryByTitle("Add Style")).toBeNull();
+    expect(setIsCreateModalOpen).not.toHaveBeenCalled();
+    for (const preset of BUILT_IN_PRESETS) {
+      expect(screen.getByText(`Built-in · ${preset.name}`)).toBeDefined();
+    }
   });
 
   it("renders Queue All Missing button when at least 2 custom styles miss anchor images", () => {
@@ -151,7 +151,7 @@ describe("MascotStyleConceptManager", () => {
 
     render(<MascotStyleConceptManager editingMascot={mascotWithMissing} stylesState={mockStylesState} />, { wrapper });
 
-    const queueAllBtn = screen.getByTitle("Queue All Missing (2)");
+    const queueAllBtn = screen.getByTitle(`Queue All Missing (${BUILT_IN_PRESETS.length - 1})`);
     expect(queueAllBtn).toBeDefined();
 
     fireEvent.click(queueAllBtn);

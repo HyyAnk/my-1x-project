@@ -1,11 +1,11 @@
-import { useMemo } from "react";
 import { ArrowLeft, ArrowRight, FilmStrip, CheckCircle } from "@phosphor-icons/react";
-import { type MascotProfile, type MascotStyle, synthesizeLegacyCoreStyle } from "@studio/shared";
+import type { MascotProfile } from "@studio/shared";
 import type { Notice } from "../../../components/types";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { useMascotAnimationProcessing } from "../animation/hooks/useMascotAnimationProcessing";
 import { AnimationProcessingSlotCard } from "../animation/components/AnimationProcessingSlotCard";
 import { MascotStyleTabBar } from "./MascotStyleTabBar";
+import { useMascotStepStyles } from "../hooks/useMascotStepStyles";
 
 export interface MascotAnimationProcessingStepProps {
   editingMascot: MascotProfile | null;
@@ -24,21 +24,7 @@ export function MascotAnimationProcessingStep({
 }: MascotAnimationProcessingStepProps) {
   const { activeStyleId, setActiveStyleId, activeStyle } = stylesState;
 
-  // Compute all available styles, ensuring Core Style exists
-  const allStyles: MascotStyle[] = useMemo(() => {
-    const rawStyles = editingMascot?.styles && editingMascot.styles.length > 0 ? [...editingMascot.styles] : [];
-    const hasCore = rawStyles.some((s) => s.id === "core" || s.is_default);
-    if (!hasCore) {
-      rawStyles.unshift(synthesizeLegacyCoreStyle(editingMascot || {}));
-    }
-    return rawStyles;
-  }, [editingMascot]);
-
-  // Resolve currently active style
-  const resolvedActiveStyle = useMemo(() => {
-    if (activeStyle) return activeStyle;
-    return allStyles.find((s) => s.id === activeStyleId) || allStyles[0];
-  }, [activeStyle, allStyles, activeStyleId]);
+  const { allStyles, resolvedActiveStyle } = useMascotStepStyles(editingMascot, activeStyle, activeStyleId);
 
   const styleId = resolvedActiveStyle?.id || "core";
   const mascotId = editingMascot?.id || "";

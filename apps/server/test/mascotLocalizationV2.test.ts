@@ -150,9 +150,10 @@ describe("prepareLocalizedMascot V2 Multi-Slot Localization", () => {
     expect(localized).not.toBeNull();
     expect(localized?.master_image_url).toBe("./mascot-assets/master.png");
     expect(localized?.actions.idle?.sprite_url).toBe("./mascot-assets/idle.png");
-    expect(localized?.styles?.[0]?.anchor_image_url).toBe("./mascot-assets/anchor.png");
-    expect(localized?.styles?.[0]?.states.thinking[0]?.image_url).toBe("./mascot-assets/think_1.png");
-    expect(localized?.styles?.[0]?.states.celebrate[0]?.image_url).toBe("./mascot-assets/celeb_1.png");
+    const cyberStyle = localized?.styles?.find((style) => style.id === "cyber");
+    expect(cyberStyle?.anchor_image_url).toBe("./mascot-assets/anchor.png");
+    expect(cyberStyle?.states.thinking[0]?.image_url).toBe("./mascot-assets/think_1.png");
+    expect(cyberStyle?.states.celebrate[0]?.image_url).toBe("./mascot-assets/celeb_1.png");
 
     const thinkStat = await stat(path.join(renderRoot, "mascot-assets", "think_1.png"));
     expect(thinkStat.isFile()).toBe(true);
@@ -231,7 +232,7 @@ describe("prepareLocalizedMascot V2 Multi-Slot Localization", () => {
     const localized = await prepareLocalizedMascot(channel, repository, renderRoot);
 
     expect(localized).not.toBeNull();
-    const anim = localized?.styles?.[0]?.states.thinking[0]?.animation;
+    const anim = localized?.styles?.find((style) => style.id === "cyber")?.states.thinking[0]?.animation;
     expect(anim).toBeDefined();
     expect(anim?.transparent_video_url).toBe(`./mascot-assets/${mascot.id}_cyber_thinking_s1_video_transparent.webm`);
     expect(anim?.atlas_url).toBe(`./mascot-assets/${mascot.id}_cyber_thinking_s1_atlas.png`);
@@ -335,12 +336,13 @@ describe("prepareLocalizedMascot V2 Multi-Slot Localization", () => {
     const renderRoot = path.join(tempDir, "render_attempts_test");
     const localized = await prepareLocalizedMascot(channel, repository, renderRoot);
 
-    const celeb1 = localized?.styles?.[0]?.states.celebrate[0]?.animation;
+    const cyberStyle = localized?.styles?.find((style) => style.id === "cyber");
+    const celeb1 = cyberStyle?.states.celebrate[0]?.animation;
     expect(celeb1?.transparent_video_url).toBe(`./mascot-assets/${mascot.id}_cyber_celebrate_s1_video_transparent.webm`);
     const disk1 = await readFile(path.join(renderRoot, "mascot-assets", `${mascot.id}_cyber_celebrate_s1_video_transparent.webm`));
     expect(disk1).toEqual(attemptWebm);
 
-    const celeb2 = localized?.styles?.[0]?.states.celebrate[1]?.animation;
+    const celeb2 = cyberStyle?.states.celebrate[1]?.animation;
     expect(celeb2?.transparent_video_url).toBe(`./mascot-assets/${mascot.id}_cyber_celebrate_s2_video_transparent.webm`);
     const disk2 = await readFile(path.join(renderRoot, "mascot-assets", `${mascot.id}_cyber_celebrate_s2_video_transparent.webm`));
     expect(disk2).toEqual(publishedWebm);
@@ -478,7 +480,8 @@ describe("prepareLocalizedMascot V2 Multi-Slot Localization", () => {
     const localized = await prepareLocalizedMascot(channel, repository, renderRoot);
 
     expect(localized).not.toBeNull();
-    expect(localized?.styles?.[0]?.states.thinking[0]?.animation?.transparent_video_url).toBe(missingUrl);
+    const cyberStyle = localized?.styles?.find((style) => style.id === "cyber");
+    expect(cyberStyle?.states.thinking[0]?.animation?.transparent_video_url).toBe(missingUrl);
   });
 
   it("resolves relative animation filenames when context is available", async () => {
@@ -542,7 +545,8 @@ describe("prepareLocalizedMascot V2 Multi-Slot Localization", () => {
     const localized = await prepareLocalizedMascot(channel, repository, renderRoot);
 
     expect(localized).not.toBeNull();
-    expect(localized?.styles?.[0]?.states.thinking[0]?.animation?.transparent_video_url).toBe(
+    const cyberStyle = localized?.styles?.find((style) => style.id === "cyber");
+    expect(cyberStyle?.states.thinking[0]?.animation?.transparent_video_url).toBe(
       `./mascot-assets/${mascot.id}_cyber_thinking_s1_video_transparent.webm`,
     );
     const fileContent = await readFile(path.join(renderRoot, "mascot-assets", `${mascot.id}_cyber_thinking_s1_video_transparent.webm`));

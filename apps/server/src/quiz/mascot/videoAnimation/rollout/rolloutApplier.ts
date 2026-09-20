@@ -157,6 +157,7 @@ export async function applyStyleRolloutPublish(
 
   const updatedStyle: MascotStyle = {
     ...style,
+    style_revision: (style.style_revision ?? 1) + 1,
     updated_at: now,
     states: {
       thinking: publishedThinking,

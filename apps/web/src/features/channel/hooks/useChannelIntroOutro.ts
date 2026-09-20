@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Channel, IntroOutroStyle } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
-import type { CreateIntroOutroStylePayload } from "../../../api/introOutroApi";
+import type { CreateIntroOutroStylePayload, IntroOutroCategorySummary } from "../../../api/introOutroApi";
 
 export interface UseChannelIntroOutroProps {
   channel: Channel;
@@ -12,34 +12,45 @@ export interface UseChannelIntroOutroProps {
 
 export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: UseChannelIntroOutroProps) {
   const [styles, setStyles] = useState<IntroOutroStyle[]>([]);
+  const [categories, setCategories] = useState<IntroOutroCategorySummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [busyAction, setBusyAction] = useState<string | null>(null);
+  const requestVersion = useRef(0);
 
   const refreshStyles = useCallback(async () => {
+    const version = ++requestVersion.current;
     setLoading(true);
     try {
-      const res = await api.listIntroOutroStyles(channel.channel_id);
-      setStyles(res.styles);
+      const [styleResponse, categoryResponse] = await Promise.all([
+        api.listIntroOutroStyles(channel.channel_id),
+        api.listIntroOutroCategories(channel.channel_id),
+      ]);
+      if (version !== requestVersion.current) return;
+      setStyles(styleResponse.styles);
+      setCategories(categoryResponse.categories);
     } catch (error) {
       onNotice({
         tone: "bad",
         message: error instanceof Error ? error.message : "Failed to load intro/outro styles",
       });
     } finally {
-      setLoading(false);
+      if (version === requestVersion.current) setLoading(false);
     }
   }, [channel.channel_id, onNotice]);
 
   useEffect(() => {
     void refreshStyles();
+    return () => {
+      requestVersion.current += 1;
+    };
   }, [refreshStyles]);
 
   const handleCreateStyle = async (payload: CreateIntroOutroStylePayload): Promise<boolean> => {
     setBusyAction("create");
     try {
       const res = await api.createIntroOutroStyle(channel.channel_id, payload);
-      setStyles((prev) => [res.style, ...prev]);
+      await refreshStyles();
       onNotice({ tone: "good", message: `Intro/Outro style "${res.style.name}" created successfully.` });
       setIsCreateOpen(false);
       return true;
@@ -58,7 +69,7 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
     setBusyAction(`delete_${styleId}`);
     try {
       await api.deleteIntroOutroStyle(channel.channel_id, styleId);
-      setStyles((prev) => prev.filter((s) => s.style_id !== styleId));
+      await refreshStyles();
       if (channel.default_intro_outro_style_id === styleId && onChannelUpdate) {
         onChannelUpdate({ ...channel, default_intro_outro_style_id: null });
       }
@@ -73,22 +84,14 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
     }
   };
 
-  const handleSetDefaultStyle = async (styleId: string | null) => {
-    setBusyAction(`default_${styleId ?? "clear"}`);
+  const handleAssignStyle = async (styleId: string, stylePresetId: string) => {
+    setBusyAction(`assign_${styleId}`);
     try {
-      const res = await api.setDefaultIntroOutroStyle(channel.channel_id, styleId);
-      if (onChannelUpdate) {
-        onChannelUpdate(res.channel);
-      }
-      onNotice({
-        tone: "good",
-        message: styleId ? "Default Intro/Outro style updated." : "Default style cleared.",
-      });
+      await api.updateIntroOutroStyle(channel.channel_id, styleId, { style_preset_id: stylePresetId });
+      await refreshStyles();
+      onNotice({ tone: "good", message: "Intro/Outro pair assigned." });
     } catch (error) {
-      onNotice({
-        tone: "bad",
-        message: error instanceof Error ? error.message : "Failed to set default style",
-      });
+      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Failed to assign Intro/Outro pair" });
     } finally {
       setBusyAction(null);
     }
@@ -96,6 +99,7 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
 
   return {
     styles,
+    categories,
     loading,
     isCreateOpen,
     setIsCreateOpen,
@@ -103,6 +107,6 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
     refreshStyles,
     handleCreateStyle,
     handleDeleteStyle,
-    handleSetDefaultStyle,
+    handleAssignStyle,
   };
 }

@@ -3,6 +3,9 @@ import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/re
 import { MascotMotionAnimationStep } from "./MascotMotionAnimationStep";
 import { mascotAnimationApi } from "../animation/services/mascotAnimationApi";
 import type { MascotProfile, MascotSlotProjection } from "@studio/shared";
+import { LanguageProvider } from "../../../i18n";
+
+const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvider>{children}</LanguageProvider>;
 
 afterEach(() => {
   cleanup();
@@ -167,6 +170,7 @@ describe("MascotMotionAnimationStep", () => {
         onSelectVariantIndex={vi.fn()}
         stylesState={mockStylesState}
       />,
+      { wrapper },
     );
 
     expect(screen.getByText("Step 4: Motion and Animation Preview")).toBeTruthy();
@@ -217,6 +221,7 @@ describe("MascotMotionAnimationStep", () => {
         onSelectVariantIndex={vi.fn()}
         stylesState={mockStylesState}
       />,
+      { wrapper },
     );
 
     await waitFor(() => {
@@ -273,6 +278,7 @@ describe("MascotMotionAnimationStep", () => {
         onSelectVariantIndex={vi.fn()}
         stylesState={mockStylesState}
       />,
+      { wrapper },
     );
 
     const playBtn = screen.getByTestId("play-pause-btn");
@@ -321,6 +327,7 @@ describe("MascotMotionAnimationStep", () => {
         onSelectVariantIndex={vi.fn()}
         stylesState={mockStylesState}
       />,
+      { wrapper },
     );
 
     await waitFor(() => {

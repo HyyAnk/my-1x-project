@@ -196,6 +196,29 @@ describe("Quiz V2 repository artifacts", () => {
     expect(reloaded.quiz_config.style_preset_id).toBe("preset_cyber_neon");
   });
 
+  it("persists typed mascot style selection and clears the legacy style id", async () => {
+    const { repository, channelId, episodeId } = await fixture();
+    const updated = await repository.updateEpisodeSettings(
+      channelId,
+      episodeId,
+      {
+        mascot_style_selection: { mode: "specific_style", style_id: "builtin_cyber_neon" },
+        mascot_style_id: null,
+      },
+      2.3,
+    );
+
+    expect(updated.quiz_config.mascot_style_selection).toEqual({
+      mode: "specific_style",
+      style_id: "builtin_cyber_neon",
+    });
+    expect(updated.quiz_config.mascot_style_id).toBeNull();
+
+    const reloaded = await repository.getEpisode(channelId, episodeId);
+    expect(reloaded.quiz_config.mascot_style_selection).toEqual(updated.quiz_config.mascot_style_selection);
+    expect(reloaded.quiz_config.mascot_style_id).toBeNull();
+  });
+
   it("initializes new episodes with empty channel_brand_name and persists updates without invalidating quiz artifacts", async () => {
     const { repository, channelId, episodeId } = await fixture();
     const initialEpisode = await repository.getEpisode(channelId, episodeId);

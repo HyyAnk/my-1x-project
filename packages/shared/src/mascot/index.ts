@@ -11,6 +11,7 @@ export * from "./utils/mascotPoseSelector.js";
 export * from "./animation/index.js";
 export * from "./slotJob/index.js";
 export * from "./styleJob/index.js";
+export * from "./builtInStyles.js";
 
 // Legacy V1 Compatibility Adapters & Cloners (@deprecated)
 export * from "./legacyAdapter.js";

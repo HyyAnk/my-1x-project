@@ -1,40 +1,39 @@
-import { Play, Star, Trash } from "@phosphor-icons/react";
+import { Play, Trash } from "@phosphor-icons/react";
 import type { IntroOutroStyle } from "@studio/shared";
 import { api } from "../../../../api";
 import type { IntroOutroPreviewClip } from "./IntroOutroPreviewModal";
+import { IntroOutroCategoryAssignment } from "./IntroOutroCategoryAssignment";
 
 export interface IntroOutroStyleCardProps {
   style: IntroOutroStyle;
   channelId: string;
-  isDefault: boolean;
   isDeleting: boolean;
-  isSettingDefault: boolean;
+  isAssigning?: boolean;
   onPreviewClip: (clip: IntroOutroPreviewClip) => void;
-  onSetDefault: (styleId: string | null) => void;
   onDelete: (styleId: string, name: string) => void;
+  onAssignCategory?: (styleId: string, stylePresetId: string) => void;
 }
 
 export function IntroOutroStyleCard({
   style,
   channelId,
-  isDefault,
   isDeleting,
-  isSettingDefault,
+  isAssigning = false,
   onPreviewClip,
-  onSetDefault,
   onDelete,
+  onAssignCategory,
 }: IntroOutroStyleCardProps) {
   return (
     <div
       className="style-card"
       style={{
-        border: isDefault ? "2px solid var(--accent)" : "1px solid var(--line)",
+        border: "1px solid var(--line)",
         borderRadius: "var(--radius)",
         overflow: "hidden",
         background: "var(--surface-strong)",
         display: "flex",
         flexDirection: "column",
-        boxShadow: isDefault ? "0 0 16px var(--accent-glow)" : "var(--shadow-sm)",
+        boxShadow: "var(--shadow-sm)",
         transition: "all 0.2s ease",
       }}
     >
@@ -178,21 +177,6 @@ export function IntroOutroStyleCard({
       <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: "var(--ink)" }}>{style.name}</h3>
-          {isDefault && (
-            <span
-              style={{
-                background: "var(--soft-accent)",
-                color: "var(--accent)",
-                border: "1px solid var(--accent)",
-                fontSize: 11,
-                fontWeight: 700,
-                padding: "2px 8px",
-                borderRadius: 999,
-              }}
-            >
-              Default
-            </span>
-          )}
         </div>
 
         <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
@@ -233,16 +217,15 @@ export function IntroOutroStyleCard({
             borderTop: "1px solid var(--line)",
           }}
         >
-          <button
-            type="button"
-            className="quiet-button"
-            style={{ fontSize: 12, display: "flex", alignItems: "center", gap: 5, padding: "4px 8px" }}
-            onClick={() => onSetDefault(isDefault ? null : style.style_id)}
-            disabled={isSettingDefault}
-          >
-            <Star size={14} weight={isDefault ? "fill" : "regular"} color={isDefault ? "#ffd43b" : "inherit"} />
-            <span>{isDefault ? "Unset Default" : "Set as Default"}</span>
-          </button>
+          {onAssignCategory ? (
+            <IntroOutroCategoryAssignment
+              styleName={style.name}
+              disabled={isAssigning}
+              onAssign={(stylePresetId) => onAssignCategory(style.style_id, stylePresetId)}
+            />
+          ) : (
+            <span />
+          )}
 
           <button
             type="button"

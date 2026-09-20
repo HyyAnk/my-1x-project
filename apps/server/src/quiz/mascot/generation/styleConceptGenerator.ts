@@ -66,7 +66,13 @@ export async function generateMascotStyleConcept(
       const latest = await repository.getMascot(mascot.id).catch(() => mascot);
       const updatedStyles = (latest.styles || []).map((s) =>
         s.id === styleId
-          ? { ...s, anchor_image_url: savedAnchorUrl, raw_anchor_image_url: savedRawUrl, updated_at: new Date().toISOString() }
+          ? {
+              ...s,
+              anchor_image_url: savedAnchorUrl,
+              raw_anchor_image_url: savedRawUrl,
+              style_revision: (s.style_revision ?? 1) + 1,
+              updated_at: new Date().toISOString(),
+            }
           : s,
       );
       options.signal?.throwIfAborted();

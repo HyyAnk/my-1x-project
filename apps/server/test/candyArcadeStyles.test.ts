@@ -317,6 +317,6 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     // 8. Visual Choices Three Pure
     const vcp = visualChoicesThreePureLayout.css("16:9");
     expect(vcp).toContain(".layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
-    expect(vcp).toContain("visual-correct-card-reveal");
+    expect(vcp).toContain("visual-pure-correct-celebrate");
   });
 });

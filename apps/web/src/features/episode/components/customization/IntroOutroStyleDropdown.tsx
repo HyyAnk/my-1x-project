@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
-import { Check } from "@phosphor-icons/react";
-import type { Channel, Episode, IntroOutroStyle } from "@studio/shared";
+import {
+  BUILT_IN_PRESETS,
+  resolveBuiltInPresetCategoryId,
+  type Channel,
+  type Episode,
+  type IntroOutroSelection,
+  type IntroOutroStyle,
+} from "@studio/shared";
 import { api } from "../../../../api";
+import type { IntroOutroCategorySummary } from "../../../../api/introOutroApi";
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
+import { StyleOptionRow } from "./StyleOptionRow";
 
 export interface IntroOutroStyleDropdownProps {
   channel: Channel;
@@ -12,8 +20,14 @@ export interface IntroOutroStyleDropdownProps {
   saving?: boolean;
   isOpen: boolean;
   onToggle: () => void;
-  introOutroStyleId?: string | null;
-  onSaveIntroOutroStyle?: (styleId: string | null) => void;
+  onSaveIntroOutroSelection: (selection: IntroOutroSelection) => void;
+}
+
+function resolveSelection(episode: Episode): IntroOutroSelection {
+  const legacyStyleId = episode.quiz_config?.intro_outro_style_id;
+  if (legacyStyleId === "none") return { mode: "none" };
+  if (legacyStyleId) return { mode: "specific_pair", style_id: legacyStyleId };
+  return episode.quiz_config?.intro_outro_selection ?? { mode: "style_builtin" };
 }
 
 export function IntroOutroStyleDropdown({
@@ -23,57 +37,41 @@ export function IntroOutroStyleDropdown({
   saving = false,
   isOpen,
   onToggle,
-  introOutroStyleId,
-  onSaveIntroOutroStyle,
+  onSaveIntroOutroSelection,
 }: IntroOutroStyleDropdownProps) {
   const [styles, setStyles] = useState<IntroOutroStyle[]>([]);
-  const effectiveStyleId = introOutroStyleId !== undefined ? introOutroStyleId : episode.quiz_config?.intro_outro_style_id;
+  const [categories, setCategories] = useState<IntroOutroCategorySummary[]>([]);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const selection = resolveSelection(episode);
+  const categoryId = resolveBuiltInPresetCategoryId(episode.quiz_config);
+  const category = BUILT_IN_PRESETS.find((preset) => preset.id === categoryId) ?? BUILT_IN_PRESETS[0];
+  const readyInCategory = categories.find((item) => item.style_preset_id === category.id)?.ready_count ?? 0;
+  const selectedStyle = selection.mode === "specific_pair" ? styles.find((style) => style.style_id === selection.style_id) : undefined;
 
   useEffect(() => {
     let cancelled = false;
-    if (!channel?.channel_id) return;
-    void api
-      .listIntroOutroStyles(channel.channel_id)
-      .then((res) => {
-        if (!cancelled && res?.styles) setStyles(res.styles);
+    setLoadFailed(false);
+    void Promise.all([api.listIntroOutroStyles(channel.channel_id), api.listIntroOutroCategories(channel.channel_id)])
+      .then(([styleResponse, categoryResponse]) => {
+        if (!cancelled) {
+          setStyles(styleResponse.styles);
+          setCategories(categoryResponse.categories);
+        }
       })
       .catch(() => {
-        // Graceful fallback for test environments or network failure
+        if (!cancelled) setLoadFailed(true);
       });
     return () => {
       cancelled = true;
     };
-  }, [channel?.channel_id]);
+  }, [channel.channel_id]);
 
-  const defaultStyle = styles.find((s) => s.style_id === channel?.default_intro_outro_style_id);
-  const selectedStyle = styles.find((s) => s.style_id === effectiveStyleId);
-
-  let displayValue: string;
-  if (effectiveStyleId === "none") {
-    displayValue = "None (Skip Intro)";
-  } else if (selectedStyle) {
-    displayValue = selectedStyle.name;
-  } else if (effectiveStyleId) {
-    displayValue = defaultStyle ? `${defaultStyle.name} (Default)` : "Default";
-  } else if (defaultStyle) {
-    displayValue = `${defaultStyle.name} (Default)`;
-  } else {
-    displayValue = "Default";
-  }
-
-  const handleSelectStyle = (styleId: string | null) => {
-    if (onSaveIntroOutroStyle) {
-      onSaveIntroOutroStyle(styleId);
-    } else if (channel?.channel_id && episode?.episode_id) {
-      void api
-        .updateEpisode(channel.channel_id, episode.episode_id, {
-          intro_outro_style_id: styleId,
-        })
-        .catch(() => {
-          // Graceful fallback
-        });
-    }
-  };
+  const displayValue =
+    selection.mode === "none"
+      ? "None"
+      : selection.mode === "specific_pair"
+        ? (selectedStyle?.name ?? "Specific Pair")
+        : `Built-in Style · ${category.name}`;
 
   return (
     <div className="customization-dropdown-item">
@@ -87,49 +85,38 @@ export function IntroOutroStyleDropdown({
       />
 
       {isOpen && !disabled ? (
-        <CustomizationPopover title="Intro / Outro Style">
-          {/* Default Option */}
-          <label className={`style-option-row ${!effectiveStyleId ? "is-checked" : ""}`} onClick={() => handleSelectStyle(null)}>
-            <input type="radio" name="intro_outro_choice" checked={!effectiveStyleId} onChange={() => handleSelectStyle(null)} />
-            <span className="style-option-label">{defaultStyle ? `${defaultStyle.name} (Channel Default)` : "Channel Default"}</span>
-            {!effectiveStyleId ? <Check size={14} weight="bold" className="style-option-check" /> : null}
-          </label>
+        <CustomizationPopover title="Intro / Outro">
+          <StyleOptionRow
+            name="intro_outro_choice"
+            label={`Built-in Style · ${category.name}`}
+            checked={selection.mode === "style_builtin"}
+            onSelect={() => onSaveIntroOutroSelection({ mode: "style_builtin" })}
+          />
+          {categories.length > 0 && readyInCategory === 0 ? (
+            <div className="style-option-message" role="status">
+              No ready pairs in {category.name}
+            </div>
+          ) : null}
 
-          {/* List of uploaded styles */}
-          {styles.map((style) => {
-            const isChecked = effectiveStyleId === style.style_id;
-            return (
-              <label
+          {styles
+            .filter((style) => style.status === "active")
+            .map((style) => (
+              <StyleOptionRow
                 key={style.style_id}
-                className={`style-option-row ${isChecked ? "is-checked" : ""}`}
-                onClick={() => handleSelectStyle(style.style_id)}
-              >
-                <input type="radio" name="intro_outro_choice" checked={isChecked} onChange={() => handleSelectStyle(style.style_id)} />
-                <span className="style-option-label" style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                  <span>{style.name}</span>
-                  <span style={{ fontSize: 11, color: "#888", marginLeft: 8 }}>
-                    {style.intro.duration_seconds.toFixed(1)}s / {style.outro.duration_seconds.toFixed(1)}s
-                  </span>
-                </span>
-                {isChecked ? <Check size={14} weight="bold" className="style-option-check" /> : null}
-              </label>
-            );
-          })}
+                name="intro_outro_choice"
+                label={style.name}
+                checked={selection.mode === "specific_pair" && selection.style_id === style.style_id}
+                onSelect={() => onSaveIntroOutroSelection({ mode: "specific_pair", style_id: style.style_id })}
+              />
+            ))}
 
-          {/* None / Skip option */}
-          <label
-            className={`style-option-row ${effectiveStyleId === "none" ? "is-checked" : ""}`}
-            onClick={() => handleSelectStyle("none")}
-          >
-            <input
-              type="radio"
-              name="intro_outro_choice"
-              checked={effectiveStyleId === "none"}
-              onChange={() => handleSelectStyle("none")}
-            />
-            <span className="style-option-label">None (Direct to Quiz)</span>
-            {effectiveStyleId === "none" ? <Check size={14} weight="bold" className="style-option-check" /> : null}
-          </label>
+          <StyleOptionRow
+            name="intro_outro_choice"
+            label="None"
+            checked={selection.mode === "none"}
+            onSelect={() => onSaveIntroOutroSelection({ mode: "none" })}
+          />
+          {loadFailed ? <div className="style-option-message is-error">Could not load specific pairs</div> : null}
         </CustomizationPopover>
       ) : null}
     </div>

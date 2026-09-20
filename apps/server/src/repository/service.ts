@@ -39,6 +39,7 @@ import {
   getIntroOutroClipPath,
   getIntroOutroThumbPath,
 } from "./introOutroStyles.js";
+import { reserveChannelIntroOutroStyle } from "./introOutroSelectionHistory.js";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging
 export interface RepositoryService extends RepositoryRuntime {}
@@ -54,6 +55,7 @@ export class RepositoryService {
   readonly usageLedgerWrites = new Map<string, Promise<void>>();
   readonly artifactMutationQueues = new Map<string, Promise<void>>();
   readonly shortReelMutationQueues = new Map<string, Promise<void>>();
+  readonly introOutroSelectionWrites = new Map<string, Promise<void>>();
 
   constructor(
     readonly rootDirectory: string,
@@ -235,5 +237,6 @@ Object.assign(
     processAndStoreStyleClip,
     getIntroOutroClipPath,
     getIntroOutroThumbPath,
+    reserveChannelIntroOutroStyle,
   },
 );

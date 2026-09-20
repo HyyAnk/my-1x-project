@@ -1,5 +1,6 @@
 import { copyFile, mkdir, readdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
 import path from "node:path";
 import {
   MASCOT_RENDER_CONTRACT_VERSION,
@@ -58,12 +59,17 @@ export async function migrateMascotStorage(
     try {
       const raw = JSON.parse(await readFile(metadataPath, "utf8")) as unknown;
       const profile = MascotProfileSchema.parse(raw);
-      if (isCurrentV2(profile)) {
+      const reconciledProfile = ensureMascotStyles(profile);
+      const needsRenderContractMigration = !isCurrentV2(profile);
+      const needsStyleRegistryMigration = !hasCurrentStyleRegistry(profile, reconciledProfile);
+      if (!needsRenderContractMigration && !needsStyleRegistryMigration) {
         items.push({ mascot_id: mascotId, status: "already_current" });
         continue;
       }
 
-      const bundle = adaptMascotV1ToV2({ ...profile, render_bundle: undefined, schema_version: undefined });
+      const bundle = needsRenderContractMigration
+        ? adaptMascotV1ToV2({ ...profile, render_bundle: undefined, schema_version: undefined })
+        : profile.render_bundle;
       if (!bundle) {
         items.push({ mascot_id: mascotId, status: "invalid", message: "Mascot has no renderable assets" });
         continue;
@@ -75,13 +81,11 @@ export async function migrateMascotStorage(
       }
 
       const backupPath = await createBackup(repository, migrationId, mascotId, metadataPath);
-      const migratedProfile = MascotProfileSchema.parse(
-        ensureMascotStyles({
-          ...profile,
-          schema_version: MASCOT_RENDER_CONTRACT_VERSION,
-          render_bundle: bundle,
-        }),
-      );
+      const migratedProfile = MascotProfileSchema.parse({
+        ...reconciledProfile,
+        schema_version: MASCOT_RENDER_CONTRACT_VERSION,
+        render_bundle: bundle,
+      });
       await repository.writeJsonAtomic(metadataPath, migratedProfile);
       const migratedSha256 = sha256(await readFile(metadataPath));
       const relativeBackupPath = path.relative(repository.roots.runtime, backupPath);
@@ -186,6 +190,12 @@ function assertSafeMigrationId(value: string): void {
 
 function isCurrentV2(profile: MascotProfile): boolean {
   return profile.schema_version === MASCOT_RENDER_CONTRACT_VERSION && Boolean(profile.render_bundle);
+}
+
+function hasCurrentStyleRegistry(profile: MascotProfile, reconciledProfile: MascotProfile): boolean {
+  return (
+    profile.active_style_id === reconciledProfile.active_style_id && isDeepStrictEqual(profile.styles ?? [], reconciledProfile.styles ?? [])
+  );
 }
 
 async function createBackup(repository: RepositoryRuntime, migrationId: string, mascotId: string, metadataPath: string): Promise<string> {

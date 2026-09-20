@@ -32,6 +32,10 @@ function hasQuizSourceSettingsChanged(next: Episode["quiz_config"], prev: Episod
 }
 
 function hasRenderStyleSettingsChanged(next: Episode["quiz_config"], prev: Episode["quiz_config"]): boolean {
+  const nextMascotStyle = JSON.stringify(next.mascot_style_selection);
+  const previousMascotStyle = JSON.stringify(prev.mascot_style_selection);
+  const nextIntroOutro = JSON.stringify(next.intro_outro_selection);
+  const previousIntroOutro = JSON.stringify(prev.intro_outro_selection);
   return (
     next.visual_theme !== prev.visual_theme ||
     next.thinking_bar_style !== prev.thinking_bar_style ||
@@ -41,7 +45,11 @@ function hasRenderStyleSettingsChanged(next: Episode["quiz_config"], prev: Episo
     next.background_style !== prev.background_style ||
     next.palette_id !== prev.palette_id ||
     next.style_preset_id !== prev.style_preset_id ||
-    next.render_aspect_ratio !== prev.render_aspect_ratio
+    next.render_aspect_ratio !== prev.render_aspect_ratio ||
+    nextMascotStyle !== previousMascotStyle ||
+    next.mascot_style_id !== prev.mascot_style_id ||
+    nextIntroOutro !== previousIntroOutro ||
+    next.intro_outro_style_id !== prev.intro_outro_style_id
   );
 }
 
@@ -68,6 +76,9 @@ function computeUpdatedQuizConfig(
     ...(input.channel_brand_name === undefined ? {} : { channel_brand_name: input.channel_brand_name }),
     ...(input.render_aspect_ratio === undefined ? {} : { render_aspect_ratio: input.render_aspect_ratio }),
     ...(input.thumbnail_aspect_ratio === undefined ? {} : { thumbnail_aspect_ratio: input.thumbnail_aspect_ratio }),
+    ...(input.mascot_style_selection === undefined ? {} : { mascot_style_selection: input.mascot_style_selection }),
+    ...(input.mascot_style_id === undefined ? {} : { mascot_style_id: input.mascot_style_id }),
+    ...(input.intro_outro_selection === undefined ? {} : { intro_outro_selection: input.intro_outro_selection }),
     ...(input.intro_outro_style_id === undefined ? {} : { intro_outro_style_id: input.intro_outro_style_id }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,

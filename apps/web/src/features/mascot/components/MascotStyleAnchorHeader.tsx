@@ -1,6 +1,7 @@
 import { Lock, CheckCircle, WarningCircle, Trash, Clock, CircleNotch } from "@phosphor-icons/react";
 import type { MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
+import { MascotStyleNameEditor } from "./MascotStyleNameEditor";
 
 export interface MascotStyleAnchorHeaderProps {
   style: MascotStyle;
@@ -14,6 +15,8 @@ export interface MascotStyleAnchorHeaderProps {
   queuePosition?: number;
   isGenerating?: boolean;
   isUploadedConcept?: boolean;
+  builtInPresetName?: string;
+  onRename?: (name: string) => Promise<void>;
 }
 
 export function MascotStyleAnchorHeader({
@@ -28,13 +31,16 @@ export function MascotStyleAnchorHeader({
   queuePosition = 0,
   isGenerating = false,
   isUploadedConcept = false,
+  builtInPresetName,
+  onRename,
 }: MascotStyleAnchorHeaderProps) {
   const { t } = useTranslation();
 
   return (
     <div className="style-anchor-header">
       <div className="style-anchor-header-left">
-        <span className="style-anchor-name">{style.name}</span>
+        <MascotStyleNameEditor name={style.name} disabled={isBusy} onSave={onRename} />
+        {builtInPresetName ? <span className="style-anchor-preset-name">Built-in · {builtInPresetName}</span> : null}
         {keywordsList.length > 0 ? (
           <div className="style-anchor-keywords-list">
             {keywordsList.slice(0, 2).map((kw, i) => (
@@ -69,10 +75,7 @@ export function MascotStyleAnchorHeader({
         ) : (
           <div className="style-anchor-badge-group">
             {isUploadedConcept ? (
-              <span
-                className="style-anchor-badge badge-uploaded-ref"
-                title={t("mascots.customStyleUploadedAnchorTooltip")}
-              >
+              <span className="style-anchor-badge badge-uploaded-ref" title={t("mascots.customStyleUploadedAnchorTooltip")}>
                 {t("mascots.customStyleUploadedAnchorRef")}
               </span>
             ) : null}

@@ -133,4 +133,11 @@ export interface IMediaRepository {
   ): Promise<IntroOutroClipMeta>;
   getIntroOutroClipPath(channelId: string, styleId: string, kind: "intro" | "outro"): Promise<string>;
   getIntroOutroThumbPath(channelId: string, styleId: string, kind: "intro" | "outro"): Promise<string | null>;
+  reserveChannelIntroOutroStyle(
+    channelId: string,
+    episodeId: string,
+    taskId: string,
+    stylePresetId: string,
+    candidateStyleIds: readonly string[],
+  ): Promise<string>;
 }

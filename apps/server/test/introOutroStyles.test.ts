@@ -127,6 +127,7 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
         url: `/api/channels/${testChannelId}/intro-outro-styles`,
         payload: {
           name: "Hero 3D Style",
+          style_preset_id: "preset_arcade_classic",
           intro_data: valid1080pVideoPath,
           outro_data: valid1080pVideoPath,
           transition_type: "stinger_swipe",
@@ -138,6 +139,7 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       const json = JSON.parse(res.body) as { style: IntroOutroStyle };
       expect(json.style).toBeDefined();
       expect(json.style.name).toBe("Hero 3D Style");
+      expect(json.style.style_preset_id).toBe("preset_arcade_classic");
       expect(json.style.intro.width).toBe(1920);
       expect(json.style.intro.height).toBe(1080);
       expect(json.style.intro.has_audio).toBe(true);
@@ -235,6 +237,46 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       const json = JSON.parse(res.body) as { styles: IntroOutroStyle[] };
       expect(Array.isArray(json.styles)).toBe(true);
       expect(json.styles.some((s: { style_id: string }) => s.style_id === createdStyleId)).toBe(true);
+    });
+
+    it("GET /api/channels/:channelId/intro-outro-categories derives inventory from built-in presets", async () => {
+      const res = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${testChannelId}/intro-outro-categories`,
+      });
+      expect(res.statusCode).toBe(200);
+      const json = JSON.parse(res.body) as {
+        categories: Array<{ style_preset_id: string; ready_count: number }>;
+      };
+      expect(json.categories.filter((category) => category.style_preset_id !== "uncategorized")).toHaveLength(7);
+      expect(json.categories.find((category) => category.style_preset_id === "preset_arcade_classic")?.ready_count).toBe(1);
+    });
+
+    it("reserves each available pair before repeating and keeps retries stable", async () => {
+      const candidates = ["pair-a", "pair-b"];
+      const first = await app.repository.reserveChannelIntroOutroStyle(
+        testChannelId,
+        "episode-a",
+        "task-a",
+        "preset_arcade_classic",
+        candidates,
+      );
+      const retry = await app.repository.reserveChannelIntroOutroStyle(
+        testChannelId,
+        "episode-a",
+        "task-a",
+        "preset_arcade_classic",
+        candidates,
+      );
+      const second = await app.repository.reserveChannelIntroOutroStyle(
+        testChannelId,
+        "episode-b",
+        "task-b",
+        "preset_arcade_classic",
+        candidates,
+      );
+      expect(retry).toBe(first);
+      expect(second).not.toBe(first);
     });
 
     it("GET /api/channels/:channelId/intro-outro-styles/:styleId/clips/intro streams clip", async () => {

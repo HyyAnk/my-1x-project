@@ -200,8 +200,15 @@ export async function removeMascotAssetBackground(
 
   if (isAll) {
     await matAllStyleVariants(repository, mascotId, updatedStyles, logger);
+    for (const style of updatedStyles) style.style_revision = (style.style_revision ?? 1) + 1;
   } else if (slotTarget) {
     await matTargetedStyleSlots(repository, mascotId, updatedStyles, slotTarget, mascot.active_style_id, logger);
+    const targetStyle = slotTarget.styleId
+      ? updatedStyles.find((style) => style.id === slotTarget.styleId)
+      : (updatedStyles.find((style) => style.id === mascot.active_style_id) ??
+        updatedStyles.find((style) => style.is_default) ??
+        updatedStyles[0]);
+    if (targetStyle) targetStyle.style_revision = (targetStyle.style_revision ?? 1) + 1;
   }
 
   return repository.saveMascot({

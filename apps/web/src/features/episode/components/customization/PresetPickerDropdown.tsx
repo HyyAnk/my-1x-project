@@ -54,6 +54,7 @@ export function PresetPickerDropdown({ episode, disabled, saving, isOpen, onTogg
 
   const previewCandidateFor = (preset: VisualPresetItem): EpisodePreviewCandidate => ({
     override: {
+      stylePresetId: preset.id,
       theme: preset.theme,
       paletteId: preset.palette_id,
       thinkingBarStyle: preset.thinking_bar_style,

@@ -71,6 +71,8 @@ export type MascotStateVariant = z.infer<typeof MascotStateVariantSchema>;
 export const MascotStyleSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
+  built_in_preset_id: z.string().min(1).optional(),
+  style_revision: z.number().int().positive().optional(),
   keyword: z.string().default(""),
   anchor_image_url: z.string().nullable().default(null),
   raw_anchor_image_url: z.string().nullable().optional().default(null),
@@ -166,6 +168,8 @@ export function synthesizeLegacyCoreStyle(profile: Partial<MascotProfile> | Masc
   return {
     id: "core",
     name: "Core Style",
+    built_in_preset_id: "preset_arcade_classic",
+    style_revision: 1,
     keyword: "",
     anchor_image_url: candidateAnchor,
     raw_anchor_image_url: (profile as MascotProfile).master_raw_image_url || null,
@@ -361,4 +365,3 @@ export const AnalyzeMascotConceptResponseSchema = z.object({
 });
 
 export type AnalyzeMascotConceptResponse = z.infer<typeof AnalyzeMascotConceptResponseSchema>;
-

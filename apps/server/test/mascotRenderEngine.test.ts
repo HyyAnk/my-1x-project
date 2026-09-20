@@ -3,10 +3,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  BUILT_IN_PRESETS,
   MascotProfileSchema,
   QuizV2Schema,
   adaptMascotV1ToV2,
   normalizeMascotRenderPhase,
+  reconcileMascotBuiltInStyles,
   resolveMascotMotionTransform,
   resolveMascotRenderGeometry,
   resolveMascotRenderSpec,
@@ -499,6 +501,37 @@ describe("Mascot portrait canvas and storage migration", () => {
     expect(rolledBack.migrated).toBe(1);
     expect(await readFile(path.join(mascotDir, "mascot.json"), "utf8")).toBe(original);
     expect(adaptMascotV1ToV2(batchMascot)?.assets.actions.thinking?.legacy_animation).toBeUndefined();
+  });
+
+  it("migrates an existing V2 manifest when its built-in style registry is stale", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-style-registry-migration-test-"));
+    roots.push(root);
+    const repository = new RepositoryService(root);
+    await repository.ensureBootstrap();
+    const mascotDir = path.join(repository.roots.mascots, batchMascot.id);
+    await mkdir(path.join(mascotDir, "assets"), { recursive: true });
+
+    const renderBundle = adaptMascotV1ToV2(batchMascot);
+    const coreStyle = reconcileMascotBuiltInStyles(batchMascot).styles?.[0];
+    if (!renderBundle || !coreStyle) throw new Error("Expected V2 render bundle and Core Style fixture");
+    const staleV2Profile = MascotProfileSchema.parse({
+      ...batchMascot,
+      schema_version: 2,
+      render_bundle: renderBundle,
+      styles: [coreStyle],
+      active_style_id: "core",
+    });
+    await writeFile(path.join(mascotDir, "mascot.json"), JSON.stringify(staleV2Profile, null, 2), "utf8");
+
+    const applied = await migrateMascotStorage(repository, { mode: "apply", migration_id: "style-registry-test" });
+    expect(applied.migrated).toBe(1);
+    const migrated = MascotProfileSchema.parse(JSON.parse(await readFile(path.join(mascotDir, "mascot.json"), "utf8")) as unknown);
+    expect(migrated.styles).toHaveLength(BUILT_IN_PRESETS.length);
+    expect(migrated.render_bundle).toEqual(renderBundle);
+
+    const repeated = await migrateMascotStorage(repository, { mode: "apply", migration_id: "style-registry-test" });
+    expect(repeated.migrated).toBe(0);
+    expect(repeated.skipped).toBe(1);
   });
 
   it("preserves calibrated V2 assets when a legacy-shaped profile is saved unchanged", async () => {

@@ -10,7 +10,7 @@ import {
   QuizThinkingBarStyleSchema,
   QuizVisualThemeSchema,
 } from "../enums.js";
-import { QUIZ_MAX_CHOICES_PER_QUESTION, RECOMMENDED_MASCOT_PLACEMENT_PRESET } from "../schemas.js";
+import { MascotStyleSelectionSchema, QUIZ_MAX_CHOICES_PER_QUESTION, RECOMMENDED_MASCOT_PLACEMENT_PRESET } from "../schemas.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { QuizPreviewLayoutIdSchema } from "../quizLayouts.js";
 import { sandboxPreviewLayoutIssues } from "../sandboxPreviewLayoutPolicy.js";
@@ -50,6 +50,8 @@ export const SandboxPreviewInputBaseSchema = z.object({
     .default("This planet features remarkable atmospheric conditions and the most stunning ring system in the solar system!"),
   mascot_id: z.string().nullable().optional(),
   mascot_style_id: z.string().nullable().optional(),
+  mascot_style_selection: MascotStyleSelectionSchema.optional(),
+  style_preset_id: z.string().optional(),
   mascot_enabled: z.boolean().optional().default(true),
   mascot_action: MascotActionTypeSchema.optional().default("thinking"),
   mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),

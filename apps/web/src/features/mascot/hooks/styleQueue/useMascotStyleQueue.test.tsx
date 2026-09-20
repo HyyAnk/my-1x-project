@@ -26,6 +26,7 @@ const mockMascot: MascotProfile = {
     {
       id: "core",
       name: "Core Style",
+      built_in_preset_id: "preset_arcade_classic",
       keyword: "classic",
       is_default: true,
       anchor_image_url: "https://example.com/core.png",
@@ -36,6 +37,7 @@ const mockMascot: MascotProfile = {
     {
       id: "style-cyber",
       name: "Cyber Neon",
+      built_in_preset_id: "preset_cyber_neon",
       keyword: "neon armor",
       is_default: false,
       anchor_image_url: null,
@@ -46,6 +48,7 @@ const mockMascot: MascotProfile = {
     {
       id: "style-stealth",
       name: "Stealth",
+      built_in_preset_id: "preset_comic_boom",
       keyword: "shadow stealth",
       is_default: false,
       anchor_image_url: null,

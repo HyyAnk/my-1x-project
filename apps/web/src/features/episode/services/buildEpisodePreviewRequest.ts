@@ -17,7 +17,7 @@ export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInpu
   return {
     ...buildStyleRequest(input),
     ...buildQuestionRequest(input),
-    ...buildMascotRequest(input.channel, aspectRatio, input.episode),
+    ...buildMascotRequest(input.channel, aspectRatio, input.episode, input.override),
     aspect_ratio: aspectRatio,
     style_catalog_revision: input.styleCatalogRevision,
   };
@@ -64,12 +64,15 @@ function buildMascotRequest(
   channel: Channel,
   aspectRatio: "16:9" = "16:9",
   episode?: Episode | null,
+  override: EpisodeStyleOverride = {},
 ): SandboxPreviewRequest {
   const config = channel.mascot_config;
   const placement = resolveChannelMascotPlacement(config, aspectRatio);
   return {
     mascot_id: channel.mascot_id && channel.mascot_id !== "none" ? channel.mascot_id : undefined,
     mascot_style_id: episode?.quiz_config?.mascot_style_id || undefined,
+    mascot_style_selection: episode?.quiz_config?.mascot_style_selection,
+    style_preset_id: override.stylePresetId ?? episode?.quiz_config?.style_preset_id,
     mascot_enabled: config?.enabled ?? false,
     mascot_position: placement.position,
     mascot_scale: placement.scale,

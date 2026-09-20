@@ -163,6 +163,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       selectedBgmFilename: comp.selectedBgmFilename,
       assetResolution: comp.assetResolution,
       preflightAssessment: comp.preflightAssessment,
+      introOutro: comp.introOutro,
       checkStatus: layoutResult.bypassed ? "skipped_fast_mode" : "passed",
       probe,
     });

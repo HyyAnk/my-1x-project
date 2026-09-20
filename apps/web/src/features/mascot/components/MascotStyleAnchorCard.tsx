@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Sparkle } from "@phosphor-icons/react";
-import type { MascotProfile, MascotStyle } from "@studio/shared";
+import { findBuiltInPresetById, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { MascotStyleAnchorHeader } from "./MascotStyleAnchorHeader";
@@ -34,6 +34,8 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
   const queuePosition = stylesState?.queuedStyleIds ? stylesState.queuedStyleIds.indexOf(style.id) + 1 : 0;
   const isCardActionLocked = isThisGenerating || isThisQueued || Boolean(stylesState?.generatingConceptStyleId);
   const hasImage = Boolean(imageUrl);
+  const builtInPreset = findBuiltInPresetById(style.built_in_preset_id);
+  const isManaged = Boolean(style.built_in_preset_id);
 
   const keywordsList = useMemo(() => parseKeywordsList(style.keyword, isCore), [isCore, style.keyword]);
   const filledPosesCount = useMemo(() => countFilledPoses(style.states), [style.states]);
@@ -67,6 +69,9 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
         isQueued={isThisQueued}
         queuePosition={queuePosition}
         isUploadedConcept={isUploaded}
+        builtInPresetName={builtInPreset?.name}
+        isBusy={isCardActionLocked}
+        onRename={stylesState ? (name) => stylesState.handleUpdateStyle(style.id, { name }) : undefined}
       />
 
       <MascotStyleAnchorCanvas
@@ -85,10 +90,7 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
       />
 
       {!isCore && isUploaded ? (
-        <div
-          className="style-anchor-uploaded-ref-hint"
-          title={t("mascots.customStyleUploadedAnchorTooltip")}
-        >
+        <div className="style-anchor-uploaded-ref-hint" title={t("mascots.customStyleUploadedAnchorTooltip")}>
           <Sparkle size={12} weight="fill" />
           <span>{t("mascots.customStyleUploadedAnchorHint")}</span>
         </div>
@@ -96,6 +98,7 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
 
       <MascotStyleAnchorActions
         isCore={isCore}
+        isManaged={isManaged}
         hasImage={hasImage}
         isThisGenerating={isThisGenerating}
         isThisQueued={isThisQueued}

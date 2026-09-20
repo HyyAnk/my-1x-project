@@ -100,10 +100,7 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
     // Verify loadMasterReferenceImageBase64 loads the master reference
     const masterRefBase64 = await loadMasterReferenceImageBase64(app.repository, mascot);
     assert.ok(masterRefBase64, "loadMasterReferenceImageBase64 must return a reference image string");
-    assert.ok(
-      masterRefBase64.startsWith("data:image/png;base64,"),
-      "Master reference must resolve to a valid data:image/png;base64 URL",
-    );
+    assert.ok(masterRefBase64.startsWith("data:image/png;base64,"), "Master reference must resolve to a valid data:image/png;base64 URL");
 
     // Verify raw fallback if master_image_url is unavailable
     const mascotWithOnlyRaw: MascotProfile = {
@@ -169,10 +166,7 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
       ),
       "Prompt must inject explicit reference preservation instructions for user_uploaded mascot",
     );
-    assert.ok(
-      validateMascotPromptContract(result.prompt_used, true),
-      "Generated prompt must satisfy the mascot prompt contract",
-    );
+    assert.ok(validateMascotPromptContract(result.prompt_used, true), "Generated prompt must satisfy the mascot prompt contract");
 
     // Verify generated style anchor is saved to disk
     assert.ok(result.anchor_image_url, "Style anchor image URL must be returned");
@@ -184,11 +178,7 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
     // Verify mascot profile is updated and Core Style remains anchored to uploaded master concept
     const reloaded = await app.repository.getMascot(uploadedMascot.id);
     const updatedCustomStyle = reloaded.styles?.find((s) => s.id === newStyleId);
-    assert.equal(
-      updatedCustomStyle?.anchor_image_url,
-      result.anchor_image_url,
-      "Custom style anchor_image_url must be updated",
-    );
+    assert.equal(updatedCustomStyle?.anchor_image_url, result.anchor_image_url, "Custom style anchor_image_url must be updated");
 
     const reloadedCoreStyle = reloaded.styles?.find((s) => s.id === "core" || s.is_default);
     assert.ok(reloadedCoreStyle, "Core Style must exist");
@@ -248,10 +238,7 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
       ),
       "Core Style slot prompt must enforce strong visual fidelity to the reference image",
     );
-    assert.ok(
-      validateMascotPromptContract(slotResult.prompt_used, true),
-      "Slot prompt must satisfy the 16:9 / isolation contract",
-    );
+    assert.ok(validateMascotPromptContract(slotResult.prompt_used, true), "Slot prompt must satisfy the 16:9 / isolation contract");
 
     // Verify slot asset persistence
     assert.ok(slotResult.slot.image_url, "Slot must have image_url");
@@ -262,8 +249,12 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
     // Verify updated mascot profile has the slot registered under Core Style
     const reloaded = await app.repository.getMascot(uploadedMascot.id);
     const updatedCore = reloaded.styles?.find((s) => s.id === coreStyle.id);
-    assert.equal(updatedCore?.states.thinking?.length, 1, "Core Style must contain 1 thinking slot");
-    assert.equal(updatedCore?.states.thinking?.[0]?.slot_index, 1, "Registered slot must have slot_index 1");
+    assert.equal(updatedCore?.states.thinking?.length, 10, "Core Style must retain all 10 managed thinking slots");
+    assert.equal(
+      updatedCore?.states.thinking?.find((slot) => slot.slot_index === 1)?.slot_index,
+      1,
+      "Registered slot must have slot_index 1",
+    );
   });
 
   it("Test 4: calls generateMascotStyleSlot under custom style with style anchor and tests graceful fallback", async () => {
@@ -286,11 +277,7 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
     // 1. Add custom style with generated style anchor
     const customStyleId = "style_stealth";
     const anchorBytes = Buffer.from(sampleBase64, "base64");
-    const anchorUrl = await app.repository.saveMascotAsset(
-      uploadedMascot.id,
-      "style_stealth_anchor_test.png",
-      anchorBytes,
-    );
+    const anchorUrl = await app.repository.saveMascotAsset(uploadedMascot.id, "style_stealth_anchor_test.png", anchorBytes);
 
     const customStyleWithAnchor = {
       id: customStyleId,
@@ -361,11 +348,7 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
 
     // Test 4B: Generate slot for custom style WITHOUT style anchor (graceful fallback)
     const refWithoutAnchor = await resolveSlotReferenceImage(app.repository, mascotWithStyles, customStyleWithoutAnchor);
-    assert.equal(
-      refWithoutAnchor.hasStyleAnchor,
-      false,
-      "Style without anchor must report hasStyleAnchor: false and fallback",
-    );
+    assert.equal(refWithoutAnchor.hasStyleAnchor, false, "Style without anchor must report hasStyleAnchor: false and fallback");
     assert.ok(refWithoutAnchor.referenceImageBase64, "Must fall back to master concept reference image");
 
     const fallbackSlotResult = await generateMascotStyleSlot(

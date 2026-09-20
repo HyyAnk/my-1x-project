@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Sparkle } from "@phosphor-icons/react";
-import { getTransition, type IntroOutroTransitionType } from "@studio/shared";
+import { BUILT_IN_PRESETS, getTransition, type IntroOutroTransitionType } from "@studio/shared";
 import type { CreateIntroOutroStylePayload } from "../../../api/introOutroApi";
 import {
   IntroOutroFormatBanner,
@@ -19,9 +19,19 @@ export interface CreateIntroOutroModalProps {
   onSubmit: (payload: CreateIntroOutroStylePayload) => Promise<boolean>;
   submitting: boolean;
   themeColors?: { from?: string; to?: string };
+  stylePresetId?: string;
+  categoryName?: string;
 }
 
-export function CreateIntroOutroModal({ isOpen, onClose, onSubmit, submitting, themeColors }: CreateIntroOutroModalProps) {
+export function CreateIntroOutroModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  submitting,
+  themeColors,
+  stylePresetId = BUILT_IN_PRESETS[0].id,
+  categoryName = BUILT_IN_PRESETS[0].name,
+}: CreateIntroOutroModalProps) {
   const [name, setName] = useState("");
   const [transitionType, setTransitionType] = useState<IntroOutroTransitionType>("stinger_swipe");
   const [durationSeconds, setDurationSeconds] = useState(0.5);
@@ -75,6 +85,7 @@ export function CreateIntroOutroModal({ isOpen, onClose, onSubmit, submitting, t
 
     await onSubmit({
       name: name.trim(),
+      style_preset_id: stylePresetId,
       transition_type: transitionType,
       transition_duration_seconds: transitionType === "cut" ? 0 : durationSeconds,
       audio_mode: audioMode,
@@ -88,7 +99,7 @@ export function CreateIntroOutroModal({ isOpen, onClose, onSubmit, submitting, t
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="intro-outro-modal-title">
       <div className="intro-outro-modal-shell">
-        <IntroOutroModalHeader onClose={onClose} disabled={submitting} />
+        <IntroOutroModalHeader onClose={onClose} disabled={submitting} categoryName={categoryName} />
 
         <form onSubmit={handleSubmit} className="intro-outro-modal-body">
           <IntroOutroFormatBanner />

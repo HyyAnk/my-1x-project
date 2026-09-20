@@ -4,6 +4,7 @@ import type { RepositoryService } from "../../repository.js";
 import type { inspectRenderedVideo } from "../../quiz/qa/postRenderQa.js";
 import type { preflightQuizRender } from "../../quiz/qa/preflight.js";
 import type { RenderEngineSnapshot } from "./renderEngineSnapshot.js";
+import type { IntroOutroMediaResolution } from "./introOutroMediaResolver.js";
 
 export async function persistVideoRenderArtifacts(options: {
   repository: RepositoryService;
@@ -26,6 +27,7 @@ export async function persistVideoRenderArtifacts(options: {
   engineSnapshot?: RenderEngineSnapshot;
   artifactSha256?: string;
   transitionInstances?: Record<string, ResolvedTransitionInstance>;
+  introOutro?: IntroOutroMediaResolution;
 }): Promise<{ videoPath: string; manifestPath: string }> {
   const {
     repository,
@@ -74,6 +76,15 @@ export async function persistVideoRenderArtifacts(options: {
       fps,
       bgm_track_id: bgmTrackId ?? undefined,
       bgm_filename: bgmFilename ?? undefined,
+      intro_outro: options.introOutro
+        ? {
+            selection_source: options.introOutro.selectionSource,
+            style_preset_id: options.introOutro.stylePresetId,
+            style_id: options.introOutro.styleId,
+            selection_fingerprint: options.introOutro.selectionFingerprint,
+            unavailable_reason: options.introOutro.unavailableReason,
+          }
+        : undefined,
       degraded: hasDegradedFallback,
       fallback_tier: hasDegradedFallback ? 3 : undefined,
       degraded_assets: hasDegradedFallback ? degradedAssets.map((a) => a.asset_id) : undefined,

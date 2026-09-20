@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import type { MascotProfile, MascotStyle } from "@studio/shared";
+import { BUILT_IN_PRESETS, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotConceptStep, type MascotConceptStepProps } from "./MascotConceptStep";
 
@@ -125,17 +125,18 @@ describe("MascotConceptStep (2-Tier Studio Layout)", () => {
     expect(screen.getByText("Core Style")).toBeTruthy();
   });
 
-  it("triggers setIsCreateModalOpen when clicking the + Add Style card in Tier 2", () => {
+  it("renders the preset-managed inventory without Add Style controls", () => {
     const stylesState = createMockStylesState();
     renderConceptStep({
       editingMascot: mockMascotWithMaster,
       stylesState: stylesState as unknown as MascotConceptStepProps["stylesState"],
     });
 
-    const addCards = screen.getAllByTitle("Add Style");
-    expect(addCards.length).toBeGreaterThan(0);
-    fireEvent.click(addCards[0]);
-    expect(stylesState.setIsCreateModalOpen).toHaveBeenCalledWith(true);
+    expect(screen.queryByTitle("Add Style")).toBeNull();
+    expect(stylesState.setIsCreateModalOpen).not.toHaveBeenCalled();
+    for (const preset of BUILT_IN_PRESETS) {
+      expect(screen.getByText(`Built-in · ${preset.name}`)).toBeTruthy();
+    }
   });
 
   it("disables custom style buttons and marks placeholder busy when another style is generating", () => {
@@ -170,7 +171,8 @@ describe("MascotConceptStep (2-Tier Studio Layout)", () => {
     expect(emptyPlaceholder?.classList.contains("is-busy")).toBe(true);
 
     // Verify Generate Style Concept button is disabled
-    const generateBtn = screen.getByTitle("Generate Style Concept");
+    const generateBtn = container.querySelector('[data-style-id="style_detective"] button[title="Generate Style Concept"]');
+    expect(generateBtn).not.toBeNull();
     expect(generateBtn).toHaveProperty("disabled", true);
   });
 
@@ -266,4 +268,3 @@ describe("MascotConceptStep (2-Tier Studio Layout)", () => {
     expect(badge.textContent).toContain("Custom Uploaded Concept");
   });
 });
-

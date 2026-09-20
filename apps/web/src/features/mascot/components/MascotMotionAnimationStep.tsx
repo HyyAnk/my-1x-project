@@ -5,7 +5,7 @@ import type { MascotAnimationStepProps } from "./MascotAnimationStep";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import type { Notice } from "../../../components/types";
 import { useMascotAnimationHotkeys } from "../hooks/useMascotAnimationHotkeys";
-import { useMascotMotionStepStyles } from "../hooks/useMascotMotionStepStyles";
+import { useMascotStepStyles } from "../hooks/useMascotStepStyles";
 import {
   MascotMotionStepHeader,
   MascotMotionStepToolbar,
@@ -39,7 +39,7 @@ export function MascotMotionAnimationStep(props: MascotMotionAnimationStepProps)
   const { activeStyleId, setActiveStyleId, activeStyle, busySlotKey, batchProgress } = stylesState;
   const isBatchBusy = batchProgress !== null || busySlotKey === "batch";
 
-  const { allStyles, resolvedActiveStyle } = useMascotMotionStepStyles(effectiveMascot, activeStyle, activeStyleId);
+  const { allStyles, resolvedActiveStyle } = useMascotStepStyles(effectiveMascot, activeStyle, activeStyleId);
 
   const preview = useStep4AnimationPreview({
     mascotId: effectiveMascot?.id,

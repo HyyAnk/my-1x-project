@@ -39,6 +39,8 @@ export type VisualPresetItem = {
   descKey?: string;
 };
 
+export const DEFAULT_BUILT_IN_PRESET_ID = "preset_arcade_classic";
+
 export const BUILT_IN_PRESETS: VisualPresetItem[] = [
   {
     id: "preset_arcade_classic",
@@ -175,6 +177,33 @@ export function findBuiltInPresetById(id?: string | null): VisualPresetItem | un
   if (!id || id === "auto" || id === "custom") return undefined;
   const resolvedId = id === "preset_visual_showcase" ? "preset_pastel_dream" : id;
   return BUILT_IN_PRESETS.find((p) => p.id === resolvedId);
+}
+
+export type BuiltInPresetResolutionInput = {
+  style_preset_id?: string | null;
+  palette_id?: string;
+  thinking_bar_style?: string;
+  question_box_style?: string;
+  answer_card_style?: string;
+  question_counter_style?: string;
+  background_style?: string;
+};
+
+export function resolveBuiltInPresetCategoryId(config?: BuiltInPresetResolutionInput): string {
+  const resolvedConfig = config ?? {};
+  const directPreset = findBuiltInPresetById(resolvedConfig.style_preset_id);
+  if (directPreset) return directPreset.id;
+
+  return (
+    matchVisualPreset({
+      palette_id: resolvedConfig.palette_id,
+      thinking_bar_style: resolvedConfig.thinking_bar_style,
+      question_box_style: resolvedConfig.question_box_style,
+      answer_card_style: resolvedConfig.answer_card_style,
+      counter_style: resolvedConfig.question_counter_style,
+      background_style: resolvedConfig.background_style,
+    })?.id ?? DEFAULT_BUILT_IN_PRESET_ID
+  );
 }
 
 import { resolvePresetPreviewLayoutId } from "./quizStyles.policy.js";

@@ -4,9 +4,10 @@ import { FilmSlate, X } from "@phosphor-icons/react";
 export interface IntroOutroModalHeaderProps {
   onClose: () => void;
   disabled?: boolean;
+  categoryName: string;
 }
 
-export const IntroOutroModalHeader: React.FC<IntroOutroModalHeaderProps> = ({ onClose, disabled = false }) => {
+export const IntroOutroModalHeader: React.FC<IntroOutroModalHeaderProps> = ({ onClose, categoryName, disabled = false }) => {
   return (
     <div className="intro-outro-modal-header">
       <div className="intro-outro-modal-header-left">
@@ -15,9 +16,9 @@ export const IntroOutroModalHeader: React.FC<IntroOutroModalHeaderProps> = ({ on
         </div>
         <div>
           <h2 id="intro-outro-modal-title" className="intro-outro-modal-title">
-            Add Intro & Outro Style
+            Upload Pair
           </h2>
-          <p className="intro-outro-modal-subtitle">Pair 1080p opening & closing clips with seamless stinger transitions.</p>
+          <p className="intro-outro-modal-subtitle">{categoryName}</p>
         </div>
       </div>
       <button type="button" className="icon-button" onClick={onClose} disabled={disabled} aria-label="Close modal">

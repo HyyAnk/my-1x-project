@@ -8,6 +8,7 @@ import type {
 } from "../utils/quizStyleResolution";
 
 export type EpisodeStyleOverride = {
+  stylePresetId?: string;
   theme?: QuizVisualTheme;
   paletteId?: string;
   thinkingBarStyle?: ResolvedThinkingBarStyle;
@@ -24,6 +25,6 @@ export type EpisodePreviewCandidate = {
   label: string;
 };
 
-export type ResolvedEpisodePreviewStyle = Required<Omit<EpisodeStyleOverride, "channelBrandName">> & {
+export type ResolvedEpisodePreviewStyle = Required<Omit<EpisodeStyleOverride, "channelBrandName" | "stylePresetId">> & {
   channelBrandName: string;
 };

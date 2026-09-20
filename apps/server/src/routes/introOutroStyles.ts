@@ -2,57 +2,17 @@ import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import type { FastifyPluginCallback } from "fastify";
-import { z } from "zod";
-import { getTransition, isValidTransition, nowIso, type IntroOutroStyle } from "@studio/shared";
+import { findBuiltInPresetById, nowIso, type IntroOutroStyle } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { AppState } from "./state.js";
-
-export const CreateIntroOutroStyleInputSchema = z
-  .object({
-    name: z.string().min(1).max(50),
-    style_id: z.string().optional(),
-    transition_type: z.string().min(1).default("stinger_swipe"),
-    transition_duration_seconds: z.number().min(0).max(1.5).optional(),
-    audio_mode: z.enum(["use_video_audio", "overlay_bgm"]).default("use_video_audio"),
-    intro_data: z.string().min(1),
-    outro_data: z.string().min(1),
-    intro_filename: z.string().default("intro.mp4"),
-    outro_filename: z.string().default("outro.mp4"),
-  })
-  .superRefine((data, ctx) => {
-    if (!isValidTransition(data.transition_type, "intro_outro") && !isValidTransition(data.transition_type)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Invalid or unregistered transition type '${data.transition_type}' for intro/outro`,
-        path: ["transition_type"],
-      });
-      return;
-    }
-
-    const def = getTransition(data.transition_type);
-    if (def) {
-      const duration = data.transition_duration_seconds ?? def.defaultDuration;
-      if (duration < def.minDuration || duration > def.maxDuration) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Transition duration ${duration}s is out of range [${def.minDuration}s, ${def.maxDuration}s] for transition '${def.name}'`,
-          path: ["transition_duration_seconds"],
-        });
-      }
-    }
-  })
-  .transform((data) => {
-    const def = getTransition(data.transition_type);
-    const resolvedDuration = data.transition_duration_seconds ?? def?.defaultDuration ?? 0.5;
-    return {
-      ...data,
-      transition_duration_seconds: resolvedDuration,
-      transition_type: data.transition_type,
-    };
-  });
-
-export type CreateIntroOutroStyleInput = z.infer<typeof CreateIntroOutroStyleInputSchema>;
+import { listIntroOutroCategorySummaries } from "./introOutro/introOutroCategoryService.js";
+import { parseIntroOutroVideoPayload } from "./introOutro/introOutroPayload.js";
+import {
+  CreateIntroOutroStyleInputSchema,
+  SetDefaultIntroOutroStyleInputSchema,
+  UpdateIntroOutroStyleInputSchema,
+} from "./introOutro/introOutroSchemas.js";
 
 export type IntroOutroStylesRouteDeps = {
   repository: RepositoryService;
@@ -60,27 +20,26 @@ export type IntroOutroStylesRouteDeps = {
   state: AppState;
 };
 
-function parseVideoPayload(data: string): Buffer | string {
-  if (data.startsWith("data:")) {
-    const commaIndex = data.indexOf(",");
-    return Buffer.from(data.slice(commaIndex + 1), "base64");
-  }
-  // If it is a path to an existing local file
-  if (data.length < 500 && (data.includes(":\\") || data.includes(":/") || data.startsWith("/"))) {
-    return data;
-  }
-  return Buffer.from(data, "base64");
-}
-
 export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository } = deps;
+
+    server.get("/api/channels/:channelId/intro-outro-categories", async (request) => {
+      const { channelId } = request.params as { channelId: string };
+      return { categories: await listIntroOutroCategorySummaries(repository, channelId) };
+    });
 
     // List all styles for channel
     server.get("/api/channels/:channelId/intro-outro-styles", async (request) => {
       const { channelId } = request.params as { channelId: string };
       const styles = await repository.listChannelIntroOutroStyles(channelId);
-      return { styles };
+      const { style_preset_id: stylePresetId } = request.query as { style_preset_id?: string };
+      if (!stylePresetId) return { styles };
+      return {
+        styles: styles.filter((style) =>
+          stylePresetId === "uncategorized" ? !style.style_preset_id : style.style_preset_id === stylePresetId,
+        ),
+      };
     });
 
     // Create a new style
@@ -89,8 +48,8 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
       const input = CreateIntroOutroStyleInputSchema.parse(request.body);
       const styleId = input.style_id?.trim() || `style_${randomUUID().slice(0, 8)}`;
 
-      const introSource = parseVideoPayload(input.intro_data);
-      const outroSource = parseVideoPayload(input.outro_data);
+      const introSource = parseIntroOutroVideoPayload(input.intro_data);
+      const outroSource = parseIntroOutroVideoPayload(input.outro_data);
 
       const introMeta = await repository.processAndStoreStyleClip(channelId, styleId, "intro", introSource, input.intro_filename);
 
@@ -104,9 +63,12 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
       }
 
       const style: IntroOutroStyle = {
+        schema_version: 2,
         style_id: styleId,
         channel_id: channelId,
+        style_preset_id: input.style_preset_id ? findBuiltInPresetById(input.style_preset_id)!.id : null,
         name: input.name.trim(),
+        status: "active",
         intro: introMeta,
         outro: outroMeta,
         transition_type: input.transition_type,
@@ -118,6 +80,24 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
 
       await repository.saveChannelIntroOutroStyle(channelId, style);
       return reply.status(201).send({ style });
+    });
+
+    server.patch("/api/channels/:channelId/intro-outro-styles/:styleId", async (request) => {
+      const { channelId, styleId } = request.params as { channelId: string; styleId: string };
+      const body = UpdateIntroOutroStyleInputSchema.parse(request.body);
+      const current = await repository.getChannelIntroOutroStyle(channelId, styleId);
+      if (!current) throw new RepositoryError(`Intro/Outro pair not found: ${styleId}`, "INTRO_OUTRO_PAIR_NOT_FOUND");
+      const preset = body.style_preset_id ? findBuiltInPresetById(body.style_preset_id) : undefined;
+      if (body.style_preset_id && !preset) throw new RepositoryError("Unknown built-in style preset", "INVALID_STYLE_PRESET");
+      const style: IntroOutroStyle = {
+        ...current,
+        schema_version: 2,
+        ...(preset ? { style_preset_id: preset.id } : {}),
+        ...(body.status ? { status: body.status } : {}),
+        updated_at: nowIso(),
+      };
+      await repository.saveChannelIntroOutroStyle(channelId, style);
+      return { style };
     });
 
     // Delete style
@@ -182,7 +162,7 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
     // Set channel default style
     server.put("/api/channels/:channelId/default-intro-outro-style", async (request) => {
       const { channelId } = request.params as { channelId: string };
-      const body = z.object({ style_id: z.string().nullable() }).parse(request.body);
+      const body = SetDefaultIntroOutroStyleInputSchema.parse(request.body);
       const channel = await repository.updateChannel(channelId, { default_intro_outro_style_id: body.style_id });
       return { ok: true, channel };
     });

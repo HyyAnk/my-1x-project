@@ -56,7 +56,7 @@ export function useMascotStyleQueueMutations({ state, refs, startPolling, pollBa
     const mascot = refs.mascotRef.current;
     if (!mascot) return;
 
-    const missingStyles = (mascot.styles || []).filter((s) => s.id !== "core" && !s.is_default && !s.anchor_image_url);
+    const missingStyles = (mascot.styles || []).filter((style) => style.built_in_preset_id && !style.is_default && !style.anchor_image_url);
 
     if (missingStyles.length === 0) {
       refs.onNoticeRef.current({

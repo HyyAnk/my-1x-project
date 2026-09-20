@@ -111,6 +111,7 @@ export type MascotStageSettingsInput = z.infer<typeof MascotStageSettingsInputSc
 export const CreateMascotStyleInputSchema = z.object({
   name: z.string().min(1),
   keyword: z.string().default(""),
+  built_in_preset_id: z.string().min(1).optional(),
 });
 
 export type CreateMascotStyleInput = z.infer<typeof CreateMascotStyleInputSchema>;
@@ -187,4 +188,3 @@ export {
   AnalyzeMascotConceptResponseSchema,
   type AnalyzeMascotConceptResponse,
 } from "../schemas/mascot.js";
-

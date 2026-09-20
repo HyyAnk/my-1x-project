@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
-import type { MascotProfile, MascotStyle } from "@studio/shared";
+import { BUILT_IN_PRESETS, DEFAULT_BUILT_IN_PRESET_ID, type MascotProfile, type MascotStyle } from "@studio/shared";
 
 const roots: string[] = [];
 
@@ -69,17 +69,18 @@ describe("Mascot Style Repository & Endpoints", () => {
     // Test getMascot auto-migration
     const migrated = await app.repository.getMascot(legacyMascotId);
     expect(migrated.styles).toBeDefined();
-    expect(migrated.styles?.length).toBe(1);
+    expect(migrated.styles?.length).toBe(BUILT_IN_PRESETS.length);
     expect(migrated.active_style_id).toBe("core");
 
     const coreStyle = migrated.styles![0];
     expect(coreStyle.id).toBe("core");
     expect(coreStyle.name).toBe("Core Style");
+    expect(coreStyle.built_in_preset_id).toBe(DEFAULT_BUILT_IN_PRESET_ID);
     expect(coreStyle.is_default).toBe(true);
-    expect(coreStyle.states.thinking.length).toBe(1);
+    expect(coreStyle.states.thinking.length).toBe(10);
     expect(coreStyle.states.thinking[0]?.image_url).toBe("/api/mascots/legacy_owl_1/assets/thinking.png");
     expect(coreStyle.states.thinking[0]?.motion_preset).toBe("sway");
-    expect(coreStyle.states.celebrate.length).toBe(1);
+    expect(coreStyle.states.celebrate.length).toBe(10);
     expect(coreStyle.states.celebrate[0]?.image_url).toBe("/api/mascots/legacy_owl_1/assets/celebrate.png");
     expect(coreStyle.states.celebrate[0]?.motion_preset).toBe("jump");
 
@@ -89,7 +90,7 @@ describe("Mascot Style Repository & Endpoints", () => {
       description: "Without styles provided",
     });
     expect(saved.styles).toBeDefined();
-    expect(saved.styles?.length).toBe(1);
+    expect(saved.styles?.length).toBe(BUILT_IN_PRESETS.length);
     expect(saved.active_style_id).toBe("core");
     expect(saved.styles![0]?.id).toBe("core");
 
@@ -97,7 +98,7 @@ describe("Mascot Style Repository & Endpoints", () => {
     const diskContent = JSON.parse(
       await readFile(path.join(app.repository.roots.mascots, saved.id, "mascot.json"), "utf8"),
     ) as MascotProfile;
-    expect(diskContent.styles?.length).toBe(1);
+    expect(diskContent.styles?.length).toBe(BUILT_IN_PRESETS.length);
     expect(diskContent.styles![0]?.id).toBe("core");
     expect(diskContent.active_style_id).toBe("core");
   });
@@ -112,7 +113,7 @@ describe("Mascot Style Repository & Endpoints", () => {
       name: "Barnaby Bear",
       description: "A friendly grizzly bear",
     });
-    expect(mascot.styles?.length).toBe(1);
+    expect(mascot.styles?.length).toBe(BUILT_IN_PRESETS.length);
     expect(mascot.active_style_id).toBe("core");
 
     // 2. Create a new style
@@ -120,7 +121,8 @@ describe("Mascot Style Repository & Endpoints", () => {
       name: "Beach Party",
       keyword: "hawaiian shirt sunglasses",
     });
-    expect(newStyle.id).toMatch(/^style_\d+/);
+    expect(newStyle.id).toBe("builtin_cyber_neon");
+    expect(newStyle.built_in_preset_id).toBe("preset_cyber_neon");
     expect(newStyle.name).toBe("Beach Party");
     expect(newStyle.keyword).toBe("hawaiian shirt sunglasses");
     expect(newStyle.is_default).toBe(false);
@@ -139,7 +141,7 @@ describe("Mascot Style Repository & Endpoints", () => {
       expect(celebSlot.image_url).toBe("");
     }
 
-    expect(mascotWithStyle.styles?.length).toBe(2);
+    expect(mascotWithStyle.styles?.length).toBe(BUILT_IN_PRESETS.length);
 
     // 3. Update style name and keyword
     const updatedMascot = await app.repository.updateMascotStyle(mascot.id, newStyle.id, {
@@ -178,12 +180,20 @@ describe("Mascot Style Repository & Endpoints", () => {
     expect(activeChangedMascot.active_style_id).toBe(newStyle.id);
 
     // 6. Delete prevention: cannot delete core style
-    await expect(app.repository.deleteMascotStyle(mascot.id, "core")).rejects.toThrow("Cannot delete the default Core Style");
+    await expect(app.repository.deleteMascotStyle(mascot.id, "core")).rejects.toThrow("Cannot delete a Built-in Style");
 
-    // 7. Delete custom style and verify active style resets to "core"
-    const deletedMascot = await app.repository.deleteMascotStyle(mascot.id, newStyle.id);
-    expect(deletedMascot.styles?.length).toBe(1);
-    expect(deletedMascot.styles?.some((s) => s.id === newStyle.id)).toBe(false);
+    // 7. Managed styles are immutable, while an unbound legacy style remains removable.
+    await expect(app.repository.deleteMascotStyle(mascot.id, newStyle.id)).rejects.toThrow("Cannot delete a Built-in Style");
+    const legacyStyle: MascotStyle = { ...newStyle, id: "legacy_beach_party", name: "Legacy Beach Party", built_in_preset_id: undefined };
+    const withLegacy = await app.repository.saveMascot({
+      ...activeChangedMascot,
+      styles: [...(activeChangedMascot.styles ?? []), legacyStyle],
+      active_style_id: legacyStyle.id,
+    });
+    expect(withLegacy.styles?.length).toBe(BUILT_IN_PRESETS.length + 1);
+    const deletedMascot = await app.repository.deleteMascotStyle(mascot.id, legacyStyle.id);
+    expect(deletedMascot.styles?.length).toBe(BUILT_IN_PRESETS.length);
+    expect(deletedMascot.styles?.some((style) => style.id === legacyStyle.id)).toBe(false);
     expect(deletedMascot.active_style_id).toBe("core");
   });
 
@@ -223,7 +233,7 @@ describe("Mascot Style Repository & Endpoints", () => {
     expect(createdStyle.keyword).toBe("parka scarf goggles");
     expect(createdStyle.states.thinking.length).toBe(10);
     expect(createdStyle.states.celebrate.length).toBe(10);
-    expect(mascotWithStyle.styles?.length).toBe(2);
+    expect(mascotWithStyle.styles?.length).toBe(BUILT_IN_PRESETS.length);
 
     // 2. PATCH /api/mascots/:mascotId/styles/:styleId
     const patchStyleRes = await app.server.inject({
@@ -278,15 +288,33 @@ describe("Mascot Style Repository & Endpoints", () => {
     });
     expect(deleteCoreRes.statusCode).toBe(400);
 
-    // 6. DELETE /api/mascots/:mascotId/styles/:styleId -> should delete and reset active style to core
+    // 6. Managed preset styles cannot be deleted.
     const deleteStyleRes = await app.server.inject({
       method: "DELETE",
       url: `/api/mascots/${mascot.id}/styles/${createdStyle.id}`,
     });
-    expect(deleteStyleRes.statusCode).toBe(200);
-    const deleteData = deleteStyleRes.json<{ ok: boolean; mascot: MascotProfile }>();
+    expect(deleteStyleRes.statusCode).toBe(400);
+
+    // 7. Unbound legacy styles remain deletable for backward compatibility.
+    const legacyStyle: MascotStyle = {
+      ...createdStyle,
+      id: "legacy_winter_explorer",
+      name: "Legacy Winter Explorer",
+      built_in_preset_id: undefined,
+    };
+    await app.repository.saveMascot({
+      ...activeMascot,
+      styles: [...(activeMascot.styles ?? []), legacyStyle],
+      active_style_id: legacyStyle.id,
+    });
+    const deleteLegacyRes = await app.server.inject({
+      method: "DELETE",
+      url: `/api/mascots/${mascot.id}/styles/${legacyStyle.id}`,
+    });
+    expect(deleteLegacyRes.statusCode).toBe(200);
+    const deleteData = deleteLegacyRes.json<{ ok: boolean; mascot: MascotProfile }>();
     expect(deleteData.ok).toBe(true);
-    expect(deleteData.mascot.styles?.length).toBe(1);
+    expect(deleteData.mascot.styles?.length).toBe(BUILT_IN_PRESETS.length);
     expect(deleteData.mascot.active_style_id).toBe("core");
   });
 });

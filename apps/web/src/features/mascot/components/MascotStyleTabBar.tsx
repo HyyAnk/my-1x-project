@@ -33,7 +33,6 @@ export function MascotStyleTabBar({
             (style.states?.thinking?.filter((v) => Boolean(v.image_url)).length || 0) +
             (style.states?.celebrate?.filter((v) => Boolean(v.image_url)).length || 0);
           const isCore = style.id === "core" || Boolean(style.is_default);
-          const isUploaded = editingMascot?.concept_origin === "user_uploaded";
           const effectiveAnchor =
             style.anchor_image_url || (isCore ? editingMascot?.master_image_url || editingMascot?.master_raw_image_url : null);
           const readiness = getMascotStyleReadiness({
@@ -51,13 +50,7 @@ export function MascotStyleTabBar({
               onClick={() => onSelectStyle(style.id)}
             >
               <PaintBrush size={14} weight={isSelected ? "fill" : "regular"} />
-              <span className="style-tab-title">
-                {style.is_default || style.id === "core"
-                  ? isUploaded
-                    ? "Core Style (Uploaded)"
-                    : "Core Style (Default)"
-                  : style.name}
-              </span>
+              <span className="style-tab-title">{style.name}</span>
               <span className={`style-tab-count-pill is-readiness-${readiness}`}>{count}/20</span>
             </button>
           );

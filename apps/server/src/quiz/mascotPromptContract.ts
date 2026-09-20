@@ -1,56 +1,23 @@
 import {
-  MASCOT_ACTION_META,
   type MascotActionType,
   type MascotConceptOrigin,
   type MascotProfile,
   type MascotStyle,
-  type QuizImageStyle,
-  getMascotSlotDefaultPreset,
   getMascotPoses,
   getUnusedMascotPoses,
   pickRandomUnusedPose,
   pickShuffledUnusedPoses,
 } from "@studio/shared";
+import { buildMascotActionPrompt, type MascotPromptBuildOptions } from "./mascotActionPromptBuilder.js";
+import {
+  MASCOT_STEP2_SOURCE_ISOLATION_TAGS,
+  MASCOT_STUDIO_ISOLATION_TAGS,
+  MASCOT_STYLE_PROMPTS,
+} from "./mascotPromptConstants.js";
 
 export { getMascotPoses, getUnusedMascotPoses, pickRandomUnusedPose, pickShuffledUnusedPoses };
-
-export const MASCOT_STYLE_PROMPTS: Record<QuizImageStyle, string> = {
-  pixar_3d:
-    "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
-  flat_vector: "2D flat vector art, clean bold outlines, solid color blocks, minimalist modern mascot, sticker style",
-  kawaii_chibi: "Chibi kawaii anime style, oversized cute sparkling eyes, mini body, joyful expression, pastel accents, cute anime mascot",
-  natural_realism:
-    "Hyper-realistic live-action CGI creature style, intricate lifelike fur and feather textures, realistic sparkling eyes, natural soft studio lighting, cinema 4D photoreal render",
-  plastic_toy: "Glossy vinyl designer toy style, smooth plastic reflections, pop mart blind box aesthetic, studio lighting",
-};
-
-/**
- * Strict studio isolation tags mandatory for all mascot generations to guarantee
- * perfect transparency and effortless AI matting with RMBG-1.4.
- */
-export const MASCOT_STUDIO_ISOLATION_TAGS = [
-  "Single centered subject standing proudly facing camera",
-  "dynamic posture",
-  "sharp clean silhouette",
-  "solid flat chroma key green background (#00FF00)",
-  "high contrast studio rim lighting",
-  "floating character",
-  "no ground shadow",
-  "no floor",
-  "no contact shadow",
-  "no pedestal",
-  "pure uniform backdrop",
-  "single standalone character only",
-  "no character sheet",
-  "no sprite sheet",
-  "no sprite strip",
-  "no spritesheet",
-  "no multiple angles",
-  "no multiple views",
-  "no turnaround",
-  "no collage",
-  "no split screen",
-].join(", ");
+export { buildMascotActionPrompt, MASCOT_STEP2_SOURCE_ISOLATION_TAGS, MASCOT_STUDIO_ISOLATION_TAGS, MASCOT_STYLE_PROMPTS };
+export type { MascotPromptBuildOptions };
 
 /**
  * Builds the canonical concept art prompt for Step 1 (Master Identity)
@@ -117,155 +84,6 @@ export function buildMascotStyleConceptPrompt(
   ].join(" ");
 
   return [continuityDirective, costumeDirective, conceptPose, isolationConstraints].join(" ");
-}
-
-/**
- * Strict studio isolation tags for Step 2 16:9 large half-body source image generation.
- * Enforces a 16:9 canvas (1280x720 composition), large half-body subject positioned in lower-middle framing,
- * safe margins with generous top 1/3 headroom for animation jump clearance, lower body continuing cleanly beyond bottom edge,
- * neutral flat background, and zero baked-in corner/bottom-left placement.
- */
-export const MASCOT_STEP2_SOURCE_ISOLATION_TAGS = [
-  "16:9 widescreen canvas",
-  "1280x720 composition",
-  "large half-body subject positioned in lower-middle frame",
-  "generous upper headroom with top one-third of frame kept as empty flat chroma key green space (#00FF00)",
-  "at least 30 percent open headspace above head and ears for animation jumping clearance",
-  "centered neutral composition",
-  "no bottom-left placement",
-  "no corner placement",
-  "head, ears, hands, and expressive features safely inside frame margins below upper one-third boundary",
-  "lower body and torso continue cleanly beyond bottom edge of canvas by design",
-  "not a floating portrait",
-  "not a small corner mascot",
-  "solid flat chroma key green background (#00FF00)",
-  "high contrast studio rim lighting",
-  "fixed camera angle facing forward",
-  "consistent character scale and lighting direction",
-  "no floor",
-  "no pedestal",
-  "no ground shadow",
-  "no contact shadow",
-  "no scenery",
-  "no text",
-  "no watermark",
-  "no frame border",
-  "single standalone character only",
-  "no character sheet",
-  "no sprite sheet",
-  "no multiple angles",
-  "no multiple views",
-  "no turnaround",
-  "no collage",
-  "no split screen",
-].join(", ");
-
-export interface MascotPromptBuildOptions {
-  prompt?: string;
-  keyword?: string;
-  hasReferenceImage?: boolean;
-  hasStyleAnchor?: boolean;
-  slotIndex?: number;
-  composition?: "full_body" | "half_body_16_9";
-}
-
-/**
- * Builds the canonical action state prompt for Step 2 (Expressive Studio)
- */
-export function buildMascotActionPrompt(
-  mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme"> & {
-    concept_origin?: MascotConceptOrigin;
-    master_image_url?: string | null;
-  },
-  action: MascotActionType,
-  options: MascotPromptBuildOptions = {},
-): string {
-  const isHalfBody = options.composition === "half_body_16_9";
-  const meta = MASCOT_ACTION_META[action] || MASCOT_ACTION_META.idle;
-  const styleDesc = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
-  const baseDesc = mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly companion`;
-
-  const isUserUploaded =
-    mascot.concept_origin === "user_uploaded" ||
-    (Boolean(mascot.master_image_url) && !mascot.master_prompt?.trim());
-
-  const fallbackPose =
-    options.slotIndex !== undefined && (action === "thinking" || action === "celebrate")
-      ? getMascotSlotDefaultPreset(action, options.slotIndex)
-      : meta.description;
-  const rawAction = options.prompt?.trim() || fallbackPose;
-  const actionText = rawAction.endsWith(".") ? rawAction.slice(0, -1) : rawAction;
-  const actionDirective = `Pose and Action: ${actionText}.`;
-
-  const rawKeyword = options.keyword?.trim();
-  const cleanKeyword = rawKeyword ? (rawKeyword.endsWith(".") ? rawKeyword.slice(0, -1) : rawKeyword) : undefined;
-  const costumeDirective = cleanKeyword ? `Theme & Costume: Styled in authentic ${cleanKeyword} attire and accessories.` : undefined;
-
-  const isolationTags = isHalfBody ? MASCOT_STEP2_SOURCE_ISOLATION_TAGS : MASCOT_STUDIO_ISOLATION_TAGS;
-
-  if (options.hasReferenceImage) {
-    if (options.hasStyleAnchor) {
-      const continuityDirective = isUserUploaded
-        ? `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". Maintain strict fidelity to the reference image character identity, color palette, and recognizable anatomical features. The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`
-        : `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`;
-
-      if (isHalfBody) {
-        const compositionDirective = `Composition: Large half-body subject on a 16:9 widescreen canvas (1280x720), centered and neutral with respect to final placement. Positioned in lower-middle frame with generous upper headroom: top one-third of the frame must remain empty flat chroma key green background to allow character animation jumps and vertical motions without clipping. The lower torso continues beyond the bottom edge of the frame; head, ears, and hands remain within safe margins below the top one-third boundary line. Strictly no corner placement, no bottom-left anchoring, no floor, no pedestal, no scenery.`;
-        return [continuityDirective, compositionDirective, actionDirective, isolationTags].join(" ");
-      }
-
-      const parts = [continuityDirective, actionDirective, isolationTags];
-      return parts.join(" ");
-    }
-
-    const continuityDirective = isUserUploaded
-      ? `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image. Maintain strong fidelity to the reference image character identity, color palette, and recognizable anatomical features while performing the pose: ${actionText}.`
-      : `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
-
-    if (isHalfBody) {
-      const compositionDirective = `Composition: Large half-body subject on a 16:9 widescreen canvas (1280x720), centered and neutral with respect to final placement. Positioned in lower-middle frame with generous upper headroom: top one-third of the frame must remain empty flat chroma key green background to allow character animation jumps and vertical motions without clipping. The lower torso continues beyond the bottom edge of the frame; head, ears, and hands remain within safe margins below the top one-third boundary line. Strictly no corner placement, no bottom-left anchoring, no floor, no pedestal, no scenery.`;
-      return [
-        continuityDirective,
-        ...(costumeDirective ? [costumeDirective] : []),
-        compositionDirective,
-        actionDirective,
-        isolationTags,
-      ].join(" ");
-    }
-
-    const parts = [continuityDirective, ...(costumeDirective ? [costumeDirective] : []), actionDirective, isolationTags];
-    return parts.join(" ");
-  }
-
-  const characterDna = [
-    `Character: "${mascot.name}"`,
-    `Visual Appearance: ${baseDesc}`,
-    `Color Palette: Primary theme ${mascot.color_theme || "#06b6d4"}`,
-    `Style & Proportions: Chibi 1:2 head-to-body proportion, large expressive sparkling eyes, ${styleDesc}`,
-    costumeDirective
-      ? `${costumeDirective} STRICT CHARACTER CONTINUITY: Identical face, eyes, head shape, and colors matching master reference image; only the costume and accessories reflect the ${cleanKeyword} theme.`
-      : `STRICT CHARACTER CONTINUITY: Identical face, eyes, head shape, costume, accessories, and colors matching master reference image. Keep the same exact character identity.`,
-  ].join(". ");
-
-  if (isHalfBody) {
-    const compositionDirective = `Composition: Large half-body subject on a 16:9 widescreen canvas (1280x720), centered and neutral with respect to final placement. Positioned in lower-middle frame with generous upper headroom: top one-third of the frame must remain empty flat chroma key green background to allow character animation jumps and vertical motions without clipping. The lower torso continues beyond the bottom edge of the frame; head, ears, and hands remain within safe margins below the top one-third boundary line. Strictly no corner placement, no bottom-left anchoring, no floor, no pedestal, no scenery.`;
-    return [
-      `Large half-body single character pose of "${mascot.name}" on a 16:9 canvas.`,
-      `${characterDna}.`,
-      compositionDirective,
-      actionDirective,
-      isolationTags,
-      `Strictly one single standalone mascot character in large half-body view positioned in lower-middle frame with top one-third headroom and lower body continuing beyond bottom edge. Centered neutral composition. No bottom-left placement, no corner placement, no multiple views, no character sheet, no sprite sheet, no turnaround, no collage.`,
-    ].join(" ");
-  }
-
-  return [
-    `Full-body single character pose of "${mascot.name}".`,
-    `${characterDna}.`,
-    actionDirective,
-    isolationTags,
-    `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no turnaround, no collage.`,
-  ].join(" ");
 }
 
 /**

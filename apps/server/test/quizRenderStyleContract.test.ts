@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { resolveBeatQuizStyle, type ResolvedQuizStyleWithProvenance } from "@studio/shared";
+import {
+  reconcileMascotBuiltInStyles,
+  resolveBeatQuizStyle,
+  type MascotProfile,
+  type ResolvedQuizStyleWithProvenance,
+} from "@studio/shared";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { HyperframesRenderer } from "../src/quiz/render/hyperframesRenderer.js";
 import { buildQuizRenderStyleContext } from "../src/quiz/render/quizRenderStyleContext.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { prepareQuizVideoRender } from "../src/tasks/video/quizVideoRenderPreparation.js";
+import { buildMascotRenderDependencies } from "../src/tasks/video/videoCompositionPreparer.js";
 import { styleAxisCases, styleBoundaryChannel, styleBoundaryEpisode, styleBoundaryQuiz as quiz } from "./quizStyleBoundaryFixtures.js";
 
 describe("Quiz production style contract", () => {
@@ -56,6 +62,66 @@ describe("Quiz production style contract", () => {
 
     expect(transition).toBeDefined();
     expect(transition).toContain("--to:#9A66E6");
+  });
+
+  it("resolves the production mascot style from the selected built-in visual preset", async () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const channel = styleBoundaryChannel();
+    const episodeQuizConfig = styleBoundaryEpisode({ style_preset_id: "preset_cyber_neon" });
+    const baseMascot = reconcileMascotBuiltInStyles(mascotProfile());
+    const mascot: MascotProfile = {
+      ...baseMascot,
+      styles: baseMascot.styles?.map((style) =>
+        style.built_in_preset_id === "preset_cyber_neon"
+          ? {
+              ...style,
+              states: {
+                thinking: [{ id: "cyber-thinking", slot_index: 1, image_url: "/assets/cyber-thinking.png" }],
+                celebrate: [{ id: "cyber-celebrate", slot_index: 1, image_url: "/assets/cyber-celebrate.png" }],
+              },
+            }
+          : style,
+      ),
+    };
+
+    const prepared = await prepareQuizVideoRender({
+      ...renderInputWithoutStyleContext(director),
+      channel,
+      episodeQuizConfig,
+      mascot,
+      mascotConfig: { enabled: true, position: "bottom_left", scale: 1, offset_x: 0, offset_y: 0 },
+    });
+
+    const firstQuestion = questionFile(prepared.compositionFiles, "q1");
+    expect(firstQuestion).toContain("/assets/cyber-thinking.png");
+    expect(firstQuestion).toContain("/assets/cyber-celebrate.png");
+  });
+
+  it("fingerprints the resolved mascot style revision and every style used by cycle mode", () => {
+    const baseMascot = reconcileMascotBuiltInStyles(mascotProfile());
+    const mascot: MascotProfile = {
+      ...baseMascot,
+      styles: baseMascot.styles?.map((style) => ({
+        ...style,
+        style_revision: style.built_in_preset_id === "preset_cyber_neon" ? 4 : 2,
+      })),
+    };
+    const cyberEpisode = {
+      quiz_config: styleBoundaryEpisode({
+        style_preset_id: "preset_cyber_neon",
+        mascot_style_selection: { mode: "style_builtin" },
+      }),
+    } as Parameters<typeof buildMascotRenderDependencies>[1];
+    const cyberDependencies = buildMascotRenderDependencies(mascot, cyberEpisode);
+
+    expect(cyberDependencies).toContain("mascot-style:builtin_cyber_neon:preset_cyber_neon:4");
+    expect(cyberDependencies.some((dependency) => dependency.includes("builtin_comic_boom"))).toBe(false);
+
+    const cycleEpisode = {
+      quiz_config: styleBoundaryEpisode({ mascot_style_selection: { mode: "cycle" } }),
+    } as Parameters<typeof buildMascotRenderDependencies>[1];
+    const cycleDependencies = buildMascotRenderDependencies(mascot, cycleEpisode);
+    expect(cycleDependencies.filter((dependency) => dependency.startsWith("mascot-style:"))).toHaveLength(mascot.styles?.length ?? 0);
   });
 
   it("P8B-BND-02 proves Theme < Channel < Episode < Beat for every style axis", () => {
@@ -136,4 +202,21 @@ function questionFile(files: Record<string, string>, questionId: string): string
   const html = Object.entries(files).find(([path]) => path.includes(`quiz-${questionId}-`))?.[1];
   expect(html).toBeDefined();
   return html ?? "";
+}
+
+function mascotProfile(): MascotProfile {
+  return {
+    id: "preset-mascot",
+    name: "Preset Mascot",
+    description: "",
+    visual_style: "pixar_3d",
+    master_prompt: "",
+    master_image_url: "/assets/master.png",
+    color_theme: "#06b6d4",
+    actions: {},
+    styles: [],
+    assigned_channel_ids: [],
+    created_at: "2026-09-20T00:00:00.000Z",
+    updated_at: "2026-09-20T00:00:00.000Z",
+  };
 }

@@ -15,6 +15,7 @@ export class HyperframesRenderer implements QuizRenderer {
       assets: input.assets,
       bgmOptions: input.bgmOptions,
       mascot: input.mascot,
+      mascotStyleId: input.mascotStyleId,
       mascotConfig: input.mascotConfig,
       premixedAudio: input.premixedAudio,
       fps: input.fps,
