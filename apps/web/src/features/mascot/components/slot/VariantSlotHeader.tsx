@@ -31,7 +31,6 @@ export interface VariantSlotHeaderProps {
   slotIndex: number;
   state?: "thinking" | "celebrate";
   isQueued?: boolean;
-  isFilled?: boolean;
   isSelected?: boolean;
   isSelectable?: boolean;
   onToggleSelect?: (selected: boolean) => void;
@@ -43,7 +42,6 @@ export function VariantSlotHeader({
   slotIndex,
   state,
   isQueued = false,
-  isFilled = false,
   isSelected = false,
   isSelectable = true,
   onToggleSelect,
@@ -55,7 +53,7 @@ export function VariantSlotHeader({
   return (
     <div className="variant-slot-header">
       <div className="slot-header-left">
-        {isFilled && onToggleSelect ? (
+        {onToggleSelect ? (
           <label className="slot-select-checkbox-label" title={checkboxAriaLabel}>
             <input
               type="checkbox"

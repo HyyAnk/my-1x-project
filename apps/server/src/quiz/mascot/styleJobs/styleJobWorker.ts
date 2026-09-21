@@ -40,6 +40,10 @@ export async function executeStyleJob(ctx: StyleJobWorkerContext, runtime: Style
 
   try {
     if (ctx.isDestroyed()) return;
+    const prompt = job.prompt?.trim();
+    if (!prompt) {
+      throw new Error("Style generation prompt is required");
+    }
     const mascot = await ctx.repository.getMascot(job.mascot_id);
     const result = await ctx.styleGenerator(
       ctx.repository,
@@ -47,7 +51,7 @@ export async function executeStyleJob(ctx: StyleJobWorkerContext, runtime: Style
       job.style_id,
       ctx.imageConfig,
       {
-        prompt: job.prompt ?? undefined,
+        prompt,
         signal: runtime.abortController.signal,
         imageFallbackConfig: ctx.imageFallbackConfig,
       },

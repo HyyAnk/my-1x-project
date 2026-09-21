@@ -14,7 +14,7 @@ export async function generateMascotStyleConcept(
   mascot: MascotProfile,
   styleId: string,
   imageConfig: AppConfig["image_generation"],
-  options: { prompt?: string; signal?: AbortSignal; imageFallbackConfig?: AppConfig["image_fallback"] } = {},
+  options: { prompt: string; signal?: AbortSignal; imageFallbackConfig?: AppConfig["image_fallback"] },
   logger?: StudioLogger,
 ): Promise<{
   anchor_image_url: string;
@@ -27,7 +27,7 @@ export async function generateMascotStyleConcept(
   if (!style) throw new Error(`Style ${styleId} not found`);
 
   const referenceImageBase64 = await loadMasterReferenceImageBase64(repository, mascot, logger);
-  const fullPrompt = buildMascotStyleConceptPrompt(mascot, style, options.prompt);
+  const fullPrompt = buildMascotStyleConceptPrompt(mascot, options.prompt);
 
   const timestamp = Date.now();
   const mattedFilename = `style_${styleId}_anchor_${timestamp}.png`;
@@ -73,6 +73,7 @@ export async function generateMascotStyleConcept(
         s.id === styleId
           ? {
               ...s,
+              keyword: options.prompt.trim(),
               anchor_image_url: savedAnchorUrl,
               raw_anchor_image_url: savedRawUrl,
               style_revision: (s.style_revision ?? 1) + 1,

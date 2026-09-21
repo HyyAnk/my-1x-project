@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sparkle } from "@phosphor-icons/react";
 import { findBuiltInPresetById, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
@@ -37,7 +37,8 @@ export interface MascotStyleAnchorCardProps {
 
 export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpenLightbox }: MascotStyleAnchorCardProps) {
   const { t } = useTranslation();
-  const [conceptPrompt, setConceptPrompt] = useState("");
+  const [conceptPrompt, setConceptPrompt] = useState(style.keyword || "");
+  const [promptError, setPromptError] = useState<string | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isCore = isCoreStyle(style);
   const isUploaded = isUploadedConcept(editingMascot);
@@ -59,9 +60,19 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
   const sanitizedStyleName = useMemo(() => sanitizeIdentifier(style.name || style.id), [style.name, style.id]);
   const rawImageUrl = useMemo(() => resolveRawImageUrl(style, editingMascot), [style, editingMascot]);
 
+  useEffect(() => {
+    setConceptPrompt(style.keyword || "");
+    setPromptError(undefined);
+  }, [style.id, style.keyword]);
+
   const handleGenerate = () => {
     if (isCardActionLocked) return;
-    const prompt = conceptPrompt.trim() || undefined;
+    const prompt = conceptPrompt.trim();
+    if (!prompt) {
+      setPromptError(t("mascots.styleConceptPromptRequired"));
+      return;
+    }
+    setPromptError(undefined);
     const request = stylesState?.handleQueueStyle
       ? stylesState.handleQueueStyle(style.id, prompt)
       : stylesState?.handleGenerateStyleConcept(style.id, prompt);
@@ -120,7 +131,16 @@ export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpe
       ) : null}
 
       {!isCore ? (
-        <MascotStyleConceptPrompt styleName={style.name} value={conceptPrompt} disabled={isCardActionLocked} onChange={setConceptPrompt} />
+        <MascotStyleConceptPrompt
+          styleName={style.name}
+          value={conceptPrompt}
+          disabled={isCardActionLocked}
+          error={promptError}
+          onChange={(value) => {
+            setConceptPrompt(value);
+            if (promptError) setPromptError(undefined);
+          }}
+        />
       ) : null}
 
       <MascotStyleAnchorActions

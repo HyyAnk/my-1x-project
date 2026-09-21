@@ -62,13 +62,10 @@ export const mascotApi = {
       },
     ),
   analyzeMascotConcept: (mascotId: string, input?: AnalyzeMascotConceptInput) =>
-    request<AnalyzeMascotConceptResponse>(
-      `/api/mascots/${encodeURIComponent(mascotId)}/analyze-concept`,
-      {
-        method: "POST",
-        body: JSON.stringify(input ?? {}),
-      },
-    ),
+    request<AnalyzeMascotConceptResponse>(`/api/mascots/${encodeURIComponent(mascotId)}/analyze-concept`, {
+      method: "POST",
+      body: JSON.stringify(input ?? {}),
+    }),
   generateMascotAction: (id: string, body: GenerateMascotSpriteInput) =>
     request<{
       mascot: MascotProfile;
@@ -133,13 +130,13 @@ export const mascotApi = {
   generateStyleConcept: async (
     mascotId: string,
     styleId: string,
-    options?: { prompt?: string },
+    options: { prompt: string },
   ): Promise<GenerateMascotStyleConceptResponse> => {
     return request<GenerateMascotStyleConceptResponse>(
       `/api/mascots/${encodeURIComponent(mascotId)}/styles/${encodeURIComponent(styleId)}/concept`,
       {
         method: "POST",
-        body: JSON.stringify(options || {}),
+        body: JSON.stringify(options),
       },
     );
   },

@@ -13,7 +13,9 @@ export interface BatchStateRefs {
   onActivityChangeRef: React.MutableRefObject<() => void>;
   onActiveStyleRecoveredRef: React.MutableRefObject<(styleId: string) => void>;
   activeBatchIdRef: React.MutableRefObject<string | null>;
+  lastBatchUpdatedAtRef: React.MutableRefObject<string | null>;
   lastCompletedCountRef: React.MutableRefObject<number>;
+  pendingSlotKeysRef: React.MutableRefObject<Set<string>>;
 }
 
 export interface MascotBatchStateReturn {

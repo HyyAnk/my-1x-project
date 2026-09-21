@@ -647,6 +647,13 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       const { style } = styleRes.json<{ mascot: MascotProfile; style: MascotStyle }>();
       expect(style.anchor_image_url ?? null).toBeNull();
 
+      const missingPromptRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${mascot.id}/styles/${style.id}/concept`,
+        payload: {},
+      });
+      expect(missingPromptRes.statusCode).toBe(400);
+
       // 3. Test 404 cases
       // 3a. Non-existent mascot ID
       const missingMascotRes = await app.server.inject({
@@ -686,14 +693,16 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(conceptBody.anchor_image_url).toContain(`/api/mascots/${mascot.id}/assets/style_${style.id}_anchor_`);
       expect(conceptBody.style.anchor_image_url).toBe(conceptBody.anchor_image_url);
       expect(conceptBody.placeholder).toBe(true);
-      expect(conceptBody.prompt_used).toContain("Cyber Neon Pulse");
-      expect(conceptBody.prompt_used).toContain("neon visor cyber katana");
+      expect(conceptBody.prompt_used).toContain("Epic neon glowing cyberpunk stance");
+      expect(conceptBody.prompt_used).not.toContain("Cyber Neon Pulse");
+      expect(conceptBody.prompt_used).not.toContain("neon visor cyber katana");
       expect(conceptBody.prompt_used).toContain("Rendering style lock");
 
       // Verify persistence in repository
       const refreshedMascot = await app.repository.getMascot(mascot.id);
       const refreshedStyle = refreshedMascot.styles?.find((s) => s.id === style.id);
       expect(refreshedStyle?.anchor_image_url).toBe(conceptBody.anchor_image_url);
+      expect(refreshedStyle?.keyword).toBe("Epic neon glowing cyberpunk stance");
 
       // 5. Style update case: Direct update of anchor_image_url via PUT /api/mascots/:id/styles/:styleId
       const customAnchorUrl = `/api/mascots/${mascot.id}/assets/custom_anchor_manual.png`;

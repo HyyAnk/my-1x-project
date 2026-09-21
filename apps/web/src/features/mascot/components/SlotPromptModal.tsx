@@ -116,13 +116,13 @@ export function SlotPromptModal({
               <p className="slot-inheritance-text">
                 {styleKeyword ? (
                   <>
-                    Theme keyword: <em>&ldquo;{styleKeyword}&rdquo;</em>.
+                    Style prompt: <em>&ldquo;{styleKeyword}&rdquo;</em>.
                   </>
                 ) : (
-                  <>Default mascot style (no additional wardrobe keyword).</>
+                  <>Default mascot style with no additional style prompt.</>
                 )}{" "}
-                Style keyword and core character identity are <strong>automatically inherited</strong>. Use this field only to specify the
-                particular pose, expression, or action.
+                The style prompt and core character identity are <strong>automatically inherited</strong>. Use this field only to specify
+                the particular pose, expression, or action.
               </p>
             </div>
 

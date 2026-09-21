@@ -698,7 +698,7 @@ describe("useMascotStyles", () => {
     );
 
     await act(async () => {
-      await result.current.handleGenerateStyleConcept("style_cyber");
+      await result.current.handleGenerateStyleConcept("style_cyber", "manual cyber prompt");
     });
 
     expect(result.current.generatingConceptStyleId).toBeNull();

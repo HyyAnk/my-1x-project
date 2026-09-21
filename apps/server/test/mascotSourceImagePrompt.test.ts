@@ -72,14 +72,14 @@ describe("Stage 02: Step 2 Source Image Prompt Contract", () => {
         hasReferenceImage: true,
         hasStyleAnchor: true,
         slotIndex: 3,
-        prompt: "triumphant arms raised high with sparkling victory confetti",
+        prompt: "triumphant arms raised high with a radiant victory smile",
       });
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain(
         'Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "Pip the Penguin"',
       );
-      expect(prompt).toContain("Pose and Action: triumphant arms raised high with sparkling victory confetti.");
+      expect(prompt).toContain("Pose and Action: triumphant arms raised high with a radiant victory smile.");
       expect(prompt).toContain("16:9 widescreen canvas (1280x720)");
       expect(prompt).toContain("centered and neutral with respect to final placement");
       expect(prompt).toContain("lower torso continues beyond the bottom edge of the frame");
@@ -193,10 +193,7 @@ describe("Stage 02: Step 2 Source Image Prompt Contract", () => {
     });
 
     it("preserves exact Step 1 Style Concept Prompt without alteration", () => {
-      const prompt = buildMascotStyleConceptPrompt(testMascot, {
-        name: "Cyber Ninja",
-        keyword: "stealth cyber armor katana holographic visor",
-      });
+      const prompt = buildMascotStyleConceptPrompt(testMascot, "stealth cyber armor katana holographic visor");
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain("Strictly preserve character identity from @1");
@@ -266,17 +263,23 @@ describe("Stage 02: Step 2 Source Image Prompt Contract", () => {
       expect(svg).toContain('height="720"');
       expect(svg).toContain('fill="#00FF00"'); // Flat chroma key green background
       expect(svg).toContain('cx="640"'); // Centered horizontal mascot
-      expect(svg).toContain("🎉"); // Celebrate prompt cue
-      expect(svg).toContain("⭐");
+      expect(svg).not.toContain("🎉");
+      expect(svg).not.toContain("⭐");
     });
 
-    it("preserves 512x512 full-body SVG when composition is full_body", () => {
-      const bytes = generateProceduralStateArt("Pip", "#06b6d4", "thinking", 1, { composition: "full_body" });
-      const svg = Buffer.from(bytes).toString("utf8");
+    it("preserves 512x512 full-body SVG without celebrate decorations", () => {
+      const thinkingSvg = Buffer.from(generateProceduralStateArt("Pip", "#06b6d4", "thinking", 1, { composition: "full_body" })).toString(
+        "utf8",
+      );
+      const celebrateSvg = Buffer.from(generateProceduralStateArt("Pip", "#06b6d4", "celebrate", 1, { composition: "full_body" })).toString(
+        "utf8",
+      );
 
-      expect(svg).toContain('viewBox="0 0 512 512"');
-      expect(svg).toContain('width="512"');
-      expect(svg).toContain('height="512"');
+      expect(thinkingSvg).toContain('viewBox="0 0 512 512"');
+      expect(thinkingSvg).toContain('width="512"');
+      expect(thinkingSvg).toContain('height="512"');
+      expect(celebrateSvg).not.toContain("🎉");
+      expect(celebrateSvg).not.toContain("⭐");
     });
   });
 });

@@ -14,8 +14,6 @@ export type VisualPresetItem = {
   id: string;
   name: string;
   description: string;
-  /** Costume and accessory direction for the preset's managed mascot style. */
-  mascot_style_prompt?: string;
   icon: string;
   theme: QuizVisualTheme;
   palette_id: Exclude<QuizPaletteId, "auto">;
@@ -51,8 +49,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     name: "Arcade Pop Master",
     description:
       "Vibrant candy rays backdrop, 3D candy pop question box, glossy arcade cards, sliding star timer, and hanging wood sign counter.",
-    mascot_style_prompt:
-      "playful arcade host wardrobe with a glossy candy-colored jacket, subtle star accents, clean sneakers, and compact game-show accessories",
     icon: "🍬",
     theme: "candy_arcade",
     palette_id: "lime",
@@ -71,8 +67,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     name: "Cyber Neon Pulse",
     description:
       "High-tech aurora glow backdrop, frosted glass question box, glowing neon cards, energy laser timer, and digital neon badge.",
-    mascot_style_prompt:
-      "futuristic techwear outfit with cyan and magenta emissive trim, a compact holographic wrist device, a cyber utility belt, and sleek high-tech footwear",
     icon: "⚡",
     theme: "candy_arcade",
     palette_id: "purple",
@@ -91,8 +85,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     name: "Comic Action Boom",
     description:
       "Action comic burst backdrop, speech bubble question box, chunky pop-art cards, flame fuse timer, and floating balloon counter.",
-    mascot_style_prompt:
-      "heroic action outfit with bold color-blocked fabric, a simple chest emblem, fitted gloves, sturdy boots, and a compact utility belt",
     icon: "💥",
     theme: "candy_arcade",
     palette_id: "sunny",
@@ -111,8 +103,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     name: "Build Zone Crew",
     description:
       "Technical construction blueprint backdrop, hazard stripe question box, steel beam plate cards, bulldozer timer, and golden shield counter.",
-    mascot_style_prompt:
-      "construction crew outfit with a fitted hard hat, reflective safety vest, practical tool belt, protective gloves, and sturdy work boots",
     icon: "🏗️",
     theme: "candy_arcade",
     palette_id: "orange",
@@ -130,8 +120,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     descKey: "visualSandbox.presetCosmicSpaceDesc",
     name: "Cosmic Space Voyager",
     description: "Deep space starfield backdrop, cockpit HUD question box, sleek soft cards, cosmic rocket timer, and space radar counter.",
-    mascot_style_prompt:
-      "sleek astronaut flight suit with mission patches, compact life-support details, a wrist controller, utility gloves, and a clear open-face helmet",
     icon: "🚀",
     theme: "candy_arcade",
     palette_id: "aqua",
@@ -150,8 +138,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     name: "Sweet Pastel Pop",
     description:
       "Dreamy floating clouds backdrop, fluffy pastel cloud question box, marshmallow answer cards, liquid capsule timer, and iridescent bubble badge.",
-    mascot_style_prompt:
-      "soft pastel candy-themed outfit with rounded color-block panels, small star and bow accents, playful wrist accessories, and clean pastel sneakers",
     icon: "🫧",
     theme: "candy_arcade",
     palette_id: "pink",
@@ -170,8 +156,6 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     name: "Treasure Quest",
     description:
       "Classic adventure parchment scroll, rustic wood plank cards, expedition map trail timer, golden compass counter, and antique treasure map backdrop.",
-    mascot_style_prompt:
-      "adventure explorer outfit with a weathered vest, belt pouch, compact compass, practical gloves, sturdy boots, and a small neck scarf",
     icon: "🧭",
     theme: "candy_arcade",
     palette_id: "sunny",

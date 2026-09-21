@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MascotActionTypeSchema, MascotMotionIntensitySchema, MascotMotionPresetSchema, QuizImageStyleSchema } from "../enums.js";
+import { MascotStyleConceptPromptSchema } from "../mascot/styleConceptPrompt.js";
 import { ChannelMascotConfigSchema, MascotPlacementPresetSchema, MascotProfileSchema, MascotStyleSchema } from "../schemas.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
@@ -156,7 +157,7 @@ export const UpdateMascotSlotInputSchema = z.object({
 export type UpdateMascotSlotInput = z.infer<typeof UpdateMascotSlotInputSchema>;
 
 export const GenerateMascotStyleConceptRequestSchema = z.object({
-  prompt: z.string().optional(),
+  prompt: MascotStyleConceptPromptSchema,
   options: z.record(z.unknown()).optional(),
 });
 

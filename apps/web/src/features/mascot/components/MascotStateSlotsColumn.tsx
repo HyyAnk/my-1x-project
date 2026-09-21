@@ -1,24 +1,22 @@
-import { useMemo, useCallback } from "react";
-import { Lightning, CircleNotch } from "@phosphor-icons/react";
+import { useMemo } from "react";
+import { CircleNotch, Lightning } from "@phosphor-icons/react";
 import type { MascotStateVariant } from "@studio/shared";
-import type { BatchProgressState } from "../hooks/useMascotBatchGeneration";
-import { VariantSlotCard } from "./VariantSlotCard";
+import { useMascotSlotQueueSelection } from "../hooks/useMascotSlotQueueSelection";
+import type { BatchProgressState, BatchSlotItem } from "../types/mascotBatch.types";
 import { MascotSlotSelectionToolbar } from "./slot/MascotSlotSelectionToolbar";
-import { useMascotSlotSelection } from "../hooks/useMascotSlotSelection";
+import { VariantSlotCard } from "./VariantSlotCard";
 
 const SLOT_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export type MascotStateSlotsColumnProps = {
   state: "thinking" | "celebrate";
   variants: MascotStateVariant[];
-  isBatchBusy: boolean;
   busySlotKey: string | null;
   queuedSlotKeys?: string[];
   batchProgress: BatchProgressState | null;
   onBatchGenerate: (state: "thinking" | "celebrate") => void;
-  onRegenerateSelected?: (
-    slots: Array<{ state: "thinking" | "celebrate"; slotIndex: number; promptModifier?: string }>,
-  ) => Promise<void> | void;
+  onGenerateSelected?: (slots: BatchSlotItem[]) => Promise<boolean>;
+  onRegenerateSelected?: (slots: BatchSlotItem[]) => Promise<boolean>;
   onGenerateSlot: (state: "thinking" | "celebrate", slotIndex: number, promptModifier?: string) => void;
   onEditPrompt: (state: "thinking" | "celebrate", slotIndex: number) => void;
   onOpenLightbox?: (img: string) => void;
@@ -27,96 +25,54 @@ export type MascotStateSlotsColumnProps = {
 export function MascotStateSlotsColumn({
   state,
   variants,
-  isBatchBusy,
   busySlotKey,
   queuedSlotKeys = [],
   batchProgress,
   onBatchGenerate,
+  onGenerateSelected,
   onRegenerateSelected,
   onGenerateSlot,
   onEditPrompt,
   onOpenLightbox,
 }: MascotStateSlotsColumnProps) {
-  const isThinking = state === "thinking";
-  const title = isThinking ? "Thinking" : "Celebrate";
-  const subtitle = isThinking
-    ? "Pondering, chin resting, clue inspection, countdown poses."
-    : "Joyful jump, triumphant arms raised, victory poses.";
+  const title = state === "thinking" ? "Thinking" : "Celebrate";
+  const subtitle =
+    state === "thinking"
+      ? "Pondering, chin resting, clue inspection, countdown poses."
+      : "Joyful jump, triumphant arms raised, victory poses.";
   const headingId = `${state}-section-heading`;
+  const variantBySlot = useMemo(() => new Map(variants.map((variant) => [variant.slot_index, variant])), [variants]);
+  const filledCount = useMemo(() => variants.filter((variant) => Boolean(variant.image_url)).length, [variants]);
+  const activeSlotKeys = useMemo(() => new Set(batchProgress?.activeSlotKeys ?? []), [batchProgress?.activeSlotKeys]);
+  const queuedKeys = useMemo(() => new Set(queuedSlotKeys), [queuedSlotKeys]);
 
-  const filledVariants = useMemo(() => variants.filter((v) => Boolean(v.image_url)), [variants]);
-  const filledCount = filledVariants.length;
-  const emptyCount = 10 - filledCount;
-
-  const selectableSlotIndices = useMemo(() => filledVariants.map((v) => v.slot_index), [filledVariants]);
-
-  const { selectedSlotIndices, isSelected, toggleSlot, selectAll, deselectAll, clearSelection, selectedCount, isAllSelected } =
-    useMascotSlotSelection({ availableSlotIndices: selectableSlotIndices });
-
-  const isRegeneratingSelected =
-    Boolean(batchProgress) &&
-    batchProgress?.mode === "regenerate_selected" &&
-    (batchProgress.targetState === state || batchProgress.targetState === "all");
-
-  const handleBatchRegenerateSelected = useCallback(async () => {
-    if (selectedCount === 0 || !onRegenerateSelected) return;
-
-    const slotsToRegenerate = Array.from(selectedSlotIndices).map((slotIndex) => {
-      const variant = variants.find((v) => v.slot_index === slotIndex);
-      return {
-        state,
-        slotIndex,
-        promptModifier: variant?.prompt_modifier || undefined,
-      };
-    });
-
-    try {
-      await onRegenerateSelected(slotsToRegenerate);
-      clearSelection();
-    } catch {
-      // Errors handled upstream by notices
-    }
-  }, [selectedCount, onRegenerateSelected, selectedSlotIndices, variants, state, clearSelection]);
-
-  const isThisBatchActive =
-    Boolean(isBatchBusy) &&
-    Boolean(
-      batchProgress &&
-      (batchProgress.targetState === state ||
-        batchProgress.targetState === "all" ||
-        batchProgress.activeSlotKeys.some((k) => k.startsWith(`${state}_`))),
-    );
-
-  const getSlotBusyState = (slotIndex: number) => {
+  const isSlotBusy = (slotIndex: number): boolean => {
     const slotKey = `${state}_${slotIndex}`;
-    if (busySlotKey === slotKey) return true;
-    if (batchProgress) {
-      return batchProgress.activeSlotKeys.includes(slotKey);
-    }
-    if (busySlotKey === "batch") {
-      const existing = variants.find((v) => v.slot_index === slotIndex);
-      return !existing?.image_url;
-    }
-    return false;
+    return busySlotKey === slotKey || activeSlotKeys.has(slotKey);
   };
+  const isSlotQueued = (slotIndex: number): boolean => queuedKeys.has(`${state}_${slotIndex}`);
+  const availableSlotIndices = SLOT_NUMBERS.filter((slotIndex) => {
+    if (isSlotBusy(slotIndex) || isSlotQueued(slotIndex)) return false;
+    const hasImage = Boolean(variantBySlot.get(slotIndex)?.image_url);
+    return hasImage ? Boolean(onRegenerateSelected) : Boolean(onGenerateSelected);
+  });
+  const queueableEmptyCount = availableSlotIndices.filter((slotIndex) => !variantBySlot.get(slotIndex)?.image_url).length;
+  const pendingSlotCount = SLOT_NUMBERS.filter((slotIndex) => isSlotBusy(slotIndex) || isSlotQueued(slotIndex)).length;
+  const hasPendingEmptySlots = 10 - filledCount > queueableEmptyCount;
 
-  const isSlotQueued = (slotIndex: number, hasImage: boolean) => {
-    const slotKey = `${state}_${slotIndex}`;
-    if (queuedSlotKeys.includes(slotKey)) {
-      return true;
-    }
-    if (!isThisBatchActive || hasImage) return false;
-    return Boolean(batchProgress && !batchProgress.activeSlotKeys.includes(slotKey));
-  };
+  const selection = useMascotSlotQueueSelection({
+    state,
+    variants,
+    availableSlotIndices,
+    onGenerateSelected,
+    onRegenerateSelected,
+  });
 
-  const getSlotStatusText = (slotIndex: number) => {
+  const getSlotStatusText = (slotIndex: number): string => {
     const slotKey = `${state}_${slotIndex}`;
-    if (busySlotKey === slotKey) return "Generating pose...";
-    if (batchProgress && batchProgress.activeSlotKeys.includes(slotKey)) {
-      const streamIdx = batchProgress.activeSlotKeys.indexOf(slotKey) + 1;
-      return `Stream ${streamIdx} generating...`;
-    }
-    return "Generating...";
+    const streamIndex = batchProgress?.activeSlotKeys.indexOf(slotKey) ?? -1;
+    if (streamIndex >= 0) return `Stream ${streamIndex + 1} generating...`;
+    return "Generating pose...";
   };
 
   return (
@@ -130,51 +86,53 @@ export function MascotStateSlotsColumn({
           <p className="state-subtitle">{subtitle}</p>
         </div>
 
-        <div className="state-header-actions">
-          <button
-            type="button"
-            className={`quiet-button is-quick-batch ${isThisBatchActive ? "is-generating" : ""}`}
-            onClick={() => onBatchGenerate(state)}
-            disabled={isBatchBusy || busySlotKey !== null || queuedSlotKeys.length > 0 || filledCount === 10}
-            title={`Generate all empty ${title} slots`}
-          >
-            {isThisBatchActive ? (
-              <>
-                <CircleNotch size={13} className="spin" />
-                <span>Generating {title}...</span>
-              </>
-            ) : (
-              <>
-                <Lightning size={13} weight="bold" />
-                <span>
-                  Batch {title} ({emptyCount} empty)
-                </span>
-              </>
-            )}
-          </button>
-        </div>
+        {filledCount < 10 ? (
+          <div className="state-header-actions">
+            <button
+              type="button"
+              className={`quiet-button is-quick-batch ${pendingSlotCount > 0 ? "is-generating" : ""}`}
+              onClick={() => onBatchGenerate(state)}
+              disabled={queueableEmptyCount === 0 || Boolean(batchProgress?.isStopping)}
+              title={`Queue all available empty ${title} slots`}
+            >
+              {pendingSlotCount > 0 && queueableEmptyCount === 0 ? (
+                <>
+                  <CircleNotch size={13} className="spin" />
+                  <span>Queue Active</span>
+                </>
+              ) : (
+                <>
+                  <Lightning size={13} weight="bold" />
+                  <span>
+                    {hasPendingEmptySlots ? `Queue Remaining (${queueableEmptyCount})` : `Queue All Empty (${queueableEmptyCount})`}
+                  </span>
+                </>
+              )}
+            </button>
+          </div>
+        ) : null}
       </div>
 
-      {filledCount > 0 && onRegenerateSelected ? (
+      {availableSlotIndices.length > 0 || selection.selectedCount > 0 ? (
         <MascotSlotSelectionToolbar
           state={state}
-          selectedCount={selectedCount}
-          isAllSelected={isAllSelected}
-          isBatchBusy={isBatchBusy || busySlotKey !== null || queuedSlotKeys.length > 0}
-          isRegeneratingSelected={isRegeneratingSelected}
-          onSelectAll={() => selectAll()}
-          onDeselectAll={deselectAll}
-          onRegenerateSelected={handleBatchRegenerateSelected}
-          totalSelectableCount={selectableSlotIndices.length}
+          mode={selection.mode}
+          selectedCount={selection.selectedCount}
+          isAllSelected={selection.isAllSelected}
+          isSubmitting={selection.isSubmitting}
+          isDisabled={Boolean(batchProgress?.isStopping)}
+          onSelectAll={selection.selectAllForMode}
+          onDeselectAll={selection.deselectAll}
+          onSubmitSelected={() => void selection.submitSelected()}
+          totalSelectableCount={selection.totalSelectableCount}
         />
       ) : null}
 
       <div className="variant-slots-grid">
         {SLOT_NUMBERS.map((slotIndex) => {
-          const variant = variants.find((v) => v.slot_index === slotIndex);
-          const hasImage = Boolean(variant?.image_url);
-          const isBusy = getSlotBusyState(slotIndex);
-          const isQueued = isSlotQueued(slotIndex, hasImage);
+          const variant = variantBySlot.get(slotIndex);
+          const isBusy = isSlotBusy(slotIndex);
+          const isQueued = isSlotQueued(slotIndex);
 
           return (
             <VariantSlotCard
@@ -184,11 +142,12 @@ export function MascotStateSlotsColumn({
               variant={variant}
               isBusy={isBusy}
               isQueued={isQueued}
-              isSelected={isSelected(slotIndex)}
-              onToggleSelect={hasImage ? (idx, checked) => toggleSlot(idx, checked) : undefined}
+              isSelected={selection.isSelected(slotIndex)}
+              isSelectable={selection.isSlotSelectable(slotIndex)}
+              onToggleSelect={(index, checked) => selection.toggleSlot(index, checked)}
               statusText={getSlotStatusText(slotIndex)}
               onGenerate={(slot) => onGenerateSlot(state, slot)}
-              onRegenerate={(slot) => onGenerateSlot(state, slot, undefined)}
+              onRegenerate={(slot) => onGenerateSlot(state, slot)}
               onEditPrompt={(slot) => onEditPrompt(state, slot)}
               onOpenLightbox={onOpenLightbox}
             />

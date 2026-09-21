@@ -55,7 +55,7 @@ export function useMascotStyleQueue({
     stopPolling,
   });
 
-  const { handleQueueStyle, handleQueueAllMissingStyles, handleStopStyleQueue, handleRetryFailedStyles } = useMascotStyleQueueMutations({
+  const { handleQueueStyle, handleStopStyleQueue, handleRetryFailedStyles } = useMascotStyleQueueMutations({
     state,
     refs,
     startPolling,
@@ -68,7 +68,6 @@ export function useMascotStyleQueue({
     activeStyleIds: state.activeStyleIds,
     styleQueueProgress: state.queueProgress,
     handleQueueStyle,
-    handleQueueAllMissingStyles,
     handleStopStyleQueue,
     handleRetryFailedStyles,
   };

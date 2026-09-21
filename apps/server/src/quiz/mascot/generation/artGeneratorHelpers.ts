@@ -1,4 +1,4 @@
-import { type MascotProfile, getMascotSlotDefaultPreset, pickRandomUnusedPose } from "@studio/shared";
+import { type MascotProfile, getMascotSlotDefaultPreset, pickRandomUnusedPose, resolveSafeMascotCelebratePrompt } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import type { StudioLogger } from "../../../logger.js";
 import { loadMasterReferenceImageBase64, loadMascotAssetBase64ByUrl } from "../services/mascotAssetLoader.js";
@@ -22,13 +22,20 @@ export function resolveSlotPromptModifier(
   slotIndex: number,
   explicitPrompt?: string,
 ): string | undefined {
-  if (explicitPrompt?.trim()) return explicitPrompt.trim();
+  if (explicitPrompt?.trim()) {
+    return state === "celebrate"
+      ? resolveSafeMascotCelebratePrompt(explicitPrompt, getMascotSlotDefaultPreset(state, slotIndex))
+      : explicitPrompt.trim();
+  }
   if (state !== "thinking" && state !== "celebrate") return undefined;
   const otherSlots = (style.states[state] || []).filter((s) => s.slot_index !== slotIndex);
   const otherUsed = otherSlots
     .map((s) => s.prompt_modifier?.trim() || (s.image_url?.trim() ? getMascotSlotDefaultPreset(state, s.slot_index) : ""))
     .filter(Boolean);
-  return pickRandomUnusedPose(state, otherUsed).prompt;
+  const selectedPrompt = pickRandomUnusedPose(state, otherUsed).prompt;
+  return state === "celebrate"
+    ? resolveSafeMascotCelebratePrompt(selectedPrompt, getMascotSlotDefaultPreset(state, slotIndex))
+    : selectedPrompt;
 }
 
 export async function resolveSlotReferenceImage(

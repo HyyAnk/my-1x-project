@@ -121,7 +121,7 @@ describe("Mascot Style Job Schemas and Contracts", () => {
     it("parses valid batch queue input", () => {
       const input = {
         styles: [
-          { style_id: "style-1", style_name: "Cyber" },
+          { style_id: "style-1", style_name: "Cyber", prompt: "add a cyan visor" },
           { style_id: "style-2", style_name: "Retro", prompt: "custom 8-bit" },
         ],
         mode: "batch" as const,
@@ -133,6 +133,14 @@ describe("Mascot Style Job Schemas and Contracts", () => {
 
     it("rejects empty styles array", () => {
       assert.throws(() => QueueStyleGenerationInputSchema.parse({ styles: [] }));
+    });
+
+    it("rejects a queue item without a user-authored prompt", () => {
+      assert.throws(() =>
+        QueueStyleGenerationInputSchema.parse({
+          styles: [{ style_id: "style-1", style_name: "Cyber" }],
+        }),
+      );
     });
   });
 

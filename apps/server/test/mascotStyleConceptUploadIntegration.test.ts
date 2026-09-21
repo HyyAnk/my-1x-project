@@ -152,7 +152,10 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
     await app.repository.saveMascot(mascotWithStyle);
 
     // Call generateMascotStyleConcept
-    const result = await generateMascotStyleConcept(app.repository, mascotWithStyle, newStyleId, testImageConfig);
+    const userPrompt = "add only a glowing visor over the left eye";
+    const result = await generateMascotStyleConcept(app.repository, mascotWithStyle, newStyleId, testImageConfig, {
+      prompt: userPrompt,
+    });
 
     // Verify prompt incorporates reference preservation cues and adheres to contract
     assert.ok(result.prompt_used.includes("@1"), "Concept prompt must reference master concept via @1");
@@ -166,10 +169,9 @@ describe("Mascot Style & Slot Generation Engine Synchronization Pipeline", () =>
       ),
       "Prompt must inject explicit reference preservation instructions for user_uploaded mascot",
     );
-    assert.ok(
-      result.prompt_used.includes('Theme wardrobe for "Cyberpunk": neon cyber armor glowing visor'),
-      "Prompt must scope the requested theme to wardrobe and accessories",
-    );
+    assert.ok(result.prompt_used.includes(userPrompt), "Prompt must include the user-authored direction");
+    assert.ok(!result.prompt_used.includes("neon cyber armor glowing visor"), "Prompt must not inject the stored style keyword");
+    assert.ok(!result.prompt_used.includes("Cyber Neon Pulse"), "Prompt must not inject a built-in preset description");
     assert.ok(validateMascotPromptContract(result.prompt_used, true), "Generated prompt must satisfy the mascot prompt contract");
 
     // Verify generated style anchor is saved to disk

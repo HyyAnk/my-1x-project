@@ -184,9 +184,13 @@ describe("VariantSlotCard Component - Stage 03 Download Actions", () => {
     expect(checkbox).toHaveProperty("disabled", true);
   });
 
-  it("does not render selection checkbox when slot is empty", () => {
-    render(<VariantSlotCard {...defaultProps} variant={null} onToggleSelect={vi.fn()} />);
+  it("renders a selection checkbox for an empty slot so it can be queued with other slots", () => {
+    const onToggleSelect = vi.fn();
+    render(<VariantSlotCard {...defaultProps} variant={null} onToggleSelect={onToggleSelect} />);
 
-    expect(screen.queryByRole("checkbox")).toBeNull();
+    const checkbox = screen.getByRole("checkbox", { name: "Select thinking slot 1" });
+    fireEvent.click(checkbox);
+
+    expect(onToggleSelect).toHaveBeenCalledWith(1, true);
   });
 });

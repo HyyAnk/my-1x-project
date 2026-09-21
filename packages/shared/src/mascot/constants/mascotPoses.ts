@@ -152,7 +152,7 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
   {
     id: "celebrate_double_thumbs_up",
     label: "Double Thumbs Up",
-    prompt: "Both thumbs up enthusiastically with wide cheerful grin, celebratory sparkles",
+    prompt: "Both thumbs up enthusiastically with a wide cheerful grin and proud upright posture",
     category: "Classic Victory",
   },
   {
@@ -176,21 +176,21 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
     category: "Festive Vibes",
   },
   {
-    id: "celebrate_party_horn_streamers",
-    label: "Party Horn Streamers",
-    prompt: "Blowing a party horn with ribbon streamers and joyful glittering star accents",
+    id: "celebrate_victory_shoulder_shimmy",
+    label: "Victory Shoulder Shimmy",
+    prompt: "Shaking shoulders in a playful victory shimmy with both hands lifted and a delighted grin",
     category: "Festive Vibes",
   },
   {
-    id: "celebrate_sparkler_wave",
-    label: "Sparkler Wave",
-    prompt: "Waving a sparkling celebration wand or sparkler with radiant golden trails",
+    id: "celebrate_joyful_side_wave",
+    label: "Joyful Side Wave",
+    prompt: "Waving one hand enthusiastically while leaning sideways with an excited open smile",
     category: "Festive Vibes",
   },
   {
-    id: "celebrate_party_popper_burst",
-    label: "Party Popper Burst",
-    prompt: "Pulling a festive party popper with colorful stream explosions and bright stars",
+    id: "celebrate_excited_heel_click",
+    label: "Excited Heel Click",
+    prompt: "Performing an excited heel click with bent knees, lifted arms, and a triumphant smile",
     category: "Festive Vibes",
   },
   {
@@ -228,7 +228,7 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
   {
     id: "celebrate_enthusiastic_applause",
     label: "Enthusiastic Applause",
-    prompt: "Clapping hands enthusiastically with delighted expression and star sparkles",
+    prompt: "Clapping hands enthusiastically with a delighted expression and lively posture",
     category: "Cute & Heartwarming",
   },
 
@@ -236,7 +236,7 @@ export const MASCOT_CELEBRATE_POSES: MascotPosePreset[] = [
   {
     id: "celebrate_cool_sunglasses_tip",
     label: "Cool Sunglasses Tip",
-    prompt: "Tipping dark stylish sunglasses with a confident charming smirk and star glint",
+    prompt: "Tipping dark stylish sunglasses with a confident charming smirk and relaxed victory stance",
     category: "Swagger & High-Energy",
   },
   {
@@ -282,10 +282,10 @@ export const MASCOT_CELEBRATE_SLOT_PRESETS: Record<number, string> = {
   1: "Joyful jump with both arms raised high in triumphant victory, big radiant smile",
   2: "Holding a shiny golden trophy cup proudly above head, beaming with proud triumph",
   3: "Playful wink with double victory V-signs, beaming with joyful charming energy",
-  4: "Both thumbs up enthusiastically with wide cheerful grin, celebratory sparkles",
+  4: "Both thumbs up enthusiastically with a wide cheerful grin and proud upright posture",
   5: "Leaping excitedly with one arm reaching high for a celebratory high-five, radiant open smile",
   6: "Punching the air excitedly in triumph, standing tall with proud champion stance",
-  7: "Blowing a party horn with ribbon streamers and joyful glittering star accents",
+  7: "Shaking shoulders in a playful victory shimmy with both hands lifted and a delighted grin",
   8: "Making a big cute heart shape with both hands, happy closed-eye smile",
   9: "Graceful theatrical bow with arm flourish, thanking the audience proudly",
   10: "Holding a winner certificate ribbon or gold medal, glowing with accomplishment",

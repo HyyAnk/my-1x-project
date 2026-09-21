@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Sparkle, MagicWand } from "@phosphor-icons/react";
+import { Sparkle } from "@phosphor-icons/react";
 import { reconcileMascotBuiltInStyles, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
@@ -19,10 +19,6 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
     return reconcileMascotBuiltInStyles(editingMascot).styles ?? [];
   }, [editingMascot]);
 
-  const missingAnchorStylesCount = useMemo(() => {
-    return allStyles.filter((style) => style.built_in_preset_id && !style.is_default && !style.anchor_image_url).length;
-  }, [allStyles]);
-
   return (
     <div className="wizard-card style-concept-manager-card">
       <div className="style-concept-manager-header">
@@ -32,21 +28,6 @@ export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLi
             <h3 className="style-concept-title">{t("mascots.styleConceptsTitle")}</h3>
           </div>
           <p className="style-concept-subtitle">{t("mascots.styleConceptsSubtitle")}</p>
-        </div>
-
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {stylesState && missingAnchorStylesCount >= 2 ? (
-            <button
-              type="button"
-              className="primary-button compact style-concept-queue-all-btn"
-              onClick={() => void stylesState.handleQueueAllMissingStyles()}
-              disabled={Boolean(stylesState.styleQueueProgress?.isStopping)}
-              title={t("mascots.queueAllMissingBtn", { count: missingAnchorStylesCount })}
-            >
-              <MagicWand size={14} weight="bold" />
-              <span>{t("mascots.queueAllMissingBtn", { count: missingAnchorStylesCount })}</span>
-            </button>
-          ) : null}
         </div>
       </div>
 

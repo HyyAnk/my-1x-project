@@ -53,7 +53,7 @@ export const MASCOT_ACTION_META: Record<
     description: "Jumping with joy, raised hands or celebratory pose during reveal and fun fact",
     defaultFps: 10,
     defaultFrames: 1,
-    icon: "🎉",
+    icon: "🙌",
     usage: "Answer reveal and Fact reading phase",
     motionPreset: "jump",
   },

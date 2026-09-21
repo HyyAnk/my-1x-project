@@ -60,9 +60,7 @@ function StyleAnchorWithImage({
           </span>
 
           {isCore && isUploaded ? (
-            <span className="style-anchor-pin-badge badge-uploaded">
-              {t("mascots.coreStyleUploadedBadge")}
-            </span>
+            <span className="style-anchor-pin-badge badge-uploaded">{t("mascots.coreStyleUploadedBadge")}</span>
           ) : !isCore && isUploaded ? (
             <span className="style-anchor-pin-badge badge-uploaded-ref" title={t("mascots.customStyleUploadedAnchorTooltip")}>
               {t("mascots.customStyleUploadedAnchorRef")}
@@ -97,12 +95,14 @@ function StyleAnchorMissingWarning({
   isBusy,
   isThisGenerating,
   isUploaded,
+  hasPrompt,
   onGenerate,
 }: {
   styleId: string;
   isBusy: boolean;
   isThisGenerating: boolean;
   isUploaded: boolean;
+  hasPrompt: boolean;
   onGenerate?: (styleId: string) => void;
 }) {
   const { t } = useTranslation();
@@ -132,8 +132,8 @@ function StyleAnchorMissingWarning({
           type="button"
           className="primary-button is-generate-anchor"
           onClick={() => onGenerate?.(styleId)}
-          disabled={isBusy}
-          title={t("mascots.styleAnchorPinGenerateBtn")}
+          disabled={isBusy || !hasPrompt}
+          title={hasPrompt ? t("mascots.styleAnchorPinGenerateBtn") : t("mascots.styleAnchorPromptRequiredTooltip")}
         >
           {isThisGenerating ? (
             <>
@@ -198,7 +198,8 @@ export function StyleAnchorReferencePin({ style, editingMascot, stylesState, onO
       isBusy={isBusy}
       isThisGenerating={isThisGenerating}
       isUploaded={isUploaded}
-      onGenerate={stylesState ? (id) => stylesState.handleGenerateStyleConcept(id) : undefined}
+      hasPrompt={Boolean(style.keyword.trim())}
+      onGenerate={stylesState ? (id) => stylesState.handleGenerateStyleConcept(id, style.keyword.trim()) : undefined}
     />
   );
 }

@@ -78,6 +78,9 @@
 .slot-select-checkbox-label {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
   cursor: pointer;
   margin: 0;
   padding: 0;
@@ -95,6 +98,13 @@
 .slot-select-checkbox:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+@media (max-width: 768px) {
+  .slot-select-checkbox-label {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }
 
 .slot-number-badge {

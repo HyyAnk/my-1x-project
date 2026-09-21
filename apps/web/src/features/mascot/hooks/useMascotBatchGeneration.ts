@@ -30,6 +30,8 @@ export function useMascotBatchGeneration({
   const mascotRef = useRef(mascot);
   const activeStyleIdRef = useRef(activeStyle?.id || activeStyleId || "core");
   const trackedStyleIdRef = useRef<string | null>(null);
+  const pendingSlotKeysRef = useRef<Set<string>>(new Set());
+  const lastBatchUpdatedAtRef = useRef<string | null>(null);
   const onMascotUpdatedRef = useRef(onMascotUpdated);
   const onNoticeRef = useRef(onNotice);
   const onActivityChangeRef = useRef(onActivityChange ?? (() => undefined));
@@ -55,7 +57,9 @@ export function useMascotBatchGeneration({
       onActivityChangeRef,
       onActiveStyleRecoveredRef,
       activeBatchIdRef: state.activeBatchIdRef,
+      lastBatchUpdatedAtRef,
       lastCompletedCountRef: state.lastCompletedCountRef,
+      pendingSlotKeysRef,
     }),
     [state.activeBatchIdRef, state.isMountedRef, state.lastCompletedCountRef],
   );
@@ -75,13 +79,18 @@ export function useMascotBatchGeneration({
     stopPolling,
   });
 
-  const { handleStopBatchGeneration, handleGenerateSlot, handleBatchGenerateStyle, handleRegenerateSelectedSlots } =
-    useMascotBatchMutations({
-      state,
-      refs,
-      startPolling,
-      pollBatchStatus,
-    });
+  const {
+    handleStopBatchGeneration,
+    handleGenerateSlot,
+    handleBatchGenerateStyle,
+    handleGenerateSelectedSlots,
+    handleRegenerateSelectedSlots,
+  } = useMascotBatchMutations({
+    state,
+    refs,
+    startPolling,
+    pollBatchStatus,
+  });
 
   return {
     busySlotKey: state.busySlotKey,
@@ -92,6 +101,7 @@ export function useMascotBatchGeneration({
     handleStopBatchGeneration,
     handleGenerateSlot,
     handleBatchGenerateStyle,
+    handleGenerateSelectedSlots,
     handleRegenerateSelectedSlots,
   };
 }

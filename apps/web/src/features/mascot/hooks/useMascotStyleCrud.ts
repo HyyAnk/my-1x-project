@@ -31,7 +31,7 @@ export type UseMascotStyleCrudResult = {
   handleUpdateStyleKeyword: (styleId: string, keyword: string) => Promise<void>;
   handleUpdateStyle: (styleId: string, input: UpdateMascotStyleInput) => Promise<void>;
   handleUpdateStyleAnchor: (styleId: string, anchorImageUrl: string | null) => Promise<void>;
-  handleGenerateStyleConcept: (styleId: string, prompt?: string) => Promise<void>;
+  handleGenerateStyleConcept: (styleId: string, prompt: string) => Promise<void>;
   handleDeleteStyle: (styleId: string) => Promise<void>;
   handleSetActiveStyle: (styleId: string) => Promise<void>;
 };
@@ -98,13 +98,13 @@ export function useMascotStyleCrud({ mascot, onMascotUpdated, onNotice }: UseMas
         onMascotUpdated(result.mascot);
         onNotice({
           tone: "good",
-          message: "Style keyword updated successfully",
+          message: "Style prompt saved successfully",
         });
       } catch (err: unknown) {
         const error = err as Error;
         onNotice({
           tone: "bad",
-          message: error?.message || "Failed to update style keyword",
+          message: error?.message || "Failed to save style prompt",
         });
       }
     },
@@ -152,7 +152,7 @@ export function useMascotStyleCrud({ mascot, onMascotUpdated, onNotice }: UseMas
   );
 
   const handleGenerateStyleConcept = useCallback(
-    async (styleId: string, prompt?: string) => {
+    async (styleId: string, prompt: string) => {
       if (!mascot) return;
       setGeneratingConceptStyleId(styleId);
       try {

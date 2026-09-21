@@ -58,6 +58,19 @@ describe("useMascotSlotSelection", () => {
     expect(result.current.isAllSelected).toBe(false);
   });
 
+  it("deselects only the submitted slots", () => {
+    const { result } = renderHook(() => useMascotSlotSelection({ availableSlotIndices: [1, 2, 3] }));
+
+    act(() => {
+      result.current.selectAll();
+      result.current.deselectSlots([1, 3]);
+    });
+
+    expect(result.current.isSelected(1)).toBe(false);
+    expect(result.current.isSelected(2)).toBe(true);
+    expect(result.current.isSelected(3)).toBe(false);
+  });
+
   it("clears selection when clearSelection is called", () => {
     const { result } = renderHook(() => useMascotSlotSelection({ availableSlotIndices: [1, 2, 3] }));
 

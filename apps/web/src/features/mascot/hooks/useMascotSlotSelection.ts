@@ -9,6 +9,7 @@ export interface UseMascotSlotSelectionResult {
   isSelected: (slotIndex: number) => boolean;
   toggleSlot: (slotIndex: number, selected?: boolean) => void;
   selectAll: (indicesToSelect?: number[]) => void;
+  deselectSlots: (slotIndices: number[]) => void;
   deselectAll: () => void;
   clearSelection: () => void;
   selectedCount: number;
@@ -47,6 +48,14 @@ export function useMascotSlotSelection({ availableSlotIndices }: UseMascotSlotSe
     setSelectedIndices(new Set());
   }, []);
 
+  const deselectSlots = useCallback((slotIndices: number[]) => {
+    setSelectedIndices((current) => {
+      const next = new Set(current);
+      for (const slotIndex of slotIndices) next.delete(slotIndex);
+      return next;
+    });
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedIndices(new Set());
   }, []);
@@ -65,6 +74,7 @@ export function useMascotSlotSelection({ availableSlotIndices }: UseMascotSlotSe
     isSelected,
     toggleSlot,
     selectAll,
+    deselectSlots,
     deselectAll,
     clearSelection,
     selectedCount,

@@ -100,7 +100,6 @@ export function generateProceduralStateArt(
       armLeft = `<g transform="translate(420, 440) rotate(-45)"><ellipse cx="0" cy="0" rx="64" ry="30" fill="${primaryColor}"/></g>`;
       armRight = `<g transform="translate(860, 440) rotate(45)"><ellipse cx="0" cy="0" rx="64" ry="30" fill="${primaryColor}"/></g>`;
       mouth = `<path d="M 600 455 Q 640 515 680 455 Z" fill="#e11d48"/>`;
-      extraDecor = `<text x="360" y="260" font-size="52">🎉</text><text x="880" y="260" font-size="52">⭐</text>`;
     }
 
     const svg16x9 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
@@ -176,7 +175,6 @@ export function generateProceduralStateArt(
     eyeLeft = `<path d="M 190 216 Q 206 194 222 216" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/>`;
     eyeRight = `<path d="M 292 216 Q 308 194 324 216" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/>`;
     mouth = `<path d="M 230 244 Q 256 280 282 244 Z" fill="#f43f5e" stroke="#0f172a" stroke-width="4"/>`;
-    extraDecor = `<text x="100" y="160" font-size="36">🎉</text><text x="380" y="160" font-size="36">⭐</text>`;
   } else if (action === "oops") {
     armLeft = `<g transform="translate(170, 160) rotate(110)"><ellipse cx="0" cy="0" rx="36" ry="18" fill="${primaryColor}"/></g>`;
     mouth = `<path d="M 240 258 Q 256 242 272 258" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>`;

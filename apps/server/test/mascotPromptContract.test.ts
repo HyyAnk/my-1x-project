@@ -226,14 +226,9 @@ describe("mascotPromptContract", () => {
   });
 
   describe("buildMascotStyleConceptPrompt", () => {
-    const testStyle = {
-      name: "Cyber Ninja",
-      keyword: "stealth cyber armor katana holographic visor",
-      built_in_preset_id: "preset_cyber_neon",
-    };
-
-    it("builds canonical style concept prompt without overridePrompt (@1 continuity, costume directive, concept pose, studio isolation)", () => {
-      const prompt = buildMascotStyleConceptPrompt(testMascot, testStyle);
+    it("uses the user prompt as the only creative style direction", () => {
+      const userPrompt = "wear high-tech glass on left eye";
+      const prompt = buildMascotStyleConceptPrompt(testMascot, userPrompt);
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain('Strictly preserve character identity from @1 for "Pip the Penguin"');
@@ -243,11 +238,15 @@ describe("mascotPromptContract", () => {
       expect(prompt).toContain(
         `Rendering style lock: match @1 exactly and retain the configured base medium: ${MASCOT_STYLE_PROMPTS.pixar_3d}`,
       );
-      expect(prompt).toContain('Theme wardrobe for "Cyber Neon Pulse": futuristic techwear outfit with cyan and magenta emissive trim');
-      expect(prompt).toContain("stealth cyber armor katana holographic visor");
+      expect(prompt).toContain(`User-authored character design direction: ${userPrompt}.`);
       expect(prompt).toContain(
-        'Full-body single character concept illustration of "Pip the Penguin" wearing the "Cyber Neon Pulse" themed outfit.',
+        'Full-body single character concept illustration of "Pip the Penguin" following the user-authored design direction.',
       );
+      expect(prompt).toContain("Change only the details explicitly requested");
+      expect(prompt).toContain("Preserve every unmentioned visual detail from @1");
+      expect(prompt).not.toContain("Cyber Neon Pulse");
+      expect(prompt).not.toContain("futuristic techwear outfit");
+      expect(prompt).not.toContain("cyber utility belt");
       expect(prompt).toContain("Preserve the exact proportions, facial geometry, eye scale, and recognizable body features shown in @1");
       expect(prompt).toContain("Do not change the art medium, rendering technique, facial design language, or character proportions.");
       expect(prompt).toContain("floating character");
@@ -262,52 +261,26 @@ describe("mascotPromptContract", () => {
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
 
-    it("uses style.name as fallback costume when keyword is empty", () => {
-      const prompt = buildMascotStyleConceptPrompt(testMascot, { name: "Victorian Detective" });
-
-      expect(prompt).toContain("@1");
-      expect(prompt).toContain('Theme wardrobe for "Victorian Detective": Victorian Detective.');
-      expect(prompt).toContain(
-        'Full-body single character concept illustration of "Pip the Penguin" wearing the "Victorian Detective" themed outfit.',
-      );
-      expect(validateMascotPromptContract(prompt, true)).toBe(true);
+    it("rejects an empty user prompt instead of falling back to style metadata", () => {
+      expect(() => buildMascotStyleConceptPrompt(testMascot, "   ")).toThrow("Style generation prompt is required");
     });
 
-    it("keeps an uploaded 3D mascot medium locked while applying a built-in wardrobe preset", () => {
+    it("keeps an uploaded 3D mascot medium locked without injecting a preset wardrobe", () => {
       const prompt = buildMascotStyleConceptPrompt(
         {
           ...testMascot,
           concept_origin: "user_uploaded",
           master_image_url: "/api/mascots/novy/assets/master.png",
         },
-        {
-          name: "Renamed Cyber Outfit",
-          keyword: "",
-          built_in_preset_id: "preset_cyber_neon",
-        },
+        "add a transparent visor over the left eye",
       );
 
       expect(prompt).toContain("Strictly preserve the exact character identity from @1");
       expect(prompt).toContain(MASCOT_STYLE_PROMPTS.pixar_3d);
-      expect(prompt).toContain('The "Cyber Neon Pulse" preset changes wardrobe, materials, accent colors, and accessories only.');
-      expect(prompt).toContain("futuristic techwear outfit with cyan and magenta emissive trim");
+      expect(prompt).toContain("add a transparent visor over the left eye");
+      expect(prompt).not.toContain("Cyber Neon Pulse");
+      expect(prompt).not.toContain("futuristic techwear outfit");
       expect(prompt).not.toContain("cute chibi proportions (1:2 head-to-body)");
-    });
-
-    it("incorporates overridePrompt into concept pose when provided", () => {
-      const override = "Holding a gleaming golden katana with glowing blue runes";
-      const prompt = buildMascotStyleConceptPrompt(testMascot, testStyle, override);
-
-      expect(prompt).toContain("@1");
-      expect(prompt).toContain(`Additional user wardrobe or accessory direction: ${override}.`);
-      expect(prompt).toContain(
-        'Full-body single character concept illustration of "Pip the Penguin" wearing the "Cyber Neon Pulse" themed outfit.',
-      );
-      expect(prompt).toContain('Theme wardrobe for "Cyber Neon Pulse": futuristic techwear outfit with cyan and magenta emissive trim');
-      expect(prompt).toContain("This direction must not override the identity or rendering style locks.");
-      expect(prompt).toContain("floating character");
-      expect(prompt).toContain("no ground shadow");
-      expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
   });
 

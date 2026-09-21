@@ -54,7 +54,11 @@ export function registerMascotStyleJobRoutes(server: FastifyInstance, deps: Masc
   server.post("/api/mascots/:mascotId/styles/jobs/queue", async (request, reply) => {
     const { mascotId } = request.params as { mascotId: string };
     const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
-    const input = QueueStyleGenerationInputSchema.parse(rawBody);
+    const parsedInput = QueueStyleGenerationInputSchema.safeParse(rawBody);
+    if (!parsedInput.success) {
+      return reply.code(400).send({ error: parsedInput.error.issues[0]?.message || "Invalid style generation queue request" });
+    }
+    const input = parsedInput.data;
 
     const mascot = await repository.getMascot(mascotId);
     if (!mascot) {

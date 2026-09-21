@@ -4,12 +4,9 @@ import {
   type MascotConceptOrigin,
   type MascotProfile,
   getMascotSlotDefaultPreset,
+  resolveSafeMascotCelebratePrompt,
 } from "@studio/shared";
-import {
-  MASCOT_STEP2_SOURCE_ISOLATION_TAGS,
-  MASCOT_STUDIO_ISOLATION_TAGS,
-  MASCOT_STYLE_PROMPTS,
-} from "./mascotPromptConstants.js";
+import { MASCOT_STEP2_SOURCE_ISOLATION_TAGS, MASCOT_STUDIO_ISOLATION_TAGS, MASCOT_STYLE_PROMPTS } from "./mascotPromptConstants.js";
 
 export interface MascotPromptBuildOptions {
   prompt?: string;
@@ -20,10 +17,7 @@ export interface MascotPromptBuildOptions {
   composition?: "full_body" | "half_body_16_9";
 }
 
-type MascotActionPromptProfile = Pick<
-  MascotProfile,
-  "name" | "description" | "visual_style" | "master_prompt" | "color_theme"
-> & {
+type MascotActionPromptProfile = Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme"> & {
   concept_origin?: MascotConceptOrigin;
   master_image_url?: string | null;
 };
@@ -36,6 +30,9 @@ const HALF_BODY_ISOLATION_DIRECTIVE =
 
 const FULL_BODY_ISOLATION_DIRECTIVE =
   "Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no turnaround, no collage.";
+
+const CELEBRATE_VISUAL_EXCLUSION_DIRECTIVE =
+  "Celebrate through the character's body pose and facial expression. Strictly no confetti, party poppers, party cannons, party horns, paper pieces, ribbon streamers, sparklers, glitter particles, floating celebration decorations, or particle bursts anywhere in the image. This exclusion overrides pose text, style direction, and reference imagery.";
 
 function removeTrailingPeriod(value: string): string {
   return value.endsWith(".") ? value.slice(0, -1) : value;
@@ -51,7 +48,14 @@ function resolveActionText(action: MascotActionType, options: MascotPromptBuildO
     options.slotIndex !== undefined && (action === "thinking" || action === "celebrate")
       ? getMascotSlotDefaultPreset(action, options.slotIndex)
       : meta.description;
-  return removeTrailingPeriod(options.prompt?.trim() || fallbackPose);
+  const requestedPose = options.prompt?.trim() || fallbackPose;
+  const safePose = action === "celebrate" ? resolveSafeMascotCelebratePrompt(requestedPose, fallbackPose) : requestedPose;
+  return removeTrailingPeriod(safePose);
+}
+
+function buildActionDirective(action: MascotActionType, actionText: string): string {
+  const poseDirective = `Pose and Action: ${actionText}.`;
+  return action === "celebrate" ? `${poseDirective} ${CELEBRATE_VISUAL_EXCLUSION_DIRECTIVE}` : poseDirective;
 }
 
 function resolveCostume(keyword?: string): { cleanKeyword?: string; directive?: string } {
@@ -154,7 +158,7 @@ export function buildMascotActionPrompt(
 ): string {
   const isHalfBody = options.composition === "half_body_16_9";
   const actionText = resolveActionText(action, options);
-  const actionDirective = `Pose and Action: ${actionText}.`;
+  const actionDirective = buildActionDirective(action, actionText);
   const { cleanKeyword, directive: costumeDirective } = resolveCostume(options.keyword);
   const isolationTags = isHalfBody ? MASCOT_STEP2_SOURCE_ISOLATION_TAGS : MASCOT_STUDIO_ISOLATION_TAGS;
 

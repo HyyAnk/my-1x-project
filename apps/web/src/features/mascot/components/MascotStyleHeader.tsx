@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Trash, Lightning, Check, CircleNotch } from "@phosphor-icons/react";
-import { findBuiltInPresetById, type MascotProfile, type MascotStyle } from "@studio/shared";
+import { MASCOT_STYLE_CONCEPT_PROMPT_MAX_LENGTH, findBuiltInPresetById, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { StyleAnchorReferencePin } from "./StyleAnchorReferencePin";
@@ -112,11 +112,11 @@ export function MascotStyleHeader({
           </div>
         </div>
 
-        {/* Style Keyword Input Row */}
+        {/* Style prompt input row */}
         <div className="active-style-keyword-box">
           <div className="keyword-input-wrap">
             <label htmlFor="active-style-keyword-input" className="keyword-field-label">
-              Style Theme Keyword:
+              Style Prompt
             </label>
             <input
               id="active-style-keyword-input"
@@ -124,7 +124,8 @@ export function MascotStyleHeader({
               className="style-keyword-input"
               value={keywordInput}
               onChange={(e) => setKeywordInput(e.target.value)}
-              placeholder="e.g., tactical military camouflage uniform, beret, tactical gear"
+              placeholder="Describe exactly what to add or change"
+              maxLength={MASCOT_STYLE_CONCEPT_PROMPT_MAX_LENGTH}
               disabled={busySlotKey !== null || isSavingKeyword}
             />
           </div>
@@ -133,10 +134,10 @@ export function MascotStyleHeader({
             className="save-keyword-btn"
             onClick={handleSaveKeyword}
             disabled={keywordInput === (resolvedActiveStyle?.keyword || "") || isSavingKeyword || busySlotKey !== null}
-            title="Save keyword updates"
+            title="Save prompt updates"
           >
             {isSavingKeyword ? <CircleNotch size={14} className="spin" /> : <Check size={14} weight="bold" />}
-            <span>Save Keyword</span>
+            <span>Save Prompt</span>
           </button>
         </div>
       </div>

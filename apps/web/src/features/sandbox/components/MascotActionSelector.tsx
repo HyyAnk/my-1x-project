@@ -103,7 +103,7 @@ export function MascotActionSelector({
           {(
             [
               { id: "thinking" as const, label: t("visualSandbox.poseThinking"), icon: "🤔" },
-              { id: "celebrate" as const, label: t("visualSandbox.poseCelebrate"), icon: "🎉" },
+              { id: "celebrate" as const, label: t("visualSandbox.poseCelebrate"), icon: "🙌" },
             ] as const
           ).map((act) => {
             const isSelected = activeCoreAction === act.id;

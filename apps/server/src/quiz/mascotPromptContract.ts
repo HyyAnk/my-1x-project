@@ -2,8 +2,7 @@ import {
   type MascotActionType,
   type MascotConceptOrigin,
   type MascotProfile,
-  type MascotStyle,
-  findBuiltInPresetById,
+  MascotStyleConceptPromptSchema,
   getMascotPoses,
   getUnusedMascotPoses,
   pickRandomUnusedPose,
@@ -38,40 +37,32 @@ export function buildMascotConceptPrompt(
 }
 
 /**
- * Builds the canonical concept art prompt for a themed Mascot Style, preserving
- * the master character identity (@1 reference) while applying the style costume.
+ * Builds a style concept prompt from the user's complete creative direction while
+ * preserving the master character identity and render contract.
  */
 export function buildMascotStyleConceptPrompt(
   mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme"> & {
     concept_origin?: MascotConceptOrigin;
     master_image_url?: string | null;
   },
-  style: Pick<MascotStyle, "name" | "keyword" | "built_in_preset_id">,
-  overridePrompt?: string,
+  userPrompt: string,
 ): string {
   const isUserUploaded = mascot.concept_origin === "user_uploaded" || (Boolean(mascot.master_image_url) && !mascot.master_prompt?.trim());
-
+  const userDirection = MascotStyleConceptPromptSchema.parse(userPrompt).replace(/\.+$/, "");
   const baseRenderStyle = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
-  const builtInPreset = findBuiltInPresetById(style.built_in_preset_id);
-  const themeName = builtInPreset?.name || style.name;
-  const presetCostume = builtInPreset?.mascot_style_prompt?.trim();
-  const customKeywords = style.keyword?.trim();
-  const costumeDetails = [presetCostume, customKeywords].filter((value): value is string => Boolean(value)).join(", ") || themeName;
 
   const continuityDirective = isUserUploaded
     ? `Strictly preserve the exact character identity from @1 for "${mascot.name}". Keep the same species, face, fur or skin colors, eye shape and size, anatomy, silhouette, and head-to-body proportions from the master reference. Do not redesign or reinterpret the character.`
     : `Strictly preserve character identity from @1 for "${mascot.name}": keep the same face, fur or skin colors, eye shape and size, anatomy, silhouette, and head-to-body proportions from the master reference.`;
 
-  const renderStyleDirective = `Rendering style lock: match @1 exactly and retain the configured base medium: ${baseRenderStyle}. The "${themeName}" preset changes wardrobe, materials, accent colors, and accessories only. Do not change the art medium, rendering technique, facial design language, or character proportions.`;
-  const costumeDirective = `Theme wardrobe for "${themeName}": ${costumeDetails}. Keep all additions wearable and subordinate to the original character identity.`;
-
-  const customDirective = overridePrompt?.trim()
-    ? `Additional user wardrobe or accessory direction: ${overridePrompt.trim().replace(/\.+$/, "")}. This direction must not override the identity or rendering style locks.`
-    : "";
+  const renderStyleDirective = `Rendering style lock: match @1 exactly and retain the configured base medium: ${baseRenderStyle}. Do not change the art medium, rendering technique, facial design language, or character proportions.`;
+  const userDirectionDirective = [
+    `User-authored character design direction: ${userDirection}.`,
+    `Treat this as the only creative change request. Change only the details explicitly requested. Preserve every unmentioned visual detail from @1, including existing clothing, colors, materials, accessories, and props. Do not infer or add any theme, wardrobe, accessory, or prop from the style name, preset metadata, or other stored fields.`,
+  ].join(" ");
 
   const conceptPose = [
-    `Full-body single character concept illustration of "${mascot.name}" wearing the "${themeName}" themed outfit.`,
-    ...(customDirective ? [customDirective] : []),
+    `Full-body single character concept illustration of "${mascot.name}" following the user-authored design direction.`,
     `Single centered subject standing proudly facing camera. Preserve the exact proportions, facial geometry, eye scale, and recognizable body features shown in @1, with a friendly and joyful expression.`,
   ].join(" ");
 
@@ -80,7 +71,7 @@ export function buildMascotStyleConceptPrompt(
     `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no model sheet, no turnaround, no front-and-back poses, no multiple angles, no side-by-side poses, no duplicate characters, no grid, no split screen, no collage, no text, no watermark.`,
   ].join(" ");
 
-  return [continuityDirective, renderStyleDirective, costumeDirective, conceptPose, isolationConstraints].join(" ");
+  return [continuityDirective, renderStyleDirective, userDirectionDirective, conceptPose, isolationConstraints].join(" ");
 }
 
 /**

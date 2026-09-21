@@ -41,7 +41,7 @@ export interface MascotStyleBatchJob {
 export interface QueueStyleGenerationItem {
   style_id: string;
   style_name?: string;
-  prompt?: string;
+  prompt: string;
 }
 
 export interface QueueStyleGenerationInput {

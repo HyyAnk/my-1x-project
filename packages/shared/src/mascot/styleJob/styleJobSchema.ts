@@ -3,6 +3,7 @@
  */
 
 import { z } from "zod";
+import { MascotStyleConceptPromptSchema } from "../styleConceptPrompt.js";
 import { MASCOT_STYLE_JOB_STATUSES, MASCOT_STYLE_BATCH_STATUSES, QUEUE_STYLE_GENERATION_MODES } from "./styleJobConstants.js";
 
 export const MascotStyleJobStatusSchema = z.enum(MASCOT_STYLE_JOB_STATUSES);
@@ -44,7 +45,7 @@ export const QueueStyleGenerationModeSchema = z.enum(QUEUE_STYLE_GENERATION_MODE
 export const QueueStyleGenerationItemSchema = z.object({
   style_id: z.string().min(1),
   style_name: z.string().optional(),
-  prompt: z.string().optional(),
+  prompt: MascotStyleConceptPromptSchema,
 });
 
 export const QueueStyleGenerationInputSchema = z.object({

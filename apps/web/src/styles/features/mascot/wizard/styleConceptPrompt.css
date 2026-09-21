@@ -58,6 +58,16 @@
   opacity: 0.6;
 }
 
+.style-anchor-prompt-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.style-anchor-prompt-error {
+  color: var(--danger);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 @media (max-width: 640px) {
   .style-anchor-prompt-input {
     min-height: 88px;

@@ -42,8 +42,10 @@ export function useMascotBatchRecovery({
   const restoreActiveBatch = useCallback(
     async (activeBatch: MascotSlotBatchJob, status: SlotBatchStatusResponse, styleId: string, canCommit: () => boolean) => {
       refs.activeBatchIdRef.current = activeBatch.id;
+      refs.lastBatchUpdatedAtRef.current = activeBatch.updated_at;
       refs.trackedStyleIdRef.current = styleId;
       refs.lastCompletedCountRef.current = activeBatch.completed_count;
+      refs.pendingSlotKeysRef.current.clear();
       refs.onActiveStyleRecoveredRef.current(styleId);
 
       const activeKeys = status.active_slot_keys.length > 0 ? status.active_slot_keys : activeBatch.active_slot_keys || [];

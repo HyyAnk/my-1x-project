@@ -133,11 +133,11 @@ describe("useMascotStyleQueue", () => {
     );
 
     await act(async () => {
-      await result.current.handleQueueStyle("style-cyber");
+      await result.current.handleQueueStyle("style-cyber", "manual cyber prompt");
     });
 
     expect(api.queueStyleGeneration).toHaveBeenCalledWith(mockMascot.id, {
-      styles: [{ style_id: "style-cyber", style_name: "Cyber Neon", prompt: undefined }],
+      styles: [{ style_id: "style-cyber", style_name: "Cyber Neon", prompt: "manual cyber prompt" }],
       mode: "single",
     });
 
@@ -268,46 +268,6 @@ describe("useMascotStyleQueue", () => {
     await act(async () => Promise.resolve());
     expect(result.current.activeBatch?.id).toBe(activeBatch.id);
     unmount();
-  });
-
-  it("queues all missing styles in batch mode", async () => {
-    const onMascotUpdated = vi.fn();
-    const onNotice = vi.fn();
-
-    const mockBatch: MascotStyleBatchJob = {
-      id: "batch-all",
-      mascot_id: mockMascot.id,
-      status: "queued",
-      total_styles: 2,
-      completed_count: 0,
-      failed_count: 0,
-      active_style_ids: [],
-      items: [],
-      created_at: "2026-09-18T10:00:00.000Z",
-      updated_at: "2026-09-18T10:00:00.000Z",
-    };
-
-    vi.mocked(api.queueStyleGeneration).mockResolvedValue(mockBatch);
-
-    const { result } = renderHook(() =>
-      useMascotStyleQueue({
-        mascot: mockMascot,
-        onMascotUpdated,
-        onNotice,
-      }),
-    );
-
-    await act(async () => {
-      await result.current.handleQueueAllMissingStyles();
-    });
-
-    expect(api.queueStyleGeneration).toHaveBeenCalledWith(mockMascot.id, {
-      styles: [
-        { style_id: "style-cyber", style_name: "Cyber Neon" },
-        { style_id: "style-stealth", style_name: "Stealth" },
-      ],
-      mode: "all_missing",
-    });
   });
 
   it("stops queue when handleStopStyleQueue is called", async () => {

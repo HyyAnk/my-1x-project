@@ -72,10 +72,15 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mascot-style-tab:hover {
+.mascot-style-tab:hover:not(:disabled) {
   background: var(--surface-active);
   color: var(--ink);
   border-color: var(--line);
+}
+
+.mascot-style-tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .mascot-style-tab.is-active {

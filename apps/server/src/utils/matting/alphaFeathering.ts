@@ -49,11 +49,15 @@ export function cleanupTransparentImage(image: DecodedImage): DecodedImage {
   const out = new Uint8Array(data.length);
   out.set(data);
 
-  // Eliminate near-zero alpha noise (e.g. compression artifacts with alpha < 5)
+  // Eliminate near-zero alpha noise and hidden key colors that can bleed during image scaling.
   for (let i = 0; i < width * height; i++) {
-    const a = out[i * 4 + 3];
+    const idx = i * 4;
+    const a = out[idx + 3];
     if (a < 5) {
-      out[i * 4 + 3] = 0;
+      out[idx] = 0;
+      out[idx + 1] = 0;
+      out[idx + 2] = 0;
+      out[idx + 3] = 0;
     }
   }
   return { width, height, data: out };

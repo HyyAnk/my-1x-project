@@ -57,7 +57,10 @@ export function registerMascotStyleRoutes(server: FastifyInstance, deps: Mascots
     try {
       const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
       const parsedBody = GenerateMascotStyleConceptRequestSchema.safeParse(rawBody);
-      const prompt = parsedBody.success ? parsedBody.data.prompt : undefined;
+      if (!parsedBody.success) {
+        return reply.code(400).send({ error: parsedBody.error.issues[0]?.message || "Invalid style generation request" });
+      }
+      const { prompt } = parsedBody.data;
 
       let mascot: MascotProfile;
       try {

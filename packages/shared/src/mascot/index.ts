@@ -8,11 +8,13 @@ export * from "./renderMotion.js";
 export * from "./constants/mascotPoses.js";
 export * from "./constants/mascotActionMeta.js";
 export * from "./utils/mascotPoseSelector.js";
+export * from "./utils/mascotCelebrateVisualPolicy.js";
 export * from "./animation/index.js";
 export * from "./slotJob/index.js";
 export * from "./styleJob/index.js";
 export * from "./activity/index.js";
 export * from "./builtInStyles.js";
+export * from "./styleConceptPrompt.js";
 
 // Legacy V1 Compatibility Adapters & Cloners (@deprecated)
 export * from "./legacyAdapter.js";

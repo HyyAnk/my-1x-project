@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor, within } from "@testing-library/react";
 import type { MascotProfile, MascotStyle } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotActionsStep, type MascotActionsStepProps } from "./MascotActionsStep";
@@ -65,7 +65,8 @@ function createMockStylesState() {
     queuedSlotKeys: [],
     handleGenerateSlot: vi.fn(),
     handleBatchGenerateStyle: vi.fn(),
-    handleRegenerateSelectedSlots: vi.fn(),
+    handleGenerateSelectedSlots: vi.fn().mockResolvedValue(true),
+    handleRegenerateSelectedSlots: vi.fn().mockResolvedValue(true),
     batchProgress: null,
     handleStopBatchGeneration: vi.fn(),
     editingSlot: null,
@@ -115,10 +116,12 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
     expect(onBackStep).toHaveBeenCalledTimes(1);
   });
 
-  it("disables 'Manage in Concept' navigation button when a slot or batch generation is busy", () => {
+  it("keeps the active style fixed while slot generation is busy", () => {
+    const setActiveStyleId = vi.fn();
     const stylesState = {
       ...createMockStylesState(),
       busySlotKey: "thinking_1",
+      setActiveStyleId,
     };
     const { container } = renderActionsStep({
       stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"],
@@ -126,10 +129,18 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
 
     const manageBtn = container.querySelector(".mascot-style-tab-manage");
     expect(manageBtn).toHaveProperty("disabled", true);
+
+    const activeStyleTab = screen.getByRole("tab", { name: /Core Style/i });
+    const otherStyleTab = screen.getByRole("tab", { name: /Cyber Punk/i });
+    expect(activeStyleTab).toHaveProperty("disabled", false);
+    expect(otherStyleTab).toHaveProperty("disabled", true);
+
+    fireEvent.click(otherStyleTab);
+    expect(setActiveStyleId).not.toHaveBeenCalled();
   });
 
   it("renders selection toolbar and handles multi-select variant regeneration", async () => {
-    const handleRegenerateSelectedSlots = vi.fn().mockResolvedValue(undefined);
+    const handleRegenerateSelectedSlots = vi.fn().mockResolvedValue(true);
     const styleWithFilledSlots: MascotStyle = {
       ...mockCoreStyle,
       states: {
@@ -178,7 +189,7 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
     expect(screen.getByText("1 selected")).toBeDefined();
 
     // Select All button
-    const selectAllBtn = screen.getByRole("button", { name: "Select all filled Thinking slots" });
+    const selectAllBtn = screen.getByRole("button", { name: "Select all available generated Thinking slots" });
     expect(selectAllBtn).toBeDefined();
 
     // Click Select All
@@ -188,7 +199,7 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
 
     // Regenerate Selected button
     const regenBtn = screen.getByRole("button", {
-      name: "Regenerate 2 selected thinking slots",
+      name: "Regenerate Selected 2 thinking slots",
     });
     expect(regenBtn).toBeDefined();
     expect(regenBtn).toHaveProperty("disabled", false);
@@ -196,14 +207,16 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
     // Click Regenerate Selected
     fireEvent.click(regenBtn);
 
-    expect(handleRegenerateSelectedSlots).toHaveBeenCalledTimes(1);
-    expect(handleRegenerateSelectedSlots).toHaveBeenCalledWith([
-      { state: "thinking", slotIndex: 1, promptModifier: "pondering deeply" },
-      { state: "thinking", slotIndex: 2, promptModifier: "scratching chin" },
-    ]);
+    await waitFor(() => {
+      expect(handleRegenerateSelectedSlots).toHaveBeenCalledTimes(1);
+      expect(handleRegenerateSelectedSlots).toHaveBeenCalledWith([
+        { state: "thinking", slotIndex: 1, promptModifier: "pondering deeply" },
+        { state: "thinking", slotIndex: 2, promptModifier: "scratching chin" },
+      ]);
+    });
   });
 
-  it("disables 'Regenerate Selected' button when generation queue is active", () => {
+  it("keeps unrelated slots selectable while another slot is generating", () => {
     const styleWithFilledSlots: MascotStyle = {
       ...mockCoreStyle,
       states: {
@@ -212,6 +225,11 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
             id: "t_1",
             slot_index: 1,
             image_url: "https://example.com/t1.png",
+          },
+          {
+            id: "t_2",
+            slot_index: 2,
+            image_url: "https://example.com/t2.png",
           },
         ],
         celebrate: [],
@@ -238,8 +256,84 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
       stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"],
     });
 
-    const selectAllBtn = screen.getByRole("button", { name: "Select all filled Thinking slots" });
-    expect(selectAllBtn).toHaveProperty("disabled", true);
+    const activeSlotCheckbox = screen.getByRole("checkbox", { name: "Select thinking slot 1" });
+    const availableSlotCheckbox = screen.getByRole("checkbox", { name: "Select thinking slot 2" });
+    expect(activeSlotCheckbox).toHaveProperty("disabled", true);
+    expect(availableSlotCheckbox).toHaveProperty("disabled", false);
+
+    fireEvent.click(availableSlotCheckbox);
+    expect(screen.getByRole("button", { name: "Regenerate Selected 1 thinking slot" })).toHaveProperty("disabled", false);
+  });
+
+  it("queues multiple selected empty slots in one request", async () => {
+    const handleGenerateSelectedSlots = vi.fn().mockResolvedValue(true);
+    const stylesState = {
+      ...createMockStylesState(),
+      handleGenerateSelectedSlots,
+    };
+
+    renderActionsStep({ stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"] });
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select thinking slot 2" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select thinking slot 4" }));
+    fireEvent.click(screen.getByRole("button", { name: "Generate Selected 2 thinking slots" }));
+
+    await waitFor(() => {
+      expect(handleGenerateSelectedSlots).toHaveBeenCalledWith([
+        { state: "thinking", slotIndex: 2, promptModifier: undefined },
+        { state: "thinking", slotIndex: 4, promptModifier: undefined },
+      ]);
+    });
+  });
+
+  it("keeps selected slots checked when the queue request is rejected", async () => {
+    const handleGenerateSelectedSlots = vi.fn().mockResolvedValue(false);
+    const stylesState = {
+      ...createMockStylesState(),
+      handleGenerateSelectedSlots,
+    };
+
+    renderActionsStep({ stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"] });
+
+    const slotCheckbox = screen.getByRole("checkbox", { name: "Select thinking slot 3" });
+    fireEvent.click(slotCheckbox);
+    fireEvent.click(screen.getByRole("button", { name: "Generate Selected 1 thinking slot" }));
+
+    await waitFor(() => expect(handleGenerateSelectedSlots).toHaveBeenCalledTimes(1));
+    expect(slotCheckbox).toHaveProperty("checked", true);
+    expect(screen.getByText("1 selected")).toBeDefined();
+  });
+
+  it("allows another empty slot to join an active queue", () => {
+    const handleGenerateSlot = vi.fn();
+    const stylesState = {
+      ...createMockStylesState(),
+      handleGenerateSlot,
+      busySlotKey: "batch",
+      queuedSlotKeys: ["thinking_1", "core:thinking_1"],
+      batchProgress: {
+        total: 2,
+        completed: 0,
+        failed: 0,
+        activeSlotKeys: ["thinking_2"],
+        statusMessage: "Generating Thinking slot 2",
+        startTime: Date.now(),
+        isStopping: false,
+        targetState: "thinking" as const,
+        mode: "single" as const,
+      },
+    };
+
+    renderActionsStep({ stylesState: stylesState as unknown as MascotActionsStepProps["stylesState"] });
+
+    const thinkingSection = screen.getByRole("region", { name: "Thinking" });
+    const availableGenerateButtons = within(thinkingSection).getAllByRole("button", { name: "Generate" });
+    expect(availableGenerateButtons).toHaveLength(8);
+    expect(availableGenerateButtons[0]).toHaveProperty("disabled", false);
+
+    fireEvent.click(availableGenerateButtons[0]!);
+    expect(handleGenerateSlot).toHaveBeenCalledWith("thinking", 3);
+    expect(within(thinkingSection).getByRole("button", { name: "Queue Remaining (8)" })).toHaveProperty("disabled", false);
   });
 
   it("attaches beforeunload listener when batch generation is active", () => {

@@ -48,8 +48,7 @@ export interface UseMascotStyleQueueResult {
   queuedStyleIds: string[];
   activeStyleIds: string[];
   styleQueueProgress: StyleQueueProgressState | null;
-  handleQueueStyle: (styleId: string, prompt?: string) => Promise<void>;
-  handleQueueAllMissingStyles: () => Promise<void>;
+  handleQueueStyle: (styleId: string, prompt: string) => Promise<void>;
   handleStopStyleQueue: () => Promise<void>;
   handleRetryFailedStyles: () => Promise<void>;
 }

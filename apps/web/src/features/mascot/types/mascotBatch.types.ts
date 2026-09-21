@@ -14,7 +14,7 @@ export type BatchProgressState = {
   startTime: number;
   isStopping: boolean;
   targetState?: "thinking" | "celebrate" | "all";
-  mode?: "single" | "batch_empty" | "regenerate_selected";
+  mode?: "single" | "batch_empty" | "generate_selected" | "regenerate_selected";
 };
 
 export type QueuedSlotTask = {
@@ -51,9 +51,8 @@ export type UseMascotBatchGenerationResult = {
   handleStopBatchGeneration: () => void;
   handleGenerateSlot: (state: "thinking" | "celebrate", slotIndex: number, promptModifier?: string) => Promise<void>;
   handleBatchGenerateStyle: (stateFilter?: "thinking" | "celebrate" | "all") => Promise<void>;
-  handleRegenerateSelectedSlots: (
-    slots: Array<{ state: "thinking" | "celebrate"; slotIndex: number; promptModifier?: string }>,
-  ) => Promise<void>;
+  handleGenerateSelectedSlots: (slots: BatchSlotItem[]) => Promise<boolean>;
+  handleRegenerateSelectedSlots: (slots: BatchSlotItem[]) => Promise<boolean>;
 };
 
 export type MascotQueueCallbacks = {

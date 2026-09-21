@@ -68,15 +68,19 @@ describe("Mascot Style Concept Generation", () => {
         deleteMascotAssetFile: vi.fn().mockResolvedValue(undefined),
       } as unknown as RepositoryService;
 
-      const result = await generateMascotStyleConcept(mockRepository, mockMascot, "style_cyber_ninja", testImageConfig);
+      const userPrompt = "add a sleek neon visor over the left eye";
+      const result = await generateMascotStyleConcept(mockRepository, mockMascot, "style_cyber_ninja", testImageConfig, {
+        prompt: userPrompt,
+      });
 
       // Verify prompt construction and contract
       expect(result.prompt_used).toContain("@1");
       expect(result.prompt_used).toContain('Strictly preserve character identity from @1 for "Shadow Fox"');
-      expect(result.prompt_used).toContain('Theme wardrobe for "Cyber Ninja": sleek nano armor dual katanas neon visor.');
+      expect(result.prompt_used).toContain(`User-authored character design direction: ${userPrompt}.`);
       expect(result.prompt_used).toContain(
-        'Full-body single character concept illustration of "Shadow Fox" wearing the "Cyber Ninja" themed outfit.',
+        'Full-body single character concept illustration of "Shadow Fox" following the user-authored design direction.',
       );
+      expect(result.prompt_used).not.toContain("sleek nano armor dual katanas neon visor");
       expect(result.prompt_used).toContain("Rendering style lock: match @1 exactly");
       expect(result.prompt_used).toContain("floating character");
       expect(result.prompt_used).toContain("no ground shadow");
@@ -96,6 +100,7 @@ describe("Mascot Style Concept Generation", () => {
       // Verify style's anchor_image_url and raw_anchor_image_url were updated on the saved mascot profile
       expect(savedMascotProfile).not.toBeNull();
       const updatedStyle = (savedMascotProfile as unknown as MascotProfile)?.styles?.find((s) => s.id === "style_cyber_ninja");
+      expect(updatedStyle?.keyword).toBe(userPrompt);
       expect(updatedStyle?.anchor_image_url).toBe(result.anchor_image_url);
       expect(updatedStyle?.raw_anchor_image_url).toBe(result.raw_image_url);
     });
@@ -113,9 +118,9 @@ describe("Mascot Style Concept Generation", () => {
 
       const mockRepository = {} as RepositoryService;
 
-      await expect(generateMascotStyleConcept(mockRepository, mockMascot, "missing_style", testImageConfig)).rejects.toThrow(
-        "Style missing_style not found",
-      );
+      await expect(
+        generateMascotStyleConcept(mockRepository, mockMascot, "missing_style", testImageConfig, { prompt: "new style" }),
+      ).rejects.toThrow("Style missing_style not found");
     });
 
     it("stops before later assets and profile persistence when cancelled after the first asset write", async () => {
@@ -154,7 +159,10 @@ describe("Mascot Style Concept Generation", () => {
       } as unknown as RepositoryService;
 
       await expect(
-        generateMascotStyleConcept(mockRepository, mockMascot, "style_signal", testImageConfig, { signal: controller.signal }),
+        generateMascotStyleConcept(mockRepository, mockMascot, "style_signal", testImageConfig, {
+          prompt: "signal suit",
+          signal: controller.signal,
+        }),
       ).rejects.toThrow("Cancelled after first mascot asset");
 
       expect(saveMascotAsset).toHaveBeenCalledTimes(1);
@@ -198,7 +206,10 @@ describe("Mascot Style Concept Generation", () => {
       } as unknown as RepositoryService;
 
       await expect(
-        generateMascotStyleConcept(mockRepository, mockMascot, "style_guard", testImageConfig, { signal: controller.signal }),
+        generateMascotStyleConcept(mockRepository, mockMascot, "style_guard", testImageConfig, {
+          prompt: "guard gear",
+          signal: controller.signal,
+        }),
       ).rejects.toThrow("Cancelled before mascot profile save");
 
       expect(mockRepository.saveMascotAsset).toHaveBeenCalledTimes(2);
@@ -245,10 +256,8 @@ describe("Mascot Style Concept Generation", () => {
       expect(result.placeholder).toBe(true);
       expect(result.prompt_used).toContain("@1");
       expect(result.prompt_used).toContain(customOverride);
-      expect(result.prompt_used).toContain(
-        'Theme wardrobe for "Cyber Neon Pulse": futuristic techwear outfit with cyan and magenta emissive trim',
-      );
-      expect(result.prompt_used).toContain("tricorn hat pirate coat brass telescope eye patch");
+      expect(result.prompt_used).not.toContain("Cyber Neon Pulse");
+      expect(result.prompt_used).not.toContain("tricorn hat pirate coat brass telescope eye patch");
       expect(validateMascotPromptContract(result.prompt_used, true)).toBe(true);
 
       // Verify files exist in repository asset storage
@@ -269,7 +278,9 @@ describe("Mascot Style Concept Generation", () => {
       expect(styleInMascot?.raw_anchor_image_url).toBe(result.raw_image_url);
 
       // 5. Regenerate style concept to verify previous asset cleanup
-      const result2 = await generateMascotStyleConcept(app.repository, reloadedMascot, style.id, testImageConfig);
+      const result2 = await generateMascotStyleConcept(app.repository, reloadedMascot, style.id, testImageConfig, {
+        prompt: "wear only a red captain hat",
+      });
 
       expect(result2.anchor_image_url).not.toBe(result.anchor_image_url);
       const reloadedMascot2 = await app.repository.getMascot(mascot.id);

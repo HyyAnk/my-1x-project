@@ -23,6 +23,7 @@ export function MascotStyleTabBar({
   onManageStyles,
 }: MascotStyleTabBarProps) {
   const { t } = useTranslation();
+  const isGenerationActive = isBatchBusy || busySlotKey !== null;
 
   return (
     <div className="mascot-style-tabs-container">
@@ -48,6 +49,8 @@ export function MascotStyleTabBar({
               aria-selected={isSelected}
               className={`mascot-style-tab ${isSelected ? "is-active" : ""} is-readiness-${readiness}`}
               onClick={() => onSelectStyle(style.id)}
+              disabled={isGenerationActive && !isSelected}
+              title={isGenerationActive && !isSelected ? "Finish or stop the active queue before switching styles" : undefined}
             >
               <PaintBrush size={14} weight={isSelected ? "fill" : "regular"} />
               <span className="style-tab-title">{style.name}</span>

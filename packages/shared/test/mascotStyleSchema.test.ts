@@ -240,10 +240,9 @@ describe("MascotStyleSchema and style readiness", () => {
   });
 
   describe("GenerateMascotStyleConcept schemas", () => {
-    it("parses request schema with optional fields", () => {
-      const parsedEmpty = GenerateMascotStyleConceptRequestSchema.parse({});
-      assert.deepEqual(parsedEmpty, {});
-
+    it("requires and parses a user-authored prompt", () => {
+      assert.throws(() => GenerateMascotStyleConceptRequestSchema.parse({}));
+      assert.throws(() => GenerateMascotStyleConceptRequestSchema.parse({ prompt: "   " }));
       const parsedWithData = GenerateMascotStyleConceptRequestSchema.parse({
         prompt: "A cyberpunk fox with goggles",
         options: { seed: 1234, negative_prompt: "blurry" },

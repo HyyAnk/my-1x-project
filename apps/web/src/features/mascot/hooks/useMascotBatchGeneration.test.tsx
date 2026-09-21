@@ -432,7 +432,9 @@ describe("useMascotBatchGeneration hook", () => {
       result.current.handleStopBatchGeneration();
     });
 
-    expect(api.cancelSlotGeneration).toHaveBeenCalledWith("mascot-hook-test", "core");
+    await waitFor(() => {
+      expect(api.cancelSlotGeneration).toHaveBeenCalledWith("mascot-hook-test", "core");
+    });
 
     await waitFor(() => {
       expect(result.current.batchProgress).toBeNull();
@@ -522,6 +524,140 @@ describe("useMascotBatchGeneration hook", () => {
       },
       { timeout: 3000 },
     );
+  });
+
+  it("serializes rapid single-slot requests so later slots append to the same server batch", async () => {
+    const createQueuedBatch = (slotIndices: number[]): MascotSlotBatchJob => ({
+      id: "batch_serialized",
+      mascot_id: "mascot-hook-test",
+      style_id: "core",
+      status: "queued",
+      total_slots: slotIndices.length,
+      completed_count: 0,
+      failed_count: 0,
+      active_slot_keys: [],
+      items: slotIndices.map((slotIndex) => ({
+        id: `job_${slotIndex}`,
+        mascot_id: "mascot-hook-test",
+        style_id: "core",
+        state: "thinking",
+        slot_index: slotIndex,
+        status: "queued",
+        created_at: "2026-01-01T00:00:00Z",
+      })),
+      created_at: "2026-01-01T00:00:00Z",
+      updated_at: "2026-01-01T00:00:00Z",
+    });
+    const firstBatch = createQueuedBatch([2]);
+    const appendedBatch = createQueuedBatch([2, 3]);
+    let activeBatch: MascotSlotBatchJob | null = null;
+    let releaseFirstRequest = () => undefined;
+    const firstRequest = new Promise<MascotSlotBatchJob>((resolve) => {
+      releaseFirstRequest = () => {
+        activeBatch = firstBatch;
+        resolve(firstBatch);
+      };
+    });
+
+    const queueSpy = vi
+      .spyOn(api, "queueSlotGeneration")
+      .mockImplementationOnce(() => firstRequest)
+      .mockImplementationOnce(async () => {
+        activeBatch = appendedBatch;
+        return appendedBatch;
+      });
+    vi.spyOn(api, "getSlotGenerationStatus").mockImplementation(async () => ({
+      active_batch: activeBatch,
+      queued_slot_keys: activeBatch?.items.map((item) => `${item.state}_${item.slot_index}`) ?? [],
+      active_slot_keys: [],
+    }));
+
+    const { result, unmount } = renderHook(() =>
+      useMascotBatchGeneration({
+        mascot: mockMascot,
+        activeStyleId: "core",
+        activeStyle: mockStyle,
+        onMascotUpdated: vi.fn(),
+        onNotice: vi.fn(),
+      }),
+    );
+
+    let firstSubmission: Promise<void>;
+    let secondSubmission: Promise<void>;
+    act(() => {
+      firstSubmission = result.current.handleGenerateSlot("thinking", 2);
+      secondSubmission = result.current.handleGenerateSlot("thinking", 3);
+    });
+
+    await waitFor(() => expect(queueSpy).toHaveBeenCalledTimes(1));
+    releaseFirstRequest();
+    await waitFor(() => expect(queueSpy).toHaveBeenCalledTimes(2));
+    await act(async () => Promise.all([firstSubmission!, secondSubmission!]));
+
+    expect(queueSpy.mock.calls[0]?.[2].slots).toEqual([{ state: "thinking", slot_index: 2, prompt_modifier: undefined }]);
+    expect(queueSpy.mock.calls[1]?.[2].slots).toEqual([{ state: "thinking", slot_index: 3, prompt_modifier: undefined }]);
+    expect(result.current.queuedSlotKeys).toEqual(expect.arrayContaining(["thinking_2", "thinking_3"]));
+    unmount();
+  });
+
+  it("queues selected empty slots in one batch request", async () => {
+    const selectedBatch: MascotSlotBatchJob = {
+      id: "batch_generate_selected",
+      mascot_id: "mascot-hook-test",
+      style_id: "core",
+      status: "queued",
+      total_slots: 2,
+      completed_count: 0,
+      failed_count: 0,
+      active_slot_keys: [],
+      items: [2, 4].map((slotIndex) => ({
+        id: `job_selected_${slotIndex}`,
+        mascot_id: "mascot-hook-test",
+        style_id: "core",
+        state: "thinking" as const,
+        slot_index: slotIndex,
+        status: "queued" as const,
+        created_at: "2026-01-01T00:00:00Z",
+      })),
+      created_at: "2026-01-01T00:00:00Z",
+      updated_at: "2026-01-01T00:00:00Z",
+    };
+    vi.spyOn(api, "queueSlotGeneration").mockResolvedValue(selectedBatch);
+    vi.spyOn(api, "getSlotGenerationStatus").mockResolvedValue({
+      active_batch: selectedBatch,
+      queued_slot_keys: ["thinking_2", "thinking_4"],
+      active_slot_keys: [],
+    });
+
+    const { result, unmount } = renderHook(() =>
+      useMascotBatchGeneration({
+        mascot: mockMascot,
+        activeStyleId: "core",
+        activeStyle: mockStyle,
+        onMascotUpdated: vi.fn(),
+        onNotice: vi.fn(),
+      }),
+    );
+
+    let accepted = false;
+    await act(async () => {
+      accepted = await result.current.handleGenerateSelectedSlots([
+        { state: "thinking", slotIndex: 2 },
+        { state: "thinking", slotIndex: 4 },
+      ]);
+    });
+
+    expect(accepted).toBe(true);
+    expect(api.queueSlotGeneration).toHaveBeenCalledWith("mascot-hook-test", "core", {
+      style_id: "core",
+      mode: "batch_empty",
+      slots: [
+        { state: "thinking", slot_index: 2, prompt_modifier: undefined },
+        { state: "thinking", slot_index: 4, prompt_modifier: undefined },
+      ],
+    });
+    expect(result.current.batchProgress?.mode).toBe("generate_selected");
+    unmount();
   });
 
   it("enqueues multi-select slots with mode regenerate_selected", async () => {

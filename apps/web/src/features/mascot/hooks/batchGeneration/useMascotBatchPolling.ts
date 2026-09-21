@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import type { MascotSlotBatchJob, SlotBatchStatusResponse } from "@studio/shared";
 import { api } from "../../../../api";
 import { inferBatchTargetState, formatSlotStreamMessage, formatQueuedKeys } from "../../utils/mascotBatchHelpers";
+import { isOlderBatchSnapshot } from "../../utils/mascotSlotQueueHelpers";
 import { emitBatchOutcome } from "./batchOutcomeEmitter";
 import type { BatchStateRefs, MascotBatchStateReturn } from "./types";
 
@@ -38,7 +39,12 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
 
   const handleActiveBatchUpdate = useCallback(
     async (activeBatch: MascotSlotBatchJob, statusRes: SlotBatchStatusResponse, mascotId: string, styleId: string) => {
+      const lastUpdatedAt = refs.lastBatchUpdatedAtRef.current;
+      const isTrackedBatch = refs.activeBatchIdRef.current === activeBatch.id;
+      if (isTrackedBatch && isOlderBatchSnapshot(activeBatch.updated_at, lastUpdatedAt)) return;
+
       refs.activeBatchIdRef.current = activeBatch.id;
+      refs.lastBatchUpdatedAtRef.current = activeBatch.updated_at;
       if (activeBatch.completed_count > refs.lastCompletedCountRef.current) {
         refs.lastCompletedCountRef.current = activeBatch.completed_count;
         try {
@@ -52,7 +58,7 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
       }
 
       const activeKeys = statusRes.active_slot_keys.length > 0 ? statusRes.active_slot_keys : activeBatch.active_slot_keys || [];
-      const queuedKeys = statusRes.queued_slot_keys || [];
+      const queuedKeys = [...(statusRes.queued_slot_keys || []), ...refs.pendingSlotKeysRef.current];
       const targetState = inferBatchTargetState(activeBatch);
       const styleName = refs.mascotRef.current?.styles?.find((style) => style.id === styleId)?.name;
 
@@ -63,20 +69,24 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
         setBusySlotKey("batch");
       }
 
-      setBatchProgress((prev) => ({
-        batchId: activeBatch.id,
-        styleId,
-        styleName,
-        total: activeBatch.total_slots,
-        completed: activeBatch.completed_count,
-        failed: activeBatch.failed_count,
-        activeSlotKeys: activeKeys,
-        statusMessage: formatSlotStreamMessage(activeKeys, activeBatch.total_slots, prev?.isStopping),
-        startTime: prev?.startTime ?? (new Date(activeBatch.created_at).getTime() || Date.now()),
-        isStopping: prev?.isStopping ?? false,
-        targetState: prev?.targetState ?? targetState,
-        mode: prev?.mode ?? (activeBatch.total_slots === 1 ? "single" : "batch_empty"),
-      }));
+      setBatchProgress((prev) => {
+        const isSameBatch = prev?.batchId === activeBatch.id;
+        const total = isSameBatch ? Math.max(prev.total, activeBatch.total_slots) : activeBatch.total_slots;
+        return {
+          batchId: activeBatch.id,
+          styleId,
+          styleName,
+          total,
+          completed: isSameBatch ? Math.max(prev.completed, activeBatch.completed_count) : activeBatch.completed_count,
+          failed: isSameBatch ? Math.max(prev.failed, activeBatch.failed_count) : activeBatch.failed_count,
+          activeSlotKeys: activeKeys,
+          statusMessage: formatSlotStreamMessage(activeKeys, total, prev?.isStopping),
+          startTime: prev?.startTime ?? (new Date(activeBatch.created_at).getTime() || Date.now()),
+          isStopping: prev?.isStopping ?? false,
+          targetState: prev?.targetState ?? targetState,
+          mode: prev?.mode ?? (activeBatch.total_slots === 1 ? "single" : "batch_empty"),
+        };
+      });
     },
     [refs, setBatchProgress, setBusySlotKey, setQueuedSlotKeys],
   );
@@ -109,8 +119,10 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
       }
 
       refs.activeBatchIdRef.current = null;
+      refs.lastBatchUpdatedAtRef.current = null;
       refs.lastCompletedCountRef.current = 0;
       refs.trackedStyleIdRef.current = null;
+      refs.pendingSlotKeysRef.current.clear();
 
       if (!isInitialMount) {
         resetBatchState();
@@ -137,7 +149,10 @@ export function useMascotBatchPolling({ state, refs }: UseMascotBatchPollingProp
           refs.trackedStyleIdRef.current = activeBatch.style_id;
           await handleActiveBatchUpdate(activeBatch, statusRes, mascotId, activeBatch.style_id);
         } else {
-          await handleTerminalBatchCleanup(activeBatch, statusRes, mascotId, isInitialMount);
+          const trackedBatchId = refs.activeBatchIdRef.current;
+          const trackedRecentBatch = statusRes.recent_batches?.find((batch) => batch.id === trackedBatchId) ?? null;
+          if (!activeBatch && trackedBatchId && !trackedRecentBatch) return;
+          await handleTerminalBatchCleanup(activeBatch ?? trackedRecentBatch, statusRes, mascotId, isInitialMount);
         }
       } catch (err) {
         console.error("Failed to poll slot generation status:", err);

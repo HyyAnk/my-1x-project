@@ -192,6 +192,37 @@ describe("MascotStyleAnchorCard", () => {
     expect(handleQueueStyle).toHaveBeenCalledWith("cyberpunk", "chrome flight suit with cyan light strips");
   });
 
+  it("requires a user-authored prompt and does not fall back to preset metadata", () => {
+    const handleQueueStyle = vi.fn();
+    const styleWithoutPrompt: MascotStyle = {
+      ...mockCustomStyleWithRaw,
+      keyword: "",
+      built_in_preset_id: "preset_cyber_neon",
+      anchor_image_url: null,
+      raw_anchor_image_url: null,
+    };
+    const stylesState = createStylesState({ handleQueueStyle });
+
+    render(<MascotStyleAnchorCard style={styleWithoutPrompt} editingMascot={mockMascot} stylesState={stylesState} />, {
+      wrapper,
+    });
+
+    fireEvent.click(screen.getByTitle("Generate Style Concept"));
+
+    expect(handleQueueStyle).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert").textContent).toBe("Enter a prompt before generating this style");
+  });
+
+  it("prefills the prompt with the last user-authored style prompt", () => {
+    const stylesState = createStylesState();
+
+    render(<MascotStyleAnchorCard style={mockCustomStyleWithRaw} editingMascot={mockMascot} stylesState={stylesState} />, {
+      wrapper,
+    });
+
+    expect((screen.getByLabelText("Style prompt for Cyberpunk") as HTMLTextAreaElement).value).toBe("neon visor, cybernetic wings");
+  });
+
   it("uses the current prompt when regenerating an existing style concept", () => {
     const handleQueueStyle = vi.fn();
     const stylesState = createStylesState({ handleQueueStyle });

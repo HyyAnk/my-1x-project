@@ -27,8 +27,8 @@ export type StyleConceptGeneratorFn = (
   mascot: MascotProfile,
   styleId: string,
   imageConfig: AppConfig["image_generation"],
-  options?: {
-    prompt?: string;
+  options: {
+    prompt: string;
     signal?: AbortSignal;
     imageFallbackConfig?: AppConfig["image_fallback"];
   },

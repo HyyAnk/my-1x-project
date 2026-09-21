@@ -109,8 +109,8 @@ describe("Mascot Style Job Routes Integration", () => {
       payload: {
         mode: "batch",
         styles: [
-          { style_id: style1.id, style_name: style1.name },
-          { style_id: style2.id, style_name: style2.name },
+          { style_id: style1.id, style_name: style1.name, prompt: "add cyan running shoes" },
+          { style_id: style2.id, style_name: style2.name, prompt: "add a matte black eye mask" },
         ],
       },
     });
@@ -125,6 +125,20 @@ describe("Mascot Style Job Routes Integration", () => {
     expect(statusData.active_batch).not.toBeNull();
     expect(statusData.active_batch?.total_styles).toBe(2);
 
+    await app.close();
+  });
+
+  it("rejects a style concept job without a user-authored prompt", async () => {
+    const { app, mascot, style1 } = await setupTestApp();
+
+    const response = await app.server.inject({
+      method: "POST",
+      url: `/api/mascots/${mascot.id}/styles/jobs/queue`,
+      payload: { styles: [{ style_id: style1.id, style_name: style1.name }] },
+    });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.json<{ error: string }>().error).toBe("Style generation prompt is required");
     await app.close();
   });
 
@@ -152,7 +166,7 @@ describe("Mascot Style Job Routes Integration", () => {
       method: "POST",
       url: `/api/mascots/${mascot.id}/styles/jobs/queue`,
       payload: {
-        styles: [{ style_id: style1.id, style_name: style1.name }],
+        styles: [{ style_id: style1.id, style_name: style1.name, prompt: "add a blue visor" }],
       },
     });
     expect(res1.statusCode).toBe(202);
@@ -164,7 +178,7 @@ describe("Mascot Style Job Routes Integration", () => {
       method: "POST",
       url: `/api/mascots/${mascot.id}/styles/jobs/queue`,
       payload: {
-        styles: [{ style_id: style2.id, style_name: style2.name }],
+        styles: [{ style_id: style2.id, style_name: style2.name, prompt: "add a black visor" }],
       },
     });
     expect(res2.statusCode).toBe(202);
@@ -203,7 +217,7 @@ describe("Mascot Style Job Routes Integration", () => {
       method: "POST",
       url: `/api/mascots/${mascot.id}/styles/jobs/queue`,
       payload: {
-        styles: [{ style_id: style1.id, style_name: style1.name }],
+        styles: [{ style_id: style1.id, style_name: style1.name, prompt: "add a single visor" }],
       },
     });
     const queued = queueRes.json<MascotStyleBatchJob>();

@@ -177,3 +177,32 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+@media (max-width: 640px) {
+  .active-style-keyword-box,
+  .keyword-input-wrap {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .keyword-input-wrap {
+    gap: 6px;
+    width: 100%;
+  }
+
+  .style-keyword-input {
+    box-sizing: border-box;
+    min-height: 44px;
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--surface-strong);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+
+  .save-keyword-btn {
+    justify-content: center;
+    min-height: 44px;
+    width: 100%;
+  }
+}

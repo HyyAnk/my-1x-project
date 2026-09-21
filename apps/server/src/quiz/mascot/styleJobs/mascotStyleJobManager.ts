@@ -99,7 +99,7 @@ export class MascotStyleJobManager extends EventEmitter {
       style_id: s.style_id,
       style_name: s.style_name || s.style_id,
       status: "queued",
-      prompt: s.prompt || null,
+      prompt: s.prompt,
       created_at: now,
     }));
 
@@ -144,7 +144,7 @@ export class MascotStyleJobManager extends EventEmitter {
       style_id: s.style_id,
       style_name: s.style_name || s.style_id,
       status: "queued",
-      prompt: s.prompt || null,
+      prompt: s.prompt,
       created_at: now,
     }));
 

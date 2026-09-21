@@ -49,7 +49,6 @@ export function VariantSlotCard(props: VariantSlotCardProps) {
         slotIndex={slotIndex}
         state={state}
         isQueued={isQueued}
-        isFilled={isFilled}
         isSelected={isSelected}
         isSelectable={isSelectable}
         onToggleSelect={onToggleSelect ? (checked) => onToggleSelect(slotIndex, checked) : undefined}

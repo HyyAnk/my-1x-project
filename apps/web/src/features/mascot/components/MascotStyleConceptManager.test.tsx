@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import { BUILT_IN_PRESETS, type MascotProfile } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotStyleConceptManager } from "./MascotStyleConceptManager";
@@ -80,9 +80,7 @@ describe("MascotStyleConceptManager", () => {
     render(<MascotStyleConceptManager editingMascot={mockMascotUploaded} />, { wrapper });
 
     // Banner verification
-    expect(
-      screen.getByText("Custom style concepts and expressive poses are anchored to your uploaded Master Concept."),
-    ).toBeDefined();
+    expect(screen.getByText("Custom style concepts and expressive poses are anchored to your uploaded Master Concept.")).toBeDefined();
 
     // Core Style card reflects user_uploaded origin badge
     expect(screen.getByText("Master Concept (Uploaded)")).toBeDefined();
@@ -96,9 +94,7 @@ describe("MascotStyleConceptManager", () => {
   it("does not render uploaded banner when concept_origin is ai_generated", () => {
     render(<MascotStyleConceptManager editingMascot={mockMascotAi} />, { wrapper });
 
-    expect(
-      screen.queryByText("Custom style concepts and expressive poses are anchored to your uploaded Master Concept."),
-    ).toBeNull();
+    expect(screen.queryByText("Custom style concepts and expressive poses are anchored to your uploaded Master Concept.")).toBeNull();
     expect(screen.queryByText("Master Concept (Uploaded)")).toBeNull();
   });
 
@@ -108,7 +104,6 @@ describe("MascotStyleConceptManager", () => {
       isCreateModalOpen: false,
       setIsCreateModalOpen,
       handleCreateStyle: vi.fn(),
-      handleQueueAllMissingStyles: vi.fn(),
       styleQueueProgress: null,
     } as any;
 
@@ -119,42 +114,5 @@ describe("MascotStyleConceptManager", () => {
     for (const preset of BUILT_IN_PRESETS) {
       expect(screen.getByText(`Built-in · ${preset.name}`)).toBeDefined();
     }
-  });
-
-  it("renders Queue All Missing button when at least 2 custom styles miss anchor images", () => {
-    const handleQueueAllMissingStyles = vi.fn();
-    const mascotWithMissing: MascotProfile = {
-      ...mockMascotUploaded,
-      styles: [
-        ...(mockMascotUploaded.styles || []),
-        {
-          id: "medieval",
-          name: "Medieval",
-          keyword: "knight armor",
-          anchor_image_url: null,
-          raw_anchor_image_url: null,
-          is_default: false,
-          states: { thinking: [], celebrate: [] },
-          created_at: "2026-09-01T00:00:00.000Z",
-          updated_at: "2026-09-01T00:00:00.000Z",
-        },
-      ],
-    };
-
-    const mockStylesState = {
-      isCreateModalOpen: false,
-      setIsCreateModalOpen: vi.fn(),
-      handleCreateStyle: vi.fn(),
-      handleQueueAllMissingStyles,
-      styleQueueProgress: null,
-    } as any;
-
-    render(<MascotStyleConceptManager editingMascot={mascotWithMissing} stylesState={mockStylesState} />, { wrapper });
-
-    const queueAllBtn = screen.getByTitle(`Queue All Missing (${BUILT_IN_PRESETS.length - 1})`);
-    expect(queueAllBtn).toBeDefined();
-
-    fireEvent.click(queueAllBtn);
-    expect(handleQueueAllMissingStyles).toHaveBeenCalledOnce();
   });
 });
