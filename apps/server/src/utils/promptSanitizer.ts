@@ -1,5 +1,6 @@
 import { EventEmitter } from "node:events";
 import type { AntigravityClient } from "../antigravity.js";
+import type { AntigravityImageAttachment, AntigravityTurnOptions } from "../antigravity/types.js";
 import type { CodexAppServerClient } from "../codex.js";
 
 export type LLMClient =
@@ -7,9 +8,9 @@ export type LLMClient =
   | CodexAppServerClient
   | {
       connect(): Promise<void>;
-      generateContent?(prompt: string, options?: unknown): Promise<{ text?: string } | string>;
+      generateContent?(prompt: string, options?: LLMContentOptions): Promise<{ text?: string } | string>;
       startThread?(): Promise<string>;
-      startTurn?(threadId: string, prompt: string, modelOverride?: string): Promise<string>;
+      startTurn?(threadId: string, prompt: string, modelOverride?: string, options?: AntigravityTurnOptions): Promise<string>;
       interruptTurn?(threadId: string, turnId: string): Promise<void>;
     };
 
@@ -98,6 +99,8 @@ export async function executeSinglePromptText(
     modelOverride?: string;
     signal?: AbortSignal;
     timeoutMs?: number;
+    imageAttachments?: AntigravityImageAttachment[];
+    requireCompleteOutput?: boolean;
   } = {},
 ): Promise<string> {
   const timeoutMs = options.timeoutMs ?? 180_000;
@@ -106,10 +109,10 @@ export async function executeSinglePromptText(
   options.signal?.throwIfAborted();
 
   if (typeof (client as { generateContent?: unknown }).generateContent === "function") {
-    const res = await (client as { generateContent: (p: string, o?: unknown) => Promise<{ text?: string } | string> }).generateContent(
-      prompt,
-      options,
-    );
+    const res = await (
+      client as { generateContent: (p: string, o?: LLMContentOptions) => Promise<{ text?: string } | string> }
+    ).generateContent(prompt, options);
+    options.signal?.throwIfAborted();
     return typeof res === "string" ? res : (res?.text ?? "");
   }
 
@@ -135,7 +138,10 @@ export async function executeSinglePromptText(
 
     const timer = setTimeout(() => {
       cleanup();
-      if (output.trim()) {
+      if (turnId && typeof client.interruptTurn === "function") {
+        void client.interruptTurn(threadId, turnId).catch(() => undefined);
+      }
+      if (output.trim() && options.requireCompleteOutput !== true) {
         resolve(output.trim());
       } else {
         reject(new Error(`LLM single prompt turn timed out after ${timeoutMs}ms`));
@@ -203,9 +209,11 @@ export async function executeSinglePromptText(
     (client as unknown as EventEmitter).on("notification", onNotification);
 
     const turnClient = client as unknown as {
-      startTurn(tId: string, p: string, m?: string): Promise<string>;
+      startTurn(tId: string, p: string, m?: string, turnOptions?: AntigravityTurnOptions): Promise<string>;
     };
-    const startTurnPromise = turnClient.startTurn(threadId, prompt, options.modelOverride);
+    const startTurnPromise = turnClient.startTurn(threadId, prompt, options.modelOverride, {
+      imageAttachments: options.imageAttachments,
+    });
     Promise.resolve(startTurnPromise)
       .then((tId: string) => {
         turnId = tId;
@@ -219,3 +227,11 @@ export async function executeSinglePromptText(
       });
   });
 }
+
+export type LLMContentOptions = {
+  modelOverride?: string;
+  signal?: AbortSignal;
+  timeoutMs?: number;
+  imageAttachments?: AntigravityImageAttachment[];
+  requireCompleteOutput?: boolean;
+};

@@ -2,6 +2,7 @@ import {
   ArrowClockwise,
   Broadcast,
   Database,
+  FolderSimple,
   Gear,
   House,
   ListChecks,
@@ -52,6 +53,7 @@ export function Sidebar({
   const items: Array<{ page: Page; label: string; icon: typeof House }> = [
     { page: "dashboard", label: t("sidebar.dashboard"), icon: House },
     { page: "channels", label: t("sidebar.channels"), icon: Broadcast },
+    { page: "brand_assets", label: t("sidebar.brandAssets"), icon: FolderSimple },
     { page: "question_bank", label: t("sidebar.questionBank"), icon: Database },
     { page: "mascots", label: t("sidebar.mascotStudio"), icon: Smiley },
     { page: "sandbox", label: t("sidebar.sandbox"), icon: Palette },

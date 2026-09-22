@@ -1,0 +1,48 @@
+{
+  "schema_version": 2,
+  "episode_id": "ep_4dc807da5f174c36",
+  "assessed_at": "2026-09-10T11:31:02.675Z",
+  "score": 97,
+  "rating": "production_ready",
+  "categories": {
+    "semantic": 100,
+    "visual": 100,
+    "pacing": 82,
+    "audio": 100,
+    "variety": 100,
+    "render_integrity": 100
+  },
+  "candy_arcade_visual": {
+    "pacing": 18,
+    "hierarchy": 15,
+    "asset_consistency": 15,
+    "motion": 15,
+    "reveal": 10,
+    "transition": 10,
+    "readability": 10,
+    "visual_variety": 5,
+    "total": 98
+  },
+  "issues": [
+    {
+      "code": "mascot_pose_incomplete",
+      "severity": "warning",
+      "message": "Mascot \"Novy\" is missing key animation poses (point). Fallback to idle will be used.",
+      "next_action": "Generate the missing action images in Mascot Studio for best video engagement.",
+      "question_ids": [],
+      "stage": "assets"
+    },
+    {
+      "code": "pacing_question_cycle_outside_target",
+      "severity": "warning",
+      "message": "3 question cycles are outside the 14–20s target for 7-9.",
+      "next_action": "Adjust narration overlap, thinking, reveal, or explanation duration before rendering.",
+      "question_ids": [
+        "question-01",
+        "question-02",
+        "question-03"
+      ],
+      "stage": "timeline"
+    }
+  ]
+}

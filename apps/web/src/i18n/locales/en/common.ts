@@ -63,6 +63,7 @@ export const commonEn = {
     brandSubtitle: "AI Video Engine",
     dashboard: "Dashboard",
     channels: "Channels",
+    brandAssets: "Brand Assets",
     questionBank: "Question Bank",
     mascotStudio: "Mascots",
     sandbox: "Visual Sandbox",

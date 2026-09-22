@@ -22,8 +22,13 @@ import { createTransitionPreviewService } from "../quiz/transitionPreview/transi
 import { registerAnalyticsRoutes } from "./analytics.js";
 import { registerAudioVideoRoutes } from "./audioVideo.js";
 import { registerChannelsRoutes } from "./channels.js";
+import { registerChannelAssetsRoutes } from "./channelAssets.js";
 import { registerEpisodesRoutes } from "./episodes.js";
 import { registerIntroOutroStylesRoutes } from "./introOutroStyles.js";
+import { registerIntroOutroScriptRoutes } from "./introOutroScripts.js";
+import { IntroOutroScriptJobManager } from "../introOutroScripts/jobManager.js";
+import { IntroOutroScriptRepository } from "../introOutroScripts/repository.js";
+import { resolveIntroOutroScriptModel } from "../introOutroScripts/model.js";
 import { registerMascotsRoutes } from "./mascots.js";
 import { registerQuestionBankRoutes } from "./questionBank.js";
 import { registerQuizV2Routes } from "./quizV2.js";
@@ -49,6 +54,7 @@ export type RegisterAllRoutesOptions = {
   state: AppState;
   revealFile?: (filePath: string) => Promise<void>;
   llmClient?: LLMClient | null;
+  introOutroScriptClient?: LLMClient | null;
   ffmpegAdapter?: FfmpegAdapter;
   animationStorageAdapter?: AnimationStorageAdapter;
   videoUploadService?: VideoUploadService;
@@ -62,6 +68,11 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   const revealFile = deps.revealFile ?? revealFileInSystem;
   const activeLlmClient: LLMClient | undefined =
     deps.llmClient !== undefined ? (deps.llmClient ?? undefined) : state.config.active_engine === "antigravity" ? antigravity : codex;
+  const scriptClient = deps.introOutroScriptClient !== undefined ? deps.introOutroScriptClient : antigravity;
+  const scriptRepository = new IntroOutroScriptRepository(repository);
+  const scriptModel = resolveIntroOutroScriptModel(state.config.antigravity.model);
+  const scriptJobs = new IntroOutroScriptJobManager(repository, scriptRepository, scriptClient, scriptModel, logger);
+  await scriptJobs.initialize();
   const portraitImageClient = createPortraitImageClient(state.config.image_generation, state.config.image_fallback);
 
   const clients = new Set<EventClient>();
@@ -76,6 +87,7 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   await server.register(registerSettingsRoutes({ rootDirectory, tasks, codex, antigravity, state }));
   await server.register(registerVoicesRoutes({ repository, logger, state }));
   await server.register(registerChannelsRoutes({ repository, tasks, logger, state, llmClient: activeLlmClient }));
+  await server.register(registerChannelAssetsRoutes({ repository, logger }));
   await server.register(
     registerMascotsRoutes({
       repository,
@@ -103,7 +115,17 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   await server.register(registerStylePresetsRoutes({ repository }));
   await server.register(registerStyleModulesRoutes({ repository }));
   await server.register(registerQuestionBankRoutes({ repository, tasks, codex, antigravity, state }));
-  await server.register(registerIntroOutroStylesRoutes({ repository, logger, state }));
+  await server.register(registerIntroOutroStylesRoutes({ repository, logger, state, scripts: scriptRepository }));
+  await server.register(
+    registerIntroOutroScriptRoutes({
+      repository,
+      scripts: scriptRepository,
+      jobs: scriptJobs,
+      client: scriptClient,
+      model: scriptModel,
+      logger,
+    }),
+  );
 
   const { service: transitionPreviewService, store: transitionPreviewStore } = createTransitionPreviewService(
     repository,

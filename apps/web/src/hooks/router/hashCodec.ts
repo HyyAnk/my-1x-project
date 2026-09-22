@@ -67,6 +67,22 @@ export function parseHash(hash: string): RouteState {
     return parseChannelRoute(segments, tab, group, hash);
   }
 
+  if (root === "brand_assets" || root === "brand-assets") {
+    const rawChannelId = segments[1] ? decodeURIComponent(segments[1]) : queryParams.get("channelId");
+    const channelId = rawChannelId ? rawChannelId.trim() : null;
+    return {
+      page: "brand_assets",
+      channelId,
+      episodeId: null,
+      shortReelId: null,
+      mascotId: null,
+      step: null,
+      tab,
+      group,
+      rawHash: hash,
+    };
+  }
+
   // Fallback to dashboard
   return {
     page: "dashboard",
@@ -148,6 +164,8 @@ export function buildHash(state: {
     }
   } else if (state.page === "mascots" && state.mascotId) {
     path = `/mascots/${encodeURIComponent(state.mascotId)}`;
+  } else if (state.page === "brand_assets") {
+    path = state.channelId ? `/brand_assets/${encodeURIComponent(state.channelId)}` : "/brand_assets";
   }
 
   const params = new URLSearchParams();

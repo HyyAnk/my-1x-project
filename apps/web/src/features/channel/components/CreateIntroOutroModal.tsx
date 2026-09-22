@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Sparkle } from "@phosphor-icons/react";
 import { BUILT_IN_PRESETS, getTransition, type IntroOutroTransitionType } from "@studio/shared";
 import type { CreateIntroOutroStylePayload } from "../../../api/introOutroApi";
+import type { UploadScriptLinks } from "./introOutroScriptStudio";
 import {
   IntroOutroFormatBanner,
   IntroOutroModalHeader,
@@ -21,6 +22,7 @@ export interface CreateIntroOutroModalProps {
   themeColors?: { from?: string; to?: string };
   stylePresetId?: string;
   categoryName?: string;
+  scriptLinks?: UploadScriptLinks | null;
 }
 
 export function CreateIntroOutroModal({
@@ -31,6 +33,7 @@ export function CreateIntroOutroModal({
   themeColors,
   stylePresetId = BUILT_IN_PRESETS[0].id,
   categoryName = BUILT_IN_PRESETS[0].name,
+  scriptLinks = null,
 }: CreateIntroOutroModalProps) {
   const [name, setName] = useState("");
   const [transitionType, setTransitionType] = useState<IntroOutroTransitionType>("stinger_swipe");
@@ -93,6 +96,22 @@ export function CreateIntroOutroModal({
       outro_data: outroInfo.dataUrl,
       intro_filename: introInfo.file.name,
       outro_filename: outroInfo.file.name,
+      ...(scriptLinks?.introRevisionId
+        ? {
+            intro_script_provenance: {
+              project_id: scriptLinks.projectId,
+              revision_id: scriptLinks.introRevisionId,
+            },
+          }
+        : {}),
+      ...(scriptLinks?.outroRevisionId
+        ? {
+            outro_script_provenance: {
+              project_id: scriptLinks.projectId,
+              revision_id: scriptLinks.outroRevisionId,
+            },
+          }
+        : {}),
     });
   };
 
@@ -103,6 +122,13 @@ export function CreateIntroOutroModal({
 
         <form onSubmit={handleSubmit} className="intro-outro-modal-body">
           <IntroOutroFormatBanner />
+
+          {scriptLinks?.introRevisionId || scriptLinks?.outroRevisionId ? (
+            <div className="script-upload-provenance">
+              Approved script links:{" "}
+              {[scriptLinks.introRevisionId ? "Intro" : null, scriptLinks.outroRevisionId ? "Outro" : null].filter(Boolean).join(" and ")}
+            </div>
+          ) : null}
 
           <IntroOutroNameInput value={name} onChange={setName} disabled={submitting} />
 

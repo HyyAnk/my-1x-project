@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { findBuiltInPresetById, getTransition, isValidTransition } from "@studio/shared";
 
+const ScriptProvenanceInputSchema = z
+  .object({
+    project_id: z.string().trim().min(1),
+    revision_id: z.string().trim().min(1),
+  })
+  .strict();
+
 export const CreateIntroOutroStyleInputSchema = z
   .object({
     name: z.string().min(1).max(50),
@@ -16,6 +23,8 @@ export const CreateIntroOutroStyleInputSchema = z
     outro_data: z.string().min(1),
     intro_filename: z.string().default("intro.mp4"),
     outro_filename: z.string().default("outro.mp4"),
+    intro_script_provenance: ScriptProvenanceInputSchema.optional(),
+    outro_script_provenance: ScriptProvenanceInputSchema.optional(),
   })
   .superRefine((data, context) => {
     if (data.style_preset_id && !findBuiltInPresetById(data.style_preset_id)) {

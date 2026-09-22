@@ -6,6 +6,7 @@ import { CreateIntroOutroModal } from "./CreateIntroOutroModal";
 import { IntroOutroCategoryDetail } from "./introOutro/IntroOutroCategoryDetail";
 import { IntroOutroCategoryGrid } from "./introOutro/IntroOutroCategoryGrid";
 import { IntroOutroPreviewModal, type IntroOutroPreviewClip } from "./introOutro/IntroOutroPreviewModal";
+import type { UploadScriptLinks } from "./introOutroScriptStudio";
 
 export interface ChannelIntroOutroTabProps {
   channel: Channel;
@@ -28,6 +29,7 @@ export function ChannelIntroOutroTab({ channel, onNotice, onChannelUpdate }: Cha
 
   const [previewClip, setPreviewClip] = useState<IntroOutroPreviewClip | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [uploadScriptLinks, setUploadScriptLinks] = useState<UploadScriptLinks | null>(null);
   const selectedCategory = categories.find((category) => category.style_preset_id === selectedCategoryId) ?? null;
   const categoryStyles = selectedCategory
     ? styles.filter((style) =>
@@ -46,7 +48,11 @@ export function ChannelIntroOutroTab({ channel, onNotice, onChannelUpdate }: Cha
           channelId={channel.channel_id}
           busyAction={busyAction}
           onBack={() => setSelectedCategoryId(null)}
-          onUpload={() => setIsCreateOpen(true)}
+          onUpload={(links) => {
+            setUploadScriptLinks(links ?? null);
+            setIsCreateOpen(true);
+          }}
+          onNotice={onNotice}
           onPreview={setPreviewClip}
           onDelete={(id, name) => void handleDeleteStyle(id, name)}
           onAssignCategory={(styleId, stylePresetId) => void handleAssignStyle(styleId, stylePresetId)}
@@ -73,11 +79,15 @@ export function ChannelIntroOutroTab({ channel, onNotice, onChannelUpdate }: Cha
       {selectedCategory && selectedCategory.style_preset_id !== "uncategorized" ? (
         <CreateIntroOutroModal
           isOpen={isCreateOpen}
-          onClose={() => setIsCreateOpen(false)}
+          onClose={() => {
+            setIsCreateOpen(false);
+            setUploadScriptLinks(null);
+          }}
           onSubmit={handleCreateStyle}
           submitting={busyAction === "create"}
           stylePresetId={selectedCategory.style_preset_id}
           categoryName={selectedCategory.name}
+          scriptLinks={uploadScriptLinks}
         />
       ) : null}
     </section>

@@ -36,6 +36,16 @@ export type ResolvedAntigravityTarget =
   | { kind: "cli"; command: string; argsPrefix: string[]; label: string; version: string }
   | { kind: "api"; command: string; argsPrefix: string[]; label: string; version: string };
 
+export type AntigravityImageAttachment = {
+  path: string;
+  mimeType: "image/png" | "image/jpeg" | "image/webp";
+  role: "mascot_subject" | "channel_logo";
+};
+
+export type AntigravityTurnOptions = {
+  imageAttachments?: AntigravityImageAttachment[];
+};
+
 export type TranscriptToolCall = {
   name?: string;
   args?: { CodeContent?: string; ReplacementContent?: string };

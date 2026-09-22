@@ -133,6 +133,7 @@ function AppContent() {
           antigravityStatus={orch.antigravityStatus}
           openPage={orch.openPage}
           openChannel={orch.openChannel}
+          openBrandAssets={orch.openBrandAssets}
           openEpisode={orch.openEpisode}
           setQueryParam={orch.setQueryParam}
           upsertTask={orch.upsertTask}

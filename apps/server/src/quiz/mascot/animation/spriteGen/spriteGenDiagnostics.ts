@@ -97,7 +97,7 @@ export async function runSpriteGenDiagnostic(customConfig?: Partial<SpriteGenCom
     margin: 16,
     chromaKey: "#00FF00",
     fit: "contain",
-    outputDir: "d:/1a Cursor Project/My 1x Project/artifacts/sprite_gen/pilot_thinking_01",
+    outputDir: path.resolve(process.cwd(), "artifacts/sprite_gen/pilot_thinking_01"),
     provider: SUPPORTED_PROVIDER,
     ...customConfig,
   };

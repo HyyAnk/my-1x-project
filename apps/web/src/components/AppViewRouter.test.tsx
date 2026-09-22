@@ -39,6 +39,10 @@ vi.mock("../features/questionBank/QuestionBankView", () => ({
   QuestionBankView: () => <div data-testid="question-bank-view">Question Bank Studio</div>,
 }));
 
+vi.mock("../features/brandAssets/BrandAssetsRootView", () => ({
+  BrandAssetsRootView: () => <div data-testid="brand-assets-view">Brand & Social Asset Hub</div>,
+}));
+
 const mockChannel: Channel = {
   channel_id: "ch_quiz_1",
   slug: "trivia-channel",
@@ -208,6 +212,14 @@ describe("AppViewRouter", () => {
     renderWithProviders(<AppViewRouter {...props} />);
 
     const el = await screen.findByText(/Question Bank Studio/i, {}, { timeout: 4000 });
+    expect(el).toBeTruthy();
+  });
+
+  it("lazy-loads and renders BrandAssetsRootView when page is brand_assets", async () => {
+    const props = createDefaultProps({ page: "brand_assets" });
+    renderWithProviders(<AppViewRouter {...props} />);
+
+    const el = await screen.findByText(/Brand & Social Asset Hub/i, {}, { timeout: 4000 });
     expect(el).toBeTruthy();
   });
 

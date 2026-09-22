@@ -6,6 +6,8 @@ import { executeSinglePromptText } from "../src/utils/promptSanitizer.js";
 import { RepositoryService } from "../src/repository.js";
 import path from "node:path";
 import os from "node:os";
+import { EventEmitter } from "node:events";
+import type { AntigravityTurnOptions } from "../src/antigravity/types.js";
 
 describe("Visual Prompt Subject Identity Preservation", () => {
   describe("compileQuizAssetPrompt preserves subjects without proxy alteration", () => {
@@ -80,6 +82,67 @@ describe("Visual Prompt Subject Identity Preservation", () => {
       expect(result).not.toContain("bloody");
       expect(result).not.toContain("gun");
       expect(result).toContain("crimson-toned dramatic");
+    });
+
+    it("forwards image attachments and waits for a completed Antigravity turn", async () => {
+      class AttachmentClient extends EventEmitter {
+        options: AntigravityTurnOptions | undefined;
+        async connect() {}
+        async startThread() {
+          return "thread-1";
+        }
+        async startTurn(_threadId: string, _prompt: string, _model?: string, options?: AntigravityTurnOptions) {
+          this.options = options;
+          setTimeout(() => {
+            this.emit("notification", {
+              method: "item/agentMessage/delta",
+              params: { threadId: "thread-1", turnId: "turn-1", delta: "complete" },
+            });
+            this.emit("notification", {
+              method: "turn/completed",
+              params: { threadId: "thread-1", turnId: "turn-1", turn: { status: "completed" } },
+            });
+          }, 0);
+          return "turn-1";
+        }
+      }
+      const client = new AttachmentClient();
+      const output = await executeSinglePromptText(client, "Inspect the mascot", {
+        requireCompleteOutput: true,
+        timeoutMs: 500,
+        imageAttachments: [{ path: "C:/fixtures/mascot.png", mimeType: "image/png", role: "mascot_subject" }],
+      });
+      expect(output).toBe("complete");
+      expect(client.options?.imageAttachments?.[0]?.role).toBe("mascot_subject");
+    });
+
+    it("rejects partial text when complete output is required", async () => {
+      class PartialClient extends EventEmitter {
+        interrupted = false;
+
+        async connect() {}
+        async startThread() {
+          return "thread-partial";
+        }
+        async startTurn() {
+          setTimeout(() => {
+            this.emit("notification", {
+              method: "item/agentMessage/delta",
+              params: { threadId: "thread-partial", turnId: "turn-partial", delta: '{"partial":' },
+            });
+          }, 0);
+          return "turn-partial";
+        }
+
+        async interruptTurn() {
+          this.interrupted = true;
+        }
+      }
+      const client = new PartialClient();
+      await expect(executeSinglePromptText(client, "Return JSON", { requireCompleteOutput: true, timeoutMs: 20 })).rejects.toThrow(
+        "timed out",
+      );
+      expect(client.interrupted).toBe(true);
     });
   });
 });

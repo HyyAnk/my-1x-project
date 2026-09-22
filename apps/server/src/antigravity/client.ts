@@ -8,6 +8,7 @@ import {
   AntigravityUnavailableError,
   DEFAULT_ANTIGRAVITY_MODELS,
   type ActiveSessionInfo,
+  type AntigravityTurnOptions,
   type ResolvedAntigravityTarget,
 } from "./types.js";
 
@@ -123,7 +124,7 @@ export class AntigravityClient extends EventEmitter {
     return this.threadConversations.get(threadId) ?? null;
   }
 
-  async startTurn(threadId: string, prompt: string, modelOverride?: string): Promise<string> {
+  async startTurn(threadId: string, prompt: string, modelOverride?: string, options: AntigravityTurnOptions = {}): Promise<string> {
     await this.ensureConnected();
     const turnId = makeId("agy_turn");
     const controller = new AbortController();
@@ -165,7 +166,7 @@ export class AntigravityClient extends EventEmitter {
 
     setTimeout(async () => {
       try {
-        await executeTurn(threadId, turnId, prompt, controller, ctx, modelOverride);
+        await executeTurn(threadId, turnId, prompt, controller, ctx, modelOverride, options);
       } finally {
         this.turnControllers.delete(turnId);
       }

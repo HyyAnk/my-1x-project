@@ -6,8 +6,10 @@ import { findBuiltInPresetById, nowIso, type IntroOutroStyle } from "@studio/sha
 import type { StudioLogger } from "../logger.js";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { AppState } from "./state.js";
+import type { IntroOutroScriptRepository } from "../introOutroScripts/repository.js";
 import { listIntroOutroCategorySummaries } from "./introOutro/introOutroCategoryService.js";
 import { parseIntroOutroVideoPayload } from "./introOutro/introOutroPayload.js";
+import { validateUploadScriptProvenance } from "./introOutro/introOutroProvenance.js";
 import {
   CreateIntroOutroStyleInputSchema,
   SetDefaultIntroOutroStyleInputSchema,
@@ -18,11 +20,12 @@ export type IntroOutroStylesRouteDeps = {
   repository: RepositoryService;
   logger: StudioLogger;
   state: AppState;
+  scripts: IntroOutroScriptRepository;
 };
 
 export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
-    const { repository } = deps;
+    const { repository, scripts } = deps;
 
     server.get("/api/channels/:channelId/intro-outro-categories", async (request) => {
       const { channelId } = request.params as { channelId: string };
@@ -47,15 +50,33 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
       const { channelId } = request.params as { channelId: string };
       const input = CreateIntroOutroStyleInputSchema.parse(request.body);
       const styleId = input.style_id?.trim() || `style_${randomUUID().slice(0, 8)}`;
+      const [introProvenance, outroProvenance] = await Promise.all([
+        validateUploadScriptProvenance({
+          scripts,
+          channelId,
+          stylePresetId: input.style_preset_id,
+          clipKind: "intro",
+          provenance: input.intro_script_provenance,
+        }),
+        validateUploadScriptProvenance({
+          scripts,
+          channelId,
+          stylePresetId: input.style_preset_id,
+          clipKind: "outro",
+          provenance: input.outro_script_provenance,
+        }),
+      ]);
 
       const introSource = parseIntroOutroVideoPayload(input.intro_data);
       const outroSource = parseIntroOutroVideoPayload(input.outro_data);
 
-      const introMeta = await repository.processAndStoreStyleClip(channelId, styleId, "intro", introSource, input.intro_filename);
+      const processedIntro = await repository.processAndStoreStyleClip(channelId, styleId, "intro", introSource, input.intro_filename);
+      const introMeta = { ...processedIntro, ...(introProvenance ? { script_provenance: introProvenance } : {}) };
 
       let outroMeta;
       try {
-        outroMeta = await repository.processAndStoreStyleClip(channelId, styleId, "outro", outroSource, input.outro_filename);
+        const processedOutro = await repository.processAndStoreStyleClip(channelId, styleId, "outro", outroSource, input.outro_filename);
+        outroMeta = { ...processedOutro, ...(outroProvenance ? { script_provenance: outroProvenance } : {}) };
       } catch (error) {
         // If outro processing fails, delete the partially created style
         await repository.deleteChannelIntroOutroStyle(channelId, styleId);

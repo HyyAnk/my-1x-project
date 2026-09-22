@@ -38,6 +38,8 @@ export type BuildAppOptions = {
   environmentRoot?: string;
   /** Optional LLM client used by synchronous channel content flows (topic confirm). */
   llmClient?: LLMClient | null;
+  /** Optional Antigravity-compatible client used by Intro/Outro script jobs. */
+  introOutroScriptClient?: LLMClient | null;
   /** Allows test hosts to replace the local file explorer integration. */
   revealFile?: (filePath: string) => Promise<void>;
   ffmpegAdapter?: FfmpegAdapter;

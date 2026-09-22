@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-  [string]$ProjectRoot = "D:\1a Cursor Project\My 1x Project",
-  [string]$ContentRoot = "D:\1a Cursor Project\My 1x Youtube Channel File",
+  [string]$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
+  [string]$ContentRoot = "",
   [string]$FailureCheckpoint = ""
 )
 
@@ -9,6 +9,24 @@ $ErrorActionPreference = "Stop"
 
 if (-not $IsWindows -and $PSVersionTable.PSEdition -eq "Core") {
   throw "This migration supports Windows only"
+}
+
+if ([string]::IsNullOrWhiteSpace($ContentRoot)) {
+  $storageConfigFile = Join-Path $ProjectRoot ".quiz-studio\storage.local.json"
+  if ($env:STUDIO_STORAGE_PATH -and (Test-Path -LiteralPath $env:STUDIO_STORAGE_PATH)) {
+    $ContentRoot = $env:STUDIO_STORAGE_PATH
+  } elseif (Test-Path -LiteralPath $storageConfigFile) {
+    try {
+      $storageJson = Get-Content -LiteralPath $storageConfigFile -Raw | ConvertFrom-Json
+      if ($storageJson.storage_path -and (Test-Path -LiteralPath $storageJson.storage_path)) {
+        $ContentRoot = $storageJson.storage_path
+      }
+    } catch { }
+  }
+}
+
+if ([string]::IsNullOrWhiteSpace($ContentRoot)) {
+  throw "ContentRoot was not provided and could not be resolved from .quiz-studio\storage.local.json or STUDIO_STORAGE_PATH"
 }
 
 Import-Module (Join-Path $PSScriptRoot "migration\QuizMigration.psm1") -Force

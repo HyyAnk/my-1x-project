@@ -12,6 +12,8 @@ export interface CreateIntroOutroStylePayload {
   outro_data: string;
   intro_filename?: string;
   outro_filename?: string;
+  intro_script_provenance?: { project_id: string; revision_id: string };
+  outro_script_provenance?: { project_id: string; revision_id: string };
 }
 
 export interface IntroOutroCategorySummary {

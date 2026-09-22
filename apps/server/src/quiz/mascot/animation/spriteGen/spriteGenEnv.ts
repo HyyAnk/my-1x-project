@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { loadStorageRoot } from "../../../../config.js";
 
 /**
  * Resolves the sprite-gen CLI executable path.
@@ -90,10 +91,28 @@ export async function ensureBaseImage(anchorPath: string | undefined, outputDir:
     }
 
     const filename = path.basename(anchorPath);
-    const candidateDirs = [
+    const candidateDirs: string[] = [
       path.resolve(process.cwd(), ".quiz-studio", "mascots"),
-      path.resolve("D:/1a Cursor Project/My 1x Youtube Channel File/.quiz-studio/mascots"),
     ];
+
+    try {
+      const configuredStorageRoot = await loadStorageRoot(process.env.STUDIO_ROOT ?? process.cwd());
+      if (configuredStorageRoot) {
+        candidateDirs.push(path.resolve(configuredStorageRoot, ".quiz-studio", "mascots"));
+        candidateDirs.push(path.resolve(configuredStorageRoot, "mascots"));
+      }
+    } catch {
+      // Ignore storage config read errors
+    }
+
+    if (process.env.STUDIO_STORAGE_PATH) {
+      candidateDirs.push(path.resolve(process.env.STUDIO_STORAGE_PATH, ".quiz-studio", "mascots"));
+      candidateDirs.push(path.resolve(process.env.STUDIO_STORAGE_PATH, "mascots"));
+    }
+    if (process.env.STUDIO_CONTENT_ROOT) {
+      candidateDirs.push(path.resolve(process.env.STUDIO_CONTENT_ROOT, ".quiz-studio", "mascots"));
+      candidateDirs.push(path.resolve(process.env.STUDIO_CONTENT_ROOT, "mascots"));
+    }
     for (const base of candidateDirs) {
       try {
         if (existsSync(base)) {

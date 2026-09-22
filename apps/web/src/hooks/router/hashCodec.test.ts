@@ -84,6 +84,29 @@ describe("hashCodec", () => {
     expect(buildHash({ page: "mascots", mascotId: "new" })).toBe("#/mascots/new");
   });
 
+  it("parses and builds brand_assets routes with optional channelId and tabs", () => {
+    const rootRoute = parseHash("#/brand_assets");
+    expect(rootRoute.page).toBe("brand_assets");
+    expect(rootRoute.channelId).toBeNull();
+
+    const hyphenRoute = parseHash("#/brand-assets");
+    expect(hyphenRoute.page).toBe("brand_assets");
+    expect(hyphenRoute.channelId).toBeNull();
+
+    const segmentRoute = parseHash("#/brand_assets/ch-1");
+    expect(segmentRoute.page).toBe("brand_assets");
+    expect(segmentRoute.channelId).toBe("ch-1");
+
+    const queryRoute = parseHash("#/brand_assets?channelId=ch-2&tab=social");
+    expect(queryRoute.page).toBe("brand_assets");
+    expect(queryRoute.channelId).toBe("ch-2");
+    expect(queryRoute.tab).toBe("social");
+
+    expect(buildHash({ page: "brand_assets" })).toBe("#/brand_assets");
+    expect(buildHash({ page: "brand_assets", channelId: "ch-1" })).toBe("#/brand_assets/ch-1");
+    expect(buildHash({ page: "brand_assets", channelId: "ch-1", tab: "art" })).toBe("#/brand_assets/ch-1?tab=art");
+  });
+
   it("round-trips workspace tabs for every routed area", () => {
     const routes = [
       ["#/tasks?tab=failed", "tasks", "failed"],
@@ -92,6 +115,7 @@ describe("hashCodec", () => {
       ["#/sandbox?tab=transition", "sandbox", "transition"],
       ["#/question_bank?tab=details", "question_bank", "details"],
       ["#/channels/ch-1/short-reels/reel-1?tab=publishing", "channels", "publishing"],
+      ["#/brand_assets?tab=art", "brand_assets", "art"],
     ] as const;
 
     for (const [hash, page, tab] of routes) {

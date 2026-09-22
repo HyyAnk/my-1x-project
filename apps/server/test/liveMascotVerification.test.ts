@@ -18,13 +18,45 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const IN_TREE_MASCOT_PATH = path.resolve(__dirname, "fixtures/liveMascotVerificationFixture.json");
-const EXTERNAL_LIVE_MASCOT_PATH =
-  process.env.LIVE_MASCOT_PATH ||
-  "D:\\1a Cursor Project\\My 1x Youtube Channel File\\.quiz-studio\\mascots\\mascot_22cb190ece7b4475\\mascot.json";
+function resolveExternalLiveMascotPath(): string | null {
+  if (process.env.LIVE_MASCOT_PATH && fs.existsSync(process.env.LIVE_MASCOT_PATH)) {
+    return process.env.LIVE_MASCOT_PATH;
+  }
+  if (process.env.STUDIO_STORAGE_PATH) {
+    const candidate = path.join(
+      process.env.STUDIO_STORAGE_PATH,
+      ".quiz-studio",
+      "mascots",
+      "mascot_22cb190ece7b4475",
+      "mascot.json"
+    );
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  const projectRoot = path.resolve(__dirname, "../../..");
+  const storageConfig = path.join(projectRoot, ".quiz-studio", "storage.local.json");
+  if (fs.existsSync(storageConfig)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(storageConfig, "utf8")) as { storage_path?: string };
+      if (parsed.storage_path) {
+        const candidate = path.join(
+          parsed.storage_path,
+          ".quiz-studio",
+          "mascots",
+          "mascot_22cb190ece7b4475",
+          "mascot.json"
+        );
+        if (fs.existsSync(candidate)) return candidate;
+      }
+    } catch { }
+  }
+  return null;
+}
+
+const EXTERNAL_LIVE_MASCOT_PATH = resolveExternalLiveMascotPath();
 
 // Decoupled resolution: use external live mascot path if present, otherwise fall back to in-tree fixture
-const hasExternalLiveMascot = fs.existsSync(EXTERNAL_LIVE_MASCOT_PATH);
-const LIVE_MASCOT_PATH = hasExternalLiveMascot ? EXTERNAL_LIVE_MASCOT_PATH : IN_TREE_MASCOT_PATH;
+const hasExternalLiveMascot = Boolean(EXTERNAL_LIVE_MASCOT_PATH && fs.existsSync(EXTERNAL_LIVE_MASCOT_PATH));
+const LIVE_MASCOT_PATH = hasExternalLiveMascot && EXTERNAL_LIVE_MASCOT_PATH ? EXTERNAL_LIVE_MASCOT_PATH : IN_TREE_MASCOT_PATH;
 
 const testMascotConfig: ChannelMascotConfig = {
   enabled: true,

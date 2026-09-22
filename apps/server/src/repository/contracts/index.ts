@@ -6,3 +6,4 @@ export * from "./quizArtifactRepository.contract.js";
 export * from "./questionBankRepository.contract.js";
 export * from "./shortReelRepository.contract.js";
 export * from "./mediaRepository.contract.js";
+export * from "./channelAssetRepository.contract.js";

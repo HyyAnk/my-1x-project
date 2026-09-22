@@ -22,6 +22,7 @@ export * from "./thumbnail/index.js";
 export * from "./utils/languageNormalize.js";
 export * from "./shortReel/index.js";
 export * from "./transitions/index.js";
+export * from "./introOutroScripts/index.js";
 export * from "./sampleImages.js";
 export * from "./quizImageSizing/index.js";
 export {
@@ -53,4 +54,3 @@ export {
   AnalyzeMascotConceptResponseSchema,
   type AnalyzeMascotConceptResponse,
 } from "./schemas/mascot.js";
-

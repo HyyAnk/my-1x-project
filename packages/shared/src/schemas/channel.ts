@@ -162,6 +162,18 @@ export const QuizConfigSchema = z.object({
 
 export type QuizConfig = z.infer<typeof QuizConfigSchema>;
 
+export const IntroOutroScriptProvenanceSchema = z
+  .object({
+    project_id: z.string().min(1),
+    revision_id: z.string().min(1),
+    style_preset_id: z.string().min(1),
+    context_fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+    linked_at: IsoDate,
+  })
+  .strict();
+
+export type IntroOutroScriptProvenance = z.infer<typeof IntroOutroScriptProvenanceSchema>;
+
 export const IntroOutroClipMetaSchema = z.object({
   filename: z.string().min(1),
   duration_seconds: z.number().positive(),
@@ -171,6 +183,7 @@ export const IntroOutroClipMetaSchema = z.object({
   has_audio: z.boolean(),
   thumbnail_filename: z.string().optional(),
   sha256: z.string().length(64).optional(),
+  script_provenance: IntroOutroScriptProvenanceSchema.optional(),
 });
 
 export type IntroOutroClipMeta = z.infer<typeof IntroOutroClipMetaSchema>;

@@ -23,6 +23,8 @@ export function IntroOutroStyleCard({
   onDelete,
   onAssignCategory,
 }: IntroOutroStyleCardProps) {
+  const linkedProvenance = style.intro.script_provenance ?? style.outro.script_provenance;
+  const provenanceMismatch = Boolean(linkedProvenance && linkedProvenance.style_preset_id !== style.style_preset_id);
   return (
     <div
       className="style-card"
@@ -204,6 +206,20 @@ export function IntroOutroStyleCard({
           >
             {style.intro.has_audio ? "🔊 Audio" : "🔇 No Audio"}
           </span>
+          {linkedProvenance ? (
+            <span
+              style={{
+                fontSize: 11,
+                background: provenanceMismatch ? "color-mix(in srgb, #f59e0b 12%, var(--surface-hover))" : "var(--surface-hover)",
+                padding: "2px 8px",
+                borderRadius: 4,
+                color: "var(--ink-secondary)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              {provenanceMismatch ? "Script category changed" : "Script linked"}
+            </span>
+          ) : null}
         </div>
 
         {/* Card Actions */}

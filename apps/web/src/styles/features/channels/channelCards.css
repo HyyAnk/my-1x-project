@@ -455,15 +455,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   background: color-mix(in srgb, var(--surface-strong) 40%, transparent);
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
+  min-height: 40px;
 }
 
 .channel-footer-stats {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .channel-footer-stats .stat-item {
@@ -478,6 +482,99 @@
 
 .channel-footer-stats .footer-time {
   opacity: 0.85;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Highlighted Video Count Badge (Bottom-Right) */
+.channel-video-count-badge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  line-height: 1;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.channel-video-count-badge .count-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.channel-video-count-badge .count-number {
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.channel-video-count-badge .count-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Highlight state for channels with videos */
+.channel-video-count-badge.has-videos {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-strong));
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  color: var(--accent-deep);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.channel-video-count-badge.has-videos .count-icon {
+  color: var(--accent);
+}
+
+.channel-video-count-badge.has-videos .count-number {
+  color: var(--accent-deep);
+}
+
+.channel-video-count-badge.has-videos .count-label {
+  color: var(--ink-secondary);
+  opacity: 0.9;
+}
+
+/* Subtle state for empty channels (0 videos) */
+.channel-video-count-badge.is-empty {
+  background: color-mix(in srgb, var(--ink) 4%, var(--surface-strong));
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.channel-video-count-badge.is-empty .count-icon {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.channel-video-count-badge.is-empty .count-number {
+  color: var(--ink-secondary);
+  font-weight: 700;
+}
+
+.channel-video-count-badge.is-empty .count-label {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+/* Card hover effect on video badge */
+.channel-card:hover .channel-video-count-badge.has-videos {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface-strong));
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  transform: translateY(-0.5px);
+}
+
+.channel-card:hover .channel-video-count-badge.is-empty {
+  border-color: var(--line-strong);
 }
 
 /* Badges */

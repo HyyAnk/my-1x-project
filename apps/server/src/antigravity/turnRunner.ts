@@ -5,7 +5,7 @@ import type { StudioLogger } from "../logger.js";
 import { runAgentApiTurn } from "./runners/agentApiRunner.js";
 import { runCliTurn } from "./runners/cliRunner.js";
 import { runGoogleApiTurn } from "./runners/googleApiRunner.js";
-import type { ActiveSessionInfo, ResolvedAntigravityTarget } from "./types.js";
+import type { ActiveSessionInfo, AntigravityImageAttachment, AntigravityTurnOptions, ResolvedAntigravityTarget } from "./types.js";
 
 export type TurnRunnerContext = {
   rootDirectory: string;
@@ -21,7 +21,7 @@ export type TurnRunnerContext = {
 export { runAgentApiTurn, runGoogleApiTurn, runCliTurn };
 
 const PROMPT_FILE_THRESHOLD = 24_000;
-const DEFAULT_FALLBACK_MODEL = "gemini-3.1-flash-image";
+const DEFAULT_FALLBACK_MODEL = "gemini-3.7-flash-high";
 
 async function persistLargePromptToFile(prompt: string, threadId: string, rootDirectory: string): Promise<string> {
   const promptDir = path.join(rootDirectory, ".context");
@@ -38,6 +38,7 @@ export async function executeTurn(
   controller: AbortController,
   ctx: TurnRunnerContext,
   modelOverride?: string,
+  options: AntigravityTurnOptions = {},
 ): Promise<void> {
   let promptFile: string | null = null;
   try {
@@ -52,16 +53,23 @@ export async function executeTurn(
     }
 
     if (ctx.target.kind === "agentapi") {
-      await runAgentApiTurn(threadId, turnId, effectivePrompt, selectedModel, controller, ctx);
+      await runAgentApiTurn(
+        threadId,
+        turnId,
+        withImageReferenceInstructions(effectivePrompt, options.imageAttachments),
+        selectedModel,
+        controller,
+        ctx,
+      );
       return;
     }
 
     if (ctx.target.kind === "api" && ctx.config.antigravity.api_key.trim()) {
-      await runGoogleApiTurn(effectivePrompt, selectedModel, controller, ctx);
+      await runGoogleApiTurn(effectivePrompt, selectedModel, controller, ctx, options.imageAttachments);
       return;
     }
 
-    await runCliTurn(effectivePrompt, selectedModel, controller, ctx);
+    await runCliTurn(withImageReferenceInstructions(effectivePrompt, options.imageAttachments), selectedModel, controller, ctx);
   } catch (error) {
     if (controller.signal.aborted) {
       ctx.onCompleted("interrupted");
@@ -80,4 +88,18 @@ export async function executeTurn(
       });
     }
   }
+}
+
+function withImageReferenceInstructions(prompt: string, attachments: readonly AntigravityImageAttachment[] | undefined): string {
+  if (!attachments?.length) return prompt;
+  const references = attachments
+    .map((attachment, index) => `${index + 1}. ${attachment.role}: file:///${attachment.path.replace(/\\/g, "/")}`)
+    .join("\n");
+  return [
+    prompt,
+    "REFERENCE IMAGE CONTRACT",
+    "Use the image-viewing tool to inspect every file listed below before answering. These files are the actual visual references, not descriptive hints.",
+    references,
+    "Do not browse other files, run shell commands, edit files, or substitute an unlisted image. If any listed image cannot be inspected, return JSON with error_code MASCOT_REFERENCE_UNAVAILABLE.",
+  ].join("\n\n");
 }

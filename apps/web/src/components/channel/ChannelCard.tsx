@@ -110,18 +110,21 @@ export function ChannelCard({
 
       <div className="channel-card-footer">
         <div className="channel-footer-stats">
-          <span className="stat-item">
-            <FilmSlate size={13} />
-            <span>
-              {channel.episode_count || 0} {channel.episode_count === 1 ? "video" : "videos"}
-            </span>
-          </span>
           {timeAgo ? (
-            <>
-              <span className="footer-dot">•</span>
-              <span className="stat-item footer-time">{timeAgo}</span>
-            </>
+            <span className="stat-item footer-time" title={channel.updated_at}>
+              {timeAgo}
+            </span>
           ) : null}
+        </div>
+
+        <div
+          className={`channel-video-count-badge ${channel.episode_count ? "has-videos" : "is-empty"}`}
+          title={`${channel.episode_count || 0} ${channel.episode_count === 1 ? "video" : "videos"}`}
+          aria-label={`${channel.episode_count || 0} ${channel.episode_count === 1 ? "video" : "videos"}`}
+        >
+          <FilmSlate size={13} weight={channel.episode_count ? "fill" : "regular"} className="count-icon" />
+          <span className="count-number">{channel.episode_count || 0}</span>
+          <span className="count-label">{channel.episode_count === 1 ? "video" : "videos"}</span>
         </div>
       </div>
     </article>

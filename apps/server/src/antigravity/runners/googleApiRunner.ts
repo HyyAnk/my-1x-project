@@ -1,4 +1,6 @@
+import { readFile } from "node:fs/promises";
 import type { TurnRunnerContext } from "../turnRunner.js";
+import type { AntigravityImageAttachment } from "../types.js";
 
 type GoogleApiCandidate = {
   content?: { parts?: Array<{ text?: string }> };
@@ -14,17 +16,31 @@ export async function runGoogleApiTurn(
   selectedModel: string,
   controller: AbortController,
   ctx: TurnRunnerContext,
+  imageAttachments: readonly AntigravityImageAttachment[] = [],
 ): Promise<void> {
   const base = (ctx.config.antigravity.api_base_url.trim() || "https://generativelanguage.googleapis.com/v1beta").replace(/\/+$/, "");
   const apiKey = ctx.config.antigravity.api_key.trim();
   const url = `${base}/models/${selectedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
+  const imageParts = (
+    await Promise.all(
+      imageAttachments.map(async (attachment) => [
+        { text: `Reference image role: ${attachment.role}` },
+        {
+          inlineData: {
+            mimeType: attachment.mimeType,
+            data: (await readFile(attachment.path)).toString("base64"),
+          },
+        },
+      ]),
+    )
+  ).flat();
   const response = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
     signal: controller.signal,
     body: JSON.stringify({
-      contents: [{ parts: [{ text: effectivePrompt }] }],
+      contents: [{ parts: [...imageParts, { text: effectivePrompt }] }],
       generationConfig: { temperature: 0.7 },
     }),
   });

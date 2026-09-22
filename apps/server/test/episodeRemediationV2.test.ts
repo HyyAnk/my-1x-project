@@ -4,8 +4,34 @@ import path from "node:path";
 import { QuizV2Schema, type QuizV2 } from "@studio/shared";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
 
-const ACTIVE_EPISODE_DIR =
-  "D:/1a Cursor Project/My 1x Youtube Channel File/channels/novy/episodes/arcade-game-secrets-true-or-false-gaming-showdown";
+function resolveActiveEpisodeDir(): string {
+  if (process.env.ACTIVE_EPISODE_DIR && existsSync(process.env.ACTIVE_EPISODE_DIR)) {
+    return process.env.ACTIVE_EPISODE_DIR;
+  }
+  if (process.env.STUDIO_STORAGE_PATH) {
+    const candidate = path.join(
+      process.env.STUDIO_STORAGE_PATH,
+      "channels/novy/episodes/arcade-game-secrets-true-or-false-gaming-showdown"
+    );
+    if (existsSync(candidate)) return candidate;
+  }
+  const projectRoot = path.resolve(__dirname, "../../..");
+  const storageConfig = path.join(projectRoot, ".quiz-studio", "storage.local.json");
+  if (existsSync(storageConfig)) {
+    try {
+      const parsed = JSON.parse(readFileSync(storageConfig, "utf8")) as { storage_path?: string };
+      if (parsed.storage_path) {
+        const candidate = path.join(
+          parsed.storage_path,
+          "channels/novy/episodes/arcade-game-secrets-true-or-false-gaming-showdown"
+        );
+        if (existsSync(candidate)) return candidate;
+      }
+    } catch { }
+  }
+  return path.resolve(__dirname, "fixtures/remediation");
+}
+
 const FIXTURE_EPISODE_DIR = path.resolve(__dirname, "fixtures/remediation");
 
 function loadJson<T>(filePath: string): T {
@@ -13,7 +39,7 @@ function loadJson<T>(filePath: string): T {
 }
 
 describe("Active Episode Remediation V2 Acceptance Tests", () => {
-  const episodeRoot = existsSync(ACTIVE_EPISODE_DIR) ? ACTIVE_EPISODE_DIR : FIXTURE_EPISODE_DIR;
+  const episodeRoot = resolveActiveEpisodeDir();
 
   it("validates all episode questions use authentic arcade lore and end with interrogative question mark", () => {
     const quiz = loadJson<QuizV2>(path.join(episodeRoot, "quiz/quiz-v2.json"));

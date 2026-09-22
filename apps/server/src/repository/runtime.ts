@@ -10,6 +10,7 @@ import type {
   IQuestionBankRepository,
   IShortReelRepository,
   IMediaRepository,
+  IChannelAssetRepository,
 } from "./contracts/index.js";
 
 export * from "./contracts/index.js";
@@ -23,7 +24,8 @@ export interface RepositoryRuntime
     IQuizArtifactRepository,
     IQuestionBankRepository,
     IShortReelRepository,
-    IMediaRepository {
+    IMediaRepository,
+    IChannelAssetRepository {
   readonly serviceId: string;
   readonly rootDirectory: string;
   readonly storageRoot: string;

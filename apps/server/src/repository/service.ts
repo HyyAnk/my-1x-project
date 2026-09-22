@@ -16,6 +16,7 @@ import type { RepositoryRoots } from "./types.js";
 import { EntityIdResolver } from "./cache/entityIdResolver.js";
 import { ChannelCache } from "./cache/channelCache.js";
 import { channelBindings } from "./bindings/channelBindings.js";
+import { channelAssetBindings } from "./bindings/channelAssetBindings.js";
 import { topicBindings } from "./bindings/topicBindings.js";
 import { mascotBindings } from "./bindings/mascotBindings.js";
 import { voiceBindings } from "./bindings/voiceBindings.js";
@@ -218,6 +219,7 @@ export class RepositoryService {
 Object.assign(
   RepositoryService.prototype,
   channelBindings,
+  channelAssetBindings,
   topicBindings,
   mascotBindings,
   voiceBindings,

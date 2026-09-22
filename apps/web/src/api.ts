@@ -10,6 +10,8 @@ import { analyticsApi } from "./api/analyticsApi";
 import { questionBankApi } from "./api/questionBankApi";
 import { shortReelApi } from "./api/shortReelApi";
 import { introOutroApi } from "./api/introOutroApi";
+import { introOutroScriptApi } from "./api/introOutroScriptApi";
+import { channelAssetsApi } from "./api/channelAssetsApi";
 
 export * from "./api/client";
 export * from "./api/channelApi";
@@ -24,6 +26,8 @@ export * from "./api/analyticsApi";
 export * from "./api/questionBankApi";
 export * from "./api/shortReelApi";
 export * from "./api/introOutroApi";
+export * from "./api/introOutroScriptApi";
+export * from "./api/channelAssetsApi";
 
 /**
  * Unified API Client Facade
@@ -42,4 +46,7 @@ export const api = {
   ...questionBankApi,
   ...shortReelApi,
   ...introOutroApi,
+  ...introOutroScriptApi,
+  ...channelAssetsApi,
+  channelAssets: channelAssetsApi,
 };

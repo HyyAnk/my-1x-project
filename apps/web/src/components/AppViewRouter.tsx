@@ -23,6 +23,9 @@ const SettingsView = lazy(() => import("./SettingsPanel").then((module) => ({ de
 const QuestionBankView = lazy(() =>
   import("../features/questionBank/QuestionBankView").then((module) => ({ default: module.QuestionBankView })),
 );
+const BrandAssetsRootView = lazy(() =>
+  import("../features/brandAssets/BrandAssetsRootView").then((module) => ({ default: module.BrandAssetsRootView })),
+);
 
 export interface AppViewRouterProps {
   loading: boolean;
@@ -55,6 +58,7 @@ export interface AppViewRouterProps {
   antigravityStatus: string;
   openPage: (page: Page) => void;
   openChannel: (channelId: string) => void;
+  openBrandAssets?: (channelId?: string | null, tab?: string) => void;
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
   setQueryParam: (key: string, value: string | null) => void;
   upsertTask: (task: Task) => void;
@@ -220,6 +224,33 @@ export function AppViewRouter(props: AppViewRouterProps) {
             onNotice={props.setNotice}
             simplifyMode={props.simplifyMode}
             onSimplifyChange={props.handleSimplifyToggle}
+          />
+        );
+      case "brand_assets":
+        return (
+          <BrandAssetsRootView
+            channels={props.channels}
+            selectedChannel={props.selectedChannel}
+            tasks={props.tasks}
+            activeTab={props.tab}
+            onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
+            openChannel={props.openChannel}
+            openMascot={props.openMascot}
+            onSelectChannel={(channelId) => {
+              if (props.openBrandAssets) {
+                props.openBrandAssets(channelId);
+              } else {
+                window.location.hash = `#/brand_assets/${encodeURIComponent(channelId)}`;
+              }
+            }}
+            onBackToOverview={() => {
+              if (props.openBrandAssets) {
+                props.openBrandAssets(null);
+              } else {
+                window.location.hash = "#/brand_assets";
+              }
+            }}
+            onNotice={props.setNotice}
           />
         );
       default:

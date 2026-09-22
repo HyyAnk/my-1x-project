@@ -103,12 +103,25 @@ export function useNavigationActions(navigate: (to: string, replace?: boolean) =
     [navigate],
   );
 
+  const openBrandAssets = useCallback(
+    (channelId?: string | null, tab?: string) => {
+      if (!channelId) {
+        navigate("/brand_assets");
+        return;
+      }
+      const query = tab ? `?tab=${encodeURIComponent(tab)}` : "";
+      navigate(`/brand_assets/${encodeURIComponent(channelId)}${query}`);
+    },
+    [navigate],
+  );
+
   return {
     openPage,
     openChannel,
     openEpisode,
     openShortReel,
     openMascot,
+    openBrandAssets,
     setQueryParam,
   };
 }

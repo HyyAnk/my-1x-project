@@ -60,9 +60,9 @@ The selected folder is saved locally in `.quiz-studio/storage.local.json`, which
 The namespace migration is an explicit Windows maintenance command; normal startup and tests never run it. Stop the dashboard, TTS, and render processes first, then run:
 
 ```powershell
-pnpm migrate:quiz-only -- -ProjectRoot "D:\1a Cursor Project\My 1x Project" -ContentRoot "D:\1a Cursor Project\My 1x Youtube Channel File"
+pnpm migrate:quiz-only -- -ProjectRoot "C:\path\to\project-root" -ContentRoot "C:\path\to\content-folder"
 ```
 
-Those paths are the deliberate production defaults, but passing both roots explicitly makes the intended scope reviewable. The command validates every resolved source and destination beneath its exact root before changing files, refuses missing sources or existing destinations, backs up every `channel.json`, removes only the retired channel-level fields, and moves both runtime directories without merging.
+If omitted, `ProjectRoot` defaults automatically to the workspace root, and `ContentRoot` is resolved dynamically from `STUDIO_STORAGE_PATH` or `.quiz-studio/storage.local.json`. Passing both roots explicitly makes the intended scope reviewable. The command validates every resolved source and destination beneath its exact root before changing files, refuses missing sources or existing destinations, backs up every `channel.json`, removes only the retired channel-level fields, and moves both runtime directories without merging.
 
 On success, the timestamped recovery copy is stored at `.quiz-studio/migration-backups/<stamp>/channels` beneath the content root. Keep that copy until the updated dashboard and all channels have been verified.
