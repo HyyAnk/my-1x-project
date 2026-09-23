@@ -1,4 +1,5 @@
 import type { Channel, ShortReelRecord, Task } from "@studio/shared";
+import type { Notice } from "../../../components/types";
 import { MascotAssetCard } from "./assetCards/MascotAssetCard";
 import { StyleAssetCard } from "./assetCards/StyleAssetCard";
 import { CoverAssetCard } from "./assetCards/CoverAssetCard";
@@ -12,9 +13,22 @@ export interface ReelAssetsProps {
   onRegenerateUnit: (target: "cover" | "references") => void;
   isGenerating: boolean;
   activeTask?: Task | null;
+  onNotice?: (notice: NonNullable<Notice>) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
-export function ReelAssets({ reel, channel, onCopyText, onRegenerateUnit, isGenerating, activeTask }: ReelAssetsProps) {
+export function ReelAssets({
+  reel,
+  channel,
+  onCopyText,
+  onRegenerateUnit,
+  isGenerating,
+  activeTask,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
+}: ReelAssetsProps) {
   const data = useReelAssetsData(reel, channel, activeTask, isGenerating, onCopyText);
 
   return (
@@ -24,6 +38,9 @@ export function ReelAssets({ reel, channel, onCopyText, onRegenerateUnit, isGene
           acceptedMascotRef={data.acceptedMascotRef}
           mascotDisplayUrl={data.mascotDisplayUrl}
           channelMasterUrl={data.channelMasterUrl}
+          onNotice={onNotice}
+          onCopyImage={onCopyImage}
+          onDownloadImage={onDownloadImage}
         />
         <StyleAssetCard
           referencesState={reel.units.references.state}
@@ -33,6 +50,9 @@ export function ReelAssets({ reel, channel, onCopyText, onRegenerateUnit, isGene
           styleStageMessage={data.styleStage?.message}
           styleError={data.styleError}
           onRegenerate={() => onRegenerateUnit("references")}
+          onNotice={onNotice}
+          onCopyImage={onCopyImage}
+          onDownloadImage={onDownloadImage}
         />
         <CoverAssetCard
           coverState={reel.units.cover.state}
@@ -42,6 +62,9 @@ export function ReelAssets({ reel, channel, onCopyText, onRegenerateUnit, isGene
           coverStageMessage={data.coverStage?.message}
           coverError={data.coverError}
           onRegenerate={() => onRegenerateUnit("cover")}
+          onNotice={onNotice}
+          onCopyImage={onCopyImage}
+          onDownloadImage={onDownloadImage}
         />
       </div>
 

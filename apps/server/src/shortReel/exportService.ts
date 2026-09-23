@@ -90,13 +90,16 @@ function buildScriptMarkdown(record: ShortReelRecord): string {
   for (const seg of script.segments) {
     lines.push(`## Segment ${seg.index} (${seg.mode.toUpperCase()}) - ${seg.duration_seconds}s`);
     lines.push(`**Narrative:** ${seg.narrative}`);
+    if (seg.dialogue) {
+      lines.push(`**Spoken Dialogue:** "${seg.dialogue}"`);
+    }
     lines.push(`**Audio Direction:** ${seg.audio_direction}`);
-    lines.push("**In-Video Text Cues:**");
+    lines.push("**In-Video Text Cues (Display Only - Do Not Read Aloud):**");
     if (seg.text_cues.length === 0) {
       lines.push("- *None*");
     } else {
       for (const cue of seg.text_cues) {
-        lines.push(`- [${cue.role.toUpperCase()}] "${cue.text}" (${cue.start_seconds}s - ${cue.end_seconds}s)`);
+        lines.push(`- [${cue.role.toUpperCase()}] "${cue.text}" (${cue.start_seconds}s - ${cue.end_seconds}s) [Graphic text only]`);
       }
     }
     lines.push("");

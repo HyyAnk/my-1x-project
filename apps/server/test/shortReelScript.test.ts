@@ -174,4 +174,21 @@ describe("Short-Reel Script Generation Service (Phase 04)", () => {
       code: "ABORTED",
     });
   });
+
+  it("passes custom seedId through prompt context to guide script generation", async () => {
+    const validScript = repairScript();
+    const stubClient = createStubLlm([JSON.stringify(validScript)]);
+
+    const result = await generateReelScript(
+      {
+        ...context,
+        seedId: "vf_simulation_challenge",
+      },
+      stubClient,
+    );
+
+    expect(result.segments).toHaveLength(3);
+    expect(stubClient.calls[0]).toContain("DIRECTORIAL SEED: SIMULATION CHALLENGE");
+    expect(stubClient.calls[0]).toContain("Simulated stress-test and survival scenario");
+  });
 });

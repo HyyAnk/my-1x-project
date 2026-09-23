@@ -15,11 +15,11 @@
 
 .topic-history-row {
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) 110px 210px;
-  grid-template-areas: "identity content status actions";
+  grid-template-columns: 76px minmax(180px, 2fr) minmax(120px, 1fr) minmax(130px, 1fr) auto;
+  grid-template-areas: "identity title domain archetype actions";
   align-items: center;
-  gap: 14px;
-  padding: 10px 16px;
+  gap: 12px;
+  padding: 8px 14px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md, 8px);
@@ -84,10 +84,56 @@
 }
 
 /* --------------------------------------------------------------------------
-   Column 2: Content (Title, Theme Hint, Premise Snippet)
+   Column 2: Title (+ optional theme badge)
+   -------------------------------------------------------------------------- */
+.topic-history-col-title {
+  grid-area: title;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topic-history-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Column 3: Domain
+   -------------------------------------------------------------------------- */
+.topic-history-col-domain {
+  grid-area: domain;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.topic-domain-empty {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Column 4: Archetype / Layout
+   -------------------------------------------------------------------------- */
+.topic-history-col-archetype {
+  grid-area: archetype;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   Column 2 Legacy Alias: Content (Title, Theme Hint)
    -------------------------------------------------------------------------- */
 .topic-history-col-content {
-  grid-area: content;
+  grid-area: title;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -547,7 +593,7 @@
 /* --------------------------------------------------------------------------
    Responsive Layout & Accessibility Accommodations
    -------------------------------------------------------------------------- */
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .topic-history-heading {
     flex-direction: column;
     align-items: flex-start;
@@ -563,14 +609,22 @@
   .topic-history-row {
     grid-template-columns: 72px minmax(0, 1fr) auto;
     grid-template-areas:
-      "identity content actions"
-      "status status status";
-    gap: 8px 12px;
-    padding: 10px 12px;
+      "identity title actions"
+      "domain archetype actions";
+    gap: 6px 12px;
+    padding: 8px 12px;
   }
+}
 
-  .topic-history-col-status {
-    justify-content: flex-start;
+@media (max-width: 560px) {
+  .topic-history-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "identity actions"
+      "title title"
+      "domain archetype";
+    gap: 6px 8px;
+    padding: 8px 10px;
   }
 }
 

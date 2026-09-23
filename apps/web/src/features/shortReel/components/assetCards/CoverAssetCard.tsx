@@ -2,6 +2,7 @@ import { ArrowClockwise } from "@phosphor-icons/react";
 import type { ReelUnitStatus } from "@studio/shared";
 import { ReelAssetCard } from "../ReelAssetCard";
 import { getUnitTone } from "./assetCardUtils";
+import type { ReelAssetNoticePayload } from "../reelAsset/reelAsset.types";
 
 export interface CoverAssetCardProps {
   coverState: ReelUnitStatus;
@@ -11,6 +12,9 @@ export interface CoverAssetCardProps {
   coverStageMessage?: string;
   coverError: string | null;
   onRegenerate: () => void;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
 export function CoverAssetCard({
@@ -21,6 +25,9 @@ export function CoverAssetCard({
   coverStageMessage,
   coverError,
   onRegenerate,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
 }: CoverAssetCardProps) {
   return (
     <ReelAssetCard
@@ -69,6 +76,9 @@ export function CoverAssetCard({
         description: "Cover image is conditioned on the accepted style reference and script.",
       }}
       ariaLabel="Cover Image"
+      onNotice={onNotice}
+      onCopyImage={onCopyImage}
+      onDownloadImage={onDownloadImage}
     />
   );
 }

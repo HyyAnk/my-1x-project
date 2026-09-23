@@ -1,19 +1,26 @@
-import { useRef } from "react";
 import type { IntroOutroScriptRevision } from "@studio/shared";
 import { useScriptPackageDownload } from "../../hooks/useScriptPackageDownload";
 
 type Props = {
   revision: IntroOutroScriptRevision;
-  approved: boolean;
-  busy: boolean;
+  selectedForUpload: boolean;
+  busy: string | null;
   hideIssueDetails?: boolean;
-  onCopyPrompt: (id: string) => Promise<void>;
   onApprove: (id: string) => Promise<void>;
+  nextActionLabel: string;
+  onNextAction: () => void;
 };
 
-export function ScriptRevisionActions({ revision, approved, busy, hideIssueDetails = false, onCopyPrompt, onApprove }: Props) {
+export function ScriptRevisionActions({
+  revision,
+  selectedForUpload,
+  busy,
+  hideIssueDetails = false,
+  onApprove,
+  nextActionLabel,
+  onNextAction,
+}: Props) {
   const { download, downloading, error } = useScriptPackageDownload();
-  const exportMenu = useRef<HTMLDetailsElement>(null);
   const findings = revision.quality_review?.findings ?? [];
   const findingKeys = new Set(findings.map((finding) => `${finding.code}:${finding.path}:${finding.message}`));
   const validationIssues = revision.validation_issues.filter((issue) => !findingKeys.has(`${issue.code}:${issue.path}:${issue.message}`));
@@ -21,62 +28,59 @@ export function ScriptRevisionActions({ revision, approved, busy, hideIssueDetai
   const hasBlockingIssues = [...revision.validation_issues, ...findings].some((issue) => issue.severity === "error");
   return (
     <>
-      <div className="script-revision-actions">
+      <section className="script-approval-panel" aria-label="Revision status and actions">
         <div className="script-revision-meta">
-          <span>{approved ? "Approved" : "Not approved"}</span>
+          <strong>{selectedForUpload ? `Selected for upload · Revision ${revision.revision_number}` : "Not selected for upload"}</strong>
           <span>
             {revision.quality_review
               ? findings.length
-                ? `AI review: ${findings.length} finding${findings.length === 1 ? "" : "s"}`
-                : "AI review passed"
+                ? `Gemini Flash review: ${findings.length} finding${findings.length === 1 ? "" : "s"}`
+                : "Gemini Flash review passed"
               : needsReview
-                ? "AI review required"
+                ? "Gemini Flash review required"
                 : "Legacy revision"}
           </span>
         </div>
-        <details className="script-project-menu" ref={exportMenu}>
-          <summary>Export</summary>
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                exportMenu.current?.removeAttribute("open");
-                void onCopyPrompt(revision.revision_id).catch(() => undefined);
-              }}
-              disabled={busy}
-            >
-              Copy prompt
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                exportMenu.current?.removeAttribute("open");
-                void download(revision);
-              }}
-              disabled={busy || downloading}
-            >
-              {downloading ? "Preparing..." : "Download package"}
-            </button>
-          </div>
+        <p className="script-approval-explanation">
+          {selectedForUpload
+            ? "This revision will be linked to the video you upload. It does not create or upload a video."
+            : "Use for upload selects this revision as the script linked to your uploaded video. It does not generate or upload a video."}
+        </p>
+        <details className="script-review-explanation">
+          <summary>What Gemini reviewed</summary>
+          <p>
+            Mascot identity, feasible motion, camera, timing, audio, logo placement, final hold, creative seeds, and Intro–Outro continuity.
+          </p>
         </details>
-        <button
-          type="button"
-          className="primary-button"
-          onClick={() => void onApprove(revision.revision_id).catch(() => undefined)}
-          disabled={busy || approved || needsReview || hasBlockingIssues}
-        >
-          Approve
-        </button>
-      </div>
+        <div className="script-revision-actions">
+          <button type="button" className="quiet-button" onClick={() => void download(revision)} disabled={downloading}>
+            {downloading ? "Preparing..." : "Download package"}
+          </button>
+          {selectedForUpload ? (
+            <button type="button" className="primary-button" onClick={onNextAction} disabled={busy !== null}>
+              {nextActionLabel}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => void onApprove(revision.revision_id).catch(() => undefined)}
+              disabled={busy !== null || needsReview || hasBlockingIssues}
+            >
+              {busy === "use-for-upload" ? "Selecting..." : "Use for upload"}
+            </button>
+          )}
+        </div>
+      </section>
       {downloading ? <div role="status">Preparing package...</div> : null}
       {error ? (
         <div className="script-alert error" role="alert">
           {error}
         </div>
       ) : null}
-      {needsReview ? <p className="script-review-note">Save a new revision to run the AI review before approval.</p> : null}
+      {needsReview ? <p className="script-review-note">Save a new revision to run the Gemini Flash review before selection.</p> : null}
       {!hideIssueDetails && findings.length ? (
-        <ul className="script-validation-list" aria-label="AI review findings">
+        <ul className="script-validation-list" aria-label="Gemini Flash review findings">
           {findings.map((finding, index) => (
             <li className={finding.severity} key={`${finding.code}-${index}`}>
               <strong>{finding.severity === "error" ? "Blocker" : "Review"}</strong> {finding.message}

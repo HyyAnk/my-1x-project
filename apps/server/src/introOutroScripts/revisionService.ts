@@ -16,7 +16,7 @@ import { INTRO_OUTRO_TEMPLATE_VERSION } from "./promptCompiler.js";
 import type { IntroOutroScriptRepository } from "./repository.js";
 import { hasBlockingIssues, validateScriptContent } from "./validation.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
-import { reviewScriptQuality } from "./qualityReview.js";
+import { reviewScriptQuality, SCRIPT_QUALITY_REVIEW_TIMEOUT_MS } from "./qualityReview.js";
 
 type CheckpointInput = {
   scripts: IntroOutroScriptRepository;
@@ -118,7 +118,7 @@ export async function checkpointDraft(input: CheckpointInput): Promise<IntroOutr
     identity,
     seeds: input.seeds,
     companionContent: companion,
-    signal: AbortSignal.timeout(180_000),
+    signal: AbortSignal.timeout(SCRIPT_QUALITY_REVIEW_TIMEOUT_MS + 30_000),
     imageAttachments: [
       { path: input.context.mascotReference.absolutePath, mimeType: input.context.mascotReference.mimeType, role: "mascot_subject" },
       ...(input.context.logoReference

@@ -8,3 +8,5 @@ export * from "./shortReelProgress.schema.js";
 export * from "./shortReel.legacy.js";
 export * from "./shortReel.compat.js";
 export * from "./shortReelRequest.js";
+export * from "./seeds/reelScriptSeedCatalog.js";
+export * from "./seeds/reelScriptSeedDefinitions.js";

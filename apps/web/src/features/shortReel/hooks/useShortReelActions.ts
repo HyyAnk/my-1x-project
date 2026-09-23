@@ -98,7 +98,7 @@ export function useShortReelActions({
   );
 
   const generate = useCallback(
-    async (target: GenerateShortReelTarget = "package", mode?: ReelGenerationMode) => {
+    async (target: GenerateShortReelTarget = "package", mode?: ReelGenerationMode, seedId?: string) => {
       if (!reel) return;
       setIsGenerating(true);
       try {
@@ -107,6 +107,7 @@ export function useShortReelActions({
           request_id: createRequestId("gen"),
           target,
           mode,
+          seed_id: seedId,
         });
 
         setActiveTask(response.task);

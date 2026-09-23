@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { GenerateShortReelRequest, ReelKey, ShortReelRecord } from "@studio/shared";
+import { resolveScriptSeed } from "@studio/shared";
 import type { RepositoryService } from "../../repository/service.js";
 import { PackageServiceError, runPackageAttempt } from "../packageAttempt.js";
 import { generateReelScript } from "../scriptService.js";
@@ -40,6 +41,8 @@ export async function executeScriptStage(
     const updatedRecord = await runPackageAttempt(repository, key, "script", scriptOpId, async (snapshot) => {
       const localization = await loadShortReelLocalizationArtifact(repository, snapshot.channel_id, snapshot.reel_id);
       const displayProjection = extractShortReelDisplayProjection(snapshot.source, localization);
+      const deterministicKey = `${snapshot.topic.topic_id || ""}:${snapshot.source.content_hash || ""}`;
+      const resolvedSeed = resolveScriptSeed(snapshot.source.archetype_id, request.seed_id, deterministicKey);
 
       if (request.target.startsWith("segment_")) {
         if (!snapshot.script) {
@@ -53,6 +56,7 @@ export async function executeScriptStage(
             displayProjection,
             mascotName: snapshot.visual_context?.mascot_name,
             artDirection: snapshot.visual_context?.art_direction,
+            seedId: request.seed_id,
           },
           dependencies.llmClient,
           { signal: dependencies.signal },
@@ -62,7 +66,7 @@ export async function executeScriptStage(
           throw new PackageServiceError("VALIDATION_FAILED", `Generated script omitted segment ${segIndex}.`);
         }
         const updatedSegments = snapshot.script.segments.map((s) => (s.index === segIndex ? replacement : s));
-        return { script: { segments: updatedSegments } };
+        return { script: { segments: updatedSegments }, seed_id: resolvedSeed.id };
       }
 
       const generated = await generateReelScript(
@@ -72,11 +76,12 @@ export async function executeScriptStage(
           displayProjection,
           mascotName: snapshot.visual_context?.mascot_name,
           artDirection: snapshot.visual_context?.art_direction,
+          seedId: request.seed_id,
         },
         dependencies.llmClient,
         { signal: dependencies.signal },
       );
-      return { script: generated };
+      return { script: generated, seed_id: resolvedSeed.id };
     });
 
     await emit("script", "completed", "Script accepted.", updatedRecord.revision);

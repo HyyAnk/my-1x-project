@@ -5,6 +5,7 @@ export type GenerationClipInput = {
   durationSeconds: number;
   seedSelection: IntroOutroSeedSelection;
   seeds: CreativeSeed[];
+  logoMode?: "post_overlay" | "supplied_reference" | "none";
 };
 
 export type ScriptGenerationJobInput = {

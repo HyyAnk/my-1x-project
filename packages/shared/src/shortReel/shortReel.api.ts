@@ -42,6 +42,7 @@ export const GenerateShortReelRequestSchema = z
     request_id: z.string().min(1),
     target: GenerateShortReelTargetSchema,
     mode: z.enum(["repair", "regenerate"]).optional(),
+    seed_id: z.string().trim().min(1).optional(),
   })
   .strict();
 

@@ -30,8 +30,8 @@ export interface ValidateTopicResponseInput {
 export function validateAndNormalizeTopicCandidates(rawOutput: unknown, plan: TopicMatrixPlan, channelId: string): TopicCandidate[] {
   const rawList = extractRawCandidates(rawOutput);
 
-  if (rawList.length !== 6) {
-    throw new Error(`Expected exactly 6 topic candidates, got ${rawList.length}`);
+  if (rawList.length !== plan.slots.length) {
+    throw new Error(`Expected exactly ${plan.slots.length} topic candidates, got ${rawList.length}`);
   }
 
   const candidates = rawList.map((raw, idx) => buildCandidateFromSlot(raw, plan.slots[idx], idx, channelId, plan));

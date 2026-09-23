@@ -7,9 +7,10 @@ import type {
   IntroOutroScriptRevision,
   IntroOutroValidationIssue,
 } from "@studio/shared";
-import { CheckCircle, FloppyDisk, WarningCircle } from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react";
 import { useScriptDraftEditor } from "../../hooks/useScriptDraftEditor";
-import { ScriptTimelineEditor } from "./ScriptTimelineEditor";
+import { ScriptDraftDetails } from "./ScriptDraftDetails";
+import { ScriptPromptPanel } from "./ScriptPromptPanel";
 import { ScriptRevisionActions } from "./ScriptRevisionActions";
 
 export type UploadScriptLinks = {
@@ -27,7 +28,8 @@ type Props = {
   onCheckpoint: (kind: IntroOutroClipKind) => Promise<void>;
   onValidate: (kind: IntroOutroClipKind) => Promise<IntroOutroValidationIssue[]>;
   onApprove: (revisionId: string) => Promise<void>;
-  onCopyPrompt: (revisionId: string) => Promise<void>;
+  onLoadPrompt: (revisionId: string) => Promise<string>;
+  onContinueToUpload: () => void;
   onDraftPendingChange?: (pending: boolean) => void;
 };
 
@@ -46,8 +48,16 @@ export function ScriptReviewStep(props: Props) {
   );
   const [selectedRevisionId, setSelectedRevisionId] = useState<string | null>(null);
   const selectedRevision = clipRevisions.find((revision) => revision.revision_id === selectedRevisionId) ?? clipRevisions[0] ?? null;
+  const otherKind: IntroOutroClipKind = kind === "intro" ? "outro" : "intro";
+  const hasOtherRevision = props.revisions.some((revision) => revision.clip_kind === otherKind);
+  const otherSelectedForUpload = Boolean(props.project.approved_revision_ids[otherKind]);
+  const nextActionLabel =
+    hasOtherRevision && !otherSelectedForUpload ? `Review ${otherKind === "intro" ? "Intro" : "Outro"}` : "Continue to upload";
   const activeJob =
     props.job && (props.job.status === "queued" || props.job.status === "running") && props.job.requested_clip_kinds.includes(kind);
+  const draftDiffersFromRevision = Boolean(
+    selectedRevision && editor.content && JSON.stringify(editor.content) !== JSON.stringify(selectedRevision.content),
+  );
 
   useEffect(() => {
     setSelectedRevisionId(clipRevisions[0]?.revision_id ?? null);
@@ -72,73 +82,9 @@ export function ScriptReviewStep(props: Props) {
             </button>
           ))}
         </div>
-        <span className={`script-save-status ${editor.saveStatus}`} role="status">
-          {editor.pending && editor.saveStatus !== "failed" ? "Saving..." : editor.saveStatus === "failed" ? "Save failed" : "Saved"}
-          {editor.saveStatus === "failed" ? (
-            <button type="button" className="quiet-button" onClick={() => void editor.retrySave()}>
-              Retry save
-            </button>
-          ) : null}
-        </span>
-      </div>
-
-      {activeJob ? <div className="script-job-banner">{props.job?.step}</div> : null}
-
-      {editor.content ? (
-        <>
-          <ScriptTimelineEditor
-            content={editor.content}
-            disabled={Boolean(activeJob) || props.busy !== null}
-            onChange={editor.updateContent}
-          />
-          {editor.issues.length ? (
-            <div className="script-validation-list" aria-live="polite">
-              {editor.issues.map((issue, index) => (
-                <div className={issue.severity} key={`${issue.code}-${index}`}>
-                  <WarningCircle size={16} />
-                  <span>{issue.message}</span>
-                </div>
-              ))}
-            </div>
-          ) : editor.validationRan ? (
-            <div className="script-validation-success" role="status">
-              Structure checked. Save a revision for AI review.
-            </div>
-          ) : null}
-          {editor.validationError ? (
-            <div className="script-alert error" role="alert">
-              {editor.validationError}
-            </div>
-          ) : null}
-          <div className="script-inline-actions">
-            <button
-              type="button"
-              className="quiet-button"
-              onClick={() => void editor.validate()}
-              disabled={editor.validating || editor.pending || props.busy !== null || Boolean(activeJob)}
-            >
-              {editor.validating ? "Validating..." : "Validate"}
-            </button>
-            <button
-              type="button"
-              className="quiet-button"
-              onClick={() => void props.onCheckpoint(kind).catch(() => undefined)}
-              disabled={editor.validating || editor.pending || props.busy !== null || Boolean(activeJob)}
-            >
-              <FloppyDisk size={15} /> Save revision
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="script-empty-project">
-          <h4>No {kind} script yet</h4>
-        </div>
-      )}
-
-      <section className="script-history">
-        <div className="script-section-heading">
-          <h4>Revision history</h4>
-          {clipRevisions.length ? (
+        {clipRevisions.length ? (
+          <label className="script-revision-selection">
+            <span>Version</span>
             <select
               aria-label="Script revision"
               value={selectedRevision?.revision_id ?? ""}
@@ -150,22 +96,43 @@ export function ScriptReviewStep(props: Props) {
                 </option>
               ))}
             </select>
+          </label>
+        ) : null}
+      </div>
+
+      {activeJob ? <div className="script-job-banner">{props.job?.step}</div> : null}
+
+      {selectedRevision ? (
+        <>
+          <ScriptPromptPanel revision={selectedRevision} onLoadPrompt={props.onLoadPrompt} />
+          {draftDiffersFromRevision ? (
+            <div className="script-alert warning" role="status">
+              Draft changes are not in this prompt. Save a new revision to update it.
+            </div>
           ) : null}
-        </div>
-        {selectedRevision ? (
           <ScriptRevisionActions
             key={selectedRevision.revision_id}
             revision={selectedRevision}
-            approved={props.project.approved_revision_ids[kind] === selectedRevision.revision_id}
-            busy={props.busy !== null}
-            hideIssueDetails={
-              editor.issues.length > 0 && props.project.drafts[kind].source_revision_id === selectedRevision.revision_id
-            }
-            onCopyPrompt={props.onCopyPrompt}
+            selectedForUpload={props.project.approved_revision_ids[kind] === selectedRevision.revision_id}
+            busy={props.busy}
+            hideIssueDetails={editor.issues.length > 0 && props.project.drafts[kind].source_revision_id === selectedRevision.revision_id}
             onApprove={props.onApprove}
+            nextActionLabel={nextActionLabel}
+            onNextAction={hasOtherRevision && !otherSelectedForUpload ? () => setKind(otherKind) : props.onContinueToUpload}
           />
-        ) : null}
-      </section>
+        </>
+      ) : (
+        <div className="script-empty-project">
+          <h4>No {kind} script yet</h4>
+        </div>
+      )}
+
+      <ScriptDraftDetails
+        kind={kind}
+        editor={editor}
+        disabled={Boolean(activeJob) || props.busy !== null}
+        onCheckpoint={props.onCheckpoint}
+      />
     </div>
   );
 }

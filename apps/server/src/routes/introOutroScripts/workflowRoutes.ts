@@ -97,6 +97,7 @@ export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutro
         durationSeconds: clip.duration_seconds,
         seedSelection: resolved.selection,
         seeds: resolved.seeds,
+        logoMode: clip.logo_mode,
       };
     });
     const job = await deps.jobs.startScriptGeneration({

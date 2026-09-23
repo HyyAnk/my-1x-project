@@ -11,7 +11,12 @@ import {
   evaluateShortReelQuestionEligibility,
   type EvaluatedBankQuestionCandidate,
 } from "../quiz/bank/bankEligibility.js";
-import { ARCHETYPE_SLOT_DEFINITIONS, CANONICAL_FALLBACK_DOMAINS } from "./topicMatrixPlanner.js";
+import {
+  ARCHETYPE_SLOT_DEFINITIONS,
+  CANONICAL_FALLBACK_DOMAINS,
+  generateRandomSlotDefinitions,
+  type TopicSlotArchetypeDefinition,
+} from "./topicMatrixPlanner.js";
 import { extractHintTokens, selectDiscoveryCandidates, selectSteeredCandidates } from "./bankTopicKeywordExtractor.js";
 import type { AllocatedSlot, AllocateTopicSlotsInput, TopicAllocationResult } from "./bankTopicAllocation.types.js";
 
@@ -26,8 +31,11 @@ export {
 } from "./bankTopicKeywordExtractor.js";
 export type { AllocatedSlot, AllocateTopicSlotsInput, TopicAllocationResult } from "./bankTopicAllocation.types.js";
 
-function buildEmptyShortages(episodeQuestionCount: number): TopicSourceShortage[] {
-  return ARCHETYPE_SLOT_DEFINITIONS.map((def) => ({
+function buildEmptyShortages(
+  episodeQuestionCount: number,
+  slotDefinitions: ReadonlyArray<TopicSlotArchetypeDefinition & { slot: number }> = ARCHETYPE_SLOT_DEFINITIONS,
+): TopicSourceShortage[] {
+  return slotDefinitions.map((def) => ({
     content_kind: def.contentKind,
     slot_id: `slot_${def.slot}`,
     requested_count: def.contentKind === "episode" ? episodeQuestionCount : 1,
@@ -37,7 +45,10 @@ function buildEmptyShortages(episodeQuestionCount: number): TopicSourceShortage[
   }));
 }
 
-function evaluateSlotEligibility(rawQuestion: BankQuestion | BankQuestionWithCooldown, def: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]) {
+function evaluateSlotEligibility(
+  rawQuestion: BankQuestion | BankQuestionWithCooldown,
+  def: TopicSlotArchetypeDefinition & { slot: number },
+) {
   if (def.contentKind === "episode") {
     return evaluateEpisodeQuestionEligibility(rawQuestion, {
       targetLanguage: "en",
@@ -45,13 +56,13 @@ function evaluateSlotEligibility(rawQuestion: BankQuestion | BankQuestionWithCoo
     });
   }
   return evaluateShortReelQuestionEligibility(rawQuestion, {
-    targetArchetype: def.archetype,
+    targetArchetype: def.archetype as "versus_faceoff" | "deep_trivia" | "verdict_true_false",
   });
 }
 
 function collectSlotCandidates(
   questions: BankQuestion[] | BankQuestionWithCooldown[],
-  def: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number],
+  def: TopicSlotArchetypeDefinition & { slot: number },
   usedQuestionIds: ReadonlySet<string>,
 ): EvaluatedBankQuestionCandidate[] {
   const slotCandidates: EvaluatedBankQuestionCandidate[] = [];
@@ -70,7 +81,7 @@ function collectSlotCandidates(
 }
 
 function createAllocatedSlotRecord(
-  def: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number],
+  def: TopicSlotArchetypeDefinition & { slot: number },
   chosen: EvaluatedBankQuestionCandidate[],
   domainTitleMap: Map<string, string>,
   isKeySteered: boolean,
@@ -108,7 +119,8 @@ function createAllocatedSlotRecord(
 }
 
 export function allocateSourceBackedTopicSlots(input: AllocateTopicSlotsInput): TopicAllocationResult {
-  const { questions, scanStatus, topicHint, episodeQuestionCount = 8 } = input;
+  const { questions, scanStatus, topicHint, episodeQuestionCount = 8, slotDefinitions: customSlots } = input;
+  const slotDefinitions = customSlots || ARCHETYPE_SLOT_DEFINITIONS;
 
   if (scanStatus === "incomplete") {
     throw new RepositoryError("INCOMPLETE_SCAN: question bank scan was incomplete", "INCOMPLETE_SCAN");
@@ -120,7 +132,7 @@ export function allocateSourceBackedTopicSlots(input: AllocateTopicSlotsInput): 
     return {
       scanStatus: "complete_empty",
       allocatedSlots: [],
-      shortages: buildEmptyShortages(episodeQuestionCount),
+      shortages: buildEmptyShortages(episodeQuestionCount, slotDefinitions),
       totalAllocatedQuestions: 0,
     };
   }
@@ -130,11 +142,13 @@ export function allocateSourceBackedTopicSlots(input: AllocateTopicSlotsInput): 
   const allocatedSlots: AllocatedSlot[] = [];
   const shortages: TopicSourceShortage[] = [];
   const domainTitleMap = new Map<string, string>(CANONICAL_FALLBACK_DOMAINS.map((d) => [d.id, d.title]));
+  const firstEpisodeSlot = slotDefinitions.find((s) => s.contentKind === "episode")?.slot ?? 1;
+  const firstShortReelSlot = slotDefinitions.find((s) => s.contentKind === "short_reel")?.slot ?? 5;
 
-  for (const def of ARCHETYPE_SLOT_DEFINITIONS) {
+  for (const def of slotDefinitions) {
     const isEpisode = def.contentKind === "episode";
     const requiredCount = isEpisode ? episodeQuestionCount : 1;
-    const isKeySteered = hasKeyword && (def.slot === 1 || def.slot === 4);
+    const isKeySteered = Boolean(hasKeyword && (def.slot === firstEpisodeSlot || def.slot === firstShortReelSlot));
     const slotCandidates = collectSlotCandidates(questions, def, usedQuestionIds);
 
     if (isKeySteered) {

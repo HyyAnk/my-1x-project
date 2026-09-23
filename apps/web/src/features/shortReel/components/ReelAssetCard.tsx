@@ -24,6 +24,9 @@ export function ReelAssetCard({
   downloadAriaLabel,
   emptyState,
   ariaLabel,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
 }: ReelAssetCardProps) {
   return (
     <section className="short-reel-card short-reel-asset-card" role="region" aria-label={ariaLabel}>
@@ -54,6 +57,9 @@ export function ReelAssetCard({
         downloadName={downloadName}
         downloadAriaLabel={downloadAriaLabel}
         emptyState={emptyState}
+        onNotice={onNotice}
+        onCopyImage={onCopyImage}
+        onDownloadImage={onDownloadImage}
       />
     </section>
   );

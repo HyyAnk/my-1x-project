@@ -65,19 +65,13 @@ export function selectManualCandidates(questions: BankQuestion[], options: Selec
     }
   }
 
-  // Enhanced Least-Variant-First sort:
   // 1. Lowest current_variants count
-  // 2. Subtopic priority: iconic_franchises has high priority when selecting for broad or general topics
-  // 3. Entity difficulty: Tier 1 household icons (difficulty: 1) before difficulty: 2
-  // 4. Deterministic tie breaking: entity_id, then archetype_id
+  // 2. Entity difficulty: Tier 1 household icons (difficulty: 1) before difficulty: 2
+  // 3. Deterministic tie breaking: entity_id, then archetype_id
   candidates.sort((a, b) => {
     if (a.current_variants !== b.current_variants) {
       return a.current_variants - b.current_variants;
     }
-
-    const aIconic = a.subtopic_id === "iconic_franchises" ? 0 : 1;
-    const bIconic = b.subtopic_id === "iconic_franchises" ? 0 : 1;
-    if (aIconic !== bIconic) return aIconic - bIconic;
 
     const entA = entityMap.get(a.entity_id);
     const entB = entityMap.get(b.entity_id);

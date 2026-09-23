@@ -32,8 +32,12 @@ export async function createDirectShortReelCandidate(input: CreateDirectShortRee
   }
 
   const topicId = makeId("topic_reel");
-  const archetype: "versus_faceoff" | "deep_trivia" =
-    bankQuestion.archetype_id === "versus_faceoff" || bankQuestion.choices.length === 2 ? "versus_faceoff" : "deep_trivia";
+  const archetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false" =
+    bankQuestion.archetype_id === "verdict_true_false"
+      ? "verdict_true_false"
+      : bankQuestion.archetype_id === "versus_faceoff"
+        ? "versus_faceoff"
+        : "deep_trivia";
 
   const contentHash = hashBankQuestionSource(bankQuestion);
   const truncatedTitle = bankQuestion.question.length > 60 ? `${bankQuestion.question.slice(0, 57)}...` : bankQuestion.question;

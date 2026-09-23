@@ -99,7 +99,7 @@ export const ShortReelTopicCandidateSchema = TopicCandidateBaseSchema.extend({
   content_kind: z.literal("short_reel"),
   question_count: z.literal(1).default(1),
   aspect_ratio: z.literal("9:16").default("9:16"),
-  archetype: z.enum(["versus_faceoff", "deep_trivia"]),
+  archetype: z.enum(["versus_faceoff", "deep_trivia", "verdict_true_false"]),
 });
 
 export type ShortReelTopicCandidate = z.infer<typeof ShortReelTopicCandidateSchema>;

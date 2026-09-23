@@ -2,6 +2,7 @@ import { ArrowClockwise } from "@phosphor-icons/react";
 import type { ReelUnitStatus } from "@studio/shared";
 import { ReelAssetCard } from "../ReelAssetCard";
 import { getUnitTone } from "./assetCardUtils";
+import type { ReelAssetNoticePayload } from "../reelAsset/reelAsset.types";
 
 export interface StyleAssetCardProps {
   referencesState: ReelUnitStatus;
@@ -11,6 +12,9 @@ export interface StyleAssetCardProps {
   styleStageMessage?: string;
   styleError: string | null;
   onRegenerate: () => void;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
 export function StyleAssetCard({
@@ -21,6 +25,9 @@ export function StyleAssetCard({
   styleStageMessage,
   styleError,
   onRegenerate,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
 }: StyleAssetCardProps) {
   return (
     <ReelAssetCard
@@ -68,6 +75,9 @@ export function StyleAssetCard({
         description: "Click 'Generate Style' to produce a 9:16 portrait style scene conditioned on the mascot.",
       }}
       ariaLabel="Portrait Style Reference"
+      onNotice={onNotice}
+      onCopyImage={onCopyImage}
+      onDownloadImage={onDownloadImage}
     />
   );
 }

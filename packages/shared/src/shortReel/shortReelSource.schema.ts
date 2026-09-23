@@ -10,7 +10,7 @@ export function isEnglishLanguage(lang?: string | null): boolean {
   return trimmed === "english" || trimmed === "en" || trimmed.startsWith("en-") || trimmed.startsWith("en_");
 }
 
-export const ReelArchetypeSchema = z.enum(["versus_faceoff", "deep_trivia"]);
+export const ReelArchetypeSchema = z.enum(["versus_faceoff", "deep_trivia", "verdict_true_false"]);
 export type ReelArchetype = z.infer<typeof ReelArchetypeSchema>;
 
 export const ShortReelSourceProvenanceSchema = z.enum(["source", "verified_translation"]);
@@ -79,6 +79,14 @@ export const CompleteShortReelSourceSnapshotSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `versus_faceoff requires exactly 2 choices (found ${source.choices.length})`,
+        path: ["choices"],
+      });
+    }
+
+    if (source.archetype_id === "verdict_true_false" && source.choices.length !== 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `verdict_true_false requires exactly 2 choices (found ${source.choices.length})`,
         path: ["choices"],
       });
     }
@@ -273,6 +281,14 @@ export const IncompleteLegacyShortReelSourceSnapshotSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `versus_faceoff requires exactly 2 choices (found ${source.choices.length})`,
+        path: ["choices"],
+      });
+    }
+
+    if (source.archetype_id === "verdict_true_false" && source.choices.length !== 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `verdict_true_false requires exactly 2 choices (found ${source.choices.length})`,
         path: ["choices"],
       });
     }

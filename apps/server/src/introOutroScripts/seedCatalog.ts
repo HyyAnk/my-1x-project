@@ -17,6 +17,12 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
     ["A05", "Container Reveal", "Reveal the mascot from an oversized soft container without compressing rigid features."],
     ["A06", "Camera Greeting", "Acknowledge the camera with a supported greeting gesture."],
     ["A07", "Attention Shift", "Begin calmly, then react with delight to the start of the quiz."],
+    [
+      "A08",
+      "Dynamic Chase Hook",
+      "Dash or slide into frame chasing a dynamic glowing cue or energetic element suited to the mascot's style.",
+      ["locomotion"],
+    ],
   ],
   intro_brand_interaction: [
     ["B01", "Mechanism Reveal", "Activate a simple mechanism that reveals the intact channel logo.", ["grasping"]],
@@ -26,6 +32,12 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
     ["B05", "Frame Assembly", "Assemble a decorative frame around the intact logo without reconstructing its letters."],
     ["B06", "Bubble Reveal", "Use a single bubble-like transition to reveal the intact channel logo."],
     ["B07", "Guided Logo Arrival", "Guide the intact channel logo into its hero position without touching signature features."],
+    [
+      "B08",
+      "Particle Pop Reveal",
+      "Trigger a colorful burst of stars, sparkles, or energy that pops the intact channel logo dynamically into center frame.",
+    ],
+    ["B09", "Hero Symmetrical Framing", "Frame the intact channel logo in an iconic hero composition with confident attitude."],
   ],
   intro_performance_tone: [
     ["C01", "Energetic", "Perform with lively timing that remains compatible with the mascot's construction."],
@@ -35,6 +47,11 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
     ["C05", "Confident", "Create a confident hero moment without adding permanent accessories."],
     ["C06", "Curious", "React with focused curiosity using supported expressions or body language."],
     ["C07", "Gently Comic", "Include one readable, safe comic recovery without excessive physical complexity."],
+    [
+      "C08",
+      "Cartoon Comic Timing",
+      "Use punchy animation physics, expressive comedic timing, and snappy reactions matching the mascot's style.",
+    ],
   ],
   intro_verbal_hook: [
     ["D01", "Friendly Challenge", "Invite viewers into a friendly knowledge challenge."],
@@ -44,6 +61,7 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
     ["D05", "Discovery", "Invite viewers to discover answers together."],
     ["D06", "Readiness", "Invite viewers to get ready and focus."],
     ["D07", "Shared Play", "Frame the quiz as friendly shared play without taunting."],
+    ["D08", "Signature Action Call", "Deliver a short, punchy catchphrase or call-to-action directly to viewers (e.g. 'Let's Quiz!')."],
   ],
   outro_recognition: [
     ["E01", "Delighted Response", "React with delight to the viewer's participation without claiming a score."],

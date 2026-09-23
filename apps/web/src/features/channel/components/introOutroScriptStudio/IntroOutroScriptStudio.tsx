@@ -106,7 +106,8 @@ export function IntroOutroScriptStudio(props: Props) {
           onCheckpoint={studio.checkpoint}
           onValidate={studio.validate}
           onApprove={studio.approve}
-          onCopyPrompt={studio.copyPrompt}
+          onLoadPrompt={studio.loadPrompt}
+          onContinueToUpload={() => setStep("upload")}
           onDraftPendingChange={setDraftPending}
         />
       ) : null}

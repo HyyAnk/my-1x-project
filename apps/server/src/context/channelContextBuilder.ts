@@ -89,6 +89,8 @@ export async function buildChannelContext(input: {
       taxonomy = null;
     }
 
+    const fallbackPlan = planTopicSuggestionMatrix({ taxonomy, index: null, topicHint, aspectRatio: "16:9" });
+
     const scanResult = await scanBankInventory(repository, {
       channelId,
       targetLanguage: "en",
@@ -102,8 +104,6 @@ export async function buildChannelContext(input: {
       topicHint,
       taxonomy,
     });
-
-    const fallbackPlan = planTopicSuggestionMatrix({ taxonomy, index: null, topicHint, aspectRatio: "16:9" });
 
     const matrixPlan: TopicMatrixPlan = {
       slots:

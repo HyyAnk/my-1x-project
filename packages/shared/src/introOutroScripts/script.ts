@@ -20,7 +20,7 @@ const ProductionLayerSchema = z
     clip_kind: IntroOutroClipKindSchema,
     language: z.literal("English"),
     aspect_ratio: z.literal("16:9"),
-    target_duration_seconds: z.number().min(8).max(10),
+    target_duration_seconds: z.number().min(6).max(10),
   })
   .strict();
 

@@ -67,7 +67,7 @@ export const CreateProjectInputSchema = z
 
 const DraftPatchSchema = z
   .object({
-    target_duration_seconds: z.number().min(8).max(10).optional(),
+    target_duration_seconds: z.number().min(6).max(10).optional(),
     seed_selection: IntroOutroSeedSelectionSchema.nullable().optional(),
     content: IntroOutroScriptContentSchema.nullable().optional(),
   })
@@ -119,10 +119,11 @@ export const ValidateDraftInputSchema = z
 const GenerateClipInputSchema = z
   .object({
     clip_kind: IntroOutroClipKindSchema,
-    duration_seconds: z.number().min(8).max(10),
+    duration_seconds: z.number().min(6).max(10),
     randomization_seed: z.string().trim().min(1).max(120),
     selected_seed_ids: z.array(z.string().trim().min(1).max(80)).max(7).optional(),
     locked_dimensions: z.array(CreativeSeedDimensionSchema).max(7).optional(),
+    logo_mode: z.enum(["post_overlay", "supplied_reference", "none"]).optional(),
   })
   .strict();
 

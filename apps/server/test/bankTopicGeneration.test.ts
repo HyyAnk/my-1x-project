@@ -121,8 +121,17 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           format: "true_false",
         }),
       );
-      // 1 versus_faceoff for slot 4 (Short-Reel)
-      const slot4Questions = [
+      // 8 visual_identification for slot 4 (Episode)
+      const slot4Questions = Array.from({ length: 8 }, (_, i) =>
+        makeQuestion({
+          id: `vi_ep_${i + 1}`,
+          archetype_id: "visual_identification",
+          domain_id: "modern_cinema_tv",
+          subtopic_id: "movies",
+        }),
+      );
+      // 1 versus_faceoff for slot 5 (Short-Reel)
+      const slot5Questions = [
         makeQuestion({
           id: "vf_reel_1",
           archetype_id: "versus_faceoff",
@@ -130,8 +139,8 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           subtopic_id: "greek_gods",
         }),
       ];
-      // 1 deep_trivia for slot 5 (Short-Reel)
-      const slot5Questions = [
+      // 1 deep_trivia for slot 6 (Short-Reel)
+      const slot6Questions = [
         makeQuestion({
           id: "dt_reel_1",
           archetype_id: "deep_trivia",
@@ -139,8 +148,18 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           subtopic_id: "electric_cars",
         }),
       ];
-      // 1 versus_faceoff for slot 6 (Short-Reel)
-      const slot6Questions = [
+      // 1 verdict_true_false for slot 7 (Short-Reel)
+      const slot7Questions = [
+        makeQuestion({
+          id: "tf_reel_1",
+          archetype_id: "verdict_true_false",
+          domain_id: "food_gastronomy",
+          subtopic_id: "desserts",
+          format: "true_false",
+        }),
+      ];
+      // 1 versus_faceoff for slot 8 (Short-Reel)
+      const slot8Questions = [
         makeQuestion({
           id: "vf_reel_2",
           archetype_id: "versus_faceoff",
@@ -156,6 +175,8 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         ...slot4Questions,
         ...slot5Questions,
         ...slot6Questions,
+        ...slot7Questions,
+        ...slot8Questions,
       ];
 
       const result = allocateSourceBackedTopicSlots({
@@ -165,10 +186,10 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       });
 
       expect(result.scanStatus).toBe("complete_nonempty");
-      expect(result.allocatedSlots).toHaveLength(6);
+      expect(result.allocatedSlots).toHaveLength(8);
       expect(result.shortages).toHaveLength(0);
 
-      // Verify slots 1, 2, 3 are episodes
+      // Verify slots 1, 2, 3, 4 are episodes
       expect(result.allocatedSlots[0].slot).toBe(1);
       expect(result.allocatedSlots[0].contentKind).toBe("episode");
       expect(result.allocatedSlots[0].allocatedQuestions).toHaveLength(8);
@@ -181,11 +202,11 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(result.allocatedSlots[2].contentKind).toBe("episode");
       expect(result.allocatedSlots[2].allocatedQuestions).toHaveLength(8);
 
-      // Verify slots 4, 5, 6 are short reels
       expect(result.allocatedSlots[3].slot).toBe(4);
-      expect(result.allocatedSlots[3].contentKind).toBe("short_reel");
-      expect(result.allocatedSlots[3].allocatedQuestions).toHaveLength(1);
+      expect(result.allocatedSlots[3].contentKind).toBe("episode");
+      expect(result.allocatedSlots[3].allocatedQuestions).toHaveLength(8);
 
+      // Verify slots 5, 6, 7, 8 are short reels
       expect(result.allocatedSlots[4].slot).toBe(5);
       expect(result.allocatedSlots[4].contentKind).toBe("short_reel");
       expect(result.allocatedSlots[4].allocatedQuestions).toHaveLength(1);
@@ -194,14 +215,22 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(result.allocatedSlots[5].contentKind).toBe("short_reel");
       expect(result.allocatedSlots[5].allocatedQuestions).toHaveLength(1);
 
+      expect(result.allocatedSlots[6].slot).toBe(7);
+      expect(result.allocatedSlots[6].contentKind).toBe("short_reel");
+      expect(result.allocatedSlots[6].allocatedQuestions).toHaveLength(1);
+
+      expect(result.allocatedSlots[7].slot).toBe(8);
+      expect(result.allocatedSlots[7].contentKind).toBe("short_reel");
+      expect(result.allocatedSlots[7].allocatedQuestions).toHaveLength(1);
+
       // Verify all question IDs are distinct across allocations
       const allAllocatedIds = result.allocatedSlots.flatMap((s) => s.allocatedQuestions.map((q) => q.question.id));
       expect(new Set(allAllocatedIds).size).toBe(allAllocatedIds.length);
-      expect(allAllocatedIds).toHaveLength(8 * 3 + 1 * 3);
+      expect(allAllocatedIds).toHaveLength(8 * 4 + 1 * 4);
     });
 
-    it("stable Episode slots 1/2/3 and Reel slots 4/5 survive holes; steered allocation has priority", () => {
-      // Provide questions for Slot 1 (8), Slot 3 (8), Slot 4 (1), Slot 5 (1), Slot 6 (1), but ZERO for Slot 2 (mystery_reveal)
+    it("stable Episode slots 1/2/3/4 and Reel slots 5/6/7/8 survive holes; steered allocation has priority", () => {
+      // Provide questions for Slot 1, 3, 4, 5, 6, 7, 8, but ZERO for Slot 2 (mystery_reveal)
       const slot1Questions = Array.from({ length: 8 }, (_, i) =>
         makeQuestion({ id: `dt_ep_${i + 1}`, archetype_id: "deep_trivia", domain_id: "space_earth" }),
       );
@@ -213,29 +242,41 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           format: "true_false",
         }),
       );
-      const slot4Questions = [makeQuestion({ id: "vf_reel_1", archetype_id: "versus_faceoff", domain_id: "space_earth" })];
-      const slot5Questions = [makeQuestion({ id: "dt_reel_1", archetype_id: "deep_trivia", domain_id: "nature_animals" })];
-      const slot6Questions = [makeQuestion({ id: "vf_reel_2", archetype_id: "versus_faceoff", domain_id: "nature_animals" })];
+      const slot4Questions = Array.from({ length: 8 }, (_, i) =>
+        makeQuestion({ id: `vi_ep_${i + 1}`, archetype_id: "visual_identification", domain_id: "modern_cinema_tv" }),
+      );
+      const slot5Questions = [makeQuestion({ id: "vf_reel_1", archetype_id: "versus_faceoff", domain_id: "space_earth" })];
+      const slot6Questions = [makeQuestion({ id: "dt_reel_1", archetype_id: "deep_trivia", domain_id: "nature_animals" })];
+      const slot7Questions = [makeQuestion({ id: "tf_reel_1", archetype_id: "verdict_true_false", domain_id: "food_gastronomy", format: "true_false" })];
+      const slot8Questions = [makeQuestion({ id: "vf_reel_2", archetype_id: "versus_faceoff", domain_id: "nature_animals" })];
 
       const result = allocateSourceBackedTopicSlots({
-        questions: [...slot1Questions, ...slot3Questions, ...slot4Questions, ...slot5Questions, ...slot6Questions],
+        questions: [
+          ...slot1Questions,
+          ...slot3Questions,
+          ...slot4Questions,
+          ...slot5Questions,
+          ...slot6Questions,
+          ...slot7Questions,
+          ...slot8Questions,
+        ],
         scanStatus: "complete_nonempty",
         channelId: "channel_1",
         topicHint: "space",
       });
 
-      // Survives hole at slot 2: exactly 5 allocated slots, 1 shortage
-      expect(result.allocatedSlots).toHaveLength(5);
+      // Survives hole at slot 2: exactly 7 allocated slots, 1 shortage
+      expect(result.allocatedSlots).toHaveLength(7);
       const allocatedSlotNumbers = result.allocatedSlots.map((s) => s.slot);
-      expect(allocatedSlotNumbers).toEqual([1, 3, 4, 5, 6]);
+      expect(allocatedSlotNumbers).toEqual([1, 3, 4, 5, 6, 7, 8]);
 
       expect(result.shortages).toHaveLength(1);
       expect(result.shortages[0].slot_id).toBe("slot_2");
       expect(result.shortages[0].content_kind).toBe("episode");
 
-      // Steered allocation has priority: slot 1 and slot 4 are steered to space
+      // Steered allocation has priority: slot 1 and slot 5 are steered to space
       expect(result.allocatedSlots.find((s) => s.slot === 1)?.isKeySteered).toBe(true);
-      expect(result.allocatedSlots.find((s) => s.slot === 4)?.isKeySteered).toBe(true);
+      expect(result.allocatedSlots.find((s) => s.slot === 5)?.isKeySteered).toBe(true);
     });
 
     it("scarce inventory yields honest partial; complete empty makes zero provider connection/call; incomplete/unavailable is a failure, not shortage", () => {
@@ -246,8 +287,8 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         channelId: "channel_1",
       });
       expect(scarceResult.allocatedSlots).toHaveLength(1);
-      expect(scarceResult.allocatedSlots[0].slot).toBe(5); // deep_trivia reel slot
-      expect(scarceResult.shortages).toHaveLength(5);
+      expect(scarceResult.allocatedSlots[0].slot).toBe(6); // deep_trivia reel slot
+      expect(scarceResult.shortages).toHaveLength(7);
 
       // 2. Complete empty (0 questions)
       const emptyResult = allocateSourceBackedTopicSlots({
@@ -256,7 +297,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         channelId: "channel_1",
       });
       expect(emptyResult.allocatedSlots).toHaveLength(0);
-      expect(emptyResult.shortages).toHaveLength(6);
+      expect(emptyResult.shortages).toHaveLength(8);
       expect(emptyResult.shortages.every((s) => s.reason_code === "NO_ELIGIBLE_SOURCES")).toBe(true);
 
       // 3. Incomplete / unavailable scan is a failure (throws)
@@ -291,7 +332,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         topicHint: "quantum computing astrophysics supercomputers",
       });
 
-      // Steered slots (1 and 4) MUST NOT fall back to nature_animals; they must report NO_KEYWORD_MATCH shortage!
+      // Steered slots (1 and 5) MUST NOT fall back to nature_animals; they must report NO_KEYWORD_MATCH shortage!
       const slot1 = result.allocatedSlots.find((s) => s.slot === 1);
       expect(slot1).toBeUndefined();
 
@@ -299,9 +340,9 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(slot1Shortage).toBeDefined();
       expect(slot1Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
 
-      const slot4Shortage = result.shortages.find((s) => s.slot_id === "slot_4");
-      expect(slot4Shortage).toBeDefined();
-      expect(slot4Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
+      const slot5Shortage = result.shortages.find((s) => s.slot_id === "slot_5");
+      expect(slot5Shortage).toBeDefined();
+      expect(slot5Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
     });
 
     it("reports NO_KEYWORD_MATCH when topicHint consists solely of stopwords", () => {
@@ -313,13 +354,13 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         topicHint: "the and for of in with",
       });
       const slot1Shortage = result.shortages.find((s) => s.slot_id === "slot_1");
-      const slot4Shortage = result.shortages.find((s) => s.slot_id === "slot_4");
+      const slot5Shortage = result.shortages.find((s) => s.slot_id === "slot_5");
       expect(slot1Shortage).toBeDefined();
       expect(slot1Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
-      expect(slot4Shortage).toBeDefined();
-      expect(slot4Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
-      // But discovery slot 5 (deep_trivia Short-Reel) can still allocate questions
-      expect(result.allocatedSlots.some((s) => s.slot === 5)).toBe(true);
+      expect(slot5Shortage).toBeDefined();
+      expect(slot5Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
+      // But discovery slot 6 (deep_trivia Short-Reel) can still allocate questions
+      expect(result.allocatedSlots.some((s) => s.slot === 6)).toBe(true);
     });
   });
 

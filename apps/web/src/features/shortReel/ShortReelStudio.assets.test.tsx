@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { api } from "../../api";
 import { ShortReelStudio } from "./ShortReelStudio";
-import { createMockChannel, createMockReadyUnits, createMockShortReel } from "../../../test/helpers/shortReelStudioTestUtils";
+import { createMockChannel, createMockReadyUnits, createMockScript, createMockShortReel } from "../../../test/helpers/shortReelStudioTestUtils";
 
 describe("ShortReelStudio Assets Presentation (U02)", () => {
   beforeEach(() => {
@@ -192,4 +192,90 @@ describe("ShortReelStudio Assets Presentation (U02)", () => {
       expect(screen.getByRole("link", { name: "Open Mascot Studio" })).toBeDefined();
     });
   });
+
+  it("provides 1-click direct image copy to clipboard with visual Copied! feedback and toast notice", async () => {
+    const channel = createMockChannel();
+    const mockReel = createMockShortReel({ script: createMockScript(), units: createMockReadyUnits() });
+    vi.spyOn(api, "getShortReel").mockResolvedValue({ short_reel: mockReel });
+
+    const writeMock = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      value: { write: writeMock },
+      configurable: true,
+      writable: true,
+    });
+
+    class MockClipboardItem {
+      types: string[];
+      items: Record<string, Blob>;
+      constructor(items: Record<string, Blob>) {
+        this.items = items;
+        this.types = Object.keys(items);
+      }
+    }
+    (globalThis as unknown as { ClipboardItem: unknown }).ClipboardItem = MockClipboardItem;
+
+    const mockPngBlob = new Blob(["mock-image-bytes"], { type: "image/png" });
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: async () => mockPngBlob,
+    } as unknown as Response);
+
+    const onNotice = vi.fn();
+    render(<ShortReelStudio channel={channel} reelId={mockReel.reel_id} onBack={vi.fn()} onNotice={onNotice} />);
+
+    await waitFor(() => expect(screen.getByRole("tab", { name: /Assets/i })).toBeDefined());
+    fireEvent.click(screen.getByRole("tab", { name: /Assets/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Copy Cover Image image" })).toBeDefined();
+    });
+
+    const copyBtn = screen.getByRole("button", { name: "Copy Cover Image image" });
+    fireEvent.click(copyBtn);
+
+    await waitFor(() => {
+      expect(writeMock).toHaveBeenCalledTimes(1);
+      expect(onNotice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tone: "good",
+          message: expect.stringMatching(/Copied.*cover/i),
+        })
+      );
+      expect(screen.getByText("Copied!")).toBeDefined();
+    });
+  });
+
+  it("downloads asset image with correct filename and image extension on download click", async () => {
+    const channel = createMockChannel();
+    const mockReel = createMockShortReel({ script: createMockScript(), units: createMockReadyUnits() });
+    vi.spyOn(api, "getShortReel").mockResolvedValue({ short_reel: mockReel });
+
+    const mockBlob = new Blob(["png-data"], { type: "image/png" });
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: async () => mockBlob,
+    } as unknown as Response);
+
+    const onNotice = vi.fn();
+    render(<ShortReelStudio channel={channel} reelId={mockReel.reel_id} onBack={vi.fn()} onNotice={onNotice} />);
+
+    await waitFor(() => expect(screen.getByRole("tab", { name: /Assets/i })).toBeDefined());
+    fireEvent.click(screen.getByRole("tab", { name: /Assets/i }));
+
+    const downloadCoverLink = await screen.findByRole("link", { name: "Download cover" });
+    expect(downloadCoverLink.getAttribute("download")).toBe("short-reel-cover.png");
+
+    fireEvent.click(downloadCoverLink);
+
+    await waitFor(() => {
+      expect(onNotice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tone: "good",
+          message: expect.stringMatching(/Downloaded short-reel-cover\.png/i),
+        })
+      );
+    });
+  });
 });
+

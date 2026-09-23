@@ -17,6 +17,11 @@ type Props = {
 
 export function ScriptStudioHeader({ studio, step, onStepChange, hasContent, activeJob, draftPending }: Props) {
   const projectActionDisabled = studio.busy !== null || draftPending;
+  const stepLabels: Record<ScriptStudioStep, string> = {
+    configure: "Create",
+    review: "Prompts",
+    upload: "Upload",
+  };
   return (
     <div className="script-studio-header">
       <div className="script-project-picker">
@@ -86,7 +91,7 @@ export function ScriptStudioHeader({ studio, step, onStepChange, hasContent, act
             key={item}
           >
             <span>{index + 1}</span>
-            {item[0].toUpperCase() + item.slice(1)}
+            {stepLabels[item]}
           </button>
         ))}
       </nav>

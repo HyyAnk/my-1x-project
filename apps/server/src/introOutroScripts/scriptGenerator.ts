@@ -35,6 +35,7 @@ export async function generateIntroOutroScript(params: {
   seeds: CreativeSeed[];
   signal: AbortSignal;
   companionContent?: IntroOutroScriptContent;
+  logoMode?: "post_overlay" | "supplied_reference" | "none";
   onProgress?: (step: string) => Promise<void>;
 }): Promise<IntroOutroScriptRevision> {
   const prompt = buildScriptGenerationPrompt(params);

@@ -42,7 +42,7 @@ export type ScriptStudioActions = {
   checkpoint: (kind: IntroOutroClipKind) => Promise<void>;
   validate: (kind: IntroOutroClipKind) => Promise<IntroOutroValidationIssue[]>;
   approve: (revisionId: string) => Promise<void>;
-  copyPrompt: (revisionId: string) => Promise<void>;
+  loadPrompt: (revisionId: string) => Promise<string>;
   refresh: () => Promise<void>;
 };
 

@@ -16,11 +16,11 @@ export function ScriptUploadStep({ project, onUpload }: Props) {
       <div className="script-upload-links">
         <div>
           {introRevisionId ? <CheckCircle size={18} weight="fill" /> : <Circle size={18} />}
-          <span>Intro {introRevisionId ? "approved and ready to link" : "will be uploaded without a script link"}</span>
+          <span>Intro: {introRevisionId ? "Selected script will be linked" : "No script selected; video will not be linked"}</span>
         </div>
         <div>
           {outroRevisionId ? <CheckCircle size={18} weight="fill" /> : <Circle size={18} />}
-          <span>Outro {outroRevisionId ? "approved and ready to link" : "will be uploaded without a script link"}</span>
+          <span>Outro: {outroRevisionId ? "Selected script will be linked" : "No script selected; video will not be linked"}</span>
         </div>
       </div>
       <button
@@ -34,7 +34,7 @@ export function ScriptUploadStep({ project, onUpload }: Props) {
           })
         }
       >
-        Select videos
+        Choose video files
       </button>
     </div>
   );

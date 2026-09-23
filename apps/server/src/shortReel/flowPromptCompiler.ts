@@ -8,13 +8,13 @@ export interface FlowPromptReferenceLabels {
 
 function formatTextCues(cues: TextCue[]): string {
   if (cues.length === 0) {
-    return "No new in-video text cues requested for this segment.";
+    return "No in-video graphic text for this segment.";
   }
 
   return cues
     .map((c) => {
       const timingLabel = `${c.start_seconds}s to ${c.end_seconds}s`;
-      return `- [${c.role.toUpperCase()}] "${c.text}" (requested visible timing: ${timingLabel})`;
+      return `- [${c.role.toUpperCase()}] "${c.text}" (timing: ${timingLabel}, in-frame graphic display only, DO NOT speak aloud)`;
     })
     .join("\n");
 }
@@ -35,10 +35,8 @@ function compileSegmentPrompt(
   references?: FlowPromptReferenceLabels,
   modelNote?: string,
 ): string {
+  void totalDuration;
   const isInitial = segment.index === 1;
-  const modeLabel = isInitial
-    ? "MODE: Initial Generation (9:16 portrait)"
-    : `MODE: Video Extension (continue from ${cumulativeTiming.start}s, do NOT restart)`;
 
   // Determine boundary text transitions across segments
   let boundaryTextInstruction = "";
@@ -68,44 +66,42 @@ function compileSegmentPrompt(
     boundaryTextInstruction = parts.join(" ");
   }
 
+  const openingDescriptor = [
+    `9:16 vertical portrait video scene${isInitial ? "" : ` (continuation from ${cumulativeTiming.start}s)`}. Duration: ${segment.duration_seconds}s.`,
+    references?.styleName ? `Visual Style: ${references.styleName}.` : "",
+    references?.mascotName ? `Character: ${references.mascotName}.` : "",
+    modelNote?.trim() ? `Visual / Model Note: ${modelNote.trim()}.` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const spokenDialogue = segment.dialogue?.trim()
+    ? `"${segment.dialogue.trim()}"`
+    : "No spoken dialogue; sound effects and musical ambience only.";
+
+  const textCuesSection = formatTextCues(segment.text_cues);
+
   const lines: string[] = [
-    `=== FLOW PROMPT: SEGMENT ${segment.index} OF 3 ===`,
-    modeLabel,
-    `Duration Target: ${segment.duration_seconds}s (cumulative time: ${cumulativeTiming.start}s - ${cumulativeTiming.end}s of ${totalDuration}s total)`,
-    modelNote ? `Target Flow Model: ${modelNote}` : "",
-    references?.mascotName ? `Mascot Character Anchor: ${references.mascotName}` : "",
-    references?.styleName ? `Visual Style Anchor: ${references.styleName}` : "",
+    openingDescriptor,
     "",
     "--- ACTION & NARRATIVE ---",
     segment.narrative,
     "",
-    "--- IN-VIDEO VISIBLE TEXT (REQUESTED IN FOOTAGE) ---",
-    formatTextCues(segment.text_cues),
-    "Note: In-video text must be rendered naturally within the video scene. Do not omit requested text. No post-production overlay is applied.",
-    "Rendering & Timing Notice: Visible text timings are narrative guidance targets; avoid promising exact millisecond precision or rigid typography. In-video text must appear organically in footage.",
-    "Human Review Required: Check factual meaning, continuity and actual generated text before publication. This is a creative draft, not reviewed footage.",
+    "--- SPOKEN DIALOGUE (VOICEOVER / LIP-SYNC) ---",
+    spokenDialogue,
+    "",
+    "--- ON-SCREEN VISUAL TEXT (DISPLAY ONLY - DO NOT READ ALOUD) ---",
+    textCuesSection,
     boundaryTextInstruction ? `Boundary Text Transition: ${boundaryTextInstruction}` : "",
     "",
-    "--- CONTINUITY & CAMERA ---",
+    "--- CAMERA & ENVIRONMENT ---",
     `Camera: ${segment.start_state.camera} transitioning to ${segment.end_state.camera}`,
     `Environment: ${segment.start_state.environment}`,
     `Character: ${segment.start_state.character_identity} (position: ${segment.start_state.position}, action: ${segment.start_state.action})`,
     `Key Props: ${formatProps(segment.start_state.props)}`,
-    `Active In-Frame Text: ${formatVisibleText(segment.start_state.visible_text)}`,
     "",
-    "--- AUDIO & PACING DIRECTION ---",
+    "--- AUDIO DIRECTION ---",
     segment.audio_direction,
-    "",
-    "--- BOUNDARY HANDOFF STATE ---",
-    `End Position: ${segment.end_state.position}`,
-    `End Character: ${segment.end_state.character_identity}`,
-    `End Environment: ${segment.end_state.environment}`,
-    `End Props: ${formatProps(segment.end_state.props)}`,
-    `Known Facts At Start: ${segment.start_state.revealed_facts.join("; ") || "None"}`,
-    `Known Facts At End: ${segment.end_state.revealed_facts.join("; ") || "None"}`,
-    `End Action: ${segment.end_state.action}`,
-    `End Camera: ${segment.end_state.camera}`,
-    `End Visible Text: ${formatVisibleText(segment.end_state.visible_text)}`,
   ];
 
   return lines.filter(Boolean).join("\n").trim();

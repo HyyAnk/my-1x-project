@@ -1,10 +1,10 @@
-import type { ARCHETYPE_SLOT_DEFINITIONS } from "./topicMatrix.constants.js";
+import type { QuizGameplayArchetypeId, QuizQuestionFormat, ResolvedQuizLayoutId } from "@studio/shared";
 
-export type TopicMatrixSlotArchetype = (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["archetype"];
+export type TopicMatrixSlotArchetype = QuizGameplayArchetypeId;
 
-export type TopicMatrixSuggestedLayout = (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["suggestedLayout"];
+export type TopicMatrixSuggestedLayout = ResolvedQuizLayoutId;
 
-export type TopicMatrixQuizFormat = (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["quizFormat"];
+export type TopicMatrixQuizFormat = QuizQuestionFormat;
 
 export interface TopicMatrixSlotPlan {
   slot: number;

@@ -51,6 +51,9 @@ export function ReelAssetPreview({
   downloadAriaLabel,
   title,
   emptyState,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
 }: ReelAssetPreviewProps) {
   if (!displayImage) {
     return (
@@ -82,6 +85,9 @@ export function ReelAssetPreview({
         downloadName={downloadName}
         downloadAriaLabel={downloadAriaLabel}
         title={title}
+        onNotice={onNotice}
+        onCopyImage={onCopyImage}
+        onDownloadImage={onDownloadImage}
       />
     </div>
   );
@@ -116,6 +122,9 @@ export function ReelAssetMediaSlot({
   downloadName = "asset.png",
   downloadAriaLabel,
   emptyState,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
 }: ReelAssetMediaSlotProps) {
   const displayImage = imageUrl || previousImageUrl;
   const isShowingPrevious = Boolean(previousImageUrl) && (!imageUrl || isGenerating || Boolean(error));
@@ -136,6 +145,9 @@ export function ReelAssetMediaSlot({
           downloadAriaLabel={downloadAriaLabel}
           title={title}
           emptyState={emptyState}
+          onNotice={onNotice}
+          onCopyImage={onCopyImage}
+          onDownloadImage={onDownloadImage}
         />
       </div>
 

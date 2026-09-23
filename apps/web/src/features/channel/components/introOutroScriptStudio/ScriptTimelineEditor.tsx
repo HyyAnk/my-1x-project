@@ -52,7 +52,13 @@ export function ScriptTimelineEditor({ content, disabled, onChange }: Props) {
                 {beat.start_seconds.toFixed(1)}–{beat.end_seconds.toFixed(1)}s
               </time>
             </header>
-            <ScriptTimeRange label={`Beat ${beat.beat}`} start={beat.start_seconds} end={beat.end_seconds} disabled={disabled} onChange={(patch) => updateBeat(index, patch)} />
+            <ScriptTimeRange
+              label={`Beat ${beat.beat}`}
+              start={beat.start_seconds}
+              end={beat.end_seconds}
+              disabled={disabled}
+              onChange={(patch) => updateBeat(index, patch)}
+            />
             <label className="script-field">
               <span>Action</span>
               <textarea
@@ -99,7 +105,13 @@ export function ScriptTimelineEditor({ content, disabled, onChange }: Props) {
         </div>
         {content.voiceover.lines.map((line, index) => (
           <div className="script-voice-row" key={index}>
-            <ScriptTimeRange label={`Voice line ${index + 1}`} start={line.start_seconds} end={line.end_seconds} disabled={disabled || !content.voiceover.enabled} onChange={(patch) => updateVoiceLine(index, patch)} />
+            <ScriptTimeRange
+              label={`Voice line ${index + 1}`}
+              start={line.start_seconds}
+              end={line.end_seconds}
+              disabled={disabled || !content.voiceover.enabled}
+              onChange={(patch) => updateVoiceLine(index, patch)}
+            />
             <input
               aria-label={`Voice line ${index + 1}`}
               value={line.text}

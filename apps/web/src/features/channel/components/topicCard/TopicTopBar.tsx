@@ -25,7 +25,13 @@ export function TopicTopBar({ topic, availability, canConfirm, sourceCapacity }:
           {topic.content_kind === "episode" ? (
             <TopicLayoutPreviewButton quizFormat={topic.quiz_format} archetype={topic.archetype} layoutId={topic.suggested_layout} />
           ) : (
-            <span className="topic-archetype-tag">{topic.archetype === "versus_faceoff" ? "Versus Face-off" : "Deep Trivia"}</span>
+            <span className="topic-archetype-tag">
+              {topic.archetype === "versus_faceoff"
+                ? "Versus Face-off"
+                : topic.archetype === "verdict_true_false"
+                  ? "True or False"
+                  : "Deep Trivia"}
+            </span>
           )}
         </div>
       </div>

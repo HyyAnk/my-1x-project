@@ -43,6 +43,7 @@ export const ReelSegmentSchema = z
     mode: SegmentModeSchema,
     duration_seconds: z.number().finite().min(8).max(10),
     narrative: z.string().min(1).max(1000),
+    dialogue: z.string().max(500).optional(),
     text_cues: z.array(TextCueSchema),
     audio_direction: z.string().min(1).max(500),
     start_state: ContinuityStateSchema,

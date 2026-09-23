@@ -1,8 +1,22 @@
 import type { BankIndex, BankTaxonomy } from "@studio/shared";
-import { ARCHETYPE_SLOT_DEFINITIONS, CANONICAL_FALLBACK_DOMAINS, KEYWORD_SYNONYMS } from "./topicMatrix.constants.js";
+import {
+  ARCHETYPE_SLOT_DEFINITIONS,
+  CANONICAL_FALLBACK_DOMAINS,
+  generateRandomSlotDefinitions,
+  KEYWORD_SYNONYMS,
+  shuffleArray,
+  type TopicSlotArchetypeDefinition,
+} from "./topicMatrix.constants.js";
 import type { TopicMatrixPlan, TopicMatrixSlotPlan } from "./topicMatrix.types.js";
 
-export { ARCHETYPE_SLOT_DEFINITIONS, CANONICAL_FALLBACK_DOMAINS, KEYWORD_SYNONYMS } from "./topicMatrix.constants.js";
+export {
+  ARCHETYPE_SLOT_DEFINITIONS,
+  CANONICAL_FALLBACK_DOMAINS,
+  generateRandomSlotDefinitions,
+  KEYWORD_SYNONYMS,
+  shuffleArray,
+  type TopicSlotArchetypeDefinition,
+} from "./topicMatrix.constants.js";
 export type {
   TopicMatrixPlan,
   TopicMatrixQuizFormat,
@@ -78,18 +92,53 @@ export function extractNormalizedDomains(
   return Array.from(domainMap.values());
 }
 
+function selectPoolDomains(
+  availableDomains: Array<{ id: string; title: string; description?: string }>,
+  count: number,
+  steeredDomain?: { id: string; title: string; description?: string },
+): Array<{ id: string; title: string; description?: string }> {
+  if (steeredDomain) {
+    const remaining = shuffleArray(availableDomains.filter((d) => d.id !== steeredDomain.id));
+    const chosen = [steeredDomain, ...remaining.slice(0, count - 1)];
+    if (chosen.length < count) {
+      const chosenIds = new Set(chosen.map((d) => d.id));
+      const fallbacks = shuffleArray(CANONICAL_FALLBACK_DOMAINS.filter((d) => !chosenIds.has(d.id)));
+      while (chosen.length < count && fallbacks.length > 0) {
+        chosen.push(fallbacks.pop()!);
+      }
+    }
+    return chosen;
+  }
+
+  const shuffled = shuffleArray(availableDomains);
+  const chosen: Array<{ id: string; title: string; description?: string }> = shuffled.slice(0, count);
+  if (chosen.length < count) {
+    const chosenIds = new Set(chosen.map((d) => d.id));
+    const fallbacks = shuffleArray(CANONICAL_FALLBACK_DOMAINS.filter((d) => !chosenIds.has(d.id)));
+    while (chosen.length < count && fallbacks.length > 0) {
+      chosen.push(fallbacks.pop()!);
+    }
+  }
+  return chosen;
+}
+
 export function planTopicSuggestionMatrix(options: {
   taxonomy?: BankTaxonomy | null;
   index?: BankIndex | null;
   topicHint?: string;
   aspectRatio?: "16:9";
+  slotDefinitions?: Array<TopicSlotArchetypeDefinition & { slot: number }>;
 }): TopicMatrixPlan {
-  const { taxonomy, index, topicHint, aspectRatio: _aspectRatio } = options;
-  const slotDefinitions = ARCHETYPE_SLOT_DEFINITIONS;
+  const { taxonomy, index, topicHint, aspectRatio: _aspectRatio, slotDefinitions: customSlots } = options;
+  const slotDefinitions = customSlots || generateRandomSlotDefinitions();
   const availableDomains = extractNormalizedDomains(taxonomy, index);
   const trimmedHint = topicHint?.trim();
 
-  let selectedSix: Array<{ id: string; title: string; description: string }> = [];
+  const episodeSlotsCount = slotDefinitions.filter((s) => s.contentKind === "episode").length;
+  const shortReelSlotsCount = slotDefinitions.filter((s) => s.contentKind === "short_reel").length;
+
+  let episodeDomains: Array<{ id: string; title: string; description?: string }> = [];
+  let shortReelDomains: Array<{ id: string; title: string; description?: string }> = [];
 
   if (trimmedHint) {
     const hintTokens = normalizeString(trimmedHint).split(/\s+/).filter(Boolean);
@@ -98,39 +147,23 @@ export function planTopicSuggestionMatrix(options: {
       relevance: calculateDomainKeywordRelevance(domain, hintTokens),
     }));
 
-    scoredDomains.sort((a, b) => b.relevance - a.relevance || b.domain.score - a.domain.score);
+    // Sort by relevance descending; tie-break randomly for variety among equal relevance
+    scoredDomains.sort((a, b) => b.relevance - a.relevance || (Math.random() - 0.5));
 
-    const steeredDomains = [scoredDomains[0].domain, scoredDomains[1].domain];
-    const steeredIds = new Set(steeredDomains.map((d) => d.id));
-
-    const remainingDomains = scoredDomains
-      .filter((sd) => !steeredIds.has(sd.domain.id))
-      .map((sd) => sd.domain)
-      .sort((a, b) => b.score - a.score);
-
-    // Slot 1 (idx 0): Episode, keyword-directed
-    // Slot 2 (idx 1): Episode, discovery
-    // Slot 3 (idx 2): Episode, discovery
-    // Slot 4 (idx 3): Short-Reel, keyword-directed
-    // Slot 5 (idx 4): Short-Reel, discovery
-    // Slot 6 (idx 5): Short-Reel, discovery
-    selectedSix = [
-      steeredDomains[0],
-      remainingDomains[0],
-      remainingDomains[1],
-      steeredDomains[1],
-      remainingDomains[2],
-      remainingDomains[3] || CANONICAL_FALLBACK_DOMAINS[5],
-    ];
+    const topSteeredDomain = scoredDomains[0]?.domain || CANONICAL_FALLBACK_DOMAINS[0];
+    episodeDomains = selectPoolDomains(availableDomains, episodeSlotsCount, topSteeredDomain);
+    shortReelDomains = selectPoolDomains(availableDomains, shortReelSlotsCount, topSteeredDomain);
   } else {
-    const sorted = [...availableDomains].sort((a, b) => b.score - a.score);
-    selectedSix = sorted.slice(0, 6);
+    // Independent uniform random rotation for Episode and Short-Reel pools
+    episodeDomains = selectPoolDomains(availableDomains, episodeSlotsCount);
+    shortReelDomains = selectPoolDomains(availableDomains, shortReelSlotsCount);
   }
 
+  const selectedDomains = [...episodeDomains, ...shortReelDomains];
+
   const slots: TopicMatrixSlotPlan[] = slotDefinitions.map((def, idx) => {
-    const assignedDomain = selectedSix[idx] || CANONICAL_FALLBACK_DOMAINS[idx];
-    const isKeySteered = Boolean(trimmedHint && (idx === 0 || idx === 3));
-    const contentKind: "episode" | "short_reel" = idx >= 3 ? "short_reel" : "episode";
+    const assignedDomain = selectedDomains[idx] || CANONICAL_FALLBACK_DOMAINS[idx];
+    const isKeySteered = Boolean(trimmedHint && (idx === 0 || idx === episodeSlotsCount));
     return {
       slot: def.slot,
       name: def.name,
@@ -141,7 +174,7 @@ export function planTopicSuggestionMatrix(options: {
       quizFormat: def.quizFormat,
       description: def.description,
       isKeySteered,
-      contentKind,
+      contentKind: def.contentKind,
     };
   });
 
@@ -163,22 +196,29 @@ export function formatTopicMatrixPrompt(
 } {
   void aspectRatio;
   const trimmedHint = topicHint?.trim();
-  const [slot1, slot2, slot3, slot4, slot5, slot6] = plan.slots;
+  const episodeSlots = plan.slots.filter((s) => s.contentKind === "episode");
+  const shortReelSlots = plan.slots.filter((s) => s.contentKind === "short_reel");
+  const totalCount = plan.slots.length;
 
   let hintGuidance = "";
   if (trimmedHint) {
-    hintGuidance = `\nIMPORTANT TOPIC THEME REQUIREMENT: The user specifically requested ideas relating to "${trimmedHint}". Exactly 2 candidates MUST be directly inspired by, focused on, or explore specific creative angles of "${trimmedHint}" (include "theme_hint": "${trimmedHint}" in those 2 JSON objects). Slot 1 (Episode) is steered to domain "${slot1.domainId}" (${slot1.domainTitle}) and Slot 4 (Short-Reel) is steered to domain "${slot4.domainId}" (${slot4.domainTitle}). The remaining 4 candidates should be diverse, creative discovery topics aligned with the overall channel DNA, sourced from 4 different domains ("${slot2.domainId}", "${slot3.domainId}", "${slot5.domainId}", "${slot6.domainId}"), and MUST NOT reuse the keyword.`;
+    const steeredEp = episodeSlots.find((s) => s.isKeySteered) || episodeSlots[0];
+    const steeredShort = shortReelSlots.find((s) => s.isKeySteered) || shortReelSlots[0];
+    const otherDomains = plan.slots.filter((s) => !s.isKeySteered).map((s) => `"${s.domainId}"`);
+    hintGuidance = `\nIMPORTANT TOPIC THEME REQUIREMENT: The user specifically requested ideas relating to "${trimmedHint}". Exactly 2 candidates MUST be directly inspired by, focused on, or explore specific creative angles of "${trimmedHint}" (include "theme_hint": "${trimmedHint}" in those 2 JSON objects). Slot ${steeredEp.slot} (Episode) is steered to domain "${steeredEp.domainId}" (${steeredEp.domainTitle}) and Slot ${steeredShort.slot} (Short-Reel) is steered to domain "${steeredShort.domainId}" (${steeredShort.domainTitle}). The remaining candidates should be diverse, creative discovery topics aligned with the overall channel DNA (sourced from domains: ${otherDomains.join(", ")}), and MUST NOT reuse the keyword.`;
   }
 
-  const blueprintGuidance = `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:
-- Slot 1 (Episode - Deep Trivia): ${slot1.description} (domain_id: "${slot1.domainId}", content_kind: "episode", quiz_format: "multiple_choice", archetype: "deep_trivia", suggested_layout: "media_left_choices_right").
-- Slot 2 (Episode - Mystery Reveal): ${slot2.description} (domain_id: "${slot2.domainId}", content_kind: "episode", quiz_format: "image_guess", archetype: "mystery_reveal", suggested_layout: "mystery_reveal").
-- Slot 3 (Episode - True or False): ${slot3.description} (domain_id: "${slot3.domainId}", content_kind: "episode", quiz_format: "true_false", archetype: "verdict_true_false", suggested_layout: "verdict_true_false").
-- Slot 4 (Short-Reel - Versus Face-off): ${slot4.description} (domain_id: "${slot4.domainId}", content_kind: "short_reel", archetype: "versus_faceoff", question_count: 1, aspect_ratio: "9:16").
-- Slot 5 (Short-Reel - Deep Trivia): ${slot5.description} (domain_id: "${slot5.domainId}", content_kind: "short_reel", archetype: "deep_trivia", question_count: 1, aspect_ratio: "9:16").
-- Slot 6 (Short-Reel - Versus Clash): ${slot6.description} (domain_id: "${slot6.domainId}", content_kind: "short_reel", archetype: "versus_faceoff", question_count: 1, aspect_ratio: "9:16").`;
+  const blueprintLines = plan.slots.map((s) => {
+    const kindLabel = s.contentKind === "short_reel" ? "Short-Reel" : "Episode";
+    const extraDetails =
+      s.contentKind === "short_reel"
+        ? `, question_count: 1, aspect_ratio: "9:16"`
+        : `, quiz_format: "${s.quizFormat}", suggested_layout: "${s.suggestedLayout}"`;
+    return `- Slot ${s.slot} (${kindLabel} - ${s.name}): ${s.description} (domain_id: "${s.domainId}", content_kind: "${s.contentKind}", archetype: "${s.archetype}"${extraDetails}).`;
+  });
+  const blueprintGuidance = `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:\n${blueprintLines.join("\n")}`;
 
-  const outputContract = `Return exactly 6 JSON candidates: Slots 1-3 are Episode concepts (content_kind: "episode", 3-10 questions, landscape layout), Slots 4-6 are Short-Reel concepts (content_kind: "short_reel", question_count: 1, 9:16 vertical, archetype "versus_faceoff" or "deep_trivia"). Each candidate must have title, premise, why_it_fits, hook, estimated_potential, domain_id, and content_kind.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`;
+  const outputContract = `Return exactly ${totalCount} JSON candidates: Slots 1-${episodeSlots.length} are Episode concepts (content_kind: "episode", 3-10 questions, landscape layout), Slots ${episodeSlots.length + 1}-${totalCount} are Short-Reel concepts (content_kind: "short_reel", question_count: 1, 9:16 vertical). Each candidate must have title, premise, why_it_fits, hook, estimated_potential, domain_id, and content_kind.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`;
 
   return {
     hintGuidance,

@@ -14,6 +14,7 @@ import { parseLlmJson } from "./jsonOutput.js";
 import { IntroOutroScriptError } from "./errors.js";
 
 const MAX_REVIEW_MESSAGE_LENGTH = 500;
+export const SCRIPT_QUALITY_REVIEW_TIMEOUT_MS = 300_000;
 const LlmQualityFindingSchema = ScriptQualityFindingSchema.extend({
   message: z.string().trim().min(1).max(4_000),
 });
@@ -41,7 +42,7 @@ Independently review this short video script against the attached mascot image a
 Return an empty findings array only if no actual issues remain. Do not generate a replacement script. Keep every finding message at or below ${MAX_REVIEW_MESSAGE_LENGTH} characters.
 Check achievable action density for each beat; camera/action agreement; logo reveal and SFX timing; sufficient audio decay; a settled final hold; opening pose compatibility with reference_mode; seed intent; and pair stage/music/logo continuity.
 Check anatomy, surface rigidity versus articulated joints, all identifying markings, and character-relative left/right. Preserve features does NOT mean every feature must be visible: visible_feature_ids must match the described angle. No invented skills or anatomy; unknown is not permission. Secondary natural follow-through is not a separate principal action.
-In post_overlay mode the logo is an editor-only asset: editorial reveal notes are allowed, but generated logo geometry/text or interaction requiring a physical logo is not. Narrator means no mascot lip-sync. Do not demand speech capability for an off-screen narrator.
+In supplied_reference mode the official logo is an in-scene 3D visual element: dynamic reveals (e.g. popping out of energy bursts, centered or framed by the mascot) and physical camera/mascot interaction are expected and valid. In post_overlay mode the logo is an editor-only asset: editorial reveal notes are allowed, but generated logo geometry/text or interaction requiring a physical logo is not. Narrator means no mascot lip-sync. Do not demand speech capability for an off-screen narrator.
 Errors are concrete production blockers or contradictions. Warnings are non-blocking residual risks. Do not invent problems to fill a quota or object to valid creative choices.
 IDENTITY: ${JSON.stringify(input.identity)}
 SEEDS: ${JSON.stringify(input.seeds)}
@@ -50,7 +51,7 @@ SCRIPT: ${JSON.stringify(input.content)}`;
   const raw = await executeSinglePromptText(input.client, prompt, {
     modelOverride: input.model,
     signal: input.signal,
-    timeoutMs: 180_000,
+    timeoutMs: SCRIPT_QUALITY_REVIEW_TIMEOUT_MS,
     requireCompleteOutput: true,
     imageAttachments: input.imageAttachments,
   });

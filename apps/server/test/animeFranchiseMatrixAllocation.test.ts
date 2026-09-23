@@ -9,6 +9,7 @@ import {
 } from "../src/context/bankTopicKeywordExtractor.js";
 import { selectAutoCandidates } from "../src/quiz/bank/matrix/selectors/matrixAutoSelector.js";
 import { selectManualCandidates } from "../src/quiz/bank/matrix/selectors/matrixManualSelector.js";
+import { loadAllKnowledgeEntities } from "../src/quiz/bank/knowledgeBaseLoader.js";
 import { planTopicSuggestionMatrix } from "../src/context/topicMatrixPlanner.js";
 import type { EvaluatedBankQuestionCandidate } from "../src/quiz/bank/bankEligibility.js";
 
@@ -84,12 +85,12 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
       });
       expect(plan.slots[0].domainId).toBe("anime_manga");
       expect(plan.slots[0].isKeySteered).toBe(true);
-      expect(plan.slots[3].isKeySteered).toBe(true);
+      expect(plan.slots[4].isKeySteered).toBe(true);
     });
   });
 
   describe("Candidate Group Prioritization in Topic Allocation", () => {
-    it("selectDiscoveryCandidates prioritizes iconic_franchises over other viable subtopics", () => {
+    it("selectDiscoveryCandidates selects a coherent viable subtopic without hardcoded franchise bias", () => {
       const shonenCandidates: EvaluatedBankQuestionCandidate[] = Array.from({ length: 8 }, (_, i) =>
         makeEvaluatedCandidate(
           makeQuestion({
@@ -110,14 +111,16 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
         ),
       );
 
-      // Pass shonen candidates first in the array to ensure ordering is deliberate
+      // Pass shonen candidates first in the array
       const combined = [...shonenCandidates, ...franchiseCandidates];
       const selected = selectDiscoveryCandidates(combined, 8);
 
       expect(selected).toHaveLength(8);
-      // Must select from iconic_franchises group
+      // All selected candidates must belong to the same subtopic (coherent topic selection)
+      const chosenSubtopic = selected[0].question.subtopic_id;
+      expect(["shonen_legends", "iconic_franchises"]).toContain(chosenSubtopic);
       for (const item of selected) {
-        expect(item.question.subtopic_id).toBe("iconic_franchises");
+        expect(item.question.subtopic_id).toBe(chosenSubtopic);
       }
     });
 
@@ -137,7 +140,7 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
       expect(selected[3].question.difficulty).toBe(2);
     });
 
-    it("selectSteeredCandidates applies priority bonus to iconic_franchises and difficulty 1", () => {
+    it("selectSteeredCandidates applies priority bonus to difficulty 1 when keyword matches equally", () => {
       const candidates: EvaluatedBankQuestionCandidate[] = [
         makeEvaluatedCandidate(
           makeQuestion({
@@ -155,7 +158,7 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
         ),
       ];
 
-      const { hintTokens } = extractHintTokens("anime legends");
+      const { hintTokens } = extractHintTokens("anime");
       const selected = selectSteeredCandidates(candidates, hintTokens, 1);
       expect(selected).not.toBeNull();
       expect(selected!).toHaveLength(1);
@@ -163,8 +166,8 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
     });
   });
 
-  describe("Matrix Selectors Franchise-First Priority", () => {
-    it("selectAutoCandidates selects iconic_franchises entities before secondary characters", () => {
+  describe("Matrix Selectors Fair Priority", () => {
+    it("selectAutoCandidates prioritizes tier-1 icons (difficulty: 1) before secondary characters", () => {
       const candidates = selectAutoCandidates([], {
         count: 25,
         domain_id: "anime_manga",
@@ -172,12 +175,21 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
       });
 
       expect(candidates).toHaveLength(25);
+      const allEntities = loadAllKnowledgeEntities();
+      const entityMap = new Map(allEntities.map((e) => [e.id, e]));
+
+      let seenDiff2 = false;
       for (const c of candidates) {
-        expect(c.subtopic_id).toBe("iconic_franchises");
+        const ent = entityMap.get(c.entity_id);
+        if (ent?.difficulty === 1) {
+          expect(seenDiff2).toBe(false);
+        } else if (ent?.difficulty === 2) {
+          seenDiff2 = true;
+        }
       }
     });
 
-    it("selectManualCandidates sorts iconic_franchises before others when current_variants are equal", () => {
+    it("selectManualCandidates sorts difficulty 1 before difficulty 2 when current_variants are equal", () => {
       const candidates = selectManualCandidates([], {
         count: 20,
         domain_id: "anime_manga",
@@ -185,9 +197,18 @@ describe("Phase 2: Anime and Franchise Allocation Logic", () => {
       });
 
       expect(candidates).toHaveLength(20);
+      const allEntities = loadAllKnowledgeEntities();
+      const entityMap = new Map(allEntities.map((e) => [e.id, e]));
+
+      let seenDiff2 = false;
       for (const c of candidates) {
-        expect(c.subtopic_id).toBe("iconic_franchises");
         expect(c.current_variants).toBe(0);
+        const ent = entityMap.get(c.entity_id);
+        if (ent?.difficulty === 1) {
+          expect(seenDiff2).toBe(false);
+        } else if (ent?.difficulty === 2) {
+          seenDiff2 = true;
+        }
       }
     });
 

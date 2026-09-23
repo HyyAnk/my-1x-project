@@ -51,6 +51,7 @@ export const ReelScriptPayloadSchema = z
   .object({
     script: ReelScriptSchema,
     compiled_prompts: z.tuple([z.string(), z.string(), z.string()]).nullable(),
+    seed_id: z.string().nullable().optional(),
   })
   .strict();
 

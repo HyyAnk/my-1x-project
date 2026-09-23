@@ -21,6 +21,7 @@ export type GenerateScriptClipInput = {
   randomization_seed: string;
   selected_seed_ids?: string[];
   locked_dimensions?: CreativeSeed["dimension"][];
+  logo_mode?: "post_overlay" | "supplied_reference" | "none";
 };
 
 export const introOutroScriptApi = {

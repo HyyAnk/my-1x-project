@@ -18,6 +18,7 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate }: Pro
   const [durations, setDurations] = useState<Record<IntroOutroClipKind, number>>({ intro: 8, outro: 8 });
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [locked, setLocked] = useState<Set<CreativeSeedDimension>>(new Set());
+  const [logoMode, setLogoMode] = useState<"supplied_reference" | "post_overlay" | "none">("supplied_reference");
   const [randomizationSeed, setRandomizationSeed] = useState(newRandomSeed);
   const groups = useMemo(() => {
     const map = new Map<CreativeSeedDimension, CreativeSeed[]>();
@@ -77,6 +78,7 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate }: Pro
         clip_kind: kind,
         duration_seconds: durations[kind],
         randomization_seed: randomizationSeed,
+        logo_mode: logoMode,
         selected_seed_ids: groups
           .filter(([, options]) => options[0]?.clip_kind === kind)
           .map(([dimension]) => selected[dimension])
@@ -107,6 +109,8 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate }: Pro
                 onChange={(event) => setDurations({ ...durations, [kind]: Number(event.target.value) })}
                 disabled={disabled || !included[kind]}
               >
+                <option value={6}>6 seconds</option>
+                <option value={7}>7 seconds</option>
                 <option value={8}>8 seconds</option>
                 <option value={9}>9 seconds</option>
                 <option value={10}>10 seconds</option>
@@ -114,6 +118,20 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate }: Pro
             </label>
           </div>
         ))}
+        <div className="script-clip-option">
+          <label>
+            <span>Logo presentation</span>
+            <select
+              value={logoMode}
+              onChange={(event) => setLogoMode(event.target.value as "supplied_reference" | "post_overlay" | "none")}
+              disabled={disabled}
+            >
+              <option value="supplied_reference">In-Scene 3D Reveal</option>
+              <option value="post_overlay">Editor Overlay</option>
+              <option value="none">No Logo</option>
+            </select>
+          </label>
+        </div>
       </div>
 
       <div className="script-section-heading">

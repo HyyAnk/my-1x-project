@@ -81,16 +81,13 @@ export function selectDiscoveryCandidates(
     });
   }
 
-  // Prioritize iconic_franchises when selecting among viable subtopic groups
-  const sortedEntries = Array.from(bySubtopic.entries()).sort(([subA], [subB]) => {
-    const aIconic = subA.includes('"iconic_franchises"') ? 0 : 1;
-    const bIconic = subB.includes('"iconic_franchises"') ? 0 : 1;
-    if (aIconic !== bIconic) return aIconic - bIconic;
-    return 0;
-  });
+  // Filter all viable subtopic groups that meet the required count
+  const viableGroups = Array.from(bySubtopic.values()).filter((group) => group.length >= requiredCount);
+  if (viableGroups.length === 0) return [];
 
-  const viableGroup = sortedEntries.find(([, group]) => group.length >= requiredCount);
-  return viableGroup ? viableGroup[1].slice(0, requiredCount) : [];
+  // Pick uniformly at random among viable subtopic groups
+  const chosenIndex = Math.floor(Math.random() * viableGroups.length);
+  return viableGroups[chosenIndex].slice(0, requiredCount);
 }
 
 export function selectSteeredCandidates(
@@ -103,10 +100,7 @@ export function selectSteeredCandidates(
     .filter((c) => hintTokens.every((token) => scoreQuestionKeywordMatch(c.question, [token]) > 0))
     .map((c) => {
       let score = scoreQuestionKeywordMatch(c.question, hintTokens) + scoreDomainKeywordMatch(c.question.domain_id || "", hintTokens);
-      // Priority bonus for iconic_franchises and difficulty: 1
-      if (c.question.subtopic_id === "iconic_franchises") {
-        score += 25;
-      }
+      // Priority bonus for difficulty: 1
       if (c.question.difficulty === 1) {
         score += 10;
       }
@@ -122,12 +116,35 @@ export function selectSteeredCandidates(
     return a.candidate.question.id.localeCompare(b.candidate.question.id);
   });
 
-  if (scoredCandidates.length < requiredCount) {
-    return null;
+  // Group scored candidates by subtopic
+  const bySubtopic = new Map<string, { candidate: EvaluatedBankQuestionCandidate; score: number }[]>();
+  for (const sc of scoredCandidates) {
+    const sub = JSON.stringify([sc.candidate.question.domain_id, sc.candidate.question.subtopic_id]);
+    if (!bySubtopic.has(sub)) bySubtopic.set(sub, []);
+    bySubtopic.get(sub)!.push(sc);
   }
-  const coherent = selectDiscoveryCandidates(
-    scoredCandidates.map((sc) => sc.candidate),
-    requiredCount,
-  );
-  return coherent.length === requiredCount ? coherent : null;
+
+  // Filter viable subtopic groups having at least requiredCount candidates
+  const viableGroups = Array.from(bySubtopic.values()).filter((g) => g.length >= requiredCount);
+  if (viableGroups.length === 0) return null;
+
+  // Sort candidates within each group: descending by score, difficulty 1 before 2, then question id
+  for (const group of viableGroups) {
+    group.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      const aDiff = a.candidate.question.difficulty ?? 2;
+      const bDiff = b.candidate.question.difficulty ?? 2;
+      if (aDiff !== bDiff) return aDiff - bDiff;
+      return a.candidate.question.id.localeCompare(b.candidate.question.id);
+    });
+  }
+
+  // Rank viable groups by their top candidates' scores
+  viableGroups.sort((gA, gB) => {
+    const topScoreA = gA.slice(0, requiredCount).reduce((sum, item) => sum + item.score, 0);
+    const topScoreB = gB.slice(0, requiredCount).reduce((sum, item) => sum + item.score, 0);
+    return topScoreB - topScoreA;
+  });
+
+  return viableGroups[0].slice(0, requiredCount).map((item) => item.candidate);
 }

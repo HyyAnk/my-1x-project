@@ -41,6 +41,13 @@ export interface ReelAssetEmptyState {
   actionLink?: ReelAssetEmptyStateActionLink;
 }
 
+export interface ReelAssetNoticePayload {
+  tone: "good" | "bad" | "neutral";
+  message: string;
+  title?: string;
+  duration?: number;
+}
+
 export interface ReelAssetCardProps {
   title: string;
   roleLabel?: string;
@@ -60,6 +67,9 @@ export interface ReelAssetCardProps {
   downloadAriaLabel?: string;
   emptyState?: ReelAssetEmptyState;
   ariaLabel: string;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
 export interface ReelAssetMetadataBarProps {
@@ -68,6 +78,9 @@ export interface ReelAssetMetadataBarProps {
   downloadName?: string;
   downloadAriaLabel?: string;
   title: string;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
 export interface ReelAssetActionButtonProps {
@@ -100,6 +113,9 @@ export interface ReelAssetPreviewProps {
   downloadAriaLabel?: string;
   title: string;
   emptyState?: ReelAssetEmptyState;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
 export interface ReelAssetErrorBoxProps {
@@ -123,4 +139,7 @@ export interface ReelAssetMediaSlotProps {
   downloadName?: string;
   downloadAriaLabel?: string;
   emptyState?: ReelAssetEmptyState;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }

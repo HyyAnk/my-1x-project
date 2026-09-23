@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { CaretDown, CaretUp, CheckCircle, CircleNotch } from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch } from "@phosphor-icons/react";
 import { ALL_QUIZ_IMAGE_STYLES, type QuizImageStyle, type TopicAvailability, type TopicCandidate } from "@studio/shared";
 import { getTopicAvailabilityPresentation, getTopicFormatBadge } from "../../utils/topicHistoryHelpers";
 import { TopicLayoutPreviewButton } from "../TopicLayoutPreviewButton";
-import { TopicHistoryPremiseDetail } from "./TopicHistoryPremiseDetail";
+import { formatDomain } from "../topicCard/topicCardHelpers";
 
 export interface TopicHistoryRowProps {
   topic: TopicCandidate;
@@ -24,7 +23,6 @@ export function TopicHistoryRow({
   busy,
   disabled,
 }: TopicHistoryRowProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const formatBadge = getTopicFormatBadge(topic);
   const availabilityInfo = availability ? getTopicAvailabilityPresentation(availability) : null;
   const isActionDisabled = disabled || (availabilityInfo ? !availabilityInfo.canConfirm : false);
@@ -34,10 +32,15 @@ export function TopicHistoryRow({
       ? availabilityInfo.tooltip
       : `Select this topic (${topic.question_count} questions${availability ? `, ${availability.source_capacity} available` : ""})`;
 
-  const toggleExpand = () => setIsExpanded((prev) => !prev);
+  const shortReelArchetypeLabel =
+    topic.archetype === "versus_faceoff"
+      ? "Versus Face-off"
+      : topic.archetype === "verdict_true_false"
+        ? "True or False"
+        : "Deep Trivia";
 
   return (
-    <div className={`topic-history-row${isExpanded ? " is-expanded" : ""}`}>
+    <div className="topic-history-row">
       <div className="topic-history-col-identity">
         <span className="topic-history-index">#{String(index).padStart(2, "0")}</span>
         <span className={`topic-format-pill ${formatBadge.indicatorClass}`} title={`${formatBadge.label} format (${formatBadge.format})`}>
@@ -45,65 +48,48 @@ export function TopicHistoryRow({
         </span>
       </div>
 
-      <div className="topic-history-col-content">
-        <div className="topic-history-title-wrap">
-          <strong className="topic-history-title" title={`${topic.title}\n\nPremise: ${topic.premise}`}>
-            {topic.title}
-          </strong>
-          {topic.theme_hint && (
-            <span className="topic-theme-badge compact" title={`Suggested by topic: ${topic.theme_hint}`}>
-              🎯 {topic.theme_hint}
-            </span>
-          )}
-          {topic.estimated_potential && (
-            <span className="topic-history-potential" title="Estimated Potential">
-              {topic.estimated_potential}
-            </span>
-          )}
-          {topic.premise && (
-            <span
-              className="topic-history-premise-snippet"
-              title="Click or press enter to view full premise details"
-              role="button"
-              tabIndex={0}
-              aria-expanded={isExpanded}
-              aria-controls={`topic-premise-${topic.topic_id}`}
-              onClick={toggleExpand}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toggleExpand();
-                }
-              }}
-            >
-              — {topic.premise}
-            </span>
-          )}
-          <button
-            type="button"
-            className="topic-history-expand-btn"
-            onClick={toggleExpand}
-            aria-expanded={isExpanded}
-            aria-controls={`topic-premise-${topic.topic_id}`}
-            aria-label={isExpanded ? `Hide premise preview for ${topic.title}` : `Expand premise preview for ${topic.title}`}
-            title={isExpanded ? "Hide premise details" : "Show premise details"}
-          >
-            {isExpanded ? <CaretUp size={12} weight="bold" /> : <CaretDown size={12} weight="bold" />}
-            <span>{isExpanded ? "Hide" : "Premise"}</span>
-          </button>
-        </div>
+      <div className="topic-history-col-title">
+        <strong className="topic-history-title" title={topic.title}>
+          {topic.title}
+        </strong>
+        {topic.theme_hint && (
+          <span className="topic-theme-badge compact" title={`Suggested by topic: ${topic.theme_hint}`}>
+            🎯 {topic.theme_hint}
+          </span>
+        )}
       </div>
 
-      <div className="topic-history-col-status">
-        {availabilityInfo && (
-          <span className={`topic-history-status is-${availabilityInfo.status}`} title={availabilityInfo.tooltip}>
-            {availabilityInfo.label}
+      <div className="topic-history-col-domain">
+        {topic.domain_id ? (
+          <span className="topic-domain-badge" title={`Domain: ${formatDomain(topic.domain_id)}`}>
+            🏛️ {formatDomain(topic.domain_id)}
+          </span>
+        ) : (
+          <span className="topic-domain-empty">—</span>
+        )}
+      </div>
+
+      <div className="topic-history-col-archetype">
+        {topic.content_kind === "episode" ? (
+          <TopicLayoutPreviewButton
+            quizFormat={topic.quiz_format}
+            archetype={topic.archetype}
+            layoutId={topic.suggested_layout}
+            aspectRatio="16:9"
+          />
+        ) : (
+          <span className="topic-archetype-tag" title={topic.archetype}>
+            {shortReelArchetypeLabel}
           </span>
         )}
       </div>
 
       <div className="topic-history-col-actions">
-        {topic.content_kind === "episode" && <TopicLayoutPreviewButton quizFormat={topic.quiz_format} />}
+        {availabilityInfo && (
+          <span className={`topic-history-status is-${availabilityInfo.status}`} title={availabilityInfo.tooltip}>
+            {availabilityInfo.label}
+          </span>
+        )}
         <button
           type="button"
           className="topic-history-use-btn"
@@ -117,8 +103,6 @@ export function TopicHistoryRow({
           <span>{busy ? "Selecting…" : "Select"}</span>
         </button>
       </div>
-
-      {isExpanded && <TopicHistoryPremiseDetail topic={topic} formatLabel={formatBadge.label} format={formatBadge.format} />}
     </div>
   );
 }

@@ -101,7 +101,7 @@ export class IntroOutroRevisionStore {
   async approve(channelId: string, projectId: string, revisionId: string, expectedVersion: number): Promise<IntroOutroScriptProject> {
     const revision = await this.get(channelId, projectId, revisionId);
     if (
-      revision.template_version === "intro-outro-script-v3" &&
+      (revision.template_version === "intro-outro-script-v3" || revision.template_version === "intro-outro-script-v4") &&
       (!revision.quality_review || revision.quality_review.content_fingerprint !== fingerprint(revision.content))
     ) {
       throw new IntroOutroScriptError("This revision needs a current production quality review", "SCRIPT_VALIDATION_FAILED");

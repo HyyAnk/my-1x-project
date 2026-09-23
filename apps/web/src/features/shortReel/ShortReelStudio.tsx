@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Channel } from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { LoadingState } from "../../components/EmptyState";
@@ -48,6 +49,8 @@ export function ShortReelStudio({
     fallback: "script",
     onChange: onTabChange,
   });
+
+  const [selectedSeedId, setSelectedSeedId] = useState<string | null>(null);
 
   const {
     status,
@@ -149,8 +152,13 @@ export function ShortReelStudio({
             isSaving={isSaving}
             onSaveSegment={saveSegment}
             onChangeSegmentDraft={setDraftScript}
-            onGenerateScript={() => generate("script")}
+            onGenerateScript={() => generate("script", undefined, selectedSeedId ?? undefined)}
             isGenerating={isGeneratingOrPending}
+            onCopyText={copyText}
+            topic={topic}
+            source={source}
+            selectedSeedId={selectedSeedId}
+            onSelectSeed={setSelectedSeedId}
           />
         )}
         {activeTab === "assets" && (
@@ -161,6 +169,7 @@ export function ShortReelStudio({
             onRegenerateUnit={(target) => generate(target)}
             isGenerating={isGeneratingOrPending}
             activeTask={activeTask}
+            onNotice={onNotice}
           />
         )}
         {activeTab === "publishing" && (

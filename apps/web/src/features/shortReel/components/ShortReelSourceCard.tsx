@@ -11,7 +11,12 @@ function formatLabel(id: string): string {
 
 export function ShortReelSourceCard({ source }: ShortReelSourceCardProps) {
   const isTranslated = source.translation_provenance === "verified_translation";
-  const archetypeDisplay = source.archetype_id === "versus_faceoff" ? "Versus Face-off" : "Deep Trivia";
+  const archetypeDisplay =
+    source.archetype_id === "versus_faceoff"
+      ? "Versus Face-off"
+      : source.archetype_id === "verdict_true_false"
+        ? "True / False"
+        : "Deep Trivia";
   const domainId = "original_question" in source && source.original_question ? source.original_question.domain_id : undefined;
   const subtopicId = "original_question" in source && source.original_question ? source.original_question.subtopic_id : undefined;
 

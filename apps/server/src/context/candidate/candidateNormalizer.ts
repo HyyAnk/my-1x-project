@@ -48,7 +48,7 @@ export function buildShortReelSlotCandidate(
     origin,
     question_count: 1,
     aspect_ratio: "9:16",
-    archetype: slotPlan.archetype as "versus_faceoff" | "deep_trivia",
+    archetype: slotPlan.archetype as "versus_faceoff" | "deep_trivia" | "verdict_true_false",
     ...(themeHint ? { theme_hint: themeHint } : {}),
     ...(domainId ? { domain_id: domainId } : {}),
     ...(subtopicId ? { subtopic_id: subtopicId } : {}),
@@ -113,8 +113,7 @@ export function buildCandidateFromSlot(
   const slotNumber = slotIndex + 1;
   const item = ensureCandidateObject(raw, slotNumber);
 
-  const hasKeyword = Boolean(plan.steeredKeyword && plan.steeredKeyword.trim());
-  const isSteered = hasKeyword && (slotIndex === 0 || slotIndex === 3);
+  const isSteered = Boolean(slotPlan.isKeySteered);
   const origin: TopicProvenanceOrigin = isSteered ? "keyword" : "discovery";
   const themeHint = isSteered ? plan.steeredKeyword : undefined;
 

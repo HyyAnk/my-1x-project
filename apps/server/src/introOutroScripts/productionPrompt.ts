@@ -9,6 +9,7 @@ export function compileProductionPrompt(revision: IntroOutroScriptRevision): str
   const { content, identity_snapshot: identity } = revision;
   const directions = content.production_directions;
   const logoOverlay = directions?.logo_mode === "post_overlay";
+  const logoSupplied = directions?.logo_mode === "supplied_reference";
   const identityText = identity
     ? [
         identity.summary,
@@ -20,10 +21,19 @@ export function compileProductionPrompt(revision: IntroOutroScriptRevision): str
       ].join("\n")
     : "Follow the attached mascot exactly. This legacy revision has no identity snapshot; manually verify its identity before production.";
   const references = revision.references
-    .map(
-      (reference) =>
-        `${referenceFilename(reference)}: ${reference.role === "channel_logo" && logoOverlay ? "editor-only overlay; do not send as a generated scene subject" : reference.role === "mascot_subject" ? (directions?.reference_mode ?? "verify reference mode manually") : "intact supplied logo reference"}`,
-    )
+    .map((reference) => {
+      const filename = referenceFilename(reference);
+      if (reference.role === "channel_logo") {
+        if (logoOverlay) return `${filename}: editor-only overlay; do not send as a generated scene subject`;
+        if (logoSupplied)
+          return `${filename}: supplied_reference (EXACT official channel logo asset to be revealed as an in-scene 3D element)`;
+        return `${filename}: intact supplied logo reference`;
+      }
+      if (reference.role === "mascot_subject") {
+        return `${filename}: ${directions?.reference_mode ?? "character_reference (EXACT character design)"}`;
+      }
+      return `${filename}: intact supplied reference`;
+    })
     .join("\n");
   return `Create one continuous ${content.production.target_duration_seconds}-second ${content.production.aspect_ratio} ${content.production.clip_kind} shot.
 
@@ -41,7 +51,7 @@ ${content.style.description}
 ${content.style.staging}
 ${content.style.motion_language}
 ${directions ? `Opening: ${directions.opening_state}\nClosing: ${directions.closing_state}\nHold the final composition for ${directions.end_hold_seconds}s.\nLogo: ${directions.logo_mode}; ${directions.logo_placement}.` : "Confirm opening pose, final hold and logo handling before production."}
-${logoOverlay ? "Keep the reserved logo region clear. Any logo reveal described below is performed in post-production, not by the video model." : ""}
+${logoOverlay ? "Keep the reserved logo region clear. Any logo reveal described below is performed in post-production, not by the video model." : logoSupplied ? "In-scene brand reveal: The official logo is revealed dynamically as an intact 3D element in the scene. Maintain 100% brand fidelity without altering or regenerating the typography." : ""}
 
 ACTION
 ${content.timeline.map((beat) => `[${beat.start_seconds.toFixed(2)}-${beat.end_seconds.toFixed(2)}s] ${beat.action}`).join("\n")}
@@ -57,5 +67,6 @@ All audio must finish within the clip. If the video tool does not support audio,
 
 CONTINUITY
 ${content.consistency.restrictions.map((restriction) => `- ${restriction}`).join("\n")}
-Generated visible text: ${content.consistency.allowed_visible_text.join(", ") || "none"}.${logoOverlay ? " The original logo text is preserved by the editor-only overlay." : ""}`;
+- Generated visible text: ${content.consistency.allowed_visible_text.join(", ") || (logoSupplied ? "none except the supplied official intact logo" : "none")}.${logoOverlay ? " The original logo text is preserved by the editor-only overlay." : ""}
+${logoSupplied ? "- The ONLY text visible is the supplied official logo. No subtitles, no random letters, no watermark." : ""}`;
 }

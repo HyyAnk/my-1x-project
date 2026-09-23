@@ -33,6 +33,8 @@ export interface TopicAllocationResult {
   totalAllocatedQuestions: number;
 }
 
+import type { TopicSlotArchetypeDefinition } from "./topicMatrix.constants.js";
+
 export interface AllocateTopicSlotsInput {
   questions: BankQuestion[] | BankQuestionWithCooldown[];
   scanStatus: TopicInventoryScanStatus;
@@ -40,4 +42,5 @@ export interface AllocateTopicSlotsInput {
   topicHint?: string;
   taxonomy?: BankTaxonomy | null;
   episodeQuestionCount?: number;
+  slotDefinitions?: ReadonlyArray<TopicSlotArchetypeDefinition & { slot: number }>;
 }

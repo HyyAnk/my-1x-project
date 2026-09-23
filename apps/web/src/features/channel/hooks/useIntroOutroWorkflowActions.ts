@@ -126,30 +126,27 @@ export function useIntroOutroWorkflowActions(props: UseScriptStudioProps, data: 
     async (revisionId: string) => {
       const current = data.projectRef.current;
       if (!current) return;
-      await run("approve", async () => {
+      await run("use-for-upload", async () => {
         const response = await api.approveIntroOutroScriptRevision(props.channelId, current.project_id, {
           revision_id: revisionId,
           expected_version: current.version,
         });
         data.projectRef.current = response.project;
         data.setProject(response.project);
-        props.onNotice({ tone: "good", message: "Script revision approved." });
+        props.onNotice({ tone: "good", message: "Script revision selected for upload." });
       });
     },
     [data, props.channelId, props.onNotice, run],
   );
 
-  const copyPrompt = useCallback(
+  const loadPrompt = useCallback(
     async (revisionId: string) => {
       const current = data.projectRef.current;
-      if (!current) return;
-      await run("copy-prompt", async () => {
-        const response = await api.exportIntroOutroScriptRevision(props.channelId, current.project_id, revisionId);
-        await navigator.clipboard.writeText(response.prompt);
-        props.onNotice({ tone: "good", message: "Production prompt copied." });
-      });
+      if (!current) throw new Error("Select a script project first");
+      const response = await api.exportIntroOutroScriptRevision(props.channelId, current.project_id, revisionId);
+      return response.prompt;
     },
-    [data, props.channelId, props.onNotice, run],
+    [data, props.channelId],
   );
 
   return {
@@ -161,6 +158,6 @@ export function useIntroOutroWorkflowActions(props: UseScriptStudioProps, data: 
     checkpoint,
     validate,
     approve,
-    copyPrompt,
+    loadPrompt,
   };
 }

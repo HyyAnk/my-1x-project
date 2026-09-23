@@ -3,6 +3,7 @@ import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../../knowledgeB
 import { ALL_MATRIX_ARCHETYPES, buildMatrixCoverageMap } from "../matrixCoverageCalculator.js";
 import { calculateTotals } from "../matrixTotalsCalculator.js";
 import type { DomainArchEvaluation, SelectAutoCandidatesOptions } from "../types/matrixPlanner.types.js";
+import { shuffleArray } from "../../../../context/topicMatrix.constants.js";
 
 /**
  * Groups knowledge entities by domain, respecting optional exclusion criteria.
@@ -30,17 +31,12 @@ function groupEntitiesByDomain(entities: KnowledgeEntity[], excludedSet: Set<str
 }
 
 /**
- * Compares two knowledge entities using enhanced priority:
- * 1. Subtopic priority: entities in "iconic_franchises" have high priority
- * 2. Entity difficulty: Tier 1 household icons (difficulty: 1) before difficulty: 2
- * 3. Total variants across all archetypes (when available)
- * 4. Deterministic tie-breaking by entity id
+ * Compares two knowledge entities using fair priority:
+ * 1. Entity difficulty: Tier 1 household icons (difficulty: 1) before difficulty: 2
+ * 2. Total variants across all archetypes (when available)
+ * 3. Deterministic tie-breaking by entity id
  */
 export function compareEntityPriority(a: KnowledgeEntity, b: KnowledgeEntity, entityVariantTotals?: Map<string, number>): number {
-  const aIconic = a.subtopic_id === "iconic_franchises" ? 0 : 1;
-  const bIconic = b.subtopic_id === "iconic_franchises" ? 0 : 1;
-  if (aIconic !== bIconic) return aIconic - bIconic;
-
   const aDiff = a.difficulty ?? 2;
   const bDiff = b.difficulty ?? 2;
   if (aDiff !== bDiff) return aDiff - bDiff;
@@ -210,7 +206,7 @@ export function selectAutoCandidates(questions: BankQuestion[], options: SelectA
 
   const entitiesByDomain = groupEntitiesByDomain(entities, excludedSet);
 
-  const candidateDomains = options.domain_id ? [options.domain_id] : Array.from(entitiesByDomain.keys()).sort();
+  const candidateDomains = options.domain_id ? [options.domain_id] : shuffleArray(Array.from(entitiesByDomain.keys()));
   const candidateArchetypes = options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
 
   const { domainVariantTotals, archVariantTotals, entityVariantTotals } = calculateTotals(questions, coverageMap, entities);

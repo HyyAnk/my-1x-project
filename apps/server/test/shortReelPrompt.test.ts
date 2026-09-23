@@ -42,29 +42,24 @@ describe("Short-Reel Prompt Compiler and Prompt Builder (Phase 04)", () => {
     expect(p2A).toBe(p2B);
     expect(p3A).toBe(p3B);
 
-    // Segment 1 uses initial generation
-    expect(p1A).toContain("MODE: Initial Generation (9:16 portrait)");
-    expect(p1A).toContain("0s - 8s of 24s total");
+    // Clean video scene descriptors without redundant headers
+    expect(p1A).toContain("9:16 vertical portrait video scene. Duration: 8s. Visual Style: Cyberpunk Glow. Character: AeroBot.");
+    expect(p2A).toContain("9:16 vertical portrait video scene (continuation from 8s). Duration: 8s. Visual Style: Cyberpunk Glow. Character: AeroBot.");
+    expect(p3A).toContain("9:16 vertical portrait video scene (continuation from 16s). Duration: 8s. Visual Style: Cyberpunk Glow. Character: AeroBot.");
+
+    // Redundant administrative headers MUST NOT be present
+    expect(p1A).not.toContain("=== FLOW PROMPT");
+    expect(p1A).not.toContain("Target Flow Model:");
+    expect(p1A).not.toContain("MODE: Initial Generation");
+    expect(p1A).not.toContain("Duration Target:");
+
+    // Dialogue and on-screen text sections are clearly distinguished
+    expect(p1A).toContain("--- SPOKEN DIALOGUE (VOICEOVER / LIP-SYNC) ---");
+    expect(p1A).toContain("--- ON-SCREEN VISUAL TEXT (DISPLAY ONLY - DO NOT READ ALOUD) ---");
     expect(p1A).toContain(`[QUESTION] "${source.question_text}"`);
-    expect(p1A).toContain("Mascot Character Anchor: AeroBot");
-    expect(p1A).toContain("Visual Style Anchor: Cyberpunk Glow");
-    expect(p1A).toContain("Target Flow Model: Omni 1.1 Flash");
-
-    // Segments 2 and 3 use video extension
-    expect(p2A).toContain("MODE: Video Extension (continue from 8s, do NOT restart)");
-    expect(p2A).toContain("8s - 16s of 24s total");
-
-    expect(p3A).toContain("MODE: Video Extension (continue from 16s, do NOT restart)");
-    expect(p3A).toContain("16s - 24s of 24s total");
+    expect(p1A).toContain("in-frame graphic display only, DO NOT speak aloud");
     expect(p3A).toContain(`[ANSWER] "${source.selected_answer_text}"`);
-
-    // In-video text requirement: text requested in footage, obsolete no-text instructions prohibited
-    for (const p of [p1A, p2A, p3A]) {
-      expect(p).toContain("In-video text must be rendered naturally within the video scene.");
-      expect(p).toContain("Do not omit requested text.");
-      expect(p).not.toMatch(/do not add (?:readable )?text/i);
-      expect(p).not.toMatch(/no text/i);
-    }
+    expect(p3A).toContain("in-frame graphic display only, DO NOT speak aloud");
   });
 
   it("buildScriptGenerationPrompt delimits source text as untrusted data against prompt injection", () => {
@@ -128,12 +123,14 @@ describe("Short-Reel Prompt Compiler and Prompt Builder (Phase 04)", () => {
     expect(p1).toContain("Boundary Text Transition: Initial scene; introduce in-frame text naturally according to segment cue timing.");
     // Boundary text transition when visible text is empty
     expect(p2).toContain("Boundary Text Transition: No prior visible text carried across boundary.");
-    // Rendering & timing guidance notice without promising millisecond precision
-    for (const p of [p1, p2, p3]) {
-      expect(p).toContain(
-        "Rendering & Timing Notice: Visible text timings are narrative guidance targets; avoid promising exact millisecond precision",
-      );
-    }
+    // Spoken dialogue formatting when present vs fallback when absent
+    expect(p1).toContain("--- SPOKEN DIALOGUE (VOICEOVER / LIP-SYNC) ---");
+    expect(p1).toContain("No spoken dialogue; sound effects and musical ambience only.");
+
+    const scriptWithDialogue = structuredClone(script);
+    scriptWithDialogue.segments[0].dialogue = "Two challengers line up for the ultimate test!";
+    const [p1WithDiag] = compileFlowPrompts(scriptWithDialogue);
+    expect(p1WithDiag).toContain('"Two challengers line up for the ultimate test!"');
 
     // 2. With explicit visible text handover across boundary
     const scriptWithText = structuredClone(script);
@@ -166,5 +163,40 @@ describe("Short-Reel Prompt Compiler and Prompt Builder (Phase 04)", () => {
     };
 
     expect(() => compileFlowPrompts(invalidScript)).toThrow(/exactly 3 segments are required/i);
+  });
+
+  it("buildScriptGenerationPrompt formats custom seed selection properly", () => {
+    const prompt = buildScriptGenerationPrompt({
+      ...context,
+      seedId: "vf_tale_of_the_tape",
+    });
+
+    expect(prompt).toContain("DIRECTORIAL SEED: TALE OF THE TAPE");
+    expect(prompt).toContain("Metric-by-metric analytical breakdown");
+    expect(prompt).toContain("HUD graphic overlays, sleek technical comparison cards");
+    expect(prompt).toContain("Break down strengths and weaknesses");
+  });
+
+  it("buildScriptGenerationPrompt formats verdict_true_false archetype and mythbusters lab seed", () => {
+    const tfSource: CompleteShortReelSourceSnapshot = {
+      ...source,
+      archetype_id: "verdict_true_false",
+      choices: [
+        { id: "A", text: "True", is_correct: true },
+        { id: "B", text: "False", is_correct: false },
+      ],
+      selected_answer_text: "True",
+    };
+
+    const prompt = buildScriptGenerationPrompt({
+      ...context,
+      source: tfSource,
+      seedId: "tf_courtroom_verdict",
+    });
+
+    expect(prompt).toContain("DIRECTORIAL SEED: COURTROOM VERDICT");
+    expect(prompt).toContain("TRUE OR FALSE");
+    expect(prompt).toContain("High-drama trial with gavel-slamming justice");
+    expect(prompt).toContain("Courtroom bench, judge's gavel");
   });
 });

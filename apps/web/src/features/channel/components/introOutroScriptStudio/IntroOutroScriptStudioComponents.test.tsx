@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type {
   CreativeSeed,
@@ -9,6 +9,7 @@ import type {
   MascotStyleIdentityProfile,
 } from "@studio/shared";
 import { ScriptConfigureStep } from "./ScriptConfigureStep";
+import { ScriptPromptPanel } from "./ScriptPromptPanel";
 import { ScriptReviewStep } from "./ScriptReviewStep";
 import { ScriptUploadStep } from "./ScriptUploadStep";
 
@@ -213,9 +214,32 @@ const revision: IntroOutroScriptRevision = {
   created_at: now,
 };
 
+const originalClipboardDescriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+
+function mockClipboard(writeText: (value: string) => Promise<void>) {
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText },
+  });
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((complete) => {
+    resolve = complete;
+  });
+  return { promise, resolve };
+}
+
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
+  vi.restoreAllMocks();
+  if (originalClipboardDescriptor) {
+    Object.defineProperty(navigator, "clipboard", originalClipboardDescriptor);
+  } else {
+    Reflect.deleteProperty(navigator, "clipboard");
+  }
 });
 
 describe("Intro/Outro Script Studio components", () => {
@@ -340,6 +364,7 @@ describe("Intro/Outro Script Studio components", () => {
         clip_kind: "intro",
         duration_seconds: 10,
         randomization_seed: "persisted-randomization-seed",
+        logo_mode: "supplied_reference",
         selected_seed_ids: ["A07", "B02", "C03", "D07"],
         locked_dimensions: ["intro_entrance", "intro_performance_tone"],
       },
@@ -347,6 +372,7 @@ describe("Intro/Outro Script Studio components", () => {
         clip_kind: "outro",
         duration_seconds: 9,
         randomization_seed: "persisted-randomization-seed",
+        logo_mode: "supplied_reference",
         selected_seed_ids: ["E07", "F01", "G05"],
         locked_dimensions: ["outro_farewell"],
       },
@@ -411,7 +437,7 @@ describe("Intro/Outro Script Studio components", () => {
     expect((screen.getByText("Inspecting mascot style reference").closest("button") as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it("autosaves structured edits and exposes revision approval and prompt export", async () => {
+  it("autosaves structured edits from the collapsed detail editor", async () => {
     vi.useFakeTimers();
     const onSave = vi.fn().mockResolvedValue(undefined);
     render(
@@ -424,9 +450,11 @@ describe("Intro/Outro Script Studio components", () => {
         onCheckpoint={vi.fn()}
         onValidate={vi.fn().mockResolvedValue([])}
         onApprove={vi.fn()}
-        onCopyPrompt={vi.fn()}
+        onLoadPrompt={vi.fn().mockResolvedValue("Final intro prompt")}
+        onContinueToUpload={vi.fn()}
       />,
     );
+    fireEvent.click(screen.getByText("Edit script details"));
     fireEvent.change(screen.getByDisplayValue("Enter"), { target: { value: "Slide into frame" } });
     await act(async () => {
       await vi.advanceTimersByTimeAsync(900);
@@ -437,8 +465,111 @@ describe("Intro/Outro Script Studio components", () => {
         timeline: expect.arrayContaining([expect.objectContaining({ action: "Slide into frame" })]),
       }),
     );
-    expect(screen.getByRole("button", { name: /Copy prompt/i })).toBeDefined();
-    expect(screen.getByText("Approved")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Copy full prompt" })).toBeDefined();
+    expect(screen.getByText(/Selected for upload/)).toBeDefined();
+  });
+
+  it("shows the complete prompt first and copies it from a direct action", async () => {
+    const finalPrompt = "Create an eight-second intro while preserving the mascot identity.";
+    const onLoadPrompt = vi.fn().mockResolvedValue(finalPrompt);
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    mockClipboard(writeText);
+
+    render(<ScriptPromptPanel revision={revision} onLoadPrompt={onLoadPrompt} />);
+
+    expect(screen.getByRole("heading", { name: "Final video prompt" })).toBeDefined();
+    expect(screen.getByRole("status").textContent).toContain("Loading final prompt");
+    const prompt = await screen.findByRole("textbox", { name: "Intro final video prompt" });
+    expect((prompt as HTMLTextAreaElement).value).toBe(finalPrompt);
+    expect(onLoadPrompt).toHaveBeenCalledWith(revision.revision_id);
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy full prompt" }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(finalPrompt));
+    expect(screen.getByRole("button", { name: "Copied" })).toBeDefined();
+  });
+
+  it("recovers from prompt loading and clipboard errors without hiding the prompt", async () => {
+    const onLoadPrompt = vi.fn().mockRejectedValueOnce(new Error("Prompt service unavailable")).mockResolvedValue("Recovered final prompt");
+    const writeText = vi.fn().mockRejectedValue(new Error("Clipboard denied"));
+    mockClipboard(writeText);
+
+    render(<ScriptPromptPanel revision={revision} onLoadPrompt={onLoadPrompt} />);
+
+    expect(await screen.findByText("Prompt service unavailable")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+    const prompt = await screen.findByRole("textbox", { name: "Intro final video prompt" });
+    expect((prompt as HTMLTextAreaElement).value).toBe("Recovered final prompt");
+    expect(onLoadPrompt).toHaveBeenCalledTimes(2);
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy full prompt" }));
+    expect(await screen.findByText("Copy failed. Select the prompt text and copy it manually.")).toBeDefined();
+    expect((screen.getByRole("textbox", { name: "Intro final video prompt" }) as HTMLTextAreaElement).value).toBe("Recovered final prompt");
+  });
+
+  it("ignores a stale prompt response after switching revisions", async () => {
+    const first = deferred<string>();
+    const second = deferred<string>();
+    const newerRevision: IntroOutroScriptRevision = {
+      ...revision,
+      revision_id: "revision_intro_2",
+      revision_number: 2,
+    };
+    const onLoadPrompt = vi.fn((revisionId: string) => (revisionId === revision.revision_id ? first.promise : second.promise));
+    const view = render(<ScriptPromptPanel revision={revision} onLoadPrompt={onLoadPrompt} />);
+
+    view.rerender(<ScriptPromptPanel revision={newerRevision} onLoadPrompt={onLoadPrompt} />);
+    await act(async () => {
+      second.resolve("Current revision prompt");
+      await second.promise;
+    });
+    expect((screen.getByRole("textbox", { name: "Intro final video prompt" }) as HTMLTextAreaElement).value).toBe(
+      "Current revision prompt",
+    );
+
+    await act(async () => {
+      first.resolve("Stale revision prompt");
+      await first.promise;
+    });
+    expect((screen.getByRole("textbox", { name: "Intro final video prompt" }) as HTMLTextAreaElement).value).toBe(
+      "Current revision prompt",
+    );
+  });
+
+  it("explains upload selection and exposes the upload step after selection", async () => {
+    const onApprove = vi.fn().mockResolvedValue(undefined);
+    const onContinueToUpload = vi.fn();
+    const unselectedProject: IntroOutroScriptProject = {
+      ...project,
+      approved_revision_ids: { intro: null, outro: null },
+    };
+    const props = {
+      project: unselectedProject,
+      revisions: [revision],
+      job: null,
+      busy: null,
+      onSave: vi.fn(),
+      onCheckpoint: vi.fn(),
+      onValidate: vi.fn(),
+      onApprove,
+      onLoadPrompt: vi.fn().mockResolvedValue("Final intro prompt"),
+      onContinueToUpload,
+    };
+    const view = render(<ScriptReviewStep {...props} />);
+
+    expect(
+      screen.getByText(
+        "Use for upload selects this revision as the script linked to your uploaded video. It does not generate or upload a video.",
+      ),
+    ).toBeDefined();
+    fireEvent.click(screen.getByText("What Gemini reviewed"));
+    expect(screen.getByText(/Mascot identity, feasible motion, camera, timing, audio, logo placement/)).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Use for upload" }));
+    await waitFor(() => expect(onApprove).toHaveBeenCalledWith(revision.revision_id));
+
+    view.rerender(<ScriptReviewStep {...props} project={project} />);
+    expect(screen.getByText(/Selected for upload/)).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Continue to upload" }));
+    expect(onContinueToUpload).toHaveBeenCalledTimes(1);
   });
 
   it("keeps validation and navigation on the saved draft and supports retry after a save failure", async () => {
@@ -455,11 +586,13 @@ describe("Intro/Outro Script Studio components", () => {
       onCheckpoint: vi.fn(),
       onValidate,
       onApprove: vi.fn(),
-      onCopyPrompt: vi.fn(),
+      onLoadPrompt: vi.fn().mockResolvedValue("Final intro prompt"),
+      onContinueToUpload: vi.fn(),
       onDraftPendingChange,
     };
     const view = render(<ScriptReviewStep {...props} />);
 
+    fireEvent.click(screen.getByText("Edit script details"));
     fireEvent.change(screen.getByDisplayValue("Enter"), { target: { value: "Hold in frame" } });
     expect((screen.getByRole("button", { name: "Validate" }) as HTMLButtonElement).disabled).toBe(true);
     expect((screen.getByRole("tab", { name: "Outro" }) as HTMLButtonElement).disabled).toBe(true);
@@ -512,12 +645,13 @@ describe("Intro/Outro Script Studio components", () => {
         onCheckpoint={vi.fn()}
         onValidate={vi.fn()}
         onApprove={vi.fn()}
-        onCopyPrompt={vi.fn()}
+        onLoadPrompt={vi.fn().mockResolvedValue("Final intro prompt")}
+        onContinueToUpload={vi.fn()}
       />,
     );
     expect(screen.getByText("Simplify the closing action.")).toBeDefined();
-    expect((screen.getByRole("button", { name: "Approve" }) as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByRole("list", { name: "AI review findings" })).toBeDefined();
+    expect((screen.getByRole("button", { name: "Use for upload" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByRole("list", { name: "Gemini Flash review findings" })).toBeDefined();
   });
 
   it("shows a saved revision issue only once when the draft already displays it", () => {
@@ -551,20 +685,21 @@ describe("Intro/Outro Script Studio components", () => {
         onCheckpoint={vi.fn()}
         onValidate={vi.fn()}
         onApprove={vi.fn()}
-        onCopyPrompt={vi.fn()}
+        onLoadPrompt={vi.fn().mockResolvedValue("Final intro prompt")}
+        onContinueToUpload={vi.fn()}
       />,
     );
 
     expect(screen.getAllByText(issue.message)).toHaveLength(1);
-    expect((screen.getByRole("button", { name: "Approve" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "Use for upload" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("marks approved upload links without requiring both scripts", () => {
     const onUpload = vi.fn();
     render(<ScriptUploadStep project={project} onUpload={onUpload} />);
-    expect(screen.getByText("Intro approved and ready to link")).toBeDefined();
-    expect(screen.getByText("Outro will be uploaded without a script link")).toBeDefined();
-    fireEvent.click(screen.getByRole("button", { name: "Select videos" }));
+    expect(screen.getByText("Intro: Selected script will be linked")).toBeDefined();
+    expect(screen.getByText("Outro: No script selected; video will not be linked")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Choose video files" }));
     expect(onUpload).toHaveBeenCalledWith({
       projectId: project.project_id,
       introRevisionId: "revision_intro",

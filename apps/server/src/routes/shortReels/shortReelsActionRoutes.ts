@@ -3,7 +3,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { CancelShortReelRequestSchema, GenerateShortReelRequestSchema, type ReelKey, type Task } from "@studio/shared";
 import { RepositoryError } from "../../repository/errors.js";
 import { requireCompleteShortReelSource } from "../../repository/shortReelSourcePolicy.js";
-import { exportShortReelPackage } from "../../shortReel/exportService.js";
+import { exportShortReelPackage, mimeToExtension } from "../../shortReel/exportService.js";
 import { readBoundedAsset } from "../../shortReel/packageAssets.js";
 import { handleRouteError } from "./shortReelsErrorMapper.js";
 import type { ShortReelsRouteDeps } from "./shortReelsTypes.js";
@@ -115,8 +115,9 @@ export function registerShortReelsActionRoutes(server: FastifyInstance, deps: Sh
       const absolutePath = path.resolve(repository.storageRoot, asset.path);
       await repository.assertRealPathInside(repository.storageRoot, absolutePath);
       const bytes = await readBoundedAsset(repository, repository.storageRoot, absolutePath);
+      const ext = mimeToExtension(asset.mime_type);
       reply.header("Cache-Control", "private, no-store");
-      reply.header("Content-Disposition", `inline; filename="${asset.asset_id}"`);
+      reply.header("Content-Disposition", `inline; filename="${asset.asset_id}.${ext}"`);
       return reply.type(asset.mime_type).send(bytes);
     } catch (error) {
       return handleRouteError(error, reply, logger);

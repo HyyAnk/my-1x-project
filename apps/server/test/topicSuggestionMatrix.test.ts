@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { BankTaxonomy } from "@studio/shared";
 import { planTopicSuggestionMatrix, formatTopicMatrixPrompt } from "../src/context/topicMatrixPlanner.js";
+import { ARCHETYPE_SLOT_DEFINITIONS } from "../src/context/topicMatrix.constants.js";
 import { parseTopicCandidates } from "../src/tasks/parsers.js";
 
 describe("topicSuggestionMatrix", () => {
@@ -70,33 +71,55 @@ describe("topicSuggestionMatrix", () => {
     },
   };
 
-  it("produces 3 Episode and 3 Short-Reel slots across 6 distinct domains", () => {
+  it("produces 4 Episode and 4 Short-Reel slots with randomized archetypes and independent domain rotation", () => {
     const plan = planTopicSuggestionMatrix({
       taxonomy: mockTaxonomy,
       index: mockIndex,
     });
 
-    expect(plan.slots).toHaveLength(6);
+    expect(plan.slots).toHaveLength(8);
 
     const contentKinds = plan.slots.map((s) => s.contentKind);
-    expect(contentKinds).toEqual(["episode", "episode", "episode", "short_reel", "short_reel", "short_reel"]);
-
-    const archetypes = plan.slots.map((s) => s.archetype);
-    expect(archetypes).toEqual(["deep_trivia", "mystery_reveal", "verdict_true_false", "versus_faceoff", "deep_trivia", "versus_faceoff"]);
-
-    const layouts = plan.slots.map((s) => s.suggestedLayout);
-    expect(layouts).toEqual([
-      "media_left_choices_right",
-      "mystery_reveal",
-      "verdict_true_false",
-      "split_versus_two",
-      "media_left_choices_right",
-      "split_versus_two",
+    expect(contentKinds).toEqual([
+      "episode",
+      "episode",
+      "episode",
+      "episode",
+      "short_reel",
+      "short_reel",
+      "short_reel",
+      "short_reel",
     ]);
 
-    const domainIds = plan.slots.map((s) => s.domainId);
-    const uniqueDomains = new Set(domainIds);
-    expect(uniqueDomains.size).toBe(6);
+    // Episode slots (1-4) choose 4 distinct archetypes from the 7 episode pool
+    const episodeArchetypes = plan.slots.slice(0, 4).map((s) => s.archetype);
+    expect(new Set(episodeArchetypes).size).toBe(4);
+    for (const a of episodeArchetypes) {
+      expect([
+        "deep_trivia",
+        "mystery_reveal",
+        "verdict_true_false",
+        "visual_spotting",
+        "visual_identification",
+        "speed_blitz",
+        "versus_faceoff",
+      ]).toContain(a);
+    }
+
+    // Short-Reel slots (5-8) choose archetypes from the 3 short-reel pool and cover all 3
+    const shortReelArchetypes = plan.slots.slice(4, 8).map((s) => s.archetype);
+    expect(new Set(shortReelArchetypes).size).toBe(3);
+    for (const a of shortReelArchetypes) {
+      expect(["versus_faceoff", "deep_trivia", "verdict_true_false"]).toContain(a);
+    }
+
+    // Episode slots must have 4 distinct domains
+    const episodeDomains = plan.slots.slice(0, 4).map((s) => s.domainId);
+    expect(new Set(episodeDomains).size).toBe(4);
+
+    // Short-Reel slots must have 4 distinct domains
+    const shortReelDomains = plan.slots.slice(4, 8).map((s) => s.domainId);
+    expect(new Set(shortReelDomains).size).toBe(4);
 
     // All slots must have valid non-empty domain_id and title
     for (const slot of plan.slots) {
@@ -106,58 +129,92 @@ describe("topicSuggestionMatrix", () => {
     }
   });
 
-  it("prioritizes domains with higher question/entity counts in default unsteered mode", () => {
+  it("supports fixed slot definitions when deterministic slots are requested", () => {
+    const plan = planTopicSuggestionMatrix({
+      taxonomy: mockTaxonomy,
+      index: mockIndex,
+      slotDefinitions: ARCHETYPE_SLOT_DEFINITIONS,
+    });
+
+    const archetypes = plan.slots.map((s) => s.archetype);
+    expect(archetypes).toEqual([
+      "deep_trivia",
+      "mystery_reveal",
+      "verdict_true_false",
+      "visual_identification",
+      "versus_faceoff",
+      "deep_trivia",
+      "verdict_true_false",
+      "versus_faceoff",
+    ]);
+  });
+
+  it("rotates domains randomly across distinct taxonomy domains in default unsteered mode", () => {
     const plan = planTopicSuggestionMatrix({
       taxonomy: mockTaxonomy,
       index: mockIndex,
     });
 
-    // nature_animals has 50 questions, space_earth has 30 questions
-    expect(plan.slots[0].domainId).toBe("nature_animals");
-    expect(plan.slots[1].domainId).toBe("space_earth");
+    const episodeDomains = plan.slots.slice(0, 4).map((s) => s.domainId);
+    const shortReelDomains = plan.slots.slice(4, 8).map((s) => s.domainId);
+    expect(new Set(episodeDomains).size).toBe(4);
+    expect(new Set(shortReelDomains).size).toBe(4);
+    for (const d of [...episodeDomains, ...shortReelDomains]) {
+      expect(typeof d).toBe("string");
+      expect(d.length).toBeGreaterThan(0);
+    }
   });
 
-  it("applies keyword steering to slot 1 (Episode) and slot 4 (Short-Reel) while keeping slots 2, 3, 5, 6 diverse", () => {
+  it("applies keyword steering to slot 1 (Episode) and slot 5 (Short-Reel) while keeping other slots diverse", () => {
     const plan = planTopicSuggestionMatrix({
       taxonomy: mockTaxonomy,
       index: mockIndex,
       topicHint: "Emergency doctor jobs",
     });
 
-    expect(plan.slots).toHaveLength(6);
+    expect(plan.slots).toHaveLength(8);
     expect(plan.steeredKeyword).toBe("Emergency doctor jobs");
 
-    // Slot 1 (Episode) & Slot 4 (Short-Reel) must be steered
+    // Slot 1 (Episode) & Slot 5 (Short-Reel) must be steered
     expect(plan.slots[0].isKeySteered).toBe(true);
-    expect(plan.slots[3].isKeySteered).toBe(true);
+    expect(plan.slots[4].isKeySteered).toBe(true);
 
     // Careers & Occupations matches "doctor jobs emergency"
     expect(plan.slots[0].domainId).toBe("careers_occupations");
+    expect(plan.slots[4].domainId).toBe("careers_occupations");
 
-    // Slots 2, 3, 5, 6 must NOT be steered and must be from 4 different domains
+    // Remaining slots must NOT be steered
     expect(plan.slots[1].isKeySteered).toBe(false);
     expect(plan.slots[2].isKeySteered).toBe(false);
-    expect(plan.slots[4].isKeySteered).toBe(false);
+    expect(plan.slots[3].isKeySteered).toBe(false);
     expect(plan.slots[5].isKeySteered).toBe(false);
+    expect(plan.slots[6].isKeySteered).toBe(false);
+    expect(plan.slots[7].isKeySteered).toBe(false);
 
-    const domainIds = plan.slots.map((s) => s.domainId);
-    const uniqueDomains = new Set(domainIds);
-    expect(uniqueDomains.size).toBe(6);
+    // Episode slots must have 4 distinct domains
+    const episodeDomains = plan.slots.slice(0, 4).map((s) => s.domainId);
+    expect(new Set(episodeDomains).size).toBe(4);
+
+    // Short-Reel slots must have 4 distinct domains
+    const shortReelDomains = plan.slots.slice(4, 8).map((s) => s.domainId);
+    expect(new Set(shortReelDomains).size).toBe(4);
   });
 
-  it("steers slots 1 and 4 to anime_manga when topicHint is 'Anime Legends'", () => {
+  it("steers slots 1 and 5 to anime_manga when topicHint is 'Anime Legends'", () => {
     const plan = planTopicSuggestionMatrix({
       taxonomy: mockTaxonomy,
       index: mockIndex,
       topicHint: "Anime Legends",
     });
 
-    expect(plan.slots).toHaveLength(6);
+    expect(plan.slots).toHaveLength(8);
     expect(plan.steeredKeyword).toBe("Anime Legends");
     expect(plan.slots[0].isKeySteered).toBe(true);
-    expect(plan.slots[3].isKeySteered).toBe(true);
+    expect(plan.slots[4].isKeySteered).toBe(true);
     expect(plan.slots[0].domainId).toBe("anime_manga");
     expect(plan.slots[0].domainTitle).toBe("Anime & Manga Universe");
+    expect(plan.slots[4].domainId).toBe("anime_manga");
+    expect(plan.slots[4].domainTitle).toBe("Anime & Manga Universe");
   });
 
   it("formats prompt instructions with domain_id, blueprints, and keyword steering", () => {
@@ -165,6 +222,7 @@ describe("topicSuggestionMatrix", () => {
       taxonomy: mockTaxonomy,
       index: mockIndex,
       topicHint: "Astronomy Planets",
+      slotDefinitions: ARCHETYPE_SLOT_DEFINITIONS,
     });
 
     const { hintGuidance, blueprintGuidance, outputContract } = formatTopicMatrixPrompt(plan, "Astronomy Planets");
@@ -174,25 +232,34 @@ describe("topicSuggestionMatrix", () => {
     expect(hintGuidance).toContain("Astronomy Planets");
     expect(hintGuidance).toContain("Exactly 2 candidates MUST be directly inspired by");
     expect(hintGuidance).toContain("Slot 1 (Episode) is steered to domain");
-    expect(hintGuidance).toContain("Slot 4 (Short-Reel) is steered to domain");
-    expect(hintGuidance).toContain("The remaining 4 candidates should be diverse");
+    expect(hintGuidance).toContain("Slot 5 (Short-Reel) is steered to domain");
+    expect(hintGuidance).toContain("The remaining candidates should be diverse");
 
     // Verify blueprint guidance
     expect(blueprintGuidance).toContain("GAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY");
     expect(blueprintGuidance).toContain("domain_id:");
-    expect(blueprintGuidance).toContain("Slot 1 (Episode - Deep Trivia)");
-    expect(blueprintGuidance).toContain("Slot 2 (Episode - Mystery Reveal)");
-    expect(blueprintGuidance).toContain("Slot 3 (Episode - True or False)");
-    expect(blueprintGuidance).toContain("Slot 4 (Short-Reel - Versus Face-off)");
-    expect(blueprintGuidance).toContain("Slot 5 (Short-Reel - Deep Trivia)");
-    expect(blueprintGuidance).toContain("Slot 6 (Short-Reel - Versus Clash)");
+    expect(blueprintGuidance).toContain("Slot 1 (Episode - Deep Trivia");
+    expect(blueprintGuidance).toContain("Slot 2 (Episode - Silhouette / Mystery Reveal");
+    expect(blueprintGuidance).toContain("Slot 3 (Episode - True or False");
+    expect(blueprintGuidance).toContain("Slot 4 (Episode - Visual Identification");
+    expect(blueprintGuidance).toContain("Slot 5 (Short-Reel - Versus Face-off");
+    expect(blueprintGuidance).toContain("Slot 6 (Short-Reel - Deep Trivia");
+    expect(blueprintGuidance).toContain("Slot 7 (Short-Reel - True or False");
+    expect(blueprintGuidance).toContain("Slot 8 (Short-Reel - Versus Clash");
 
     // Verify output contract
     expect(outputContract).toContain("domain_id");
-    expect(outputContract).toContain("Return exactly 6 JSON candidates");
+    expect(outputContract).toContain("Return exactly 8 JSON candidates");
   });
 
   it("parses domain_id and subtopic_id from topic candidates JSON", () => {
+    const assignedPlan = planTopicSuggestionMatrix({
+      taxonomy: mockTaxonomy,
+      index: mockIndex,
+      topicHint: "Medical Careers",
+      slotDefinitions: ARCHETYPE_SLOT_DEFINITIONS,
+    });
+
     const mockOutput = JSON.stringify({
       candidates: [
         {
@@ -206,7 +273,7 @@ describe("topicSuggestionMatrix", () => {
           quiz_format: "multiple_choice",
           archetype: "deep_trivia",
           suggested_layout: "media_left_choices_right",
-          domain_id: "careers_occupations",
+          domain_id: assignedPlan.slots[0].domainId,
           subtopic_id: "emergency_services",
           theme_hint: "Medical Careers",
         },
@@ -221,7 +288,7 @@ describe("topicSuggestionMatrix", () => {
           quiz_format: "image_guess",
           archetype: "mystery_reveal",
           suggested_layout: "mystery_reveal",
-          domain_id: "nature_animals",
+          domain_id: assignedPlan.slots[1].domainId,
           subtopic_id: "emergency_services",
         },
         {
@@ -235,11 +302,25 @@ describe("topicSuggestionMatrix", () => {
           quiz_format: "true_false",
           archetype: "verdict_true_false",
           suggested_layout: "verdict_true_false",
-          domain_id: "space_earth",
+          domain_id: assignedPlan.slots[2].domainId,
           subtopic_id: "solar_system",
         },
         {
           topic_id: "topic-4",
+          content_kind: "episode",
+          title: "Emergency Rush",
+          premise: "Rapid fire emergency questions",
+          why_it_fits: "Fast paced reflex test",
+          hook: "Can you think fast under pressure?",
+          estimated_potential: "High",
+          quiz_format: "multiple_choice",
+          archetype: "visual_identification",
+          suggested_layout: "visual_choices_three",
+          domain_id: assignedPlan.slots[3].domainId,
+          subtopic_id: "emergency_services",
+        },
+        {
+          topic_id: "topic-5",
           content_kind: "short_reel",
           title: "Chef's Secret",
           premise: "Guess the pastry from ingredients",
@@ -249,11 +330,11 @@ describe("topicSuggestionMatrix", () => {
           quiz_format: "multiple_choice",
           archetype: "versus_faceoff",
           suggested_layout: "split_versus_two",
-          domain_id: "vehicles_technology",
+          domain_id: assignedPlan.slots[4].domainId,
           subtopic_id: "desserts",
         },
         {
-          topic_id: "topic-5",
+          topic_id: "topic-6",
           content_kind: "short_reel",
           title: "Tiger vs Lion",
           premise: "Apex predator showdown",
@@ -263,11 +344,25 @@ describe("topicSuggestionMatrix", () => {
           quiz_format: "multiple_choice",
           archetype: "deep_trivia",
           suggested_layout: "media_left_choices_right",
-          domain_id: "food_gastronomy",
+          domain_id: assignedPlan.slots[5].domainId,
           subtopic_id: "mammals",
         },
         {
-          topic_id: "topic-6",
+          topic_id: "topic-7",
+          content_kind: "short_reel",
+          title: "Myth or Fact: Lightning",
+          premise: "Does lightning strike twice?",
+          why_it_fits: "Common misconception",
+          hook: "Is this classic storm belief true or false?",
+          estimated_potential: "Viral",
+          quiz_format: "true_false",
+          archetype: "verdict_true_false",
+          suggested_layout: "verdict_true_false",
+          domain_id: assignedPlan.slots[6].domainId,
+          subtopic_id: "solar_system",
+        },
+        {
+          topic_id: "topic-8",
           content_kind: "short_reel",
           title: "Eagle vs Hawk",
           premise: "Sky raptor face-off",
@@ -277,16 +372,14 @@ describe("topicSuggestionMatrix", () => {
           quiz_format: "multiple_choice",
           archetype: "versus_faceoff",
           suggested_layout: "split_versus_two",
-          domain_id: "countries_nations",
+          domain_id: assignedPlan.slots[7].domainId,
           subtopic_id: "landmarks",
         },
       ],
     });
-
-    const assignedPlan = planTopicSuggestionMatrix({ taxonomy: mockTaxonomy, index: mockIndex, topicHint: "Medical Careers" });
     const parsed = parseTopicCandidates(mockOutput, "ch_test_123", assignedPlan);
 
-    expect(parsed).toHaveLength(6);
+    expect(parsed).toHaveLength(8);
     expect(parsed[0].domain_id).toBe(assignedPlan.slots[0].domainId);
     expect(parsed[0].subtopic_id).toBe("emergency_services");
     expect(parsed[0].archetype).toBe("deep_trivia");
@@ -302,26 +395,37 @@ describe("topicSuggestionMatrix", () => {
     expect(parsed[2].archetype).toBe("verdict_true_false");
     expect(parsed[2].suggested_layout).toBe("verdict_true_false");
 
-    expect(parsed[3].content_kind).toBe("short_reel");
+    expect(parsed[3].content_kind).toBe("episode");
     expect(parsed[3].domain_id).toBe(assignedPlan.slots[3].domainId);
-    expect(parsed[3].archetype).toBe("versus_faceoff");
-    expect(parsed[3].question_count).toBe(1);
-    expect(parsed[3].aspect_ratio).toBe("9:16");
+    expect(parsed[3].archetype).toBe("visual_identification");
+    expect(parsed[3].suggested_layout).toBe("visual_choices_three");
 
     expect(parsed[4].content_kind).toBe("short_reel");
     expect(parsed[4].domain_id).toBe(assignedPlan.slots[4].domainId);
-    expect(parsed[4].archetype).toBe("deep_trivia");
+    expect(parsed[4].archetype).toBe("versus_faceoff");
     expect(parsed[4].question_count).toBe(1);
     expect(parsed[4].aspect_ratio).toBe("9:16");
 
     expect(parsed[5].content_kind).toBe("short_reel");
     expect(parsed[5].domain_id).toBe(assignedPlan.slots[5].domainId);
-    expect(parsed[5].archetype).toBe("versus_faceoff");
+    expect(parsed[5].archetype).toBe("deep_trivia");
     expect(parsed[5].question_count).toBe(1);
     expect(parsed[5].aspect_ratio).toBe("9:16");
+
+    expect(parsed[6].content_kind).toBe("short_reel");
+    expect(parsed[6].domain_id).toBe(assignedPlan.slots[6].domainId);
+    expect(parsed[6].archetype).toBe("verdict_true_false");
+    expect(parsed[6].question_count).toBe(1);
+    expect(parsed[6].aspect_ratio).toBe("9:16");
+
+    expect(parsed[7].content_kind).toBe("short_reel");
+    expect(parsed[7].domain_id).toBe(assignedPlan.slots[7].domainId);
+    expect(parsed[7].archetype).toBe("versus_faceoff");
+    expect(parsed[7].question_count).toBe(1);
+    expect(parsed[7].aspect_ratio).toBe("9:16");
   });
 
-  it("ignores legacy portrait Episode matrix requests and preserves the 3:3 content matrix", () => {
+  it("ignores legacy portrait Episode matrix requests and preserves the 4:4 content matrix", () => {
     const plan = planTopicSuggestionMatrix({
       taxonomy: mockTaxonomy,
       index: mockIndex,
@@ -329,11 +433,11 @@ describe("topicSuggestionMatrix", () => {
     });
 
     expect(plan.aspectRatio).toBe("16:9");
-    expect(plan.slots).toHaveLength(6);
+    expect(plan.slots).toHaveLength(8);
 
-    expect(plan.slots.slice(0, 3).every((slot) => slot.contentKind === "episode")).toBe(true);
-    expect(plan.slots.slice(0, 3).every((slot) => !slot.suggestedLayout.startsWith("portrait_"))).toBe(true);
-    expect(plan.slots.slice(3).every((slot) => slot.contentKind === "short_reel")).toBe(true);
+    expect(plan.slots.slice(0, 4).every((slot) => slot.contentKind === "episode")).toBe(true);
+    expect(plan.slots.slice(0, 4).every((slot) => !slot.suggestedLayout.startsWith("portrait_"))).toBe(true);
+    expect(plan.slots.slice(4).every((slot) => slot.contentKind === "short_reel")).toBe(true);
   });
 
   it("formats landscape Episode guidance and vertical Short-Reel guidance for legacy ratio input", () => {
@@ -342,24 +446,27 @@ describe("topicSuggestionMatrix", () => {
       index: mockIndex,
       topicHint: "Emergency doctor jobs",
       aspectRatio: "9:16",
+      slotDefinitions: ARCHETYPE_SLOT_DEFINITIONS,
     });
 
     const { blueprintGuidance, outputContract } = formatTopicMatrixPrompt(plan, "Emergency doctor jobs", "9:16");
 
-    expect(blueprintGuidance).toContain("Slot 1 (Episode - Deep Trivia):");
+    expect(blueprintGuidance).toContain("Slot 1 (Episode - Deep Trivia");
     expect(blueprintGuidance).toContain('suggested_layout: "media_left_choices_right"');
-    expect(blueprintGuidance).toContain("Slot 2 (Episode - Mystery Reveal):");
-    expect(blueprintGuidance).toContain("Slot 3 (Episode - True or False):");
+    expect(blueprintGuidance).toContain("Slot 2 (Episode - Silhouette / Mystery Reveal");
+    expect(blueprintGuidance).toContain("Slot 3 (Episode - True or False");
     expect(blueprintGuidance).toContain('suggested_layout: "verdict_true_false"');
-    expect(blueprintGuidance).toContain("Slot 4 (Short-Reel - Versus Face-off):");
-    expect(blueprintGuidance).toContain("Slot 5 (Short-Reel - Deep Trivia):");
-    expect(blueprintGuidance).toContain("Slot 6 (Short-Reel - Versus Clash):");
+    expect(blueprintGuidance).toContain("Slot 4 (Episode - Visual Identification");
+    expect(blueprintGuidance).toContain("Slot 5 (Short-Reel - Versus Face-off");
+    expect(blueprintGuidance).toContain("Slot 6 (Short-Reel - Deep Trivia");
+    expect(blueprintGuidance).toContain("Slot 7 (Short-Reel - True or False");
+    expect(blueprintGuidance).toContain("Slot 8 (Short-Reel - Versus Clash");
 
     expect(blueprintGuidance).not.toContain("portrait_");
 
     // Verify output contract
-    expect(outputContract).toContain("Slots 1-3 are Episode concepts");
-    expect(outputContract).toContain("Slots 4-6 are Short-Reel concepts");
+    expect(outputContract).toContain("Slots 1-4 are Episode concepts");
+    expect(outputContract).toContain("Slots 5-8 are Short-Reel concepts");
 
     expect(outputContract).not.toContain("portrait_");
   });
@@ -373,9 +480,10 @@ describe("topicSuggestionMatrix", () => {
 
     const { blueprintGuidance, outputContract } = formatTopicMatrixPrompt(plan);
 
-    expect(blueprintGuidance).toContain('suggested_layout: "media_left_choices_right"');
+    expect(blueprintGuidance).toContain("Slot 1 (Episode");
+    expect(blueprintGuidance).toContain("Slot 5 (Short-Reel");
     expect(blueprintGuidance).not.toContain("portrait_");
-    expect(outputContract).toContain("Slots 1-3 are Episode concepts");
-    expect(outputContract).toContain("Slots 4-6 are Short-Reel concepts");
+    expect(outputContract).toContain("Slots 1-4 are Episode concepts");
+    expect(outputContract).toContain("Slots 5-8 are Short-Reel concepts");
   });
 });

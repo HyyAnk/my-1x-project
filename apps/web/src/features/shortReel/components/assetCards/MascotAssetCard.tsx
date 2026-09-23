@@ -1,12 +1,23 @@
 import { ReelAssetCard } from "../ReelAssetCard";
+import type { ReelAssetNoticePayload } from "../reelAsset/reelAsset.types";
 
 export interface MascotAssetCardProps {
   acceptedMascotRef?: { width: number; height: number; mime_type: string; checksum: string };
   mascotDisplayUrl: string | null;
   channelMasterUrl: string | null;
+  onNotice?: (notice: ReelAssetNoticePayload) => void;
+  onCopyImage?: (imageUrl: string) => Promise<boolean>;
+  onDownloadImage?: (imageUrl: string, filename: string) => Promise<void>;
 }
 
-export function MascotAssetCard({ acceptedMascotRef, mascotDisplayUrl, channelMasterUrl }: MascotAssetCardProps) {
+export function MascotAssetCard({
+  acceptedMascotRef,
+  mascotDisplayUrl,
+  channelMasterUrl,
+  onNotice,
+  onCopyImage,
+  onDownloadImage,
+}: MascotAssetCardProps) {
   return (
     <ReelAssetCard
       title="Channel Mascot Reference"
@@ -38,6 +49,9 @@ export function MascotAssetCard({ acceptedMascotRef, mascotDisplayUrl, channelMa
         },
       }}
       ariaLabel="Mascot Reference"
+      onNotice={onNotice}
+      onCopyImage={onCopyImage}
+      onDownloadImage={onDownloadImage}
     />
   );
 }

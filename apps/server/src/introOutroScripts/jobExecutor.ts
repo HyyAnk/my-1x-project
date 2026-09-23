@@ -88,6 +88,7 @@ export class IntroOutroScriptJobExecutor {
           durationSeconds: clip.durationSeconds,
           seedSelection: clip.seedSelection,
           seeds: clip.seeds,
+          logoMode: clip.logoMode,
           signal,
           companionContent,
           onProgress: (step) => this.updateStep(job, step),

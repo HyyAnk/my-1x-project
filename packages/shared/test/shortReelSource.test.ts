@@ -127,7 +127,24 @@ describe("Short-Reel Source Snapshot Boundary (Task A1)", () => {
       status: "approved",
     });
 
-    assert.throws(() => createEnglishSourceSnapshot(tfQuestion, "source"), /archetype must be 'versus_faceoff' or 'deep_trivia'/i);
+    const tfSnapshot = createEnglishSourceSnapshot(tfQuestion, "source");
+    assert.equal(tfSnapshot.archetype_id, "verdict_true_false");
+    assert.equal(tfSnapshot.choices.length, 2);
+
+    const speedBlitzQuestion = BankQuestionSchema.parse({
+      ...validEnglishVersus,
+      id: "q-speed",
+      archetype_id: "speed_blitz",
+      choices: [
+        { id: "A", text: "20 km/h", is_correct: true },
+        { id: "B", text: "10 km/h", is_correct: false },
+        { id: "C", text: "5 km/h", is_correct: false },
+      ],
+    });
+    assert.throws(
+      () => createEnglishSourceSnapshot(speedBlitzQuestion, "source"),
+      /archetype must be 'versus_faceoff', 'deep_trivia', or 'verdict_true_false'/i,
+    );
   });
 
   it("rejects non-English source questions without translation", () => {

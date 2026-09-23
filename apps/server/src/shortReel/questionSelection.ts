@@ -47,7 +47,7 @@ export async function selectShortReelQuestion(options: SelectShortReelQuestionOp
   const shortReelTopic = topic;
   const targetArchetype = String(shortReelTopic.archetype);
 
-  if (targetArchetype !== "versus_faceoff" && targetArchetype !== "deep_trivia") {
+  if (targetArchetype !== "versus_faceoff" && targetArchetype !== "deep_trivia" && targetArchetype !== "verdict_true_false") {
     throw new RepositoryError(`Invalid Short-Reel archetype "${targetArchetype}"`, "INVALID_ARCHETYPE");
   }
 

@@ -32,7 +32,7 @@ interface SharedEligibilityOptions {
 }
 
 export interface ShortReelEligibilityOptions {
-  targetArchetype: "versus_faceoff" | "deep_trivia";
+  targetArchetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false";
 }
 
 export interface EpisodeEligibilityOptions extends SharedEligibilityOptions {

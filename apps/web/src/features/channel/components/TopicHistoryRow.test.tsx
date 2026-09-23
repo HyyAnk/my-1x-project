@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import type { TopicAvailability, TopicCandidate } from "@studio/shared";
-import { TopicHistoryRow } from "./TopicHistoryRow";
+import { TopicHistoryRow } from "./topicHistory/TopicHistoryRow";
 
 describe("TopicHistoryRow", () => {
   afterEach(() => {
@@ -26,9 +26,10 @@ describe("TopicHistoryRow", () => {
     question_count: 5,
     visual_style: "pixar_3d",
     theme_hint: "Astrophysics",
+    domain_id: "space_earth",
   };
 
-  it("renders 16:9 landscape format pill and index for episode topics", () => {
+  it("renders 16:9 landscape format pill, index, domain badge, and layout preview for episode topics", () => {
     const { container, getByText } = render(
       <TopicHistoryRow topic={baseTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} />,
     );
@@ -40,15 +41,23 @@ describe("TopicHistoryRow", () => {
     expect(formatPill?.classList.contains("is-landscape")).toBe(true);
     expect(getByText("The Mystery of Black Holes")).toBeDefined();
     expect(getByText("🎯 Astrophysics")).toBeDefined();
+
+    const domainBadge = container.querySelector(".topic-domain-badge");
+    expect(domainBadge).not.toBeNull();
+    expect(domainBadge?.textContent).toContain("Space Earth");
+
+    const layoutButton = container.querySelector(".topic-layout-badge-btn");
+    expect(layoutButton).not.toBeNull();
   });
 
-  it("renders 9:16 vertical format pill for short_reel topics without layout preview button", () => {
+  it("renders 9:16 vertical format pill, short_reel archetype tag, and domain badge for short_reel topics", () => {
     const shortReelTopic: TopicCandidate = {
       ...baseTopic,
       content_kind: "short_reel",
       aspect_ratio: "9:16",
       question_count: 1,
-      archetype: "deep_trivia",
+      archetype: "versus_faceoff",
+      domain_id: "nature_animals",
     };
 
     const { container, getByText } = render(
@@ -61,8 +70,31 @@ describe("TopicHistoryRow", () => {
     expect(formatPill?.textContent).toBe("9:16");
     expect(formatPill?.classList.contains("is-vertical")).toBe(true);
 
+    const archetypeTag = container.querySelector(".topic-archetype-tag");
+    expect(archetypeTag).not.toBeNull();
+    expect(archetypeTag?.textContent).toBe("Versus Face-off");
+
+    const domainBadge = container.querySelector(".topic-domain-badge");
+    expect(domainBadge?.textContent).toContain("Nature Animals");
+
+    // Layout preview button is not rendered for short_reel
     const previewButton = container.querySelector(".topic-layout-badge-btn");
     expect(previewButton).toBeNull();
+  });
+
+  it("renders empty domain placeholder when domain_id is not specified", () => {
+    const noDomainTopic: TopicCandidate = {
+      ...baseTopic,
+      domain_id: undefined,
+    };
+
+    const { container } = render(
+      <TopicHistoryRow topic={noDomainTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} />,
+    );
+
+    const emptyDomain = container.querySelector(".topic-domain-empty");
+    expect(emptyDomain).not.toBeNull();
+    expect(emptyDomain?.textContent).toBe("—");
   });
 
   it("renders ready availability pill with is-ready class when confirmation is available", () => {
@@ -164,45 +196,5 @@ describe("TopicHistoryRow", () => {
 
     expect(getByText("Selecting…")).toBeDefined();
     expect(container.querySelector(".spin")).not.toBeNull();
-  });
-
-  it("toggles expandable premise preview when expand button is clicked", () => {
-    const { container, getByRole, getByText } = render(
-      <TopicHistoryRow topic={baseTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} />,
-    );
-
-    const expandBtn = getByRole("button", { name: /Expand premise preview/i });
-    expect(expandBtn.getAttribute("aria-expanded")).toBe("false");
-    expect(container.querySelector(".topic-history-premise-expanded")).toBeNull();
-
-    // Click to expand
-    fireEvent.click(expandBtn);
-
-    expect(expandBtn.getAttribute("aria-expanded")).toBe("true");
-    const expandedPanel = container.querySelector(".topic-history-premise-expanded");
-    expect(expandedPanel).not.toBeNull();
-    expect(getByText(baseTopic.premise)).toBeDefined();
-    expect(getByText(`"${baseTopic.hook}"`)).toBeDefined();
-    expect(getByText("deep trivia")).toBeDefined();
-
-    // Click to collapse
-    fireEvent.click(expandBtn);
-    expect(expandBtn.getAttribute("aria-expanded")).toBe("false");
-    expect(container.querySelector(".topic-history-premise-expanded")).toBeNull();
-  });
-
-  it("expands premise preview when clicking on premise snippet", () => {
-    const { container, getByText } = render(
-      <TopicHistoryRow topic={baseTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} />,
-    );
-
-    const snippet = container.querySelector(".topic-history-premise-snippet");
-    expect(snippet).not.toBeNull();
-    if (snippet) {
-      fireEvent.click(snippet);
-    }
-
-    expect(container.querySelector(".topic-history-premise-expanded")).not.toBeNull();
-    expect(getByText(baseTopic.premise)).toBeDefined();
   });
 });

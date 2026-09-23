@@ -9,7 +9,7 @@ import { BUILT_IN_INTRO_OUTRO_SEEDS } from "../src/introOutroScripts/seedCatalog
 import { resolveSeedSelection } from "../src/introOutroScripts/seedSelection.js";
 import { validateScriptContent } from "../src/introOutroScripts/validation.js";
 import { resolveIntroOutroScriptModel } from "../src/introOutroScripts/model.js";
-import { compileProductionPrompt } from "../src/introOutroScripts/productionPrompt.js";
+import { buildScriptGenerationPrompt, compileProductionPrompt } from "../src/introOutroScripts/promptCompiler.js";
 import { reviewScriptQuality } from "../src/introOutroScripts/qualityReview.js";
 
 const identity: MascotStyleIdentityProfile = {
@@ -320,5 +320,73 @@ describe("Intro/Outro script domain", () => {
     const prompt = compileProductionPrompt(revision);
     expect(prompt).toContain("legacy revision has no identity snapshot");
     expect(prompt).toContain("Confirm opening pose, final hold and logo handling");
+  });
+
+  it("builds generation prompt with in-scene 3D logo reveal when logoReference is present", () => {
+    const prompt = buildScriptGenerationPrompt({
+      clipKind: "intro",
+      durationSeconds: 8,
+      context: {
+        channel: { channel_id: "ch_1", display_name: "Novy Quiz", target_audience: "children" } as any,
+        mascot: { mascot_id: "m_1", name: "Novy" } as any,
+        style: { mascot_style_id: "s_1", name: "3D Cartoon", keyword: "cartoon" } as any,
+        publicContext: { style_preset_id: "preset_1" } as any,
+        mascotReference: { assetId: "a_1", absolutePath: "/mascot.png", url: "/mascot.png", mimeType: "image/png", sha256: "1".repeat(64) },
+        logoReference: { assetId: "a_2", absolutePath: "/logo.png", url: "/logo.png", mimeType: "image/png", sha256: "2".repeat(64) },
+        identity,
+      },
+      identity,
+      seeds: [],
+    });
+
+    expect(prompt).toContain("LOGO IN-SCENE 3D REVEAL (supplied_reference)");
+    expect(prompt).toContain("CRITICAL BRAND FIDELITY");
+    expect(prompt).toContain('"logo_mode":"supplied_reference"');
+  });
+
+  it("compiles production prompt with in-scene 3D logo instructions and strict consistency constraints", () => {
+    const content = productionContent();
+    content.production_directions!.logo_mode = "supplied_reference";
+    content.production_directions!.logo_placement = "Center frame, framed by mascot";
+
+    const revision = IntroOutroScriptRevisionSchema.parse({
+      schema_version: 1,
+      revision_id: "script_intro_supplied",
+      project_id: "project_1",
+      channel_id: "channel_1",
+      style_preset_id: "preset_arcade_classic",
+      clip_kind: "intro",
+      revision_number: 1,
+      origin: "generated",
+      content,
+      identity_snapshot: identity,
+      seed_selection: { randomization_seed: "test", selected_seed_ids: [], locked_dimensions: [], algorithm_version: "1" },
+      seed_snapshot: [],
+      references: [
+        { role: "mascot_subject", asset_id: "asset_1", url: "/reference.png", sha256: "a".repeat(64), mime_type: "image/png" },
+        { role: "channel_logo", asset_id: "asset_2", url: "/logo.png", sha256: "b".repeat(64), mime_type: "image/png" },
+      ],
+      context_fingerprint: "c".repeat(64),
+      template_version: "intro-outro-script-v4",
+      requested_model: "gemini-3.7-flash-high",
+      effective_model: null,
+      validation_issues: [],
+      warning_acknowledgements: [],
+      created_at: "2026-09-22T00:00:00.000Z",
+    });
+
+    const compiled = compileProductionPrompt(revision);
+    expect(compiled).toContain("supplied_reference (EXACT official channel logo asset to be revealed as an in-scene 3D element)");
+    expect(compiled).toContain("In-scene brand reveal: The official logo is revealed dynamically as an intact 3D element");
+    expect(compiled).toContain("The ONLY text visible is the supplied official logo. No subtitles, no random letters, no watermark.");
+  });
+
+  it("includes high-energy entertainment seeds in the built-in seed catalog", () => {
+    const seedIds = BUILT_IN_INTRO_OUTRO_SEEDS.map((s) => s.id);
+    expect(seedIds).toContain("A08");
+    expect(seedIds).toContain("B08");
+    expect(seedIds).toContain("B09");
+    expect(seedIds).toContain("C08");
+    expect(seedIds).toContain("D08");
   });
 });

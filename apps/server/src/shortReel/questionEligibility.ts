@@ -13,7 +13,7 @@ export type QuestionEligibilityResult =
 /** Backward-compatible Short-Reel policy entry point backed by shared eligibility. */
 export function evaluateQuestionEligibility(
   question: BankQuestionWithCooldown,
-  targetArchetype: "versus_faceoff" | "deep_trivia",
+  targetArchetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false",
 ): QuestionEligibilityResult {
   const result = evaluateShortReelQuestionEligibility(question, { targetArchetype });
   if (!result.eligible && !question.language?.trim() && (!question.translations || Object.keys(question.translations).length === 0)) {
