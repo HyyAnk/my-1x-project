@@ -65,7 +65,7 @@ export const MascotRenderAssetCatalogV2Schema = z.object({
 
 export const MascotPlacementV2Schema = z.object({
   anchor: MascotPositionSchema,
-  scale: z.number().finite().min(0.3).max(3),
+  scale: z.number().finite().min(0.3).max(10),
   offset_x: z.number().finite().min(-1500).max(1500),
   offset_y: z.number().finite().min(-1500).max(1500),
   flip_x: z.boolean(),

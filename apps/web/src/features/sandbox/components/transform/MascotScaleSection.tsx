@@ -27,12 +27,12 @@ export function MascotScaleSection({ mascotScale, setMascotScale }: MascotScaleS
           <input
             type="number"
             min={30}
-            max={300}
+            max={1000}
             step={1}
             value={Math.round(mascotScale * 100)}
             onChange={(e) => {
               const val = Number(e.target.value);
-              if (!isNaN(val)) setMascotScale(Math.max(0.3, Math.min(3.0, val / 100)));
+              if (!isNaN(val)) setMascotScale(Math.max(0.3, Math.min(10.0, val / 100)));
             }}
             className="text-input compact"
             style={{ width: "56px", fontSize: "11px", padding: "2px 4px", textAlign: "right" }}
@@ -63,7 +63,7 @@ export function MascotScaleSection({ mascotScale, setMascotScale }: MascotScaleS
           type="button"
           className="quiet-button compact"
           style={{ fontSize: "10.5px", padding: "3px 4px", justifyContent: "center" }}
-          onClick={() => setMascotScale((p) => Math.min(3.0, Math.round((p + 0.05) * 100) / 100))}
+          onClick={() => setMascotScale((p) => Math.min(10.0, Math.round((p + 0.05) * 100) / 100))}
         >
           +5%
         </button>
@@ -71,7 +71,7 @@ export function MascotScaleSection({ mascotScale, setMascotScale }: MascotScaleS
           type="button"
           className="quiet-button compact"
           style={{ fontSize: "10.5px", padding: "3px 4px", justifyContent: "center" }}
-          onClick={() => setMascotScale((p) => Math.min(3.0, Math.round((p + 0.25) * 100) / 100))}
+          onClick={() => setMascotScale((p) => Math.min(10.0, Math.round((p + 0.25) * 100) / 100))}
         >
           +25%
         </button>
@@ -81,7 +81,7 @@ export function MascotScaleSection({ mascotScale, setMascotScale }: MascotScaleS
       <input
         type="range"
         min="0.3"
-        max="3.0"
+        max="10.0"
         step="0.01"
         value={mascotScale}
         onChange={(e) => setMascotScale(Number(e.target.value))}

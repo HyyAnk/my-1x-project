@@ -145,6 +145,13 @@
   color: var(--accent);
 }
 
+.slot-selection-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .slot-action-btn.is-queue-selected {
   display: inline-flex;
   align-items: center;
@@ -175,6 +182,36 @@
   cursor: wait;
 }
 
+.slot-action-btn.is-download-zip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--surface-card, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.slot-action-btn.is-download-zip:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.slot-action-btn.is-download-zip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.slot-action-btn.is-download-zip.is-downloading {
+  cursor: wait;
+}
+
 /* 4. 10-Slot Grid */
 .variant-slots-grid {
   display: grid;
@@ -199,12 +236,14 @@
   }
 
   .slot-selection-toolbar-right,
-  .slot-action-btn.is-queue-selected {
+  .slot-action-btn.is-queue-selected,
+  .slot-action-btn.is-download-zip {
     width: 100%;
   }
 
   .slot-selection-toggle-btn,
-  .slot-action-btn.is-queue-selected {
+  .slot-action-btn.is-queue-selected,
+  .slot-action-btn.is-download-zip {
     min-height: 44px;
     justify-content: center;
   }

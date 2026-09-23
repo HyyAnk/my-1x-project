@@ -1,3 +1,4 @@
+import { DEFAULT_TOPIC_EPISODE_TARGET_COUNT, DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT } from "@studio/shared";
 import { extractNarrationSections } from "../production.js";
 import type { ActiveRun, TaskManagerRuntime } from "./runtime.js";
 import { getAssignedTopicAllocation } from "../context/channelContextBuilder.js";
@@ -102,7 +103,8 @@ export async function retryTopicSuggestions(this: TaskManagerRuntime, active: Ac
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();
   const allocation = getAssignedTopicAllocation(active.manifest);
-  const slotCount = allocation ? allocation.allocatedSlots.length : (active.topicMatrixPlan?.slots.length ?? 5);
+  const defaultSlotCount = DEFAULT_TOPIC_EPISODE_TARGET_COUNT + DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT;
+  const slotCount = allocation ? allocation.allocatedSlots.length : (active.topicMatrixPlan?.slots.length ?? defaultSlotCount);
   const turnId = await client.startTurn(
     threadId,
     `${active.manifest.prompt}\n\nSTRICT RETRY: The previous topic suggestions response failed slot plan validation (${reason}). Start over in a fresh response. Return exactly ${slotCount} JSON candidate(s) strictly matching the assigned allocated slot plan. For each candidate, provide ONLY the creative fields: slot_id, title, premise, why_it_fits, hook, estimated_potential. Do not return Markdown fences or commentary outside the JSON.`,

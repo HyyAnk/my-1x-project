@@ -216,7 +216,7 @@ export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 = { ...RECOMMENDED_MASCOT_
 
 export const MascotPlacementPresetSchema = z.object({
   position: z.enum(["bottom_left", "bottom_right"]).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),
-  scale: z.number().min(0.3).max(3).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale),
+  scale: z.number().min(0.3).max(10).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale),
   offset_x: z.number().int().min(-1500).max(1500).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x),
   offset_y: z.number().int().min(-1500).max(1500).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y),
   flip_x: z.boolean().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.flip_x),

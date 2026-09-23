@@ -123,7 +123,7 @@ describe("Mascot Stage default placement preset", () => {
         method: "POST",
         url: "/api/mascot-stage/settings",
         payload: {
-          default_placement: { position: "bottom_left", scale: 3.1, offset_x: 0, offset_y: 0 },
+          default_placement: { position: "bottom_left", scale: 10.1, offset_x: 0, offset_y: 0 },
         },
       });
       expect(response.statusCode).toBe(400);

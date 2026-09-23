@@ -13,7 +13,7 @@ export const MASCOT_RENDER_PHASES: MascotRenderPhase[] = ["intro", "question", "
 
 export const MASCOT_BASE_BOX_PX = 220;
 export const MASCOT_SCALE_MIN = 0.3;
-export const MASCOT_SCALE_MAX = 3;
+export const MASCOT_SCALE_MAX = 10;
 export const MASCOT_OFFSET_MIN = -1500;
 export const MASCOT_OFFSET_MAX = 1500;
 export const MASCOT_MOTION_SPEED_MIN = 0.1;

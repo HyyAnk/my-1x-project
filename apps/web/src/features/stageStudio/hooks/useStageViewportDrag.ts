@@ -105,7 +105,7 @@ export function useStageViewportDrag({
     const onMouseMove = (e: MouseEvent) => {
       if (!resizeStartRef.current) return;
       const dy = (resizeStartRef.current.startY - e.clientY) / (200 * stageScale);
-      const nextScale = Math.max(0.3, Math.min(3.0, Number((resizeStartRef.current.initScale + dy).toFixed(2))));
+      const nextScale = Math.max(0.3, Math.min(10.0, Number((resizeStartRef.current.initScale + dy).toFixed(2))));
       setScale(nextScale);
     };
     const onMouseUp = () => {

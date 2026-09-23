@@ -107,6 +107,8 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
             busySlotKey={busySlotKey}
             queuedSlotKeys={queuedSlotKeys}
             batchProgress={batchProgress}
+            mascotName={editingMascot?.name}
+            styleName={resolvedActiveStyle?.name}
             onBatchGenerate={handleBatchGenerateStyle}
             onGenerateSelected={handleGenerateSelectedSlots}
             onRegenerateSelected={handleRegenerateSelectedSlots}
@@ -121,6 +123,8 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
             busySlotKey={busySlotKey}
             queuedSlotKeys={queuedSlotKeys}
             batchProgress={batchProgress}
+            mascotName={editingMascot?.name}
+            styleName={resolvedActiveStyle?.name}
             onBatchGenerate={handleBatchGenerateStyle}
             onGenerateSelected={handleGenerateSelectedSlots}
             onRegenerateSelected={handleRegenerateSelectedSlots}

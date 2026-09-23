@@ -45,6 +45,23 @@ describe("bank inventory scan", () => {
     expect(result.eligible_sources[0].source_content_hash).toMatch(/^[a-f0-9]{64}$/);
   });
 
+  it("keeps one-choice Mystery Reveal questions eligible for Episode allocation", async () => {
+    const mysteryReveal: BankQuestionWithCooldown = {
+      ...q("mystery-1"),
+      archetype_id: "mystery_reveal",
+      format: "image_guess",
+      choices: [{ id: "a", text: "L Lawliet" }],
+      correct_choice_id: "a",
+    };
+    const result = await scanBankInventory(
+      { queryQuestionBankQuestions: () => Promise.resolve({ questions: [mysteryReveal], total: 1 }) },
+      { channelId: "channel-1", targetLanguage: "en" },
+    );
+
+    expect(result.eligible_by_policy.episode).toBe(1);
+    expect(result.eligible_sources.filter((source) => source.policy === "episode")).toHaveLength(1);
+  });
+
   it("keeps Bank availability snapshots independent of channel target language", async () => {
     const reader = { queryQuestionBankQuestions: () => Promise.resolve({ questions: [q("1")], total: 1 }) };
     const english = await scanBankInventory(reader, { channelId: "channel-1", targetLanguage: "en" });

@@ -9,6 +9,7 @@ import { retryQuizResearch, retryScript, retrySequenceScenes, retryVisualBible, 
 import { handleNotification } from "./stream/notificationHandler.js";
 import { handleServerRequest } from "./stream/approvalHandler.js";
 import { completeWithOutput } from "./handlers/outputCompletionHandler.js";
+import { resolveTopicRunTargetCounts } from "../context/topicRunTargets.js";
 
 export {
   retryQuizResearch,
@@ -79,10 +80,11 @@ export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
     if (task.task_type === "SUGGEST_TOPICS") {
       const allocation = getAssignedTopicAllocation(manifest);
       if (allocation && allocation.allocatedSlots.length === 0) {
+        const targets = resolveTopicRunTargetCounts(allocation.allocatedSlots, allocation.shortages);
         const emptyRun: TopicRunResult = {
           run_id: randomUUID(),
-          target_episode_count: 3,
-          target_short_reel_count: 2,
+          target_episode_count: targets.episode,
+          target_short_reel_count: targets.shortReel,
           candidates: [],
           shortages: allocation.shortages,
         };

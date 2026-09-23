@@ -13,16 +13,18 @@ function makeQuestion(overrides: Partial<BankQuestion> = {}): BankQuestion {
   const id = overrides.id ?? "q1";
   const format = overrides.format ?? "multiple_choice";
   const defaultChoices =
-    format === "true_false" || overrides.archetype_id === "versus_faceoff"
-      ? [
-          { id: "a", text: "Choice A" },
-          { id: "b", text: "Choice B" },
-        ]
-      : [
-          { id: "a", text: "Choice A" },
-          { id: "b", text: "Choice B" },
-          { id: "c", text: "Choice C" },
-        ];
+    overrides.archetype_id === "mystery_reveal"
+      ? [{ id: "a", text: "Choice A" }]
+      : format === "true_false" || overrides.archetype_id === "versus_faceoff"
+        ? [
+            { id: "a", text: "Choice A" },
+            { id: "b", text: "Choice B" },
+          ]
+        : [
+            { id: "a", text: "Choice A" },
+            { id: "b", text: "Choice B" },
+            { id: "c", text: "Choice C" },
+          ];
 
   return {
     id,
@@ -96,7 +98,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(result.allocatedSlots.some((slot) => slot.slot === 1)).toBe(false);
     });
 
-    it("complete fixture yields three coherent Episode allocations and two Reel allocations with no repeated source ID", () => {
+    it("complete fixture yields four coherent Episode allocations and four Reel allocations with no repeated source ID", () => {
       // 8 deep_trivia for slot 1 (Episode)
       const slot1Questions = Array.from({ length: 8 }, (_, i) =>
         makeQuestion({ id: `dt_ep_${i + 1}`, archetype_id: "deep_trivia", subtopic_id: "deep_space" }),
@@ -247,7 +249,9 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       );
       const slot5Questions = [makeQuestion({ id: "vf_reel_1", archetype_id: "versus_faceoff", domain_id: "space_earth" })];
       const slot6Questions = [makeQuestion({ id: "dt_reel_1", archetype_id: "deep_trivia", domain_id: "nature_animals" })];
-      const slot7Questions = [makeQuestion({ id: "tf_reel_1", archetype_id: "verdict_true_false", domain_id: "food_gastronomy", format: "true_false" })];
+      const slot7Questions = [
+        makeQuestion({ id: "tf_reel_1", archetype_id: "verdict_true_false", domain_id: "food_gastronomy", format: "true_false" }),
+      ];
       const slot8Questions = [makeQuestion({ id: "vf_reel_2", archetype_id: "versus_faceoff", domain_id: "nature_animals" })];
 
       const result = allocateSourceBackedTopicSlots({
@@ -928,6 +932,8 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(latest?.run_id).toBe(runResult.run_id);
       expect(latest?.candidates).toHaveLength(1);
       expect(latest?.shortages.length).toBeGreaterThanOrEqual(1);
+      expect(latest?.target_episode_count).toBe(4);
+      expect(latest?.target_short_reel_count).toBe(4);
     });
   });
 });

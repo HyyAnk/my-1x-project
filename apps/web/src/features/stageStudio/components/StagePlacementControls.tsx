@@ -69,15 +69,15 @@ export function StagePlacementControls({ studio }: StagePlacementControlsProps) 
       <SliderControl
         label={t("stageStudio.scaleTitle")}
         min={0.3}
-        max={3}
+        max={10}
         step={0.01}
         value={scale}
         displayValue={Math.round(scale * 100)}
         unit="%"
         inputMin={30}
-        inputMax={300}
+        inputMax={1000}
         onSliderChange={setScale}
-        onInputChange={(value) => setScale(Math.max(0.3, Math.min(3, value / 100)))}
+        onInputChange={(value) => setScale(Math.max(0.3, Math.min(10, value / 100)))}
       />
       <SliderControl
         label="X"

@@ -113,7 +113,11 @@ function validateStructure(question: BankQuestionWithCooldown, options: BankElig
   if (question.channel_cooldown?.is_cooldown) return reject("IN_COOLDOWN", "Question is currently in channel cooldown");
   const expectedCount =
     options.expectedChoiceCount ??
-    (options.targetArchetype ? bankRequiredChoiceCountForArchetype(options.targetArchetype) : question.format === "true_false" ? 2 : 3);
+    (options.targetArchetype
+      ? bankRequiredChoiceCountForArchetype(options.targetArchetype)
+      : question.format === "true_false"
+        ? 2
+        : bankRequiredChoiceCountForArchetype(question.archetype_id));
   if (expectedCount !== undefined && question.choices.length !== expectedCount) {
     return reject("INVALID_CHOICE_COUNT", `Question has ${question.choices.length} choices, expected ${expectedCount}`);
   }

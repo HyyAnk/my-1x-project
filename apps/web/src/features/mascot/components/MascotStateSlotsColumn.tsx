@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { CircleNotch, Lightning } from "@phosphor-icons/react";
 import type { MascotStateVariant } from "@studio/shared";
+import { useMascotBatchDownload } from "../hooks/useMascotBatchDownload";
 import { useMascotSlotQueueSelection } from "../hooks/useMascotSlotQueueSelection";
 import type { BatchProgressState, BatchSlotItem } from "../types/mascotBatch.types";
 import { MascotSlotSelectionToolbar } from "./slot/MascotSlotSelectionToolbar";
@@ -14,6 +15,8 @@ export type MascotStateSlotsColumnProps = {
   busySlotKey: string | null;
   queuedSlotKeys?: string[];
   batchProgress: BatchProgressState | null;
+  mascotName?: string;
+  styleName?: string;
   onBatchGenerate: (state: "thinking" | "celebrate") => void;
   onGenerateSelected?: (slots: BatchSlotItem[]) => Promise<boolean>;
   onRegenerateSelected?: (slots: BatchSlotItem[]) => Promise<boolean>;
@@ -28,6 +31,8 @@ export function MascotStateSlotsColumn({
   busySlotKey,
   queuedSlotKeys = [],
   batchProgress,
+  mascotName,
+  styleName,
   onBatchGenerate,
   onGenerateSelected,
   onRegenerateSelected,
@@ -67,6 +72,28 @@ export function MascotStateSlotsColumn({
     onGenerateSelected,
     onRegenerateSelected,
   });
+
+  const batchDownload = useMascotBatchDownload();
+
+  const selectedVariants = useMemo(() => {
+    return (selection.selectedSlotIndices ?? [])
+      .map((slotIndex) => variantBySlot.get(slotIndex))
+      .filter((variant): variant is MascotStateVariant => Boolean(variant?.image_url));
+  }, [selection.selectedSlotIndices, variantBySlot]);
+
+  const handleDownloadOriginalZip = useCallback(() => {
+    void batchDownload.downloadSelectedZip("original", selectedVariants, state, {
+      mascotName,
+      styleName,
+    });
+  }, [batchDownload, mascotName, selectedVariants, state, styleName]);
+
+  const handleDownloadTransparentZip = useCallback(() => {
+    void batchDownload.downloadSelectedZip("transparent", selectedVariants, state, {
+      mascotName,
+      styleName,
+    });
+  }, [batchDownload, mascotName, selectedVariants, state, styleName]);
 
   const getSlotStatusText = (slotIndex: number): string => {
     const slotKey = `${state}_${slotIndex}`;
@@ -125,6 +152,10 @@ export function MascotStateSlotsColumn({
           onDeselectAll={selection.deselectAll}
           onSubmitSelected={() => void selection.submitSelected()}
           totalSelectableCount={selection.totalSelectableCount}
+          onDownloadOriginalZip={handleDownloadOriginalZip}
+          onDownloadTransparentZip={handleDownloadTransparentZip}
+          isDownloadingZip={batchDownload.isDownloading}
+          downloadingZipKind={batchDownload.downloadingKind}
         />
       ) : null}
 

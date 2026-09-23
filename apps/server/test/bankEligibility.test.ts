@@ -36,6 +36,17 @@ describe("bank eligibility policies", () => {
     expect(evaluateEpisodeQuestionEligibility(question(), { targetLanguage: "English" }).eligible).toBe(true);
   });
 
+  it("uses the question archetype when validating Episode choice counts", () => {
+    const mysteryReveal = question({
+      archetype_id: "mystery_reveal",
+      format: "image_guess",
+      choices: [{ id: "a", text: "L Lawliet" }],
+      correct_choice_id: "a",
+    });
+
+    expect(evaluateEpisodeQuestionEligibility(mysteryReveal, { targetLanguage: "en" }).eligible).toBe(true);
+  });
+
   it("requires explicit English source metadata and ignores stored translations", () => {
     const translated = question({
       language: undefined,

@@ -106,6 +106,13 @@ void describe("topic source contracts", () => {
     );
   });
 
+  void it("defaults topic suggestion runs to four Episodes and four Short-Reels", () => {
+    const run = TopicRunResultSchema.parse({ run_id: "run-default-targets", candidates: [] });
+
+    assert.equal(run.target_episode_count, 4);
+    assert.equal(run.target_short_reel_count, 4);
+  });
+
   void it("hashes canonical object key order identically", () => {
     assert.equal(canonicalJsonStringify({ b: 2, a: 1 }), canonicalJsonStringify({ a: 1, b: 2 }));
     assert.equal(sourceSha256Hex(canonicalJsonStringify({ b: 2, a: 1 })), sourceSha256Hex(canonicalJsonStringify({ a: 1, b: 2 })));

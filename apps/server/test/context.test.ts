@@ -82,16 +82,15 @@ describe("ContextEngine", () => {
     expect(context.prompt).toContain("IMPORTANT TOPIC THEME REQUIREMENT");
     expect(context.prompt).toContain("Các loại nghề nghiệp");
     expect(context.prompt).toContain("Exactly 2 candidates MUST be directly inspired by");
-    expect(context.prompt).toContain("The remaining 4 candidates should be diverse");
+    expect(context.prompt).toContain("The remaining candidates should be diverse");
+    expect(context.prompt).toContain("Return exactly 8 JSON candidates");
+    expect(context.prompt).toContain("Slots 1-4 are Episode concepts");
+    expect(context.prompt).toContain("Slots 5-8 are Short-Reel concepts");
     expect(context.prompt).toContain("GAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY");
-    expect(context.prompt).toContain("Slot 1 (Episode - Deep Trivia)");
-    expect(context.prompt).toContain("Slot 2 (Episode - Mystery Reveal)");
-    expect(context.prompt).toContain("Slot 3 (Episode - True or False)");
-    expect(context.prompt).toContain("Slot 4 (Short-Reel - Versus Face-off)");
-    expect(context.prompt).toContain("Slot 5 (Short-Reel - Deep Trivia)");
-    expect(context.prompt).toContain("Slot 6 (Short-Reel - Versus Clash)");
-    expect(context.prompt).toContain("mystery_reveal");
-    expect(context.prompt).toContain("versus_faceoff");
+    expect(context.prompt).toMatch(/Slot 1 \(Episode - /);
+    expect(context.prompt).toMatch(/Slot 4 \(Episode - /);
+    expect(context.prompt).toMatch(/Slot 5 \(Short-Reel - /);
+    expect(context.prompt).toMatch(/Slot 8 \(Short-Reel - /);
   });
 
   it("uses the Quiz Engine DNA template for AI DNA generation", async () => {

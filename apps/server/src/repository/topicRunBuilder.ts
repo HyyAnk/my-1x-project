@@ -1,4 +1,6 @@
 import {
+  DEFAULT_TOPIC_EPISODE_TARGET_COUNT,
+  DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT,
   TopicCandidateSchema,
   TopicRunCandidateSchema,
   TopicRunResultSchema,
@@ -49,8 +51,8 @@ export function buildRunFromCandidates(candidates: TopicCandidate[]): TopicRun {
   return {
     run_id: runId,
     generated_at: nowIso(),
-    target_episode_count: 3,
-    target_short_reel_count: 3,
+    target_episode_count: DEFAULT_TOPIC_EPISODE_TARGET_COUNT,
+    target_short_reel_count: DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT,
     candidates: candidates.map((candidate) => normalizeCandidateWithBindings(candidate, runId)),
     shortages: [],
   };

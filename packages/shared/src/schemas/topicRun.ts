@@ -2,6 +2,9 @@ import { z } from "zod";
 import { TopicCandidateSchema } from "./channel.js";
 import { TopicSourceBindingSetSchema, TopicSourceShortageSchema } from "./topicSourceBinding.js";
 
+export const DEFAULT_TOPIC_EPISODE_TARGET_COUNT = 4;
+export const DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT = 4;
+
 export const TopicRunCandidateSchema = z
   .object({
     slot_id: z.string().trim().min(1),
@@ -23,8 +26,8 @@ export type TopicRunCandidate = z.infer<typeof TopicRunCandidateSchema>;
 export const TopicRunResultSchema = z
   .object({
     run_id: z.string().trim().min(1),
-    target_episode_count: z.number().int().nonnegative().default(3),
-    target_short_reel_count: z.number().int().nonnegative().default(3),
+    target_episode_count: z.number().int().nonnegative().default(DEFAULT_TOPIC_EPISODE_TARGET_COUNT),
+    target_short_reel_count: z.number().int().nonnegative().default(DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT),
     candidates: z.array(TopicRunCandidateSchema),
     shortages: z.array(TopicSourceShortageSchema).default([]),
   })
@@ -35,8 +38,8 @@ export const TopicRunSchema = z
   .object({
     run_id: z.string().trim().min(1),
     generated_at: z.string(),
-    target_episode_count: z.number().int().nonnegative().default(3),
-    target_short_reel_count: z.number().int().nonnegative().default(3),
+    target_episode_count: z.number().int().nonnegative().default(DEFAULT_TOPIC_EPISODE_TARGET_COUNT),
+    target_short_reel_count: z.number().int().nonnegative().default(DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT),
     candidates: z.array(TopicRunCandidateSchema),
     shortages: z.array(TopicSourceShortageSchema).default([]),
   })

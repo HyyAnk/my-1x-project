@@ -110,6 +110,7 @@ export function useMascotSlotQueueSelection({
   return {
     mode,
     selectedCount: selection.selectedCount,
+    selectedSlotIndices: selectedIndices,
     isSelected: selection.isSelected,
     isSlotSelectable,
     toggleSlot,

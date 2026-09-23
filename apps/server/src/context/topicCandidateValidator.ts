@@ -8,6 +8,7 @@ import {
 } from "@studio/shared";
 import type { TopicMatrixPlan } from "./topicMatrixPlanner.js";
 import type { AllocatedSlot } from "./bankTopicAllocation.js";
+import { resolveTopicRunTargetCounts } from "./topicRunTargets.js";
 import {
   extractRawCandidates,
   validateRawCandidateSlotIds,
@@ -82,13 +83,12 @@ export function normalizeTopicRunResult(input: ValidateTopicResponseInput): Topi
     candidates.push(buildCandidateFromItem(slot, rawList[matchIdx], channelId));
   }
 
-  const shortReelCount = allocatedSlots.filter((s) => s.contentKind === "short_reel").length;
-  const episodeCount = allocatedSlots.filter((s) => s.contentKind === "episode").length;
+  const targets = resolveTopicRunTargetCounts(allocatedSlots, shortages);
 
   return TopicRunResultSchema.parse({
     run_id: runId || makeId("run"),
-    target_episode_count: episodeCount || 3,
-    target_short_reel_count: shortReelCount || 3,
+    target_episode_count: targets.episode,
+    target_short_reel_count: targets.shortReel,
     candidates,
     shortages,
   });
