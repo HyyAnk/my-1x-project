@@ -1,7 +1,10 @@
+import { createHash } from "node:crypto";
 import type { MascotProfile } from "@studio/shared";
 import type { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
 import type { loadProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
+import { loadMasterReferenceImageBase64 } from "../mascot/services/mascotAssetLoader.js";
+import type { MascotVisualAnchor } from "./thumbnailTypes.js";
 
 export interface EpisodeQuestionItem {
   question: string;
@@ -30,6 +33,65 @@ export async function loadChannelMascot(
     return null;
   }
 }
+
+/**
+ * Loads the channel mascot visual anchor (master reference image base64, mimeType, sourceUrl, and sha256 fingerprint),
+ * or logs a warning and returns null safely.
+ */
+export async function loadChannelMascotVisualAnchor(
+  repository: RepositoryService,
+  channelId: string,
+  episodeId: string,
+  mascotId?: string | null,
+  logger?: StudioLogger,
+): Promise<MascotVisualAnchor | null> {
+  if (!mascotId) return null;
+  let mascot: MascotProfile;
+  try {
+    mascot = await repository.getMascot(mascotId);
+  } catch {
+    logger?.warn(`Assigned mascot ${mascotId} not found for visual anchor, proceeding without mascot anchor`, {
+      profileId: channelId,
+      workerId: episodeId,
+    });
+    return null;
+  }
+
+  try {
+    const base64 = await loadMasterReferenceImageBase64(repository, mascot, logger);
+    if (!base64) {
+      logger?.warn(`Mascot ${mascotId} has no master reference image available for visual anchor`, {
+        profileId: channelId,
+        workerId: episodeId,
+      });
+      return null;
+    }
+
+    const mimeMatch = base64.match(/^data:([^;]+);base64,/);
+    const mimeType = mimeMatch ? mimeMatch[1] : "image/png";
+    const sourceUrl = mascot.master_image_url || mascot.master_raw_image_url || undefined;
+    const base64Data = base64.includes(",") ? base64.split(",")[1] : base64;
+    const rawBuffer = Buffer.from(base64Data, "base64");
+    const fingerprint = createHash("sha256").update(rawBuffer).digest("hex");
+
+    return {
+      base64,
+      mimeType,
+      sourceUrl: sourceUrl ?? undefined,
+      fingerprint,
+    };
+  } catch (err) {
+    logger?.warn(
+      `Failed to extract mascot visual anchor for ${mascotId}: ${err instanceof Error ? err.message : String(err)}`,
+      {
+        profileId: channelId,
+        workerId: episodeId,
+      },
+    );
+    return null;
+  }
+}
+
 
 /**
  * Loads parsed quiz questions from repository scene data for an episode.

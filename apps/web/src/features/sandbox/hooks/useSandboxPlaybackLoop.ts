@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { getSandboxPhaseAtTime, type SandboxPhase } from "@studio/shared";
+import { getSandboxPhaseAtTime, type SandboxPhase, type SandboxPhaseTimeline } from "@studio/shared";
 
 export interface UseSandboxPlaybackLoopOptions {
   isPlaying: boolean;
@@ -9,6 +9,7 @@ export interface UseSandboxPlaybackLoopOptions {
   setTimelineSeconds: React.Dispatch<React.SetStateAction<number>>;
   setPhase: (phase: SandboxPhase) => void;
   totalDuration: number;
+  timeline?: SandboxPhaseTimeline;
   seekIframe: (time: number) => void;
   playIframe: (time?: number) => void;
   pauseIframe: () => void;
@@ -29,6 +30,7 @@ export function useSandboxPlaybackLoop({
   setTimelineSeconds,
   setPhase,
   totalDuration,
+  timeline,
   seekIframe,
   playIframe,
   pauseIframe,
@@ -90,12 +92,12 @@ export function useSandboxPlaybackLoop({
           if (isPlayingRef) {
             isPlayingRef.current = false;
           }
-          setPhase(getSandboxPhaseAtTime(0));
+          setPhase(getSandboxPhaseAtTime(0, timeline));
           return 0;
         }
 
         evaluateAndPlayCues(prev, next);
-        setPhase(getSandboxPhaseAtTime(next));
+        setPhase(getSandboxPhaseAtTime(next, timeline));
         return next;
       });
 
@@ -109,6 +111,7 @@ export function useSandboxPlaybackLoop({
       }
     };
   }, [
+    timeline,
     clearFiredCues,
     evaluateAndPlayCues,
     isPlaying,

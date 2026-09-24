@@ -9,10 +9,21 @@ import {
   pickShuffledUnusedPoses,
 } from "@studio/shared";
 import { buildMascotActionPrompt, type MascotPromptBuildOptions } from "./mascotActionPromptBuilder.js";
-import { MASCOT_STEP2_SOURCE_ISOLATION_TAGS, MASCOT_STUDIO_ISOLATION_TAGS, MASCOT_STYLE_PROMPTS } from "./mascotPromptConstants.js";
+import {
+  MASCOT_GREEN_SCREEN_REINFORCEMENT_TAGS,
+  MASCOT_STEP2_SOURCE_ISOLATION_TAGS,
+  MASCOT_STUDIO_ISOLATION_TAGS,
+  MASCOT_STYLE_PROMPTS,
+} from "./mascotPromptConstants.js";
 
 export { getMascotPoses, getUnusedMascotPoses, pickRandomUnusedPose, pickShuffledUnusedPoses };
-export { buildMascotActionPrompt, MASCOT_STEP2_SOURCE_ISOLATION_TAGS, MASCOT_STUDIO_ISOLATION_TAGS, MASCOT_STYLE_PROMPTS };
+export {
+  buildMascotActionPrompt,
+  MASCOT_GREEN_SCREEN_REINFORCEMENT_TAGS,
+  MASCOT_STEP2_SOURCE_ISOLATION_TAGS,
+  MASCOT_STUDIO_ISOLATION_TAGS,
+  MASCOT_STYLE_PROMPTS,
+};
 export type { MascotPromptBuildOptions };
 
 /**

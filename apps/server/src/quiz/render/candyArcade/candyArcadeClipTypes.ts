@@ -17,6 +17,7 @@ import type { ProductionMascotTimelineEvent } from "../productionMascotRenderer.
 import type { Copy } from "./quizCopy.js";
 
 export type QuestionClipInput = {
+  countdownSeconds?: number;
   start: number;
   questionNarrationStart?: number;
   choicesStart: number;

@@ -1,6 +1,6 @@
 import type { DirectorPlan, QuestionHistoryCheckResult, QuizV2 } from "@studio/shared";
 import { RepositoryError } from "../../../repository.js";
-import { createDefaultDirectorPlan } from "../../director/parseDirectorPlan.js";
+import { createEpisodeDirectorPlan } from "../../director/episodeDirectorPlan.js";
 import { deriveQuizV2FromScenes } from "../../domain/quiz.js";
 import { checkQuestionsAgainstHistory } from "../../qa/questionHistory.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
@@ -35,6 +35,8 @@ export async function generateQuiz(
     language: channel.language,
     ageBand: episode.quiz_config.age_band,
     format: episode.quiz_config.quiz_format,
+    targetLayout: episode.quiz_config.target_layout,
+    gameplayId: episode.quiz_config.archetype,
     scenes,
   });
   const artifact_path = await input.repository.writeQuiz(input.channelId, input.episodeId, quiz);
@@ -53,9 +55,12 @@ export async function generateQuiz(
 export async function generateDirector(
   input: QuizOrchestratorInput,
 ): Promise<{ director_plan: DirectorPlan; artifact_path: string; invalidated: string[] }> {
-  const quiz = await input.repository.readQuiz(input.channelId, input.episodeId);
+  const [quiz, episode] = await Promise.all([
+    input.repository.readQuiz(input.channelId, input.episodeId),
+    input.repository.getEpisode(input.channelId, input.episodeId),
+  ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before the Director plan", "QUIZ_REQUIRED");
-  const director_plan = createDefaultDirectorPlan(quiz);
+  const director_plan = createEpisodeDirectorPlan(quiz, episode.quiz_config);
   const artifact_path = await input.repository.writeDirectorPlan(input.channelId, input.episodeId, director_plan);
   const invalidatedStages = invalidateQuizArtifacts("director");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);

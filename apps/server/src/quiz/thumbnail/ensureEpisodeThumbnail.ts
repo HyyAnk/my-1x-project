@@ -2,6 +2,7 @@ import type { ThumbnailAspectRatio, ThumbnailManifest } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { StudioLogger } from "../../logger.js";
 import { generateEpisodeThumbnail, resolveTargetThumbnailRatio } from "./thumbnailService.js";
+import { loadChannelMascotVisualAnchor } from "./thumbnailLoaders.js";
 import { getEpisodeThumbnailManifest } from "./thumbnailManifestStore.js";
 import type { GenerateEpisodeThumbnailOptions } from "./thumbnailVariantGenerator.js";
 import {
@@ -35,11 +36,13 @@ async function ensureThumbnailVariants(
   options: GenerateEpisodeThumbnailOptions,
 ): Promise<ThumbnailManifest | null> {
   const { channelId, episodeId } = options;
+  const logger = new StudioLogger(repository.rootDirectory);
   const [episode, channel, quiz] = await Promise.all([
     repository.getEpisode(channelId, episodeId),
     repository.getChannel(channelId),
     repository.readQuiz(channelId, episodeId),
   ]);
+  const visualAnchor = await loadChannelMascotVisualAnchor(repository, channelId, episodeId, channel.mascot_id, logger);
   const ratio = resolveTargetThumbnailRatio(episode, options.aspectRatio);
   const ratios: ThumbnailAspectRatio[] = ratio === "both" ? ["16:9", "9:16"] : [ratio];
   const fingerprint = thumbnailInputFingerprint({
@@ -49,6 +52,7 @@ async function ensureThumbnailVariants(
     language: channel.language,
     style: episode.quiz_config.resolved_visual_style ?? episode.quiz_config.visual_style,
     mascotId: channel.mascot_id,
+    mascotAnchorFingerprint: visualAnchor?.fingerprint,
     layout: options.layoutOverride,
     hook: options.customHookText,
     badge: options.badgeOverride,
@@ -56,7 +60,6 @@ async function ensureThumbnailVariants(
   const checkpointPath = repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "thumbnail-reuse.json");
   const checkpoint = await readThumbnailReuseCheckpoint(checkpointPath);
   let manifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);
-  const logger = new StudioLogger(repository.rootDirectory);
   for (const target of ratios) {
     const assetPath =
       target === "16:9"

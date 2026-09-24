@@ -5,7 +5,8 @@ export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
 
   const semanticProblems = quiz.questions.flatMap((question) => {
     const result: QuizIssue[] = [];
-    const requiredChoiceCount = quizChoiceCountForFormat(question.format, question.answer_mode);
+    const requiredChoiceCount =
+      question.gameplay_id === "versus_faceoff" ? 2 : quizChoiceCountForFormat(question.format, question.answer_mode);
     if (question.choices.length !== requiredChoiceCount) {
       result.push({
         code: "quiz_choice_count_invalid",

@@ -87,7 +87,8 @@ export function normalizeRawQuizQuestion(raw: unknown, targetFallback?: QuizQues
     (typeof obj.answer_mode === "string" && (obj.answer_mode === "single_reveal" || obj.answer_mode === "choice_selection")
       ? obj.answer_mode
       : targetFallback?.answer_mode) ?? (choices.length === 1 ? "single_reveal" : "choice_selection");
-  const requiredChoiceCount = quizChoiceCountForFormat(format, answerMode);
+  const gameplayId = targetFallback?.gameplay_id ?? obj.gameplay_id;
+  const requiredChoiceCount = gameplayId === "versus_faceoff" ? 2 : quizChoiceCountForFormat(format, answerMode);
 
   if (choices.length !== requiredChoiceCount) {
     throw new Error(
@@ -108,6 +109,7 @@ export function normalizeRawQuizQuestion(raw: unknown, targetFallback?: QuizQues
     id,
     number,
     format,
+    gameplay_id: gameplayId,
     answer_mode: answerMode,
     difficulty,
     question,

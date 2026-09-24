@@ -153,6 +153,7 @@ export function buildCandyArcadeQuestionTimeline(input: CandyArcadeQuestionTimel
     if (timing.end - timing.start > 0.04) {
       clips.push(
         questionClip({
+          countdownSeconds: input.events.filter((event) => event.question_id === question.id && event.type === "countdown.tick").length || undefined,
           start: timing.start,
           questionNarrationStart: timing.questionNarrationStart,
           choicesStart: timing.choicesStart,

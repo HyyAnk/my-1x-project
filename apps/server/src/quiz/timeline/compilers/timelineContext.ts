@@ -12,7 +12,7 @@ export class TimelineContext {
   cursor = 0;
 
   constructor(
-    readonly policy: QuizTimingPolicy,
+    public policy: QuizTimingPolicy,
     readonly audioDurations?: Record<string, number>,
   ) {}
 

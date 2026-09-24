@@ -3,8 +3,16 @@ import type { MascotActionType } from "@studio/shared";
 /**
  * Generates an ultra-crisp procedural SVG fallback converted to PNG-like SVG data
  */
-export function generateProceduralMascotArt(name: string, color: string, _state?: string): Uint8Array {
+export function generateProceduralMascotArt(
+  name: string,
+  color: string,
+  _state?: string,
+  options?: { greenScreen?: boolean },
+): Uint8Array {
   const primaryColor = color || "#06b6d4";
+  const bgRect = options?.greenScreen
+    ? '<rect width="512" height="512" fill="#00FF00"/>'
+    : '<rect width="512" height="512" rx="64" fill="none"/>';
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -15,7 +23,7 @@ export function generateProceduralMascotArt(name: string, color: string, _state?
       <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="rgba(0,0,0,0.3)"/>
     </filter>
   </defs>
-  <rect width="512" height="512" rx="64" fill="none"/>
+  ${bgRect}
   <ellipse cx="256" cy="460" rx="140" ry="24" fill="rgba(0,0,0,0.15)"/>
   <g filter="url(#shadow)">
     <!-- Ears -->
@@ -58,6 +66,7 @@ export function generateProceduralMascotArt(name: string, color: string, _state?
 
 export interface ProceduralArtOptions {
   composition?: "full_body" | "half_body_16_9";
+  greenScreen?: boolean;
 }
 
 /**
@@ -195,7 +204,7 @@ export function generateProceduralStateArt(
       <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="rgba(0,0,0,0.3)"/>
     </filter>
   </defs>
-  <rect width="512" height="512" rx="64" fill="none"/>
+  ${options?.greenScreen ? '<rect width="512" height="512" fill="#00FF00"/>' : '<rect width="512" height="512" rx="64" fill="none"/>'}
   <ellipse cx="256" cy="460" rx="140" ry="24" fill="rgba(0,0,0,0.15)"/>
   <g filter="url(#shadow_${action})">
     <!-- Ears -->

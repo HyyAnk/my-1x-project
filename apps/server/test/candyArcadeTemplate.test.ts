@@ -306,7 +306,7 @@ describe("Candy Arcade visual template", () => {
     expect(plasticToyPrompt.prompt).toContain(
       "Living creatures, characters, dinosaurs, and animals must have complete, expressive natural eyes",
     );
-    expect(plasticToyPrompt.cacheVersion).toContain("v5-layout-framing");
+    expect(plasticToyPrompt.cacheVersion).toContain("v6-clean-framing");
 
     expect(assessQuizVisualLayout({ quiz: candyArcadeQuiz, director }).filter((issue) => issue.severity === "blocker")).toEqual([]);
     const fairnessIssues = assessQuizVisualLayout({ quiz: candyArcadeQuiz, director, assetPlan });

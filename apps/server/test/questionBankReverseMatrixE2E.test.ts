@@ -494,6 +494,8 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       const promptVersus = buildReverseGenerationPrompt({ archetypeId: "versus_faceoff", targets: [target] });
       expect(promptVersus).toContain("SPECIALIZED VERSUS FACEOFF COMPARATIVE DIRECTIVE");
       expect(promptVersus).toContain("NO REDUNDANT CHOICE TEXT");
+      expect(promptVersus).toContain("STRICT COMPETITOR SYMMETRY & SHARED PREMISE");
+      expect(promptVersus).toContain("NO ONE-SIDED TRIVIA");
 
       const promptSpotting = buildReverseGenerationPrompt({ archetypeId: "visual_spotting", targets: [target] });
       expect(promptSpotting).toContain("SPECIALIZED VISUAL SPOTTING OUTLIER DIRECTIVE");

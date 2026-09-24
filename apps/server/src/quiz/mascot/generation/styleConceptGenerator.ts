@@ -6,7 +6,7 @@ import { buildMascotStyleConceptPrompt } from "../../mascotPromptContract.js";
 import { generateProceduralMascotArt } from "../proceduralArt.js";
 import { generateMascotArtWithFallback } from "../services/mascotAiImageClient.js";
 import { loadMasterReferenceImageBase64 } from "../services/mascotAssetLoader.js";
-import { hasMeaningfulPngTransparency } from "../../../utils/imageMatting.js";
+import { hasMeaningfulPngTransparency, validateGreenScreen } from "../../../utils/imageMatting.js";
 import { deletePreviousMascotAsset } from "./artGeneratorHelpers.js";
 
 export async function generateMascotStyleConcept(
@@ -45,13 +45,22 @@ export async function generateMascotStyleConcept(
       background: "opaque",
       cancellationSignal: options.signal,
       idempotencyKey: `mascot_${mascot.id}_${styleId}_anchor_${timestamp}`,
+      requireGreenScreen: true,
+      composition: "1:1",
     },
     logger,
     logContext: { profileId: mascot.id, styleId, hasRefImage: Boolean(referenceImageBase64) },
     actionLabel: `mascot style concept for ${mascot.name} style ${style.name} (${styleId})`,
-    fallbackArt: () => generateProceduralMascotArt(mascot.name, mascot.color_theme, `style_${styleId}`),
+    fallbackArt: () => generateProceduralMascotArt(mascot.name, mascot.color_theme, `style_${styleId}`, { greenScreen: true }),
   });
   options.signal?.throwIfAborted();
+
+  if (!placeholder) {
+    const rawValidation = validateGreenScreen(rawBytes, { composition: "1:1" });
+    if (!rawValidation.isValid) {
+      throw new Error(`Style concept raw image failed green-screen validation (${rawValidation.reason})`);
+    }
+  }
 
   if (!hasMeaningfulPngTransparency(mattedBytes)) {
     throw new Error("Style concept background removal did not produce a transparent PNG cutout");

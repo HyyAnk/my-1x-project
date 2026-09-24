@@ -24,6 +24,7 @@ import { renderQuizSceneChoicePart, renderQuizSceneThinkingPart, renderStableQui
 import { rewardFx } from "./candyArcade/candyArcadeClips.js";
 import { renderQuizLayoutBody } from "./layouts/registry.js";
 import type { QuizScenePhase } from "./scene/quizScene.types.js";
+import { sandboxGameplayTimeline } from "./sandbox/sandboxGameplayTimeline.js";
 import { sandboxRehearsalDocument, sandboxRewardFx, sandboxSnapshotDocument } from "./sandbox/sandboxDocumentTemplates.js";
 
 export { sandboxSnapshotDocument, sandboxRehearsalDocument, sandboxRewardFx };
@@ -50,7 +51,7 @@ function buildSandboxRehearsalComposition(
   rawInput?: SandboxPreviewInput,
 ): SandboxPreviewResponse {
   const isMystery = parsed.layout_id === "mystery_reveal";
-  const timeline = computeSandboxPhaseTimeline(undefined, { isSingleReveal: isMystery });
+  const timeline = sandboxGameplayTimeline(parsed);
   const mascotEnabled = parsed.mascot_enabled !== false && parsed.mascot_id !== "none";
   const mascotConfig = {
     enabled: mascotEnabled,
@@ -78,7 +79,7 @@ function buildSandboxRehearsalComposition(
         : parsed.mascot_phase === "reveal"
           ? timeline.revealStart
           : parsed.mascot_phase === "explain"
-            ? timeline.revealStart + 0.8
+          ? timeline.explainStart
             : 0;
 
   const timelineEvents: ProductionMascotTimelineEvent[] = isMystery
@@ -90,7 +91,7 @@ function buildSandboxRehearsalComposition(
         { type: "choices.enter", at_seconds: timeline.choicesStart },
         { type: "countdown.start", at_seconds: timeline.thinkingStart },
         { type: "answer.reveal", at_seconds: timeline.revealStart },
-        { type: "fact.enter", at_seconds: timeline.revealStart + 0.8 },
+        { type: "fact.enter", at_seconds: timeline.explainStart },
       ];
 
   const hasExplicitActionOverride =
@@ -126,8 +127,9 @@ function buildSandboxRehearsalComposition(
   const parts = buildQuizSceneParts(model);
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });
-  const rewardStart = timeline.revealStart + 0.8;
+  const rewardStart = timeline.rewardStart ?? timeline.revealStart + 0.8;
   const timing = {
+    countdownSeconds: timeline.countdownSeconds,
     start: 0,
     choicesStart: timeline.choicesStart,
     thinkingStart: timeline.thinkingStart,
@@ -156,6 +158,7 @@ function buildSandboxRehearsalComposition(
   const rewardHtml = rewardFx("big");
   const html = sandboxRehearsalDocument(model, parts, stableParts, stageContent, mascotHtml, rewardHtml, timeline);
   return {
+    timeline,
     html,
     css: candyArcadeCss({ fontMode: "preview", aspectRatio: model.aspectRatio, backgroundStyles: [parts.background.style] }),
     contrast_report: evaluateContrast(model.palette.text, model.palette.surface, 4.5),

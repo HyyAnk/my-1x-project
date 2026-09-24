@@ -180,11 +180,6 @@ export function applyPresetToStudio({
     }
   }
   if (preset.mascot_id !== undefined) mascot.setMascotId(preset.mascot_id || "none");
-  if (preset.mascot_position) mascot.setMascotPosition(preset.mascot_position);
-  if (preset.mascot_scale !== undefined) mascot.setMascotScale(preset.mascot_scale);
-  if (preset.mascot_offset_x !== undefined) mascot.setMascotOffsetX(preset.mascot_offset_x);
-  if (preset.mascot_offset_y !== undefined) mascot.setMascotOffsetY(preset.mascot_offset_y);
-  if (preset.mascot_flip_x !== undefined) mascot.setMascotFlipX(preset.mascot_flip_x);
   if (preset.channel_brand_name !== undefined && brandName) {
     brandName.setChannelBrandName(preset.channel_brand_name);
   }

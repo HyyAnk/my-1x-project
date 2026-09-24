@@ -42,6 +42,7 @@ async function assertMatchesBaseline(caseItem: VisualSnapshotCase): Promise<void
   const diff = await diffPngs(baseline, captured);
   if (diff.diffPercent > MAX_DIFF_PERCENT) {
     const diffPath = await writeDiffArtifact(caseName, diff);
+    await writeFile(diffPath.replace(/-diff\.png$/, "-actual.png"), captured);
     throw new Error(
       `Visual regression in ${caseName}: ${diff.differentPixels}/${diff.totalPixels} pixels differ ` +
         `(${diff.diffPercent.toFixed(3)}% > ${MAX_DIFF_PERCENT}%). Diff image: ${diffPath}. ` +

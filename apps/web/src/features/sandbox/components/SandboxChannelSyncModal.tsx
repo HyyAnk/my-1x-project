@@ -6,7 +6,6 @@ import {
   QUESTION_COUNTER_STYLE_LABELS,
   THINKING_BAR_STYLE_LABELS,
   type Channel,
-  type MascotProfile,
   type QuizAnswerCardStyle,
   type QuizBackgroundStyle,
   type QuizQuestionBoxStyle,
@@ -24,10 +23,6 @@ export interface SandboxChannelSyncModalProps {
   channels: Channel[];
   selectedChannelId: string;
   setSelectedChannelId: (id: string) => void;
-  mascotId: string;
-  activeMascot?: MascotProfile | null;
-  syncMascotToChannel: boolean;
-  setSyncMascotToChannel: (sync: boolean) => void;
   layoutId: QuizPreviewLayoutId;
   paletteId: string;
   thinkingBarStyle: QuizThinkingBarStyle;
@@ -35,8 +30,6 @@ export interface SandboxChannelSyncModalProps {
   answerCardStyle: QuizAnswerCardStyle;
   counterStyle: QuizQuestionCounterStyle;
   backgroundStyle: QuizBackgroundStyle;
-  mascotPosition: string;
-  mascotScale: number;
   savingChannel: boolean;
   onApply: () => void;
 }
@@ -47,10 +40,6 @@ export function SandboxChannelSyncModal({
   channels,
   selectedChannelId,
   setSelectedChannelId,
-  mascotId,
-  activeMascot,
-  syncMascotToChannel,
-  setSyncMascotToChannel,
   layoutId,
   paletteId,
   thinkingBarStyle,
@@ -58,8 +47,6 @@ export function SandboxChannelSyncModal({
   answerCardStyle,
   counterStyle,
   backgroundStyle,
-  mascotPosition,
-  mascotScale,
   savingChannel,
   onApply,
 }: SandboxChannelSyncModalProps) {
@@ -119,15 +106,7 @@ export function SandboxChannelSyncModal({
           </select>
         </div>
 
-        {/* Sync Mascot Checkbox */}
-        <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", marginBottom: "14px", cursor: "pointer" }}>
-          <input type="checkbox" checked={syncMascotToChannel} onChange={(e) => setSyncMascotToChannel(e.target.checked)} />
-          <span>
-            {t("visualSandbox.syncMascotCheckbox", {
-              name: activeMascot ? activeMascot.name : t("visualSandbox.summaryMascotDisabled"),
-            })}
-          </span>
-        </label>
+        <p>Mascot assignments are managed in Stage Studio.</p>
 
         <div
           style={{
@@ -163,14 +142,6 @@ export function SandboxChannelSyncModal({
           <div>
             <strong>• {t("visualSandbox.summaryBackground")}</strong> {BACKGROUND_STYLE_LABELS[backgroundStyle]}
           </div>
-          {syncMascotToChannel && (
-            <div>
-              <strong>• {t("visualSandbox.summaryMascot")}</strong>{" "}
-              {mascotId === "none" || !activeMascot
-                ? t("visualSandbox.summaryMascotDisabled")
-                : `${activeMascot.name} (${mascotPosition}, ${mascotScale.toFixed(2)}x)`}
-            </div>
-          )}
         </div>
 
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>

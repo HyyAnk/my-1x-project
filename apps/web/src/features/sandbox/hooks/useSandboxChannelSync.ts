@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { type Channel, type ChannelMascotConfig, type MascotPlacementPreset } from "@studio/shared";
+import { type Channel } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
 import type { SandboxDesignState } from "./useSandboxDesignState";
-import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxTransitionState } from "./useSandboxTransitionState";
 
 type UseSandboxChannelSyncInput = {
@@ -13,20 +12,15 @@ type UseSandboxChannelSyncInput = {
     SandboxDesignState,
     "thinkingBarStyle" | "questionBoxStyle" | "answerCardStyle" | "counterStyle" | "backgroundStyle" | "paletteId"
   >;
-  mascot: Pick<
-    SandboxMascotState,
-    "mascotId" | "mascotEnabled" | "mascotPosition" | "mascotScale" | "mascotOffsetX" | "mascotOffsetY" | "mascotFlipX"
-  >;
   transition?: Pick<SandboxTransitionState, "syncFromChannel">;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
 };
 
-export function useSandboxChannelSync({ channels, design, mascot, transition, onNotice, onRefreshChannels }: UseSandboxChannelSyncInput) {
+export function useSandboxChannelSync({ channels, design, transition, onNotice, onRefreshChannels }: UseSandboxChannelSyncInput) {
   const { t } = useTranslation();
   const [channelSyncOpen, setChannelSyncOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState(channels[0]?.channel_id || "");
-  const [syncMascotToChannel, setSyncMascotToChannel] = useState(true);
   const [savingChannel, setSavingChannel] = useState(false);
 
   useEffect(() => {
@@ -53,40 +47,6 @@ export function useSandboxChannelSync({ channels, design, mascot, transition, on
         default_palette_id: design.paletteId,
       });
 
-      if (syncMascotToChannel && mascot.mascotId) {
-        if (mascot.mascotId === "none") {
-          await api.assignMascotToChannel(selectedChannelId, { mascot_id: null, config: { enabled: false } });
-        } else {
-          const activePlacement: MascotPlacementPreset = {
-            position: mascot.mascotPosition,
-            scale: mascot.mascotScale,
-            offset_x: mascot.mascotOffsetX,
-            offset_y: mascot.mascotOffsetY,
-            flip_x: mascot.mascotFlipX,
-          };
-
-          const placements = { "16:9": activePlacement };
-
-          const config: ChannelMascotConfig = {
-            enabled: mascot.mascotEnabled,
-            position: placements["16:9"].position,
-            scale: placements["16:9"].scale,
-            offset_x: placements["16:9"].offset_x,
-            offset_y: placements["16:9"].offset_y,
-            flip_x: placements["16:9"].flip_x,
-            show_in_intro: targetChannel.mascot_config?.show_in_intro ?? false,
-            show_in_outro: targetChannel.mascot_config?.show_in_outro ?? false,
-            show_in_question: true,
-            placements,
-          };
-
-          await api.assignMascotToChannel(selectedChannelId, {
-            mascot_id: mascot.mascotId,
-            config,
-          });
-        }
-      }
-
       if (onRefreshChannels) await onRefreshChannels();
       setChannelSyncOpen(false);
       if (onNotice) {
@@ -106,8 +66,6 @@ export function useSandboxChannelSync({ channels, design, mascot, transition, on
     setChannelSyncOpen,
     selectedChannelId,
     setSelectedChannelId,
-    syncMascotToChannel,
-    setSyncMascotToChannel,
     savingChannel,
     handleApplyToChannel,
   };

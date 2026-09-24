@@ -30,7 +30,7 @@ export const SandboxPreviewInputBaseSchema = z.object({
   counter_style: QuizQuestionCounterStyleSchema.optional().default("hanging_woodsign"),
   background_style: QuizBackgroundStyleSchema.optional().default("candy_rays"),
   phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
-  timeline_time_seconds: z.number().min(0).max(15).optional(),
+  timeline_time_seconds: z.number().min(0).max(3600).optional(),
   question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
   choices: z.array(z.string().trim().min(1)).max(QUIZ_MAX_CHOICES_PER_QUESTION).optional().default(["Jupiter", "Saturn", "Uranus"]),
   correct_choice_index: z
@@ -49,6 +49,8 @@ export const SandboxPreviewInputBaseSchema = z.object({
     .optional()
     .default("This planet features remarkable atmospheric conditions and the most stunning ring system in the solar system!"),
   mascot_id: z.string().nullable().optional(),
+  mascot_placement_source: z.enum(["stage_default", "channel"]).optional(),
+  mascot_channel_id: z.string().min(1).optional(),
   mascot_style_id: z.string().nullable().optional(),
   mascot_style_selection: MascotStyleSelectionSchema.optional(),
   style_preset_id: z.string().optional(),
@@ -111,6 +113,19 @@ export type SandboxPreviewInput = z.infer<typeof SandboxPreviewInputSchema>;
 export type SandboxPreviewRequest = z.input<typeof SandboxPreviewInputSchema>;
 
 export const SandboxPreviewResponseSchema = z.object({
+  timeline: z
+    .object({
+      countdownSeconds: z.number().optional(),
+      questionStart: z.number(),
+      choicesStart: z.number(),
+      thinkingStart: z.number(),
+      timerHideAt: z.number().optional(),
+      revealStart: z.number(),
+      rewardStart: z.number().optional(),
+      explainStart: z.number(),
+      totalDuration: z.number(),
+    })
+    .optional(),
   html: z.string(),
   css: z.string(),
   contrast_report: z.object({

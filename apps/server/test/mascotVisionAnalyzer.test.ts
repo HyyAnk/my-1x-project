@@ -14,6 +14,7 @@ import {
 import {
   analyzeMascotConceptImage,
   classifyHexColor,
+  extractOpaqueColorStats,
   normalizeHexColor,
   normalizeSuggestedStyle,
   performLocalPixelAnalysis,
@@ -65,6 +66,36 @@ async function createSamplePngBuffer(r = 0, g = 210, b = 255): Promise<Buffer> {
       background: { r, g, b, alpha: 1 },
     },
   })
+    .png()
+    .toBuffer();
+}
+
+async function createTransparentPngWithShapeBuffer(
+  shapeR = 0,
+  shapeG = 210,
+  shapeB = 255,
+  transparentR = 8,
+  transparentG = 8,
+  transparentB = 8,
+): Promise<Buffer> {
+  const hex = `#${shapeR.toString(16).padStart(2, "0")}${shapeG.toString(16).padStart(2, "0")}${shapeB.toString(16).padStart(2, "0")}`;
+  return await sharp({
+    create: {
+      width: 100,
+      height: 100,
+      channels: 4,
+      background: { r: transparentR, g: transparentG, b: transparentB, alpha: 0 },
+    },
+  })
+    .composite([
+      {
+        input: Buffer.from(
+          `<svg width="100" height="100"><circle cx="50" cy="50" r="25" fill="${hex}" /></svg>`,
+        ),
+        top: 0,
+        left: 0,
+      },
+    ])
     .png()
     .toBuffer();
 }
@@ -130,6 +161,74 @@ describe("Mascot Vision Feature Extraction & Multimodal Profiling", () => {
       assert.equal(classifyHexColor(result.dominant_color), "red");
       assert.ok(result.tags.includes("red"));
       assert.equal(result.confidence, 0.6);
+    });
+
+    it("accurately detects dominant color in a transparent PNG and avoids sampling transparent pixels as #080808 black", async () => {
+      // 80% transparent image with transparent pixels having RGB (8,8,8) and a cyan circle in center
+      const buffer = await createTransparentPngWithShapeBuffer(0, 210, 255, 8, 8, 8);
+      const result = await performLocalPixelAnalysis(buffer);
+
+      assert.equal(result.source, "local_fallback");
+      assert.notEqual(result.dominant_color, "#080808");
+      assert.equal(classifyHexColor(result.dominant_color), "cyan");
+      assert.ok(result.tags.includes("cyan"));
+      assert.ok(!result.tags.includes("black"), "Transparent background must not cause 'black' tag");
+      assert.ok(result.tags.includes("isolated"), "Image with alpha must be tagged as isolated");
+      assert.ok(
+        !result.suggested_master_prompt.includes("black character mascot"),
+        "Must not generate 'A cute black character mascot' for transparent images",
+      );
+      assert.ok(
+        !result.suggested_master_prompt.includes("#080808"),
+        "Must not inject #080808 into master prompt for transparent images",
+      );
+    });
+
+    it("generates professional named fallback prompt when mascotName is provided", async () => {
+      const buffer = await createTransparentPngWithShapeBuffer(0, 210, 255);
+      const result = await performLocalPixelAnalysis(buffer, "Feli");
+
+      assert.equal(result.subject, "Feli Mascot");
+      assert.ok(
+        result.suggested_master_prompt.includes("named Feli"),
+        "Fallback prompt should include character name",
+      );
+      assert.ok(
+        !result.suggested_master_prompt.includes("black character"),
+        "Fallback prompt must not include black character",
+      );
+      assert.ok(
+        !result.suggested_master_prompt.includes("#080808"),
+        "Fallback prompt must not include #080808",
+      );
+    });
+
+    it("safely handles 100% transparent image with neutral fallback rather than #080808", async () => {
+      const fullTransparentBuffer = await sharp({
+        create: {
+          width: 64,
+          height: 64,
+          channels: 4,
+          background: { r: 8, g: 8, b: 8, alpha: 0 },
+        },
+      })
+        .png()
+        .toBuffer();
+
+      const result = await performLocalPixelAnalysis(fullTransparentBuffer);
+      assert.equal(result.dominant_color, "#06b6d4");
+      assert.ok(!result.suggested_master_prompt.includes("#080808"));
+      assert.ok(!result.suggested_master_prompt.includes("black character"));
+    });
+
+    it("extracts distinct palette colors from opaque pixels", async () => {
+      const stats = await extractOpaqueColorStats(
+        await createTransparentPngWithShapeBuffer(255, 140, 0),
+      );
+      assert.ok(stats.palette.length >= 1);
+      assert.notEqual(stats.dominantHex, "#080808");
+      assert.equal(stats.hasAlpha, true);
+      assert.ok(stats.opaquePixelCount > 0);
     });
   });
 

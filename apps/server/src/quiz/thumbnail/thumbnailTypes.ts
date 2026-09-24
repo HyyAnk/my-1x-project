@@ -68,3 +68,11 @@ export type CompiledThumbnailPrompts = {
   prompt_16_9: string;
   prompt_9_16: string;
 };
+
+export interface MascotVisualAnchor {
+  base64: string; // valid data URL e.g. data:image/png;base64,...
+  mimeType: string; // e.g. 'image/png'
+  sourceUrl?: string; // relative asset url
+  fingerprint: string; // sha256 hex of raw bytes
+}
+

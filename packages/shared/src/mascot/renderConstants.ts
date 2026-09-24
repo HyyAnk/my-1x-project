@@ -1,5 +1,6 @@
 import type { MascotActionType, MascotMotionIntensity, MascotMotionPreset, MascotState } from "../enums.js";
 import type { MascotRenderAspectRatio, MascotPhaseRuleV2, MascotPlacementV2, MascotRenderPhase } from "./renderTypes.js";
+import { STAGE_PLACEMENT_DEFAULT } from "./stagePlacementDefaults.js";
 
 export const MASCOT_RENDER_CONTRACT_VERSION = 2 as const;
 
@@ -84,11 +85,11 @@ export const MASCOT_DEFAULT_PLACEMENT: MascotPlacementV2 = {
 };
 
 export const MASCOT_RECOMMENDED_PLACEMENT: MascotPlacementV2 = {
-  anchor: "bottom_left",
-  scale: 2.31,
-  offset_x: 127,
-  offset_y: 119,
-  flip_x: false,
+  anchor: STAGE_PLACEMENT_DEFAULT.position,
+  scale: STAGE_PLACEMENT_DEFAULT.scale,
+  offset_x: STAGE_PLACEMENT_DEFAULT.offset_x,
+  offset_y: STAGE_PLACEMENT_DEFAULT.offset_y,
+  flip_x: STAGE_PLACEMENT_DEFAULT.flip_x,
 };
 
 export const DEFAULT_MASCOT_PHASE_RULES: Record<MascotRenderPhase, MascotPhaseRuleV2> = {

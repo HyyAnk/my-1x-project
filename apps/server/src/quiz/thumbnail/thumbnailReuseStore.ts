@@ -10,7 +10,21 @@ import { writeJsonAtomic } from "../../utils/fs.js";
 const CheckpointSchema = z.object({ version: z.literal(1), fingerprints: z.record(z.string()) });
 export type ThumbnailReuseCheckpoint = z.infer<typeof CheckpointSchema>;
 
-export function thumbnailInputFingerprint(input: unknown): string {
+export interface ThumbnailFingerprintInput {
+  version?: number;
+  topic?: unknown;
+  questions?: unknown;
+  language?: unknown;
+  style?: unknown;
+  mascotId?: string | null;
+  mascotAnchorFingerprint?: string | null;
+  layout?: unknown;
+  hook?: unknown;
+  badge?: unknown;
+  [key: string]: unknown;
+}
+
+export function thumbnailInputFingerprint(input: ThumbnailFingerprintInput | unknown): string {
   return createHash("sha256").update(JSON.stringify(input)).digest("hex");
 }
 

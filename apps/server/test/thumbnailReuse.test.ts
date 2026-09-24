@@ -10,6 +10,7 @@ import type { GenerateEpisodeThumbnailOptions } from "../src/quiz/thumbnail/thum
 const mocks = vi.hoisted(() => ({
   generate: vi.fn<(repository: RepositoryService, options: GenerateEpisodeThumbnailOptions) => Promise<ThumbnailManifest>>(),
   readManifest: vi.fn<() => Promise<ThumbnailManifest | null>>(),
+  loadVisualAnchor: vi.fn<() => Promise<{ base64: string; mimeType: string; fingerprint: string } | null>>(),
 }));
 vi.mock("../src/quiz/thumbnail/thumbnailService.js", () => ({
   generateEpisodeThumbnail: mocks.generate,
@@ -17,6 +18,9 @@ vi.mock("../src/quiz/thumbnail/thumbnailService.js", () => ({
     ratio ?? episode.quiz_config.thumbnail_aspect_ratio,
 }));
 vi.mock("../src/quiz/thumbnail/thumbnailManifestStore.js", () => ({ getEpisodeThumbnailManifest: mocks.readManifest }));
+vi.mock("../src/quiz/thumbnail/thumbnailLoaders.js", () => ({
+  loadChannelMascotVisualAnchor: mocks.loadVisualAnchor,
+}));
 import { ensureEpisodeThumbnail } from "../src/quiz/thumbnail/ensureEpisodeThumbnail.js";
 
 const roots: string[] = [];
@@ -105,5 +109,28 @@ describe("automatic thumbnail reuse", () => {
     await ensureEpisodeThumbnail(repository, options);
     expect(mocks.generate).toHaveBeenCalledTimes(1);
     expect(mocks.generate.mock.calls[0][1].aspectRatio).toBe("9:16");
+  });
+  it("invalidates thumbnails when mascot anchor fingerprint changes", async () => {
+    const { repository, options } = await fixture();
+    mocks.loadVisualAnchor.mockResolvedValue({
+      base64: "data:image/png;base64,aaa",
+      mimeType: "image/png",
+      fingerprint: "anchor_hash_v1",
+    });
+    await ensureEpisodeThumbnail(repository, options);
+    expect(mocks.generate).toHaveBeenCalledTimes(1);
+
+    // Same anchor fingerprint -> reuse
+    await ensureEpisodeThumbnail(repository, options);
+    expect(mocks.generate).toHaveBeenCalledTimes(1);
+
+    // Changed anchor fingerprint -> invalidates cache and regenerates
+    mocks.loadVisualAnchor.mockResolvedValue({
+      base64: "data:image/png;base64,bbb",
+      mimeType: "image/png",
+      fingerprint: "anchor_hash_v2",
+    });
+    await ensureEpisodeThumbnail(repository, options);
+    expect(mocks.generate).toHaveBeenCalledTimes(2);
   });
 });

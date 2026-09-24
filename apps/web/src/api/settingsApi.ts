@@ -13,7 +13,7 @@ import type {
 import { request, type EngineInfoResponse } from "./client";
 
 export const settingsApi = {
-  config: () => request<AppConfig>("/api/config"),
+  config: (signal?: AbortSignal) => request<AppConfig>("/api/config", { signal }),
   engine: () => request<EngineInfoResponse>("/api/engine"),
   setEngine: (active_engine: "codex" | "antigravity", model?: string) =>
     request<{ active_engine: "codex" | "antigravity"; status: string; model: string }>("/api/engine", {

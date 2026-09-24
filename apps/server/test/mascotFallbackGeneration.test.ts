@@ -7,7 +7,19 @@ import { generateMascotStyleSlot } from "../src/quiz/mascot/artGenerator.js";
 import { generateMascotArtWithFallback } from "../src/quiz/mascot/services/mascotAiImageClient.js";
 import * as gpti2Module from "../src/providers/gpti2/generator.js";
 import * as imgStudioModule from "../src/providers/imgstudio/generator.js";
+import { encodeRgbaToPng } from "../src/utils/imageMatting.js";
 import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, type AppConfig } from "@studio/shared";
+
+function createMockGreenImage(width = 64, height = 36): Uint8Array {
+  const data = new Uint8Array(width * height * 4);
+  for (let i = 0; i < width * height; i++) {
+    data[i * 4 + 0] = 0;
+    data[i * 4 + 1] = 255;
+    data[i * 4 + 2] = 0;
+    data[i * 4 + 3] = 255;
+  }
+  return encodeRgbaToPng({ width, height, data });
+}
 
 const roots: string[] = [];
 
@@ -94,7 +106,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
     const primarySpy = vi.spyOn(gpti2Module, "generateGpti2ImageBytes").mockRejectedValue(new Error("Image generation was cancelled"));
 
     // Mock fallback success
-    const fallbackImageBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]); // PNG magic bytes
+    const fallbackImageBytes = createMockGreenImage();
     const fallbackSpy = vi.spyOn(imgStudioModule, "generateImgStudioImageBytes").mockResolvedValue({
       bytes: fallbackImageBytes,
       model: "2d059365-a09a-4fd5-aa9e-b5335d09bbe9",
@@ -253,7 +265,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
 
     vi.spyOn(gpti2Module, "generateGpti2ImageBytes").mockRejectedValue(new Error("Timeout"));
     const fallbackSpy = vi.spyOn(imgStudioModule, "generateImgStudioImageBytes").mockResolvedValue({
-      bytes: new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]),
+      bytes: createMockGreenImage(),
       model: "default-model",
       aspect_ratio: "16:9",
       resolution: "2K",
@@ -308,7 +320,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
 
     const modelsAttempted: string[] = [];
     const idempotencyKeys: string[] = [];
-    const fallbackImageBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+    const fallbackImageBytes = createMockGreenImage();
     const fallbackSpy = vi.spyOn(imgStudioModule, "generateImgStudioImageBytes").mockImplementation(async (_prompt, opts) => {
       const model = opts?.model || "";
       modelsAttempted.push(model);

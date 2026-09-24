@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { compileDualThumbnailPrompts, compileThumbnailPrompt, resolveThumbnailLayout } from "../src/quiz/thumbnail/index.js";
 import type { MascotProfile } from "@studio/shared";
+import {
+  compileDualThumbnailPrompts,
+  compileThumbnailPrompt,
+  resolveMascotDescription,
+  resolveThumbnailLayout,
+  type MascotVisualAnchor,
+} from "../src/quiz/thumbnail/index.js";
 
 describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
   const sampleMascot: MascotProfile = {
@@ -692,6 +698,151 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       rawPlan.hookText = "can you pass this quiz?";
       const prompt = compileThumbnailPrompt(rawPlan, "16:9", sampleMascot);
       expect(prompt).toContain("CAN YOU PASS THIS QUIZ?");
+    });
+  });
+
+  describe("Stage 2: Universal Character Prompt Compiler & Identity Contract", () => {
+    const sampleVisualAnchor: MascotVisualAnchor = {
+      base64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+      mimeType: "image/png",
+      sourceUrl: "/mascots/kiko/master.png",
+      fingerprint: "abc123sha256fingerprint",
+    };
+
+    it("compiles prompt with Universal Identity Prompt Contract when both visualAnchor and mascotProfile are present", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Solar System Planets Quiz",
+        mascotProfile: sampleMascot,
+      });
+
+      const prompt = compileThumbnailPrompt(plan, "16:9", sampleMascot, sampleVisualAnchor);
+
+      // 1. Strict Identity Lock to reference image
+      expect(prompt).toContain(
+        "Mascot character named Kiko (STRICT CHARACTER IDENTITY: exact character from the provided reference image; strictly preserve its identical species anatomy, facial features, proportions, original color palette, and signature physical details from the reference image):"
+      );
+
+      // 2. Preserves dynamic contextual role/costume/expression/pose
+      expect(prompt).toContain(plan.mascotPersona.expression);
+      expect(prompt).toContain(plan.mascotPersona.poseDescription);
+      expect(prompt).toContain("wearing a stylish");
+
+      // 3. Clean rim lighting and uncluttered composition
+      expect(prompt).toContain("Clean bright luminous rim lighting accentuating the character silhouette against the environment.");
+      expect(prompt).toContain("Clean composition without cluttered extra handheld items.");
+
+      // 4. Physical descriptions from master_prompt MUST NOT be injected into the prompt
+      expect(prompt).not.toContain("a clever fluffy robotic fox with glowing cyan eyes and chrome accents");
+    });
+
+    it("strictly blocks raw master_prompt studio green-screen and artifact strings (#00FF00, chroma key, no character sheet)", () => {
+      const dirtyMascot: MascotProfile = {
+        ...sampleMascot,
+        id: "mascot_dirty",
+        name: "ShadowCat",
+        master_prompt:
+          "A cute black character mascot #080808, solid flat chroma key background #00FF00, studio lighting, no character sheet, 3d model sheet",
+        color_theme: "#00FF00",
+      };
+
+      const plan = resolveThumbnailLayout({
+        topicTitle: "World Animal Mysteries",
+        mascotProfile: dirtyMascot,
+      });
+
+      const prompt = compileThumbnailPrompt(plan, "16:9", dirtyMascot, sampleVisualAnchor);
+
+      // Verifies studio/chromakey garbage is completely excluded
+      expect(prompt).not.toContain("#00FF00");
+      expect(prompt).not.toContain("#080808");
+      expect(prompt).not.toContain("chroma key");
+      expect(prompt).not.toContain("no character sheet");
+      expect(prompt).not.toContain("3d model sheet");
+      expect(prompt).not.toContain("black character mascot");
+
+      // Strictly enforces identity contract with name
+      expect(prompt).toContain("Mascot character named ShadowCat (STRICT CHARACTER IDENTITY:");
+    });
+
+    it("applies Universal Identity Contract when only visualAnchor is provided without mascotProfile", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Dinosaur Giants",
+      });
+
+      const prompt = compileThumbnailPrompt(plan, "16:9", null, sampleVisualAnchor);
+
+      // When visual anchor exists without profile, locks identity anonymously without awkward formatting
+      expect(prompt).toContain(
+        "Mascot character (STRICT CHARACTER IDENTITY: exact character from the provided reference image; strictly preserve its identical species anatomy, facial features, proportions, original color palette, and signature physical details from the reference image):"
+      );
+      expect(prompt).not.toContain("named undefined");
+      expect(prompt).not.toContain("named null");
+      expect(prompt).not.toContain("Mascot character  ("); // No double space
+    });
+
+    it("applies Universal Identity Contract when mascotProfile is provided without visualAnchor (backward compatibility)", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Deep Sea Ocean Creatures",
+        mascotProfile: sampleMascot,
+      });
+
+      const prompt = compileThumbnailPrompt(plan, "16:9", sampleMascot, null);
+
+      expect(prompt).toContain(
+        "Mascot character named Kiko (STRICT CHARACTER IDENTITY: exact character from the provided reference image; strictly preserve its identical species anatomy, facial features, proportions, original color palette, and signature physical details from the reference image):"
+      );
+      expect(prompt).not.toContain("a clever fluffy robotic fox");
+    });
+
+    it("falls back to clean dynamic Pixar 3D description when neither mascotProfile nor visualAnchor is provided", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Math Brain Teaser Challenge",
+      });
+
+      const prompt = compileThumbnailPrompt(plan, "16:9", null, null);
+
+      // Fallback does NOT instruct reference image identity lock
+      expect(prompt).not.toContain("STRICT CHARACTER IDENTITY");
+      expect(prompt).not.toContain("provided reference image");
+
+      // Fallback generates clean dynamic Pixar 3D animated companion
+      expect(prompt).toContain("Mascot character: an adorable, cheerful Pixar 3D animated companion character with expressive friendly eyes");
+      expect(prompt).toContain("wearing a stylish");
+      expect(prompt).toContain("Clean bright luminous rim lighting");
+      expect(prompt).toContain("Clean composition without cluttered extra handheld items.");
+    });
+
+    it("compileDualThumbnailPrompts propagates visualAnchor to both 16:9 and 9:16 prompts", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Space Odyssey",
+        mascotProfile: sampleMascot,
+      });
+
+      const dual = compileDualThumbnailPrompts(plan, sampleMascot, sampleVisualAnchor);
+
+      expect(dual.prompt_16_9).toContain("16:9");
+      expect(dual.prompt_16_9).toContain("Mascot character named Kiko (STRICT CHARACTER IDENTITY:");
+      expect(dual.prompt_9_16).toContain("9:16");
+      expect(dual.prompt_9_16).toContain("Mascot character named Kiko (STRICT CHARACTER IDENTITY:");
+    });
+
+    it("resolveMascotDescription handles props cleanly without trailing or duplicate spaces", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Mystery Puzzle",
+        mascotProfile: sampleMascot,
+      });
+
+      // Case with explicit prop
+      plan.mascotPersona.prop = "glowing magnifying glass";
+      const descWithProp = resolveMascotDescription(plan, sampleMascot, sampleVisualAnchor);
+      expect(descWithProp).toContain("Thematic Prop: interacting with glowing magnifying glass.");
+      expect(descWithProp).not.toMatch(/\s{2,}/);
+
+      // Case with prop set to "none"
+      plan.mascotPersona.prop = "none";
+      const descWithoutProp = resolveMascotDescription(plan, sampleMascot, sampleVisualAnchor);
+      expect(descWithoutProp).not.toContain("Thematic Prop:");
+      expect(descWithoutProp).not.toMatch(/\s{2,}/);
     });
   });
 });

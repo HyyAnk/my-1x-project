@@ -24,6 +24,7 @@ export type QuizSceneState = {
 };
 
 export type QuizSceneTiming = {
+  countdownSeconds?: number;
   start: number;
   questionNarrationStart?: number;
   choicesStart: number;

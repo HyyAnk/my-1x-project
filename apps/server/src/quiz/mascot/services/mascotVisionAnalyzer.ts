@@ -21,6 +21,7 @@ export interface MascotVisionAnalyzerOptions {
   aiConfig?: MascotVisionAiConfig;
   logger?: StudioLogger;
   mimeType?: string;
+  name?: string;
 }
 
 export const MASCOT_VISION_ANALYSIS_PROMPT = `
@@ -114,12 +115,23 @@ export function normalizeHexColor(hex?: string, fallback = "#06b6d4"): string {
   return fallback;
 }
 
+function colorEuclideanDistance(r1: number, g1: number, b1: number, r2: number, g2: number, b2: number): number {
+  return Math.hypot(r1 - r2, g1 - g2, b1 - b2);
+}
+
+export interface OpaqueColorStats {
+  dominantHex: string;
+  palette: string[];
+  hasAlpha: boolean;
+  isSquare: boolean;
+  opaquePixelCount: number;
+}
+
 /**
- * Performs local image pixel analysis using Sharp to extract dominant color,
- * classify color attributes, and generate baseline character tags.
+ * Extracts dominant color and palette by filtering out transparent or near-transparent pixels (alpha < 32)
+ * and ignoring dark transparent edge bleed artifacts.
  */
-export async function performLocalPixelAnalysis(buffer: Buffer): Promise<MascotVisionAnalysisResult> {
-  let dominantHex = "#06b6d4";
+export async function extractOpaqueColorStats(buffer: Buffer): Promise<OpaqueColorStats> {
   let isSquare = true;
   let hasAlpha = false;
 
@@ -130,43 +142,157 @@ export async function performLocalPixelAnalysis(buffer: Buffer): Promise<MascotV
     }
     hasAlpha = Boolean(meta.hasAlpha);
 
-    const stats = await sharp(buffer, { failOn: "none" }).stats();
-    const dominant = stats.dominant;
-    if (dominant && typeof dominant.r === "number") {
-      const r = Math.min(255, Math.max(0, Math.round(dominant.r))).toString(16).padStart(2, "0");
-      const g = Math.min(255, Math.max(0, Math.round(dominant.g))).toString(16).padStart(2, "0");
-      const b = Math.min(255, Math.max(0, Math.round(dominant.b))).toString(16).padStart(2, "0");
-      dominantHex = `#${r}${g}${b}`.toLowerCase();
-    }
-  } catch {
-    // Non-fatal: default values will be used
-  }
+    const { data } = await sharp(buffer, { failOn: "none" })
+      .resize(96, 96, { fit: "inside" })
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
 
+    const bins = new Map<number, { count: number; rSum: number; gSum: number; bSum: number }>();
+    let opaquePixels = 0;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3];
+      // Exclude transparent and semi-transparent fringe pixels (alpha < 32)
+      if (a < 32) continue;
+      opaquePixels++;
+
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+
+      const qr = r >> 4;
+      const qg = g >> 4;
+      const qb = b >> 4;
+      const key = (qr << 8) | (qg << 4) | qb;
+
+      let entry = bins.get(key);
+      if (!entry) {
+        entry = { count: 0, rSum: 0, gSum: 0, bSum: 0 };
+        bins.set(key, entry);
+      }
+      entry.count++;
+      entry.rSum += r;
+      entry.gSum += g;
+      entry.bSum += b;
+    }
+
+    if (opaquePixels === 0 || bins.size === 0) {
+      return {
+        dominantHex: "#06b6d4",
+        palette: ["#06b6d4"],
+        hasAlpha,
+        isSquare,
+        opaquePixelCount: 0,
+      };
+    }
+
+    const sortedBins = Array.from(bins.values())
+      .map((b) => ({
+        count: b.count,
+        r: Math.round(b.rSum / b.count),
+        g: Math.round(b.gSum / b.count),
+        b: Math.round(b.bSum / b.count),
+        isDarkBleed: b.rSum / b.count <= 15 && b.gSum / b.count <= 15 && b.bSum / b.count <= 15,
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    // If top bin is a dark bleed artifact (#080808 or <= 15), prefer a non-bleed bin if available
+    let dominantEntry = sortedBins[0];
+    if (dominantEntry.isDarkBleed && sortedBins.length > 1) {
+      const nonBleed = sortedBins.find((entry) => !entry.isDarkBleed);
+      if (nonBleed) {
+        dominantEntry = nonBleed;
+      }
+    }
+
+    const toHex = (r: number, g: number, b: number) =>
+      `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`.toLowerCase();
+
+    let dominantHex = toHex(dominantEntry.r, dominantEntry.g, dominantEntry.b);
+    if ((dominantHex === "#080808" || dominantHex === "#000000") && hasAlpha) {
+      dominantHex = "#06b6d4";
+    }
+
+    // Build palette with up to 4 distinct representative colors
+    const paletteEntries = [dominantEntry];
+    for (const entry of sortedBins) {
+      if (paletteEntries.length >= 4) break;
+      if (entry.isDarkBleed) continue;
+      const isDistinct = paletteEntries.every(
+        (p) => colorEuclideanDistance(p.r, p.g, p.b, entry.r, entry.g, entry.b) > 40,
+      );
+      if (isDistinct) {
+        paletteEntries.push(entry);
+      }
+    }
+
+    const palette = paletteEntries.map((e) => toHex(e.r, e.g, e.b));
+
+    return {
+      dominantHex,
+      palette,
+      hasAlpha,
+      isSquare,
+      opaquePixelCount: opaquePixels,
+    };
+  } catch {
+    return {
+      dominantHex: "#06b6d4",
+      palette: ["#06b6d4"],
+      hasAlpha,
+      isSquare,
+      opaquePixelCount: 0,
+    };
+  }
+}
+
+/**
+ * Performs local image pixel analysis using Sharp to extract dominant color,
+ * classify color attributes, and generate baseline character tags.
+ * Ignores transparent background pixels and avoids generating false black #080808.
+ */
+export async function performLocalPixelAnalysis(
+  buffer: Buffer,
+  mascotName?: string,
+): Promise<MascotVisionAnalysisResult> {
+  const stats = await extractOpaqueColorStats(buffer);
+  const dominantHex = stats.dominantHex;
   const colorName = classifyHexColor(dominantHex);
+
   const tags = Array.from(
     new Set([
       "mascot",
       "character",
       colorName,
-      isSquare ? "square-framed" : "portrait",
-      hasAlpha ? "isolated" : "solid-backdrop",
+      stats.isSquare ? "square-framed" : "portrait",
+      stats.hasAlpha ? "isolated" : "solid-backdrop",
     ]),
   );
 
-  const subject = `Custom ${colorName.charAt(0).toUpperCase() + colorName.slice(1)} Mascot`;
+  const characterName = mascotName?.trim() || "Custom Mascot";
+  const subject = mascotName?.trim()
+    ? `${characterName} Mascot`
+    : `Custom ${colorName.charAt(0).toUpperCase() + colorName.slice(1)} Mascot`;
+
+  const fallbackDescription = mascotName?.trim()
+    ? `A cute stylized 3D character mascot named ${characterName}`
+    : colorName !== "black"
+      ? `A cute stylized 3D character mascot with ${colorName} accents`
+      : "A cute stylized 3D character mascot";
+
   const suggestedMasterPrompt = buildMascotConceptPrompt({
-    name: "Custom Mascot",
+    name: characterName,
     visual_style: "pixar_3d",
     color_theme: dominantHex,
-    description: `A cute ${colorName} character mascot`,
+    description: fallbackDescription,
     master_prompt: "",
   });
-
 
   return {
     subject,
     dominant_color: dominantHex,
-    palette: [dominantHex],
+    palette: stats.palette.length > 0 ? stats.palette : [dominantHex],
     tags,
     suggested_master_prompt: suggestedMasterPrompt,
     suggested_visual_style: "pixar_3d",
@@ -309,11 +435,11 @@ export async function analyzeMascotConceptImage(
   imageInput: Buffer | Uint8Array | string,
   options: MascotVisionAnalyzerOptions = {},
 ): Promise<MascotVisionAnalysisResult> {
-  const { logger, aiConfig, mimeType: declaredMime } = options;
+  const { logger, aiConfig, mimeType: declaredMime, name: mascotName } = options;
   const { buffer, base64Data, mimeType } = normalizeImageInput(imageInput, declaredMime);
 
   // Compute local Sharp pixel analysis as baseline & fallback
-  const fallbackResult = await performLocalPixelAnalysis(buffer);
+  const fallbackResult = await performLocalPixelAnalysis(buffer, mascotName);
 
   const isAiEnabled = Boolean(aiConfig && aiConfig.enabled !== false && aiConfig.apiKey?.trim());
   if (!isAiEnabled || !aiConfig) {

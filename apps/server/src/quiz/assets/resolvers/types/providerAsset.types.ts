@@ -36,6 +36,7 @@ export interface ProviderAssetInput {
   imgStudioRunId?: string;
   cancellationSignal?: AbortSignal;
   logger: StudioLogger;
+  referenceImageBase64?: string;
 }
 
 export interface ProviderAssetOutput {

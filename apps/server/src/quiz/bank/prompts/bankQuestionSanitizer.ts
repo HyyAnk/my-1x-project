@@ -3,8 +3,8 @@ import type { BankGameplayArchetypeId } from "@studio/shared";
 /**
  * Cleans formulaic redundancies from generated question text.
  * Specifically removes trailing ': Option A or Option B?' from versus_faceoff
- * where options match choice texts, and removes robotic mismatch slogans
- * from visual_spotting questions.
+ * where options match choice texts, removes robotic mismatch slogans,
+ * and dynamically rewrites repetitive "odd one out" phrases in visual_spotting.
  */
 export function sanitizeBankQuestionText(
   questionText: string,
@@ -30,12 +30,22 @@ export function sanitizeBankQuestionText(
   }
 
   if (archetypeId === "visual_spotting") {
+    // 1. Remove robotic trailing slogans like '— spot the mismatch!'
     const trailingMismatchPattern = /[:\s—–-]+(?:spot|find)\s+the\s+mismatch\s*!?$/i;
     if (trailingMismatchPattern.test(cleaned)) {
       cleaned = cleaned.replace(trailingMismatchPattern, "").trim();
       if (!cleaned.endsWith("?") && !cleaned.endsWith("!")) {
         cleaned += "?";
       }
+    }
+
+    // 2. Rewrite formulaic opening 'Spot/Find the odd one out:' to 'Spot/Find the outlier:'
+    cleaned = cleaned.replace(/^(Spot|Find)\s+the\s+odd\s+one\s+out\s*([:—–-])/i, "$1 the outlier$2");
+
+    // 3. Rewrite formulaic trailing 'is the odd one out?' to 'is the outlier?'
+    if (/(?:\s+is)?\s+the\s+odd\s+one\s+out\s*\??$/i.test(cleaned)) {
+      cleaned = cleaned.replace(/(?:\s+is)?\s+the\s+odd\s+one\s+out\s*\??$/i, " is the outlier?").trim();
+      cleaned = cleaned.replace(/\s+is\s+is\s+the\s+outlier\?$/i, " is the outlier?");
     }
   }
 

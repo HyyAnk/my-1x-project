@@ -1,4 +1,12 @@
-import { QuizTimelineSchema, type DirectorPlan, type QuizTimeline, type QuizV2, type VoicePlan } from "@studio/shared";
+import {
+  QuizTimelineSchema,
+  gameplayTimingPolicy,
+  resolveGameplayPolicy,
+  type DirectorPlan,
+  type QuizTimeline,
+  type QuizV2,
+  type VoicePlan,
+} from "@studio/shared";
 import { timingPolicyForAgeBand, type QuizTimingPolicy } from "./timingPolicy.js";
 import { TimelineContext, round } from "./compilers/timelineContext.js";
 import { compileIntroStage } from "./compilers/introCompiler.js";
@@ -24,8 +32,14 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
 
   // 2. Question Blocks
   for (const [questionIndex, question] of input.quiz.questions.entries()) {
+    const beat = input.director.beats.find((item) => item.question_id === question.id);
+    ctx.policy =
+      input.director.gameplay_policy_version && beat
+        ? { ...gameplayTimingPolicy(resolveGameplayPolicy(beat), input.quiz.age_band, question.difficulty), ...input.timing }
+        : policy;
     compileQuestionBlock(ctx, question, questionIndex, input.director, input.voicePlan);
   }
+  ctx.policy = policy;
 
   // 3. Outro Stage
   compileOutroStage(ctx, input.voicePlan, input.outroDuration);

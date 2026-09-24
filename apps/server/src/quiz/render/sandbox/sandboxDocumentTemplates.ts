@@ -114,11 +114,13 @@ export function sandboxRehearsalDocument(
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
   const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
   const thinkingTiming = calculateThinkingBarTiming({
+    countdownSeconds: timeline.countdownSeconds,
+    timerHideAt: timeline.timerHideAt,
     clipStart: 0,
     revealStart: timeline.revealStart,
     thinkingStart: timeline.thinkingStart,
   });
-  const rewardStart = timeline.revealStart + 0.8;
+  const rewardStart = timeline.rewardStart ?? timeline.revealStart + 0.8;
   const revealDuration = Math.max(0.04, rewardStart - timeline.revealStart);
   return `<!doctype html>
 <html>

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { EpisodeStageSchema } from "../enums.js";
+import { EpisodeStageSchema, QuizQuestionFormatSchema } from "../enums.js";
+import { QuizGameplayIdSchema } from "../quizGameplaySchema.js";
 import { IsoDate, QUIZ_MAX_CHOICES_PER_QUESTION } from "./common.js";
 import { EpisodeTopicSchema, QuizConfigSchema } from "./channel.js";
 
@@ -22,6 +23,8 @@ export type EditorialOverlay = z.infer<typeof EditorialOverlaySchema>;
 import { QuizAnswerModeSchema } from "../quizAnswerMode.js";
 
 export const QuizSceneContentSchema = z.object({
+  gameplay_id: QuizGameplayIdSchema.optional(),
+  format: QuizQuestionFormatSchema.optional(),
   phase: z.enum(["intro", "question", "reveal", "explanation", "outro"]).default("question"),
   question_number: z.number().int().positive().nullable().default(null),
   question: z.string().default(""),

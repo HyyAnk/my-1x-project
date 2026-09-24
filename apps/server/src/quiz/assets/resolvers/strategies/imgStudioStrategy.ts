@@ -54,6 +54,7 @@ export async function generateImgStudioAsset(
       fingerprint,
       prompt: compiledPrompt,
       aspect_ratio: request.aspect_ratio,
+      referenceImageBase64: input.referenceImageBase64,
     },
     input.cancellationSignal,
   );

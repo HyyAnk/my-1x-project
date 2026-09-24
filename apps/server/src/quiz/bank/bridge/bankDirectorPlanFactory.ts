@@ -1,10 +1,10 @@
 import {
   DirectorPlanSchema,
   QuizPaletteIdSchema,
+  QuizConfigSchema,
   getQuizGameplayArchetype,
   type Channel,
   type DirectorArchetype,
-  type DirectorBeat,
   type DirectorPlan,
   type MascotRenderAspectRatio,
   type QuizLayoutId,
@@ -12,7 +12,7 @@ import {
   type QuizV2,
   type TopicCandidate,
 } from "@studio/shared";
-import { createDefaultDirectorPlan } from "../../director/parseDirectorPlan.js";
+import { createEpisodeDirectorPlan } from "../../director/episodeDirectorPlan.js";
 
 /**
  * Maps a quiz archetype identifier to a corresponding DirectorArchetype.
@@ -78,6 +78,7 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
 }
 
 export interface BuildSingleQuestionDirectorPlanParams {
+  ageBand?: QuizV2["age_band"];
   episodeId: string;
   quizQuestion: QuizQuestion;
   archetypeId?: string;
@@ -91,49 +92,21 @@ export interface BuildSingleQuestionDirectorPlanParams {
 export function buildSingleQuestionDirectorPlan(params: BuildSingleQuestionDirectorPlanParams): DirectorPlan {
   const { episodeId, quizQuestion, archetypeId, channel, targetLayout } = params;
   const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
-  const directorArchetype = mapToDirectorArchetype(archetypeId, "text_multiple_choice");
-  const isRevealArchetype = archetypeId === "mystery_reveal";
-
-  const directorBeat: DirectorBeat = {
-    question_id: quizQuestion.id,
-    archetype: directorArchetype,
-    energy: "curious",
-    visual_density: "focused",
-    palette_id: channelPalette.success ? channelPalette.data : "auto",
-    layout_id: targetLayout,
-    motion_id: "enter.pop",
-    transition_id: "bubble_splash",
-    thinking_bar_style: channel.default_thinking_bar_style ?? "auto",
-    question_counter_style: channel.default_counter_style ?? "auto",
-    question_box_style: channel.default_question_box_style ?? "auto",
-    answer_card_style: channel.default_answer_card_style ?? "auto",
-    background_style: channel.default_background_style ?? "auto",
-    thinking_seconds: 7.0,
-    beat_intents: [
-      "question_enter",
-      "choice_reveal",
-      "thinking",
-      "countdown",
-      "answer_reveal",
-      "explanation",
-      ...(quizQuestion.fun_fact ? ["fun_fact" as const] : []),
-      "celebrate" as const,
-      "transition",
-    ],
-    asset_intents: isRevealArchetype ? ["question_illustration", "answer_reveal"] : ["question_illustration"],
-    mascot_state: "celebrate",
-    sfx_intents: ["countdown_tick", "correct_medium"],
-    transition_intent: "zoom",
-    reward_intensity: "medium",
-  };
-
+  const plan = createEpisodeDirectorPlan(
+    { schema_version: 2, episode_id: episodeId, age_band: params.ageBand ?? "7-9", language: channel.language, questions: [quizQuestion] },
+    QuizConfigSchema.parse({ archetype: archetypeId, target_layout: targetLayout }),
+  );
   return DirectorPlanSchema.parse({
-    schema_version: 2,
-    episode_id: episodeId,
-    archetype_family: "candy_arcade",
-    beats: [directorBeat],
-    midpoint_question_id: quizQuestion.id,
-    final_challenge_question_id: quizQuestion.id,
+    ...plan,
+    beats: plan.beats.map((beat) => ({
+      ...beat,
+      palette_id: channelPalette.success ? channelPalette.data : "auto",
+      thinking_bar_style: channel.default_thinking_bar_style ?? "auto",
+      question_counter_style: channel.default_counter_style ?? "auto",
+      question_box_style: channel.default_question_box_style ?? "auto",
+      answer_card_style: channel.default_answer_card_style ?? "auto",
+      background_style: channel.default_background_style ?? "auto",
+    })),
   });
 }
 
@@ -147,26 +120,27 @@ export function buildTopicDirectorPlan(
   targetLayout: QuizLayoutId,
   aspectRatio: MascotRenderAspectRatio = "16:9",
 ): DirectorPlan {
-  const basePlan = createDefaultDirectorPlan(quiz, aspectRatio);
+  const basePlan = createEpisodeDirectorPlan(
+    quiz,
+    QuizConfigSchema.parse({
+      archetype: topic.archetype,
+      target_layout: targetLayout,
+      render_aspect_ratio: aspectRatio,
+    }),
+  );
   const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
-  const isReveal = topic.archetype === "mystery_reveal";
 
   return DirectorPlanSchema.parse({
     ...basePlan,
     beats: basePlan.beats.map((beat) => {
-      const directorArchetype = mapToDirectorArchetype(topic.archetype, beat.archetype);
-
       return {
         ...beat,
-        archetype: directorArchetype,
-        layout_id: targetLayout,
         palette_id: channelPalette.success ? channelPalette.data : beat.palette_id,
         thinking_bar_style: channel.default_thinking_bar_style ?? beat.thinking_bar_style,
         question_counter_style: channel.default_counter_style ?? beat.question_counter_style,
         question_box_style: channel.default_question_box_style ?? beat.question_box_style,
         answer_card_style: channel.default_answer_card_style ?? beat.answer_card_style,
         background_style: channel.default_background_style ?? beat.background_style,
-        asset_intents: isReveal ? ["question_illustration", "answer_reveal"] : beat.asset_intents,
       };
     }),
   });

@@ -2,6 +2,7 @@ import type { QuizThinkingBarStyle } from "@studio/shared";
 import type { VisualElementVariant } from "../types.js";
 
 export type ThinkingBarRenderInput = {
+  countdownSeconds?: number;
   clipStart: number;
   questionNarrationStart?: number;
   revealStart: number;
@@ -37,6 +38,7 @@ export type ThinkingBarTiming = {
  * to desync from the question appearance.
  */
 export function calculateThinkingBarTiming(input: {
+  countdownSeconds?: number;
   clipStart: number;
   questionNarrationStart?: number;
   revealStart: number;
@@ -53,8 +55,8 @@ export function calculateThinkingBarTiming(input: {
   const cd2Raw = duration - 2;
   const cd1Raw = duration - 1;
 
-  const cd5Show = cd5Raw >= 0;
-  const cd4Show = cd4Raw >= 0;
+  const cd5Show = cd5Raw >= 0 && (input.countdownSeconds ?? 5) >= 5;
+  const cd4Show = cd4Raw >= 0 && (input.countdownSeconds ?? 5) >= 4;
   const cd3Show = cd3Raw >= 0;
   const cd2Show = cd2Raw >= 0;
   const cd1Show = cd1Raw >= 0;
@@ -64,7 +66,7 @@ export function calculateThinkingBarTiming(input: {
   const cd3 = Math.max(0, cd3Raw);
   const cd2 = Math.max(0, cd2Raw);
   const cd1 = Math.max(0, cd1Raw);
-  const queryHoldDuration = cd5Show ? cd5 : 0;
+  const queryHoldDuration = Math.max(0, duration - (input.countdownSeconds ?? 5));
   const timerExitStart = Math.max(0, duration - 0.28);
   const cssVars = [
     `--timer-start:${timerStart.toFixed(3)}s`,

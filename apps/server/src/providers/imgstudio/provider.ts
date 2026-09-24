@@ -33,7 +33,13 @@ export class ImgStudioQuizImageProvider {
   }
 
   async generateAsset(
-    input: { assetId: string; fingerprint: string; prompt: string; aspect_ratio?: string },
+    input: {
+      assetId: string;
+      fingerprint: string;
+      prompt: string;
+      aspect_ratio?: string;
+      referenceImageBase64?: string;
+    },
     cancellationSignal?: AbortSignal,
   ): Promise<{
     path: string;
@@ -69,6 +75,7 @@ export class ImgStudioQuizImageProvider {
       aspect_ratio: aspectRatio,
       resolution,
       quality,
+      referenceImage: input.referenceImageBase64,
       idempotencyKey,
       cancellationSignal,
     });

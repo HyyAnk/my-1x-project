@@ -114,6 +114,8 @@ export function timingPolicyForAgeBand(ageBand: QuizAgeBand): QuizTimingPolicy {
 export type SandboxPhase = "question" | "choices" | "thinking" | "reveal" | "explain";
 
 export type SandboxPhaseTimeline = {
+  countdownSeconds?: number;
+  rewardStart?: number;
   questionStart: number;
   choicesStart: number;
   thinkingStart: number;
@@ -158,8 +160,11 @@ export function computeSandboxPhaseTimeline(
 /**
  * Resolves the active visual phase for a given timestamp in the Sandbox preview.
  */
-export function getSandboxPhaseAtTime(timeSeconds: number, policy: QuizTimingPolicy = timingPolicyForAgeBand("7-9")): SandboxPhase {
-  const timeline = computeSandboxPhaseTimeline(policy);
+export function getSandboxPhaseAtTime(
+  timeSeconds: number,
+  policy: QuizTimingPolicy | SandboxPhaseTimeline = timingPolicyForAgeBand("7-9"),
+): SandboxPhase {
+  const timeline = "totalDuration" in policy ? policy : computeSandboxPhaseTimeline(policy);
   if (timeSeconds < timeline.choicesStart) return "question";
   if (timeSeconds < timeline.thinkingStart) return "choices";
   if (timeSeconds < timeline.revealStart) return "thinking";

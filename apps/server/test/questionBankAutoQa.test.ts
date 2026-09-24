@@ -150,15 +150,26 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     expect(resDupChoices.passed).toBe(false);
     expect(resDupChoices.issues.some((i) => i.type === "quality")).toBe(true);
 
-    // 3. Question text too long (> 85 characters)
+    // 3. Question text length boundary (<= 110 passes, > 110 fails)
+    const exactly110Q: BankQuestion = {
+      ...sampleValidQuestion,
+      id: "BOUNDARY-110-PASS",
+      question: "Blue whales are the largest animals ever known to have lived on Earth, larger than any dinosaur. Fact or Myth?",
+    };
+    expect(exactly110Q.question.length).toBe(110);
+    const res110 = runAutoQaOnQuestion(exactly110Q);
+    expect(res110.passed).toBe(true);
+
     const longQ: BankQuestion = {
       ...sampleValidQuestion,
       id: "LONG-FAIL",
-      question: "Blue whales are the largest animals ever known to have lived on Earth, larger than any dinosaur. Fact or Myth?",
+      question: "Blue whales are the largest animals ever known to have lived on Earth, much larger than any dinosaur. Fact or Myth?",
     };
+    expect(longQ.question.length).toBe(115);
     const resLong = runAutoQaOnQuestion(longQ);
     expect(resLong.passed).toBe(false);
     expect(resLong.issues.some((i) => i.type === "quality" && i.message.includes("too long"))).toBe(true);
+    expect(resLong.issues.find((i) => i.details?.maxLength === 110)).toBeDefined();
   });
 
   it("Auto-QA: Batch execution filters out duplicates and accumulates report summary", () => {
@@ -416,6 +427,33 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     };
     const resClean = runAutoQaOnQuestion(cleanVersusQ);
     expect(resClean.passed).toBe(true);
+  });
+
+  it("Auto-QA: flags asymmetric single-character trivia disguised as versus faceoff", () => {
+    const asymmetricQ: BankQuestion = {
+      ...sampleValidQuestion,
+      id: "VERSUS-ASYM-1",
+      archetype_id: "versus_faceoff",
+      format: "multiple_choice",
+      question: "In Harry Potter, which wizard escaped Azkaban unaided?",
+      choices: [
+        { id: "A", text: "Sirius Black", is_correct: true },
+        { id: "B", text: "Severus Snape", is_correct: false },
+      ],
+      correct_choice_id: "A",
+    };
+
+    const res = runAutoQaOnQuestion(asymmetricQ);
+    expect(res.passed).toBe(false);
+    expect(res.issues.some((i) => i.message.includes("asymmetric single-character trivia"))).toBe(true);
+
+    const symmetricQ: BankQuestion = {
+      ...asymmetricQ,
+      id: "VERSUS-SYM-1",
+      question: "Sirius Black vs Bellatrix: Who escaped Azkaban first?",
+    };
+    const resSym = runAutoQaOnQuestion(symmetricQ);
+    expect(resSym.passed).toBe(true);
   });
 
   it("Auto-QA: detectSyntacticRepetition catches repetitive formulaic suffixes across batch", () => {

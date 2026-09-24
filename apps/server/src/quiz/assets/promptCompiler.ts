@@ -83,6 +83,10 @@ export const QUIZ_STYLE_CONTRACTS: Record<QuizImageStyle, QuizStyleContract> = {
   },
 };
 
+export function isGraphicIdentitySubject(subject: string): boolean {
+  return /\b(logo|logos|emblem|emblems|insignia|crest|brandmark|brand mark|brand symbol|brand|brands|flag|flags|monogram|swoosh|app icon)\b/i.test(subject);
+}
+
 export function compileQuizAssetPrompt(
   request: QuizAssetRequirement,
   consistencyGroup?: AssetConsistencyGroup,
@@ -93,14 +97,25 @@ export function compileQuizAssetPrompt(
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const rules = purposeRules(request.purpose);
   const cleanSubject = request.subject.trim();
+  const isGraphicIdentity = isGraphicIdentitySubject(cleanSubject);
 
-  const backgroundGuidance = request.transparent_background
+  const backgroundGuidance = request.transparent_background || isGraphicIdentity
     ? "Background: isolated centered subject on a pure solid white studio backdrop, crystal clear silhouette boundaries, high edge contrast, zero background clutter, zero shadows on backdrop, perfectly suited for clean background matting."
     : request.purpose === "hero_question_image" || request.purpose === "question_illustration"
       ? `Background: ${contract.heroBackground}.`
       : `Background: ${contract.optionBackground}.`;
 
-  const soloHeroContract = !consistencyGroup && (request.purpose === "hero_question_image" || request.purpose === "question_illustration") ? [
+  const visualStyleLine = isGraphicIdentity
+    ? "Visual Style: Crisp 2D Flat Vector Graphic Emblem, high-contrast iconic symbol, minimalist clean silhouette, sharp vector geometry, centered on solid background."
+    : `Visual Style: ${contract.name}, bright, friendly, high saturation, clean lighting, large identifiable subject, simple composition, safe and positive for children.`;
+
+  const graphicContract = isGraphicIdentity ? [
+    "Graphic emblem contract: Clean, high-contrast, minimalist vector graphic emblem or official symbol.",
+    "Framing & Isolation: Perfectly centered isolated mark on a pure solid clean white backdrop with zero background elements.",
+    "Strict Negative Guidance: Zero physical commercial products (no shoes, no cans, no bottles, no boxes, no cars), zero human models, zero 3D room environments.",
+  ] : [];
+
+  const soloHeroContract = !consistencyGroup && !isGraphicIdentity && (request.purpose === "hero_question_image" || request.purpose === "question_illustration") ? [
     `Solo hero art contract: ${contract.renderingMedium} with ${contract.edgeTreatment} and one clear focal subject.`,
     `Lighting: ${contract.lighting}.`,
     `Detail level: ${contract.detailLevel}.`,
@@ -119,25 +134,33 @@ export function compileQuizAssetPrompt(
   ] : [];
 
   const framing = framingRules(request.aspect_ratio, request.purpose, { layoutId });
+  const negativeGuidance = isGraphicIdentity
+    ? "No watermark, collage, split screen, physical product mockups, human hands, or 3D background scenes; render the official emblem or symbol mark accurately centered on a clean solid white backdrop; do not add unrelated secondary logos or decorative frames."
+    : "No words, letters, captions, labels, watermark, collage, or split screen; do not add unrelated logos; retain identifying marks explicitly required by the subject.";
+
   const rawPrompt = [
     "Create one image asset for a children's educational quiz video.",
     `Subject: ${cleanSubject}.`,
     `Purpose: ${request.purpose.replaceAll("_", " ")}.`,
-    `Visual Style: ${contract.name}, bright, friendly, high saturation, clean lighting, large identifiable subject, simple composition, safe and positive for children.`,
+    visualStyleLine,
+    ...graphicContract,
     ...soloHeroContract,
     ...groupContract,
     rules,
     framing,
     backgroundGuidance,
     `Output framing: ${request.aspect_ratio}.`,
-    "No words, letters, captions, labels, watermark, collage, or split screen; do not add unrelated logos; retain identifying marks explicitly required by the subject.",
+    negativeGuidance,
   ].join("\n");
 
   const prompt = rawPrompt.replace(/\s{2,}/g, " ").trim();
+  const cacheVersion = isGraphicIdentity
+    ? `${contract.id}-v7-graphic-emblem`
+    : `${contract.id}-v6-clean-framing`;
 
   return {
     prompt,
-    cacheVersion: `${contract.id}-v5-layout-framing`,
+    cacheVersion,
     critical: request.required,
   };
 }

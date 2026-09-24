@@ -1,4 +1,5 @@
 import type { Task } from "@studio/shared";
+import { matchesEpisodeLayout } from "../../quiz/director/episodeDirectorPlan.js";
 import { isQuizAssetResolutionComplete } from "../../quiz/assets/resolveQuizAssets.js";
 import { ensureQuizAssetSizing } from "../../quiz/assets/ensureQuizAssetSizing.js";
 import {
@@ -32,14 +33,15 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     task.episode_id!,
   );
 
-  if (!artifacts.quiz || !artifacts.director_plan) {
+  const directorNeedsRefresh = !artifacts.director_plan || !matchesEpisodeLayout(artifacts.director_plan, episode.quiz_config);
+  if (!artifacts.quiz || directorNeedsRefresh) {
     const quizContentStart = Date.now();
     if (!artifacts.quiz) {
       await this.update(task.task_id, { progress_message: "Quiz · locking question facts", progress_percent: 26 });
       await generateQuiz(input);
       artifacts = await readQuizArtifacts(input);
     }
-    if (!artifacts.director_plan) {
+    if (!artifacts.director_plan || directorNeedsRefresh) {
       await this.update(task.task_id, { progress_message: "Quiz · directing question presentation", progress_percent: 28 });
       await generateDirector(input);
       artifacts = await readQuizArtifacts(input);

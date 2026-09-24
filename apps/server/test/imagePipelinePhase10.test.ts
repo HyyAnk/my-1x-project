@@ -357,52 +357,58 @@ describe("Phase 10 - Image Prompt, Request and Cache Propagation", () => {
   });
 
   describe("promptFramingRules layout-aware safe region insets", () => {
-    it("provides Media Left safe region: 8% L/R, 6% T/B", () => {
+    it("provides Media Left safe region without literal percentage annotations", () => {
       const rules = framingRules("4:3", "hero_question_image", { layoutId: "media_left_choices_right" });
       expect(rules).toContain("Output aspect ratio: 4:3.");
-      expect(rules).toContain("8% from the left and right, and 6% from the top and bottom");
+      expect(rules).toContain("safe region with comfortable breathing room");
       expect(rules).toContain("landscape hero card on the left side");
+      expect(rules).not.toMatch(/\d+%/);
     });
 
-    it("provides Visual Choices Three safe region: 6% L/R, 10% T/B", () => {
+    it("provides Visual Choices Three safe region without literal percentage annotations", () => {
       const rules = framingRules("1:1", "answer_option", { layoutId: "visual_choices_three" });
       expect(rules).toContain("Output aspect ratio: 1:1.");
-      expect(rules).toContain("6% from the left and right, and 10% from the top and bottom");
+      expect(rules).toContain("safe region with balanced breathing room on all sides");
       expect(rules).toContain("square visual choice card");
+      expect(rules).not.toMatch(/\d+%/);
     });
 
-    it("provides Pure Visual safe region: 6% L/R, 8% top, 14% bottom (badge reserve)", () => {
+    it("provides Pure Visual safe region without literal percentage annotations (badge reserve)", () => {
       const rules = framingRules("3:4", "answer_option", { layoutId: "visual_choices_three_pure" });
       expect(rules).toContain("Output aspect ratio: 3:4.");
-      expect(rules).toContain("6% from the left and right, 8% from the top, and 14% from the bottom");
+      expect(rules).toContain("safe region, keeping the focal subject in the upper and middle area with generous bottom margin");
       expect(rules).toContain("badge overlapping its lower center");
+      expect(rules).not.toMatch(/\d+%/);
     });
 
-    it("provides Split Versus safe region: 12% L/R, 6% T/B", () => {
+    it("provides Split Versus safe region without literal percentage annotations", () => {
       const rules = framingRules("16:9", "answer_option", { layoutId: "split_versus_two" });
       expect(rules).toContain("Output aspect ratio: 16:9.");
-      expect(rules).toContain("12% from the left and right, and 6% from the top and bottom");
+      expect(rules).toContain("safe region with generous side margins and clear space along all edges");
       expect(rules).toContain("split-versus competition card");
+      expect(rules).not.toMatch(/\d+%/);
     });
 
-    it("provides Verdict safe region: 6% L/R, 10% T/B", () => {
+    it("provides Verdict safe region without literal percentage annotations", () => {
       const rules = framingRules("4:3", "hero_question_image", { layoutId: "verdict_true_false" });
       expect(rules).toContain("Output aspect ratio: 4:3.");
-      expect(rules).toContain("6% from the left and right, and 10% from the top and bottom");
+      expect(rules).toContain("safe region with comfortable breathing room");
       expect(rules).toContain("verdict question card");
+      expect(rules).not.toMatch(/\d+%/);
     });
 
-    it("provides Mystery Reveal safe region: 6% all edges and clean subject instruction", () => {
+    it("provides Mystery Reveal safe region without literal percentage annotations", () => {
       const rules = framingRules("16:9", "hero_question_image", { layoutId: "mystery_reveal" });
       expect(rules).toContain("Output aspect ratio: 16:9.");
-      expect(rules).toContain("6% from each edge");
+      expect(rules).toContain("safe region with clear breathing room from all edges");
       expect(rules).toContain("centered mystery stage");
       expect(rules).toContain("do not generate a pre-blurred, pixelated, or mosaic image");
+      expect(rules).not.toMatch(/\d+%/);
     });
   });
 
   describe("compileQuizAssetPrompt cache version and framing integration", () => {
-    it("bumps cacheVersion to v5-layout-framing and includes safe region instructions", () => {
+    it("bumps cacheVersion to v6-clean-framing and includes safe region instructions without percentages", () => {
       const compiled = compileQuizAssetPrompt({
         asset_id: "asset-q1-c1",
         question_id: "q1",
@@ -423,9 +429,33 @@ describe("Phase 10 - Image Prompt, Request and Cache Propagation", () => {
         },
       });
 
-      expect(compiled.cacheVersion).toContain("v5-layout-framing");
-      expect(compiled.prompt).toContain("12% from the left and right, and 6% from the top and bottom");
+      expect(compiled.cacheVersion).toContain("v6-clean-framing");
+      expect(compiled.prompt).toContain("safe region with generous side margins");
+      expect(compiled.prompt).not.toMatch(/\d+%/);
       expect(compiled.prompt).toContain("Output framing: 16:9.");
+    });
+
+    it("compiles graphic identity subjects with specialized vector emblem contract and v7 cache version", () => {
+      const compiled = compileQuizAssetPrompt({
+        asset_id: "asset-q1-hero",
+        question_id: "q1",
+        subject: "Official minimalist vector brand logo of Nike with iconic clean black swoosh",
+        purpose: "hero_question_image",
+        style: "cute_illustration",
+        aspect_ratio: "16:9",
+        transparent_background: true,
+        required: true,
+        semantic_key: "q1:hero_question_image",
+        consistency_group_id: null,
+      });
+
+      expect(compiled.cacheVersion).toContain("v7-graphic-emblem");
+      expect(compiled.prompt).toContain("Visual Style: Crisp 2D Flat Vector Graphic Emblem");
+      expect(compiled.prompt).toContain("Graphic emblem contract: Clean, high-contrast, minimalist vector graphic emblem");
+      expect(compiled.prompt).toContain("Zero physical commercial products");
+      expect(compiled.prompt).toContain("render the official emblem or symbol mark accurately");
+      expect(compiled.prompt).not.toContain("Face policy: natural_only");
+      expect(compiled.prompt).not.toContain("No words, letters");
     });
   });
 

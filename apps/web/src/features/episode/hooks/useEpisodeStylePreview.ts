@@ -3,6 +3,7 @@ import type { Channel, Episode } from "@studio/shared";
 import { api } from "../../../api";
 import { verifyPreviewFonts } from "../../previewFonts/verifyPreviewFonts";
 import { buildEpisodePreviewRequest } from "../services/buildEpisodePreviewRequest";
+import { useStageSource } from "../../stageStudio/hooks/useStageSource";
 import type { EpisodePreviewQuestion } from "../types/episodePreview.types";
 import type { EpisodePreviewCandidate, ResolvedEpisodePreviewStyle } from "../types/episodeStylePreview.types";
 import {
@@ -30,6 +31,9 @@ type PendingPreview = { html: string; requestId: number };
 const RENDER_DEBOUNCE_MS = 150;
 
 export function useEpisodeStylePreview({ channel, episode, candidate, channelBrandName, previewQuestion }: UseEpisodeStylePreviewProps) {
+  const initialChannels = useMemo(() => [channel], [channel]);
+  const stageSource = useStageSource(initialChannels, false);
+  const assignedChannel = stageSource.channels.find((item) => item.channel_id === channel.channel_id) ?? channel;
   const [previewHtml, setPreviewHtml] = useState("");
   const [pendingPreview, setPendingPreview] = useState<PendingPreview | null>(null);
   const [loading, setLoading] = useState(false);
@@ -66,7 +70,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
 
       try {
         const request = buildEpisodePreviewRequest({
-          channel,
+          channel: assignedChannel,
           episode,
           override,
           resolved,
@@ -85,8 +89,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
     },
     [
       candidate,
-      channel.mascot_config,
-      channel.mascot_id,
+      assignedChannel,
       episode?.quiz_config?.style_catalog_revision,
       episode?.quiz_config?.render_aspect_ratio,
       previewQuestion,
@@ -122,14 +125,17 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
   useEffect(() => {
     const requestId = beginPreviewRequest();
     const timer = setTimeout(() => void renderPreview(requestId), RENDER_DEBOUNCE_MS);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      latestRequestId.current += 1;
+    };
   }, [beginPreviewRequest, renderPreview]);
 
   return {
     previewHtml,
     pendingPreviewHtml: pendingPreview?.html ?? "",
     loading,
-    previewError,
+    previewError: previewError ?? stageSource.error,
     iframeKey,
     commitPendingPreview,
     retryPreview,

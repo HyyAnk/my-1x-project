@@ -23,15 +23,18 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
         "1. NEVER formulate a question around an isolated, naked character name (e.g. NEVER ask 'Whose hand clap swaps positions?' or 'Who is Tenko Shimura?').",
       );
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
-        "2. ALWAYS explicitly anchor the parent franchise or show title in the question prompt (e.g. 'In Jujutsu Kaisen, which sorcerer...', 'In Dragon Ball Z, whose signature beam is...', 'In Demon Slayer, what color is Tanjiro's blade?', 'In Naruto, who leads Team 7?').",
+        "2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Jujutsu Kaisen...', 'In Dragon Ball Z...', 'In Demon Slayer...', 'In Naruto...').",
       );
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
-        "3. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.",
+        "3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals",
       );
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
-        "4. This ensures 100% immediate context and instant engagement for casual viewers and families.",
+        "4. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.",
       );
-      expect(FRANCHISE_ANCHOR_MANDATE_LINES.length).toBe(6);
+      expect(FRANCHISE_ANCHOR_MANDATE).toContain(
+        "5. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage or text clipping on mobile screens.",
+      );
+      expect(FRANCHISE_ANCHOR_MANDATE_LINES.length).toBe(7);
     });
 
     it("exports VISUAL_ANCHOR_MANDATE with all canonical visual spec rules", () => {
@@ -71,8 +74,10 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
 
       expect(prompt).toContain("=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===");
       expect(prompt).toContain("NEVER formulate a question around an isolated, naked character name");
-      expect(prompt).toContain("ALWAYS explicitly anchor the parent franchise or show title in the question prompt");
-      expect(prompt).toContain("In Jujutsu Kaisen, which sorcerer...");
+      expect(prompt).toContain(
+        "ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name",
+      );
+      expect(prompt).toContain("'In Jujutsu Kaisen...'");
     });
 
     it("uses franchise-anchored examples in Golden Deep Trivia Paradigms", () => {
@@ -125,9 +130,11 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
 
       expect(prompt).toContain("=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===");
       expect(prompt).toContain("NEVER formulate a question around an isolated, naked character name");
-      expect(prompt).toContain("ALWAYS explicitly anchor the parent franchise or show title in the question prompt");
       expect(prompt).toContain(
-        "5. FRANCHISE ANCHORING: If the target entity belongs to anime, manga, gaming, comics, movies, or fictional lore, ALWAYS explicitly include the parent franchise/universe name in the question hook.",
+        "ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name",
+      );
+      expect(prompt).toContain(
+        "5. FRANCHISE ANCHORING: If the target entity belongs to anime, manga, gaming, comics, movies, or fictional lore, ALWAYS explicitly include the parent franchise name using short umbrella titles",
       );
     });
 

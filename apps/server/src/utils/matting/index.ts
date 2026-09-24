@@ -7,3 +7,4 @@ export * from "./proceduralMatting.js";
 export * from "./aiMatting.js";
 export * from "./mosaicMatting.js";
 export * from "./imageFormatNormalizer.js";
+export * from "./greenScreenValidator.js";

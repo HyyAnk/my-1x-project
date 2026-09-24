@@ -2,9 +2,9 @@ import type { MascotActionType, MascotProfile, MascotStyle } from "@studio/share
 import { MascotPicker } from "./MascotPicker";
 import { SandboxChannelBrandControl } from "./SandboxChannelBrandControl";
 import { MascotActionSelector } from "./MascotActionSelector";
-import { MascotTransformControls } from "./MascotTransformControls";
 
 export interface SandboxMascotTabProps {
+  assignmentLocked?: boolean;
   mascots: MascotProfile[];
   mascotId: string;
   setMascotId: (id: string) => void;
@@ -34,6 +34,7 @@ export interface SandboxMascotTabProps {
 }
 
 export function SandboxMascotTab({
+  assignmentLocked = false,
   mascots,
   mascotId,
   setMascotId,
@@ -50,26 +51,24 @@ export function SandboxMascotTab({
   mascotAction,
   setMascotAction,
   mascotPosition,
-  setMascotPosition,
   mascotScale,
-  setMascotScale,
   mascotOffsetX,
-  setMascotOffsetX,
   mascotOffsetY,
-  setMascotOffsetY,
   mascotFlipX,
-  setMascotFlipX,
-  resetToDefaultPlacement,
 }: SandboxMascotTabProps) {
   return (
     <>
-      <MascotPicker
-        mascots={mascots}
-        mascotId={mascotId}
-        setMascotId={setMascotId}
-        mascotEnabled={mascotEnabled}
-        setMascotEnabled={setMascotEnabled}
-      />
+      {assignmentLocked ? (
+        <p>Assigned mascot: {mascots.find((item) => item.id === mascotId)?.name ?? "None"}</p>
+      ) : (
+        <MascotPicker
+          mascots={mascots}
+          mascotId={mascotId}
+          setMascotId={setMascotId}
+          mascotEnabled={mascotEnabled}
+          setMascotEnabled={setMascotEnabled}
+        />
+      )}
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 
@@ -90,19 +89,17 @@ export function SandboxMascotTab({
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 
-      <MascotTransformControls
-        mascotPosition={mascotPosition}
-        setMascotPosition={setMascotPosition}
-        mascotScale={mascotScale}
-        setMascotScale={setMascotScale}
-        mascotOffsetX={mascotOffsetX}
-        setMascotOffsetX={setMascotOffsetX}
-        mascotOffsetY={mascotOffsetY}
-        setMascotOffsetY={setMascotOffsetY}
-        mascotFlipX={mascotFlipX}
-        setMascotFlipX={setMascotFlipX}
-        onResetDefaultPlacement={resetToDefaultPlacement}
-      />
+      <section className="inspector-section">
+        <h3 className="inspector-section-title">Stage Studio placement</h3>
+        <output>
+          X {mascotOffsetX} px · Y {mascotOffsetY} px · Scale {Math.round(mascotScale * 100)}%
+        </output>
+        <p>
+          {mascotPosition === "bottom_left" ? "Bottom left" : "Bottom right"}
+          {mascotFlipX ? " · Flipped" : ""}
+        </p>
+        <p>Edit placement and assign channels in Stage Studio.</p>
+      </section>
     </>
   );
 }

@@ -15,9 +15,9 @@ export function framingRules(
     return [
       "Output aspect ratio: 4:3.",
       "Create one large, clearly recognizable subject with a complete silhouette.",
-      "Keep critical identifying details inside the safe region: 8% from the left and right, and 6% from the top and bottom.",
+      "Keep critical identifying details centered inside the safe region with comfortable breathing room, avoiding borders and edges.",
       "The image will be displayed in a landscape hero card on the left side of the quiz frame.",
-      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+      "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
@@ -25,9 +25,9 @@ export function framingRules(
     return [
       "Output aspect ratio: 1:1.",
       "Create one large, clearly recognizable subject with a complete silhouette.",
-      "Keep critical identifying details inside the safe region: 6% from the left and right, and 10% from the top and bottom.",
+      "Keep critical identifying details centered inside the safe region with balanced breathing room on all sides.",
       "The image will be displayed in a square visual choice card with an answer label below it.",
-      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+      "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
@@ -35,9 +35,9 @@ export function framingRules(
     return [
       "Output aspect ratio: 3:4.",
       "Create one large, clearly recognizable subject with a complete silhouette.",
-      "Keep critical identifying details inside the safe region: 6% from the left and right, 8% from the top, and 14% from the bottom.",
+      "Keep critical identifying details inside the safe region, keeping the focal subject in the upper and middle area with generous bottom margin.",
       "The image will be displayed in a portrait choice card with a badge overlapping its lower center.",
-      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+      "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
@@ -45,9 +45,9 @@ export function framingRules(
     return [
       "Output aspect ratio: 16:9.",
       "Create one large, clearly recognizable subject with a complete silhouette.",
-      "Keep critical identifying details inside the safe region: 12% from the left and right, and 6% from the top and bottom.",
+      "Keep critical identifying details centered inside the safe region with generous side margins and clear space along all edges.",
       "The image will be displayed in a split-versus competition card with a central VS emblem.",
-      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+      "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
@@ -55,9 +55,9 @@ export function framingRules(
     return [
       "Output aspect ratio: 4:3.",
       "Create one large, clearly recognizable subject with a complete silhouette.",
-      "Keep critical identifying details inside the safe region: 6% from the left and right, and 10% from the top and bottom.",
+      "Keep critical identifying details centered inside the safe region with comfortable breathing room, avoiding borders and edges.",
       "The image will be displayed in a verdict question card on the left side of the quiz frame.",
-      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+      "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
@@ -65,9 +65,9 @@ export function framingRules(
     return [
       "Output aspect ratio: 16:9.",
       "Create one large, clearly recognizable subject with a complete silhouette on a clean background.",
-      "Keep critical identifying details inside the safe region: 6% from each edge (left, right, top, bottom).",
+      "Keep critical identifying details centered inside the safe region with clear breathing room from all edges.",
       "The image will be displayed in a centered mystery stage. Concealment, mosaic blurring, and reveal are runtime effects; do not generate a pre-blurred, pixelated, or mosaic image.",
-      "Do not draw the card frame, badge, answer text, letters, captions, watermark, or interface elements.",
+      "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
@@ -75,16 +75,16 @@ export function framingRules(
     return [
       "Output aspect ratio: 9:16.",
       "Create one large, clearly recognizable subject with a complete silhouette.",
-      "Keep critical identifying details inside the safe region: 8% from the left and right, and 12% from the top and bottom.",
-      "Do not draw card borders, captions, watermarks, or interface elements.",
+      "Keep critical identifying details centered inside the safe region with generous vertical and horizontal breathing room.",
+      "Do not draw card borders, guidelines, measurement markings, frames, captions, watermarks, or interface elements.",
     ].join("\n");
   }
 
   return [
     `Output aspect ratio: ${aspectRatio}.`,
     "Create one large, clearly recognizable subject with a complete silhouette.",
-    "Keep critical identifying details inside the safe region: 8% from all edges.",
-    "Do not draw card borders, captions, watermarks, or interface elements.",
+    "Keep critical identifying details centered inside the safe region with comfortable breathing room from all edges.",
+    "Do not draw card borders, guidelines, measurement markings, frames, captions, watermarks, or interface elements.",
   ].join("\n");
 }
 

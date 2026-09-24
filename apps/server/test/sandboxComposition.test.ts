@@ -450,7 +450,6 @@ describe("buildSandboxComposition Preview Engine", () => {
 
   describe("Sandbox Rehearsal Phase Timing & Parity", () => {
     it("sets --reward-at, --reveal-duration, --timer-duration, and --timer-start matching production pacing", () => {
-      const timeline = computeSandboxPhaseTimeline();
       const res = buildSandboxComposition({
         mode: "rehearsal",
         aspect_ratio: "16:9",
@@ -459,12 +458,13 @@ describe("buildSandboxComposition Preview Engine", () => {
         fact_card_text: "Red has the longest wavelength.",
       });
 
-      const rewardAtExpected = (timeline.revealStart + 0.8).toFixed(3);
+      const timeline = res.timeline!;
+      const rewardAtExpected = timeline.rewardStart!.toFixed(3);
       expect(res.html).toContain(`--reward-at: ${rewardAtExpected}s;`);
-      expect(res.html).toContain("--reveal-duration: 0.800s;");
+      expect(res.html).toContain(`--reveal-duration: ${(timeline.rewardStart! - timeline.revealStart).toFixed(3)}s;`);
       expect(res.html).toContain(`--timer-duration: ${timeline.revealStart.toFixed(3)}s;`);
       expect(res.html).toContain("--timer-start: 0s;");
-      expect(res.html).toContain(`--query-hold-duration: ${(timeline.revealStart - 5).toFixed(3)}s;`);
+      expect(res.html).toContain(`--query-hold-duration: ${(timeline.revealStart - timeline.countdownSeconds!).toFixed(3)}s;`);
       expect(res.html).toContain(`--cd5-at: ${(timeline.revealStart - 5).toFixed(3)}s;`);
       expect(res.html).toContain(`--cd1-at: ${(timeline.revealStart - 1).toFixed(3)}s;`);
     });
@@ -479,7 +479,6 @@ describe("buildSandboxComposition Preview Engine", () => {
     });
 
     it("renders all mascot state layers with clean transitions across rehearsal timeline", () => {
-      const timeline = computeSandboxPhaseTimeline();
       const res = buildSandboxComposition(
         {
           mode: "rehearsal",
@@ -494,6 +493,7 @@ describe("buildSandboxComposition Preview Engine", () => {
       );
 
       // Verify all canonical state layers are rendered in rehearsal HTML
+      const timeline = res.timeline!;
       expect(res.html).toContain('class="candy-mascot-container mascot-v2-container mascot-stage');
       expect(res.html).toContain('data-mascot-phase="choices"');
       expect(res.html).toContain('data-mascot-phase="thinking"');
@@ -507,7 +507,7 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain("state-celebrate");
 
       // Verify explanation mascot transition timestamp matches revealStart + 0.8s
-      const expectedExplainDelay = Number((timeline.revealStart + 0.8).toFixed(3)).toString();
+      const expectedExplainDelay = Number(timeline.explainStart.toFixed(3)).toString();
       expect(res.html).toContain(`--mascot-state-delay:${expectedExplainDelay}s`);
       expect(res.html).toContain("state-point");
       expect(res.html).toContain('data-mascot-action="point"');
@@ -515,7 +515,6 @@ describe("buildSandboxComposition Preview Engine", () => {
     });
 
     it("creates appropriate action override in initial state when specifying mascot_action in rehearsal", () => {
-      const timeline = computeSandboxPhaseTimeline();
       const res = buildSandboxComposition(
         {
           mode: "rehearsal",
@@ -530,6 +529,7 @@ describe("buildSandboxComposition Preview Engine", () => {
       );
 
       // Initial state at 0s should be the action override "wave"
+      const timeline = res.timeline!;
       expect(res.html).toContain("state-wave");
       expect(res.html).toContain('data-mascot-action="wave"');
       expect(res.html).toContain("/api/mascots/mascot_test_123/assets/wave_sprite.png");
@@ -540,13 +540,12 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.thinkingStart.toFixed(3))}s`);
       expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.revealStart.toFixed(3))}s`);
       expect(res.html).toContain("state-celebrate");
-      const expectedExplainDelay = Number((timeline.revealStart + 0.8).toFixed(3)).toString();
+      const expectedExplainDelay = Number(timeline.explainStart.toFixed(3)).toString();
       expect(res.html).toContain(`--mascot-state-delay:${expectedExplainDelay}s`);
       expect(res.html).toContain("state-point");
     });
 
     it("targets specific phase when mascot_action is accompanied by mascot_phase", () => {
-      const timeline = computeSandboxPhaseTimeline();
       const res = buildSandboxComposition(
         {
           mode: "rehearsal",
@@ -562,6 +561,7 @@ describe("buildSandboxComposition Preview Engine", () => {
       );
 
       // The reveal phase marker at revealStart should receive the wave action override
+      const timeline = res.timeline!;
       expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.revealStart.toFixed(3))}s`);
       expect(res.html).toContain("state-wave");
       expect(res.html).toContain('data-mascot-action="wave"');

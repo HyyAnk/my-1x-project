@@ -14,6 +14,7 @@ import {
 import { validateDirectorPlan } from "../director/validateDirectorPlan.js";
 import { assessQuizVisualLayout } from "./visualQa.js";
 import { assessSemanticQa } from "./stages/assessSemanticQa.js";
+import { assessGameplayQa } from "./stages/assessGameplayQa.js";
 import { assessAssetQa } from "./stages/assessAssetQa.js";
 import { assessVoiceQa } from "./stages/assessVoiceQa.js";
 import { assessTimelineQa, questionCycleRangeSeconds } from "./stages/assessTimelineQa.js";
@@ -45,6 +46,7 @@ export type QuizAssessmentInput = {
 
 export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
   const issues: QuizIssue[] = [];
+  issues.push(...assessGameplayQa(input));
   const hasQuestionMascot =
     input.hasMascot !== undefined
       ? input.hasMascot
@@ -86,6 +88,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
 
   // 6. Timeline & Motion Continuity Stage
   assessTimelineQa({
+    director: input.director,
     quiz: input.quiz,
     timeline: input.timeline,
     staticIntervalThresholdSeconds: input.staticIntervalThresholdSeconds,

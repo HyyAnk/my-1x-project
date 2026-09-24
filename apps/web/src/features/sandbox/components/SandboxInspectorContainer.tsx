@@ -16,6 +16,7 @@ import { SandboxContentTab } from "./SandboxContentTab";
 import { SandboxTransitionTab } from "./transition";
 
 export interface SandboxInspectorContainerProps {
+  stageAssignmentLocked?: boolean;
   activeInspectorTab: SandboxInspectorTabId;
   onTabChange: (tab: SandboxInspectorTabId) => void;
   presets: ReturnType<typeof useSandboxPresets>;
@@ -31,6 +32,7 @@ export interface SandboxInspectorContainerProps {
 }
 
 export function SandboxInspectorContainer({
+  stageAssignmentLocked,
   activeInspectorTab,
   onTabChange,
   presets,
@@ -105,6 +107,7 @@ export function SandboxInspectorContainer({
 
       {activeInspectorTab === "mascot" && (
         <SandboxMascotTab
+          assignmentLocked={stageAssignmentLocked}
           mascots={mascot.mascots}
           mascotId={mascot.mascotId}
           setMascotId={mascot.setMascotId}

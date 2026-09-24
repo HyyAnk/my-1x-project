@@ -14,6 +14,7 @@ import type {
 } from "../quiz/mascot/videoAnimation/index.js";
 import type { MascotSlotJobManager } from "../quiz/mascot/slotJobs/index.js";
 import type { MascotStyleJobManager } from "../quiz/mascot/styleJobs/index.js";
+import type { MascotGreenScreenAuditService } from "../quiz/mascot/audit/index.js";
 import type { AppState } from "./state.js";
 import { registerEventsRoutes, type EventClient } from "./events.js";
 import { createPortraitImageClient } from "../providers/imageGeneration/portraitImageClient.js";
@@ -61,6 +62,7 @@ export type RegisterAllRoutesOptions = {
   videoProcessingRepository?: VideoProcessingRepository;
   mascotSlotJobManager?: MascotSlotJobManager;
   mascotStyleJobManager?: MascotStyleJobManager;
+  mascotGreenScreenAuditService?: MascotGreenScreenAuditService;
 };
 
 export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise<void> {
@@ -99,6 +101,7 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
       videoProcessingRepository: deps.videoProcessingRepository,
       mascotSlotJobManager: deps.mascotSlotJobManager,
       mascotStyleJobManager: deps.mascotStyleJobManager,
+      mascotGreenScreenAuditService: deps.mascotGreenScreenAuditService,
     }),
   );
   await server.register(registerEpisodesRoutes({ repository, state, tasks }));

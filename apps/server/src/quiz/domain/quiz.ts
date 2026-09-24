@@ -99,6 +99,8 @@ export function deriveQuizV2FromScenes(input: {
   language: string;
   ageBand: QuizConfig["age_band"];
   format: QuizConfig["quiz_format"];
+  targetLayout?: QuizConfig["target_layout"];
+  gameplayId?: QuizConfig["archetype"];
   scenes: Scene[];
 }): QuizV2 {
   const grouped = new Map<number, Scene[]>();
@@ -111,12 +113,20 @@ export function deriveQuizV2FromScenes(input: {
 
   const questions = [...grouped.entries()]
     .sort(([a], [b]) => a - b)
-    .map(([number, questionScenes], index) => {
+    .map(([number, questionScenes], index): QuizQuestion => {
       const quizScenes = questionScenes.map((scene) => scene.quiz).filter((quiz): quiz is NonNullable<Scene["quiz"]> => Boolean(quiz));
       const question = quizScenes.find((quiz) => quiz.question.trim())?.question.trim() ?? "";
-      const format = normalizeQuestionFormat(input.format);
-      const requiredChoiceCount = quizChoiceCountForFormat(format);
+      const gameplayId =
+        quizScenes.find((quiz) => quiz.gameplay_id)?.gameplay_id ??
+        input.gameplayId ??
+        (input.targetLayout === "split_versus_two" ? "versus_faceoff" : undefined);
+      const format = quizScenes.find((quiz) => quiz.format)?.format ?? normalizeQuestionFormat(input.format);
       const rawChoices = quizScenes.find((quiz) => quiz.choices.length > 0)?.choices ?? [];
+      const answerMode =
+        quizScenes.some((quiz) => quiz.answer_mode === "single_reveal") || (format === "image_guess" && rawChoices.length === 1)
+          ? "single_reveal"
+          : "choice_selection";
+      const requiredChoiceCount = gameplayId === "versus_faceoff" ? 2 : quizChoiceCountForFormat(format, answerMode);
       const answer = quizScenes.find((quiz) => quiz.answer.trim())?.answer.trim() ?? "";
       const explanation = quizScenes.find((quiz) => quiz.explanation.trim())?.explanation.trim() ?? "";
 
@@ -128,7 +138,11 @@ export function deriveQuizV2FromScenes(input: {
             number +
             " must have exactly " +
             requiredChoiceCount +
-            (format === "true_false" ? " choices: True and False" : " choices: A, B, and C") +
+            (answerMode === "single_reveal"
+              ? " reveal answer"
+              : format === "true_false"
+                ? " choices: True and False"
+                : " choices: A, B, and C") +
             "; received " +
             choicesText.length,
           "QUIZ_CHOICE_COUNT_INVALID",
@@ -165,7 +179,8 @@ export function deriveQuizV2FromScenes(input: {
         id: "question-" + String(index + 1).padStart(2, "0"),
         number: index + 1,
         format,
-        answer_mode: choices.length === 1 ? ("single_reveal" as const) : ("choice_selection" as const),
+        gameplay_id: gameplayId,
+        answer_mode: answerMode,
         difficulty: Math.min(5, 1 + Math.floor(index / Math.max(1, Math.ceil(grouped.size / 5)))),
         question,
         choices,

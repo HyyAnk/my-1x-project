@@ -359,4 +359,18 @@ describe("MascotActionsStep (Streamlined Step 2)", () => {
 
     expect(addEventListenerSpy).toHaveBeenCalledWith("beforeunload", expect.any(Function));
   });
+
+  it("renders 'Audit Green Screen' button and opens audit modal on click", () => {
+    const { container } = renderActionsStep();
+
+    const auditBtn = screen.getByRole("button", { name: /Audit Green Screen/i });
+    expect(auditBtn).toBeTruthy();
+
+    expect(container.querySelector(".mascot-audit-modal")).toBeNull();
+
+    fireEvent.click(auditBtn);
+
+    expect(container.querySelector(".mascot-audit-modal")).toBeTruthy();
+    expect(screen.getByText(/Chroma-Key Green Screen Audit/i)).toBeTruthy();
+  });
 });

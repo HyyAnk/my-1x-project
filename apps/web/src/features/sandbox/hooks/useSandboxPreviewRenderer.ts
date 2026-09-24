@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { SandboxPreviewRequest } from "@studio/shared";
+import type { SandboxPreviewRequest, SandboxPhaseTimeline } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
@@ -17,12 +17,14 @@ type UseSandboxPreviewRendererInput = {
   timeline: SandboxTimelineState;
   aspectRatio: SandboxAspectRatio;
   channelBrandName?: string;
+  stageChannelId?: string;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
 export type ContrastReport = { ok: boolean; ratio?: number; message?: string } | null;
 
 type PendingPreview = {
+  timeline?: SandboxPhaseTimeline;
   html: string;
   contrastReport: ContrastReport;
   manualNotice: boolean;
@@ -36,6 +38,7 @@ export function useSandboxPreviewRenderer({
   timeline,
   aspectRatio,
   channelBrandName,
+  stageChannelId,
   onNotice,
 }: UseSandboxPreviewRendererInput) {
   const { t } = useTranslation();
@@ -103,6 +106,8 @@ export function useSandboxPreviewRenderer({
           fact_card_text: question.factCardText,
           channel_brand_name: channelBrandName ?? "Tino",
           mascot_id: mascot.mascotId === "none" ? null : mascot.mascotId,
+          mascot_placement_source: stageChannelId ? "channel" : "stage_default",
+          mascot_channel_id: stageChannelId || undefined,
           mascot_style_id: mascot.mascot_style_id ?? (mascot.mascotStyleId || undefined),
           mascot_enabled: mascot.mascotEnabled && mascot.mascotId !== "none",
           mascot_action: mascot.mascotAction,
@@ -117,7 +122,7 @@ export function useSandboxPreviewRenderer({
 
         const response = await api.previewSandboxComposition(input);
         if (requestId !== latestRequestId.current) return;
-        setPendingPreview({ html: response.html, contrastReport: response.contrast_report, manualNotice, requestId });
+        setPendingPreview({ html: response.html, timeline: response.timeline, contrastReport: response.contrast_report, manualNotice, requestId });
       } catch (error) {
         if (requestId !== latestRequestId.current) return;
         const message = error instanceof Error ? error.message : "Failed to compile preview composition";
@@ -158,6 +163,7 @@ export function useSandboxPreviewRenderer({
       mascot.mascotFlipX,
       aspectRatio,
       channelBrandName,
+      stageChannelId,
       onNotice,
     ],
   );
@@ -168,6 +174,7 @@ export function useSandboxPreviewRenderer({
         await verifyPreviewFonts(frame);
         if (!pendingPreview || pendingPreview.html !== html || pendingPreview.requestId !== latestRequestId.current) return;
         const renderedAt = new Date().toLocaleTimeString();
+        if (pendingPreview.timeline) timelineRef.current.setTimeline(pendingPreview.timeline);
         setPreviewHtml(pendingPreview.html);
         setContrastReport(pendingPreview.contrastReport);
         setLastRenderTime(renderedAt);

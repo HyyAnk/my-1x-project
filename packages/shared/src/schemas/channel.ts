@@ -15,6 +15,7 @@ import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./com
 import { ChannelMascotConfigSchema } from "./mascot.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { TopicSourceBindingSetSchema } from "./topicSourceBinding.js";
+import { QuizGameplayIdSchema } from "../quizGameplaySchema.js";
 
 export const ChannelSchema = z
   .object({
@@ -41,23 +42,14 @@ export const ChannelSchema = z
     default_background_style: QuizBackgroundStyleSchema.optional().default("auto"),
     default_palette_id: z.string().optional().default("auto"),
     mascot_id: z.string().nullable().default(null),
-    mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 2.31, offset_x: 127, offset_y: 119 }),
+    mascot_config: ChannelMascotConfigSchema.default({}),
     default_intro_outro_style_id: z.string().nullable().optional(),
   })
   .strict();
 
 export type Channel = z.infer<typeof ChannelSchema>;
 
-export const TopicGameplayArchetypeSchema = z.enum([
-  "deep_trivia",
-  "visual_spotting",
-  "verdict_true_false",
-  "verdict_fact_myth",
-  "versus_faceoff",
-  "visual_identification",
-  "speed_blitz",
-  "mystery_reveal",
-]);
+export const TopicGameplayArchetypeSchema = QuizGameplayIdSchema;
 
 export type TopicGameplayArchetype = z.infer<typeof TopicGameplayArchetypeSchema>;
 

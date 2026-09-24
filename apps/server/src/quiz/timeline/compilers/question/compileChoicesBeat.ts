@@ -32,7 +32,15 @@ export function compileChoicesBeat(
   });
 
   const choiceSegment = voicePlan.segments.find((segment) => segment.segment_id === question.id + ":choice");
-  let choiceNarrationEnd = round(choicesStart + policy.choice_settle_seconds);
+  let choiceNarrationEnd = round(
+    Math.max(
+      questionNarrationEnd,
+      choicesStart +
+        policy.choice_entrance_seconds +
+        Math.max(0, question.choices.length - 1) * policy.choice_stagger_seconds +
+        policy.choice_settle_seconds,
+    ),
+  );
 
   if (choiceSegment) {
     const choiceAt = round(

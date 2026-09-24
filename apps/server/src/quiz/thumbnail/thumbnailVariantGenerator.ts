@@ -14,7 +14,7 @@ import type { RepositoryService } from "../../repository.js";
 import type { ImageProvider } from "../../providers/index.js";
 import type { AntigravityClient } from "../../antigravity.js";
 import { generateAssetWithProvider } from "../assets/resolvers/providerAssetResolver.js";
-import type { QuizThumbnailPlan } from "./thumbnailTypes.js";
+import type { MascotVisualAnchor, QuizThumbnailPlan } from "./thumbnailTypes.js";
 
 export type GenerateEpisodeThumbnailOptions = {
   channelId: string;
@@ -55,6 +55,7 @@ export type GenerateVariantParams = {
   options: GenerateEpisodeThumbnailOptions;
   logger: StudioLogger;
   nowTimestamp: number;
+  visualAnchor?: MascotVisualAnchor | null;
 };
 
 export type VariantGenerationResult = {
@@ -78,7 +79,7 @@ const ACTIVE_9_16_FILENAME = "thumbnail_9_16.jpg";
  * Generates and stores a single thumbnail variant (16:9 or 9:16) on disk.
  */
 export async function generateThumbnailVariant(params: GenerateVariantParams): Promise<VariantGenerationResult> {
-  const { repository, channel, episode, ratio, prompt, plan, options, logger, nowTimestamp } = params;
+  const { repository, channel, episode, ratio, prompt, plan, options, logger, nowTimestamp, visualAnchor } = params;
   const versionId = `thumb_${ratio.replace(":", "_")}_${nowTimestamp}`;
   const variantFilename = `${versionId}.jpg`;
   const targets = resolveVariantFileTargets(repository, channel, episode, ratio, variantFilename);
@@ -88,7 +89,7 @@ export async function generateThumbnailVariant(params: GenerateVariantParams): P
     if (options.imageProvider) {
       await copyProviderGeneratedImage({ repository, channel, episode, ratio, prompt, options, targets });
     } else {
-      await generateProviderAsset({ repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets });
+      await generateProviderAsset({ repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets, visualAnchor });
     }
 
     return buildVariantResult({ versionId, variantFilename, ratio, prompt, plan, channel, episode, targets });
@@ -173,10 +174,11 @@ type GenerateProviderAssetParams = {
   versionId: string;
   nowTimestamp: number;
   targets: VariantFileTargets;
+  visualAnchor?: MascotVisualAnchor | null;
 };
 
 async function generateProviderAsset(params: GenerateProviderAssetParams): Promise<void> {
-  const { repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets } = params;
+  const { repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets, visualAnchor } = params;
   const fingerprint = createHash("sha256").update(prompt).digest("hex");
   const generated = await generateAssetWithProvider({
     repository,
@@ -201,6 +203,7 @@ async function generateProviderAsset(params: GenerateProviderAssetParams): Promi
     antigravityClient: options.antigravityClient,
     imageConfig: options.imageConfig,
     imageFallbackConfig: options.imageFallbackConfig,
+    referenceImageBase64: visualAnchor?.base64,
     logger,
   });
 

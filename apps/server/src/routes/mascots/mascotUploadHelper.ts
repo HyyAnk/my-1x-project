@@ -16,7 +16,11 @@ import type { StudioLogger } from "../../logger.js";
 import { withMascotWriteLock } from "../../repository/mascots.js";
 import { removeImageBackground } from "../../utils/imageMatting.js";
 import { deletePreviousMascotAsset } from "../../quiz/mascot/generation/artGeneratorHelpers.js";
-import { analyzeMascotConceptImage, type MascotVisionAiConfig } from "../../quiz/mascot/services/mascotVisionAnalyzer.js";
+import {
+  analyzeMascotConceptImage,
+  extractOpaqueColorStats,
+  type MascotVisionAiConfig,
+} from "../../quiz/mascot/services/mascotVisionAnalyzer.js";
 
 export interface MascotUploadContext {
   logger?: StudioLogger;
@@ -36,20 +40,8 @@ function createHttpError(message: string, statusCode: number): Error {
 
 export async function extractDominantColor(buffer: Buffer): Promise<string | undefined> {
   try {
-    const stats = await sharp(buffer).stats();
-    const dominant = stats.dominant;
-    if (dominant) {
-      const r = Math.min(255, Math.max(0, Math.round(dominant.r)))
-        .toString(16)
-        .padStart(2, "0");
-      const g = Math.min(255, Math.max(0, Math.round(dominant.g)))
-        .toString(16)
-        .padStart(2, "0");
-      const b = Math.min(255, Math.max(0, Math.round(dominant.b)))
-        .toString(16)
-        .padStart(2, "0");
-      return `#${r}${g}${b}`;
-    }
+    const stats = await extractOpaqueColorStats(buffer);
+    return stats.dominantHex;
   } catch {
     // Dominant color extraction is best-effort
   }
@@ -190,6 +182,7 @@ export async function handleExistingMascotConceptUpload(
     logger: context?.logger,
     aiConfig: context?.aiConfig,
     mimeType: "image/png",
+    name: input.name || existingMascot.name,
   });
 
   const dominantColor = input.color_theme || visionAnalysis.dominant_color || localColor || existingMascot.color_theme;
@@ -257,6 +250,7 @@ export async function handleNewMascotConceptUpload(
     logger: context?.logger,
     aiConfig: context?.aiConfig,
     mimeType: "image/png",
+    name: input.name,
   });
 
   return withMascotWriteLock(mascotId, async () => {
@@ -327,6 +321,7 @@ export async function handleAnalyzeExistingMascotConcept(
   const analysis = await analyzeMascotConceptImage(imageBuffer, {
     logger: context?.logger,
     aiConfig,
+    name: mascot.name,
   });
 
   if (input?.save) {

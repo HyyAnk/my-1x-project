@@ -75,3 +75,11 @@ export const MASCOT_STEP2_SOURCE_ISOLATION_TAGS = [
   "no collage",
   "no split screen",
 ].join(", ");
+
+/**
+ * Reinforced prompt tags appended during green-screen ingress retry when validation fails.
+ * Guarantees explicit background isolation and zero transparency instructions.
+ */
+export const MASCOT_GREEN_SCREEN_REINFORCEMENT_TAGS =
+  "solid flat chroma key green background (#00FF00), completely opaque, pure uniform green backdrop, zero transparency, solid green background";
+

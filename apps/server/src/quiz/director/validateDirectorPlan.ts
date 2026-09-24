@@ -1,4 +1,11 @@
-import { DirectorPlanSchema, type DirectorPlan, type QuizIssue, type QuizV2 } from "@studio/shared";
+import {
+  DirectorPlanSchema,
+  gameplayTimingPolicy,
+  resolveGameplayPolicy,
+  type DirectorPlan,
+  type QuizIssue,
+  type QuizV2,
+} from "@studio/shared";
 import { layoutResolutionIssues, resolveQuestionLayout } from "../layoutCompatibility.js";
 
 const minimumThinkingSeconds: Record<QuizV2["age_band"], number> = { "4-6": 7.2, "7-9": 6.8, "10-12": 6.5, family: 6.8 };
@@ -70,7 +77,7 @@ export function validateDirectorPlan(quiz: QuizV2, value: unknown): { plan: Dire
   const archetypeCounts = new Map<string, number>();
   for (const beat of plan.beats) archetypeCounts.set(beat.archetype, (archetypeCounts.get(beat.archetype) ?? 0) + 1);
   const repeated = [...archetypeCounts.entries()].find(([, count]) => count > Math.ceil(quiz.questions.length * 0.6));
-  if (repeated)
+  if (repeated && !plan.gameplay_policy_version)
     issues.push({
       code: "director_repeated_archetype",
       severity: "warning",
@@ -112,12 +119,15 @@ export function validateDirectorPlan(quiz: QuizV2, value: unknown): { plan: Dire
     if (!question) continue;
     const layoutResolution = resolveQuestionLayout(question, beat);
     if (!layoutResolution.ok) issues.push(...layoutResolutionIssues(layoutResolution, question.id, "director", "director"));
-    if (beat.thinking_seconds < minimumThinkingSeconds[quiz.age_band])
+    const minimum = plan.gameplay_policy_version
+      ? gameplayTimingPolicy(resolveGameplayPolicy(beat), quiz.age_band, question.difficulty).minimum_thinking_seconds
+      : minimumThinkingSeconds[quiz.age_band];
+    if (beat.thinking_seconds < minimum)
       issues.push({
         code: "director_thinking_too_short",
         severity: "blocker",
         message: "Question " + question.number + " has " + beat.thinking_seconds + "s of thinking time for age band " + quiz.age_band + ".",
-        next_action: "Increase thinking time to at least " + minimumThinkingSeconds[quiz.age_band] + " seconds.",
+        next_action: "Increase thinking time to at least " + minimum + " seconds.",
         question_ids: [question.id],
         stage: "director",
       });

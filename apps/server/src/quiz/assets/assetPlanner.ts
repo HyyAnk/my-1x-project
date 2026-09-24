@@ -10,9 +10,31 @@ import {
   type QuizV2,
 } from "@studio/shared";
 import { resolveQuestionLayout } from "../layoutCompatibility.js";
-import { QUIZ_STYLE_CONTRACTS } from "./promptCompiler.js";
+import { QUIZ_STYLE_CONTRACTS, isGraphicIdentitySubject } from "./promptCompiler.js";
 
 export const QUIZ_ASSET_SUBJECT_MAX_LENGTH = 280;
+
+export function resolveGraphicChoiceSubject(
+  choiceText: string,
+  question: { question: string; visual_opportunity?: string },
+): string {
+  const combined = `${question.question} ${question.visual_opportunity || ""}`.toLowerCase();
+  const text = choiceText.trim();
+  if (/\b(flag|flags)\b/i.test(combined)) {
+    if (!/\b(flag|flags)\b/i.test(text)) {
+      return `Official national flag of ${text}, clean 2D graphic vector illustration`;
+    }
+  } else if (/\b(logo|logos|brand|brands)\b/i.test(combined)) {
+    if (!/\b(logo|logos|brand)\b/i.test(text)) {
+      return `Official minimalist vector brand logo of ${text}, clean graphic design icon`;
+    }
+  } else if (/\b(emblem|insignia|crest|monogram|symbol)\b/i.test(combined)) {
+    if (!/\b(emblem|insignia|crest|symbol)\b/i.test(text)) {
+      return `Official vector emblem or symbol of ${text}, clean graphic design mark`;
+    }
+  }
+  return text;
+}
 
 export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle: QuizImageStyle = "pixar_3d"): QuizAssetPlan {
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
@@ -105,21 +127,23 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
           }
         : undefined;
 
+      const isGraphicQuestion = isGraphicIdentitySubject(question.visual_opportunity || question.question);
+
       consistencyGroups.push({
         group_id: groupId,
         question_id: question.id,
         purpose: "visual_answer_set",
-        style_family: contract.styleFamily,
-        rendering_medium: contract.renderingMedium,
-        lighting: contract.lighting,
-        framing: "one centered subject, eye-level, full silhouette visible",
-        background_treatment: contract.optionBackground,
+        style_family: isGraphicQuestion ? "2D clean vector graphic emblem and symbol design" : contract.styleFamily,
+        rendering_medium: isGraphicQuestion ? "clean flat 2D graphic vector emblem, sharp silhouette, centered on solid background" : contract.renderingMedium,
+        lighting: isGraphicQuestion ? "clean ambient studio lighting with zero shadows" : contract.lighting,
+        framing: isGraphicQuestion ? "one centered isolated vector mark, high contrast, clean white background" : "one centered subject, eye-level, full silhouette visible",
+        background_treatment: isGraphicQuestion ? "pure solid clean white background" : contract.optionBackground,
         subject_scale: "one large, clearly recognizable subject with a complete silhouette scaled to fill the card comfortably while keeping critical details within the layout-defined safe region, consistent in scale and lighting across every option in this set",
         contrast: "medium-high and matched across every option",
         saturation: "bright but matched across every option",
-        edge_treatment: contract.edgeTreatment,
-        detail_level: contract.detailLevel,
-        face_policy: "natural_only",
+        edge_treatment: isGraphicQuestion ? "sharp, clean vector outlines" : contract.edgeTreatment,
+        detail_level: isGraphicQuestion ? "clean minimalist vector art designed for instant brand and symbol clarity" : contract.detailLevel,
+        face_policy: isGraphicQuestion ? "none" : "natural_only",
         asset_ids: optionAssetIds,
       });
 
@@ -127,7 +151,7 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         assets.push({
           asset_id: "asset-" + question.id + "-" + choice.id,
           question_id: question.id,
-          subject: choice.text,
+          subject: isGraphicQuestion ? resolveGraphicChoiceSubject(choice.text, question) : choice.text,
           purpose: "answer_option",
           style: "cute_illustration",
           aspect_ratio: ratio,

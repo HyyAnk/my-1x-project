@@ -21,6 +21,7 @@ import type {
 } from "../../quiz/mascot/videoAnimation/index.js";
 import type { MascotSlotJobManager } from "../../quiz/mascot/slotJobs/index.js";
 import type { MascotStyleJobManager } from "../../quiz/mascot/styleJobs/index.js";
+import type { MascotGreenScreenAuditService } from "../../quiz/mascot/audit/index.js";
 
 export type MascotsRouteDeps = {
   repository: RepositoryService;
@@ -28,6 +29,7 @@ export type MascotsRouteDeps = {
   state: AppState;
   mascotSlotJobManager?: MascotSlotJobManager;
   mascotStyleJobManager?: MascotStyleJobManager;
+  mascotGreenScreenAuditService?: MascotGreenScreenAuditService;
   animationRepository?: AnimationRepository;
   animationJobService?: AnimationJobService;
   animationPublishService?: AnimationPublishService;

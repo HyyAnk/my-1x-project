@@ -48,10 +48,11 @@ describe("buildDirectQuizOutputContract", () => {
     });
 
     expect(contract).toContain("=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===");
-    expect(contract).toContain("NEVER formulate a question around an isolated, naked character name");
-    expect(contract).toContain("ALWAYS explicitly anchor the parent franchise or show title in the question prompt");
-    expect(contract).toContain("In Jujutsu Kaisen, which sorcerer...");
-    expect(contract).toContain("In Dragon Ball Z, whose signature beam is...");
+    expect(contract).toContain(
+      "ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name",
+    );
+    expect(contract).toContain("'In Jujutsu Kaisen...'");
+    expect(contract).toContain("'In Dragon Ball Z...'");
     expect(contract).toContain(
       "Franchise Anchoring: When generating questions about anime, manga, gaming, comics, movies, or fictional characters",
     );
@@ -74,7 +75,7 @@ describe("buildDirectQuizOutputContract", () => {
       'Visual Opportunity Entity & Setting Mandate: The "visual_opportunity" field is used directly by AI image generators',
     );
     expect(contract).toContain(
-      "ENTITY & FRANCHISE IDENTITY: ALWAYS explicitly name the specific character/entity and their parent franchise or lore universe",
+      "CHARACTERS & CREATURES: ALWAYS explicitly name the specific character/entity and their parent franchise or lore universe",
     );
     expect(contract).toContain('VISUAL PROMPT LANGUAGE: The "visual_opportunity" field MUST ALWAYS be written 100% in English');
   });

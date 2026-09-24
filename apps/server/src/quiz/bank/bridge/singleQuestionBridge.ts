@@ -146,6 +146,7 @@ export async function createEpisodeFromQuestionBank(deps: {
   });
 
   const directorPlan = buildSingleQuestionDirectorPlan({
+    ageBand: bankQuestion.age_band,
     episodeId,
     quizQuestion,
     archetypeId: bankQuestion.archetype_id,

@@ -121,6 +121,8 @@ export function synthesizeScenesFromQuiz(quiz: QuizV2): Scene[] {
         source_ids: [],
       },
       quiz: {
+        gameplay_id: question.gameplay_id,
+        format: question.format,
         phase: "question",
         question_number: sceneNumber,
         question: question.question,

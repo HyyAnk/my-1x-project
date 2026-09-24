@@ -70,6 +70,8 @@ function buildMascotRequest(
   const placement = resolveChannelMascotPlacement(config, aspectRatio);
   return {
     mascot_id: channel.mascot_id && channel.mascot_id !== "none" ? channel.mascot_id : undefined,
+    mascot_placement_source: "channel",
+    mascot_channel_id: channel.channel_id,
     mascot_style_id: episode?.quiz_config?.mascot_style_id || undefined,
     mascot_style_selection: episode?.quiz_config?.mascot_style_selection,
     style_preset_id: override.stylePresetId ?? episode?.quiz_config?.style_preset_id,

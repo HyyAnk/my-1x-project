@@ -11,6 +11,7 @@ import type { MascotActionAssetV2 } from "../mascot/renderTypes.js";
 import { MascotBoundsSchema, MascotCanvasSizeSchema, MascotPointSchema } from "../mascot/renderRegistrationSchema.js";
 import { MascotPublishedAnimationAssetSchema, MascotSlotStateSchema, MascotSlotStatusSchema } from "../mascot/animation/animationSchema.js";
 import { IsoDate } from "./common.js";
+import { STAGE_PLACEMENT_DEFAULT } from "../mascot/stagePlacementDefaults.js";
 
 /**
  * @deprecated Legacy V1 sprite action schema. Use `MascotRenderBundleV2` or `MascotStateVariantSchema` instead.
@@ -203,13 +204,7 @@ export function resolveMascotStyle(profile: MascotProfile, styleId?: string | nu
   return synthesizeLegacyCoreStyle(profile);
 }
 
-export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
-  position: "bottom_left",
-  scale: 2.31,
-  offset_x: 127,
-  offset_y: 119,
-  flip_x: false,
-} as const;
+export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = STAGE_PLACEMENT_DEFAULT;
 
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_16_9 = { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET };
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 = { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET };

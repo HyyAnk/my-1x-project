@@ -3,6 +3,7 @@ import { type Channel, type ChannelMascotConfig, type MascotPlacementPreset, typ
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { StageAspectRatio, StagePosition } from "../types";
+import { notifyStageSourceChanged } from "../services/stageSourceEvents";
 
 export interface BuildDecoupledChannelMascotConfigParams {
   activePlacement: MascotPlacementPreset;
@@ -137,6 +138,7 @@ export function useStageSaveAction(options: {
         });
       }
 
+      notifyStageSourceChanged();
       await onSaved();
       onClose();
     } catch (err) {

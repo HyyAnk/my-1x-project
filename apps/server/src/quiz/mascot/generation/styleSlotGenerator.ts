@@ -4,6 +4,7 @@ import type { StudioLogger } from "../../../logger.js";
 import { buildMascotSlotPrompt } from "../../mascotPromptContract.js";
 import { generateProceduralStateArt } from "../proceduralArt.js";
 import { generateMascotArtWithFallback } from "../services/mascotAiImageClient.js";
+import { validateGreenScreen } from "../../../utils/imageMatting.js";
 import { deletePreviousMascotAsset, resolveSlotPromptModifier, resolveSlotReferenceImage } from "./artGeneratorHelpers.js";
 
 export async function generateMascotStyleSlot(
@@ -24,6 +25,7 @@ export async function generateMascotStyleSlot(
 
   const effectiveComposition = input.composition ?? options.composition ?? "half_body_16_9";
   const isHalfBody16x9 = effectiveComposition === "half_body_16_9";
+  const targetComposition = isHalfBody16x9 ? "16:9" : "1:1";
 
   const effectivePromptModifier = resolveSlotPromptModifier(style, input.state, input.slot_index, input.prompt_modifier);
   const { referenceImageBase64, hasStyleAnchor } = await resolveSlotReferenceImage(repository, mascot, style, logger);
@@ -52,13 +54,22 @@ export async function generateMascotStyleSlot(
       background: "opaque",
       cancellationSignal: options.signal,
       idempotencyKey: `mascot_${mascot.id}_${styleId}_${input.state}_s${input.slot_index}_${timestamp}`,
+      requireGreenScreen: true,
+      composition: targetComposition,
     },
     logger,
     logContext: { profileId: mascot.id, styleId, state: input.state, slotIndex: input.slot_index },
     actionLabel: `mascot style slot for ${mascot.name} style ${styleId} (${input.state} slot ${input.slot_index})`,
-    fallbackArt: () => generateProceduralStateArt(mascot.name, mascot.color_theme, input.state, 1, { composition: effectiveComposition }),
+    fallbackArt: () => generateProceduralStateArt(mascot.name, mascot.color_theme, input.state, 1, { composition: effectiveComposition, greenScreen: true }),
   });
   options.signal?.throwIfAborted();
+
+  if (!placeholder) {
+    const rawValidation = validateGreenScreen(rawBytes, { composition: targetComposition });
+    if (!rawValidation.isValid) {
+      throw new Error(`Style slot raw image failed green-screen validation (${rawValidation.reason})`);
+    }
+  }
 
   const existingSlot = style.states[input.state]?.find((s) => s.slot_index === input.slot_index);
   deletePreviousMascotAsset(repository, mascot.id, existingSlot?.image_url, filename);

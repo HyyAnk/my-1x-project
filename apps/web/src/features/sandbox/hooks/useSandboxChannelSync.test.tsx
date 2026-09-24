@@ -25,30 +25,16 @@ const design = {
   backgroundStyle: "aurora_glow",
   paletteId: "purple",
 } as const;
-const mascot = {
-  mascotId: "mascot-fox",
-  mascotEnabled: true,
-  mascotPosition: "bottom_right",
-  mascotScale: 1.3,
-  mascotOffsetX: -30,
-  mascotOffsetY: 25,
-  mascotFlipX: false,
-} as const;
 
 describe("useSandboxChannelSync", () => {
   beforeEach(() => vi.restoreAllMocks());
 
-  it("updates styles and stores only the landscape mascot placement", async () => {
+  it("updates styles without overwriting Stage Studio assignments", async () => {
     const updateChannel = vi.spyOn(api, "updateChannel").mockResolvedValue(channel);
     const assignMascot = vi.spyOn(api, "assignMascotToChannel").mockResolvedValue({ channel });
-    const { result } = renderHook(() => useSandboxChannelSync({ channels: [channel], design, mascot }), { wrapper });
+    const { result } = renderHook(() => useSandboxChannelSync({ channels: [channel], design }), { wrapper });
     await act(async () => result.current.handleApplyToChannel());
     expect(updateChannel).toHaveBeenCalledWith("channel-1", expect.objectContaining({ default_palette_id: "purple" }));
-    expect(assignMascot).toHaveBeenCalled();
-    const callArgs = assignMascot.mock.lastCall;
-    expect(callArgs?.[0]).toBe("channel-1");
-    expect(callArgs?.[1]?.config?.placements).toEqual({
-      "16:9": { position: "bottom_right", scale: 1.3, offset_x: -30, offset_y: 25, flip_x: false },
-    });
+    expect(assignMascot).not.toHaveBeenCalled();
   });
 });

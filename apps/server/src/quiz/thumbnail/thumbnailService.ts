@@ -11,10 +11,15 @@ import {
   pruneVersionHistory,
   type GenerateEpisodeThumbnailOptions,
 } from "./thumbnailManifestManager.js";
-import type { QuizThumbnailPlan } from "./thumbnailTypes.js";
+import {
+  applyLocalizedQuestionProjection,
+  loadChannelMascot,
+  loadChannelMascotVisualAnchor,
+  loadEpisodeQuestions,
+} from "./thumbnailLoaders.js";
+import type { MascotVisualAnchor, QuizThumbnailPlan } from "./thumbnailTypes.js";
 import { validateThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { resolveTargetThumbnailRatio } from "./thumbnailRatio.js";
-import { applyLocalizedQuestionProjection, loadChannelMascot, loadEpisodeQuestions } from "./thumbnailLoaders.js";
 
 export type { GenerateEpisodeThumbnailOptions } from "./thumbnailManifestManager.js";
 export {
@@ -24,8 +29,10 @@ export {
   pruneVersionHistory,
 } from "./thumbnailManifestManager.js";
 export { resolveTargetThumbnailRatio } from "./thumbnailRatio.js";
-export { applyLocalizedQuestionProjection } from "./thumbnailLoaders.js";
+export { applyLocalizedQuestionProjection, loadChannelMascot, loadChannelMascotVisualAnchor } from "./thumbnailLoaders.js";
+export type { MascotVisualAnchor } from "./thumbnailTypes.js";
 export const isValidShortHookText = (text: string | null | undefined): boolean => validateThumbnailHook(text).valid;
+
 
 async function createThumbnailPlan(params: {
   episode: Episode;
@@ -74,6 +81,7 @@ async function processVariantGeneration(
     options: GenerateEpisodeThumbnailOptions;
     logger: StudioLogger;
     nowTimestamp: number;
+    visualAnchor?: MascotVisualAnchor | null;
   },
 ): Promise<{ assetPath: string | null; activeId: string | undefined }> {
   if (!shouldGenerate || !prompt) return { assetPath: currentAssetPath, activeId: currentActiveId };
@@ -87,6 +95,7 @@ async function processVariantGeneration(
     options: ctx.options,
     logger: ctx.logger,
     nowTimestamp: ctx.nowTimestamp,
+    visualAnchor: ctx.visualAnchor,
   });
   for (let i = 0; i < history.length; i++) {
     const item = history[i];
@@ -111,6 +120,7 @@ export async function generateEpisodeThumbnail(
   const { targetLanguage, localization } = await resolveEpisodeTargetLanguage(repository, channelId, episode);
 
   const mascotProfile = await loadChannelMascot(repository, channelId, episodeId, channel.mascot_id, logger);
+  const visualAnchor = await loadChannelMascotVisualAnchor(repository, channelId, episodeId, channel.mascot_id, logger);
   const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
   const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
   const plan = await createThumbnailPlan({ episode, channel, questions, mascotProfile, localization, targetLanguage, options });
@@ -118,10 +128,10 @@ export async function generateEpisodeThumbnail(
   const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);
   const should169 = targetRatio === "16:9" || targetRatio === "both";
   const should916 = targetRatio === "9:16" || targetRatio === "both";
-  const prompt169 = should169 ? compileThumbnailPrompt(plan, "16:9", mascotProfile) : null;
-  const prompt916 = should916 ? compileThumbnailPrompt(plan, "9:16", mascotProfile) : null;
+  const prompt169 = should169 ? compileThumbnailPrompt(plan, "16:9", mascotProfile, visualAnchor) : null;
+  const prompt916 = should916 ? compileThumbnailPrompt(plan, "9:16", mascotProfile, visualAnchor) : null;
   const history: ThumbnailHistoryItem[] = existingManifest?.history ? [...existingManifest.history] : [];
-  const ctx = { repository, channel, episode, plan, options, logger, nowTimestamp: Date.now() };
+  const ctx = { repository, channel, episode, plan, options, logger, nowTimestamp: Date.now(), visualAnchor };
 
   const gen169 = await processVariantGeneration(
     "16:9",

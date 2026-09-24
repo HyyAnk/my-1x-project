@@ -7,6 +7,7 @@ import { resolveCandyArcadeFont } from "../../quiz/render/candyArcade/candyArcad
 import { defaultSfxCandidateDirectories, resolveSfxCandidatePath } from "../../quiz/audio/soundtrackSfxPlanner.js";
 import { RepositoryError } from "../../repository.js";
 import type { QuizV2RouteDeps } from "./quizV2Types.js";
+import { resolvePreviewStageSource } from "./resolvePreviewStageSource.js";
 
 /**
  * Registers media preview, static font resolution, SFX streaming, and soundtrack routes for Quiz V2.
@@ -15,7 +16,7 @@ export function registerQuizV2MediaRoutes(server: FastifyInstance, deps: QuizV2R
   const { repository } = deps;
 
   server.post("/api/quiz/preview-composition", async (request, reply) => {
-    const input = SandboxPreviewInputBaseSchema.parse(request.body ?? {});
+    const input = await resolvePreviewStageSource(SandboxPreviewInputBaseSchema.parse(request.body ?? {}), deps);
     const layoutIssues = sandboxPreviewLayoutIssues(input);
     if (layoutIssues.length) {
       return reply.code(400).send({

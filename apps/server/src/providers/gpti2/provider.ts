@@ -83,7 +83,13 @@ export class Gpti2QuizImageProvider {
   ) {}
 
   async generateAsset(
-    input: { assetId: string; fingerprint: string; prompt: string; aspect_ratio?: string },
+    input: {
+      assetId: string;
+      fingerprint: string;
+      prompt: string;
+      aspect_ratio?: string;
+      referenceImageBase64?: string;
+    },
     cancellationSignal?: AbortSignal,
   ): Promise<{ path: string; price_vnd?: number; price_breakdown?: Record<string, number>; model?: string; aspect_ratio?: string }> {
     const aspectRatio = input.aspect_ratio || "1:1";
@@ -96,6 +102,7 @@ export class Gpti2QuizImageProvider {
       apiKey: this.options.apiKey,
       model: this.options.model,
       aspect_ratio: aspectRatio,
+      referenceImageBase64: input.referenceImageBase64,
       idempotencyKey,
       cancellationSignal,
     });

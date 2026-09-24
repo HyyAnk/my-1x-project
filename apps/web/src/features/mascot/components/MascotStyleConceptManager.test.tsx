@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { BUILT_IN_PRESETS, type MascotProfile } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotStyleConceptManager } from "./MascotStyleConceptManager";
@@ -114,5 +114,11 @@ describe("MascotStyleConceptManager", () => {
     for (const preset of BUILT_IN_PRESETS) {
       expect(screen.getByText(`Built-in · ${preset.name}`)).toBeDefined();
     }
+  });
+
+  it("does not render 'Audit Green Screen' button in Step 1 Style Concepts", () => {
+    render(<MascotStyleConceptManager editingMascot={mockMascotAi} />, { wrapper });
+
+    expect(screen.queryByRole("button", { name: /Audit Green Screen/i })).toBeNull();
   });
 });

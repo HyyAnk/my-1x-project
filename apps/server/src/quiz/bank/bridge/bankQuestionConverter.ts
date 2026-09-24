@@ -103,12 +103,19 @@ export function convertBankQuestionToQuizQuestionLossless(
 
   const isMystery = bankQuestion.archetype_id === "mystery_reveal" || quizChoices.length === 1;
   const answerMode = isMystery ? "single_reveal" : "choice_selection";
-  const resolvedFormat = isMystery ? "image_guess" : quizChoices.length === 2 ? "true_false" : bankQuestion.format || "multiple_choice";
+  const resolvedFormat = isMystery
+    ? "image_guess"
+    : bankQuestion.archetype_id === "versus_faceoff"
+      ? "multiple_choice"
+      : quizChoices.length === 2
+        ? "true_false"
+        : bankQuestion.format || "multiple_choice";
 
   const candidateQuestion = {
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
     format: resolvedFormat,
+    gameplay_id: bankQuestion.archetype_id,
     answer_mode: answerMode,
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
     question: localizedQuestion.trim(),
@@ -189,14 +196,15 @@ function buildConvertedChoices(
  * non-bound flow. Bound products must use convertBankQuestionToQuizQuestionLossless.
  */
 export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
-  const isMystery = bankQuestion.archetype_id === "mystery_reveal" || bankQuestion.format === "image_guess";
-  const requiredCount = isMystery ? 1 : bankQuestion.format === "true_false" ? 2 : 3;
+  const isMystery = bankQuestion.archetype_id === "mystery_reveal";
+  const requiredCount = bankRequiredChoiceCountForArchetype(bankQuestion.archetype_id);
   const { mapped, correctIndex } = buildConvertedChoices(bankQuestion, options, isMystery, requiredCount);
   const mappedCorrectIndex = Math.min(Math.max(correctIndex, 0), requiredCount - 1);
   return QuizQuestionSchema.parse({
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
     format: isMystery ? "image_guess" : bankQuestion.format || "multiple_choice",
+    gameplay_id: bankQuestion.archetype_id,
     answer_mode: isMystery ? "single_reveal" : "choice_selection",
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
     question: (options.translation?.question || bankQuestion.question || "Engaging trivia challenge question").slice(0, 320).trim(),

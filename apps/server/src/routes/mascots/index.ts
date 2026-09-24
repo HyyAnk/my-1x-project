@@ -8,6 +8,8 @@ import { registerMascotPackageRoutes } from "./mascotPackageRoutes.js";
 import { registerMascotMigrationRoutes } from "./mascotMigrationRoutes.js";
 import { registerMascotAnimationRoutes } from "./mascotAnimationRoutes.js";
 import { registerMascotActivityRoutes } from "./mascotActivityRoutes.js";
+import { registerMascotAuditRoutes, resolveAuditService } from "./mascotAuditRoutes.js";
+import { registerMascotVariantExportRoutes } from "./mascotVariantExportRoutes.js";
 
 export type { MascotsRouteDeps } from "./mascotTypes.js";
 export { registerMascotCrudRoutes } from "./mascotCrudRoutes.js";
@@ -18,6 +20,7 @@ export { registerMascotPackageRoutes } from "./mascotPackageRoutes.js";
 export { registerMascotMigrationRoutes } from "./mascotMigrationRoutes.js";
 export { registerMascotAnimationRoutes } from "./mascotAnimationRoutes.js";
 export { registerMascotActivityRoutes } from "./mascotActivityRoutes.js";
+export { registerMascotAuditRoutes, resolveAuditService } from "./mascotAuditRoutes.js";
 
 /**
  * Registers all mascot modular route plugins onto the Fastify instance.
@@ -32,6 +35,8 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
     registerMascotMigrationRoutes(server, deps);
     registerMascotAnimationRoutes(server, deps);
     registerMascotActivityRoutes(server, deps);
+    registerMascotAuditRoutes(server, deps);
+    registerMascotVariantExportRoutes(server, deps);
     done();
   };
 }

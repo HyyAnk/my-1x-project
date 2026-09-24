@@ -20,10 +20,12 @@ import {
   TransitionIntentSchema,
 } from "../../enums.js";
 import { QUIZ_MAX_QUESTION_COUNT } from "../common.js";
+import { QuizGameplayIdSchema } from "../../quizGameplaySchema.js";
 
 export const DirectorBeatSchema = z
   .object({
     question_id: z.string().min(1),
+    gameplay_id: QuizGameplayIdSchema.optional(),
     archetype: DirectorArchetypeSchema,
     energy: DirectorEnergySchema,
     visual_density: DirectorVisualDensitySchema,
@@ -52,6 +54,7 @@ export const DirectorPlanSchema = z
   .object({
     schema_version: z.literal(2),
     episode_id: z.string().min(1),
+    gameplay_policy_version: z.number().int().positive().optional(),
     style_catalog_revision: z.string().trim().min(1).optional(),
     archetype_family: z.string().min(1).max(80),
     beats: DirectorBeatSchema.array().min(1).max(QUIZ_MAX_QUESTION_COUNT),

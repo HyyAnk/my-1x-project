@@ -37,9 +37,11 @@ export function styleAttributes(
   rewardStart: number,
   clipEnd: number,
   timerHideAt?: number,
+  countdownSeconds?: number,
 ): string {
   const paletteInline = serializeQuizPaletteInlineStyle(visual.palette);
   const thinkingTiming = calculateThinkingBarTiming({
+    countdownSeconds,
     clipStart,
     revealStart,
     timerHideAt,

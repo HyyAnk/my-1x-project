@@ -2,7 +2,7 @@ import type { Channel, ConfirmTopicResponse, QuizImageStyle, Task, TopicAvailabi
 import { request } from "./client";
 
 export const channelApi = {
-  channels: () => request<{ channels: Channel[] }>("/api/channels"),
+  channels: (signal?: AbortSignal) => request<{ channels: Channel[] }>("/api/channels", { signal }),
   createChannel: (body: unknown) =>
     request<{ channel: Channel; task: Task | null }>("/api/channels", { method: "POST", body: JSON.stringify(body) }),
   updateChannel: (id: string, body: unknown) => request<Channel>(`/api/channels/${id}`, { method: "PATCH", body: JSON.stringify(body) }),

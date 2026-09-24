@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { QuizAgeBandSchema, type QuizQuestionFormat, QuizQuestionFormatSchema } from "../../enums.js";
+import { QuizGameplayIdSchema } from "../../quizGameplaySchema.js";
 import {
   QUIZ_MAX_CHOICES_PER_QUESTION,
   QUIZ_MAX_QUESTION_COUNT,
@@ -34,6 +35,7 @@ export const QuizQuestionSchema = z
     id: z.string().min(1).max(80),
     number: z.number().int().positive(),
     format: QuizQuestionFormatSchema,
+    gameplay_id: QuizGameplayIdSchema.optional(),
     difficulty: z.number().int().min(1).max(5),
     question: z.string().trim().min(1).max(320),
     answer_mode: QuizAnswerModeSchema.default("choice_selection"),
@@ -89,7 +91,8 @@ export const QuizQuestionSchema = z
       return;
     }
 
-    const requiredChoiceCount = quizChoiceCountForFormat(question.format, question.answer_mode);
+    const requiredChoiceCount =
+      question.gameplay_id === "versus_faceoff" ? 2 : quizChoiceCountForFormat(question.format, question.answer_mode);
     if (question.choices.length !== requiredChoiceCount) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

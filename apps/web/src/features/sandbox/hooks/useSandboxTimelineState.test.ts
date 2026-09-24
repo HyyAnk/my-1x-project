@@ -3,6 +3,18 @@ import { renderHook, act } from "@testing-library/react";
 import { useSandboxTimelineState } from "./useSandboxTimelineState";
 
 describe("useSandboxTimelineState", () => {
+  it("uses server gameplay timing for seeking and phase jumps", () => {
+    const { result } = renderHook(() => useSandboxTimelineState());
+    act(() => result.current.setTimeline({ questionStart: 0, choicesStart: 1, thinkingStart: 8,
+      revealStart: 18, rewardStart: 18.58, explainStart: 21, totalDuration: 27, countdownSeconds: 3 }));
+    expect(result.current.totalDuration).toBe(27);
+    act(() => result.current.handleScrubberChange(17));
+    expect(result.current.phase).toBe("thinking");
+    act(() => result.current.handlePhaseChange("reveal"));
+    expect(result.current.timelineSeconds).toBeCloseTo(18.65);
+    act(() => result.current.handleTogglePlay());
+    expect(result.current.timelineSeconds).toBe(18);
+  });
   beforeEach(() => {
     vi.useFakeTimers();
   });

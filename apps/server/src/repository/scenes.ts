@@ -23,12 +23,21 @@ function clearSceneAudio(scene: Scene): Scene {
 
 export function assertQuizSceneChoicePolicy(scenes: Scene[], episode: Episode): void {
   const normalizedFormat = episode.quiz_config.quiz_format === "knowledge" ? "multiple_choice" : episode.quiz_config.quiz_format;
-  const defaultRequiredChoiceCount = quizChoiceCountForFormat(normalizedFormat);
+  const defaultRequiredChoiceCount = quizChoiceCountForFormat(
+    episode.quiz_config.target_layout === "split_versus_two" ? "true_false" : normalizedFormat,
+  );
   for (const scene of scenes) {
     if (!scene.quiz || !scene.quiz.question_number || ["intro", "outro"].includes(scene.quiz.phase)) continue;
     const isSingleReveal =
       scene.quiz.answer_mode === "single_reveal" || (scene.quiz.choices.length === 1 && episode.quiz_config.quiz_format === "image_guess");
-    const requiredChoiceCount = isSingleReveal ? 1 : defaultRequiredChoiceCount;
+    const requiredChoiceCount =
+      scene.quiz.gameplay_id === "versus_faceoff"
+        ? 2
+        : isSingleReveal
+          ? 1
+          : scene.quiz.format
+            ? quizChoiceCountForFormat(scene.quiz.format)
+            : defaultRequiredChoiceCount;
     if (scene.quiz.choices.length !== requiredChoiceCount) {
       throw new RepositoryError(
         `Question ${scene.quiz.question_number} must have exactly ${requiredChoiceCount} choices; received ${scene.quiz.choices.length}`,

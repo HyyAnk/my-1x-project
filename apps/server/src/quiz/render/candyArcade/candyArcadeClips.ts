@@ -91,6 +91,7 @@ export function outroClip(
 export function questionClip(input: QuestionClipInput): string {
   const { question, visual } = input;
   const timing: QuizSceneTiming = {
+    countdownSeconds: input.countdownSeconds,
     start: input.start,
     questionNarrationStart: input.questionNarrationStart,
     choicesStart: input.choicesStart,
@@ -147,6 +148,7 @@ export function questionClip(input: QuestionClipInput): string {
     input.rewardStart,
     input.end,
     input.timerHideAt,
+    input.countdownSeconds,
   );
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });

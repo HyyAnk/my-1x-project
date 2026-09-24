@@ -1,15 +1,9 @@
-import { IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, type AppConfig } from "@studio/shared";
+import { IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, RECOMMENDED_MASCOT_PLACEMENT_PRESET, type AppConfig } from "@studio/shared";
 
 export const DEFAULT_CONFIG: AppConfig = {
   active_engine: "codex",
   mascot_stage: {
-    default_placement: {
-      position: "bottom_left",
-      scale: 2.31,
-      offset_x: 127,
-      offset_y: 119,
-      flip_x: false,
-    },
+    default_placement: { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET },
   },
   video_generation: {
     provider: "hyperframes",

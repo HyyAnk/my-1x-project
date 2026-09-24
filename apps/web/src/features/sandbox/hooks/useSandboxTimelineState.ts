@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, SETTLED_SANDBOX_PHASE_TIMESTAMPS, type SandboxPhase } from "@studio/shared";
 import { useSandboxAudioCues } from "./useSandboxAudioCues";
 import { useSandboxIframeBridge } from "./useSandboxIframeBridge";
@@ -8,7 +8,7 @@ import { computePlaybackStartTime, getPhaseTargetTime } from "./useSandboxTimeli
 export type { SandboxPhase };
 
 export function useSandboxTimelineState() {
-  const timeline = useMemo(() => computeSandboxPhaseTimeline(), []);
+  const [timeline, setTimeline] = useState(() => computeSandboxPhaseTimeline());
   const [phase, setPhase] = useState<SandboxPhase>("thinking");
   const [timelineSeconds, setTimelineSeconds] = useState<number>(SETTLED_SANDBOX_PHASE_TIMESTAMPS.thinking);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -43,6 +43,7 @@ export function useSandboxTimelineState() {
     setTimelineSeconds,
     setPhase,
     totalDuration: timeline.totalDuration,
+    timeline,
     seekIframe,
     playIframe,
     pauseIframe,
@@ -65,27 +66,18 @@ export function useSandboxTimelineState() {
         timelineSecondsRef.current = startSec;
         setTimelineSeconds(startSec);
         resetCuesForReveal(startSec);
-        startRevealAnimation(startSec, SETTLED_SANDBOX_PHASE_TIMESTAMPS.reveal);
+        startRevealAnimation(startSec, Math.min(timeline.explainStart, startSec + 0.63));
         return;
       }
 
-      const targetTime = getPhaseTargetTime(newPhase);
+      const targetTime = getPhaseTargetTime(newPhase, timeline);
       timelineSecondsRef.current = targetTime;
       setTimelineSeconds(targetTime);
       seekIframe(targetTime);
       pauseIframe();
       syncCuesToTime(targetTime);
     },
-    [
-      cancelRehearsalAnimation,
-      pauseIframe,
-      resetCuesForReveal,
-      seekIframe,
-      startRevealAnimation,
-      stopAudio,
-      syncCuesToTime,
-      timeline.revealStart,
-    ],
+    [cancelRehearsalAnimation, pauseIframe, resetCuesForReveal, seekIframe, startRevealAnimation, stopAudio, syncCuesToTime, timeline],
   );
 
   const handleScrubberChange = useCallback(
@@ -95,7 +87,7 @@ export function useSandboxTimelineState() {
       const clamped = Math.max(0, Math.min(timeline.totalDuration, Number(seconds.toFixed(2))));
       timelineSecondsRef.current = clamped;
       setTimelineSeconds(clamped);
-      setPhase(getSandboxPhaseAtTime(clamped));
+      setPhase(getSandboxPhaseAtTime(clamped, timeline));
       seekIframe(clamped);
       setIsPlaying(false);
       isPlayingRef.current = false;
@@ -103,7 +95,7 @@ export function useSandboxTimelineState() {
       stopAudio();
       syncCuesToTime(clamped);
     },
-    [cancelRehearsalAnimation, pauseIframe, seekIframe, stopAudio, syncCuesToTime, timeline.totalDuration],
+    [cancelRehearsalAnimation, pauseIframe, seekIframe, stopAudio, syncCuesToTime, timeline],
   );
 
   const handleTogglePlay = useCallback(() => {
@@ -116,7 +108,7 @@ export function useSandboxTimelineState() {
         const { startTime, isLoopRestart } = computePlaybackStartTime(timelineSecondsRef.current, phase, timeline);
         timelineSecondsRef.current = startTime;
         setTimelineSeconds(startTime);
-        setPhase(getSandboxPhaseAtTime(startTime));
+        setPhase(getSandboxPhaseAtTime(startTime, timeline));
         seekIframe(startTime);
         if (isLoopRestart) clearFiredCues();
         else syncCuesToTime(startTime);
@@ -128,6 +120,7 @@ export function useSandboxTimelineState() {
   const rehearseReveal = useCallback(() => handlePhaseChange("reveal", { previewAnimation: true }), [handlePhaseChange]);
 
   return {
+    setTimeline,
     phase,
     setPhase,
     timelineSeconds,

@@ -3,39 +3,52 @@ import { calculateQuestionSimilarity, normalizeQuestionText } from "../../qa/que
 import { DEFAULT_SIMILARITY_THRESHOLD, type AutoQaIssue, type AutoQaResult } from "./autoQa.types.js";
 import { QuestionBankAutoQaIndex } from "./autoQaIndex.js";
 
+export const MAX_QUESTION_LENGTH = 110;
+export const MIN_QUESTION_LENGTH = 8;
+export const MIN_EXPLANATION_LENGTH = 8;
+
 /**
  * Validates quality standards and schema integrity on a bank question.
  */
 export function checkQualityAndSchemaIssues(question: BankQuestion): AutoQaIssue[] {
   const issues: AutoQaIssue[] = [];
 
-  if (!question.question || question.question.trim().length < 8) {
+  if (!question.question || question.question.trim().length < MIN_QUESTION_LENGTH) {
     issues.push({
       type: "quality",
-      message: "Question text is too short (less than 8 characters).",
+      message: `Question text is too short (less than ${MIN_QUESTION_LENGTH} characters).`,
     });
-  } else if (question.question.trim().length > 100) {
+  } else if (question.question.trim().length > MAX_QUESTION_LENGTH) {
     issues.push({
       type: "quality",
-      message: `Question text is too long (${question.question.trim().length} chars). Mobile video shorts require concise questions under 100 characters to prevent font shrinkage and text clipping.`,
-      details: { length: question.question.trim().length, maxLength: 100 },
+      message: `Question text is too long (${question.question.trim().length} chars). Mobile video shorts require concise questions under ${MAX_QUESTION_LENGTH} characters to prevent font shrinkage and text clipping.`,
+      details: { length: question.question.trim().length, maxLength: MAX_QUESTION_LENGTH },
     });
   }
 
-  if (!question.explanation || question.explanation.trim().length < 8) {
+  if (!question.explanation || question.explanation.trim().length < MIN_EXPLANATION_LENGTH) {
     issues.push({
       type: "quality",
-      message: "Explanation is too short or missing (less than 8 characters).",
+      message: `Explanation is too short or missing (less than ${MIN_EXPLANATION_LENGTH} characters).`,
     });
   }
 
   if (question.archetype_id === "versus_faceoff" && question.choices && question.choices.length === 2) {
     const qTrim = question.question?.trim() || "";
-    if (/:\s*[^:?]+\s*(?:or|vs\.?)\s*[^:?]+\??$/i.test(qTrim)) {
+    if (/:\s*[^:?]+\s+\b(?:or|vs\.?)\b\s+[^:?]+\??$/i.test(qTrim)) {
       issues.push({
         type: "quality",
         message:
           "Versus Faceoff question should not redundantly append ': Choice A or Choice B?' at the end. Choices are rendered directly on the split-screen buttons.",
+        details: { question: qTrim },
+      });
+    }
+
+    if (/^In\s+[^,]+,\s+which\s+[a-z\s]+(?:\b(?:escaped|shouts?|voices?|played|invented|created|is\s+the\s+only)\b)/i.test(qTrim)) {
+      issues.push({
+        type: "quality",
+        message:
+          "Versus Faceoff question appears to be an asymmetric single-character trivia question rather than a 1v1 head-to-head comparison. Use comparative phrasing (e.g., 'Entity A vs Entity B: Who has more...').",
         details: { question: qTrim },
       });
     }

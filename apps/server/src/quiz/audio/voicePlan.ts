@@ -1,10 +1,21 @@
-import { VoicePlanSchema, type QuizV2, type VoicePhrase, type VoiceSegmentRole, type VoicePlan } from "@studio/shared";
+import {
+  VoicePlanSchema,
+  resolveGameplayPolicy,
+  type DirectorPlan,
+  type QuizV2,
+  type VoicePhrase,
+  type VoiceSegmentRole,
+  type VoicePlan,
+} from "@studio/shared";
 import { sanitizeTextForSpeech, splitSmartPunctuationPhrases, canSplitBetweenWords } from "../../utils/speechSanitizer.js";
 import { resolveQuizVoiceCopy } from "./voiceCopy.js";
 
 export { CHINESE_OUTRO_CLOSING_VARIANTS, ENGLISH_OUTRO_CLOSING_VARIANTS, resolveOutroClosing } from "./voiceCopy.js";
 
-export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean; skipOutro?: boolean }): VoicePlan {
+export function buildQuizVoicePlan(
+  quiz: QuizV2,
+  options?: { skipIntro?: boolean; skipOutro?: boolean; director?: DirectorPlan },
+): VoicePlan {
   const copy = resolveQuizVoiceCopy(quiz.language, quiz.episode_id);
   const segments: VoicePlan["segments"] = [];
   if (!options?.skipIntro) {
@@ -18,6 +29,9 @@ export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean
     });
   }
   quiz.questions.forEach((question, index) => {
+    const beat = options?.director?.beats.find((item) => item.question_id === question.id);
+    const policy =
+      options?.director?.gameplay_policy_version || question.gameplay_id ? resolveGameplayPolicy({ ...question, ...beat }) : undefined;
     const answer = question.choices.find((choice) => choice.id === question.correct_choice_id)?.text ?? "";
     segments.push(
       withPhrases({
@@ -28,7 +42,7 @@ export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean
         duration_seconds: null,
       }),
     );
-    if (question.answer_mode !== "single_reveal") {
+    if (question.answer_mode !== "single_reveal" && policy?.readChoices !== false) {
       segments.push(
         withPhrases({
           segment_id: question.id + ":choice",
@@ -39,14 +53,17 @@ export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean
         }),
       );
     }
+    if (policy?.thinkingPrompt !== false)
+      segments.push(
+        withPhrases({
+          segment_id: question.id + ":thinking",
+          role: "thinking_prompt",
+          question_id: question.id,
+          text: copy.thinking[index % copy.thinking.length],
+          duration_seconds: null,
+        }),
+      );
     segments.push(
-      withPhrases({
-        segment_id: question.id + ":thinking",
-        role: "thinking_prompt",
-        question_id: question.id,
-        text: copy.thinking[index % copy.thinking.length],
-        duration_seconds: null,
-      }),
       withPhrases({
         segment_id: question.id + ":reveal",
         role: "reveal",

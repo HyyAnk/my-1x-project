@@ -150,7 +150,12 @@ export async function planVoice(
   const quiz = await input.repository.readQuiz(input.channelId, input.episodeId);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning voice", "QUIZ_REQUIRED");
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
-  const voice_plan = buildQuizVoicePlan(quiz, { skipIntro: introOutro.skipIntro, skipOutro: introOutro.skipOutro });
+  const director = await input.repository.readDirectorPlan(input.channelId, input.episodeId);
+  const voice_plan = buildQuizVoicePlan(quiz, {
+    skipIntro: introOutro.skipIntro,
+    skipOutro: introOutro.skipOutro,
+    director: director ?? undefined,
+  });
   const artifact_path = await input.repository.writeVoicePlan(input.channelId, input.episodeId, voice_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
@@ -176,7 +181,11 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
-  const plannedVoice = buildQuizVoicePlan(quiz, { skipIntro: introOutro.skipIntro, skipOutro: introOutro.skipOutro });
+  const plannedVoice = buildQuizVoicePlan(quiz, {
+    skipIntro: introOutro.skipIntro,
+    skipOutro: introOutro.skipOutro,
+    director: director_plan,
+  });
   const measured = await synthesizeQuizVoiceSegments({
     repository: input.repository,
     config: input.config.audio_generation,

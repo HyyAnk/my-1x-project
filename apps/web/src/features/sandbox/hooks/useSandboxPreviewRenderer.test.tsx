@@ -121,6 +121,7 @@ describe("useSandboxPreviewRenderer", () => {
       handleApplyPresetQuestion: vi.fn(),
     };
     mockTimeline = {
+      setTimeline: vi.fn(),
       phase: "choices",
       setPhase: vi.fn(),
       isPlaying: false,

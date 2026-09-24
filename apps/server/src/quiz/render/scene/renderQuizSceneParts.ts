@@ -38,6 +38,7 @@ export function renderStableQuizSceneParts(parts: QuizSceneParts) {
 
 export function renderQuizSceneThinkingPart(parts: QuizSceneParts, timing: QuizSceneTiming): string {
   return resolveThinkingBarVariant(parts.phase.thinkingStyle, undefined, parts.styleCatalogRevision).renderHtml({
+    countdownSeconds: timing.countdownSeconds,
     clipStart: timing.start,
     questionNarrationStart: timing.questionNarrationStart,
     revealStart: timing.revealStart,

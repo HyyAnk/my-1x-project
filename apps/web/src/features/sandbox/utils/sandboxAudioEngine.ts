@@ -160,7 +160,7 @@ export function buildSandboxRehearsalCues(
   const isCorrect = revealOutcome === "correct";
   const revealSfx = isCorrect ? "correct_triumph.wav" : "streak.wav";
 
-  return [
+  const cues: SfxCue[] = [
     // 1. Choices entrance pop
     {
       id: "choices-enter",
@@ -225,4 +225,12 @@ export function buildSandboxRehearsalCues(
       volume: 0.65,
     },
   ];
+  if (timeline.countdownSeconds === undefined) return cues;
+  return cues
+    .filter((cue) => !/^cd-[1-5]$/.test(cue.id) || Number(cue.id.slice(3)) <= timeline.countdownSeconds!)
+    .map((cue) =>
+      /^cd-[1-5]$/.test(cue.id)
+        ? { ...cue, timeSeconds: Number(((timeline.timerHideAt ?? timeline.revealStart) - Number(cue.id.slice(3))).toFixed(2)) }
+        : cue,
+    );
 }

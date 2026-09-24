@@ -12,9 +12,10 @@ import {
   createImgStudioRunId,
 } from "../../../providers/imgstudio/idempotency.js";
 import type { StudioLogger } from "../../../logger.js";
-import { normalizeImageToPng, removeImageBackground } from "../../../utils/imageMatting.js";
+import { normalizeImageToPng, removeImageBackground, type GreenScreenCanvasComposition } from "../../../utils/imageMatting.js";
 import { retryWithBackoff } from "../../../utils/retryWithBackoff.js";
 import { validateMascotPromptContract } from "../../mascotPromptContract.js";
+import { generateWithGreenScreenRetry } from "./mascotGreenScreenIngressGuard.js";
 
 /**
  * Enforces the studio isolation prompt contract before spending an AI call.
@@ -94,6 +95,9 @@ export interface MascotArtFallbackParams {
     background?: "transparent" | "opaque" | "auto";
     cancellationSignal?: AbortSignal;
     idempotencyKey?: string;
+    requireGreenScreen?: boolean;
+    maxGreenScreenRetries?: number;
+    composition?: GreenScreenCanvasComposition;
   };
   logger?: StudioLogger;
   logContext?: Record<string, unknown>;
@@ -296,6 +300,31 @@ export async function generateMascotArtWithFallback(params: MascotArtFallbackPar
     Boolean((imageFallbackConfig?.api_key || process.env.IMGSTUDIO_API_KEY || "").trim());
   const fallbackRunId = options.idempotencyKey?.trim() || createImgStudioRunId();
   const fallbackModels = resolveImgStudioFallbackModels(imageFallbackConfig?.model);
+
+  if (options.requireGreenScreen) {
+    return await generateWithGreenScreenRetry(
+      params,
+      isPrimaryEnabled,
+      isFallbackConfigured,
+      fallbackModels,
+      {
+        tryPrimary: (attemptParams) => tryPrimaryGeneration(attemptParams, isPrimaryEnabled, isFallbackConfigured),
+        tryFallback: (attemptParams, runId, model, tier) =>
+          tryFallbackGeneration(attemptParams, isFallbackConfigured, runId, model, tier),
+        normalizeAndMat: async (rawBytes) => {
+          const normalizedRaw = await normalizeGeneratedImage(rawBytes, actionLabel, logger, logContext);
+          const matted = await applyMattingWithFallback(normalizedRaw, actionLabel, logger, logContext);
+          return { mattedBytes: matted, rawBytes: normalizedRaw };
+        },
+        executeFallbackArt: async () => {
+          const fallback = fallbackArt();
+          const normalizedFallback = await normalizeGeneratedImage(fallback, actionLabel, logger, logContext);
+          const mattedFallback = await applyMattingWithFallback(normalizedFallback, actionLabel, logger, logContext);
+          return { mattedBytes: mattedFallback, rawBytes: normalizedFallback };
+        },
+      },
+    );
+  }
 
   let raw = await tryPrimaryGeneration(params, isPrimaryEnabled, isFallbackConfigured);
   options.cancellationSignal?.throwIfAborted();

@@ -26,6 +26,7 @@ export async function generateGpti2Asset(input: ProviderAssetInput): Promise<Pro
         fingerprint,
         prompt: compiledPrompt,
         aspect_ratio: request.aspect_ratio,
+        referenceImageBase64: input.referenceImageBase64,
       });
       break;
     } catch (err) {

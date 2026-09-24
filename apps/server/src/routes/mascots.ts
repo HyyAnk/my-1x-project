@@ -10,4 +10,6 @@ export {
   registerMascotMigrationRoutes,
   registerMascotAnimationRoutes,
   registerMascotActivityRoutes,
+  registerMascotAuditRoutes,
+  resolveAuditService,
 } from "./mascots/index.js";

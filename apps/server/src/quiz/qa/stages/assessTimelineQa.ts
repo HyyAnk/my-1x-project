@@ -1,8 +1,9 @@
-import type { QuizIssue, QuizTimeline, QuizV2 } from "@studio/shared";
+import { resolveGameplayPolicy, type DirectorPlan, type QuizIssue, type QuizTimeline, type QuizV2 } from "@studio/shared";
 import { validateQuizTimeline } from "../../timeline/validateTimeline.js";
 
 export interface AssessTimelineQaInput {
   quiz: QuizV2;
+  director?: DirectorPlan | null;
   timeline?: QuizTimeline | null;
   staticIntervalThresholdSeconds?: number;
 }
@@ -32,18 +33,21 @@ export function assessTimelineQa(input: AssessTimelineQaInput): QuizIssue[] {
     .filter((start): start is number => start !== undefined);
 
   const rushed = quiz.questions.flatMap((question, index) => {
+    const beat = input.director?.beats.find((item) => item.question_id === question.id);
+    const [minCycle, maxCycle] =
+      input.director?.gameplay_policy_version && beat ? resolveGameplayPolicy(beat).cycle : [minimumCycle, maximumCycle];
     const start = starts[index];
     const nextStart = starts[index + 1];
     const transition = timeline.events.find((event) => event.type === "transition.start" && event.question_id === question.id);
     const end = nextStart ?? (transition ? transition.at_seconds + transition.duration_seconds : timeline.duration_seconds);
-    return typeof start === "number" && (end - start < minimumCycle || end - start > maximumCycle) ? [question] : [];
+    return typeof start === "number" && (end - start < minCycle || end - start > maxCycle) ? [question] : [];
   });
 
   if (rushed.length) {
     issues.push({
       code: "pacing_question_cycle_outside_target",
       severity: "warning",
-      message: `${rushed.length} question cycle${rushed.length === 1 ? " is" : "s are"} outside the ${minimumCycle}–${maximumCycle}s target for ${quiz.age_band}.`,
+      message: `${rushed.length} question cycles are outside their gameplay/age pacing target.`,
       next_action: "Adjust narration overlap, thinking, reveal, or explanation duration before rendering.",
       question_ids: rushed.map((question) => question.id),
       stage: "timeline",

@@ -21,6 +21,7 @@ import type {
 } from "./quiz/mascot/videoAnimation/index.js";
 import { createMascotSlotJobManager, createMascotSlotJobRepository, type MascotSlotJobManager } from "./quiz/mascot/slotJobs/index.js";
 import { createMascotStyleJobManager, createMascotStyleJobRepository, type MascotStyleJobManager } from "./quiz/mascot/styleJobs/index.js";
+import type { MascotGreenScreenAuditService } from "./quiz/mascot/audit/index.js";
 import type { AppState } from "./routes/state.js";
 
 export type StudioApp = {
@@ -30,6 +31,7 @@ export type StudioApp = {
   logger: StudioLogger;
   mascotSlotJobManager: MascotSlotJobManager;
   mascotStyleJobManager: MascotStyleJobManager;
+  mascotGreenScreenAuditService?: MascotGreenScreenAuditService;
   close: () => Promise<void>;
 };
 
@@ -48,6 +50,7 @@ export type BuildAppOptions = {
   videoProcessingRepository?: VideoProcessingRepository;
   mascotSlotJobManager?: MascotSlotJobManager;
   mascotStyleJobManager?: MascotStyleJobManager;
+  mascotGreenScreenAuditService?: MascotGreenScreenAuditService;
 };
 
 export async function buildApp(

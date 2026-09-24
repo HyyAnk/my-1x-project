@@ -3,6 +3,7 @@ import { type MascotPlacementPreset, RECOMMENDED_MASCOT_PLACEMENT_PRESETS, resol
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { StageAspectRatio, StagePosition } from "../types";
+import { notifyStageSourceChanged } from "../services/stageSourceEvents";
 
 type PlacementPresetOptions = {
   isOpen: boolean;
@@ -120,6 +121,7 @@ export function useMascotPlacementPreset(options: PlacementPresetOptions) {
       const stageSettings = response.mascot_stage;
       const p16 = resolveMascotStageDefaultPlacement(stageSettings, "16:9");
       setDefaultPlacements({ "16:9": p16 });
+      notifyStageSourceChanged();
       options.onNotice({ tone: "good", message: options.t("stageStudio.noticeDefaultPresetSaved") });
     } catch (error) {
       options.onNotice({

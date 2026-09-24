@@ -2,18 +2,23 @@ import type { MascotProfile, ThumbnailAspectRatio } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../assets/promptCompiler.js";
 import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { resolveTopicEnvironmentSubject } from "./thumbnailEnvironmentResolver.js";
-import type { CompiledThumbnailPrompts, QuizThumbnailPlan } from "./thumbnailTypes.js";
+import type { CompiledThumbnailPrompts, MascotVisualAnchor, QuizThumbnailPlan } from "./thumbnailTypes.js";
 
 /**
- * Compiles clean, modern, high-CTR AI prompts for Thumbnail Generation in 16:9 and 9:16 formats.
- * Enforces a minimalist, clutter-free aesthetic without arcade glitz, heavy metal borders, or checkmark spoilers.
+ * Resolves the mascot description for the thumbnail prompt.
+ *
+ * Universal Reference-First Identity Contract:
+ * When a visual anchor or mascot profile is available, we strictly decouple physical species/anatomy/fur/color
+ * descriptors from the text prompt to eliminate hallucinations and chromakey/studio artifact leaks.
+ * We lock the character identity to the reference image while directing dynamic costume, expression, pose, and prop.
+ *
+ * Fallback: When no mascot or visual anchor is present, generates a clean, dynamic, friendly Pixar 3D animated companion.
  */
-function resolveMascotDescription(plan: QuizThumbnailPlan, mascotProfile?: MascotProfile | null): string {
-  const mascotName = mascotProfile?.name ? `named ${mascotProfile.name}` : "";
-  const mascotBasePrompt =
-    mascotProfile?.master_prompt || "an adorable clever fluffy robotic fox with cyan accents and big expressive sparkling eyes";
-  const mascotColor = mascotProfile?.color_theme || plan.colorTheme || "#06b6d4";
-
+export function resolveMascotDescription(
+  plan: QuizThumbnailPlan,
+  mascotProfile?: MascotProfile | null,
+  visualAnchor?: MascotVisualAnchor | null,
+): string {
   const costumeText = plan.mascotPersona.costume ? `wearing a stylish ${plan.mascotPersona.costume}` : "wearing a stylish themed costume";
   const expressionText = plan.mascotPersona.expression
     ? `Expression: ${plan.mascotPersona.expression}.`
@@ -26,7 +31,20 @@ function resolveMascotDescription(plan: QuizThumbnailPlan, mascotProfile?: Masco
       ? `Thematic Prop: interacting with ${plan.mascotPersona.prop}.`
       : "";
 
-  return `Mascot character ${mascotName}: ${mascotBasePrompt} (theme color: ${mascotColor}), ${costumeText}. ${expressionText} ${poseText} ${propText} Clean bright luminous rim lighting accentuating the character silhouette against the environment. Clean composition without cluttered extra handheld items.`;
+  const hasAnchorOrProfile = Boolean(visualAnchor || mascotProfile);
+
+  if (hasAnchorOrProfile) {
+    const mascotName = mascotProfile?.name ? `named ${mascotProfile.name}` : "";
+    const mascotPrefix = mascotName ? `Mascot character ${mascotName}` : "Mascot character";
+    const propSegment = propText ? `${propText} ` : "";
+    const prompt = `${mascotPrefix} (STRICT CHARACTER IDENTITY: exact character from the provided reference image; strictly preserve its identical species anatomy, facial features, proportions, original color palette, and signature physical details from the reference image): ${costumeText}. ${expressionText} ${poseText} ${propSegment}Clean bright luminous rim lighting accentuating the character silhouette against the environment. Clean composition without cluttered extra handheld items.`;
+    return prompt.replace(/\s{2,}/g, " ").trim();
+  }
+
+  const mascotColor = plan.colorTheme || "#06b6d4";
+  const propSegment = propText ? `${propText} ` : "";
+  const fallback = `Mascot character: an adorable, cheerful Pixar 3D animated companion character with expressive friendly eyes (theme color: ${mascotColor}), ${costumeText}. ${expressionText} ${poseText} ${propSegment}Clean bright luminous rim lighting accentuating the character silhouette against the environment. Clean composition without cluttered extra handheld items.`;
+  return fallback.replace(/\s{2,}/g, " ").trim();
 }
 
 function resolveLayoutPrompt(plan: QuizThumbnailPlan, isLandscape: boolean, mascotDescription: string): string {
@@ -74,6 +92,7 @@ export function compileThumbnailPrompt(
   plan: QuizThumbnailPlan,
   aspectRatio: ThumbnailAspectRatio,
   mascotProfile?: MascotProfile | null,
+  visualAnchor?: MascotVisualAnchor | null,
 ): string {
   const isLandscape = aspectRatio === "16:9";
   const styleContract = QUIZ_STYLE_CONTRACTS[plan.visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
@@ -84,7 +103,7 @@ export function compileThumbnailPrompt(
     : "Composition: 9:16 vertical portrait modern YouTube Shorts cover format. Clean minimalist stacked composition. STRICT CLUTTER RESTRICTIONS: Full-bleed borderless art (STRICT NO thick outer border). NO heavy metallic frames, NO lightning bolts, NO checkmark stickers (NO ✅/❌). STRICT SAFE ZONE: Enforce 440px bottom buffer / clear bottom 25% safe zone area free of text, crucial visual focal points, or mascot details to avoid vertical TikTok/Shorts UI overlays (captions, sounds, creator handle). Center all crucial subjects, text hooks, and mascot within the middle 60% vertical safe zone. Compose subjects cleanly with clear vertical stacking and zero cluttered 3-card or 3-subject matrices.";
 
   // 2. Mascot Definition (Clean, Expressive, Uncluttered)
-  const mascotDescription = resolveMascotDescription(plan, mascotProfile);
+  const mascotDescription = resolveMascotDescription(plan, mascotProfile, visualAnchor);
   const hookBannerText = sanitizeThumbnailHook(plan.hookText);
 
   // 3. Clean Modern Typography & Capsule Badge
@@ -115,10 +134,14 @@ export function compileThumbnailPrompt(
 /**
  * Compiles both 16:9 and 9:16 thumbnail prompts simultaneously.
  */
-export function compileDualThumbnailPrompts(plan: QuizThumbnailPlan, mascotProfile?: MascotProfile | null): CompiledThumbnailPrompts {
+export function compileDualThumbnailPrompts(
+  plan: QuizThumbnailPlan,
+  mascotProfile?: MascotProfile | null,
+  visualAnchor?: MascotVisualAnchor | null,
+): CompiledThumbnailPrompts {
   return {
     plan,
-    prompt_16_9: compileThumbnailPrompt(plan, "16:9", mascotProfile),
-    prompt_9_16: compileThumbnailPrompt(plan, "9:16", mascotProfile),
+    prompt_16_9: compileThumbnailPrompt(plan, "16:9", mascotProfile, visualAnchor),
+    prompt_9_16: compileThumbnailPrompt(plan, "9:16", mascotProfile, visualAnchor),
   };
 }

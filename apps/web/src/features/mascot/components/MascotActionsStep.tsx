@@ -1,14 +1,17 @@
-import { ArrowLeft, ArrowRight, Sparkle } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import type { MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { useBeforeUnloadWarning } from "../hooks/useBeforeUnloadWarning";
 import { useMascotStepStyles } from "../hooks/useMascotStepStyles";
+import { useMascotGreenScreenAudit } from "../hooks/useMascotGreenScreenAudit";
 import { MascotStyleTabBar } from "./MascotStyleTabBar";
 import { MascotStyleHeader } from "./MascotStyleHeader";
 import { MascotBatchProgressCard } from "./MascotBatchProgressCard";
 import { MascotStateSlotsColumn } from "./MascotStateSlotsColumn";
 import { SlotPromptModal } from "./SlotPromptModal";
+import { MascotGreenScreenAuditModal } from "./MascotGreenScreenAuditModal";
+import { MascotStatesHeader } from "./MascotStatesHeader";
 
 export type MascotActionsStepProps = {
   editingMascot: MascotProfile | null;
@@ -41,6 +44,10 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
 
   const { allStyles, resolvedActiveStyle } = useMascotStepStyles(editingMascot, activeStyle, activeStyleId);
 
+  const greenScreenAudit = useMascotGreenScreenAudit({
+    mascotId: editingMascot?.id,
+  });
+
   // Completion calculation for active style
   const thinkingVariants = resolvedActiveStyle?.states?.thinking || [];
   const celebrateVariants = resolvedActiveStyle?.states?.celebrate || [];
@@ -57,19 +64,7 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
   return (
     <div className="wizard-step-content mascot-actions-step-container">
       <div className="wizard-card states-studio-card">
-        {/* Step Header */}
-        <div className="wizard-card-header-flex">
-          <div>
-            <span className="states-studio-badge">
-              <Sparkle size={13} weight="fill" />
-              <span>Step 2: Expressive States &amp; Multi-Style Studio</span>
-            </span>
-            <h3 className="states-studio-main-heading">Mascot Styles &amp; Expressive Poses</h3>
-            <p className="states-studio-subheading">
-              Manage wardrobe themes and generate up to 10 Thinking and 10 Celebrate pose variants per style.
-            </p>
-          </div>
-        </div>
+        <MascotStatesHeader mascot={editingMascot} onAudit={greenScreenAudit.openAuditModal} />
 
         {/* 1. Style Tabs & Management */}
         <MascotStyleTabBar
@@ -156,6 +151,20 @@ export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNe
         styleName={resolvedActiveStyle?.name || "Active Style"}
         onClose={handleCloseSlotPromptModal}
         onSave={handleSaveSlotPrompt}
+      />
+
+      <MascotGreenScreenAuditModal
+        isOpen={greenScreenAudit.isOpen}
+        onClose={greenScreenAudit.closeAuditModal}
+        mascotName={editingMascot?.name}
+        auditResult={greenScreenAudit.activeResult}
+        auditStatus={greenScreenAudit.auditStatus}
+        isScanning={greenScreenAudit.isScanning}
+        isRepairing={greenScreenAudit.isRepairing}
+        error={greenScreenAudit.error}
+        onScan={greenScreenAudit.runScan}
+        onRepair={greenScreenAudit.runRepair}
+        onOpenLightbox={onOpenLightbox}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import { useRouteTab } from "../../hooks/router/useRouteTab";
 import { useSandboxChannelSync } from "./hooks/useSandboxChannelSync";
 import { useSandboxDesignState } from "./hooks/useSandboxDesignState";
 import { useSandboxMascotState } from "./hooks/useSandboxMascotState";
+import { useSandboxStageSource } from "./hooks/useSandboxStageSource";
 import { useSandboxBrandNameState } from "./hooks/useSandboxBrandNameState";
 import { useSandboxPresets } from "./hooks/useSandboxPresets";
 import { useSandboxPreviewRenderer } from "./hooks/useSandboxPreviewRenderer";
@@ -47,7 +48,9 @@ export function VisualSandboxTab({
 
   const viewport = useSandboxViewportState();
   const design = useSandboxDesignState();
-  const mascot = useSandboxMascotState();
+  const mascotDraft = useSandboxMascotState();
+  const stageSource = useSandboxStageSource(mascotDraft, channels);
+  const mascot = stageSource.mascot;
   const brandName = useSandboxBrandNameState();
   const timeline = useSandboxTimelineState();
   const question = useSandboxQuestionState();
@@ -67,6 +70,7 @@ export function VisualSandboxTab({
     question,
     aspectRatio: viewport.aspectRatio,
     channelBrandName: brandName.channelBrandName,
+    stageChannelId: stageSource.channelId,
     onNotice,
   });
   const presets = useSandboxPresets({
@@ -78,9 +82,8 @@ export function VisualSandboxTab({
     onLayoutChange: handleLayoutChange,
   });
   const channelSync = useSandboxChannelSync({
-    channels,
+    channels: stageSource.channels,
     design,
-    mascot,
     transition,
     onNotice,
     onRefreshChannels,
@@ -100,15 +103,53 @@ export function VisualSandboxTab({
   return (
     <section className="page-wrap visual-sandbox-page">
       <SandboxHeader
-        hasChannels={channels.length > 0}
+        hasChannels={stageSource.channels.length > 0}
         loading={preview.loading}
         onOpenPresetModal={() => presets.setPresetModalOpen(true)}
         onOpenChannelSyncModal={() => channelSync.setChannelSyncOpen(true)}
         onRerender={() => void preview.renderPreview(true)}
       />
 
+      <div style={{ minWidth: 0, marginBottom: 12 }}>
+        <label style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+          Stage Studio source
+          <select
+            style={{
+              width: "100%",
+              maxWidth: 450,
+              minHeight: 36,
+              borderRadius: 8,
+              background: "var(--surface)",
+              color: "var(--text)",
+              border: "1px solid var(--line)",
+              padding: "6px 10px",
+            }}
+            className="select-input"
+            value={stageSource.channelId}
+            onChange={(event) => stageSource.setChannelId(event.target.value)}
+          >
+            <option value="">Stage Studio default</option>
+            {stageSource.channels.map((channel) => (
+              <option key={channel.channel_id} value={channel.channel_id}>
+                {channel.display_name}
+              </option>
+            ))}
+          </select>
+        </label>
+        {stageSource.error ? (
+          <p role="alert">
+            {stageSource.error}{" "}
+            <button type="button" onClick={() => void stageSource.refresh()}>
+              Retry
+            </button>
+          </p>
+        ) : (
+          !stageSource.ready && <p role="status">Loading Stage Studio placement</p>
+        )}
+      </div>
       <div className="visual-sandbox-workspace">
         <SandboxInspectorContainer
+          stageAssignmentLocked={Boolean(stageSource.channelId)}
           activeInspectorTab={activeInspectorTab}
           onTabChange={handleTabChange}
           presets={presets}
@@ -133,7 +174,7 @@ export function VisualSandboxTab({
         />
       </div>
 
-      <SandboxModalsContainer channels={channels} presets={presets} channelSync={channelSync} mascot={mascot} design={design} />
+      <SandboxModalsContainer channels={stageSource.channels} presets={presets} channelSync={channelSync} design={design} />
     </section>
   );
 }
