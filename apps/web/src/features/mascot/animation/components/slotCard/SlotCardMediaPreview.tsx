@@ -13,13 +13,14 @@ export function SlotCardMediaPreview({ mascotId, styleId, state, slotIndex, proj
   const rawVideoUrl = projection?.active_revision?.transparent_video_url;
   const videoUrl = rawVideoUrl && !isMockFixtureIdentifier(rawVideoUrl) ? rawVideoUrl : null;
 
-  const previewArtifactUrl = `/api/mascots/${encodeURIComponent(mascotId)}/styles/${encodeURIComponent(styleId)}/animations/${state}/${slotIndex}/artifacts/preview.png`;
   const activeRevision = projection?.active_revision;
+  const previewArtifactUrl = `/api/mascots/${encodeURIComponent(mascotId)}/styles/${encodeURIComponent(styleId)}/animations/${state}/${slotIndex}/artifacts/preview.png${activeRevision ? `?attempt=${activeRevision.attempt}` : ""}`;
 
   return (
     <div className="anim-slot-preview-box">
       {videoUrl ? (
         <video
+          key={`${videoUrl}:${projection?.active_revision_id ?? activeRevision?.id}`}
           src={videoUrl}
           autoPlay
           loop
@@ -36,6 +37,7 @@ export function SlotCardMediaPreview({ mascotId, styleId, state, slotIndex, proj
         />
       ) : (
         <img
+          key={previewArtifactUrl}
           src={previewArtifactUrl}
           alt={`${state} slot ${slotIndex} preview`}
           className="anim-slot-preview-img"

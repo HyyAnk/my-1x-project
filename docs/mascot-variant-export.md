@@ -4,7 +4,7 @@
 
 1. Step 2 offers Download Original and Download Transparent beside Audit Green Screen.
 2. Opening either action fetches the current all-style Thinking/Celebrate counts and restores any active server export.
-3. Choose Folder opens an in-dashboard browser for folders on the backend machine. Users can browse drives/subfolders or enter an existing absolute path. Use This Folder checks directory access and write permission before enabling Download Variants.
+3. Choose Folder opens the Windows folder-selection dialog when Studio is accessed through localhost on the backend computer. Selection validates write access and fills the destination automatically; cancellation preserves the previous selection. Duplicate requests and exports are disabled while choosing. The window times out after two minutes. Other locations expands the fallback Use Server Path action for remote/headless access; Open Path navigates its in-dashboard directory list.
 4. Download Variants snapshots current variant references from all styles. Empty slots are counted in the preview but not exported. Original prefers the raw source; Transparent uses the existing cache/matting pipeline.
 5. The server acknowledges a background job. The dashboard polls sequentially, shows real processed/total progress, and prevents repeated submission while leaving the rest of the application usable.
 6. Closing the dialog does not cancel the job. Reopening restores active status. Cancel Export stops after the in-flight image; already saved files remain. Retry Failed processes only the failed entries from the previous snapshot.
@@ -26,7 +26,7 @@ Selected Folder/
 - The number is the source slot index, padded to three digits. Original keeps its detected PNG/JPEG/WebP format and original bytes. Transparent is PNG, using the existing full-canvas pipeline.
 - Names are filesystem-safe ASCII. Reserved Windows names are prefixed; conflicting style names receive a stable ID hash suffix.
 - Identical existing images are skipped. Different content gets a stable content-hash suffix; existing files are never overwritten.
-- Sources must be local mascot asset URLs. No remote fetching, shell execution, desktop input, AI image generation, or source-file modification occurs. Transparent cache creation is the only source-library side effect.
+- Sources must be local mascot asset URLs. Export uses filesystem operations, not shell copying. The native picker launches a fixed encoded PowerShell script in STA mode, passing the initial path only through an environment variable; it does not automate mouse/keyboard input. No remote fetching, AI image generation, or source-file modification occurs. Transparent cache creation is the only source-library side effect.
 - Output paths cannot be inside the mascot source library. Generated output directories are checked for symlinks/junctions and real-path containment.
 - Hard-link publication is atomic on supported filesystems. FAT/exFAT/network shares fall back to exclusive file creation, removing the newly created file if writing fails.
 

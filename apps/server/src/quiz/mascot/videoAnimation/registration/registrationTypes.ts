@@ -4,6 +4,7 @@ export interface FrameGeometryInput {
   frameIndex: number;
   width: number;
   height: number;
+  centroid?: MascotPoint;
   bounds: {
     minX: number;
     minY: number;
@@ -14,7 +15,6 @@ export interface FrameGeometryInput {
 
 export interface ComputeRegistrationFromFramesParams {
   frames: FrameGeometryInput[];
-  maxAllowedDriftPx?: number;
   expectedFrameCount?: number;
 }
 
@@ -25,7 +25,6 @@ export interface ComputeAttemptRegistrationParams {
   slotIndex: number;
   attemptId: string | number;
   subDir?: string;
-  maxAllowedDriftPx?: number;
   frameCount?: number;
 }
 

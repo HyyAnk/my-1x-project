@@ -165,8 +165,8 @@ describe("Stage 08 — Mascot Sequence Common Registration", () => {
     });
   });
 
-  describe("Centroid Drift Tolerance", () => {
-    it("rejects excessive centroid jumps (> maxAllowedDriftPx) with EXCESSIVE_DRIFT", () => {
+  describe("Diagnostic Movement Metrics", () => {
+    it("accepts large intentional centroid jumps without modifying the animation", () => {
       const frames: FrameGeometryInput[] = Array.from({ length: 12 }, (_, i) => {
         // Sudden jump of 250px at frame 6
         const jump = i >= 5 ? 250 : 0;
@@ -183,11 +183,11 @@ describe("Stage 08 — Mascot Sequence Common Registration", () => {
         };
       });
 
-      expect(() => computeRegistrationFromGeometry({ frames, maxAllowedDriftPx: 100 })).toThrowError(
-        expect.objectContaining({
-          code: "EXCESSIVE_DRIFT",
-        }),
-      );
+      const result = computeRegistrationFromGeometry({ frames });
+      expect(result.maxDriftPx).toBe(250);
+      expect(result.registration.offset_x).toBe(0);
+      expect(result.registration.offset_y).toBe(0);
+      expect(result.commonBounds).toEqual({ x: 200, y: 100, width: 451, height: 501 });
     });
 
     it("measures drift metrics accurately on smooth motion", () => {
@@ -204,7 +204,7 @@ describe("Stage 08 — Mascot Sequence Common Registration", () => {
         },
       }));
 
-      const result = computeRegistrationFromGeometry({ frames, maxAllowedDriftPx: 100 });
+      const result = computeRegistrationFromGeometry({ frames });
       expect(result.maxDriftPx).toBe(10);
       expect(result.avgDriftPx).toBe(10);
     });

@@ -9,7 +9,7 @@ export function useExportDialog() {
       if (event.key !== "Tab" || !node) return;
       const controls = [
         ...node.querySelectorAll<HTMLElement>("button:not(:disabled), input:not(:disabled), select:not(:disabled), summary"),
-      ];
+      ].filter((element) => !element.closest("details:not([open])") || element.tagName === "SUMMARY");
       const first = controls[0];
       const last = controls[controls.length - 1];
       if (event.shiftKey && document.activeElement === first) {

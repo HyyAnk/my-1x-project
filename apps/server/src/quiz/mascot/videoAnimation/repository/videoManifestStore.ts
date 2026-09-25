@@ -110,10 +110,11 @@ export function createVideoManifestStore(storageAdapter: AnimationStorageAdapter
     if (!isRecognizedArtifact(filename)) return null;
 
     const slotDir = storageAdapter.getSlotDir(mascotId, styleId, state, slotIndex);
-    const candidatePaths = [
+    const legacyPaths = [
       path.join(slotDir, filename),
       path.join(storageAdapter.getPublishedArtifactsDir(mascotId, styleId, state, slotIndex), filename),
     ];
+    const candidatePaths: string[] = [];
 
     const targetAttempts: number[] = [];
     if (attemptId !== undefined) {
@@ -121,17 +122,18 @@ export function createVideoManifestStore(storageAdapter: AnimationStorageAdapter
     } else {
       const activeRev = await getActiveRevision(mascotId, styleId, state, slotIndex);
       if (activeRev) targetAttempts.push(activeRev.attempt);
-      try {
-        const entries = await fs.readdir(path.join(slotDir, "attempts"), { withFileTypes: true });
-        const scanned = entries
-          .filter((e) => e.isDirectory() && e.name.startsWith("att_"))
-          .map((e) => parseInt(e.name.replace("att_", ""), 10))
-          .filter((n) => !Number.isNaN(n))
-          .sort((a, b) => b - a);
-        targetAttempts.push(...scanned);
-      } catch {
-        // attempts dir uninitialized
-      }
+      if (!activeRev)
+        try {
+          const entries = await fs.readdir(path.join(slotDir, "attempts"), { withFileTypes: true });
+          const scanned = entries
+            .filter((e) => e.isDirectory() && e.name.startsWith("att_"))
+            .map((e) => parseInt(e.name.replace("att_", ""), 10))
+            .filter((n) => !Number.isNaN(n))
+            .sort((a, b) => b - a);
+          targetAttempts.push(...scanned);
+        } catch {
+          // attempts dir uninitialized
+        }
     }
 
     for (const att of targetAttempts) {
@@ -142,6 +144,8 @@ export function createVideoManifestStore(storageAdapter: AnimationStorageAdapter
         path.join(attDir, "frames", "extracted", filename),
       );
     }
+
+    if (attemptId === undefined && targetAttempts.length === 0) candidatePaths.push(...legacyPaths);
 
     for (const candidate of candidatePaths) {
       try {

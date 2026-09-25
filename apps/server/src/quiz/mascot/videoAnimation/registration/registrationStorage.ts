@@ -65,11 +65,17 @@ async function decodeFrameBounds(filePath: string, frameIndex: number, filename:
   let maxX = -1;
   let minY = height;
   let maxY = -1;
+  let alphaWeight = 0;
+  let weightedX = 0;
+  let weightedY = 0;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const alpha = data[(y * width + x) * 4 + 3];
       if (alpha > 10) {
+        alphaWeight += alpha;
+        weightedX += x * alpha;
+        weightedY += y * alpha;
         if (x < minX) minX = x;
         if (x > maxX) maxX = x;
         if (y < minY) minY = y;
@@ -86,6 +92,7 @@ async function decodeFrameBounds(filePath: string, frameIndex: number, filename:
     frameIndex,
     width,
     height,
+    centroid: { x: weightedX / alphaWeight, y: weightedY / alphaWeight },
     bounds: { minX, minY, maxX, maxY },
   };
 }

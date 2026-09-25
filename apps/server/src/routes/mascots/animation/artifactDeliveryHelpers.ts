@@ -76,7 +76,7 @@ export function sendArtifactFile(filePath: string, filename: string, request: Fa
           "content-range": `bytes ${start}-${end}/${fileSize}`,
           "accept-ranges": "bytes",
           "content-length": contentLength,
-          "cache-control": "public, max-age=3600",
+          "cache-control": "no-store",
         })
         .send(createReadStream(filePath, { start, end }));
     }
@@ -87,7 +87,7 @@ export function sendArtifactFile(filePath: string, filename: string, request: Fa
         "content-type": contentType,
         "content-length": fileSize,
         "accept-ranges": "bytes",
-        "cache-control": "public, max-age=3600",
+        "cache-control": "no-store",
       })
       .send(createReadStream(filePath));
   });
@@ -102,6 +102,7 @@ export interface ResolveCandidateParams {
   state: string;
   slotIndex: string;
   filename: string;
+  attemptId?: number;
 }
 
 /**
@@ -114,14 +115,25 @@ export async function resolveArtifactCandidatePath(params: ResolveCandidateParam
   const parsedSlot = parseInt(slotIndex, 10);
   if (parsedSlot >= 1 && parsedSlot <= 10 && (state === "thinking" || state === "celebrate")) {
     try {
-      const resolvedFromRepo = await videoProcessingRepo.resolveArtifactPath(mascotId, styleId, state, parsedSlot, filename);
+      const resolvedFromRepo = await videoProcessingRepo.resolveArtifactPath(
+        mascotId,
+        styleId,
+        state,
+        parsedSlot,
+        filename,
+        params.attemptId,
+      );
       if (resolvedFromRepo) {
         return resolvedFromRepo;
       }
+      if (await videoProcessingRepo.getActiveRevision(mascotId, styleId, state, parsedSlot)) return null;
     } catch {
       // Fall back to candidate search
     }
   }
+
+  // A pinned request must never fall through to an unrelated or unpublished attempt.
+  if (params.attemptId !== undefined) return null;
 
   const slotDir = path.join(outputBaseDir, mascotId, styleId, state, String(slotIndex));
   const candidatePaths: string[] = [path.join(slotDir, filename)];

@@ -8,6 +8,15 @@
   color: var(--muted);
   font-size: 12px;
 }
+.variant-export-folder-alternative {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.variant-export-folder-alternative summary {
+  cursor: pointer;
+  padding: 12px 0;
+}
 .variant-export-modal {
   width: min(620px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);

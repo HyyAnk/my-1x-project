@@ -20,6 +20,7 @@ import {
   makeSlotKey,
 } from "../projections/slotProjectionMapper.js";
 import type { VideoSlotStore } from "./repositoryTypes.js";
+import { pinRevisionArtifactUrls } from "../projections/revisionArtifactUrls.js";
 
 export function createVideoSlotStore(storageRoot: string): VideoSlotStore {
   const slotProjections = new Map<string, MascotSlotProjection>();
@@ -56,7 +57,12 @@ export function createVideoSlotStore(storageRoot: string): VideoSlotStore {
     await loadSlotProjectionsIfPresent(mascotId, styleId);
     const key = makeSlotKey(mascotId, styleId, state, slotIndex);
     const existing = slotProjections.get(key);
-    if (existing) return { ...existing };
+    if (existing) {
+      return {
+        ...existing,
+        ...(existing.active_revision ? { active_revision: pinRevisionArtifactUrls(existing.active_revision) } : {}),
+      };
+    }
 
     const initial = createDefaultSlotProjection(styleId, state, slotIndex);
     slotProjections.set(key, initial);

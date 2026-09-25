@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { FolderOpen, X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react";
 import type { useVariantExport } from "../../hooks/useVariantExport";
 import { ExportFolderPicker } from "./ExportFolderPicker";
 import { VariantExportProgress } from "./VariantExportProgress";
 import { VariantExportSummary } from "./VariantExportSummary";
 import { useExportDialog } from "../../hooks/useExportDialog";
+import { useNativeExportFolder } from "../../hooks/useNativeExportFolder";
+import { NativeFolderActions } from "./NativeFolderActions";
 
 export function VariantExportModal({ state, mascotName }: { state: ReturnType<typeof useVariantExport>; mascotName: string }) {
   const dialog = useExportDialog();
   const [choosing, setChoosing] = useState(false);
-  const busy = state.active || state.pending;
-  const total = (state.summary?.thinking || 0) + (state.summary?.celebrate || 0);
+  const folder = useNativeExportFolder(state.setDestination);
+  const busy = state.active || state.pending || folder.pending;
+  const { thinking = 0, celebrate = 0 } = state.summary ?? {};
+  const total = thinking + celebrate;
   const canRetry =
     state.job && state.job.failed > 0 && !busy && state.job.mode === state.mode && state.job.destination === state.destination;
   const visibleJob = state.job?.mode === state.mode && state.job.destination === state.destination ? state.job : null;
@@ -44,10 +48,7 @@ export function VariantExportModal({ state, mascotName }: { state: ReturnType<ty
         />
       ) : (
         <>
-          <button type="button" className="quiet-button" disabled={busy} onClick={() => setChoosing(true)}>
-            <FolderOpen size={18} />
-            Choose Folder
-          </button>
+          <NativeFolderActions folder={folder} busy={busy} destination={state.destination} onFallback={() => setChoosing(true)} />
           {state.destination && (
             <p className="variant-export-path" aria-label="Selected folder">
               {state.destination}
@@ -76,7 +77,7 @@ export function VariantExportModal({ state, mascotName }: { state: ReturnType<ty
                 <button
                   type="button"
                   className="primary-button"
-                  disabled={!state.destination || !total || state.loading || state.pending}
+                  disabled={!state.destination || !total || state.loading || busy}
                   onClick={() => void state.start()}
                 >
                   {state.pending ? "Starting…" : "Download Variants"}

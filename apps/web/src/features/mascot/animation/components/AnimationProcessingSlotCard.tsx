@@ -1,4 +1,5 @@
 import type { AnimationProcessingSlotCardProps } from "./slotCard";
+import { SlotReplacementWarning } from "./slotCard/SlotReplacementWarning";
 import {
   useSlotCardDropZone,
   SlotCardHeader,
@@ -70,7 +71,7 @@ export function AnimationProcessingSlotCard({
         slotIndex={slotIndex}
         attempt={attempt}
         status={status}
-        isReady={isReady}
+        isReady={isReady && !isProcessing}
         isQueued={isQueued}
         isProcessing={isProcessing}
         isFailed={isFailed}
@@ -78,7 +79,7 @@ export function AnimationProcessingSlotCard({
       />
 
       <div className="anim-slot-canvas-wrap">
-        {isReady ? (
+        {isReady && !isProcessing ? (
           <SlotCardMediaPreview
             mascotId={mascotId}
             styleId={styleId}
@@ -101,6 +102,8 @@ export function AnimationProcessingSlotCard({
           <SlotCardEmptyPrompt sourceImageUrl={sourceImageUrl} onTriggerUpload={triggerUpload} />
         )}
       </div>
+
+      {isReady && !isProcessing ? <SlotReplacementWarning errorMessage={projection?.error_message} /> : null}
 
       <SlotCardActions
         isReady={isReady}

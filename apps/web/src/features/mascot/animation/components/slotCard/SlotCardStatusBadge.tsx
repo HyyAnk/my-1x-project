@@ -11,6 +11,14 @@ export interface SlotCardStatusBadgeProps {
 
 export function SlotCardStatusBadge({ status, isReady, isQueued, isProcessing, isFailed, errorMessage }: SlotCardStatusBadgeProps) {
   if (isReady) {
+    if (errorMessage) {
+      return (
+        <span className="anim-status-badge is-failed">
+          <WarningCircle size={12} weight="fill" />
+          <span>Replacement failed</span>
+        </span>
+      );
+    }
     return (
       <span className="anim-status-badge is-ready" title="Sequence packaged and verified">
         <CheckCircle size={12} weight="fill" />

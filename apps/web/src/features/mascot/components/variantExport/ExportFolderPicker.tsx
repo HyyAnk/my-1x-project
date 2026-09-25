@@ -32,7 +32,7 @@ export function ExportFolderPicker({
             disabled={folders.busy}
           />
           <button className="quiet-button" disabled={folders.busy || !folders.path.trim()}>
-            Browse
+            Open Path
           </button>
         </div>
       </form>

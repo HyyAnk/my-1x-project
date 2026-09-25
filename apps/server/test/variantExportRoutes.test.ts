@@ -27,9 +27,14 @@ it("runs the filesystem export workflow through HTTP, including real transparent
   });
   await repository.ensureBootstrap();
   registerErrorHandler(server, logger);
-  registerMascotVariantExportRoutes(server, { repository, logger });
+  const pickFolder = vi.fn<() => Promise<string | null>>();
+  registerMascotVariantExportRoutes(server, { repository, logger, pickFolder });
   const output = path.join(root, "exports");
   await mkdir(output);
+  pickFolder.mockResolvedValueOnce(output).mockResolvedValueOnce(null);
+  const pick = () => server.inject({ method: "POST", url: "/api/mascots/variant-export/folders/pick", payload: {} });
+  expect((await pick()).json()).toEqual({ path: output });
+  expect((await pick()).json()).toEqual({ path: null });
   const mascot = await repository.saveMascot({ name: "HTTP Mascot" });
   const pixels = new Uint8Array(64 * 64 * 4);
   for (let index = 0; index < 64 * 64; index++) {

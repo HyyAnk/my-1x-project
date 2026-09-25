@@ -50,6 +50,10 @@ export function registerMascotAnimationArtifactRoutes(server: FastifyInstance, d
       return sendError(reply, 400, "INVALID_FILENAME", `Unsupported artifact file extension: ${ext}`);
     }
 
+    const { attempt } = request.query as { attempt?: string };
+    if (attempt !== undefined && (typeof attempt !== "string" || !/^[1-9]\d*$/.test(attempt) || !Number.isSafeInteger(Number(attempt)))) {
+      return sendError(reply, 400, "INVALID_ATTEMPT", "Attempt must be a positive integer");
+    }
     const resolvedPath = await resolveArtifactCandidatePath({
       outputBaseDir,
       storageAdapter,
@@ -59,6 +63,7 @@ export function registerMascotAnimationArtifactRoutes(server: FastifyInstance, d
       state,
       slotIndex,
       filename,
+      attemptId: attempt === undefined ? undefined : Number(attempt),
     });
 
     if (!resolvedPath) {

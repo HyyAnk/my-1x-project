@@ -43,7 +43,7 @@ function validateFrameGeometries(frames: FrameGeometryInput[], expectedFrameCoun
   return { baseWidth, baseHeight };
 }
 
-function calculateCentroidDrift(frameCentroids: FrameCentroid[], maxAllowedDriftPx: number): { maxDriftPx: number; avgDriftPx: number } {
+function calculateCentroidDrift(frameCentroids: FrameCentroid[]): { maxDriftPx: number; avgDriftPx: number } {
   let maxDrift = 0;
   let totalDrift = 0;
   const stepCount = frameCentroids.length - 1;
@@ -63,21 +63,15 @@ function calculateCentroidDrift(frameCentroids: FrameCentroid[], maxAllowedDrift
   const avgDriftPx = stepCount > 0 ? Number((totalDrift / stepCount).toFixed(2)) : 0;
   const maxDriftPx = Number(maxDrift.toFixed(2));
 
-  if (maxDriftPx > maxAllowedDriftPx) {
-    throw new FrameRegistrationError(
-      `Inter-frame centroid drift of ${maxDriftPx}px exceeds maximum allowed tolerance of ${maxAllowedDriftPx}px`,
-      "EXCESSIVE_DRIFT",
-    );
-  }
-
   return { maxDriftPx, avgDriftPx };
 }
 
 /**
- * Computes common union bounding box, stable baseline anchor pivot, and inter-frame drift metrics.
+ * Computes common bounds, a stable anchor, and diagnostic-only movement metrics.
+ * User-selected motion is preserved, never rejected based on its displacement.
  */
 export function computeRegistrationFromGeometry(params: ComputeRegistrationFromFramesParams): SequenceRegistrationResult {
-  const { frames, maxAllowedDriftPx = 180, expectedFrameCount } = params;
+  const { frames, expectedFrameCount } = params;
 
   const { baseWidth, baseHeight } = validateFrameGeometries(frames, expectedFrameCount);
 
@@ -94,8 +88,9 @@ export function computeRegistrationFromGeometry(params: ComputeRegistrationFromF
     if (f.bounds.maxX > commonMaxX) commonMaxX = f.bounds.maxX;
     if (f.bounds.maxY > commonMaxY) commonMaxY = f.bounds.maxY;
 
-    const cx = (f.bounds.minX + f.bounds.maxX) / 2;
-    const cy = (f.bounds.minY + f.bounds.maxY) / 2;
+    // Alpha-weighted centers measure subject motion without amplifying isolated matte noise.
+    const cx = f.centroid?.x ?? (f.bounds.minX + f.bounds.maxX) / 2;
+    const cy = f.centroid?.y ?? (f.bounds.minY + f.bounds.maxY) / 2;
     frameCentroids.push({
       frameIndex: f.frameIndex,
       x: Number(cx.toFixed(2)),
@@ -122,7 +117,7 @@ export function computeRegistrationFromGeometry(params: ComputeRegistrationFromF
     y: commonMaxY,
   };
 
-  const { maxDriftPx, avgDriftPx } = calculateCentroidDrift(frameCentroids, maxAllowedDriftPx);
+  const { maxDriftPx, avgDriftPx } = calculateCentroidDrift(frameCentroids);
 
   const registration: MascotAssetRegistration = {
     source_width: baseWidth,

@@ -13,6 +13,7 @@ import {
 } from "@studio/shared";
 import { sanitizeIdentifier } from "../adapters/animationStorageAdapter.js";
 import { InvalidStateTransitionError, StaleCompletionError } from "../errors/videoProcessingErrors.js";
+import { pinRevisionArtifactUrls } from "./revisionArtifactUrls.js";
 
 export type SlotProjection = MascotSlotProjection;
 
@@ -107,7 +108,7 @@ export function applyActiveRevision(
     throw new StaleCompletionError(attemptId, current.active_attempt);
   }
 
-  const validatedRevision = MascotAnimationRevisionSchema.parse(revision);
+  const validatedRevision = pinRevisionArtifactUrls(MascotAnimationRevisionSchema.parse(revision));
 
   return {
     ...current,

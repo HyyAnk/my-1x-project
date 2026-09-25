@@ -4,6 +4,9 @@ import { request } from "../../../api/client";
 const base = (id: string) => `/api/mascots/${encodeURIComponent(id)}/variant-exports`;
 const timeout = () => AbortSignal.timeout(30_000);
 export const variantExportApi = {
+  pickFolder: (path?: string) => request<{ path: string | null }>("/api/mascots/variant-export/folders/pick", {
+    method: "POST", body: JSON.stringify({ path }), signal: AbortSignal.timeout(125_000),
+  }),
   preview: (id: string) => request<{ summary: VariantExportSummary; job: VariantExportJob | null }>(base(id), { signal: timeout() }),
   start: (id: string, input: VariantExportRequest) => request<VariantExportJob>(base(id), { method: "POST", body: JSON.stringify(input), signal: timeout() }),
   status: (id: string, jobId: string) => request<VariantExportJob>(`${base(id)}/${jobId}`, { signal: timeout() }),

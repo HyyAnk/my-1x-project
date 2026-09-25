@@ -6,6 +6,7 @@ import { variantExportApi } from "../../services/variantExportApi";
 
 vi.mock("../../services/variantExportApi", () => ({
   variantExportApi: {
+    pickFolder: vi.fn(),
     preview: vi.fn(),
     folders: vi.fn(),
     validate: vi.fn(),
@@ -48,13 +49,27 @@ beforeEach(() => {
 afterEach(cleanup);
 
 async function selectFolder() {
-  fireEvent.click(screen.getByRole("button", { name: "Choose Folder" }));
+  fireEvent.click(screen.getByText("Other locations"));
+  fireEvent.click(screen.getByRole("button", { name: "Use Server Path" }));
   await waitFor(() => expect((screen.getByLabelText("Server folder") as HTMLInputElement).value).toBe("D:\\Exports"));
   fireEvent.click(screen.getByRole("button", { name: "Use This Folder" }));
   await waitFor(() => expect(screen.queryByLabelText("Server folder")).toBeNull());
 }
 
 describe("variant export controls", () => {
+  it("opens the native picker directly and preserves selection when cancelled", async () => {
+    vi.mocked(variantExportApi.pickFolder).mockResolvedValueOnce({ path: "D:\\Exports" }).mockResolvedValueOnce({ path: null });
+    render(<VariantExportControls mascotId="mascot" mascotName="Mascot" />);
+    fireEvent.click(screen.getByRole("button", { name: "Download Original" }));
+    await screen.findByText("2 styles · 2 Thinking · 2 Celebrate");
+    fireEvent.click(screen.getByRole("button", { name: "Choose Folder" }));
+    await screen.findByLabelText("Selected folder");
+    expect(variantExportApi.pickFolder).toHaveBeenCalledWith(undefined);
+    expect(screen.queryByLabelText("Server folder")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Choose Folder" }));
+    await screen.findByText("Folder selection cancelled");
+    expect(screen.getByLabelText("Selected folder").textContent).toBe("D:\\Exports");
+  });
   it("keeps keyboard focus inside the dialog and restores its trigger on close", async () => {
     render(<VariantExportControls mascotId="mascot" mascotName="Mascot" />);
     const trigger = screen.getByRole("button", { name: "Download Original" });
@@ -118,7 +133,8 @@ describe("variant export controls", () => {
     vi.mocked(variantExportApi.validate).mockRejectedValue(new Error("Folder is read-only"));
     render(<VariantExportControls mascotId="mascot" mascotName="Mascot" />);
     fireEvent.click(screen.getByRole("button", { name: "Download Original" }));
-    fireEvent.click(screen.getByRole("button", { name: "Choose Folder" }));
+    fireEvent.click(screen.getByText("Other locations"));
+    fireEvent.click(screen.getByRole("button", { name: "Use Server Path" }));
     await waitFor(() => expect((screen.getByLabelText("Server folder") as HTMLInputElement).value).toBe("D:\\Exports"));
     fireEvent.click(screen.getByRole("button", { name: "Use This Folder" }));
     await screen.findByText("Folder is read-only");

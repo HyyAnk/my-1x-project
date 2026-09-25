@@ -19,7 +19,6 @@ export function createFrameRegistrationService(storageAdapter: AnimationStorageA
 
     return computeRegistrationFromGeometry({
       frames: frameGeometries,
-      maxAllowedDriftPx: params.maxAllowedDriftPx,
       expectedFrameCount: targetCount,
     });
   }
