@@ -1,14 +1,17 @@
-import type { IntroOutroClipKind, IntroOutroScriptJob } from "@studio/shared";
+import type { IntroOutroScriptJob } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
 import type { RepositoryService } from "../repository.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 import { resolveIntroOutroContext } from "./contextResolver.js";
-import { describeScriptError, IntroOutroScriptError } from "./errors.js";
+import { IntroOutroScriptError } from "./errors.js";
 import { analyzeMascotStyleIdentity } from "./identityAnalyzer.js";
 import type { ScriptGenerationJobInput } from "./jobTypes.js";
 import type { IntroOutroScriptRepository } from "./repository.js";
 import { retainContextReferenceSnapshots } from "./revisionService.js";
-import { generateIntroOutroScript } from "./scriptGenerator.js";
+import { generateIntroOutroScripts } from "./scriptGenerator.js";
+import { GenerationResults } from "./generationResults.js";
+import { prepareAutomaticIdentity } from "./automaticIdentity.js";
+import { prepareGenerationClips } from "./prepareGeneration.js";
 
 export class IntroOutroScriptJobExecutor {
   constructor(
@@ -45,16 +48,19 @@ export class IntroOutroScriptJobExecutor {
 
   async generate(job: IntroOutroScriptJob, input: ScriptGenerationJobInput, signal: AbortSignal): Promise<Partial<IntroOutroScriptJob>> {
     if (!this.client) throw new IntroOutroScriptError("Antigravity is unavailable", "LLM_UNAVAILABLE");
-    const context = await resolveIntroOutroContext({
+    const context = await prepareAutomaticIdentity({
       repository: this.repository,
       scripts: this.scripts,
+      client: this.client,
+      model: this.model,
+      signal,
+      force: input.autoIdentity === false,
+      onProgress: (step) => this.updateStep(job, step),
       channelId: input.channelId,
       stylePresetId: input.stylePresetId,
       mascotStyleId: input.mascotStyleId,
     });
-    if (!context.identity || context.publicContext.identity_status !== "reviewed") {
-      throw new IntroOutroScriptError("Review the current mascot style identity before generating scripts", "IDENTITY_REVIEW_REQUIRED");
-    }
+    const clips = await prepareGenerationClips(this.scripts, input, context.identity);
     await retainContextReferenceSnapshots({
       scripts: this.scripts,
       context,
@@ -63,72 +69,48 @@ export class IntroOutroScriptJobExecutor {
     });
 
     const existingRevisions = await this.scripts.listRevisions(input.channelId, input.projectId);
-    const resultIds: string[] = [];
-    const failedKinds: IntroOutroClipKind[] = [];
-    const clipErrors: IntroOutroScriptJob["clip_errors"] = [];
-    let expectedVersion = input.projectVersion;
     const project = await this.scripts.getProject(input.channelId, input.projectId);
     let companionContent =
       input.clips.length === 1 ? (project.drafts[input.clips[0].clipKind === "intro" ? "outro" : "intro"].content ?? undefined) : undefined;
     if (companionContent?.identity.profile_id !== context.identity.profile_id || !companionContent?.production_directions)
       companionContent = undefined;
 
-    for (const clip of input.clips) {
-      if (signal.aborted) throw new IntroOutroScriptError("Generation cancelled", "GENERATION_CANCELLED");
-      await this.updateStep(job, `Generating ${clip.clipKind} script`);
-      try {
-        const revision = await generateIntroOutroScript({
-          client: this.client,
-          context,
-          identity: context.identity,
-          model: this.model,
-          projectId: input.projectId,
-          revisionNumber: existingRevisions.filter((item) => item.clip_kind === clip.clipKind).length + 1,
-          clipKind: clip.clipKind,
-          durationSeconds: clip.durationSeconds,
-          seedSelection: clip.seedSelection,
-          seeds: clip.seeds,
-          logoMode: clip.logoMode,
-          signal,
-          companionContent,
-          onProgress: (step) => this.updateStep(job, step),
-        });
-        signal.throwIfAborted();
-        const appended = await this.scripts.appendRevision(input.channelId, revision, expectedVersion);
-        companionContent = revision.content;
-        if (appended.draftUpdated) expectedVersion = appended.project.version;
-        resultIds.push(revision.revision_id);
-      } catch (error) {
-        failedKinds.push(clip.clipKind);
-        const details = describeScriptError(error);
-        clipErrors.push({ clip_kind: clip.clipKind, code: details.code, message: details.message });
-        this.logger.warn(`Intro/outro ${clip.clipKind} generation failed: ${details.message}`, {
-          step: "intro_outro_script_generation",
-          workerId: job.job_id,
-          channelId: input.channelId,
-          errorCode: details.code,
-        });
-      }
-    }
-
-    const status = resultIds.length === input.clips.length ? "succeeded" : resultIds.length ? "partial" : "failed";
-    return {
-      status,
-      step: status === "succeeded" ? "Scripts ready for review" : status === "partial" ? "Some scripts need retry" : "Generation failed",
-      result_revision_ids: resultIds,
-      failed_clip_kinds: failedKinds,
-      clip_errors: clipErrors,
-      ...(status === "failed"
-        ? {
-            error_code: clipErrors[0]?.code ?? "SCRIPT_GENERATION_FAILED",
-            error_message: clipErrors[0]?.message ?? "No requested script could be generated.",
-          }
-        : {}),
-    };
+    const startedAt = Date.now();
+    const results = new GenerationResults(this.repository, this.scripts, job, input, context, signal);
+    await generateIntroOutroScripts({
+      client: this.client,
+      context,
+      identity: context.identity,
+      model: this.model,
+      projectId: input.projectId,
+      clips: clips.map((clip) => ({
+        ...clip,
+        revisionNumber: existingRevisions.filter((item) => item.clip_kind === clip.clipKind).length + 1,
+      })),
+      signal,
+      companionContent,
+      onProgress: (step) => this.updateStep(job, step),
+      onResult: (result) => results.accept(result),
+    });
+    const finished = results.finish();
+    this.logger.info("Independent script generation completed", {
+      step: "intro_outro_script_generation",
+      workerId: job.job_id,
+      channelId: input.channelId,
+      elapsedMs: Date.now() - startedAt,
+      generationCalls: clips.length,
+      reviewCalls: 0,
+      automaticRepairs: 0,
+      saved: finished.result_revision_ids?.length,
+      failed: finished.failed_clip_kinds?.length,
+    });
+    return finished;
   }
 
   private async updateStep(job: IntroOutroScriptJob, step: string): Promise<void> {
-    const current = await this.scripts.getJob(job.channel_id, job.job_id);
-    await this.scripts.saveJob({ ...current, step });
+    await this.scripts.withLock(`job-progress:${job.job_id}`, async () => {
+      const current = await this.scripts.getJob(job.channel_id, job.job_id);
+      if (current.status === "running") await this.scripts.saveJob({ ...current, step });
+    });
   }
 }

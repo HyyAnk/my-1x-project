@@ -118,11 +118,13 @@ export async function loadAttemptFrameGeometries(
   const frameGeometries: FrameGeometryInput[] = [];
 
   for (let i = 1; i <= targetCount; i++) {
+    params.signal?.throwIfAborted();
     const filename = `frame_${String(i).padStart(3, "0")}.png`;
     const filePath = path.join(framesDir, filename);
     const geometry = await decodeFrameBounds(filePath, i, filename);
     frameGeometries.push(geometry);
   }
 
+  params.signal?.throwIfAborted();
   return { frameGeometries, targetCount };
 }

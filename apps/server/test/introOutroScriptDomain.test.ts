@@ -1,126 +1,41 @@
 import { describe, expect, it } from "vitest";
-import {
-  IntroOutroScriptContentSchema,
-  IntroOutroScriptRevisionSchema,
-  type IntroOutroScriptContent,
-  type MascotStyleIdentityProfile,
-} from "@studio/shared";
+import { IntroOutroScriptRevisionSchema, type IntroOutroScriptContent } from "@studio/shared";
 import { BUILT_IN_INTRO_OUTRO_SEEDS } from "../src/introOutroScripts/seedCatalog.js";
 import { resolveSeedSelection } from "../src/introOutroScripts/seedSelection.js";
 import { validateScriptContent } from "../src/introOutroScripts/validation.js";
 import { resolveIntroOutroScriptModel } from "../src/introOutroScripts/model.js";
 import { buildScriptGenerationPrompt, compileProductionPrompt } from "../src/introOutroScripts/promptCompiler.js";
 import { reviewScriptQuality } from "../src/introOutroScripts/qualityReview.js";
+import { normalizeGeneratedContent } from "../src/introOutroScripts/generatedNormalization.js";
 
-const identity: MascotStyleIdentityProfile = {
-  schema_version: 1,
-  profile_id: "identity_1",
-  mascot_id: "mascot_1",
-  mascot_style_id: "style_1",
-  style_preset_id: "preset_arcade_classic",
-  style_revision: 1,
-  reference_asset_url: "/reference.png",
-  reference_sha256: "a".repeat(64),
-  reference_mime_type: "image/png",
-  summary: "A rigid limbless mascot",
-  morphology: ["No visible limbs"],
-  features: [
-    {
-      id: "rigid_marker",
-      description: "Rigid side marker",
-      body_anchor: "left edge",
-      material: "plastic",
-      rigidity: "rigid",
-      importance: "signature",
-      visibility_rule: "Preserve in hero framing",
-    },
-  ],
-  capabilities: {
-    locomotion: "unknown",
-    grasping: "unsupported",
-    pointing: "unsupported",
-    waving: "unsupported",
-    flight: "unsupported",
-    facial_expression: "unknown",
-    speech: "unknown",
-    ride_vehicle: "unsupported",
-    hold_props: "unsupported",
-  },
-  motion_constraints: ["Keep rigid_marker rigid"],
-  palette: [],
-  style_description: "Flat graphic",
-  allowed_accessories: [],
-  status: "reviewed",
-  source: "manual",
-  analysis_model: null,
-  analysis_version: "manual-v1",
-  created_at: "2026-09-22T00:00:00.000Z",
-  updated_at: "2026-09-22T00:00:00.000Z",
-  reviewed_at: "2026-09-22T00:00:00.000Z",
-};
-
-function productionContent(): IntroOutroScriptContent {
-  return IntroOutroScriptContentSchema.parse({
-    production: { clip_kind: "intro", language: "English", aspect_ratio: "16:9", target_duration_seconds: 8 },
-    production_directions: {
-      reference_mode: "character_reference",
-      logo_mode: "none",
-      voice_source: "narrator",
-      logo_placement: "No logo",
-      opening_state: "Centered mascot",
-      closing_state: "Settled mascot",
-      end_hold_seconds: 0.75,
-    },
-    identity: {
-      profile_id: identity.profile_id,
-      mascot_id: identity.mascot_id,
-      mascot_style_id: identity.mascot_style_id,
-      required_feature_ids: ["rigid_marker"],
-    },
-    style: { description: "Flat", palette: [], staging: "Center", motion_language: "Restrained" },
-    timeline: [
-      {
-        beat: 1,
-        role: "entrance",
-        start_seconds: 0,
-        end_seconds: 2,
-        action: "Hold a calm opening pose",
-        capability_ids: [],
-        props: [],
-        visible_feature_ids: ["rigid_marker"],
-      },
-      {
-        beat: 2,
-        role: "brand_interaction",
-        start_seconds: 2,
-        end_seconds: 5,
-        action: "Settle",
-        capability_ids: [],
-        props: [],
-        visible_feature_ids: ["rigid_marker"],
-      },
-      {
-        beat: 3,
-        role: "handoff",
-        start_seconds: 5,
-        end_seconds: 8,
-        action: "Hold",
-        capability_ids: [],
-        props: [],
-        visible_feature_ids: ["rigid_marker"],
-      },
-    ],
-    voiceover: {
-      enabled: true,
-      lines: [{ start_seconds: 0.5, end_seconds: 4.5, text: "Let the game begin now", delivery: "Warm narrator" }],
-    },
-    audio: { music_direction: "Light cue", events: [{ at_seconds: 5, direction: "Soft chime" }] },
-    camera: [{ start_seconds: 0, end_seconds: 8, framing: "Wide", movement: "Static" }],
-    consistency: { preserve_feature_ids: ["rigid_marker"], allowed_visible_text: [], restrictions: [] },
-  });
-}
+import { identity, productionContent } from "./fixtures/introOutroDomainFixture.js";
 
 describe("Intro/Outro script domain", () => {
+  it("repairs supported capability metadata and a tight live-provider voice interval without rewriting text", () => {
+    const content = productionContent();
+    content.timeline[1].action = "Novy steps forward slightly into a warm stance";
+    content.voiceover.lines = [{ start_seconds: 5.6, end_seconds: 7, text: "See you soon!", delivery: "Warm" }];
+    const supported = { ...identity, capabilities: { ...identity.capabilities, locomotion: "supported" as const } };
+    const normalized = normalizeGeneratedContent(content, supported);
+    expect(normalized.timeline[1].capability_ids).toContain("locomotion");
+    expect(normalized.voiceover.lines[0].end_seconds).toBe(7.025);
+    expect(normalized.voiceover.lines[0].text).toBe("See you soon!");
+    expect(content.voiceover.lines[0].end_seconds).toBe(7);
+    expect(validateScriptContent(normalized, supported, [])).toEqual([]);
+  });
+
+  it("does not infer unsupported capabilities or extend speech into another line or final hold", () => {
+    const content = productionContent();
+    content.timeline[1].action = "Walks forward";
+    content.voiceover.lines = [
+      { start_seconds: 5.6, end_seconds: 6, text: "See you soon!", delivery: "Warm" },
+      { start_seconds: 6.1, end_seconds: 7, text: "Come back and play again!", delivery: "Warm" },
+    ];
+    const normalized = normalizeGeneratedContent(content, identity);
+    expect(normalized.voiceover.lines).toEqual(content.voiceover.lines);
+    expect(normalized.timeline[1].capability_ids).not.toContain("locomotion");
+    expect(validateScriptContent(normalized, identity, []).map((issue) => issue.code)).toContain("VOICE_BUDGET_EXCEEDED");
+  });
   it("bounds verbose reviewer messages without discarding a valid quality review", async () => {
     const verboseMessage = `${"Character-relative direction conflicts with the reserved logo area. ".repeat(9)}Use the opposite gauntlet.`;
     const review = await reviewScriptQuality({
@@ -339,8 +254,8 @@ describe("Intro/Outro script domain", () => {
       seeds: [],
     });
 
-    expect(prompt).toContain("LOGO IN-SCENE 3D REVEAL (supplied_reference)");
-    expect(prompt).toContain("CRITICAL BRAND FIDELITY");
+    expect(prompt).toContain("reveal the exact attached official logo intact in-scene");
+    expect(prompt).toContain("never redraw, warp or respell it");
     expect(prompt).toContain('"logo_mode":"supplied_reference"');
   });
 

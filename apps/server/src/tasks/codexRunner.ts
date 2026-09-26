@@ -10,6 +10,7 @@ import { handleNotification } from "./stream/notificationHandler.js";
 import { handleServerRequest } from "./stream/approvalHandler.js";
 import { completeWithOutput } from "./handlers/outputCompletionHandler.js";
 import { resolveTopicRunTargetCounts } from "../context/topicRunTargets.js";
+import { runThumbnailTask } from "./thumbnail/thumbnailTaskRunner.js";
 
 export {
   retryQuizResearch,
@@ -23,6 +24,10 @@ export {
 };
 
 export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
+  if (task.task_type === "GENERATE_THUMBNAIL") {
+    await runThumbnailTask(this, task);
+    return;
+  }
   if (isShortReelTask(task)) {
     await runShortReelTask(this, task);
     return;

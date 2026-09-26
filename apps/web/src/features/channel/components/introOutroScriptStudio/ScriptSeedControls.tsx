@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowsClockwise, Lock, LockOpen } from "@phosphor-icons/react";
+import { ArrowsClockwise, Lock, LockOpen, Sparkle } from "@phosphor-icons/react";
 import type { CreativeSeed, CreativeSeedDimension, IntroOutroClipKind, IntroOutroScriptProject } from "@studio/shared";
 import type { GenerateScriptClipInput } from "../../../../api/introOutroScriptApi";
 
@@ -8,12 +8,13 @@ type Props = {
   project: IntroOutroScriptProject;
   disabled: boolean;
   onGenerate: (clips: GenerateScriptClipInput[]) => Promise<void>;
+  onOpenBatchModal?: () => void;
 };
 
 const newRandomSeed = () =>
   typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-export function ScriptSeedControls({ seeds, project, disabled, onGenerate }: Props) {
+export function ScriptSeedControls({ seeds, project, disabled, onGenerate, onOpenBatchModal }: Props) {
   const [included, setIncluded] = useState<Record<IntroOutroClipKind, boolean>>({ intro: true, outro: true });
   const [durations, setDurations] = useState<Record<IntroOutroClipKind, number>>({ intro: 8, outro: 8 });
   const [selected, setSelected] = useState<Record<string, string>>({});
@@ -176,14 +177,28 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate }: Pro
           </div>
         ))}
       </div>
-      <button
-        type="button"
-        className="primary-button script-generate-button"
-        onClick={() => void generate().catch(() => undefined)}
-        disabled={disabled || (!included.intro && !included.outro)}
-      >
-        Generate scripts
-      </button>
+      <div className="script-generate-action-group">
+        <button
+          type="button"
+          className="primary-button script-generate-button"
+          onClick={() => void generate().catch(() => undefined)}
+          disabled={disabled || (!included.intro && !included.outro)}
+        >
+          Generate scripts
+        </button>
+        {onOpenBatchModal ? (
+          <button
+            type="button"
+            className="quiet-button batch-trigger-button"
+            onClick={onOpenBatchModal}
+            disabled={disabled}
+            title="Generate multiple script pairs concurrently"
+          >
+            <Sparkle size={15} weight="fill" />
+            <span>Batch Generate</span>
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }

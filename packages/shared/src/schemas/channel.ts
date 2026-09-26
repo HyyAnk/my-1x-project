@@ -176,6 +176,7 @@ export const IntroOutroClipMetaSchema = z.object({
   thumbnail_filename: z.string().optional(),
   sha256: z.string().length(64).optional(),
   script_provenance: IntroOutroScriptProvenanceSchema.optional(),
+  script_text: z.string().max(60000).optional(),
 });
 
 export type IntroOutroClipMeta = z.infer<typeof IntroOutroClipMetaSchema>;
@@ -184,6 +185,7 @@ export const IntroOutroTransitionTypeSchema = z.string().min(1);
 export type IntroOutroTransitionType = "stinger_swipe" | "crossfade" | "cut" | (string & {});
 
 export const IntroOutroStyleSchema = z.object({
+  upload_fingerprint: z.string().length(64).optional(),
   schema_version: z.number().int().positive().default(1),
   style_id: z.string().min(1),
   channel_id: z.string().min(1),

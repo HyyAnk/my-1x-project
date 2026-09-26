@@ -19,6 +19,23 @@ const mockProjection: MascotSlotProjection = {
 };
 
 describe("useSlotMutations", () => {
+  it("reports cancellation failure and permits retry without claiming success", async () => {
+    const cancel = vi.spyOn(mascotAnimationApi, "cancelProcessingJob").mockRejectedValue(new Error("Connection lost. Retry cancellation."));
+    const onNotice = vi.fn();
+    const refreshSlots = vi.fn().mockResolvedValue(undefined);
+    const setError = vi.fn();
+    const { result } = renderHook(() => useSlotMutations({ mascotId: "m1", styleId: "core", onNotice, refreshSlots, setError }));
+    await act(async () => {
+      await result.current.cancelJob("job-1");
+    });
+    expect(setError).toHaveBeenLastCalledWith("Connection lost. Retry cancellation.");
+    expect(onNotice).toHaveBeenCalledWith({ tone: "bad", message: "Connection lost. Retry cancellation." });
+    expect(refreshSlots).not.toHaveBeenCalled();
+    await act(async () => {
+      await result.current.cancelJob("job-1");
+    });
+    expect(cancel).toHaveBeenCalledTimes(2);
+  });
   it("rejects unsupported video format", async () => {
     const refreshSlots = vi.fn().mockResolvedValue(undefined);
     const setError = vi.fn();

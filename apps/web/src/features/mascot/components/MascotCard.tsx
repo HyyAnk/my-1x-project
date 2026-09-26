@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { DownloadSimple, PencilSimple, Trash } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type Channel, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
@@ -15,6 +16,14 @@ type MascotCardProps = {
 
 export function MascotCard({ mascot, channels, onEdit, onRenameRequest, onQuickAssign, onDeleteRequest }: MascotCardProps) {
   const { t } = useTranslation();
+  const [imageFailed, setImageFailed] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(mascot.master_image_url);
+
+  useEffect(() => {
+    setCurrentSrc(mascot.master_image_url);
+    setImageFailed(false);
+  }, [mascot.master_image_url]);
+
   const assignedCount = mascot.assigned_channel_ids?.length || 0;
   const assignedNames =
     mascot.assigned_channel_ids?.map((cid) => channels.find((c) => c.channel_id === cid)?.display_name || cid).join(", ") || "";
@@ -34,8 +43,24 @@ export function MascotCard({ mascot, channels, onEdit, onRenameRequest, onQuickA
           }
         }}
       >
-        {mascot.master_image_url ? (
-          <img src={mascot.master_image_url} alt={mascot.name} className="mascot-card-img" />
+        {currentSrc && !imageFailed ? (
+          <img
+            src={currentSrc}
+            alt={mascot.name}
+            className="mascot-card-img"
+            onError={() => {
+              const rawFallback =
+                mascot.master_raw_image_url ||
+                (mascot.master_image_url?.includes("master_concept_")
+                  ? mascot.master_image_url.replace("master_concept_", "master_concept_raw_")
+                  : null);
+              if (rawFallback && currentSrc !== rawFallback) {
+                setCurrentSrc(rawFallback);
+              } else {
+                setImageFailed(true);
+              }
+            }}
+          />
         ) : (
           <div className="mascot-card-placeholder">
             <span>{t("mascots.noImagePlaceholder")}</span>

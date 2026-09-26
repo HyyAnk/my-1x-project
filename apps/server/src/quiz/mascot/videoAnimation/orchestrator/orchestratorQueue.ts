@@ -25,6 +25,7 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
   const runningJobs = new Map<string, ActiveJobContext>();
   const slotActiveJob = new Map<string, string>();
   const queuedJobIds: string[] = [];
+  const cancellations = new Map<string, Promise<MascotVideoProcessingJob>>();
 
   async function pumpQueue(): Promise<void> {
     if (runningJobs.size >= maxConcurrent || queuedJobIds.length === 0) {
@@ -109,7 +110,7 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
     return startJobExecution(job);
   }
 
-  async function cancelJob(jobId: string, reason = "Job cancelled by user"): Promise<MascotVideoProcessingJob> {
+  async function performCancellation(jobId: string, reason = "Job cancelled by user"): Promise<MascotVideoProcessingJob> {
     const job = await deps.repository.getJob(jobId);
     if (!job) {
       throw new OrchestrationError(`Job ${jobId} not found`, "JOB_NOT_FOUND");
@@ -126,8 +127,8 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
 
     const activeCtx = runningJobs.get(jobId);
     if (activeCtx) {
-      activeCtx.abortController.abort();
-      await activeCtx.promise.catch(() => {});
+      activeCtx.abortController.abort(new Error(reason));
+      await activeCtx.promise;
     } else {
       await rollbackSlotStateOnCancellation(deps, job, reason);
     }
@@ -146,7 +147,13 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
   return {
     scheduleJob,
     runJobSync,
-    cancelJob,
+    cancelJob: (jobId, reason) => {
+      const existing = cancellations.get(jobId);
+      if (existing) return existing;
+      const pending = performCancellation(jobId, reason).finally(() => cancellations.delete(jobId));
+      cancellations.set(jobId, pending);
+      return pending;
+    },
     getQueueStatus,
   };
 }

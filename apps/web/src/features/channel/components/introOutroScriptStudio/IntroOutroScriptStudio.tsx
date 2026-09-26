@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { WarningCircle, X } from "@phosphor-icons/react";
+import { WarningCircle } from "@phosphor-icons/react";
 import type { Notice } from "../../../../components/types";
 import { useIntroOutroScriptStudio } from "../../hooks/useIntroOutroScriptStudio";
+import { ActiveJobsBanner } from "./ActiveJobsBanner";
+import { BatchGenerateModal } from "./BatchGenerateModal";
+import { BatchReviewMatrix } from "./BatchReviewMatrix";
 import { ScriptConfigureStep } from "./ScriptConfigureStep";
 import { ScriptReviewStep, type UploadScriptLinks } from "./ScriptReviewStep";
 import { ScriptStudioHeader, type ScriptStudioStep } from "./ScriptStudioHeader";
@@ -18,6 +21,7 @@ type Props = {
 export function IntroOutroScriptStudio(props: Props) {
   const studio = useIntroOutroScriptStudio(props);
   const [step, setStep] = useState<ScriptStudioStep>("configure");
+  const [batchModalOpen, setBatchModalOpen] = useState(false);
   const [draftPending, setDraftPending] = useState(false);
   const hasContent = Boolean(studio.project?.drafts.intro.content || studio.project?.drafts.outro.content);
   const activeJob = studio.job && (studio.job.status === "queued" || studio.job.status === "running");
@@ -53,22 +57,17 @@ export function IntroOutroScriptStudio(props: Props) {
         hasContent={hasContent}
         activeJob={Boolean(activeJob)}
         draftPending={draftPending}
+        onOpenBatchModal={() => setBatchModalOpen(true)}
       />
 
-      {activeJob ? (
-        <div className="script-job-banner" aria-live="polite">
-          <span>{studio.job?.step}</span>
-          <button
-            type="button"
-            className="icon-button"
-            onClick={() => void studio.cancelJob().catch(() => undefined)}
-            aria-label="Cancel script job"
-          >
-            <X size={15} />
-          </button>
-        </div>
-      ) : null}
-      {studio.busy && !activeJob ? (
+      <ActiveJobsBanner
+        currentJob={studio.job}
+        activeJobs={studio.activeJobs}
+        onCancelJob={() => void studio.cancelJob().catch(() => undefined)}
+        onCancelSpecificJob={(id) => void studio.cancelSpecificJob(id).catch(() => undefined)}
+      />
+
+      {studio.busy && !activeJob && studio.activeJobs.length === 0 ? (
         <div className="script-operation-status" aria-live="polite">
           {studio.busy.replaceAll("-", " ")}...
         </div>
@@ -93,6 +92,31 @@ export function IntroOutroScriptStudio(props: Props) {
           onReviewIdentity={studio.reviewIdentity}
           onGenerate={studio.generate}
           onRefresh={studio.refresh}
+          onOpenBatchModal={() => setBatchModalOpen(true)}
+        />
+      ) : null}
+
+      {step === "matrix" ? (
+        <BatchReviewMatrix
+          projects={studio.projects}
+          activeJobs={studio.activeJobs}
+          currentProjectId={studio.project?.project_id ?? null}
+          onSelectProject={(projectId) => {
+            studio.selectProject(projectId);
+            setStep("review");
+          }}
+          onOpenBatchModal={() => setBatchModalOpen(true)}
+          onApproveProject={async (projectId) => {
+            const p = studio.projects.find((item) => item.project_id === projectId);
+            if (!p) return;
+            if (p.drafts.intro.source_revision_id && !p.approved_revision_ids.intro) {
+              await studio.approve(p.drafts.intro.source_revision_id);
+            }
+            if (p.drafts.outro.source_revision_id && !p.approved_revision_ids.outro) {
+              await studio.approve(p.drafts.outro.source_revision_id);
+            }
+          }}
+          busy={studio.busy}
         />
       ) : null}
 
@@ -113,6 +137,13 @@ export function IntroOutroScriptStudio(props: Props) {
       ) : null}
 
       {step === "upload" && studio.project ? <ScriptUploadStep project={studio.project} onUpload={props.onUpload} /> : null}
+
+      <BatchGenerateModal
+        isOpen={batchModalOpen}
+        onClose={() => setBatchModalOpen(false)}
+        onSubmit={studio.batchGenerate}
+        busy={studio.busy !== null}
+      />
     </section>
   );
 }

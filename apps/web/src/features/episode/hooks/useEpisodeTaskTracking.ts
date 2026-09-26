@@ -36,7 +36,14 @@ export function useEpisodeTaskTracking({ episodeId, tasks, load, onNotice }: Use
 
   const completedShotSequences = useMemo(() => currentShotBatch.filter((task) => task.status === "COMPLETED").length, [currentShotBatch]);
 
-  const activeEpisodeTask = useMemo(() => episodeTasks.find(isTaskActive) ?? null, [episodeTasks]);
+  const activeEpisodeTask = useMemo(
+    () =>
+      episodeTasks.find((task) => task.task_type === "GENERATE_PIPELINE" && isTaskActive(task)) ??
+      episodeTasks.find((task) => task.task_type !== "GENERATE_THUMBNAIL" && isTaskActive(task)) ??
+      null,
+    [episodeTasks],
+  );
+  const thumbnailTask = useMemo(() => latestTask(episodeTasks, ["GENERATE_THUMBNAIL"]), [episodeTasks]);
   const pipelineTask = useMemo(() => latestTask(episodeTasks, ["GENERATE_PIPELINE"]), [episodeTasks]);
 
   useEffect(() => {
@@ -67,6 +74,7 @@ export function useEpisodeTaskTracking({ episodeId, tasks, load, onNotice }: Use
     currentShotBatch,
     completedShotSequences,
     activeEpisodeTask,
+    thumbnailTask,
     pipelineTask,
   };
 }

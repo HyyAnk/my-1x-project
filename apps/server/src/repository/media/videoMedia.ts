@@ -65,19 +65,21 @@ export async function saveVideoMetadata(
   durationSeconds: number,
   renderManifestPath: string,
 ): Promise<Episode> {
-  const episode = await this.getEpisode(channelId, episodeId);
-  const channel = await this.getChannel(channelId);
-  const next = EpisodeSchema.parse({
-    ...episode,
-    stage: "VIDEO_READY",
-    video_asset_path: assetPath,
-    video_generated_at: nowIso(),
-    video_duration_seconds: durationSeconds,
-    render_manifest_path: renderManifestPath,
-    render_stale: false,
-    updated_at: nowIso(),
+  return this.queueEpisodeArtifactMutation(channelId, episodeId, async () => {
+    const episode = await this.getEpisode(channelId, episodeId);
+    const channel = await this.getChannel(channelId);
+    const next = EpisodeSchema.parse({
+      ...episode,
+      stage: "VIDEO_READY",
+      video_asset_path: assetPath,
+      video_generated_at: nowIso(),
+      video_duration_seconds: durationSeconds,
+      render_manifest_path: renderManifestPath,
+      render_stale: false,
+      updated_at: nowIso(),
+    });
+    await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+    this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
+    return next;
   });
-  await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
-  this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
-  return next;
 }

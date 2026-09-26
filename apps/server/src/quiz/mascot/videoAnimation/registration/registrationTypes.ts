@@ -19,6 +19,7 @@ export interface ComputeRegistrationFromFramesParams {
 }
 
 export interface ComputeAttemptRegistrationParams {
+  signal?: AbortSignal;
   mascotId: string;
   styleId: string;
   state: AnimationState;

@@ -1,8 +1,6 @@
 # System architecture
 
-_Last reviewed: 2026-09-19 against the current working tree, including uncommitted changes_
-
-This is the starting point for coding agents working on AI Quiz Studio. It describes implemented boundaries, not a proposed redesign or a guarantee that every subsystem is correct. Source, schemas, and executable tests take precedence when this guide drifts. Follow [AGENTS.md](../AGENTS.md) for engineering rules and [the system map](system-map.md) for source navigation.
+This is the source-navigation and responsibility map for AI Quiz Studio. Source, schemas, and executable tests take precedence when this guide drifts. Follow [AGENTS.md](../AGENTS.md) for engineering rules and [the development workflow](workflow.md) for verification.
 
 ## Executable system map
 
@@ -13,7 +11,7 @@ flowchart LR
     Hooks["Feature hooks and useAppOrchestration"]
     HTTP["Feature API modules and api/client"]
     TaskState["useTasks task state"]
-    Polling["Mascot and animation polling hooks"]
+    Polling["Mascot, animation and script-job polling hooks"]
 
     UI --> Hooks --> HTTP
     TaskState --> UI
@@ -25,6 +23,7 @@ flowchart LR
     Routes["registerAllRoutes and route modules"]
     Tasks["TaskManager<br/>queue lanes, locks, cancellation, recovery"]
     MascotQueues["Mascot style and slot job managers"]
+    ScriptJobs["Intro/Outro identity and script job manager"]
     Animation["Mascot sprite and uploaded-video animation services"]
     Transition["Transition preview service"]
     Domain["Quiz, question-bank and Short-Reel workflows"]
@@ -36,6 +35,7 @@ flowchart LR
     App --> MascotQueues
     Routes --> Tasks
     Routes --> MascotQueues
+    Routes --> ScriptJobs
     Routes --> Animation
     Routes --> Transition
     Tasks --> Domain
@@ -43,6 +43,7 @@ flowchart LR
     Domain --> Render
     Domain --> Repo
     MascotQueues --> Repo
+    ScriptJobs --> Repo
     Animation --> Repo
     Transition --> Render
     Render --> Repo
@@ -65,6 +66,7 @@ flowchart LR
   Repo --> Content
   Repo --> Resources
   Tasks --> LLM
+  ScriptJobs --> LLM
   Domain --> LLM
   Domain --> Images
   Domain --> TTS
@@ -74,6 +76,7 @@ flowchart LR
   Contracts -.-> UI
   Contracts -.-> Routes
   Contracts -.-> Tasks
+  Contracts -.-> ScriptJobs
   Contracts -.-> Domain
 ```
 
@@ -88,7 +91,7 @@ AI Quiz Studio is a Windows-supported, local-first pnpm/TypeScript workspace. Lo
 - [packages/shared](../packages/shared/src/index.ts) owns cross-application types, Zod schemas, API contracts, quiz/layout policies, mascot contracts, and Short-Reel contracts. It must not import either application.
 - [services/tts](../services/tts/app.py) is the Python Chatterbox sidecar, kept separate from Node because of its model and native runtime.
 - [app.ts](../apps/server/src/app.ts) is the composition root. It loads environment and configuration, creates the repository, LLM clients, context engine, `TaskManager`, persistent mascot style/slot managers, server plugins, and all routes.
-- [registerAllRoutes.ts](../apps/server/src/routes/registerAllRoutes.ts) is the HTTP composition boundary. It also constructs the portrait image client and transition preview service, broadcasts TaskManager events, and assembles the mascot animation service graph.
+- [registerAllRoutes.ts](../apps/server/src/routes/registerAllRoutes.ts) is the HTTP composition boundary. It also constructs the Intro/Outro script job manager, portrait image client, and transition preview service; broadcasts TaskManager events; and assembles the mascot animation service graph.
 - [server index.ts](../apps/server/src/index.ts) defaults to loopback port 4310. Vite uses port 2244 in development; Fastify serves the built frontend when `apps/web/dist` exists.
 
 The server owns privileged I/O. Keep filesystem and provider credentials out of browser code. Loopback binding and loopback-only CORS are not a public multi-user authentication model; do not expose the server remotely without a separate security design.
@@ -105,7 +108,9 @@ The server owns privileged I/O. Keep filesystem and provider credentials out of 
 | Quiz workflows                        | [pipeline orchestrator](../apps/server/src/quiz/pipeline/orchestrator.ts), [task pipeline runners](../apps/server/src/tasks/pipeline/)                                                                                         | Keep domain stages separate from task scheduling and child-task coordination                       |
 | Filesystem persistence                | [RepositoryService](../apps/server/src/repository/service.ts), [repository contracts](../apps/server/src/repository/contracts/), [bindings](../apps/server/src/repository/bindings/)                                           | Reuse path safety, atomic writes, admission checks, caches, and per-entity mutation queues         |
 | Question bank and topic confirmation  | [bank services](../apps/server/src/quiz/bank/), [bank storage](../apps/server/src/repository/quiz/bank/)                                                                                                                       | Preserve source identity, curation/QA, serialization, confirmation replay, and localization        |
+| Channel identity and DNA              | [channel repository](../apps/server/src/repository/channels.ts), [context modules](../apps/server/src/context/)                                                                                                                | Keep channel metadata separate from its Markdown DNA; updates do not regenerate existing products  |
 | Short-Reel workflow                   | [services](../apps/server/src/shortReel/), [contracts](../packages/shared/src/shortReel/), [routes](../apps/server/src/routes/shortReels.ts)                                                                                   | Preserve product revisions, unit attempts, dependency fingerprints, cancellation, and export gates |
+| Intro/Outro scripts                   | [script services](../apps/server/src/introOutroScripts/), [routes](../apps/server/src/routes/introOutroScripts.ts), [shared contracts](../packages/shared/src/introOutroScripts/)                                              | Keep script revisions and jobs separate from uploaded video-pair records                           |
 | Generation adapters                   | [providers](../apps/server/src/providers/), [asset resolver](../apps/server/src/quiz/assets/resolvers/providerAssetResolver.ts), [portrait client](../apps/server/src/providers/imageGeneration/portraitImageClient.ts)        | Keep provider transport, retries, idempotency, fallback, and safe errors at the adapter boundary   |
 | Mascot authoring queues               | [style jobs](../apps/server/src/quiz/mascot/styleJobs/), [slot jobs](../apps/server/src/quiz/mascot/slotJobs/), [mascot routes](../apps/server/src/routes/mascots/)                                                            | These are independent background-job systems, not TaskManager task types                           |
 | Mascot animation processing           | [sprite animation](../apps/server/src/quiz/mascot/animation/), [video animation](../apps/server/src/quiz/mascot/videoAnimation/), [animation route assembly](../apps/server/src/routes/mascots/animation/animationServices.ts) | Keep upload, extraction, matting, registration, QA, packaging, publish, and rollout explicit       |
@@ -126,6 +131,7 @@ There are several asynchronous systems. They must not be documented or implement
 | SpriteGen animation jobs                                | Animation job service/repository owns plan, execution, retry, curation, QA, and publish state                                                 | Mascot animation UI polls the job and batch endpoints                                                |
 | Uploaded-video animation processing                     | Video processing orchestrator coordinates upload, FFmpeg extraction, matting, registration, packaging, cancellation, and active revision data | Mascot animation UI polls processing and slot endpoints                                              |
 | Transition previews                                     | A transition preview service uses the shared video-render limiter and a dedicated preview store                                               | The owning feature requests and refreshes preview state                                              |
+| Intro/Outro script and identity jobs                    | A script job manager persists generation and analysis state, handles cancellation, and reconciles interrupted jobs                            | The Script Studio polls job status and refreshes projects and revisions                              |
 
 Do not broadcast a completed UI result before its owning server workflow confirms it. After a mutation, refresh every affected view; TaskManager events do not automatically synchronize mascot queues, animation revisions, or arbitrary feature data.
 
@@ -180,6 +186,8 @@ Mascot CRUD, style concepts, state-slot generation, package import/export, migra
 - Uploaded-video animation uses FFmpeg-backed upload validation and frame extraction, then matting, registration, packaging, and revision persistence through the video processing orchestrator.
 - Production rendering selects canonical V2 mascot assets and active style/animation revisions through [render mascot adapters](../apps/server/src/quiz/render/mascot/). Authoring and processing workflows must not bypass the persisted selection contract.
 
+Channel creation stores `channel_dna.md` under the selected content root. [Channel repository methods](../apps/server/src/repository/channels.ts) update it separately from schema-validated metadata. Generation context can read DNA, but changing it does not regenerate existing artifacts. Intro/Outro script projects have a separate [workflow guide](intro-outro.md).
+
 ## Persistence and artifact contracts
 
 [createRoots](../apps/server/src/repository/pathSafety.ts) distinguishes the code root from the selected content root:
@@ -212,18 +220,6 @@ Object fields such as `director_plan` and `assessment` are not disk filenames. D
 - Child processes must propagate cancellation and timeouts. HyperFrames, FFmpeg, SpriteGen, and the Python TTS sidecar are infrastructure boundaries, not domain modules.
 - Preserve user input on recoverable errors and expose pending, retry, cancel, partial, and failed states. Prevent duplicate submissions without freezing unrelated controls.
 
-## Agent change and verification checklist
-
-1. Read repository instructions and `git status --short`; preserve unrelated working-tree changes. If `.codegraph/` exists, use CodeGraph before text search to locate responsibilities, then verify current source.
-2. Trace the relevant UI/API, workflow, domain, storage/provider, process, and shared-contract boundaries. Identify which asynchronous system owns the work before changing status or synchronization behavior.
-3. Update the narrowest useful behavior tests. Server tests are in [apps/server/test](../apps/server/test/); web unit tests are colocated under [src](../apps/web/src/) and Playwright tests live under [test](../apps/web/test/).
-4. Use scripts from [package.json](../package.json): `pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm format:check`, and `pnpm build`. `pnpm check:all` runs typecheck, tests, audits, and the suppression ratchet; it does not include lint, formatting, production build, or Playwright.
-5. For focused server verification, build shared contracts first when needed, then run the specific Vitest file. Use isolated fixtures, not live channels, for mutation tests.
-6. For application changes, restart or rebuild affected processes and exercise the updated primary workflow. Provider-backed generation requires configured services and may incur cost; mocked tests do not prove live-provider behavior.
-7. For documentation-only changes, check relative links, Mermaid syntax, cited paths/contracts, formatting, and the diff; no application restart is required. Report exactly what was and was not verified.
-
 ## Keeping this guide current
 
-Update this file when package boundaries, composition roots, background-work ownership, transport, persistence, providers, or main product flows change. Keep exact thresholds and catalogs in source/tests rather than duplicating them here. Use [system-map.md](system-map.md) as a navigation aid and domain documents for detail, but recheck their claims before implementation.
-
-This review corrected concrete drift after the 2026-09-18 system refactor. It is not a full code audit, an architectural compliance certification, or confirmation that all workspace tests pass.
+Update this file when package boundaries, composition roots, background-work ownership, transport, persistence, providers, or main product flows change. Keep exact thresholds and catalogs in source/tests rather than duplicating them here. Use the domain guides for detail, and recheck their claims before implementation.

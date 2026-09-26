@@ -5,7 +5,7 @@ import {
   type IntroOutroScriptProject,
   type MascotStyleIdentityProfile,
 } from "@studio/shared";
-import { CheckCircle, WarningCircle } from "@phosphor-icons/react";
+import { CheckCircle, Sparkle, WarningCircle } from "@phosphor-icons/react";
 import type { GenerateScriptClipInput } from "../../../../api/introOutroScriptApi";
 import type { ScriptContextBundle } from "../../hooks/introOutroScriptStudio.types";
 import { CustomSeedPanel } from "./CustomSeedPanel";
@@ -24,6 +24,7 @@ type Props = {
   onReviewIdentity: (profile: MascotStyleIdentityProfile) => Promise<void>;
   onGenerate: (clips: GenerateScriptClipInput[]) => Promise<void>;
   onRefresh: () => Promise<void>;
+  onOpenBatchModal?: () => void;
 };
 
 function manualProfile(bundle: ScriptContextBundle, stylePresetId: string): MascotStyleIdentityProfile {
@@ -122,15 +123,28 @@ export function ScriptConfigureStep(props: Props) {
 
         {!props.project ? (
           <div className="script-empty-project">
-            <h4>Create a script project</h4>
-            <button
-              type="button"
-              className="primary-button"
-              onClick={() => void props.onCreateProject().catch(() => undefined)}
-              disabled={props.busy !== null}
-            >
-              Create project
-            </button>
+            <h4>Get started with intro & outro scripts</h4>
+            <div className="script-empty-actions">
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() => void props.onCreateProject().catch(() => undefined)}
+                disabled={props.busy !== null}
+              >
+                Create project
+              </button>
+              {props.onOpenBatchModal ? (
+                <button
+                  type="button"
+                  className="quiet-button"
+                  onClick={props.onOpenBatchModal}
+                  disabled={props.busy !== null || blocking || !reviewed}
+                >
+                  <Sparkle size={15} weight="fill" />
+                  <span>Batch generate</span>
+                </button>
+              ) : null}
+            </div>
           </div>
         ) : (
           <ScriptSeedControls
@@ -138,6 +152,7 @@ export function ScriptConfigureStep(props: Props) {
             project={props.project}
             disabled={blocking || !reviewed || props.busy !== null || Boolean(activeJob)}
             onGenerate={props.onGenerate}
+            onOpenBatchModal={props.onOpenBatchModal}
           />
         )}
 

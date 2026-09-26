@@ -16,7 +16,7 @@ export async function generateGoogleImagenAsset(input: ProviderAssetInput): Prom
     imageConfig?.base_url,
   );
 
-  const result = await provider.generateReference(compiledPrompt);
+  const result = await provider.generateReference(compiledPrompt, input.cancellationSignal);
 
   await trackGoogleUsage(
     repository,

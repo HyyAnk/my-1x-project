@@ -4,7 +4,7 @@ import { resolveMaxConcurrentVideoRenders } from "./video/renderConcurrencyLimit
 
 export const channelTaskTypes = new Set<TaskType>(["GENERATE_DNA", "SUGGEST_TOPICS"]);
 export const audioTaskTypes = new Set<TaskType>(["GENERATE_AUDIO"]);
-export const imageTaskTypes = new Set<TaskType>(["GENERATE_BUNDLE_IMAGE"]);
+export const imageTaskTypes = new Set<TaskType>(["GENERATE_BUNDLE_IMAGE", "GENERATE_THUMBNAIL"]);
 export const videoTaskTypes = new Set<TaskType>(["GENERATE_VIDEO"]);
 export const pipelineTaskTypes = new Set<TaskType>(["GENERATE_PIPELINE"]);
 

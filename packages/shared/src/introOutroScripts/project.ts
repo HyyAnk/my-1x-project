@@ -11,6 +11,7 @@ export const IntroOutroScriptDraftSchema = z
     content: IntroOutroScriptContentSchema.nullable().default(null),
     validation_issues: z.array(IntroOutroValidationIssueSchema).default([]),
     source_revision_id: z.string().trim().min(1).nullable().default(null),
+    prompt_text: z.string().max(60000).optional(),
     updated_at: IsoDate,
   })
   .strict();
@@ -26,6 +27,7 @@ export const IntroOutroScriptProjectSchema = z
     name: z.string().trim().min(1).max(100),
     version: z.number().int().positive(),
     archived: z.boolean().default(false),
+    purpose: z.literal("pair_workspace").optional(),
     drafts: z.object({
       intro: IntroOutroScriptDraftSchema,
       outro: IntroOutroScriptDraftSchema,
@@ -94,7 +96,7 @@ export const IntroOutroScriptContextSchema = z
     mascot_reference_url: z.string().trim().min(1).nullable(),
     logo_reference_url: z.string().trim().min(1).nullable(),
     identity_profile_id: z.string().trim().min(1).nullable(),
-    identity_status: z.enum(["missing", "unreviewed", "needs_review", "reviewed", "stale"]),
+    identity_status: z.enum(["missing", "unreviewed", "needs_review", "reviewed", "ready", "stale"]),
     issues: z.array(
       z.object({
         code: z.string().trim().min(1),

@@ -51,7 +51,7 @@ export function ScriptDraftDetails({ kind, editor, disabled, onCheckpoint }: Pro
             <ScriptTimelineEditor content={editor.content} disabled={disabled} onChange={editor.updateContent} />
             {editor.validationRan && !editor.issues.length ? (
               <div className="script-validation-success" role="status">
-                Structure checked. Save a revision to run the Gemini Flash review.
+                Structure checked. Save a revision to use these changes.
               </div>
             ) : null}
             <div className="script-inline-actions">
@@ -69,7 +69,7 @@ export function ScriptDraftDetails({ kind, editor, disabled, onCheckpoint }: Pro
                 onClick={() => void onCheckpoint(kind).catch(() => undefined)}
                 disabled={editor.validating || editor.pending || disabled}
               >
-                <FloppyDisk size={15} /> Save and review
+                <FloppyDisk size={15} /> Save revision
               </button>
             </div>
           </div>

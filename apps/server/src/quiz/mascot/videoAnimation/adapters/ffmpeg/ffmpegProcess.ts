@@ -37,8 +37,6 @@ export async function runFfmpegProcess(options: RunFfmpegProcessOptions): Promis
     abortListener = () => {
       aborted = true;
       child.kill();
-      cleanup();
-      reject(onAborted());
     };
 
     if (signal) {
@@ -49,12 +47,10 @@ export async function runFfmpegProcess(options: RunFfmpegProcessOptions): Promis
       timeoutTimer = setTimeout(() => {
         timedOut = true;
         child.kill();
-        cleanup();
-        reject(onTimeout(timeoutMs));
       }, timeoutMs);
     }
 
-    const child = spawn(ffmpegBinary, args, { stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(ffmpegBinary, args, { stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
 
     let stderr = "";
     child.stderr?.on("data", (chunk: Buffer) => {
@@ -69,7 +65,14 @@ export async function runFfmpegProcess(options: RunFfmpegProcessOptions): Promis
 
     child.on("close", (code) => {
       cleanup();
-      if (aborted || timedOut) return;
+      if (aborted) {
+        reject(onAborted());
+        return;
+      }
+      if (timedOut) {
+        reject(onTimeout(timeoutMs));
+        return;
+      }
 
       if (code !== 0) {
         reject(onCommandFailed(`FFmpeg exited with code ${code}: ${stderr.trim().slice(-500)}`));

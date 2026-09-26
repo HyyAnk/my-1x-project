@@ -70,6 +70,7 @@ const DraftPatchSchema = z
     target_duration_seconds: z.number().min(6).max(10).optional(),
     seed_selection: IntroOutroSeedSelectionSchema.nullable().optional(),
     content: IntroOutroScriptContentSchema.nullable().optional(),
+    prompt_text: z.string().max(60000).optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, "No draft update supplied");
@@ -130,6 +131,7 @@ const GenerateClipInputSchema = z
 export const GenerateScriptsInputSchema = z
   .object({
     expected_version: z.number().int().positive(),
+    auto_identity: z.boolean().default(true),
     mascot_style_id: z.string().trim().min(1).optional(),
     idempotency_key: z.string().trim().min(1).max(160),
     clips: z.array(GenerateClipInputSchema).min(1).max(2),

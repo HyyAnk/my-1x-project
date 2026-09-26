@@ -10,7 +10,7 @@ The default transport is local stdio. If using a configured WebSocket endpoint, 
 
 ## A task is stuck
 
-Open Tasks. Queued tasks wait for the same episode/channel lock or for the global concurrency cap. A running task can be cancelled. After a dashboard restart, an interrupted running task is marked failed while repository artifacts remain intact.
+Open Tasks. Queued tasks wait for the same episode/channel lock or for queue capacity. A running task can be cancelled. After a dashboard restart, interrupted Episode pipeline and standalone video tasks can be requeued automatically; other interrupted tasks fail. Repeated build interruptions eventually require manual Retry. Repository artifacts remain available for recovery. See [Episode workflow](episode-workflow.md#progress-and-recovery).
 
 ## Video composition check failed
 
@@ -21,6 +21,7 @@ Pre-render checks only abort when true blocking issues exist: bounding box colli
 Quiz video rendering is strictly V2-only. A render task requires all five canonical artifacts (`quiz-v2.json`, `director-plan.json`, `asset-plan.json`, `voice-plan.json`, `timeline.json`) to exist and be valid before video composition can begin. The legacy V1 scene renderer and `USE_LEGACY_QUIZ_PIPELINE` flag have been retired and are ignored.
 
 If rendering fails with `QUIZ_V2_REQUIRED` (reporting missing artifacts):
+
 1. Run the quiz production pipeline or trigger the appropriate pipeline stage (e.g., `GENERATE_QUIZ` or V2 stage runners) to generate the missing plans and timeline.
 2. If artifacts were manually removed or corrupted, regenerate them through the standard V2 pipeline stages rather than synthesizing legacy scene markdown.
 

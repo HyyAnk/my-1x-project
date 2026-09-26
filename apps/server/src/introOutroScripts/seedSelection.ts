@@ -11,6 +11,7 @@ import {
 import { IntroOutroScriptError } from "./errors.js";
 import { isSeedEligible } from "./seedCatalog.js";
 import { hasBlockingIssues, validateSeedSelection } from "./validation.js";
+import { compatibleSeeds, fitsProductionPolicy } from "./seedProductionPolicy.js";
 
 function dimensionsForClip(clipKind: IntroOutroClipKind): readonly CreativeSeedDimension[] {
   return clipKind === "intro" ? INTRO_SEED_DIMENSIONS : OUTRO_SEED_DIMENSIONS;
@@ -37,25 +38,47 @@ export function resolveSeedSelection(params: {
   randomizationSeed: string;
   selectedSeedIds?: readonly string[];
   lockedDimensions?: readonly CreativeSeedDimension[];
+  durationSeconds?: number;
 }): { selection: IntroOutroSeedSelection; seeds: CreativeSeed[] } {
   const dimensions = dimensionsForClip(params.clipKind);
   const active = latestCatalog(params.catalog).filter((seed) => seed.clip_kind === params.clipKind && seed.status === "active");
   const requested = new Map(active.filter((seed) => params.selectedSeedIds?.includes(seed.id)).map((seed) => [seed.dimension, seed]));
-  const selected: CreativeSeed[] = [];
-
-  for (const dimension of dimensions) {
+  if (params.lockedDimensions?.some((dimension) => !requested.has(dimension)))
+    throw new IntroOutroScriptError("Each locked dimension needs an explicit active seed", "SEED_COMBINATION_INVALID");
+  if (
+    (params.selectedSeedIds ?? []).some((id) => !active.some((seed) => seed.id === id)) ||
+    requested.size !== (params.selectedSeedIds?.length ?? 0)
+  ) {
+    throw new IntroOutroScriptError("Select one active seed per dimension", "SEED_COMBINATION_INVALID");
+  }
+  const candidates = dimensions.map((dimension) => {
     const explicit = requested.get(dimension);
-    if (explicit) {
-      selected.push(explicit);
-      continue;
-    }
-    const eligible = active.filter((seed) => seed.dimension === dimension && isSeedEligible(seed, params.identity));
+    const eligible = active.filter(
+      (seed) =>
+        seed.dimension === dimension &&
+        isSeedEligible(seed, params.identity) &&
+        fitsProductionPolicy(seed, params.durationSeconds ?? 8) &&
+        (!explicit || seed.id === explicit.id),
+    );
     if (!eligible.length) {
       throw new IntroOutroScriptError(`No compatible active seed is available for ${dimension}`, "SEED_COMBINATION_INVALID");
     }
     const weighted = eligible.flatMap((seed) => Array.from({ length: Math.max(1, Math.round(seed.selection_weight)) }, () => seed));
-    selected.push(weighted[seededIndex(params.randomizationSeed, dimension, weighted.length)]);
-  }
+    const first = weighted[seededIndex(params.randomizationSeed, dimension, weighted.length)];
+    return [first, ...eligible.filter((seed) => seed.id !== first.id)];
+  });
+  const search = (index: number, selected: CreativeSeed[]): CreativeSeed[] | null => {
+    if (index === candidates.length) return selected;
+    for (const seed of candidates[index]) {
+      if (!compatibleSeeds(selected, seed)) continue;
+      const result = search(index + 1, [...selected, seed]);
+      if (result) return result;
+    }
+    return null;
+  };
+  const selected = search(0, []);
+  if (!selected)
+    throw new IntroOutroScriptError("Selected seeds conflict with the single-action production budget", "SEED_COMBINATION_INVALID");
 
   const issues = validateSeedSelection(selected, params.identity, dimensions);
   if (hasBlockingIssues(issues)) {
@@ -66,7 +89,7 @@ export function resolveSeedSelection(params: {
       randomization_seed: params.randomizationSeed,
       selected_seed_ids: selected.map((seed) => seed.id),
       locked_dimensions: [...(params.lockedDimensions ?? [])],
-      algorithm_version: "1",
+      algorithm_version: "2",
     },
     seeds: selected,
   };

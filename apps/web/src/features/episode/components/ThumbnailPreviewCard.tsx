@@ -5,19 +5,30 @@ import type { Notice } from "../../../components/types";
 import { ThumbnailCarouselStage } from "./ThumbnailCarouselStage";
 import { ThumbnailControlsDeck } from "./ThumbnailControlsDeck";
 import { useThumbnailPreview } from "../hooks/useThumbnailPreview";
+import { isTaskActive } from "../../../lib/utils";
+import { thumbnailTaskMessage } from "../utils/thumbnailTaskState";
 
 export type ThumbnailPreviewCardProps = {
   channel: Channel;
   episode: Episode;
   episodeId: string;
   activeEpisodeTask?: Task | null;
+  thumbnailTask?: Task | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onUpdated?: () => Promise<void> | void;
 };
 
 export function ThumbnailPreviewCard(props: ThumbnailPreviewCardProps) {
   const { channel, episode, episodeId } = props;
-  const thumb = useThumbnailPreview(props);
+  const backgroundPending = Boolean(props.thumbnailTask && isTaskActive(props.thumbnailTask));
+  const thumb = useThumbnailPreview({ ...props, activeEpisodeTask: backgroundPending ? props.thumbnailTask : props.activeEpisodeTask });
+  const generating = thumb.generating || backgroundPending;
+  const newerManifest = Boolean(
+    thumb.manifest?.updated_at &&
+    props.thumbnailTask?.completed_at &&
+    Date.parse(thumb.manifest.updated_at) > Date.parse(props.thumbnailTask.completed_at),
+  );
+  const statusMessage = newerManifest ? null : thumbnailTaskMessage(props.thumbnailTask);
 
   return (
     <section className="quiz-thumbnail-panel">
@@ -54,6 +65,11 @@ export function ThumbnailPreviewCard(props: ThumbnailPreviewCardProps) {
         </div>
       </div>
 
+      {statusMessage && (
+        <p role="status" aria-live="polite">
+          {statusMessage}
+        </p>
+      )}
       {/* Main Studio Workspace Grid */}
       <div className="thumbnail-studio-grid">
         {/* Left / Center: Visual Carousel Stage */}
@@ -62,7 +78,7 @@ export function ThumbnailPreviewCard(props: ThumbnailPreviewCardProps) {
           episodeId={episodeId}
           episodeSlug={episode.slug}
           activeRatio={thumb.activeRatio}
-          generating={thumb.generating}
+          generating={generating}
           hasImage={thumb.hasImage}
           hasAnyThumbnail={thumb.hasAnyThumbnail}
           imageUrl={thumb.imageUrl}
@@ -86,7 +102,7 @@ export function ThumbnailPreviewCard(props: ThumbnailPreviewCardProps) {
           setCustomHook={thumb.setCustomHook}
           manifest={thumb.manifest}
           hasAnyThumbnail={thumb.hasAnyThumbnail}
-          generating={thumb.generating}
+          generating={generating}
           loading={thumb.loading}
           onGenerateThumbnail={thumb.handleGenerateThumbnail}
           onResetDefaults={thumb.handleResetDefaults}

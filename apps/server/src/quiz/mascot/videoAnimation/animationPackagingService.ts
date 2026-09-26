@@ -41,6 +41,7 @@ export function createAnimationPackagingService(
   }
 
   async function packageAttemptAnimation(params: PackageAttemptAnimationParams): Promise<PackageAnimationResult> {
+    params.signal?.throwIfAborted();
     const {
       mascotId,
       styleId,
@@ -61,6 +62,7 @@ export function createAnimationPackagingService(
     const { mattedFramePaths, targetCount } = await verifyAndCollectMattedFrames(mattedFramesDir, requestedFrameCount);
 
     const reg = await regService.computeAttemptRegistration({
+      signal: params.signal,
       mascotId,
       styleId,
       state,
@@ -86,6 +88,7 @@ export function createAnimationPackagingService(
 
     const outputWebmPath = path.join(attemptDir, "video_transparent.webm");
     await ffmpegAdapter.encodeFramesToTransparentWebm({
+      signal: params.signal,
       framesDir: mattedFramesDir,
       outputWebmPath,
       fps,
@@ -94,6 +97,7 @@ export function createAnimationPackagingService(
     });
 
     const atlasResult = await stitchAtlasGrid({
+      signal: params.signal,
       attemptDir,
       mattedFramePaths,
       targetCount,
@@ -108,6 +112,7 @@ export function createAnimationPackagingService(
     });
 
     const { previewPath } = await renderPreviewThumbnails({
+      signal: params.signal,
       attemptDir,
       firstFramePath: mattedFramePaths[0],
       cropX: cropBounds.cropX,
@@ -138,6 +143,7 @@ export function createAnimationPackagingService(
     });
 
     const manifestPath = path.join(attemptDir, "manifest.json");
+    params.signal?.throwIfAborted();
     await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
 
     return {

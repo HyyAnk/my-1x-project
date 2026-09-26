@@ -1,50 +1,19 @@
-# Mascot rendering contract
+# Mascot rendering and assets
 
-Reviewed and updated on 2026-09-16. This documents the canonical Mascot V2 rendering contract, recording the retirement of the legacy V1 Sprite Action model.
+## Current contract
 
-## Retirement of Legacy V1 Sprite Action Model
+[Mascot profiles](../packages/shared/src/schemas/mascot.ts) use `schema_version: 2`, `render_bundle`, and `styles`. The [render bundle contracts](../packages/shared/src/mascot/renderTypes.ts) and [schemas](../packages/shared/src/mascot/renderSchema.ts) define registered action images, placement, visibility, and motion. Styles hold Thinking and Celebrate state slots and can select published animation assets. New consumers should read these canonical fields rather than the legacy root `actions` mirror.
 
-The legacy V1 Sprite Action architecture (based on `MascotSpriteAction`, multi-frame sprite sheets/strips, and the root `mascot.actions` dictionary) is **formally retired**:
-- **Authoring Discontinued:** Authoring multi-frame sprite sheets or strips has been discontinued. New mascot assets are authored as standalone V2 action images (`MascotActionAssetV2`) or style state slot variants (`MascotStateVariant`).
-- **Compatibility Phase-Out:** Legacy compatibility adapters (`adaptMascotV1ToV2`, `buildLegacySpriteAction`) remain available strictly for transient reading of unmigrated data and are slated for removal. Runtime mutation of `mascot.actions` is disabled.
-- **Retired Portrait Path:** Legacy portrait (`9:16`) preview and production composition paths for legacy sprites are retired.
+[The legacy adapter](../packages/shared/src/mascot/legacyAdapter.ts) still reads older sprite data, but new authoring uses V2 action images and style slots. [Repository methods](../apps/server/src/repository/mascots.ts) own persistence and migration at the storage boundary. [Production state adaptation](../apps/server/src/quiz/render/mascot/productionMascotStateAdapter.ts), [HTML rendering](../apps/server/src/quiz/render/mascotHtmlRenderer.ts), and [timeline seeking](../apps/server/src/quiz/render/productionMascotTimeline.ts) consume persisted selections without changing the source profile.
 
-## Canonical Data Models: `render_bundle` and `styles`
+## Animation replacement
 
-`render_bundle` (`MascotRenderBundleV2`) and `styles` (`MascotStyle`) are the canonical, authoritative, and primary data models across all authoring, persistence, preview, and video rendering pipelines:
+[Uploaded-video processing](../apps/server/src/quiz/mascot/videoAnimation/) validates and packages new attempts before publishing them. A failed replacement retains the approved attempt and should leave a visible error. Preview and artifact requests must identify the approved attempt so browser caching cannot show a failed or older replacement as current. [Movement measurements](../apps/server/src/quiz/mascot/videoAnimation/registration/registrationMath.ts) are diagnostic; missing frames, empty content, inconsistent dimensions, invalid files, and out-of-canvas bounds remain validation failures.
 
-### 1. `render_bundle` (`MascotRenderBundleV2`)
-Defined in [packages/shared/src/mascot/renderTypes.ts](../packages/shared/src/mascot/renderTypes.ts) and validated by [packages/shared/src/mascot/renderSchema.ts](../packages/shared/src/mascot/renderSchema.ts):
-- **`config` (`MascotRenderConfigV2`):** Defines placements across supported aspect ratios (`16:9`, `9:16`) with anchor, scale, offset, and flip parameters, alongside visibility phase rules and reveal outcome actions.
-- **`assets` (`MascotRenderAssetCatalogV2`):** Maps action keys (`idle`, `wave`, `thinking`, `point`, `celebrate`, `oops`, `outro`) to dedicated `MascotActionAssetV2` instances, each specifying `image_url`, `registration` (source dimensions, content bounds, pivot, offsets), and deterministic `motion` presets (`preset`, `speed`, `intensity`).
-- **Canonical Base Geometry:** The base box is 220 by 220 logical pixels in canvas coordinates. Placement transforms apply in strict order:
-  ```text
-  canvas anchor -> unscaled placement offset -> scale/flip around pivot
-  -> per-action registration offset -> deterministic motion
-  ```
+## Variant export
 
-### 2. `styles` (`MascotStyle[]`)
-Defined in [packages/shared/src/mascot/mascotStyleSchema.ts](../packages/shared/src/mascot/mascotStyleSchema.ts):
-- Authoritative for costume variants and multi-slot visual diversity across questions.
-- Each style contains an `id`, `name`, `keyword`, optional `anchor_image_url`, and a map of `states` (`thinking`, `celebrate`) containing up to 10 slot variants (`MascotStateVariant`).
-- Supports both static 3D characters with CSS keyframe motion and transparent WebM VP9 dynamic video animations (`MascotAnimationAssetV1`).
+The Mascot UI exports Original source images or Transparent PNGs for all populated Thinking and Celebrate slots. [The export plan](../apps/server/src/quiz/mascot/variantExport/variantExportPlan.ts) writes under `Mascot Name/Style Name/Thinking|Celebrate/` using numbered slot filenames. Empty slots are omitted. [The export service](../apps/server/src/quiz/mascot/variantExport/variantExportService.ts) runs a background job with progress, cancellation, retry of failed items, and per-mascot duplicate-request protection. Job history is process-local; a server restart requires a new export, which safely skips identical output files.
 
-## Runtime Pipeline Consumers
+[The export service](../apps/server/src/quiz/mascot/variantExport/variantExportService.ts) rejects output inside the source library. [The file adapter](../apps/server/src/quiz/mascot/variantExport/variantExportFiles.ts) accepts local mascot assets, preserves original bytes where applicable, and never overwrites a different existing file. The selected folder is on the backend computer. Use the [HTTP routes](../apps/server/src/routes/mascots/mascotVariantExportRoutes.ts) and [browser hook](../apps/web/src/features/mascot/hooks/useVariantExport.ts) for changes instead of copying files directly.
 
-- **State Adaptation:** [productionMascotRenderer.ts](../apps/server/src/quiz/render/productionMascotRenderer.ts) and [productionMascotStateAdapter.ts](../apps/server/src/quiz/render/mascot/productionMascotStateAdapter.ts) adapt question requirements directly onto `render_bundle.assets.actions` and active style slots without mutating legacy `actions`.
-- **HTML Serialization:** [mascotHtmlRenderer.ts](../apps/server/src/quiz/render/mascotHtmlRenderer.ts) and [previewMascotRenderer.ts](../apps/server/src/quiz/render/previewMascotRenderer.ts) serialize DOM/CSS layers directly from `MascotRenderBundleV2`.
-- **Timeline Seeking:** [productionMascotTimeline.ts](../apps/server/src/quiz/render/productionMascotTimeline.ts) deterministically resolves phase markers, frame indices, and video seek times without clock drift.
-- **Studio & Previews:** [Stage Studio](../apps/web/src/features/stageStudio/) and [Visual Sandbox](../apps/web/src/features/sandbox/) consume canonical V2 bundles.
-
-## Persistence and Storage Migration
-
-All persistent mascot documents in [mascot repositories](../apps/server/src/repository/mascots.ts) enforce `schema_version: 2` with canonical `render_bundle` and `styles`:
-- When writing mascots, `buildPersistedMascotProfile` maintains `render_bundle` as the single source of truth.
-- Backward compatibility mirrors in `mascot.actions` are generated read-only for older external integrations and should not be relied upon for new features.
-
-## Verification
-
-Modernized tests must verify the native V2 path (`render_bundle` and `styles`):
-- Test fixtures should directly instantiate `render_bundle` and `styles`.
-- Assertions should verify updates to `render_bundle.assets.actions` and `action_asset` rather than legacy `actions`.
-- HyperFrames validation tests verify bitwise deterministic rendering across arbitrary seek points.
+For changes to rendering or animation, run the relevant focused tests and a production composition check. For export, start with [service tests](../apps/server/test/variantExportService.test.ts) and [route tests](../apps/server/test/variantExportRoutes.test.ts); verify a real export with source files when changing filesystem behavior.

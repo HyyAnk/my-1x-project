@@ -561,8 +561,8 @@ describe("Intro/Outro Script Studio components", () => {
         "Use for upload selects this revision as the script linked to your uploaded video. It does not generate or upload a video.",
       ),
     ).toBeDefined();
-    fireEvent.click(screen.getByText("What Gemini reviewed"));
-    expect(screen.getByText(/Mascot identity, feasible motion, camera, timing, audio, logo placement/)).toBeDefined();
+    expect(screen.queryByText("What Gemini reviewed")).toBeNull();
+    expect(screen.getByText("AI review not required")).toBeDefined();
     fireEvent.click(screen.getByRole("button", { name: "Use for upload" }));
     await waitFor(() => expect(onApprove).toHaveBeenCalledWith(revision.revision_id));
 
@@ -691,7 +691,8 @@ describe("Intro/Outro Script Studio components", () => {
     );
 
     expect(screen.getAllByText(issue.message)).toHaveLength(1);
-    expect((screen.getByRole("button", { name: "Use for upload" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "Use for upload" }) as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.getByText("AI review not required")).toBeDefined();
   });
 
   it("marks approved upload links without requiring both scripts", () => {

@@ -1,5 +1,6 @@
 import type { QuizStageTimings } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
+import { mergeQuizTimingPatch } from "../../repository/quiz/quizTimingMutation.js";
 
 export async function initializeStageTimings(
   repository: RepositoryService,
@@ -34,7 +35,7 @@ export async function recordStageTiming(
     duration_seconds: durationSeconds,
   };
   timings.updated_at = new Date().toISOString();
-  await repository.writeQuizStageTimings?.(channelId, episodeId, timings)?.catch?.(() => {});
+  await mergeQuizTimingPatch(repository, channelId, episodeId, { stages: { [stageKey]: timings.stages[stageKey] } });
 }
 
 export async function recordParallelTiming(
@@ -64,7 +65,10 @@ export async function recordParallelTiming(
     duration_seconds: parallelTotalSeconds,
   };
   timings.updated_at = new Date().toISOString();
-  await repository.writeQuizStageTimings(channelId, episodeId, timings).catch(() => {});
+  await mergeQuizTimingPatch(repository, channelId, episodeId, {
+    stages: Object.fromEntries(stages.map(({ key }) => [key, timings.stages![key]])),
+    parallel_groups: { [groupKey]: timings.parallel_groups[groupKey] },
+  });
 }
 
 export interface QuizPipelineTimingsRecorder {

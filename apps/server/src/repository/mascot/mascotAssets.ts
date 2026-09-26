@@ -27,6 +27,28 @@ export async function getMascotAssetFile(
     const metadata = await stat(absolutePath);
     return { absolutePath, size: metadata.size, modified_at: metadata.mtime.toISOString() };
   } catch {
+    const fallbackCandidates: string[] = [];
+    if (filename.startsWith("master_concept_") && !filename.startsWith("master_concept_raw_")) {
+      fallbackCandidates.push(filename.replace("master_concept_", "master_concept_raw_"));
+    } else if (filename.startsWith("master_concept_raw_")) {
+      fallbackCandidates.push(filename.replace("master_concept_raw_", "master_concept_"));
+    } else if (filename.includes("_anchor_") && !filename.includes("_anchor_raw_")) {
+      fallbackCandidates.push(filename.replace("_anchor_", "_anchor_raw_"));
+    } else if (filename.includes("_anchor_raw_")) {
+      fallbackCandidates.push(filename.replace("_anchor_raw_", "_anchor_"));
+    }
+
+    for (const alt of fallbackCandidates) {
+      const altPath = path.join(mascotDir, "assets", alt);
+      try {
+        await this.assertRealPathInside(this.roots.mascots, altPath);
+        const metadata = await stat(altPath);
+        return { absolutePath: altPath, size: metadata.size, modified_at: metadata.mtime.toISOString() };
+      } catch {
+        // continue trying next candidate
+      }
+    }
+
     throw new RepositoryError("Mascot asset not found", "MASCOT_ASSET_NOT_FOUND");
   }
 }

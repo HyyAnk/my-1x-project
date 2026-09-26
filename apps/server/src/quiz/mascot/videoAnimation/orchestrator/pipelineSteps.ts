@@ -25,6 +25,7 @@ export async function rollbackSlotStateOnCancellation(
 
   const { mascot_id, style_id, state, slot_index } = job;
   const currentProj = await deps.repository.getSlotProjection(mascot_id, style_id, state, slot_index);
+  if (currentProj.active_job_id && currentProj.active_job_id !== job.id) return;
   const transition = (s: MascotSlotState) => deps.repository.transitionSlotState(mascot_id, style_id, state, slot_index, s);
 
   if (currentProj.active_revision_id) {
@@ -50,7 +51,8 @@ export async function handlePipelineFailure(
   const isCancelled = signal.aborted || error.code === "CANCELLED";
 
   if (isCancelled) {
-    await rollbackSlotStateOnCancellation(deps, job, error.message || "Job cancelled by user or newer attempt");
+    const reason = signal.reason instanceof Error ? signal.reason.message : error.message;
+    await rollbackSlotStateOnCancellation(deps, job, reason || "Job cancelled by user or newer attempt");
   } else {
     const failure = { code: error.code ?? "PROCESSING_FAILED", message: error.message };
     await deps.repository.updateJobStatus(job.id, "qa_failed", job.progress, failure);
@@ -155,6 +157,7 @@ export async function executePipeline(
 
   // 3. Strict Frame Matting
   await deps.mattingService.matteAttemptFrames({
+    signal,
     mascotId: mascot_id,
     styleId: style_id,
     state,
@@ -166,6 +169,7 @@ export async function executePipeline(
 
   // 4. Common Registration
   const registrationResult = await deps.registrationService.computeAttemptRegistration({
+    signal,
     mascotId: mascot_id,
     styleId: style_id,
     state,
@@ -177,6 +181,7 @@ export async function executePipeline(
 
   // 5. Sequence Packaging & Atlas
   const packagingResult = await deps.packagingService.packageAttemptAnimation({
+    signal,
     mascotId: mascot_id,
     styleId: style_id,
     state,

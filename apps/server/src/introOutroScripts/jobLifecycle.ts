@@ -5,13 +5,31 @@ import type { IntroOutroScriptRepository } from "./repository.js";
 
 const terminalStatuses = new Set<IntroOutroScriptJob["status"]>(["succeeded", "partial", "failed", "cancelled", "interrupted"]);
 
+type QueuedJobItem = {
+  job: IntroOutroScriptJob;
+  initialStep: string;
+  operation: (signal: AbortSignal) => Promise<Partial<IntroOutroScriptJob>>;
+  controller: AbortController;
+};
+
 export class IntroOutroJobLifecycle {
   private readonly controllers = new Map<string, AbortController>();
+  private readonly queue: QueuedJobItem[] = [];
+  private activeCount = 0;
+  private readonly maxConcurrency: number;
 
   constructor(
     private readonly repository: RepositoryService,
     private readonly scripts: IntroOutroScriptRepository,
-  ) {}
+    maxConcurrency = 3,
+  ) {
+    this.maxConcurrency = maxConcurrency;
+  }
+
+  async listActiveJobs(channelId: string): Promise<IntroOutroScriptJob[]> {
+    const all = await this.scripts.listJobs(channelId);
+    return all.filter((job) => job.status === "queued" || job.status === "running");
+  }
 
   async initialize(): Promise<void> {
     const channels = await this.repository.listChannels();
@@ -84,23 +102,47 @@ export class IntroOutroJobLifecycle {
   launch(job: IntroOutroScriptJob, initialStep: string, operation: (signal: AbortSignal) => Promise<Partial<IntroOutroScriptJob>>): void {
     const controller = new AbortController();
     this.controllers.set(job.job_id, controller);
-    setTimeout(() => {
-      void this.run(job, initialStep, operation, controller).finally(() => this.controllers.delete(job.job_id));
-    }, 0);
+    this.queue.push({ job, initialStep, operation, controller });
+    setTimeout(() => this.drainQueue(), 0);
+  }
+
+  private drainQueue(): void {
+    while (this.activeCount < this.maxConcurrency && this.queue.length > 0) {
+      const next = this.queue.shift();
+      if (!next) break;
+      if (next.controller.signal.aborted) {
+        this.controllers.delete(next.job.job_id);
+        continue;
+      }
+      this.activeCount += 1;
+      void this.run(next.job, next.initialStep, next.operation, next.controller).finally(() => {
+        this.controllers.delete(next.job.job_id);
+        this.activeCount -= 1;
+        this.drainQueue();
+      });
+    }
   }
 
   async cancel(channelId: string, jobId: string): Promise<IntroOutroScriptJob> {
     const current = await this.scripts.getJob(channelId, jobId);
     if (terminalStatuses.has(current.status)) return current;
+    const queuedIdx = this.queue.findIndex((item) => item.job.job_id === jobId);
+    if (queuedIdx >= 0) {
+      const [item] = this.queue.splice(queuedIdx, 1);
+      item?.controller.abort();
+    }
     this.controllers.get(jobId)?.abort();
     this.controllers.delete(jobId);
-    return this.scripts.saveJob({
-      ...current,
-      status: "cancelled",
-      step: "Cancelled",
-      error_code: null,
-      error_message: null,
-      completed_at: nowIso(),
+    return this.scripts.withLock(`job-progress:${jobId}`, async () => {
+      const latest = await this.scripts.getJob(channelId, jobId);
+      return this.scripts.saveJob({
+        ...latest,
+        status: "cancelled",
+        step: "Cancelled",
+        error_code: null,
+        error_message: null,
+        completed_at: nowIso(),
+      });
     });
   }
 

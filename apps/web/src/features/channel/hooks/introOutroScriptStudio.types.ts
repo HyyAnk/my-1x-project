@@ -1,4 +1,5 @@
 import type {
+  BatchGenerateIntroOutroScriptsInput,
   CreativeSeed,
   IntroOutroClipKind,
   IntroOutroScriptContext,
@@ -23,6 +24,7 @@ export type ScriptStudioState = {
   project: IntroOutroScriptProject | null;
   revisions: IntroOutroScriptRevision[];
   job: IntroOutroScriptJob | null;
+  activeJobs: IntroOutroScriptJob[];
   loading: boolean;
   busy: string | null;
   error: string | null;
@@ -37,7 +39,9 @@ export type ScriptStudioActions = {
   analyzeIdentity: () => Promise<void>;
   reviewIdentity: (profile: MascotStyleIdentityProfile) => Promise<void>;
   generate: (clips: GenerateScriptClipInput[]) => Promise<void>;
+  batchGenerate: (input: Omit<BatchGenerateIntroOutroScriptsInput, "style_preset_id">) => Promise<void>;
   cancelJob: () => Promise<void>;
+  cancelSpecificJob: (jobId: string) => Promise<void>;
   saveContent: (kind: IntroOutroClipKind, content: IntroOutroScriptRevision["content"]) => Promise<void>;
   checkpoint: (kind: IntroOutroClipKind) => Promise<void>;
   validate: (kind: IntroOutroClipKind) => Promise<IntroOutroValidationIssue[]>;

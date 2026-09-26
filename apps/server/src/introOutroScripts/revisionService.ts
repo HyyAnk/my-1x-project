@@ -15,8 +15,6 @@ import { fingerprint } from "./fingerprint.js";
 import { INTRO_OUTRO_TEMPLATE_VERSION } from "./promptCompiler.js";
 import type { IntroOutroScriptRepository } from "./repository.js";
 import { hasBlockingIssues, validateScriptContent } from "./validation.js";
-import type { LLMClient } from "../utils/promptSanitizer.js";
-import { reviewScriptQuality, SCRIPT_QUALITY_REVIEW_TIMEOUT_MS } from "./qualityReview.js";
 
 type CheckpointInput = {
   scripts: IntroOutroScriptRepository;
@@ -27,7 +25,6 @@ type CheckpointInput = {
   seeds: CreativeSeed[];
   warningAcknowledgements: string[];
   requestedModel: string;
-  client: LLMClient | null;
 };
 
 function revisionReferences(context: ResolvedIntroOutroContext): IntroOutroScriptRevision["references"] {
@@ -74,7 +71,7 @@ export async function retainContextReferenceSnapshots(input: {
 
 export async function checkpointDraft(input: CheckpointInput): Promise<IntroOutroScriptRevision> {
   const identity = input.context.identity;
-  if (!identity || input.context.publicContext.identity_status !== "reviewed") {
+  if (!identity || !["reviewed", "ready"].includes(input.context.publicContext.identity_status)) {
     throw new IntroOutroScriptError("Review the current mascot style identity before saving a revision", "IDENTITY_REVIEW_REQUIRED");
   }
   const draft = input.project.drafts[input.clipKind];
@@ -110,30 +107,6 @@ export async function checkpointDraft(input: CheckpointInput): Promise<IntroOutr
   });
   const revisions = await input.scripts.listRevisions(input.project.channel_id, input.project.project_id);
   const references = revisionReferences(input.context);
-  if (!input.client) throw new IntroOutroScriptError("Antigravity is required to review a new revision", "LLM_UNAVAILABLE");
-  const qualityReview = await reviewScriptQuality({
-    client: input.client,
-    model: input.requestedModel,
-    content: input.content,
-    identity,
-    seeds: input.seeds,
-    companionContent: companion,
-    signal: AbortSignal.timeout(SCRIPT_QUALITY_REVIEW_TIMEOUT_MS + 30_000),
-    imageAttachments: [
-      { path: input.context.mascotReference.absolutePath, mimeType: input.context.mascotReference.mimeType, role: "mascot_subject" },
-      ...(input.context.logoReference
-        ? [
-            {
-              path: input.context.logoReference.absolutePath,
-              mimeType: input.context.logoReference.mimeType,
-              role: "channel_logo" as const,
-            },
-          ]
-        : []),
-    ],
-  });
-  if (hasBlockingIssues(qualityReview.findings))
-    throw new IntroOutroScriptError(qualityReview.findings.map((finding) => finding.message).join(" "), "SCRIPT_VALIDATION_FAILED");
   return IntroOutroScriptRevisionSchema.parse({
     schema_version: 1,
     revision_id: makeId(`script_${input.clipKind}`),
@@ -145,7 +118,6 @@ export async function checkpointDraft(input: CheckpointInput): Promise<IntroOutr
     origin: "edited",
     content: input.content,
     identity_snapshot: identity,
-    quality_review: qualityReview,
     seed_selection: draft.seed_selection,
     seed_snapshot: input.seeds,
     references,
@@ -159,7 +131,7 @@ export async function checkpointDraft(input: CheckpointInput): Promise<IntroOutr
     template_version: INTRO_OUTRO_TEMPLATE_VERSION,
     requested_model: input.requestedModel,
     effective_model: null,
-    validation_issues: [...issues, ...qualityReview.findings],
+    validation_issues: issues,
     warning_acknowledgements: input.warningAcknowledgements,
     created_at: nowIso(),
   });

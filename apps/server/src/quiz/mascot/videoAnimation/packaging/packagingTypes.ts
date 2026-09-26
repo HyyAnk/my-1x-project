@@ -14,6 +14,7 @@ export interface AnimationPackagingServiceOptions {
 }
 
 export interface PackageAttemptAnimationParams {
+  signal?: AbortSignal;
   mascotId: string;
   styleId: string;
   state: AnimationState;
@@ -70,6 +71,7 @@ export interface CropBoundsResult {
 }
 
 export interface StitchAtlasGridParams {
+  signal?: AbortSignal;
   attemptDir: string;
   mattedFramePaths: string[];
   targetCount: number;
@@ -92,6 +94,7 @@ export interface StitchAtlasResult {
 }
 
 export interface RenderPreviewThumbnailsParams {
+  signal?: AbortSignal;
   attemptDir: string;
   firstFramePath: string;
   cropX: number;

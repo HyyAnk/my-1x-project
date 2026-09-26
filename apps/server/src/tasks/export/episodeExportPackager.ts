@@ -13,6 +13,7 @@ import { getEpisodeThumbnailManifest } from "../../quiz/thumbnail/index.js";
 import { formatExportDescriptionText } from "./descriptionExportFormatter.js";
 import { packageExportThumbnails } from "./thumbnailExportPackager.js";
 import { updateExportsManifest } from "./exportsManifestManager.js";
+import { queueExportPackaging } from "./exportPackagingQueue.js";
 
 export interface PackageEpisodeExportOptions {
   repository: RepositoryService;
@@ -29,6 +30,31 @@ export interface PackageEpisodeExportResult {
 }
 
 export async function packageEpisodeExport(options: PackageEpisodeExportOptions): Promise<PackageEpisodeExportResult> {
+  return queueExportPackaging(options.repository, options.channelId, () => buildEpisodeExport(options, "copy-video"));
+}
+
+/** A late thumbnail refresh never copies the video again or creates a premature export. */
+export async function refreshEpisodeExport(
+  options: Pick<PackageEpisodeExportOptions, "repository" | "channelId" | "episodeId">,
+): Promise<PackageEpisodeExportResult | null> {
+  return queueExportPackaging(options.repository, options.channelId, async () => {
+    const { repository, channelId, episodeId } = options;
+    const [channel, episode] = await Promise.all([repository.getChannel(channelId), repository.getEpisode(channelId, episodeId)]);
+    const video = repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "export", "quiz-video.mp4");
+    try {
+      if (!(await stat(video)).isFile()) return null;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+      throw error;
+    }
+    return buildEpisodeExport(options, "metadata-only");
+  });
+}
+
+async function buildEpisodeExport(
+  options: PackageEpisodeExportOptions,
+  mode: "copy-video" | "metadata-only",
+): Promise<PackageEpisodeExportResult> {
   const { repository, channelId, episodeId, videoSourcePath, duration } = options;
 
   const [channel, episode] = await Promise.all([repository.getChannel(channelId), repository.getEpisode(channelId, episodeId)]);
@@ -53,7 +79,7 @@ export async function packageEpisodeExport(options: PackageEpisodeExportOptions)
 
   try {
     const videoStat = await stat(sourceVideoPath);
-    if (videoStat.isFile()) {
+    if (mode === "copy-video" && videoStat.isFile()) {
       await copyFile(sourceVideoPath, targetVideoPath);
     }
   } catch {

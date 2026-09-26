@@ -12,5 +12,5 @@ export interface AnimationProcessingSlotCardProps {
   onUploadVideo: (file: File) => void;
   onRetry: () => void;
   onReplaceVideo: (file: File) => void;
-  onCancelJob?: (jobId: string) => void;
+  onCancelJob?: (jobId: string) => void | Promise<void>;
 }

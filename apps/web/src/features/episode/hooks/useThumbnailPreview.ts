@@ -62,10 +62,12 @@ export function useThumbnailPreview({
   onUpdated,
 }: UseThumbnailPreviewOptions): UseThumbnailPreviewReturn {
   const isMountedRef = useRef(true);
+  const manifestRequest = useRef(0);
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      manifestRequest.current += 1;
     };
   }, []);
 
@@ -92,13 +94,14 @@ export function useThumbnailPreview({
 
   const fetchManifest = useCallback(
     async (silent = false) => {
+      const request = ++manifestRequest.current;
       if (!silent && isMountedRef.current) setLoading(true);
       try {
         const res = await episodeApi.getThumbnail(channel.channel_id, episodeId);
-        if (!isMountedRef.current) return;
+        if (!isMountedRef.current || request !== manifestRequest.current) return;
         if (res.manifest) {
           setManifest((prev) => {
-            if (!prev || prev.updated_at !== res.manifest?.updated_at || !imageTimestamp) {
+            if (!prev || prev.updated_at !== res.manifest?.updated_at) {
               setImageTimestamp(String(Date.now()));
             }
             return res.manifest;
@@ -110,34 +113,44 @@ export function useThumbnailPreview({
       } catch {
         // Manifest not created yet
       } finally {
-        if (!silent && isMountedRef.current) setLoading(false);
+        if (isMountedRef.current && request === manifestRequest.current) setLoading(false);
       }
     },
-    [channel.channel_id, episodeId, imageTimestamp],
+    [channel.channel_id, episodeId],
   );
 
   useEffect(() => {
     void fetchManifest();
     setImageTimestamp(episode.updated_at);
+    return () => {
+      manifestRequest.current += 1;
+    };
   }, [fetchManifest, episode.updated_at, episode.thumbnail_asset_path_16_9, episode.thumbnail_asset_path_9_16]);
 
-  // Live Auto-Poll while task is active or if thumbnail is not yet loaded
+  // Schedule the next poll after the response so slow requests cannot overlap.
   useEffect(() => {
     const isTaskRunning = Boolean(activeEpisodeTask && (activeEpisodeTask.status === "RUNNING" || activeEpisodeTask.status === "QUEUED"));
-    const hasAny = Boolean(
-      manifest?.asset_path_16_9 || manifest?.asset_path_9_16 || episode.thumbnail_asset_path_16_9 || episode.thumbnail_asset_path_9_16,
-    );
-
-    if (!isTaskRunning && hasAny) {
+    if (!isTaskRunning) {
       return;
     }
 
-    const interval = window.setInterval(() => {
-      void fetchManifest(true);
+    let stopped = false;
+    let timer: number;
+    const poll = async () => {
+      await fetchManifest(true);
+      if (!stopped)
+        timer = window.setTimeout(() => {
+          void poll();
+        }, 2500);
+    };
+    timer = window.setTimeout(() => {
+      void poll();
     }, 2500);
-
-    return () => window.clearInterval(interval);
-  }, [activeEpisodeTask, manifest, episode.thumbnail_asset_path_16_9, episode.thumbnail_asset_path_9_16, fetchManifest]);
+    return () => {
+      stopped = true;
+      window.clearTimeout(timer);
+    };
+  }, [activeEpisodeTask?.task_id, activeEpisodeTask?.status, fetchManifest]);
 
   // Filter history for current aspect ratio
   const historyList = useMemo(() => {
@@ -158,6 +171,7 @@ export function useThumbnailPreview({
   const currentVariant = historyList[carouselIndex] || null;
 
   const handleGenerateThumbnail = useCallback(async () => {
+    manifestRequest.current += 1;
     setGenerating(true);
     try {
       const targetMode = episode.quiz_config?.thumbnail_aspect_ratio || "auto";
@@ -168,6 +182,7 @@ export function useThumbnailPreview({
         aspect_ratio: targetMode === "both" ? "both" : targetMode === "16:9" || targetMode === "9:16" ? targetMode : undefined,
       });
       if (res.ok && res.manifest) {
+        manifestRequest.current += 1;
         setManifest(res.manifest);
         setImageTimestamp(String(Date.now()));
         setCarouselIndex(0);

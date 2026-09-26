@@ -12,7 +12,6 @@ import {
   readQuizArtifacts,
   resolveAssets,
 } from "../../quiz/pipeline/orchestrator.js";
-import { ensureEpisodeThumbnail } from "../../quiz/thumbnail/ensureEpisodeThumbnail.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { createQuizPipelineTimingsRecorder } from "./quizPipelineTimings.js";
 import {
@@ -158,34 +157,5 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
   if (!artifacts.timeline) {
     await this.update(task.task_id, { progress_message: "Quiz · compiling deterministic timeline", progress_percent: 58 });
     await compileTimeline(input);
-  }
-
-  try {
-    const thumbStart = Date.now();
-    await this.update(task.task_id, { progress_message: "Quiz · checking thumbnail", progress_percent: 59 });
-    await ensureEpisodeThumbnail(this.repository, {
-      channelId: task.channel_id,
-      episodeId: task.episode_id!,
-      activeEngine: this.activeEngine,
-      antigravityClient: this.antigravity,
-      customHookText: input.customHookText,
-      layoutOverride: input.layoutOverride,
-      badgeOverride: input.badgeOverride,
-      imageConfig: input.config.image_generation
-        ? {
-            api_key: input.config.image_generation.api_key,
-            model: input.config.image_generation.model,
-            provider: input.config.image_generation.provider,
-            base_url: input.config.image_generation.base_url,
-          }
-        : undefined,
-      imageFallbackConfig: input.config.image_fallback,
-    });
-    await recordStageTiming("thumbnail", thumbStart);
-  } catch (error) {
-    this.logger.warn(`Auto thumbnail generation had an issue: ${(error as Error).message}`, {
-      profileId: task.channel_id,
-      workerId: task.task_id,
-    });
   }
 }

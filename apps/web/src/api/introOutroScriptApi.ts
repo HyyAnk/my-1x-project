@@ -1,4 +1,6 @@
 import type {
+  BatchGenerateIntroOutroScriptsInput,
+  BatchGenerateIntroOutroScriptsResponse,
   CreativeSeed,
   IntroOutroClipKind,
   IntroOutroScriptContent,
@@ -179,6 +181,18 @@ export const introOutroScriptApi = {
 
   getIntroOutroScriptJob: (channelId: string, jobId: string): Promise<{ job: IntroOutroScriptJob }> =>
     request(`${channelBase(channelId)}/intro-outro-script-jobs/${encodeURIComponent(jobId)}`),
+
+  listActiveIntroOutroScriptJobs: (channelId: string): Promise<{ jobs: IntroOutroScriptJob[] }> =>
+    request(`${channelBase(channelId)}/intro-outro-script-jobs`),
+
+  batchGenerateIntroOutroScripts: (
+    channelId: string,
+    payload: BatchGenerateIntroOutroScriptsInput,
+  ): Promise<BatchGenerateIntroOutroScriptsResponse> =>
+    request(`${scriptBase(channelId)}/batch-generate`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 
   cancelIntroOutroScriptJob: (channelId: string, jobId: string): Promise<{ job: IntroOutroScriptJob }> =>
     request(`${channelBase(channelId)}/intro-outro-script-jobs/${encodeURIComponent(jobId)}/cancel`, {

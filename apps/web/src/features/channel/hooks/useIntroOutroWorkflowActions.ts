@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import type { IntroOutroClipKind, IntroOutroScriptRevision, MascotStyleIdentityProfile } from "@studio/shared";
+import type { BatchGenerateIntroOutroScriptsInput, IntroOutroClipKind, IntroOutroScriptRevision, MascotStyleIdentityProfile } from "@studio/shared";
 import { api } from "../../../api";
 import type { GenerateScriptClipInput } from "../../../api/introOutroScriptApi";
 import type { UseScriptStudioProps } from "./introOutroScriptStudio.types";
@@ -63,6 +63,33 @@ export function useIntroOutroWorkflowActions(props: UseScriptStudioProps, data: 
       data.setJob(response.job);
     });
   }, [data, props.channelId, run]);
+
+  const batchGenerate = useCallback(
+    async (input: Omit<BatchGenerateIntroOutroScriptsInput, "style_preset_id">) => {
+      await run("batch-generate", async () => {
+        const response = await api.batchGenerateIntroOutroScripts(props.channelId, {
+          ...input,
+          style_preset_id: props.stylePresetId,
+        });
+        await data.refresh();
+        props.onNotice({
+          tone: "good",
+          message: `Started batch generation for ${response.total_jobs} script pairs.`,
+        });
+      });
+    },
+    [data, props.channelId, props.onNotice, props.stylePresetId, run],
+  );
+
+  const cancelSpecificJob = useCallback(
+    async (jobId: string) => {
+      await run("cancel-job", async () => {
+        await api.cancelIntroOutroScriptJob(props.channelId, jobId);
+        await data.refresh();
+      });
+    },
+    [data, props.channelId, run],
+  );
 
   const saveContent = useCallback(
     (kind: IntroOutroClipKind, content: IntroOutroScriptRevision["content"]) => {
@@ -153,7 +180,9 @@ export function useIntroOutroWorkflowActions(props: UseScriptStudioProps, data: 
     analyzeIdentity,
     reviewIdentity,
     generate,
+    batchGenerate,
     cancelJob,
+    cancelSpecificJob,
     saveContent,
     checkpoint,
     validate,

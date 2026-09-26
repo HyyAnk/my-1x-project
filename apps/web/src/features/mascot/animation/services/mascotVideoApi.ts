@@ -163,6 +163,7 @@ export const mascotVideoApi = {
       {
         method: "POST",
         body: JSON.stringify({ reason }),
+        signal: AbortSignal.timeout(30_000),
       },
     ),
 

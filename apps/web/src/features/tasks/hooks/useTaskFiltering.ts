@@ -22,16 +22,18 @@ export function useTaskFiltering(options: {
     for (const task of tasks) {
       if (dismissedTaskIds.has(task.task_id)) continue;
       if (task.episode_id) {
-        const existing = epMap.get(task.episode_id) || [];
+        const key = task.task_type === "GENERATE_THUMBNAIL" ? `${task.episode_id}:thumbnail` : task.episode_id;
+        const existing = epMap.get(key) || [];
         existing.push(task);
-        epMap.set(task.episode_id, existing);
+        epMap.set(key, existing);
       }
     }
 
     const list: ProductionItemSummary[] = [];
 
     // Episode-grouped items
-    for (const [episodeId, epTasks] of epMap.entries()) {
+    for (const [groupId, epTasks] of epMap.entries()) {
+      const episodeId = epTasks[0].episode_id!;
       const sorted = [...epTasks].sort((a, b) => b.created_at.localeCompare(a.created_at));
       const activeTask = sorted.find(isTaskActive) ?? null;
       const latestTask = sorted[0];
@@ -44,7 +46,7 @@ export function useTaskFiltering(options: {
         activeTask?.progress_message || latestTask.progress_message || (status === "COMPLETED" ? "Video build completed" : "");
 
       list.push({
-        id: `ep-${episodeId}`,
+        id: `ep-${groupId}`,
         channelId,
         channelName,
         episodeId,

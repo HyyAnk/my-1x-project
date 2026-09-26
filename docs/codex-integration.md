@@ -1,6 +1,6 @@
 # LLM Engine Integration (Codex & Google Antigravity)
 
-Reviewed against repository integration boundaries on 2026-09-09. This describes this project's adapters, not a guarantee of upstream product/API behavior. Verify configured transport and provider readiness before live generation.
+This describes this project's adapters, not a guarantee of upstream product/API behavior. Verify configured transport and provider readiness before live generation.
 
 The platform features native dual-engine support for LLM generation. Users can seamlessly toggle between **OpenAI Codex** and **Google Antigravity** via the interactive topbar selector ([`EngineToggleGroup.tsx`](../apps/web/src/components/chrome/topbar/EngineToggleGroup.tsx)). Both engines adhere to identical context boundaries, concurrency locks, and artifact output contracts.
 

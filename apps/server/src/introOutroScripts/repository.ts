@@ -13,6 +13,7 @@ import { IntroOutroRevisionStore } from "./repositories/revisionStore.js";
 import { IntroOutroScriptStorage } from "./repositories/storage.js";
 
 export class IntroOutroScriptRepository {
+  private readonly storage: IntroOutroScriptStorage;
   private readonly identitiesAndSeeds: IntroOutroIdentitySeedStore;
   private readonly projects: IntroOutroProjectStore;
   private readonly revisions: IntroOutroRevisionStore;
@@ -20,6 +21,7 @@ export class IntroOutroScriptRepository {
 
   constructor(repository: RepositoryService) {
     const storage = new IntroOutroScriptStorage(repository);
+    this.storage = storage;
     this.identitiesAndSeeds = new IntroOutroIdentitySeedStore(storage);
     this.projects = new IntroOutroProjectStore(storage);
     this.revisions = new IntroOutroRevisionStore(storage, this.projects);
@@ -28,6 +30,19 @@ export class IntroOutroScriptRepository {
 
   getIdentityProfile(mascotId: string, styleId: string): Promise<MascotStyleIdentityProfile | null> {
     return this.identitiesAndSeeds.getIdentityProfile(mascotId, styleId);
+  }
+
+  withLock<T>(key: string, operation: () => Promise<T>): Promise<T> {
+    return this.storage.queue(key, operation);
+  }
+
+  async pairWorkspace(channelId: string, stylePresetId: string): Promise<IntroOutroScriptProject> {
+    return this.withLock(`workspace:${channelId}:${stylePresetId}`, async () => {
+      const current = (await this.listProjects(channelId, stylePresetId)).find((project) => project.purpose === "pair_workspace");
+      if (current) return current;
+      const created = await this.createProject(channelId, stylePresetId, "New Pair");
+      return this.updateProject(channelId, created.project_id, created.version, (project) => ({ ...project, purpose: "pair_workspace" }));
+    });
   }
 
   saveIdentityProfile(profile: MascotStyleIdentityProfile): Promise<MascotStyleIdentityProfile> {

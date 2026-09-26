@@ -211,20 +211,9 @@ export function ThumbnailControlsDeck({
       </div>
 
       {/* Primary Generation Button */}
-      <button
-        type="button"
-        className="thumbnail-generate-btn"
-        onClick={onGenerateThumbnail}
-        disabled={!hasAnyThumbnail || generating || loading}
-      >
+      <button type="button" className="thumbnail-generate-btn" onClick={onGenerateThumbnail} disabled={generating || loading}>
         <ArrowsClockwise size={18} className={generating ? "thumbnail-spinner" : ""} />
-        <span>
-          {generating
-            ? "Generating Dual Thumbnails (16:9 & 9:16)..."
-            : !hasAnyThumbnail
-              ? "Awaiting Auto-Generation in Asset Stage..."
-              : "Re-roll / Generate New Thumbnail"}
-        </span>
+        <span>{generating ? "Generating…" : "Generate"}</span>
       </button>
     </div>
   );

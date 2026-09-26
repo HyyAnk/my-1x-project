@@ -2,7 +2,14 @@ import type { Channel, IntroOutroStyle, IntroOutroTransitionType } from "@studio
 import { request } from "./client";
 
 export interface CreateIntroOutroStylePayload {
-  name: string;
+  name?: string;
+  auto_name?: boolean;
+  intro_mute_audio?: boolean;
+  outro_mute_audio?: boolean;
+  intro_script_text?: string;
+  outro_script_text?: string;
+  script_project_id?: string;
+  script_project_version?: number;
   style_id?: string;
   style_preset_id: string;
   transition_type?: IntroOutroTransitionType;

@@ -100,7 +100,7 @@ export const BUILT_IN_INTRO_OUTRO_SEEDS: CreativeSeed[] = Object.entries(definit
   const dimension = rawDimension as CreativeSeedDimension;
   return seeds.map(([id, name, narrative_intent, required_capabilities = []]) => ({
     id,
-    revision: 2,
+    revision: 3,
     dimension,
     clip_kind: clipKindForDimension(dimension),
     name,
@@ -110,7 +110,7 @@ export const BUILT_IN_INTRO_OUTRO_SEEDS: CreativeSeed[] = Object.entries(definit
     allowed_props: [],
     allowed_text: [],
     forbidden_seed_ids: [],
-    complexity: "low",
+    complexity: ["A04", "A05", "A08", "B01", "B05", "C07", "C08"].includes(id) ? "medium" : "low",
     selection_weight: 1,
     origin: "built_in",
     status: "active",
@@ -124,7 +124,7 @@ export function isSeedEligible(seed: CreativeSeed, identity: MascotStyleIdentity
 
 export function listEligibleSeeds(catalog: readonly CreativeSeed[], identity: MascotStyleIdentityProfile | null): CreativeSeed[] {
   const latest = latestSeedCatalog(catalog);
-  if (!identity || identity.status !== "reviewed") return latest.filter((seed) => seed.status === "active");
+  if (!identity || !["reviewed", "ready"].includes(identity.status)) return latest.filter((seed) => seed.status === "active");
   return latest.filter((seed) => isSeedEligible(seed, identity));
 }
 

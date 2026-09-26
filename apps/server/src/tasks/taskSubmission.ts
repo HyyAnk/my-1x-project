@@ -36,6 +36,7 @@ function resolveLockKey(
   reelId?: string | null,
 ): string | null {
   if (taskType === "GENERATE_PIPELINE" && episodeId) return `${episodeId}:pipeline`;
+  if (taskType === "GENERATE_THUMBNAIL" && episodeId) return `${channelId}:${episodeId}:thumbnail`;
   if (taskType === "GENERATE_SEQUENCE_SCENES" && episodeId && sceneNumber) return `${episodeId}:sequence:${sceneNumber}`;
   if (taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber) {
     return `${episodeId}:bundle:${sceneNumber}:variant:${imageVariant}`;
@@ -63,6 +64,11 @@ export function submitTask(
   const lockKey = resolveLockKey(taskType, channelId, episodeId, sceneNumber, imageVariant, reelId);
 
   if (!lockKey) throw new RepositoryError("Episode is required for this task", "EPISODE_REQUIRED");
+
+  if (taskType === "GENERATE_THUMBNAIL") {
+    const existing = runtime.list().find((item) => item.lock_key === lockKey && activeStatuses.some((status) => status === item.status));
+    if (existing) return existing;
+  }
 
   if (
     taskType === "GENERATE_PIPELINE" &&

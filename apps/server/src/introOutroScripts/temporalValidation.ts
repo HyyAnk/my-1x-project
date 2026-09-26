@@ -1,13 +1,6 @@
 import type { IntroOutroScriptContent, IntroOutroValidationIssue, MascotStyleIdentityProfile } from "@studio/shared";
 
-const ACTION_CAPABILITIES = [
-  {
-    capability: "locomotion",
-    pattern: /\b(?:walks?|steps?|bounces?|jogs?|runs?|moves?|travels?|departs?|exits?|enters?|weight shift)\b/i,
-  },
-  { capability: "waving", pattern: /\bwav(?:e|es|ing)\b/i },
-  { capability: "pointing", pattern: /\b(?:points?|pointing|presents?|presenting|gestures? (?:toward|to))\b/i },
-] as const;
+import { ACTION_CAPABILITIES } from "./actionCapabilities.js";
 
 export function validateProductionTiming(
   content: IntroOutroScriptContent,
@@ -59,11 +52,16 @@ export function validateProductionTiming(
     return issues;
   }
   const holdStart = duration - directions.end_hold_seconds;
+  if (
+    content.dialogue_policy &&
+    (!content.voiceover.enabled || directions.voice_source !== "mascot" || content.voiceover.lines.length !== 1)
+  )
+    add("MASCOT_DIALOGUE_REQUIRED", "voiceover", "This production requires one line spoken by the visible mascot with lip-sync.");
   if (holdStart < content.timeline[2].start_seconds)
     add("END_HOLD_INVALID", "production_directions", "The final hold must fit inside the final beat.");
   if (content.voiceover.enabled !== (directions.voice_source !== "none"))
     add("VOICE_SOURCE_MISMATCH", "production_directions.voice_source", "Voice source must match the voiceover enabled state.");
-  if (directions.voice_source === "mascot" && identity.capabilities.speech !== "supported")
+  if (directions.voice_source === "mascot" && identity.capabilities.speech !== "supported" && !content.dialogue_policy)
     add("SPEECH_UNCONFIRMED", "production_directions.voice_source", "Use a narrator unless mascot speech is explicitly supported.");
   let voiceEnd = 0;
   content.voiceover.lines.forEach((line, index) => {

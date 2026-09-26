@@ -1,6 +1,6 @@
+import { PairCreationService } from "../introOutroScripts/pairCreationService.js";
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
-import { randomUUID } from "node:crypto";
 import type { FastifyPluginCallback } from "fastify";
 import { findBuiltInPresetById, nowIso, type IntroOutroStyle } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
@@ -8,8 +8,6 @@ import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { AppState } from "./state.js";
 import type { IntroOutroScriptRepository } from "../introOutroScripts/repository.js";
 import { listIntroOutroCategorySummaries } from "./introOutro/introOutroCategoryService.js";
-import { parseIntroOutroVideoPayload } from "./introOutro/introOutroPayload.js";
-import { validateUploadScriptProvenance } from "./introOutro/introOutroProvenance.js";
 import {
   CreateIntroOutroStyleInputSchema,
   SetDefaultIntroOutroStyleInputSchema,
@@ -26,6 +24,7 @@ export type IntroOutroStylesRouteDeps = {
 export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository, scripts } = deps;
+    const pairs = new PairCreationService(repository, scripts);
 
     server.get("/api/channels/:channelId/intro-outro-categories", async (request) => {
       const { channelId } = request.params as { channelId: string };
@@ -49,57 +48,7 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
     server.post("/api/channels/:channelId/intro-outro-styles", { bodyLimit: 250 * 1024 * 1024 }, async (request, reply) => {
       const { channelId } = request.params as { channelId: string };
       const input = CreateIntroOutroStyleInputSchema.parse(request.body);
-      const styleId = input.style_id?.trim() || `style_${randomUUID().slice(0, 8)}`;
-      const [introProvenance, outroProvenance] = await Promise.all([
-        validateUploadScriptProvenance({
-          scripts,
-          channelId,
-          stylePresetId: input.style_preset_id,
-          clipKind: "intro",
-          provenance: input.intro_script_provenance,
-        }),
-        validateUploadScriptProvenance({
-          scripts,
-          channelId,
-          stylePresetId: input.style_preset_id,
-          clipKind: "outro",
-          provenance: input.outro_script_provenance,
-        }),
-      ]);
-
-      const introSource = parseIntroOutroVideoPayload(input.intro_data);
-      const outroSource = parseIntroOutroVideoPayload(input.outro_data);
-
-      const processedIntro = await repository.processAndStoreStyleClip(channelId, styleId, "intro", introSource, input.intro_filename);
-      const introMeta = { ...processedIntro, ...(introProvenance ? { script_provenance: introProvenance } : {}) };
-
-      let outroMeta;
-      try {
-        const processedOutro = await repository.processAndStoreStyleClip(channelId, styleId, "outro", outroSource, input.outro_filename);
-        outroMeta = { ...processedOutro, ...(outroProvenance ? { script_provenance: outroProvenance } : {}) };
-      } catch (error) {
-        // If outro processing fails, delete the partially created style
-        await repository.deleteChannelIntroOutroStyle(channelId, styleId);
-        throw error;
-      }
-
-      const style: IntroOutroStyle = {
-        schema_version: 2,
-        style_id: styleId,
-        channel_id: channelId,
-        style_preset_id: input.style_preset_id ? findBuiltInPresetById(input.style_preset_id)!.id : null,
-        name: input.name.trim(),
-        status: "active",
-        intro: introMeta,
-        outro: outroMeta,
-        transition_type: input.transition_type,
-        transition_duration_seconds: input.transition_duration_seconds,
-        audio_mode: input.audio_mode,
-        created_at: nowIso(),
-        updated_at: nowIso(),
-      };
-
-      await repository.saveChannelIntroOutroStyle(channelId, style);
+      const style = await pairs.create(channelId, input);
       return reply.status(201).send({ style });
     });
 

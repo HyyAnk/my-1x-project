@@ -36,6 +36,7 @@ async function ensureThumbnailVariants(
   options: GenerateEpisodeThumbnailOptions,
 ): Promise<ThumbnailManifest | null> {
   const { channelId, episodeId } = options;
+  options.signal?.throwIfAborted();
   const logger = new StudioLogger(repository.rootDirectory);
   const [episode, channel, quiz] = await Promise.all([
     repository.getEpisode(channelId, episodeId),
@@ -61,6 +62,7 @@ async function ensureThumbnailVariants(
   const checkpoint = await readThumbnailReuseCheckpoint(checkpointPath);
   let manifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);
   for (const target of ratios) {
+    options.signal?.throwIfAborted();
     const assetPath =
       target === "16:9"
         ? (manifest?.asset_path_16_9 ?? episode.thumbnail_asset_path_16_9)
@@ -77,6 +79,7 @@ async function ensureThumbnailVariants(
       }
     }
     checkpoint.fingerprints[target] = fingerprint;
+    options.signal?.throwIfAborted();
     await writeThumbnailReuseCheckpoint(checkpointPath, checkpoint);
   }
   return manifest;

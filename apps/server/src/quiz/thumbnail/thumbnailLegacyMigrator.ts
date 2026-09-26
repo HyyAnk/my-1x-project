@@ -24,16 +24,18 @@ type SyncLegacyEpisodeThumbnailPathsParams = {
  */
 export async function syncLegacyEpisodeThumbnailPaths(params: SyncLegacyEpisodeThumbnailPathsParams): Promise<void> {
   const { repository, channel, episode, manifest } = params;
-  const latestEpisode = await repository.getEpisode(channel.channel_id, episode.episode_id);
-  const updatedEpisode = EpisodeSchema.parse({
-    ...latestEpisode,
-    thumbnail_asset_path_16_9: manifest.asset_path_16_9 ?? latestEpisode.thumbnail_asset_path_16_9,
-    thumbnail_asset_path_9_16: manifest.asset_path_9_16 ?? latestEpisode.thumbnail_asset_path_9_16,
-    updated_at: nowIso(),
-  });
+  await repository.queueEpisodeArtifactMutation(channel.channel_id, episode.episode_id, async () => {
+    const latestEpisode = await repository.getEpisode(channel.channel_id, episode.episode_id);
+    const updatedEpisode = EpisodeSchema.parse({
+      ...latestEpisode,
+      thumbnail_asset_path_16_9: manifest.asset_path_16_9 ?? latestEpisode.thumbnail_asset_path_16_9,
+      thumbnail_asset_path_9_16: manifest.asset_path_9_16 ?? latestEpisode.thumbnail_asset_path_9_16,
+      updated_at: nowIso(),
+    });
 
-  const episodeDirectory = repository.resolvePath("channels", channel.slug, "episodes", episode.slug);
-  await repository.writeJsonAtomic(path.join(episodeDirectory, EPISODE_RECORD_FILENAME), updatedEpisode);
+    const episodeDirectory = repository.resolvePath("channels", channel.slug, "episodes", episode.slug);
+    await repository.writeJsonAtomic(path.join(episodeDirectory, EPISODE_RECORD_FILENAME), updatedEpisode);
+  });
 }
 
 export type { SyncLegacyEpisodeThumbnailPathsParams };

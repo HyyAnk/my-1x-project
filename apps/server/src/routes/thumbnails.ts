@@ -13,6 +13,7 @@ import {
 } from "../quiz/thumbnail/index.js";
 import type { AntigravityClient } from "../antigravity.js";
 import type { ImageProvider } from "../providers/index.js";
+import { refreshEpisodeExport } from "../tasks/export/episodeExportPackager.js";
 
 export type ThumbnailsRouteDeps = {
   repository: RepositoryService;
@@ -69,6 +70,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
         throwOnError: true,
       });
 
+      await refreshEpisodeExport({ repository, ...params });
       return reply.code(200).send({ ok: true, manifest });
     });
 
@@ -84,6 +86,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
       const params = request.params as { channelId: string; episodeId: string };
       const body = SetActiveThumbnailBodySchema.parse(request.body || {});
       const manifest = await setActiveThumbnailVersion(repository, params.channelId, params.episodeId, body.version_id);
+      await refreshEpisodeExport({ repository, ...params });
       return reply.code(200).send({ ok: true, manifest });
     });
 
@@ -91,6 +94,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
     server.delete("/api/channels/:channelId/episodes/:episodeId/thumbnail/variants/:variantId", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string; variantId: string };
       const manifest = await deleteThumbnailVersion(repository, params.channelId, params.episodeId, params.variantId);
+      await refreshEpisodeExport({ repository, ...params });
       return reply.code(200).send({ ok: true, manifest });
     });
 

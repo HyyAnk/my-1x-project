@@ -74,6 +74,7 @@ export function calculateContentCrop(params: CalculateContentCropParams): CropBo
  * or collates zero-offset frame rects for longer animations without large atlas images.
  */
 export async function stitchAtlasGrid(params: StitchAtlasGridParams): Promise<StitchAtlasResult> {
+  params.signal?.throwIfAborted();
   const {
     attemptDir,
     mattedFramePaths,
@@ -110,6 +111,7 @@ export async function stitchAtlasGrid(params: StitchAtlasGridParams): Promise<St
   const compositeOperations: Array<{ input: Buffer; top: number; left: number }> = [];
 
   for (let i = 0; i < targetCount; i++) {
+    params.signal?.throwIfAborted();
     const frameX = (i % cols) * cellWidth;
     const frameY = Math.floor(i / cols) * cellHeight;
 
@@ -131,6 +133,7 @@ export async function stitchAtlasGrid(params: StitchAtlasGridParams): Promise<St
   }
 
   const atlasPath = path.join(attemptDir, "atlas.png");
+  params.signal?.throwIfAborted();
   await sharp({
     create: { width: atlasWidth, height: atlasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
@@ -144,6 +147,7 @@ export async function stitchAtlasGrid(params: StitchAtlasGridParams): Promise<St
     .digest("hex");
 
   const contactSheetPath = path.join(attemptDir, "contact_sheet.png");
+  params.signal?.throwIfAborted();
   await sharp({
     create: { width: atlasWidth, height: atlasHeight, channels: 4, background: { r: 24, g: 24, b: 27, alpha: 1 } },
   })
@@ -168,6 +172,7 @@ export async function stitchAtlasGrid(params: StitchAtlasGridParams): Promise<St
 export async function renderPreviewThumbnails(
   params: RenderPreviewThumbnailsParams,
 ): Promise<{ previewPath: string; previewWebpPath: string }> {
+  params.signal?.throwIfAborted();
   const { attemptDir, firstFramePath, cropX, cropY, cellWidth, cellHeight, canvasWidth, canvasHeight, cropToContent } = params;
 
   const previewPath = path.join(attemptDir, "preview.png");
@@ -180,6 +185,7 @@ export async function renderPreviewThumbnails(
     : frame1Buffer;
 
   await fs.writeFile(previewPath, previewBuffer);
+  params.signal?.throwIfAborted();
   await sharp(previewBuffer).webp().toFile(previewWebpPath);
 
   return { previewPath, previewWebpPath };

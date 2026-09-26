@@ -18,26 +18,30 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const requestVersion = useRef(0);
 
-  const refreshStyles = useCallback(async () => {
-    const version = ++requestVersion.current;
-    setLoading(true);
-    try {
-      const [styleResponse, categoryResponse] = await Promise.all([
-        api.listIntroOutroStyles(channel.channel_id),
-        api.listIntroOutroCategories(channel.channel_id),
-      ]);
-      if (version !== requestVersion.current) return;
-      setStyles(styleResponse.styles);
-      setCategories(categoryResponse.categories);
-    } catch (error) {
-      onNotice({
-        tone: "bad",
-        message: error instanceof Error ? error.message : "Failed to load intro/outro styles",
-      });
-    } finally {
-      if (version === requestVersion.current) setLoading(false);
-    }
-  }, [channel.channel_id, onNotice]);
+  const refreshStyles = useCallback(
+    async (throwOnError = false) => {
+      const version = ++requestVersion.current;
+      setLoading(true);
+      try {
+        const [styleResponse, categoryResponse] = await Promise.all([
+          api.listIntroOutroStyles(channel.channel_id),
+          api.listIntroOutroCategories(channel.channel_id),
+        ]);
+        if (version !== requestVersion.current) return;
+        setStyles(styleResponse.styles);
+        setCategories(categoryResponse.categories);
+      } catch (error) {
+        onNotice({
+          tone: "bad",
+          message: error instanceof Error ? error.message : "Failed to load intro/outro styles",
+        });
+        if (throwOnError) throw error;
+      } finally {
+        if (version === requestVersion.current) setLoading(false);
+      }
+    },
+    [channel.channel_id, onNotice],
+  );
 
   useEffect(() => {
     void refreshStyles();

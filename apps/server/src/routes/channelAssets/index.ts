@@ -3,6 +3,7 @@ import type { ChannelAssetsRouteDeps } from "./channelAssetTypes.js";
 import { registerChannelAssetReadRoutes } from "./channelAssetReadRoutes.js";
 import { registerChannelAssetMutationRoutes } from "./channelAssetMutationRoutes.js";
 import { registerChannelAssetExportRoutes } from "./channelAssetExportRoutes.js";
+import { registerBrandIdentityExportRoutes } from "./brandIdentityExportRoutes.js";
 
 export type { ChannelAssetsRouteDeps } from "./channelAssetTypes.js";
 export { registerChannelAssetReadRoutes } from "./channelAssetReadRoutes.js";
@@ -15,6 +16,7 @@ export function registerChannelAssetsRoutes(deps: ChannelAssetsRouteDeps): Fasti
     registerChannelAssetReadRoutes(server, deps);
     registerChannelAssetMutationRoutes(server, deps);
     registerChannelAssetExportRoutes(server, deps);
+    registerBrandIdentityExportRoutes(server, deps);
     done();
   };
 }

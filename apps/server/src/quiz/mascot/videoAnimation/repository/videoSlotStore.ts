@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import {
   ANIMATION_STATES,
   SLOTS_PER_STATE,
+  MascotSlotProjectionSchema,
   type AnimationState,
   type MascotAnimationRevision,
   type MascotSlotProjection,
@@ -21,21 +22,44 @@ import {
 } from "../projections/slotProjectionMapper.js";
 import type { VideoSlotStore } from "./repositoryTypes.js";
 import { pinRevisionArtifactUrls } from "../projections/revisionArtifactUrls.js";
+import { recoverInterruptedSlot } from "./interruptedSlotRecovery.js";
 
 export function createVideoSlotStore(storageRoot: string): VideoSlotStore {
   const slotProjections = new Map<string, MascotSlotProjection>();
+  const loadedStyles = new Map<string, Promise<void>>();
 
-  async function loadSlotProjectionsIfPresent(mascotId: string, styleId: string): Promise<void> {
+  async function loadFromDisk(mascotId: string, styleId: string): Promise<void> {
     const filePath = getSlotFilePath(storageRoot, mascotId, styleId);
+    let raw: string;
     try {
-      const raw = await fs.readFile(filePath, "utf8");
-      const parsed = JSON.parse(raw) as Record<string, MascotSlotProjection>;
-      for (const [key, val] of Object.entries(parsed)) {
-        if (!slotProjections.has(key)) slotProjections.set(key, val);
-      }
-    } catch {
-      // State file uninitialized
+      raw = await fs.readFile(filePath, "utf8");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return;
+      throw error;
     }
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const entries = Object.entries(parsed).map(([key, value]) => [key, MascotSlotProjectionSchema.parse(value)] as const);
+    let recovered = false;
+    for (const [key, slot] of entries) {
+      if (slotProjections.has(key)) continue;
+      const updated = recoverInterruptedSlot(slot);
+      recovered ||= updated !== slot;
+      slotProjections.set(key, updated);
+    }
+    if (recovered) await persistSlotProjections(mascotId, styleId);
+  }
+
+  function loadSlotProjectionsIfPresent(mascotId: string, styleId: string): Promise<void> {
+    const key = getSlotFilePath(storageRoot, mascotId, styleId);
+    let pending = loadedStyles.get(key);
+    if (!pending) {
+      pending = loadFromDisk(mascotId, styleId).catch((error: unknown) => {
+        loadedStyles.delete(key);
+        throw error;
+      });
+      loadedStyles.set(key, pending);
+    }
+    return pending;
   }
 
   async function persistSlotProjections(mascotId: string, styleId: string): Promise<void> {

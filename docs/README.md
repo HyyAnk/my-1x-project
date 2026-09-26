@@ -1,28 +1,21 @@
 # AI Quiz Studio Documentation
 
-Technical documentation and architectural guides for **AI Quiz Studio**, a local-first automated AI quiz video production engine.
-
-Reviewed against the working tree. Source, schemas, and executable tests take precedence. These guides describe implementation; they do not certify that current runtime tests pass.
+Current guides for **AI Quiz Studio**. Source, schemas, and tests take precedence when a guide drifts.
 
 ## Start here
 
-1. [Architecture](architecture.md): responsibilities, data flow and persistence boundaries.
-2. [System map](system-map.md): source entry points.
-3. [Development workflow](workflow.md): change safety, verification and publishing.
-4. [Testing strategy](testing.md): test tiers, commands and retention rules.
+1. [Setup](setup.md): start and configure the local services.
+2. [Architecture](architecture.md): responsibilities, source entry points, and persistence boundaries.
+3. [Development workflow](workflow.md): change safety and verification commands.
+4. [Troubleshooting](troubleshooting.md): recover from common failures.
 
 ## Domain guides
 
-- [Channel DNA](channel-dna.md)
 - [Question bank and source-bound topics](question-bank.md)
 - [Episode workflow](episode-workflow.md)
 - [Quiz Engine V2](quiz-engine-v2.md)
 - [Short Reels](short-reel.md)
 - [Mascot rendering contract](mascot-rendering-contract.md)
+- [Intro and Outro Script Studio](intro-outro.md)
 - [LLM engine integration](codex-integration.md)
 - [Provider boundaries](provider-system.md)
-
-## Operations
-
-- [Setup](setup.md)
-- [Troubleshooting](troubleshooting.md)

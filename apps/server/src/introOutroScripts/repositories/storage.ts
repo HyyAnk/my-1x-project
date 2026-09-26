@@ -30,7 +30,10 @@ export class IntroOutroScriptStorage {
   async queue<T>(key: string, operation: () => Promise<T>): Promise<T> {
     const previous = this.mutationQueues.get(key) ?? Promise.resolve();
     const current = previous.catch(() => undefined).then(operation);
-    const tail = current.then(() => undefined);
+    const tail = current.then(
+      () => undefined,
+      () => undefined,
+    );
     this.mutationQueues.set(key, tail);
     return current.finally(() => {
       if (this.mutationQueues.get(key) === tail) this.mutationQueues.delete(key);

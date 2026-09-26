@@ -32,7 +32,7 @@ export function buildTaskCardViewModel(
     durationLabel: formatElapsedSeconds(durationSeconds),
     timeLabel: formatTaskTime(timestamp, locale),
     detailLabel: getDetailLabel(item),
-    progressPercent: item.status === "RUNNING" ? item.progressPercent : null,
+    progressPercent: item.status === "RUNNING" && targetTask.task_type !== "GENERATE_THUMBNAIL" ? item.progressPercent : null,
     thumbnailUrl: item.episodeId
       ? episodeApi.thumbnailFileUrl(item.channelId, item.episodeId, "16:9", item.completedAt || item.startedAt)
       : null,

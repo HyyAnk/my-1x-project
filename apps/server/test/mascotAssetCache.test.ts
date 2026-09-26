@@ -194,4 +194,18 @@ describe("Mascot Matting Pre-Processing & Transparent Sprite Caching", () => {
     const masterStat2 = await stat(path.join(renderRoot2, "mascot-assets", "master.png"));
     expect(masterStat2.isFile()).toBe(true);
   });
+
+  it("gracefully falls back to raw concept asset when cutout is missing", async () => {
+    const mascot = await repository.saveMascot({ name: "Novy" });
+    const rawFilename = "master_concept_raw_12345.png";
+    const cutoutFilename = "master_concept_12345.png";
+
+    await repository.saveMascotAsset(mascot.id, rawFilename, TINY_PNG);
+
+    // Requesting the missing cutout should resolve to the raw asset via fallback
+    const resolved = await repository.getMascotAssetFile(mascot.id, cutoutFilename);
+    expect(resolved.absolutePath).toContain(rawFilename);
+    expect(resolved.size).toBe(TINY_PNG.length);
+  });
 });
+

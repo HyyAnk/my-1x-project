@@ -61,12 +61,17 @@ export class IntroOutroScriptJobManager {
   }
 
   async startScriptGeneration(input: ScriptGenerationJobInput): Promise<IntroOutroScriptJob> {
+    return this.scripts.withLock(`generation:${input.channelId}`, () => this.startGenerationLocked(input));
+  }
+
+  private async startGenerationLocked(input: ScriptGenerationJobInput): Promise<IntroOutroScriptJob> {
     const requestFingerprint = fingerprint({
       projectId: input.projectId,
       stylePresetId: input.stylePresetId,
       mascotStyleId: input.mascotStyleId ?? null,
       projectVersion: input.projectVersion,
       clips: input.clips,
+      autoIdentity: input.autoIdentity ?? true,
     });
     const existing = await this.lifecycle.findReusable(input.channelId, input.idempotencyKey, "script_generation", requestFingerprint);
     if (existing) return existing;
@@ -88,8 +93,13 @@ export class IntroOutroScriptJobManager {
     return this.lifecycle.cancel(channelId, jobId);
   }
 
+  listActiveJobs(channelId: string): Promise<IntroOutroScriptJob[]> {
+    return this.lifecycle.listActiveJobs(channelId);
+  }
+
   private async assertGenerationCanStart(input: ScriptGenerationJobInput): Promise<void> {
     const currentProject = await this.scripts.getProject(input.channelId, input.projectId);
+    if (currentProject.archived) throw new IntroOutroScriptError("This pair draft is archived. Open New Pair again.", "VERSION_CONFLICT");
     if (currentProject.version !== input.projectVersion) {
       throw new IntroOutroScriptError("This script changed. Reload it before generation.", "VERSION_CONFLICT");
     }

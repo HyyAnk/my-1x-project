@@ -112,4 +112,15 @@ describe("MascotConceptPreviewCard", () => {
     expect(cutoutLink.getAttribute("href")).toBe("https://example.com/giraffe_cutout.png");
     expect(cutoutLink.getAttribute("download")).toContain("_master_cutout.png");
   });
+
+  it("gracefully falls back to raw image when master image fails to load", () => {
+    renderPreviewCard();
+
+    const img = screen.getByAltText("Master Concept") as HTMLImageElement;
+    expect(img.getAttribute("src")).toBe("https://example.com/giraffe_cutout.png");
+
+    fireEvent.error(img);
+    expect(img.getAttribute("src")).toBe("https://example.com/giraffe_raw.png");
+  });
 });
+

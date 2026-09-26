@@ -54,7 +54,7 @@ export const MascotStyleIdentityProfileSchema = z
       .default([]),
     style_description: z.string().trim().max(1000).default(""),
     allowed_accessories: z.array(z.string().trim().min(1).max(120)).max(20).default([]),
-    status: z.enum(["unreviewed", "needs_review", "reviewed"]),
+    status: z.enum(["unreviewed", "needs_review", "reviewed", "ready"]),
     source: z.enum(["antigravity_vision", "manual"]),
     analysis_model: z.string().trim().min(1).nullable(),
     analysis_version: z.string().trim().min(1),

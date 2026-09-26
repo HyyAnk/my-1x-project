@@ -24,7 +24,6 @@ export function ScriptRevisionActions({
   const findings = revision.quality_review?.findings ?? [];
   const findingKeys = new Set(findings.map((finding) => `${finding.code}:${finding.path}:${finding.message}`));
   const validationIssues = revision.validation_issues.filter((issue) => !findingKeys.has(`${issue.code}:${issue.path}:${issue.message}`));
-  const needsReview = revision.template_version === "intro-outro-script-v3" && !revision.quality_review;
   const hasBlockingIssues = [...revision.validation_issues, ...findings].some((issue) => issue.severity === "error");
   return (
     <>
@@ -36,9 +35,9 @@ export function ScriptRevisionActions({
               ? findings.length
                 ? `Gemini Flash review: ${findings.length} finding${findings.length === 1 ? "" : "s"}`
                 : "Gemini Flash review passed"
-              : needsReview
-                ? "Gemini Flash review required"
-                : "Legacy revision"}
+              : hasBlockingIssues
+                ? "Validation needs attention"
+                : "AI review not required"}
           </span>
         </div>
         <p className="script-approval-explanation">
@@ -46,12 +45,15 @@ export function ScriptRevisionActions({
             ? "This revision will be linked to the video you upload. It does not create or upload a video."
             : "Use for upload selects this revision as the script linked to your uploaded video. It does not generate or upload a video."}
         </p>
-        <details className="script-review-explanation">
-          <summary>What Gemini reviewed</summary>
-          <p>
-            Mascot identity, feasible motion, camera, timing, audio, logo placement, final hold, creative seeds, and Intro–Outro continuity.
-          </p>
-        </details>
+        {revision.quality_review ? (
+          <details className="script-review-explanation">
+            <summary>What Gemini reviewed</summary>
+            <p>
+              Mascot identity, feasible motion, camera, timing, audio, logo placement, final hold, creative seeds, and Intro–Outro
+              continuity.
+            </p>
+          </details>
+        ) : null}
         <div className="script-revision-actions">
           <button type="button" className="quiet-button" onClick={() => void download(revision)} disabled={downloading}>
             {downloading ? "Preparing..." : "Download package"}
@@ -65,7 +67,7 @@ export function ScriptRevisionActions({
               type="button"
               className="primary-button"
               onClick={() => void onApprove(revision.revision_id).catch(() => undefined)}
-              disabled={busy !== null || needsReview || hasBlockingIssues}
+              disabled={busy !== null || hasBlockingIssues}
             >
               {busy === "use-for-upload" ? "Selecting..." : "Use for upload"}
             </button>
@@ -78,7 +80,6 @@ export function ScriptRevisionActions({
           {error}
         </div>
       ) : null}
-      {needsReview ? <p className="script-review-note">Save a new revision to run the Gemini Flash review before selection.</p> : null}
       {!hideIssueDetails && findings.length ? (
         <ul className="script-validation-list" aria-label="Gemini Flash review findings">
           {findings.map((finding, index) => (

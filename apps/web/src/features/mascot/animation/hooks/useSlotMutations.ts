@@ -156,10 +156,17 @@ export function useSlotMutations({
     async (jobId: string): Promise<void> => {
       if (!mascotId) return;
       try {
-        await mascotAnimationApi.cancelProcessingJob(mascotId, jobId, "User cancelled processing");
+        setError(null);
+        const response = await mascotAnimationApi.cancelProcessingJob(mascotId, jobId, "User cancelled processing");
         onActivityChange?.();
         if (onNotice) {
-          onNotice({ tone: "neutral", message: "Processing job cancelled." });
+          onNotice({
+            tone: "neutral",
+            message:
+              response.job.status === "cancelled"
+                ? "Processing job cancelled."
+                : "Processing already finished. Replace the video to upload another.",
+          });
         }
         await refreshSlots();
       } catch (err: unknown) {

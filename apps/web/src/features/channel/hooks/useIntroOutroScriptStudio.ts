@@ -11,6 +11,7 @@ export function useIntroOutroScriptStudio(props: UseScriptStudioProps): ScriptSt
     project: data.project,
     revisions: data.revisions,
     job: data.job,
+    activeJobs: data.activeJobs,
     loading: data.loading,
     busy: data.busy,
     error: data.error,

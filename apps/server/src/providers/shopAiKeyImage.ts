@@ -295,14 +295,17 @@ export class ShopAiKeyQuizImageProvider {
     return ShopAiKeyImageProvider.isConfigured(apiKey);
   }
 
-  async generateAsset(input: { assetId: string; fingerprint: string; prompt: string; aspect_ratio?: string }): Promise<{ path: string }> {
+  async generateAsset(
+    input: { assetId: string; fingerprint: string; prompt: string; aspect_ratio?: string },
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ path: string }> {
     return {
       path: await this.repository.writeQuizImageAsset(
         this.target.channelId,
         this.target.episodeId,
         input.assetId,
         input.fingerprint,
-        await generateShopAiKeyImageBytes(input.prompt, undefined, {
+        await generateShopAiKeyImageBytes(input.prompt, cancellationSignal, {
           ...this.options,
           aspectRatio: input.aspect_ratio || this.options?.aspectRatio,
         }),

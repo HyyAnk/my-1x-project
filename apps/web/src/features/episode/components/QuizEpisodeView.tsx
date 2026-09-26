@@ -98,6 +98,7 @@ export function QuizEpisodeView({
         episode={episode}
         episodeId={episodeId}
         activeEpisodeTask={pipeline.activeEpisodeTask}
+        thumbnailTask={pipeline.thumbnailTask}
         onNotice={onNotice}
         onUpdated={pipeline.load}
       />

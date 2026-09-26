@@ -6,6 +6,7 @@ import type { PipelineRun, TaskManagerRuntime } from "../src/tasks/runtime.js";
 vi.mock("../src/tasks/pipeline/quizV2PipelineRunner.js", () => ({
   runQuizV2Pipeline: vi.fn(() => Promise.resolve()),
 }));
+vi.mock("../src/tasks/pipeline/independentStageTiming.js", () => ({ recordIndependentStageTiming: vi.fn() }));
 
 const mockQuiz: QuizV2 = {
   schema_version: 2,

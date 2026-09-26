@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CircleNotch, DownloadSimple, MagnifyingGlassPlus, PaintBrush, UploadSimple } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
@@ -27,6 +27,14 @@ export function MascotConceptPreviewCard({
   onRemoveBackground,
 }: MascotConceptPreviewCardProps) {
   const { t } = useTranslation();
+
+  const [currentPreviewSrc, setCurrentPreviewSrc] = useState(editingMascot?.master_image_url);
+  const [previewFailed, setPreviewFailed] = useState(false);
+
+  useEffect(() => {
+    setCurrentPreviewSrc(editingMascot?.master_image_url);
+    setPreviewFailed(false);
+  }, [editingMascot?.master_image_url]);
 
   const masterRawUrl = useMemo(() => {
     return (
@@ -57,11 +65,11 @@ export function MascotConceptPreviewCard({
             </span>
           ) : null}
         </div>
-        {editingMascot?.master_image_url && !busyAction ? (
+        {currentPreviewSrc && !busyAction && !previewFailed ? (
           <button
             type="button"
             className="icon-button compact"
-            onClick={() => onZoomPreview(editingMascot.master_image_url!)}
+            onClick={() => onZoomPreview(currentPreviewSrc)}
             title={t("mascots.zoomPreviewBtn")}
           >
             <MagnifyingGlassPlus size={16} />
@@ -112,9 +120,20 @@ export function MascotConceptPreviewCard({
               <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, backgroundColor: "#a855f7" }} />
             </div>
           </div>
-        ) : editingMascot?.master_image_url ? (
-          <div className="concept-preview-img-container" onClick={() => onZoomPreview(editingMascot.master_image_url!)}>
-            <img src={editingMascot.master_image_url} alt="Master Concept" className="concept-preview-img" />
+        ) : currentPreviewSrc && !previewFailed ? (
+          <div className="concept-preview-img-container" onClick={() => onZoomPreview(currentPreviewSrc)}>
+            <img
+              src={currentPreviewSrc}
+              alt="Master Concept"
+              className="concept-preview-img"
+              onError={() => {
+                if (masterRawUrl && currentPreviewSrc !== masterRawUrl) {
+                  setCurrentPreviewSrc(masterRawUrl);
+                } else {
+                  setPreviewFailed(true);
+                }
+              }}
+            />
             <div className="preview-hover-overlay">
               <MagnifyingGlassPlus size={24} color="#fff" />
               <span>{t("mascots.zoomPreviewBtn")}</span>

@@ -43,7 +43,7 @@ export const IntroOutroSeedSelectionSchema = z
     randomization_seed: z.string().trim().min(1).max(120),
     selected_seed_ids: z.array(z.string().trim().min(1).max(80)).max(7),
     locked_dimensions: z.array(CreativeSeedDimensionSchema).max(7).default([]),
-    algorithm_version: z.literal("1"),
+    algorithm_version: z.enum(["1", "2"]),
   })
   .strict();
 

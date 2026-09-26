@@ -123,7 +123,7 @@ export function createFrameMattingService(
   mattingAdapter: MascotMattingAdapter,
   serviceOptions?: FrameMattingServiceOptions,
 ): FrameMattingService {
-  async function matteAttemptFrames(params: MatteAttemptFramesParams): Promise<MatteAttemptFramesResult> {
+  async function processFrames(params: MatteAttemptFramesParams, adapter: MascotMattingAdapter): Promise<MatteAttemptFramesResult> {
     const { mascotId, styleId, state, slotIndex, attemptId, mattingOptions, frameCount, batchSize, signal } = params;
 
     const sourceFramesDir = storageAdapter.getAttemptFramesDir(mascotId, styleId, state, slotIndex, attemptId, "source");
@@ -202,7 +202,8 @@ export function createFrameMattingService(
 
           let matteResult;
           try {
-            matteResult = await mattingAdapter.matteFrame({
+            signal?.throwIfAborted();
+            matteResult = await adapter.matteFrame({
               imageBytes: new Uint8Array(sourceBytes),
               options: mattingOptions,
               frameIndex,
@@ -219,6 +220,7 @@ export function createFrameMattingService(
           }
 
           // Write matted PNG file to disk
+          signal?.throwIfAborted();
           await fs.writeFile(mattedFramePath, Buffer.from(matteResult.imageBytes));
           return {
             mattedFramePath,
@@ -244,6 +246,14 @@ export function createFrameMattingService(
   }
 
   return {
-    matteAttemptFrames,
+    matteAttemptFrames: async (params) => {
+      params.signal?.throwIfAborted();
+      const session = mattingAdapter.createSession?.(params.signal);
+      try {
+        return await processFrames(params, session ?? mattingAdapter);
+      } finally {
+        await session?.close();
+      }
+    },
   };
 }

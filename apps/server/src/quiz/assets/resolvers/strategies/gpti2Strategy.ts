@@ -20,6 +20,7 @@ export async function generateGpti2Asset(input: ProviderAssetInput): Promise<Pro
   let generated: { path: string; price_vnd?: number; model?: string } | null = null;
 
   for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
+    input.cancellationSignal?.throwIfAborted();
     try {
       generated = await provider.generateAsset({
         assetId: request.asset_id,
@@ -27,9 +28,10 @@ export async function generateGpti2Asset(input: ProviderAssetInput): Promise<Pro
         prompt: compiledPrompt,
         aspect_ratio: request.aspect_ratio,
         referenceImageBase64: input.referenceImageBase64,
-      });
+      }, input.cancellationSignal);
       break;
     } catch (err) {
+      input.cancellationSignal?.throwIfAborted();
       if (
         isContentFilterError(err) ||
         (err instanceof RepositoryError && err.code === "image_request_size_conflict")

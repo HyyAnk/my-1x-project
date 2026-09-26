@@ -10,7 +10,17 @@ const ScriptProvenanceInputSchema = z
 
 export const CreateIntroOutroStyleInputSchema = z
   .object({
-    name: z.string().min(1).max(50),
+    name: z.string().trim().min(1).max(50).optional(),
+    auto_name: z.boolean().default(false),
+    intro_mute_audio: z.boolean().default(false),
+    outro_mute_audio: z.boolean().default(false),
+    intro_script_text: z.string().max(60000).optional(),
+    outro_script_text: z.string().max(60000).optional(),
+    script_project_id: z
+      .string()
+      .regex(/^[a-zA-Z0-9_-]+$/)
+      .optional(),
+    script_project_version: z.number().int().positive().optional(),
     style_id: z
       .string()
       .regex(/^[a-zA-Z0-9_-]+$/)
@@ -27,6 +37,16 @@ export const CreateIntroOutroStyleInputSchema = z
     outro_script_provenance: ScriptProvenanceInputSchema.optional(),
   })
   .superRefine((data, context) => {
+    if (!data.name && !data.auto_name)
+      context.addIssue({ code: z.ZodIssueCode.custom, path: ["name"], message: "A name or automatic numbering is required" });
+    if (data.auto_name && (!data.style_id || !data.style_preset_id))
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["style_id"],
+        message: "Automatic pairs require a style category and request ID",
+      });
+    if (data.script_project_id && !data.script_project_version)
+      context.addIssue({ code: z.ZodIssueCode.custom, path: ["script_project_version"], message: "A script project version is required" });
     if (data.style_preset_id && !findBuiltInPresetById(data.style_preset_id)) {
       context.addIssue({
         code: z.ZodIssueCode.custom,

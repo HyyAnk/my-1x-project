@@ -1,7 +1,5 @@
 # Episode workflow
 
-Reviewed against working-tree source on 2026-09-09.
-
 ## Create and confirm
 
 Topics and bank questions feed landscape Episodes through [the bank bridge](../apps/server/src/quiz/bank/questionBankToQuizBridge.ts). Topic confirmation must use authoritative source bindings, eligibility checks and durable receipts; it is not merely copying a topic into a new folder. See [Question bank](question-bank.md).
@@ -27,5 +25,9 @@ Scene-level audio/regeneration code remains for compatibility consumers. Its exi
 ## Progress and recovery
 
 Task state is delivered through WebSocket events with refetch on reconnect and terminal updates. Feature hooks must refresh Episode details and artifact views, not only the task list.
+
+The [restart recovery policy](../apps/server/src/tasks/taskRestartRecovery.ts) requeues interrupted pipeline and standalone video tasks under the same task ID, up to three interrupted starts. It supersedes active pipeline children so the parent can rebuild one consistent workflow. Other interrupted tasks fail and require a new request; already failed, cancelled, or completed work is not restarted automatically.
+
+Video rendering uses [resumable chunks](../apps/server/src/tasks/video/resume/resumeChunkRender.ts). A retry reuses only chunks whose receipts and output still match the current immutable render plan, then assembles and validates the final video. Source, localized media, render settings, or FFmpeg changes can invalidate prior chunks. Keep failed render files until recovery is no longer needed; do not manually copy partial output into the final artifact.
 
 Verify successful build, reused artifacts, upstream invalidation, cancellation, retry, provider failure and reconnect without requiring a full-page refresh. See [Workflow](workflow.md) and [Troubleshooting](troubleshooting.md).

@@ -1,4 +1,4 @@
-import type { CreativeSeed, IntroOutroClipKind, IntroOutroSeedSelection } from "@studio/shared";
+import type { CreativeSeed, CreativeSeedDimension, IntroOutroClipKind, IntroOutroSeedSelection } from "@studio/shared";
 
 export type GenerationClipInput = {
   clipKind: IntroOutroClipKind;
@@ -14,6 +14,16 @@ export type ScriptGenerationJobInput = {
   stylePresetId: string;
   mascotStyleId?: string;
   projectVersion: number;
-  clips: GenerationClipInput[];
+  clips: (GenerationClipInput | GenerationClipRequest)[];
+  autoIdentity?: boolean;
   idempotencyKey: string;
+};
+
+export type GenerationClipRequest = {
+  clipKind: IntroOutroClipKind;
+  durationSeconds: number;
+  randomizationSeed: string;
+  selectedSeedIds?: string[];
+  lockedDimensions?: CreativeSeedDimension[];
+  logoMode?: GenerationClipInput["logoMode"];
 };

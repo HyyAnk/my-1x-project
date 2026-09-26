@@ -1,11 +1,12 @@
 import { CircleNotch, XCircle } from "@phosphor-icons/react";
+import { useRef, useState } from "react";
 
 export interface SlotCardProgressProps {
   status: string;
   isQueued: boolean;
   jobProgress?: number | null;
   activeJobId?: string | null;
-  onCancelJob?: (jobId: string) => void;
+  onCancelJob?: (jobId: string) => void | Promise<void>;
 }
 
 export function resolveProgressPercent(status: string, isQueued: boolean, jobProgress?: number | null): number {
@@ -29,6 +30,19 @@ export function resolveProgressMessage(status: string, isQueued: boolean, progre
 }
 
 export function SlotCardProgress({ status, isQueued, jobProgress, activeJobId, onCancelJob }: SlotCardProgressProps) {
+  const [isCancelling, setIsCancelling] = useState(false);
+  const pending = useRef(false);
+  const cancel = async () => {
+    if (!activeJobId || !onCancelJob || pending.current) return;
+    pending.current = true;
+    setIsCancelling(true);
+    try {
+      await onCancelJob(activeJobId);
+    } finally {
+      pending.current = false;
+      setIsCancelling(false);
+    }
+  };
   const progressPercent = resolveProgressPercent(status, isQueued, jobProgress);
   const progressMessage = resolveProgressMessage(status, isQueued, progressPercent);
 
@@ -39,16 +53,18 @@ export function SlotCardProgress({ status, isQueued, jobProgress, activeJobId, o
         <div className={`anim-progress-bar-fill ${isQueued ? "is-queued" : ""}`} style={{ width: `${progressPercent}%` }} />
       </div>
       <span className="anim-progress-pct">{isQueued ? "Queued" : `${progressPercent}%`}</span>
-      <span className="anim-progress-text">{progressMessage}</span>
+      <span className="anim-progress-text">{isCancelling ? "Cancelling…" : progressMessage}</span>
       {activeJobId && onCancelJob ? (
         <button
           type="button"
           className="anim-cancel-btn"
-          onClick={() => onCancelJob(activeJobId)}
+          onClick={() => void cancel()}
+          disabled={isCancelling}
+          aria-busy={isCancelling}
           title={isQueued ? "Cancel waiting job" : "Cancel processing"}
         >
           <XCircle size={13} />
-          <span>Cancel</span>
+          <span>{isCancelling ? "Cancelling…" : "Cancel"}</span>
         </button>
       ) : null}
     </div>

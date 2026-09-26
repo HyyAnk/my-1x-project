@@ -1,6 +1,6 @@
 import { TaskSchema, type Task } from "@studio/shared";
 
-const BUILD_TYPES = new Set<Task["task_type"]>(["GENERATE_PIPELINE", "GENERATE_VIDEO"]);
+const BUILD_TYPES = new Set<Task["task_type"]>(["GENERATE_PIPELINE", "GENERATE_VIDEO", "GENERATE_THUMBNAIL"]);
 const CHILD_TYPES = new Set<Task["task_type"]>(["GENERATE_QUIZ", "GENERATE_VIDEO"]);
 const RECOVERABLE = new Set<Task["status"]>(["RUNNING", "QUEUED"]);
 const MAX_RESTART_RECOVERIES = 3;
@@ -48,6 +48,8 @@ export function recoverTasksAfterRestart(tasks: Task[], timestamp: string): Task
 }
 
 function isPipelineChild(task: Task, parent: Task): boolean {
+  // Thumbnail work survives a completed or recovering video pipeline independently.
+  if (task.task_type === "GENERATE_THUMBNAIL") return false;
   if (task.task_id === parent.task_id || task.channel_id !== parent.channel_id || task.episode_id !== parent.episode_id) return false;
   if (task.parent_task_id) return task.parent_task_id === parent.task_id;
   // Compatibility for pre-parent-ID task records: the quiz-native pipeline only

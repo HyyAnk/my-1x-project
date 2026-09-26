@@ -1,6 +1,7 @@
 import type { ChannelAssetsOverviewResponse } from "@studio/shared";
 import { MascotMasterConceptCard } from "./MascotMasterConceptCard";
 import { ChannelLogoCard } from "./ChannelLogoCard";
+import { IdentityDownload } from "./IdentityDownload";
 
 export interface BrandIdentitySectionProps {
   overview: ChannelAssetsOverviewResponse | null;
@@ -28,11 +29,9 @@ export function BrandIdentitySection({
       data-testid="brand-identity-section"
       aria-label="Brand Identity Section"
     >
-      <div className="section-intro">
+      <div className="section-intro identity-section-header">
         <h2 className="section-title">Brand Identity</h2>
-        <p className="section-subtitle">
-          Core visual brand assets including channel mascot representation and official channel logo.
-        </p>
+        {overview && <IdentityDownload key={overview.channel_id} channelId={overview.channel_id} disabled={isLoading || isMutating} />}
       </div>
 
       <div className="brand-identity-grid">

@@ -1,6 +1,6 @@
 # Question bank and source-bound topics
 
-Reviewed against working-tree source on 2026-09-09. The bank stores reusable English source questions; Episodes and Short Reels consume source-bound selections and own localized output.
+The bank stores reusable English source questions; Episodes and Short Reels consume source-bound selections and own localized output.
 
 ## Boundaries and entry points
 
@@ -55,4 +55,4 @@ Localized artifacts/projections retain source identity. The language resolver ow
 
 [useTopicAvailability.ts](../apps/web/src/features/channel/hooks/useTopicAvailability.ts) owns availability refresh behavior. Preserve cancellation and stale-response guards; mutation completion must refresh affected topic/product views.
 
-Useful regression entry points include [boundTopicConfirmation.test.ts](../apps/server/test/boundTopicConfirmation.test.ts), [topicAvailabilityRoute.test.ts](../apps/server/test/topicAvailabilityRoute.test.ts), [shortReelLocalization.test.ts](../apps/server/test/shortReelLocalization.test.ts), and [bankSerializationBoundary.test.ts](../apps/server/test/bankSerializationBoundary.test.ts). Exercise replay, conflicts, shortage, concurrent writes and corrupt persisted state using isolated fixtures. Historical reports are not evidence that these tests pass in the current checkout.
+Useful regression entry points include [boundTopicConfirmation.test.ts](../apps/server/test/boundTopicConfirmation.test.ts), [topicAvailabilityRoute.test.ts](../apps/server/test/topicAvailabilityRoute.test.ts), [shortReelLocalization.test.ts](../apps/server/test/shortReelLocalization.test.ts), and [bankSerializationBoundary.system.test.ts](../apps/server/test/bankSerializationBoundary.system.test.ts). Exercise replay, conflicts, shortage, concurrent writes and corrupt persisted state using isolated fixtures.

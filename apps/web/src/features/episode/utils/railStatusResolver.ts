@@ -1,6 +1,7 @@
 import type { Task } from "@studio/shared";
 import type { QuizV2State } from "../../../api";
 import { isTaskActive, latestTask } from "../../../lib/utils";
+import { thumbnailTaskStatus } from "./thumbnailTaskState";
 import {
   STAGES,
   STREAMLINED_STAGES,
@@ -20,6 +21,7 @@ export function latestRelevantTask(stage: RailStage, tasks: Task[]): Task | null
     visualBible: ["GENERATE_VISUAL_BIBLE"],
     scenes: ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"],
     questions: ["GENERATE_QUIZ"],
+    thumbnail: ["GENERATE_THUMBNAIL"],
     render: ["GENERATE_VIDEO"],
   };
   const stageTypes = types[stage];
@@ -40,6 +42,7 @@ export function latestStreamlinedChildTask(stage: StreamlinedRailStage, tasks: T
     quizContent: ["GENERATE_QUIZ", "GENERATE_SCRIPT", "GENERATE_TREATMENT", "GENERATE_RESEARCH"],
     assets: ["GENERATE_BUNDLE_IMAGE", "GENERATE_VISUAL_BIBLE"],
     voice: ["GENERATE_AUDIO"],
+    thumbnail: ["GENERATE_THUMBNAIL"],
     qaGates: ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"],
     render: ["GENERATE_VIDEO"],
   };
@@ -175,6 +178,7 @@ export function resolveStatus(
   tasks: Task[],
   currentStage: { key: RailStage; label: string } | null,
 ): RailStatus {
+  if (stage === "thumbnail") return thumbnailTaskStatus(tasks, Boolean(readiness.thumbnail));
   const base = baseStatus(stage, readiness, state);
   const failedStage = pipelineTask?.status === "FAILED" ? currentStage?.key : null;
   if (failedStage === stage) return "failed";
@@ -204,6 +208,7 @@ export function resolveStreamlinedStatus(
   tasks: Task[],
   currentStage: { key: StreamlinedRailStage; label: string } | null,
 ): RailStatus {
+  if (stage === "thumbnail") return thumbnailTaskStatus(tasks, Boolean(readiness.thumbnail));
   const base = baseStreamlinedStatus(stage, readiness, state);
 
   const failedStage = pipelineTask?.status === "FAILED" ? currentStage?.key : null;

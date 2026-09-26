@@ -25,6 +25,17 @@ afterEach(async () => {
 });
 
 describe("restart recovery", () => {
+  it.each(["RUNNING", "COMPLETED"] as const)("recovers thumbnail independently when its parent is %s", (status) => {
+    const parent = task({ task_id: "parent", task_type: "GENERATE_PIPELINE", status });
+    const thumbnail = task({
+      task_id: "thumbnail",
+      task_type: "GENERATE_THUMBNAIL",
+      parent_task_id: "parent",
+      lock_key: "episode:thumbnail",
+    });
+    const result = recoverTasksAfterRestart([parent, thumbnail], timestamp);
+    expect(result[1]).toMatchObject({ status: "QUEUED", restart_recovery_count: 1, task_id: "thumbnail" });
+  });
   it("requeues interrupted builds while preserving task identity and progress", () => {
     const [result] = recoverTasksAfterRestart([task({ progress_percent: 74 })], timestamp);
     expect(result).toMatchObject({ task_id: "video", status: "QUEUED", restart_recovery_count: 1, progress_percent: 74, error: null });

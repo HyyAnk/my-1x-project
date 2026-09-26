@@ -729,6 +729,287 @@
   }
 }
 
+/* Batch Script Studio & Concurrency Styles */
+.script-generate-action-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.batch-header-btn,
+.batch-trigger-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+}
+
+.batch-generate-modal {
+  max-width: 540px;
+  width: 90vw;
+}
+
+.batch-sparkle-icon {
+  color: var(--accent);
+}
+
+.batch-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.batch-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.batch-count-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.batch-count-options button.active {
+  background: var(--surface-strong);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.batch-count-input {
+  width: 72px;
+  text-align: center;
+}
+
+.batch-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.batch-radio-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--surface);
+}
+
+.batch-radio-label:hover {
+  background: var(--surface-strong);
+}
+
+.batch-radio-label input {
+  margin-top: 3px;
+}
+
+.batch-radio-label span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.batch-radio-label small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.batch-clip-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.batch-clip-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.script-empty-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Active Jobs Banner */
+.script-job-banner.batch-active {
+  background: var(--accent-subtle, rgba(56, 114, 224, 0.08));
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+}
+
+.batch-banner-info,
+.single-job-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Batch Review Matrix */
+.batch-review-matrix {
+  padding: 16px;
+}
+
+.batch-matrix-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.batch-matrix-toolbar h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+}
+
+.batch-matrix-toolbar p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.batch-matrix-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batch-matrix-table-wrapper {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.batch-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.batch-matrix-table th {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  background: var(--surface-subtle, rgba(0, 0, 0, 0.02));
+}
+
+.batch-matrix-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.batch-matrix-table tr:last-child td {
+  border-bottom: none;
+}
+
+.batch-matrix-table tr.selected-row {
+  background: var(--surface-strong);
+}
+
+.project-name-cell {
+  white-space: nowrap;
+}
+
+.current-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--accent-subtle, rgba(56, 114, 224, 0.15));
+  color: var(--accent);
+}
+
+.clip-snippet-cell {
+  max-width: 260px;
+}
+
+.clip-snippet-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.approved-icon {
+  color: var(--good, #16a34a);
+}
+
+.job-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.job-status-pill.running {
+  background: var(--accent-subtle, rgba(56, 114, 224, 0.15));
+  color: var(--accent);
+}
+
+.job-status-pill.approved {
+  background: var(--good-subtle, rgba(22, 163, 74, 0.12));
+  color: var(--good, #16a34a);
+}
+
+.job-status-pill.draft {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.job-status-pill.empty {
+  color: var(--muted);
+}
+
+.icon-text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .intro-outro-script-studio *,
   .intro-outro-script-studio *::before,

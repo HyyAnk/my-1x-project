@@ -1,6 +1,6 @@
 # Quiz Engine V2
 
-Reviewed against working-tree source on 2026-09-09. See [Architecture](architecture.md) for system boundaries and [Episode workflow](episode-workflow.md) for product entry points.
+See [Architecture](architecture.md) for system boundaries and [Episode workflow](episode-workflow.md) for product entry points.
 
 ## Production path
 
@@ -37,6 +37,12 @@ Domain validation is owned by:
 - [Invalidation map](../apps/server/src/quiz/pipeline/invalidation.ts) and [repository invalidation](../apps/server/src/repository/quiz/quizArtifactsInvalidation.ts): upstream changes invalidate derived artifacts.
 
 Read thresholds in source/tests instead of copying numeric rules into new modules.
+
+## Gameplay policy
+
+[The shared gameplay policy](../packages/shared/src/quizGameplayPolicy.ts) controls choice narration, thinking windows, countdowns, and pacing by gameplay and age band. `gameplay_id` remains distinct from question format and visual layout; a Versus faceoff has two choices and must not be mislabeled as True/False. Director plans carry a policy version so a resume can regenerate an outdated plan and invalidate dependent assets, voice, timeline, QA, and render output.
+
+Timeline timing waits for measured narration and complete choice entrances. QA rejects incompatible voice roles, premature answer narration, invalid Versus labels, and other gameplay conflicts. Keep source facts and answers intact when adapting a question to a layout. [Gameplay tests](../apps/server/test/gameplayPolicy.test.ts) cover the policy; [render specimens](../apps/server/test/gameplayRender.system.test.ts) are opt-in system tests for media changes.
 
 ### Pre-render composition and contrast QA policy
 

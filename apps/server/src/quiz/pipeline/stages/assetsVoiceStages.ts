@@ -10,8 +10,6 @@ import { quizVoiceTargetWordsPerSecond } from "../../audio/voicePolicy.js";
 import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js";
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
-import { ensureEpisodeThumbnail } from "../../thumbnail/ensureEpisodeThumbnail.js";
-import { StudioLogger } from "../../../logger.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 
 export async function planAssets(
@@ -83,35 +81,6 @@ export async function resolveAssets(
     input.episodeId,
     invalidateQuizArtifacts("asset_resolution"),
   );
-
-  // Auto-generate Thumbnail immediately upon completing Visual Assets resolution
-  try {
-    await ensureEpisodeThumbnail(input.repository, {
-      channelId: input.channelId,
-      episodeId: input.episodeId,
-      activeEngine: input.activeEngine,
-      antigravityClient: input.antigravityClient,
-      customHookText: input.customHookText,
-      layoutOverride: input.layoutOverride,
-      badgeOverride: input.badgeOverride,
-      imageConfig: input.config.image_generation
-        ? {
-            api_key: input.config.image_generation.api_key,
-            model: input.config.image_generation.model,
-            provider: input.config.image_generation.provider,
-            base_url: input.config.image_generation.base_url,
-            quality: input.config.image_generation.quality,
-          }
-        : undefined,
-      imageFallbackConfig: input.config.image_fallback,
-    });
-  } catch (error) {
-    const logger = new StudioLogger(input.repository.rootDirectory);
-    logger.warn(`Auto thumbnail generation during asset resolution encountered an issue: ${(error as Error).message}`, {
-      profileId: input.channelId,
-      workerId: input.episodeId,
-    });
-  }
 
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }

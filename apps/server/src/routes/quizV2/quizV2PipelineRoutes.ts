@@ -57,10 +57,12 @@ export function registerQuizV2PipelineRoutes(server: FastifyInstance, deps: Quiz
 
   server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/assets/resolve", async (request) => {
     const params = request.params as { channelId: string; episodeId: string };
-    return resolveAssets({
+    const result = await resolveAssets({
       ...pipelineDeps(params.channelId, params.episodeId),
       activeEngine: tasks.getActiveEngine(),
     });
+    tasks.submit("GENERATE_THUMBNAIL", params.channelId, params.episodeId);
+    return result;
   });
 
   server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/voice/plan", async (request) => {

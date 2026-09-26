@@ -1,3 +1,5 @@
+import { createMattingWorkerSession } from "./mattingWorkerSession.js";
+import type { MattingSession } from "./mattingWorker.types.js";
 import {
   decodePngToRgba,
   encodeRgbaToPng,
@@ -61,6 +63,7 @@ export interface MascotMattingAdapterOptions {
 }
 
 export interface MascotMattingAdapter {
+  createSession?: (signal?: AbortSignal) => MattingSession;
   matteFrame: (input: MatteFrameInput) => Promise<MatteFrameResult>;
 }
 
@@ -338,5 +341,8 @@ export function createMascotMattingAdapter(options: MascotMattingAdapterOptions 
 
   return {
     matteFrame,
+    ...(!options.fixtureHandler
+      ? { createSession: (signal?: AbortSignal) => createMattingWorkerSession(signal, options.defaultOptions) }
+      : {}),
   };
 }

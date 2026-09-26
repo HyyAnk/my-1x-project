@@ -6,6 +6,7 @@ import {
   type MascotStyleIdentityProfile,
 } from "@studio/shared";
 import { validateProductionTiming } from "./temporalValidation.js";
+import { validateChoreography } from "./choreographyValidation.js";
 
 const EPSILON = 0.011;
 
@@ -82,6 +83,7 @@ export function validateScriptContent(
       }
     }
     for (const capabilityId of beat.capability_ids) {
+      if (capabilityId === "speech" && content.dialogue_policy === "mascot-direct-speech-v1") continue;
       const parsed = MascotCapabilityIdSchema.safeParse(capabilityId);
       if (!parsed.success || identity.capabilities[parsed.data] !== "supported") {
         issues.push(
@@ -128,7 +130,7 @@ export function validateScriptContent(
       issues.push(issue("VISIBLE_TEXT_REVIEW", "warning", "consistency.allowed_visible_text", `Review visible text: ${visibleText}.`));
     }
   }
-  return [...issues, ...validateProductionTiming(content, identity)];
+  return [...issues, ...validateProductionTiming(content, identity), ...validateChoreography(content, identity)];
 }
 
 export function hasBlockingIssues(issues: readonly IntroOutroValidationIssue[]): boolean {

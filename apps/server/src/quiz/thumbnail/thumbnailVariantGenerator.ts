@@ -43,9 +43,11 @@ export type GenerateEpisodeThumbnailOptions = {
     quality?: "standard" | "high";
   };
   throwOnError?: boolean;
+  signal?: AbortSignal;
 };
 
 export type GenerateVariantParams = {
+  assertCurrent?: () => Promise<void>;
   repository: RepositoryService;
   channel: Channel;
   episode: Episode;
@@ -86,14 +88,38 @@ export async function generateThumbnailVariant(params: GenerateVariantParams): P
   await mkdir(path.dirname(targets.variantAbsolute), { recursive: true });
 
   try {
+    options.signal?.throwIfAborted();
     if (options.imageProvider) {
-      await copyProviderGeneratedImage({ repository, channel, episode, ratio, prompt, options, targets });
+      await copyProviderGeneratedImage({
+        repository,
+        channel,
+        episode,
+        ratio,
+        prompt,
+        options,
+        targets,
+        assertCurrent: params.assertCurrent,
+      });
     } else {
-      await generateProviderAsset({ repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets, visualAnchor });
+      await generateProviderAsset({
+        repository,
+        channel,
+        episode,
+        ratio,
+        prompt,
+        options,
+        logger,
+        versionId,
+        nowTimestamp,
+        targets,
+        visualAnchor,
+        assertCurrent: params.assertCurrent,
+      });
     }
 
     return buildVariantResult({ versionId, variantFilename, ratio, prompt, plan, channel, episode, targets });
   } catch (err) {
+    options.signal?.throwIfAborted();
     return recoverFromVariantGenerationFailure({
       channel,
       episode,
@@ -131,6 +157,7 @@ function resolveVariantFileTargets(
 }
 
 type CopyProviderGeneratedImageParams = {
+  assertCurrent?: () => Promise<void>;
   repository: RepositoryService;
   channel: Channel;
   episode: Episode;
@@ -142,13 +169,15 @@ type CopyProviderGeneratedImageParams = {
 
 async function copyProviderGeneratedImage(params: CopyProviderGeneratedImageParams): Promise<void> {
   const { repository, channel, episode, ratio, prompt, options, targets } = params;
-  const generated = await options.imageProvider!.generateReference(prompt);
+  const generated = await options.imageProvider!.generateReference(prompt, options.signal);
   const sourceAbsolute = path.isAbsolute(generated.asset_path)
     ? generated.asset_path
     : path.resolve(repository.storageRoot, generated.asset_path);
   const fileData = await readFile(sourceAbsolute);
-  await writeFile(targets.variantAbsolute, fileData);
-  await writeFile(targets.activeAbsolute, fileData);
+  await params.assertCurrent?.();
+  options.signal?.throwIfAborted();
+  await repository.writeBinaryAtomic(targets.variantAbsolute, fileData);
+  await repository.writeBinaryAtomic(targets.activeAbsolute, fileData);
   await repository
     .recordImageUsage({
       channelId: channel.channel_id,
@@ -164,6 +193,7 @@ async function copyProviderGeneratedImage(params: CopyProviderGeneratedImagePara
 }
 
 type GenerateProviderAssetParams = {
+  assertCurrent?: () => Promise<void>;
   repository: RepositoryService;
   channel: Channel;
   episode: Episode;
@@ -204,6 +234,7 @@ async function generateProviderAsset(params: GenerateProviderAssetParams): Promi
     imageConfig: options.imageConfig,
     imageFallbackConfig: options.imageFallbackConfig,
     referenceImageBase64: visualAnchor?.base64,
+    cancellationSignal: options.signal,
     logger,
   });
 
@@ -212,8 +243,10 @@ async function generateProviderAsset(params: GenerateProviderAssetParams): Promi
       ? generated.entry.path
       : path.resolve(repository.storageRoot, generated.entry.path);
     const fileData = await readFile(sourceAbsolute);
-    await writeFile(targets.variantAbsolute, fileData);
-    await writeFile(targets.activeAbsolute, fileData);
+    await params.assertCurrent?.();
+    options.signal?.throwIfAborted();
+    await repository.writeBinaryAtomic(targets.variantAbsolute, fileData);
+    await repository.writeBinaryAtomic(targets.activeAbsolute, fileData);
   }
 }
 

@@ -2,9 +2,9 @@
 
 > **Note:** This is a personal project developed and supported exclusively for **Windows**. Other operating systems are not supported.
 
-**AI Quiz Studio** is a local-first, automated production studio for creating high-engagement AI Quiz videos. It orchestrates the full lifecycle of quiz video creation—from curated question banks and topic matrices to director planning, AI image generation, voiceover synthesis with Chatterbox Turbo, timeline compilation, and final MP4 video rendering.
+**AI Quiz Studio** is a local-first production studio for AI quiz content. Landscape Episodes run from curated questions and director planning through images, Chatterbox Turbo narration, timeline compilation, and final MP4 rendering.
 
-The platform natively supports both **16:9 Landscape Episodes** (for YouTube) and **9:16 Portrait Short Reels** (for YouTube Shorts, TikTok, and Reels).
+**Short Reels** prepare 9:16 scripts, references, covers, publishing copy, and export packages for separate video production. They do not render a Short Reel MP4 in this workflow.
 
 ---
 
@@ -103,7 +103,7 @@ For in-depth technical documentation, refer to:
 - [System Architecture](docs/architecture.md): Implementation boundaries, runtime contracts, and data flow.
 - [Quiz Engine V2](docs/quiz-engine-v2.md): Pipeline stages, QA healing, and video rendering contracts.
 - [Question Bank & Topics](docs/question-bank.md): Source question curation, eligibility, and receipts.
-- [Short Reels](docs/short-reel.md): 9:16 vertical video pipeline and export packaging.
+- [Short Reels](docs/short-reel.md): portrait production assets and export packaging.
 - [LLM Engine Integration](docs/codex-integration.md): Codex and Google Antigravity integration details.
 - [Setup & Troubleshooting](docs/setup.md): Detailed local configuration and troubleshooting runbooks.
 - [Repository Rules (AGENTS.md)](AGENTS.md): Architectural rules and coding standards.

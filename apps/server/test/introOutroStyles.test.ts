@@ -8,6 +8,7 @@ import { promisify } from "node:util";
 import { buildApp, type StudioApp } from "../src/app.js";
 import { probeAndValidate1080pVideo } from "../src/repository/introOutroStyles.js";
 import { registerTransition, type Channel, type IntroOutroStyle } from "@studio/shared";
+import { registerAutomaticPairUploadCases } from "./fixtures/automaticPairUploadCases.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -337,4 +338,5 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       expect(updated.quiz_config.intro_outro_style_id).toBe("test_custom_style");
     });
   });
+  registerAutomaticPairUploadCases(() => ({ app, channelId: testChannelId, video: valid1080pVideoPath }));
 });

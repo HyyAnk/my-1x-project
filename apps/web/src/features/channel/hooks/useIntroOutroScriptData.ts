@@ -10,6 +10,7 @@ export function useIntroOutroScriptData(props: UseScriptStudioProps) {
   const [project, setProject] = useState<IntroOutroScriptProject | null>(null);
   const [revisions, setRevisions] = useState<IntroOutroScriptRevision[]>([]);
   const [job, setJob] = useState<IntroOutroScriptJob | null>(null);
+  const [activeJobs, setActiveJobs] = useState<IntroOutroScriptJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -36,17 +37,21 @@ export function useIntroOutroScriptData(props: UseScriptStudioProps) {
     const version = ++requestVersion.current;
     setError(null);
     try {
-      const [contextResponse, projectResponse] = await Promise.all([
+      const [contextResponse, projectResponse, jobsResponse] = await Promise.all([
         api.getIntroOutroScriptContext(props.channelId, props.stylePresetId),
         api.listIntroOutroScriptProjects(props.channelId, props.stylePresetId),
+        api.listActiveIntroOutroScriptJobs(props.channelId).catch(() => ({ jobs: [] as IntroOutroScriptJob[] })),
       ]);
       if (version !== requestVersion.current) return;
       setContextBundle(contextResponse);
       setProjects(projectResponse.projects);
+      setActiveJobs(jobsResponse.jobs);
       const currentId = projectRef.current?.project_id;
       const nextProject = projectResponse.projects.find((item) => item.project_id === currentId) ?? projectResponse.projects[0] ?? null;
       setProject(nextProject);
       projectRef.current = nextProject;
+      const matchingJob = jobsResponse.jobs.find((j) => j.project_id === nextProject?.project_id) ?? null;
+      if (matchingJob) setJob(matchingJob);
       await loadRevisions(nextProject?.project_id ?? null);
     } catch (cause) {
       if (version !== requestVersion.current) return;
@@ -72,9 +77,11 @@ export function useIntroOutroScriptData(props: UseScriptStudioProps) {
       const selected = projects.find((item) => item.project_id === projectId) ?? null;
       setProject(selected);
       projectRef.current = selected;
+      const matchingJob = activeJobs.find((item) => item.project_id === projectId) ?? null;
+      setJob(matchingJob);
       void loadRevisions(selected?.project_id ?? null);
     },
-    [loadRevisions, projects],
+    [activeJobs, loadRevisions, projects],
   );
 
   const onJobTerminal = useCallback(
@@ -94,7 +101,15 @@ export function useIntroOutroScriptData(props: UseScriptStudioProps) {
     [props.onNotice, refresh],
   );
 
-  useIntroOutroJobPolling({ channelId: props.channelId, job, setJob, onTerminal: onJobTerminal });
+  useIntroOutroJobPolling({
+    channelId: props.channelId,
+    projectId: project?.project_id,
+    job,
+    activeJobs,
+    setJob,
+    setActiveJobs,
+    onTerminal: onJobTerminal,
+  });
 
   return {
     contextBundle,
@@ -108,6 +123,8 @@ export function useIntroOutroScriptData(props: UseScriptStudioProps) {
     setRevisions,
     job,
     setJob,
+    activeJobs,
+    setActiveJobs,
     loading,
     busy,
     setBusy,

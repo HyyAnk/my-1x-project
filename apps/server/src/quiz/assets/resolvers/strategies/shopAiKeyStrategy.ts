@@ -27,15 +27,17 @@ export async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise
   let generated: Awaited<ReturnType<typeof provider.generateAsset>> | null = null;
 
   for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
+    input.cancellationSignal?.throwIfAborted();
     try {
       generated = await provider.generateAsset({
         assetId: request.asset_id,
         fingerprint,
         prompt: compiledPrompt,
         aspect_ratio: request.aspect_ratio,
-      });
+      }, input.cancellationSignal);
       break;
     } catch (err) {
+      input.cancellationSignal?.throwIfAborted();
       if (
         isContentFilterError(err) ||
         (err instanceof RepositoryError && err.code === "image_request_size_conflict")

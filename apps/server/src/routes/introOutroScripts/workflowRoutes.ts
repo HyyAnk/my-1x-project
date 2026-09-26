@@ -1,15 +1,17 @@
 import type { FastifyInstance } from "fastify";
+import { BatchGenerateIntroOutroScriptsInputSchema } from "@studio/shared";
 import { resolveIntroOutroContext } from "../../introOutroScripts/contextResolver.js";
 import { IntroOutroScriptError } from "../../introOutroScripts/errors.js";
 import { compileProductionPrompt } from "../../introOutroScripts/promptCompiler.js";
 import { checkpointDraft } from "../../introOutroScripts/revisionService.js";
-import { resolveSeedSelection } from "../../introOutroScripts/seedSelection.js";
 import { hasBlockingIssues, validateScriptContent } from "../../introOutroScripts/validation.js";
+import { IntroOutroBatchJobCoordinator } from "../../introOutroScripts/batchJobCoordinator.js";
 import { ApproveRevisionInputSchema, CheckpointInputSchema, GenerateScriptsInputSchema, ValidateDraftInputSchema } from "./schemas.js";
 import { loadSeedCatalog, resolveDraftSeedSnapshot } from "./seedHelpers.js";
 import type { IntroOutroScriptRouteDeps } from "./types.js";
 
 export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutroScriptRouteDeps): void {
+  const batchCoordinator = new IntroOutroBatchJobCoordinator(deps);
   server.get("/api/channels/:channelId/intro-outro-scripts/:projectId/revisions", async (request) => {
     const { channelId, projectId } = request.params as { channelId: string; projectId: string };
     return { revisions: await deps.scripts.listRevisions(channelId, projectId) };
@@ -42,7 +44,6 @@ export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutro
       seeds,
       warningAcknowledgements: input.warning_acknowledgements,
       requestedModel: deps.model,
-      client: deps.client,
     });
     const result = await deps.scripts.appendRevision(channelId, revision, input.expected_version, true);
     return reply.status(201).send({ revision, project: result.project });
@@ -72,34 +73,14 @@ export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutro
     const { channelId, projectId } = request.params as { channelId: string; projectId: string };
     const input = GenerateScriptsInputSchema.parse(request.body);
     const project = await deps.scripts.getProject(channelId, projectId);
-    const context = await resolveIntroOutroContext({
-      repository: deps.repository,
-      scripts: deps.scripts,
-      channelId,
-      stylePresetId: project.style_preset_id,
-      mascotStyleId: input.mascot_style_id,
-    });
-    if (!context.identity || context.publicContext.identity_status !== "reviewed") {
-      throw new IntroOutroScriptError("Review mascot identity first", "IDENTITY_REVIEW_REQUIRED");
-    }
-    const { latest } = await loadSeedCatalog(deps.scripts, channelId);
-    const clips = input.clips.map((clip) => {
-      const resolved = resolveSeedSelection({
-        clipKind: clip.clip_kind,
-        catalog: latest,
-        identity: context.identity!,
-        randomizationSeed: clip.randomization_seed,
-        selectedSeedIds: clip.selected_seed_ids,
-        lockedDimensions: clip.locked_dimensions,
-      });
-      return {
-        clipKind: clip.clip_kind,
-        durationSeconds: clip.duration_seconds,
-        seedSelection: resolved.selection,
-        seeds: resolved.seeds,
-        logoMode: clip.logo_mode,
-      };
-    });
+    const clips = input.clips.map((clip) => ({
+      clipKind: clip.clip_kind,
+      durationSeconds: clip.duration_seconds,
+      randomizationSeed: clip.randomization_seed,
+      selectedSeedIds: clip.selected_seed_ids,
+      lockedDimensions: clip.locked_dimensions,
+      logoMode: clip.logo_mode,
+    }));
     const job = await deps.jobs.startScriptGeneration({
       channelId,
       projectId,
@@ -107,6 +88,7 @@ export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutro
       mascotStyleId: input.mascot_style_id,
       projectVersion: input.expected_version,
       clips,
+      autoIdentity: input.auto_identity,
       idempotencyKey: input.idempotency_key,
     });
     return reply.status(202).send({ job });
@@ -133,6 +115,18 @@ export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutro
   server.get("/api/channels/:channelId/intro-outro-script-jobs/:jobId", async (request) => {
     const { channelId, jobId } = request.params as { channelId: string; jobId: string };
     return { job: await deps.scripts.getJob(channelId, jobId) };
+  });
+
+  server.get("/api/channels/:channelId/intro-outro-script-jobs", async (request) => {
+    const { channelId } = request.params as { channelId: string };
+    return { jobs: await deps.jobs.listActiveJobs(channelId) };
+  });
+
+  server.post("/api/channels/:channelId/intro-outro-scripts/batch-generate", async (request, reply) => {
+    const { channelId } = request.params as { channelId: string };
+    const input = BatchGenerateIntroOutroScriptsInputSchema.parse(request.body);
+    const result = await batchCoordinator.generateBatch(channelId, input);
+    return reply.status(202).send(result);
   });
 
   server.post("/api/channels/:channelId/intro-outro-script-jobs/:jobId/cancel", async (request) => {

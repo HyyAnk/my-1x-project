@@ -11,6 +11,7 @@ import {
 import type { RepositoryService } from "../../repository.js";
 import { syncLegacyEpisodeThumbnailPaths } from "./thumbnailLegacyMigrator.js";
 import type { QuizThumbnailPlan } from "./thumbnailTypes.js";
+import { queueThumbnailOperation } from "./thumbnailOperationQueue.js";
 
 const MANIFEST_FILENAME = "thumbnail.json";
 const ASSETS_DIRECTORY_NAME = "assets";
@@ -85,7 +86,7 @@ async function writeManifestFile(
   manifest: ThumbnailManifest,
 ): Promise<void> {
   const episodeDirectory = await resolveEpisodeDirectory({ repository, channelId, episodeId });
-  await writeFile(path.join(episodeDirectory, MANIFEST_FILENAME), JSON.stringify(manifest, null, 2), "utf8");
+  await repository.writeJsonAtomic(path.join(episodeDirectory, MANIFEST_FILENAME), manifest);
 }
 
 async function writeActiveThumbnail(
@@ -111,6 +112,15 @@ async function readVariantFile(repository: RepositoryService, filePath: string):
  * Sets a specific thumbnail version from history as the active thumbnail for the episode.
  */
 export async function setActiveThumbnailVersion(
+  repository: RepositoryService,
+  channelId: string,
+  episodeId: string,
+  versionId: string,
+): Promise<ThumbnailManifest> {
+  return queueThumbnailOperation(repository, channelId, episodeId, () => setActiveVersion(repository, channelId, episodeId, versionId));
+}
+
+async function setActiveVersion(
   repository: RepositoryService,
   channelId: string,
   episodeId: string,
@@ -158,6 +168,15 @@ export async function setActiveThumbnailVersion(
  * Deletes a specific thumbnail version from history and disk.
  */
 export async function deleteThumbnailVersion(
+  repository: RepositoryService,
+  channelId: string,
+  episodeId: string,
+  versionId: string,
+): Promise<ThumbnailManifest> {
+  return queueThumbnailOperation(repository, channelId, episodeId, () => deleteVersion(repository, channelId, episodeId, versionId));
+}
+
+async function deleteVersion(
   repository: RepositoryService,
   channelId: string,
   episodeId: string,
@@ -260,7 +279,7 @@ export async function persistThumbnailManifest(params: PersistThumbnailManifestP
     updated_at: nowIso(),
   });
 
-  await writeFile(path.join(episodeDirectory, MANIFEST_FILENAME), JSON.stringify(manifest, null, 2), "utf8");
+  await repository.writeJsonAtomic(path.join(episodeDirectory, MANIFEST_FILENAME), manifest);
 
   await syncLegacyEpisodeThumbnailPaths({ repository, channel, episode, manifest });
   return manifest;

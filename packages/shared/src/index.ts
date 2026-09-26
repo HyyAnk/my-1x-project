@@ -78,3 +78,4 @@ export {
   type MascotGreenScreenAuditStatusResponse,
 } from "./schemas/mascotAudit.js";
 export * from "./mascot/variantExport.js";
+export * from "./schemas/brandIdentityExport.js";

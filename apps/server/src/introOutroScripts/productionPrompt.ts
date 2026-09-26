@@ -1,4 +1,5 @@
 import type { IntroOutroReferenceAsset, IntroOutroScriptRevision } from "@studio/shared";
+import { compileCompactProductionPrompt } from "./compactProductionPrompt.js";
 
 export function referenceFilename(reference: IntroOutroReferenceAsset): string {
   const extension = reference.mime_type === "image/jpeg" ? "jpg" : reference.mime_type === "image/webp" ? "webp" : "png";
@@ -6,6 +7,7 @@ export function referenceFilename(reference: IntroOutroReferenceAsset): string {
 }
 
 export function compileProductionPrompt(revision: IntroOutroScriptRevision): string {
+  if (revision.content.production_policy && revision.content.production_directions) return compileCompactProductionPrompt(revision);
   const { content, identity_snapshot: identity } = revision;
   const directions = content.production_directions;
   const logoOverlay = directions?.logo_mode === "post_overlay";
@@ -35,7 +37,7 @@ export function compileProductionPrompt(revision: IntroOutroScriptRevision): str
       return `${filename}: intact supplied reference`;
     })
     .join("\n");
-  return `Create one continuous ${content.production.target_duration_seconds}-second ${content.production.aspect_ratio} ${content.production.clip_kind} shot.
+  return `Create one continuous ${content.production.clip_kind}
 
 REFERENCE ASSETS
 Attach the actual files from the export package. Local URLs, IDs and hashes are not image attachments.

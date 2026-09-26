@@ -369,7 +369,7 @@ describe("useThumbnailPreview hook", () => {
     });
   });
 
-  it("auto-polls when activeEpisodeTask is RUNNING", () => {
+  it("auto-polls when activeEpisodeTask is RUNNING", async () => {
     vi.useFakeTimers();
     const getThumbnailSpy = vi.spyOn(episodeApi, "getThumbnail").mockResolvedValue({ manifest: sampleManifest });
 
@@ -389,13 +389,13 @@ describe("useThumbnailPreview hook", () => {
 
     expect(getThumbnailSpy).toHaveBeenCalledTimes(1);
 
-    act(() => {
-      vi.advanceTimersByTime(2500);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2500);
     });
     expect(getThumbnailSpy).toHaveBeenCalledTimes(2);
 
-    act(() => {
-      vi.advanceTimersByTime(2500);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2500);
     });
     expect(getThumbnailSpy).toHaveBeenCalledTimes(3);
 
@@ -403,6 +403,44 @@ describe("useThumbnailPreview hook", () => {
       unmount();
     });
     vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+
+  it("waits for a slow poll before scheduling another and stops after completion", async () => {
+    vi.useFakeTimers();
+    let resolvePoll!: (value: { manifest: ThumbnailManifest | null }) => void;
+    const slowPoll = new Promise<{ manifest: ThumbnailManifest | null }>((resolve) => {
+      resolvePoll = resolve;
+    });
+    const getThumbnail = vi
+      .spyOn(episodeApi, "getThumbnail")
+      .mockResolvedValueOnce({ manifest: sampleManifest })
+      .mockReturnValueOnce(slowPoll)
+      .mockResolvedValue({ manifest: sampleManifest });
+    const { rerender, unmount } = renderHook(
+      ({ status }: { status: Task["status"] }) =>
+        useThumbnailPreview({
+          channel: sampleChannel,
+          episode: sampleEpisode,
+          episodeId: "ep-202",
+          activeEpisodeTask: { task_id: "thumb", status } as Task,
+        }),
+      { initialProps: { status: "RUNNING" as Task["status"] } },
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10_000);
+    });
+    expect(getThumbnail).toHaveBeenCalledTimes(2);
+    await act(async () => {
+      resolvePoll({ manifest: sampleManifest });
+      await Promise.resolve();
+    });
+    rerender({ status: "COMPLETED" });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10_000);
+    });
+    expect(getThumbnail).toHaveBeenCalledTimes(2);
+    unmount();
     vi.useRealTimers();
   });
 });

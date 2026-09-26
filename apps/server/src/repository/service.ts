@@ -183,7 +183,10 @@ export class RepositoryService {
     const key = `${channelId}/${episodeId}`;
     const previous = this.artifactMutationQueues.get(key) ?? Promise.resolve();
     const current = previous.catch(() => undefined).then(operation);
-    const tail: Promise<void> = current.then(() => undefined);
+    const tail: Promise<void> = current.then(
+      () => undefined,
+      () => undefined,
+    );
     this.artifactMutationQueues.set(key, tail);
     return current.finally(() => {
       if (this.artifactMutationQueues.get(key) === tail) this.artifactMutationQueues.delete(key);

@@ -4,6 +4,7 @@ import { waitForTaskTerminal } from "./pipelineHelpers.js";
 import { runQuizV2Pipeline } from "./quizV2PipelineRunner.js";
 import type { PipelineRun, TaskManagerRuntime } from "../runtime.js";
 import { synthesizeScenesFromQuiz } from "../../quiz/domain/quizArtifactSynthesizer.js";
+import { recordIndependentStageTiming } from "./independentStageTiming.js";
 
 type PipelineStepFn = (label: string, percent: number, childType: TaskType, shouldRun: () => Promise<boolean>) => Promise<boolean>;
 
@@ -58,21 +59,7 @@ async function runVideoRenderStep(runtime: TaskManagerRuntime, task: Task, episo
       }
     });
     if (completed.status !== "COMPLETED") throw new Error(`Video render failed: ${completed.error ?? completed.status}`);
-    const renderDuration = Math.max(0, Math.round((Date.now() - renderStartMs) / 1000));
-    const existingTimings = (await runtime.repository.readQuizStageTimings?.(task.channel_id, episodeId)) ?? {
-      schema_version: 1,
-      episode_id: episodeId,
-      stages: {},
-      parallel_groups: {},
-    };
-    if (!existingTimings.stages) existingTimings.stages = {};
-    existingTimings.stages.render = {
-      started_at: new Date(renderStartMs).toISOString(),
-      completed_at: new Date().toISOString(),
-      duration_seconds: renderDuration,
-    };
-    existingTimings.updated_at = new Date().toISOString();
-    await runtime.repository.writeQuizStageTimings?.(task.channel_id, episodeId, existingTimings)?.catch?.(() => {});
+    await recordIndependentStageTiming(runtime.repository, task, "render", renderStartMs, true);
   } finally {
     run.children.delete(videoChild.task_id);
   }
@@ -120,6 +107,17 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     await runQuizV2Pipeline.call(this, task);
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
+    const thumbnail = this.submit(
+      "GENERATE_THUMBNAIL",
+      task.channel_id,
+      episodeId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      task.task_id,
+    );
+    run.children.add(thumbnail.task_id);
     await runVideoRenderStep(this, task, episodeId, run);
 
     await this.finish(task.task_id, "COMPLETED", null, []);

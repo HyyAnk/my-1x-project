@@ -128,14 +128,14 @@ export async function resolveIntroOutroContextPreview(params: ResolveContextPara
       : identity.status;
   publicContext.identity_profile_id = identity?.profile_id ?? null;
   publicContext.identity_status = identityStatus;
-  if (identityStatus !== "reviewed") {
+  if (identityStatus !== "reviewed" && identityStatus !== "ready") {
     publicContext.issues.push({
       code: identityStatus === "stale" ? "IDENTITY_PROFILE_STALE" : "IDENTITY_REVIEW_REQUIRED",
       message:
         identityStatus === "stale"
-          ? "The mascot style image changed. Analyze and review it again."
-          : "Analyze and review this mascot style before generation.",
-      blocking: true,
+          ? "The changed mascot style will be analyzed during generation."
+          : "Mascot identity will be prepared during generation.",
+      blocking: false,
     });
   }
 

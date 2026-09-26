@@ -3,7 +3,8 @@ import path from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { IntroOutroScriptRevisionSchema, nowIso, type IntroOutroScriptProject, type IntroOutroScriptRevision } from "@studio/shared";
 import { IntroOutroScriptError } from "../errors.js";
-import { fingerprint } from "../fingerprint.js";
+import { hasBlockingIssues, validateScriptContent } from "../validation.js";
+import { compileProductionPrompt } from "../productionPrompt.js";
 import type { IntroOutroProjectStore } from "./projectStore.js";
 import { IntroOutroScriptStorage, isMissingFile, safeScriptId } from "./storage.js";
 
@@ -66,6 +67,7 @@ export class IntroOutroRevisionStore {
               [revision.clip_kind]: {
                 ...current.drafts[revision.clip_kind],
                 content: revision.content,
+                prompt_text: compileProductionPrompt(revision),
                 seed_selection: revision.seed_selection,
                 validation_issues: revision.validation_issues,
                 source_revision_id: revision.revision_id,
@@ -100,14 +102,11 @@ export class IntroOutroRevisionStore {
 
   async approve(channelId: string, projectId: string, revisionId: string, expectedVersion: number): Promise<IntroOutroScriptProject> {
     const revision = await this.get(channelId, projectId, revisionId);
+    const localIssues = revision.identity_snapshot
+      ? validateScriptContent(revision.content, revision.identity_snapshot, revision.seed_snapshot)
+      : [];
     if (
-      (revision.template_version === "intro-outro-script-v3" || revision.template_version === "intro-outro-script-v4") &&
-      (!revision.quality_review || revision.quality_review.content_fingerprint !== fingerprint(revision.content))
-    ) {
-      throw new IntroOutroScriptError("This revision needs a current production quality review", "SCRIPT_VALIDATION_FAILED");
-    }
-    if (
-      revision.validation_issues.some((item) => item.severity === "error") ||
+      hasBlockingIssues([...revision.validation_issues, ...localIssues]) ||
       revision.quality_review?.findings.some((item) => item.severity === "error")
     ) {
       throw new IntroOutroScriptError("Resolve blocking validation errors before approval", "SCRIPT_VALIDATION_FAILED");

@@ -1,6 +1,6 @@
 # Provider system
 
-Reviewed against repository boundaries on 2026-09-09. Configured remote generation can require credentials, network access and billable requests. Local storage does not imply fully offline generation.
+Configured remote generation can require credentials, network access and billable requests. Local storage does not imply fully offline generation.
 
 In Quiz Engine V2, provider generation operates primarily on quiz voice plans and asset plans, with scene-level interfaces maintained for backward compatibility:
 

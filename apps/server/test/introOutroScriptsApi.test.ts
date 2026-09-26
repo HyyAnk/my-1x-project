@@ -19,120 +19,10 @@ import { createTestImageBuffer } from "./channelAssetsTestHelpers.js";
 import { parseZipArchive } from "../src/quiz/zipHelper.js";
 
 const execFileAsync = promisify(execFile);
-type ContentOptions = {
-  imageAttachments?: Array<{ path: string; role: string }>;
-};
-
-class FakeGeminiFlashClient {
-  readonly attachments: Array<Array<{ path: string; role: string }>> = [];
-  readonly generationPrompts: string[] = [];
-  reviewCalls = 0;
-  reviewFailure: "none" | "error" | "timeout" = "none";
-  rejectReview = false;
-  overloadFirstIntro = false;
-  failOutro = false;
-  delayMs = 0;
-
-  async connect(): Promise<void> {}
-
-  async generateContent(prompt: string, options?: ContentOptions): Promise<string> {
-    this.attachments.push(options?.imageAttachments ?? []);
-    if (prompt.startsWith("SCRIPT PRODUCTION QUALITY REVIEW")) {
-      this.reviewCalls += 1;
-      if (this.reviewFailure !== "none") {
-        const error = new Error(this.reviewFailure === "timeout" ? "Forced quality-review timeout" : "Forced quality-review failure");
-        if (this.reviewFailure === "timeout") error.name = "TimeoutError";
-        throw error;
-      }
-      const overloaded = this.rejectReview || prompt.includes("Spin, jump, then bow");
-      return JSON.stringify({
-        findings: overloaded
-          ? [
-              {
-                code: "ACTION_OVERLOAD",
-                severity: "error",
-                path: "timeline.0.action",
-                message: "One principal action is possible in this beat; remove the gesture chain.",
-              },
-            ]
-          : [],
-      });
-    }
-    if (prompt.includes("analyzing one mascot reference image")) {
-      return JSON.stringify({
-        summary: "A flat asymmetric mascot with one rigid side marker and no visible limbs",
-        morphology: ["Single rounded body", "No visible limbs"],
-        features: [
-          {
-            id: "side_marker",
-            description: "Rigid marker attached to the left edge",
-            body_anchor: "left edge",
-            material: "flat graphic",
-            rigidity: "rigid",
-            importance: "signature",
-            visibility_rule: "Keep visible in hero framing",
-          },
-        ],
-        capabilities: {
-          locomotion: "unknown",
-          grasping: "unsupported",
-          pointing: "unsupported",
-          waving: "unsupported",
-          flight: "unsupported",
-          facial_expression: "unknown",
-          speech: "unknown",
-          ride_vehicle: "unsupported",
-          hold_props: "unsupported",
-        },
-        motion_constraints: ["Keep side_marker rigid and attached"],
-        palette: ["#3366FF"],
-        style_description: "Flat vector art with restrained motion",
-        allowed_accessories: [],
-      });
-    }
-
-    if (this.delayMs > 0) await new Promise((resolve) => setTimeout(resolve, this.delayMs));
-
-    const intro = prompt.includes("structured intro script");
-    this.generationPrompts.push(prompt);
-    if (!intro && this.failOutro) throw new Error("Forced outro failure");
-    const roles = intro ? ["entrance", "brand_interaction", "handoff"] : ["recognition", "invitation", "farewell"];
-    return JSON.stringify({
-      production_directions: {
-        reference_mode: "character_reference",
-        logo_mode: "none",
-        voice_source: "none",
-        logo_placement: "No logo",
-        opening_state: "Centered rigid mascot",
-        closing_state: "Settled mascot",
-        end_hold_seconds: 0.75,
-      },
-      style: {
-        description: "Flat vector staging that preserves the supplied mascot",
-        palette: ["#3366FF"],
-        staging: "Center stage with open negative space",
-        motion_language: "Rigid marker remains fixed while the body translates gently",
-      },
-      timeline: roles.map((role, index) => ({
-        beat: index + 1,
-        role,
-        start_seconds: [0, 2, 5][index],
-        end_seconds: [2, 5, 8][index],
-        action:
-          intro && index === 0 && this.overloadFirstIntro && !prompt.includes("REPAIR REQUEST")
-            ? "Spin, jump, then bow"
-            : `One clear ${role.replaceAll("_", " ")} action`,
-        capability_ids: [],
-        props: [],
-        visible_feature_ids: ["side_marker"],
-      })),
-      voiceover: { enabled: false, lines: [] },
-      audio: { music_direction: "Light family quiz cue", events: [] },
-      camera: [{ start_seconds: 0, end_seconds: 8, framing: "Medium wide", movement: "Static" }],
-      consistency: { allowed_visible_text: [], restrictions: ["Keep side_marker rigid and attached"] },
-    });
-  }
-}
+import { FakeGeminiFlashClient } from "./fixtures/introOutroScriptClient.js";
+import { registerSinglePassScriptCases } from "./fixtures/singlePassScriptCases.js";
+import { registerAutomaticIdentityCases } from "./fixtures/automaticIdentityCases.js";
+import { registerIndependentScriptCases } from "./fixtures/independentScriptCases.js";
 
 async function waitForJob(app: StudioApp, channelId: string, jobId: string): Promise<IntroOutroScriptJob> {
   for (let attempt = 0; attempt < 100; attempt += 1) {
@@ -206,7 +96,24 @@ describe("Intro/Outro Script Studio API", () => {
     await rm(root, { recursive: true, force: true });
   });
 
-  it("analyzes the actual mascot image, generates, reviews, exports, and links uploaded videos", async () => {
+  it("exposes resource previews without generating missing transparency", async () => {
+    const response = await app.server.inject({
+      method: "GET",
+      url: `/api/channels/${channelId}/intro-outro-resources?style_preset_id=preset_arcade_classic`,
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.json().resources).toEqual([
+      { kind: "mascot", preview_url: expect.stringContaining("flat-anchor.png"), transparent_url: null },
+      { kind: "logo", preview_url: null, transparent_url: null },
+    ]);
+    const missing = await app.server.inject({
+      method: "GET",
+      url: `/api/channels/${channelId}/intro-outro-resources/logo?style_preset_id=preset_arcade_classic`,
+    });
+    expect(missing.statusCode).toBe(404);
+  });
+
+  it("analyzes the mascot, generates independent clips, exports, and links uploaded videos", async () => {
     const contextUrl = `/api/channels/${channelId}/intro-outro-context?style_preset_id=preset_arcade_classic`;
     const initialContextResponse = await app.server.inject({ method: "GET", url: contextUrl });
     expect(initialContextResponse.statusCode).toBe(200);
@@ -271,6 +178,8 @@ describe("Intro/Outro Script Studio API", () => {
     const generationJob = await waitForJob(app, channelId, generateResponse.json<{ job: IntroOutroScriptJob }>().job.job_id);
     expect(generationJob.status).toBe("succeeded");
     expect(generationJob.result_revision_ids).toHaveLength(2);
+    expect(fakeGemini.generationPrompts).toHaveLength(2);
+    expect(fakeGemini.reviewCalls).toBe(0);
     expect(fakeGemini.attachments.slice(1).every((items) => items.some((item) => item.role === "mascot_subject"))).toBe(true);
 
     const projectResponse = await app.server.inject({
@@ -278,7 +187,7 @@ describe("Intro/Outro Script Studio API", () => {
       url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}`,
     });
     project = projectResponse.json<{ project: IntroOutroScriptProject }>().project;
-    expect(project.drafts.intro.content?.timeline.map((beat) => beat.end_seconds)).toEqual([2, 5, 8]);
+    expect(project.drafts.intro.content?.timeline.map((beat) => beat.end_seconds)).toEqual([2.5, 5.5, 8]);
     expect(project.drafts.outro.content?.identity.mascot_style_id).toBe(analyzed.context.mascot_style_id);
 
     const idempotentResponse = await app.server.inject({
@@ -325,9 +234,19 @@ describe("Intro/Outro Script Studio API", () => {
     });
     expect(exportResponse.statusCode).toBe(200);
     expect(exportResponse.json<{ prompt: string }>().prompt).toContain("REFERENCE ASSETS");
+    expect(exportResponse.json<{ prompt: string }>().prompt).toContain("synchronized mouth movement");
+    expect(exportResponse.json<{ prompt: string }>().prompt).not.toContain("no mascot lip-sync");
+    expect(outroRevision.content.production_directions?.voice_source).toBe("mascot");
+    expect(outroRevision.content.voiceover.lines[0].text).toBe("See you next quiz!");
     expect(exportResponse.json<{ prompt: string }>().prompt).toContain("Rigid marker attached to the left edge");
     expect(introRevision.identity_snapshot?.profile_id).toBe(analyzed.identity.profile_id);
-    expect(introRevision.quality_review?.findings).toEqual([]);
+    expect(introRevision.quality_review).toBeUndefined();
+    expect(introRevision.template_version).toBe("intro-outro-script-v8");
+    expect(introRevision.content.production_directions?.voice_source).toBe("mascot");
+    expect(introRevision.content.voiceover.lines[0].text).toBe("Quiz time!");
+    expect(introRevision.content.dialogue_policy).toBe("mascot-direct-speech-v1");
+    expect(outroRevision.content.style).toEqual(introRevision.content.style);
+    expect(outroRevision.content.audio.music_direction).toBe(introRevision.content.audio.music_direction);
     const packageResponse = await app.server.inject({
       method: "GET",
       url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}/revisions/${introRevision.revision_id}/package`,
@@ -342,7 +261,8 @@ describe("Intro/Outro Script Studio API", () => {
       Buffer.from(entries.find((entry) => entry.filename === "revision.json")!.data).toString("utf8"),
     ) as IntroOutroScriptRevision;
     expect(packagedRevision.identity_snapshot?.profile_id).toBe(analyzed.identity.profile_id);
-    expect(packagedRevision.quality_review?.content_fingerprint).toBe(introRevision.quality_review?.content_fingerprint);
+    expect(packagedRevision.quality_review).toBeUndefined();
+    expect(packagedRevision.template_version).toBe("intro-outro-script-v8");
     expect(Buffer.from(entries.find((entry) => entry.filename === "prompt.txt")!.data).toString("utf8")).toContain(
       "Rigid marker attached to the left edge",
     );
@@ -390,7 +310,7 @@ describe("Intro/Outro Script Studio API", () => {
       expect(job.status).toBe("partial");
       expect(job.result_revision_ids).toHaveLength(1);
       expect(job.failed_clip_kinds).toEqual(["outro"]);
-      expect(job.clip_errors[0]).toMatchObject({ clip_kind: "outro", message: "Forced outro failure" });
+      expect(job.clip_errors[0]).toMatchObject({ clip_kind: "outro", message: "Missing outro script; retry this clip." });
     } finally {
       fakeGemini.failOutro = false;
     }
@@ -433,15 +353,14 @@ describe("Intro/Outro Script Studio API", () => {
     }
   });
 
-  it("repairs a script after the independent reviewer finds overloaded action", async () => {
-    fakeGemini.overloadFirstIntro = true;
-    const firstPromptIndex = fakeGemini.generationPrompts.length;
-    const firstReviewCount = fakeGemini.reviewCalls;
+  it.each(["invalidIntro", "malformedOutput"] as const)("fails %s after one call without automatic review or repair", async (failure) => {
+    fakeGemini[failure] = true;
+    const calls = fakeGemini.generationPrompts.length;
     try {
       const created = await app.server.inject({
         method: "POST",
         url: `/api/channels/${channelId}/intro-outro-scripts`,
-        payload: { style_preset_id: "preset_arcade_classic", name: "Reviewed Repair" },
+        payload: { style_preset_id: "preset_arcade_classic", name: "Invalid Output" },
       });
       const project = created.json<{ project: IntroOutroScriptProject }>().project;
       const response = await app.server.inject({
@@ -449,62 +368,26 @@ describe("Intro/Outro Script Studio API", () => {
         url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}/generate`,
         payload: {
           expected_version: project.version,
-          idempotency_key: "review-repair-v1",
-          clips: [{ clip_kind: "intro", duration_seconds: 8, randomization_seed: "repair-seed" }],
-        },
-      });
-      const job = await waitForJob(app, channelId, response.json<{ job: IntroOutroScriptJob }>().job.job_id);
-      expect(job.status).toBe("succeeded");
-      expect(fakeGemini.reviewCalls - firstReviewCount).toBe(2);
-      expect(fakeGemini.generationPrompts.slice(firstPromptIndex)).toHaveLength(2);
-      expect(fakeGemini.generationPrompts.at(-1)).toContain("REPAIR REQUEST");
-      const revisions = await app.server.inject({
-        method: "GET",
-        url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}/revisions`,
-      });
-      const revision = revisions.json<{ revisions: IntroOutroScriptRevision[] }>().revisions[0];
-      expect(revision.content.timeline[0].action).toBe("One clear entrance action");
-      expect(revision.quality_review?.findings).toEqual([]);
-    } finally {
-      fakeGemini.overloadFirstIntro = false;
-    }
-  });
-
-  it("stops after bounded quality-review failures without persisting a revision", async () => {
-    fakeGemini.rejectReview = true;
-    const reviewCount = fakeGemini.reviewCalls;
-    try {
-      const created = await app.server.inject({
-        method: "POST",
-        url: `/api/channels/${channelId}/intro-outro-scripts`,
-        payload: { style_preset_id: "preset_arcade_classic", name: "Review Rejection" },
-      });
-      const project = created.json<{ project: IntroOutroScriptProject }>().project;
-      const response = await app.server.inject({
-        method: "POST",
-        url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}/generate`,
-        payload: {
-          expected_version: project.version,
-          idempotency_key: "review-rejection-v1",
-          clips: [{ clip_kind: "intro", duration_seconds: 8, randomization_seed: "rejection-seed" }],
+          idempotency_key: `invalid-${failure}`,
+          clips: [{ clip_kind: "intro", duration_seconds: 8, randomization_seed: "invalid" }],
         },
       });
       const job = await waitForJob(app, channelId, response.json<{ job: IntroOutroScriptJob }>().job.job_id);
       expect(job.status).toBe("failed");
       expect(job.result_revision_ids).toEqual([]);
-      expect(fakeGemini.reviewCalls - reviewCount).toBe(3);
-      expect(job.clip_errors[0].message).toContain("One principal action");
+      expect(fakeGemini.generationPrompts.length - calls).toBe(1);
+      expect(fakeGemini.reviewCalls).toBe(0);
       const revisions = await app.server.inject({
         method: "GET",
         url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}/revisions`,
       });
       expect(revisions.json<{ revisions: IntroOutroScriptRevision[] }>().revisions).toEqual([]);
     } finally {
-      fakeGemini.rejectReview = false;
+      fakeGemini[failure] = false;
     }
   });
 
-  it("preserves valid unreviewed revisions after review errors or timeouts and blocks approval", async () => {
+  it("approves locally valid revisions without calling an unavailable AI reviewer", async () => {
     try {
       for (const reviewFailure of ["error", "timeout"] as const) {
         fakeGemini.reviewFailure = reviewFailure;
@@ -531,12 +414,7 @@ describe("Intro/Outro Script Studio API", () => {
         const revisionsResponse = await app.server.inject({ method: "GET", url: `${base}/revisions` });
         const revision = revisionsResponse.json<{ revisions: IntroOutroScriptRevision[] }>().revisions[0];
         expect(revision.quality_review).toBeUndefined();
-        expect(revision.validation_issues).toContainEqual({
-          code: "QUALITY_REVIEW_UNAVAILABLE",
-          severity: "warning",
-          path: "quality_review",
-          message: "AI production review did not complete. Save a new revision to retry the review before approval.",
-        });
+        expect(revision.validation_issues).toEqual([]);
         expect(revision.validation_issues.some((issue) => issue.severity === "error")).toBe(false);
 
         const refreshedProject = (await app.server.inject({ method: "GET", url: base })).json<{
@@ -547,11 +425,8 @@ describe("Intro/Outro Script Studio API", () => {
           url: `${base}/approve`,
           payload: { revision_id: revision.revision_id, expected_version: refreshedProject.version },
         });
-        expect(approval.statusCode).toBe(422);
-        expect(approval.json<{ code: string; error: string }>()).toMatchObject({
-          code: "SCRIPT_VALIDATION_FAILED",
-          error: "This revision needs a current production quality review",
-        });
+        expect(approval.statusCode).toBe(200);
+        expect(fakeGemini.reviewCalls).toBe(0);
       }
     } finally {
       fakeGemini.reviewFailure = "none";
@@ -622,6 +497,7 @@ describe("Intro/Outro Script Studio API", () => {
     });
     expect(updated.statusCode).toBe(200);
     project = updated.json<{ project: IntroOutroScriptProject }>().project;
+    const connectCalls = fakeGemini.connectCalls;
     checkpoint = await app.server.inject({
       method: "POST",
       url: `${base}/revisions`,
@@ -655,7 +531,9 @@ describe("Intro/Outro Script Studio API", () => {
     const saved = checkpoint.json<{ revision: IntroOutroScriptRevision }>().revision;
     expect(saved.origin).toBe("edited");
     expect(saved.identity_snapshot?.profile_id).toBe(outro.identity.profile_id);
-    expect(saved.quality_review?.findings).toEqual([]);
+    expect(saved.quality_review).toBeUndefined();
+    expect(fakeGemini.reviewCalls).toBe(0);
+    expect(fakeGemini.connectCalls).toBe(connectCalls);
   });
 
   it("does not approve a revision whose saved quality review has a blocking finding", async () => {
@@ -672,14 +550,20 @@ describe("Intro/Outro Script Studio API", () => {
     const saved = await readFile(revisionPath, "utf8");
     try {
       const revision = JSON.parse(saved) as IntroOutroScriptRevision;
-      revision.quality_review!.findings = [
-        {
-          code: "IDENTITY_DRIFT",
-          severity: "error",
-          path: "timeline.1.action",
-          message: "The action changes a signature feature.",
-        },
-      ];
+      revision.quality_review = {
+        version: "script-quality-v1",
+        requested_model: "gemini-flash",
+        reviewed_at: revision.created_at,
+        content_fingerprint: "f".repeat(64),
+        findings: [
+          {
+            code: "IDENTITY_DRIFT",
+            severity: "error",
+            path: "timeline.1.action",
+            message: "The action changes a signature feature.",
+          },
+        ],
+      };
       await writeFile(revisionPath, JSON.stringify(revision));
       const project = (
         await app.server.inject({ method: "GET", url: `/api/channels/${channelId}/intro-outro-scripts/${firstProjectId}` })
@@ -721,4 +605,53 @@ describe("Intro/Outro Script Studio API", () => {
       await writeFile(referencePath, saved);
     }
   });
+
+  it("generates a batch of script pairs concurrently and reports active jobs", async () => {
+    const batchResponse = await app.server.inject({
+      method: "POST",
+      url: `/api/channels/${channelId}/intro-outro-scripts/batch-generate`,
+      payload: {
+        style_preset_id: "preset_arcade_classic",
+        count: 3,
+        strategy: "random_seeds",
+        durations: { intro: 8, outro: 8 },
+        logo_mode: "supplied_reference",
+        naming_prefix: "Batch Test",
+      },
+    });
+    expect(batchResponse.statusCode).toBe(202);
+    const body = batchResponse.json<{
+      batch_id: string;
+      total_jobs: number;
+      project_ids: string[];
+      job_ids: string[];
+    }>();
+    expect(body.total_jobs).toBe(3);
+    expect(body.project_ids).toHaveLength(3);
+    expect(body.job_ids).toHaveLength(3);
+
+    const activeJobsRes = await app.server.inject({
+      method: "GET",
+      url: `/api/channels/${channelId}/intro-outro-script-jobs`,
+    });
+    expect(activeJobsRes.statusCode).toBe(200);
+
+    const completedJobs = await Promise.all(body.job_ids.map((id) => waitForJob(app, channelId, id)));
+    for (const job of completedJobs) {
+      expect(job.status).toBe("succeeded");
+      expect(job.result_revision_ids.length).toBeGreaterThanOrEqual(1);
+    }
+
+    for (const projectId of body.project_ids) {
+      const projRes = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${channelId}/intro-outro-scripts/${projectId}`,
+      });
+      expect(projRes.statusCode).toBe(200);
+      expect(projRes.json<{ project: IntroOutroScriptProject }>().project.name).toContain("Batch Test");
+    }
+  });
+  registerSinglePassScriptCases(() => ({ app, channelId, client: fakeGemini }), waitForJob);
+  registerIndependentScriptCases(() => ({ app, channelId, client: fakeGemini }), waitForJob);
+  registerAutomaticIdentityCases(() => ({ app, client: fakeGemini }), waitForJob);
 });

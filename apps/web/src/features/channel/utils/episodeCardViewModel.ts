@@ -47,6 +47,7 @@ const taskLabels: Record<Task["task_type"], string> = {
   GENERATE_AUDIO: "Generating audio",
   GENERATE_BUNDLE_IMAGE: "Generating visuals",
   GENERATE_VIDEO: "Rendering video",
+  GENERATE_THUMBNAIL: "Generating thumbnail",
   GENERATE_QUIZ: "Drafting quiz",
   GENERATE_SHORT_REEL: "Generating short-reel",
   GENERATE_SHORT_REEL_PACKAGE: "Generating short-reel package",
@@ -60,6 +61,7 @@ function resolveLayoutLabel(format?: Episode["quiz_config"]["quiz_format"]): str
 }
 
 function resolveStatusLabel(episode: Episode, tasks: Task[]): string {
+  tasks = tasks.filter((task) => task.task_type !== "GENERATE_THUMBNAIL");
   const latestActiveTask = tasks.filter(isTaskActive).sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
   if (latestActiveTask) return latestActiveTask.progress_message.trim() || taskLabels[latestActiveTask.task_type];
 

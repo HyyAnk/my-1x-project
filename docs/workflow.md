@@ -1,6 +1,6 @@
 # Development and verification
 
-Reviewed on 2026-09-09. Follow [AGENTS.md](../AGENTS.md) for engineering rules and [Documentation](README.md) for the reading order.
+Follow [AGENTS.md](../AGENTS.md) for engineering rules and [Documentation](README.md) for the reading order.
 
 ## Before changing code
 
@@ -16,13 +16,15 @@ Retired agent claim/lease scripts are not required. This does not remove applica
 
 Commands are defined in [package.json](../package.json); [CI](../.github/workflows/ci.yml) defines automated gates.
 
+`pnpm test` is the fast shared, server, and web suite. `pnpm test:system` runs resource-intensive server tests such as browser, FFmpeg, render, and process-lifecycle checks. `pnpm test:full` includes both tiers; `pnpm check:all` uses the full suite. Playwright end-to-end and visual regression checks remain separate. Place focused tests at the cheapest boundary that protects observable behavior; keep migration, concurrency, and persistence coverage when removing obsolete tests.
+
 | Command              | Scope                                               |
 | -------------------- | --------------------------------------------------- |
 | `pnpm build:shared`  | Build shared contracts before consumers when needed |
 | `pnpm typecheck`     | Build shared and typecheck workspace                |
 | `pnpm test`          | Shared, server and web unit/integration suites      |
 | `pnpm run audit`     | Quiz choice and quiz-only integrity audits          |
-| `pnpm check:all`     | Typecheck, tests and audits only                    |
+| `pnpm check:all`     | Typecheck, full tests, audits, suppression ratchet  |
 | `pnpm lint`          | ESLint                                              |
 | `pnpm format:check`  | Formatting policy and baseline check                |
 | `pnpm build`         | Workspace production build                          |
@@ -58,4 +60,4 @@ The former standalone GitHub publishing checklist has been consolidated here.
 
 ## Documentation maintenance
 
-Update domain docs when public contracts, persistence, supported workflows or failure handling change. Prefer source links over duplicated catalogs and line-number claims. Date a source review without implying runtime acceptance. Keep historical reports separate from current implementation guidance.
+Update domain docs when public contracts, persistence, supported workflows or failure handling change. Prefer source links over duplicated catalogs, milestone reports, and fixed test counts. Remove completed plans once their durable behavior is described in a current guide.

@@ -1,6 +1,6 @@
 # Short Reels
 
-Reviewed against working-tree boundaries on 2026-09-09. Short Reels are separate source-bound products, not portrait Episode records.
+Short Reels are separate source-bound products, not portrait Episode records.
 
 ## Contracts and entry points
 
@@ -23,6 +23,7 @@ Deliverables such as script, references, cover and publishing data have independ
 ### V2 Pipeline & Dependency Graph
 
 The generation pipeline enforces a strict dependency progression:
+
 ```
 Topic & Complete Source
        │
@@ -45,7 +46,7 @@ Topic & Complete Source
 
 ### Publishing Contracts
 
-- **Two Fields Only**: Publishing consists strictly of `title` (maximum 80 characters) and `description` (maximum 600 characters, including hashtags and call-to-action).
+- **Two Fields Only**: Publishing consists of `title` and `description`. Generated copy is limited to 80 and 600 characters respectively; the persisted edit contract accepts longer user-written text. Read the active schemas before changing either limit.
 - **No Split Fields**: Deprecated split fields (`hook`, `cta`, `hashtags` as array) are eliminated from contracts and UI.
 - **Single-Source Copy**: Export produces `publishing.txt` formatted strictly as:
   ```text
@@ -83,7 +84,8 @@ Canonical source identity remains English; audience-facing localized projections
 ### Export Verification & Manifest
 
 Export generates a verified ZIP archive containing:
-1. `manifest.json` (version 2 schema with asset checksums, dimensions, model notes, and provenance)
+
+1. `manifest.json` (schema version 1 with asset checksums, dimensions, model notes, and provenance)
 2. `script.json` (machine-readable 3-segment script)
 3. `script.md` (formatted human-readable script)
 4. `publishing.txt` (`TITLE:` and `DESCRIPTION:` sections)
@@ -91,27 +93,13 @@ Export generates a verified ZIP archive containing:
 6. `prompts/01-generate.txt`, `prompts/02-extend.txt`, `prompts/03-extend.txt` (compiled flow prompts)
 7. `references/mascot.png` (or `.webp`)
 8. `references/style.png` (or `.webp`)
-9. `cover.png` (1080x1920 portrait cover)
+9. `cover.<image extension>` (1080x1920 portrait cover)
 10. `localization.json` (when localized)
-
-### Safe Rollback Procedure
-
-In the event of an emergency requiring reversal of a v2 upgrade to a prior v1 state:
-1. **Stop Server Process**: Halt the specific owning server instance to ensure no background generation or CAS mutations are in-flight.
-2. **Locate Canonical Storage**: Navigate to the exact channel directory in storage (`channels/<slug>/short-reels/<reel_id>/`).
-3. **Inspect Backup Files**: Verify the presence of automatic backup-on-write files (`<reel_id>.json.v1.bak` or timestamped backups) and check their SHA-256 integrity.
-4. **Preserve V2 Artifacts**: Move current v2 files and assets to an isolated quarantine folder (`channels/<slug>/short-reels/<reel_id>/quarantine-v2/`) to avoid data loss.
-5. **Restore V1 Record**: Copy the verified v1 backup to `<reel_id>.json`.
-6. **User Authorization**: Manual rollback must be executed with explicit operator consent; never execute broad automated batch rollbacks across multi-tenant channels.
 
 ## Verification
 
 Start with [shortReelRevision.test.ts](../apps/server/test/shortReelRevision.test.ts), [shortReelRoutesConflict.test.ts](../apps/server/test/shortReelRoutesConflict.test.ts), [shortReelLocalization.test.ts](../apps/server/test/shortReelLocalization.test.ts), and [shortReelRoutesExport.test.ts](../apps/server/test/shortReelRoutesExport.test.ts).
 
-Run the full Phase 01–07 test suites:
-- Server suites: `pnpm --filter @studio/server test test/shortReel` (39 files, 272+ tests)
-- Web suites: `pnpm --filter @studio/web test src/features/shortReel` (7 files, 32+ tests)
-- Shared contract suites: `pnpm --filter @studio/shared test` (80 tests)
-- Workspace typecheck: `pnpm typecheck`
+For broader changes, run the relevant Short-Reel server and web suites, shared contracts, and `pnpm typecheck`. See [Workflow](workflow.md) for the current test commands.
 
 Verify repeated confirmation, concurrent edits, cancellation, late results, missing localization, stale deliverables and export recovery. Follow [Workflow](workflow.md) for UI and cross-system checks; historical acceptance reports do not substitute for current tests.

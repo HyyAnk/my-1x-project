@@ -3,6 +3,7 @@ import { IsoDate } from "../schemas/common.js";
 import { IntroOutroReferenceAssetSchema, MascotStyleIdentityProfileSchema } from "./identity.js";
 import { ScriptProductionDirectionsSchema, ScriptQualityReviewSchema } from "./quality.js";
 import { CreativeSeedSchema, IntroOutroClipKindSchema, IntroOutroSeedSelectionSchema } from "./seeds.js";
+import { ScriptChoreographySchema } from "./choreography.js";
 
 export const IntroOutroValidationIssueSchema = z
   .object({
@@ -49,6 +50,7 @@ const TimelineBeatSchema = z
     start_seconds: z.number().min(0).max(10),
     end_seconds: z.number().positive().max(10),
     action: z.string().trim().min(1).max(1400),
+    choreography: ScriptChoreographySchema.optional(),
     capability_ids: z.array(z.string().trim().min(1).max(80)).max(8).default([]),
     props: z.array(z.string().trim().min(1).max(100)).max(3).default([]),
     visible_feature_ids: z.array(z.string().trim().min(1).max(80)).max(20).default([]),
@@ -82,6 +84,8 @@ const CameraDirectionSchema = z
 
 export const IntroOutroScriptContentSchema = z
   .object({
+    production_policy: z.literal("single-action-hero-hold-v1").optional(),
+    dialogue_policy: z.literal("mascot-direct-speech-v1").optional(),
     production: ProductionLayerSchema,
     production_directions: ScriptProductionDirectionsSchema.optional(),
     identity: IdentityLayerSchema,
