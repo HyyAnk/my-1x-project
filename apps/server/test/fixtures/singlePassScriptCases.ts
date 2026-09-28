@@ -126,7 +126,7 @@ export function registerSinglePassScriptCases(getContext: () => Context, waitFor
     }
   });
 
-  it("retains the outro when the intro fails local validation", async () => {
+  it("retains both clips when the intro has an advisory capability conflict", async () => {
     const context = getContext();
     const { app, channelId, client } = context;
     const project = await createProject(context);
@@ -134,9 +134,9 @@ export function registerSinglePassScriptCases(getContext: () => Context, waitFor
     try {
       const started = await generate(context, project, ["intro", "outro"], "invalid-intro-valid-outro");
       const final = await waitForJob(app, channelId, started.job_id);
-      expect(final.status).toBe("partial");
-      expect(final.failed_clip_kinds).toEqual(["intro"]);
-      expect(final.result_revision_ids).toHaveLength(1);
+      expect(final.status).toBe("succeeded");
+      expect(final.failed_clip_kinds).toEqual([]);
+      expect(final.result_revision_ids).toHaveLength(2);
     } finally {
       client.invalidIntro = false;
     }

@@ -36,23 +36,23 @@ const IdentityLayerSchema = z
 
 const StyleLayerSchema = z
   .object({
-    description: z.string().trim().min(1).max(1200),
+    description: z.string().trim().min(1),
     palette: z.array(z.string().trim().min(1).max(80)).max(12).default([]),
-    staging: z.string().trim().min(1).max(800),
-    motion_language: z.string().trim().min(1).max(800),
+    staging: z.string().trim().min(1),
+    motion_language: z.string().trim().min(1),
   })
   .strict();
 
 const TimelineBeatSchema = z
   .object({
-    beat: z.number().int().min(1).max(3),
+    beat: z.number().int().min(1),
     role: z.string().trim().min(1).max(80),
     start_seconds: z.number().min(0).max(10),
     end_seconds: z.number().positive().max(10),
-    action: z.string().trim().min(1).max(1400),
+    action: z.string().trim().min(1),
     choreography: ScriptChoreographySchema.optional(),
     capability_ids: z.array(z.string().trim().min(1).max(80)).max(8).default([]),
-    props: z.array(z.string().trim().min(1).max(100)).max(3).default([]),
+    props: z.array(z.string().trim().min(1)).default([]),
     visible_feature_ids: z.array(z.string().trim().min(1).max(80)).max(20).default([]),
   })
   .strict();
@@ -61,15 +61,15 @@ const VoiceLineSchema = z
   .object({
     start_seconds: z.number().min(0).max(10),
     end_seconds: z.number().positive().max(10),
-    text: z.string().trim().min(1).max(240),
-    delivery: z.string().trim().min(1).max(240),
+    text: z.string().trim().min(1),
+    delivery: z.string().trim().min(1),
   })
   .strict();
 
 const TimedDirectionSchema = z
   .object({
     at_seconds: z.number().min(0).max(10),
-    direction: z.string().trim().min(1).max(400),
+    direction: z.string().trim().min(1),
   })
   .strict();
 
@@ -77,38 +77,38 @@ const CameraDirectionSchema = z
   .object({
     start_seconds: z.number().min(0).max(10),
     end_seconds: z.number().positive().max(10),
-    framing: z.string().trim().min(1).max(300),
-    movement: z.string().trim().min(1).max(300),
+    framing: z.string().trim().min(1),
+    movement: z.string().trim().min(1),
   })
   .strict();
 
 export const IntroOutroScriptContentSchema = z
   .object({
-    production_policy: z.literal("single-action-hero-hold-v1").optional(),
+    production_policy: z.enum(["single-action-hero-hold-v1", "dynamic-micro-narrative-v2", "creative-performance-v3"]).optional(),
     dialogue_policy: z.literal("mascot-direct-speech-v1").optional(),
     production: ProductionLayerSchema,
     production_directions: ScriptProductionDirectionsSchema.optional(),
     identity: IdentityLayerSchema,
     style: StyleLayerSchema,
-    timeline: z.array(TimelineBeatSchema).length(3),
+    timeline: z.array(TimelineBeatSchema).min(1),
     voiceover: z
       .object({
         enabled: z.boolean(),
-        lines: z.array(VoiceLineSchema).max(3),
+        lines: z.array(VoiceLineSchema),
       })
       .strict(),
     audio: z
       .object({
-        music_direction: z.string().trim().max(600).default(""),
-        events: z.array(TimedDirectionSchema).max(16).default([]),
+        music_direction: z.string().trim().default(""),
+        events: z.array(TimedDirectionSchema).default([]),
       })
       .strict(),
-    camera: z.array(CameraDirectionSchema).min(1).max(8),
+    camera: z.array(CameraDirectionSchema),
     consistency: z
       .object({
         preserve_feature_ids: z.array(z.string().trim().min(1)).max(40),
-        allowed_visible_text: z.array(z.string().trim().min(1).max(120)).max(12).default([]),
-        restrictions: z.array(z.string().trim().min(1).max(400)).max(30),
+        allowed_visible_text: z.array(z.string().trim().min(1)).default([]),
+        restrictions: z.array(z.string().trim().min(1)),
       })
       .strict(),
   })

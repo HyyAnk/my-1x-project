@@ -1,25 +1,7 @@
 import os from "node:os";
-import { existsSync } from "node:fs";
+import { tsImport } from "tsx/esm/api";
 
-function resolveHardwareBrowserPath() {
-  if (process.env.HYPERFRAMES_BROWSER_PATH && existsSync(process.env.HYPERFRAMES_BROWSER_PATH)) {
-    return process.env.HYPERFRAMES_BROWSER_PATH;
-  }
-  const candidatePaths = [
-    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-    "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
-    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
-    "/usr/bin/google-chrome",
-    "/usr/bin/google-chrome-stable",
-    "/usr/bin/chromium-browser",
-    "/usr/bin/chromium",
-  ];
-  for (const candidate of candidatePaths) {
-    if (existsSync(candidate)) return candidate;
-  }
-  return undefined;
-}
+const { resolveHardwareBrowserPath } = await tsImport("../apps/server/src/infrastructure/executables/browserDiscovery.ts", import.meta.url);
 
 function calculateOptimalWorkers(configuredWorkers) {
   if (typeof configuredWorkers === "number" && configuredWorkers > 0) {

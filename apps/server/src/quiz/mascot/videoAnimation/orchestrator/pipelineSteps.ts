@@ -103,7 +103,9 @@ function buildAnimationRevision(
     source_video_url: job.source_video_url,
     atlas_url: atlasUrl,
     manifest_url: `${basePath}/manifest.json`,
-    frame_urls: Array.from({ length: frameCount }, (_, i) => `${basePath}/frame_${String(i + 1).padStart(3, "0")}.png`),
+    ...(!hasTransparentWebm && !atlasUrl
+      ? { frame_urls: Array.from({ length: frameCount }, (_, i) => `${basePath}/frame_${String(i + 1).padStart(3, "0")}.png`) }
+      : {}),
     frame_count: frameCount,
     source_fps: manifest.fps ?? 24,
     playback_fps: playbackFps,

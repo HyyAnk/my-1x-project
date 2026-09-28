@@ -2,9 +2,10 @@ import type { CreativeSeed, IntroOutroClipKind, IntroOutroScriptContent, MascotS
 import type { ResolvedIntroOutroContext } from "./contextResolver.js";
 
 import { buildPairGenerationPrompt } from "./pairGenerationPrompt.js";
+import { CREATIVE_PRODUCTION_POLICY } from "./creativePolicy.js";
 
 export { compileProductionPrompt } from "./productionPrompt.js";
-export const INTRO_OUTRO_TEMPLATE_VERSION = "intro-outro-script-v8";
+export const INTRO_OUTRO_TEMPLATE_VERSION = "intro-outro-script-v13";
 
 function stringArray(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : [];
@@ -18,6 +19,7 @@ export function buildScriptGenerationPrompt(params: {
   seeds: readonly CreativeSeed[];
   companionContent?: IntroOutroScriptContent;
   logoMode?: "post_overlay" | "supplied_reference" | "none";
+  randomizationSeed?: string;
 }): string {
   return buildPairGenerationPrompt({
     context: params.context,
@@ -49,9 +51,13 @@ export function mergeGeneratedContent(params: {
       ...rawConsistency,
       preserve_feature_ids: requiredFeatures,
       allowed_visible_text: stringArray(rawConsistency.allowed_visible_text),
-      restrictions: stringArray(rawConsistency.restrictions).length
+      restrictions: (stringArray(rawConsistency.restrictions).length
         ? stringArray(rawConsistency.restrictions)
-        : identity.motion_constraints,
+        : identity.motion_constraints
+      )
+        .map((r) => r.trim())
+        .filter(Boolean)
+        .slice(0, raw.production_policy === CREATIVE_PRODUCTION_POLICY ? undefined : 5),
     },
   } satisfies Partial<IntroOutroScriptContent>;
 }

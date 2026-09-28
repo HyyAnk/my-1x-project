@@ -3,6 +3,7 @@ import path from "node:path";
 import { EpisodeSchema, SceneSchema, nowIso, type Episode } from "@studio/shared";
 import { RepositoryError } from "../errors.js";
 import type { RepositoryRuntime } from "../runtime.js";
+import { findIdenticalNarration, narrationContentFilename } from "./narrationReuse.js";
 
 export async function saveSceneAudio(
   this: RepositoryRuntime,
@@ -127,7 +128,9 @@ export async function writeQuizNarrationAudio(
   const assetsDirectory = this.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets");
   await mkdir(assetsDirectory, { recursive: true });
   await this.assertRealPathInside(episodeDirectory, assetsDirectory);
-  const filename = `quiz-narration-${Date.now()}.wav`;
+  const existing = await findIdenticalNarration(assetsDirectory, content);
+  if (existing) return `channels/${channel.slug}/episodes/${episode.slug}/assets/${existing}`;
+  const filename = narrationContentFilename(content);
   const absolutePath = this.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets", filename);
   await this.writeBinaryAtomic(absolutePath, content);
   return `channels/${channel.slug}/episodes/${episode.slug}/assets/${filename}`;

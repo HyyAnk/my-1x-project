@@ -34,4 +34,8 @@ describe("authored mascot dialogue", () => {
     content.production_directions!.voice_source = "narrator";
     expect(validateScriptContent(content, identity, []).some((issue) => issue.code === "MASCOT_DIALOGUE_REQUIRED")).toBe(true);
   });
+  it("resolves dynamic verbal hooks when dynamic seeds are passed", () => {
+    expect(mascotDialogue("intro", 8, ["D09"]).lines[0].text).toBe("Can you score full points?");
+    expect(mascotDialogue("intro", 8, ["D10"]).lines[0].text).toBe("Think you know? Let's see!");
+  });
 });

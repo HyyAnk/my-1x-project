@@ -16,6 +16,7 @@ export interface VideoProcessingOrchestratorDeps {
   registrationService: FrameRegistrationService;
   packagingService: AnimationPackagingService;
   maxConcurrentJobs?: number;
+  completedAttemptCleanup?: (job: MascotVideoProcessingJob) => Promise<void>;
 }
 
 export interface ReplaceSlotParams {

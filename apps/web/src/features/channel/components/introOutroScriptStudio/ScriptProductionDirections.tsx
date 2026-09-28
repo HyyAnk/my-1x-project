@@ -58,8 +58,8 @@ export function ScriptProductionDirections({ content, disabled, onChange }: Prop
         <span>Final hold (seconds)</span>
         <input
           type="number"
-          min={0.5}
-          max={2}
+          min={content.production_policy === "creative-performance-v3" ? 0 : 0.5}
+          max={content.production_policy === "creative-performance-v3" ? undefined : 2}
           step={0.1}
           value={directions.end_hold_seconds}
           disabled={disabled}

@@ -3,13 +3,11 @@ import { z } from "zod";
 import { IntroOutroScriptError } from "./errors.js";
 import type { ScriptGenerationInput } from "./generation.types.js";
 import { buildGeneratedRevision } from "./generatedRevision.js";
-import { scriptBeatStructure } from "./generationStructure.js";
 import { mergeGeneratedContent } from "./promptCompiler.js";
 import { hasBlockingIssues, validateScriptContent } from "./validation.js";
 import { normalizeGeneratedContent } from "./generatedNormalization.js";
-import { assembleChoreography } from "./generatedChoreography.js";
-import { PRODUCTION_POLICY, FINAL_HOLD_SECONDS } from "./choreographyPolicy.js";
-import { mascotDialogue } from "./mascotDialogue.js";
+import { CREATIVE_PRODUCTION_POLICY } from "./creativePolicy.js";
+import { assembleCreativeTimeline } from "./creativeTimeline.js";
 
 function logoMode(input: ScriptGenerationInput, clip: ScriptGenerationInput["clips"][number]) {
   return input.context.logoReference ? (clip.logoMode ?? "supplied_reference") : "none";
@@ -32,10 +30,8 @@ export function parseGeneratedClip(
   // New shared direction is concise; a legacy companion remains exact for pair continuity.
   if (!companion && !anchor)
     z.object({
-      style: z
-        .object({ description: z.string().max(180), staging: z.string().max(180), motion_language: z.string().max(180) })
-        .passthrough(),
-      logo_placement: z.string().max(100),
+      style: z.object({ description: z.string(), staging: z.string(), motion_language: z.string() }).passthrough(),
+      logo_placement: z.string().max(400),
     })
       .passthrough()
       .parse(shared);
@@ -44,30 +40,31 @@ export function parseGeneratedClip(
   if (selectedLogoMode !== anchorLogoMode) {
     throw new IntroOutroScriptError("Use the same logo mode for both clips to preserve pair continuity.", "SCRIPT_VALIDATION_FAILED");
   }
-  const structure = scriptBeatStructure(clip.clipKind, clip.durationSeconds);
-  const timeline = assembleChoreography(raw.timeline, clip.durationSeconds).map((beat, index) => ({ ...beat, ...structure[index] }));
+  const timeline = assembleCreativeTimeline(raw.timeline, clip.durationSeconds, clip.clipKind);
+  const voiceover = IntroOutroScriptContentSchema.shape.voiceover.parse(raw.voiceover);
   const parsedContent = IntroOutroScriptContentSchema.parse(
     mergeGeneratedContent({
       raw: {
         ...raw,
-        production_policy: PRODUCTION_POLICY,
+        production_policy: CREATIVE_PRODUCTION_POLICY,
         dialogue_policy: "mascot-direct-speech-v1",
-        voiceover: mascotDialogue(clip.clipKind, clip.durationSeconds),
+        voiceover,
         style: anchor?.style ?? companion?.style ?? shared.style,
         timeline,
         audio: {
           ...record(raw.audio),
-          music_direction: anchor?.music_direction ?? companion?.audio.music_direction ?? shared.music_direction,
+          music_direction:
+            record(raw.audio).music_direction ?? shared.music_direction ?? anchor?.music_direction ?? companion?.audio.music_direction,
         },
         production_directions: {
           ...record(raw.production_directions),
-          voice_source: "mascot",
+          voice_source: record(raw.production_directions).voice_source ?? (voiceover.enabled ? "mascot" : "none"),
           logo_mode: selectedLogoMode,
           logo_placement:
             selectedLogoMode === "none"
               ? "No logo"
               : (anchor?.logo_placement ?? companion?.production_directions?.logo_placement ?? shared.logo_placement),
-          end_hold_seconds: FINAL_HOLD_SECONDS,
+          end_hold_seconds: record(raw.production_directions).end_hold_seconds ?? (clip.clipKind === "intro" ? 0 : 1),
         },
       },
       clipKind: clip.clipKind,

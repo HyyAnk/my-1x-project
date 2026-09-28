@@ -99,6 +99,18 @@ describe("single-action production policy", () => {
   });
 });
 
+describe("dynamic-micro-narrative-v2 policy", () => {
+  it("allows transitional gestures, expressive ending poses and stable final camera movements", () => {
+    const content = contentV6();
+    content.production_policy = "dynamic-micro-narrative-v2";
+    content.timeline[0].action = "Novy skids into the frame, then winks at the camera";
+    content.timeline[2].choreography!.secondary_motion = "tail_wag";
+    content.timeline[2].choreography!.end_pose = "dynamic_point";
+    content.camera[1].movement = "Slow subtle push-in";
+    expect(validateChoreography(content, identity)).toEqual([]);
+  });
+});
+
 describe("production seed matrix", () => {
   const supported = {
     ...identity,
@@ -113,7 +125,7 @@ describe("production seed matrix", () => {
       selectedSeedIds,
       durationSeconds,
     });
-  it("excludes departure seeds even for mascots that can travel", () => {
+  it("allows departure seeds for mascots that can travel", () => {
     for (let index = 0; index < 100; index++) {
       const result = resolveSeedSelection({
         clipKind: "outro",
@@ -121,9 +133,9 @@ describe("production seed matrix", () => {
         identity: supported,
         randomizationSeed: String(index),
       });
-      expect(result.seeds.find((seed) => seed.dimension === "outro_farewell")?.id).toMatch(/^G0[146]$/);
+      expect(result.seeds.find((seed) => seed.dimension === "outro_farewell")).toBeDefined();
     }
-    expect(() => select(BUILT_IN_INTRO_OUTRO_SEEDS, ["G05"])).toThrow();
+    expect(select(BUILT_IN_INTRO_OUTRO_SEEDS, ["G05"]).selection.selected_seed_ids).toContain("G05");
   });
   it("searches compatible combinations deterministically and rejects conflicting explicit selections", () => {
     const catalog = BUILT_IN_INTRO_OUTRO_SEEDS.map((seed) => (seed.id === "E01" ? { ...seed, forbidden_seed_ids: ["F01"] } : seed));
@@ -132,9 +144,9 @@ describe("production seed matrix", () => {
     expect(select(catalog, ["E01"]).selection).toEqual(first.selection);
     expect(first.selection.selected_seed_ids).not.toContain("F01");
   });
-  it("limits medium complexity at short duration and rejects unknown explicit IDs", () => {
+  it("allows complexity choices at short duration and rejects unknown explicit IDs", () => {
     const catalog = BUILT_IN_INTRO_OUTRO_SEEDS.map((seed) => (seed.id === "E01" ? { ...seed, complexity: "medium" as const } : seed));
-    expect(() => select(catalog, ["E01"], 6)).toThrow();
+    expect(select(catalog, ["E01"], 6).selection.selected_seed_ids).toContain("E01");
     expect(() => select(catalog, ["missing"])).toThrow();
   });
 });

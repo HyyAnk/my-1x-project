@@ -314,7 +314,7 @@ describe("Stage 05 — Mascot Video Upload Boundary & Security", () => {
       expect(result.metadata.durationMs).toBe(1500);
       expect(result.videoSha256).toBeDefined();
       expect(result.sourceVideoFingerprint).toBeDefined();
-      expect(result.sourceVideoPath).toContain(path.normalize("slot_2/attempts/att_1/celebrate_02.mp4"));
+      expect(result.sourceVideoPath).toContain(path.normalize("slot_2/attempts/att_1/source.mp4"));
     });
   });
 

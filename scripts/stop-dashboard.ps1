@@ -11,6 +11,7 @@ $resolvedRoot = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd("\").ToLow
 $startedAt = Get-Date
 $stopped = 0
 $failed = 0
+. (Join-Path $PSScriptRoot "dashboard-process-owner.ps1")
 
 function Write-Log {
   param(
@@ -48,9 +49,7 @@ foreach ($port in $ports) {
       continue
     }
 
-    $metadata = Get-CimInstance Win32_Process -Filter ("ProcessId={0}" -f $processId)
-    $commandLine = ([string]$metadata.CommandLine).Replace("/", "\").ToLowerInvariant()
-    if (-not $commandLine.Contains($resolvedRoot)) {
+    if (-not (Test-DashboardProcessOwner -ProcessId $processId -ProjectRoot $resolvedRoot)) {
       $failed++
       Write-Log "ERROR" "guard" ("Refusing to stop PID {0} on port {1}: it is not running from this workspace" -f $processId, $port) ([ConsoleColor]::Red)
       continue
@@ -85,6 +84,10 @@ foreach ($port in $ports) {
 # pnpm/concurrently watchers from restarting a service after its listener exits.
 $launcher = @(Get-Process -Name cmd | Where-Object { $_.MainWindowTitle -eq "AI Quiz Studio" })
 foreach ($process in $launcher) {
+  if (-not (Test-DashboardProcessOwner -ProcessId $process.Id -ProjectRoot $resolvedRoot)) {
+    Write-Log "WARN" "guard" ("Skipping launcher PID {0}: workspace ownership could not be verified" -f $process.Id) ([ConsoleColor]::Yellow)
+    continue
+  }
   Write-Log "STEP" "launcher" ("Stopping launcher process tree PID {0}" -f $process.Id) ([ConsoleColor]::Blue)
   & taskkill.exe /PID $process.Id /T /F >$null 2>&1
   if ($LASTEXITCODE -eq 0) {

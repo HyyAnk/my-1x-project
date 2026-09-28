@@ -23,6 +23,23 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
       "Dash or slide into frame chasing a dynamic glowing cue or energetic element suited to the mascot's style.",
       ["locomotion"],
     ],
+    [
+      "A09",
+      "Superhero Landing",
+      "Descend or leap dynamically into the frame with an energetic superhero landing that shakes the view before stabilizing.",
+      ["locomotion"],
+    ],
+    [
+      "A10",
+      "Sneaker Skid Stop",
+      "Sprint into frame and perform a playful shoe-skid stop, creating subtle sparkly friction cues before engaging the camera.",
+      ["locomotion"],
+    ],
+    [
+      "A11",
+      "Peek-a-Boo Surprise",
+      "Pop playfully into frame from behind a scenic element or stage prop, startling the camera in a delightful way.",
+    ],
   ],
   intro_brand_interaction: [
     ["B01", "Mechanism Reveal", "Activate a simple mechanism that reveals the intact channel logo.", ["grasping"]],
@@ -38,6 +55,19 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
       "Trigger a colorful burst of stars, sparkles, or energy that pops the intact channel logo dynamically into center frame.",
     ],
     ["B09", "Hero Symmetrical Framing", "Frame the intact channel logo in an iconic hero composition with confident attitude."],
+    [
+      "B10",
+      "Arcade Button Slam",
+      "Smash a giant arcade button or pull a lever to trigger the channel logo popping dynamically into place.",
+      ["grasping"],
+    ],
+    [
+      "B11",
+      "Logo Leap & Bounce",
+      "Leap beside or interact with the channel logo as it lands bouncy and vibrant on the stage.",
+      ["locomotion"],
+    ],
+    ["B12", "Magical Spark Sneeze", "Let out a cute tiny sneeze or breath that blooms into sparkling embers outlining the channel logo."],
   ],
   intro_performance_tone: [
     ["C01", "Energetic", "Perform with lively timing that remains compatible with the mascot's construction."],
@@ -52,6 +82,12 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
       "Cartoon Comic Timing",
       "Use punchy animation physics, expressive comedic timing, and snappy reactions matching the mascot's style.",
     ],
+    ["C09", "Hype Master", "Pump up the audience with high energy, confident bounce, and anticipation for the upcoming quiz."],
+    [
+      "C10",
+      "Clever Detective",
+      "Inspect the scene inquisitively, tilting head with an expressive eyebrow raise before smiling warmly at the viewer.",
+    ],
   ],
   intro_verbal_hook: [
     ["D01", "Friendly Challenge", "Invite viewers into a friendly knowledge challenge."],
@@ -62,6 +98,16 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
     ["D06", "Readiness", "Invite viewers to get ready and focus."],
     ["D07", "Shared Play", "Frame the quiz as friendly shared play without taunting."],
     ["D08", "Signature Action Call", "Deliver a short, punchy catchphrase or call-to-action directly to viewers (e.g. 'Let's Quiz!')."],
+    [
+      "D09",
+      "Challenger Hype",
+      "Challenge the viewers directly with high energy to test their skills (e.g. 'Can you score 10 out of 10?').",
+    ],
+    [
+      "D10",
+      "Curiosity Spark",
+      "Hook the viewers with an intriguing teaser about the challenge ahead (e.g. 'Think you know the answer? Let's find out!').",
+    ],
   ],
   outro_recognition: [
     ["E01", "Delighted Response", "React with delight to the viewer's participation without claiming a score."],
@@ -110,7 +156,7 @@ export const BUILT_IN_INTRO_OUTRO_SEEDS: CreativeSeed[] = Object.entries(definit
     allowed_props: [],
     allowed_text: [],
     forbidden_seed_ids: [],
-    complexity: ["A04", "A05", "A08", "B01", "B05", "C07", "C08"].includes(id) ? "medium" : "low",
+    complexity: ["A04", "A05", "A08", "A09", "A10", "B01", "B05", "B10", "B11", "C07", "C08", "C09"].includes(id) ? "medium" : "low",
     selection_weight: 1,
     origin: "built_in",
     status: "active",

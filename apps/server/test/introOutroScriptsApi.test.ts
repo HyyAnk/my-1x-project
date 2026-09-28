@@ -23,6 +23,7 @@ import { FakeGeminiFlashClient } from "./fixtures/introOutroScriptClient.js";
 import { registerSinglePassScriptCases } from "./fixtures/singlePassScriptCases.js";
 import { registerAutomaticIdentityCases } from "./fixtures/automaticIdentityCases.js";
 import { registerIndependentScriptCases } from "./fixtures/independentScriptCases.js";
+import { registerCreativeScriptCases } from "./fixtures/creativeScriptCases.js";
 
 async function waitForJob(app: StudioApp, channelId: string, jobId: string): Promise<IntroOutroScriptJob> {
   for (let attempt = 0; attempt < 100; attempt += 1) {
@@ -187,7 +188,7 @@ describe("Intro/Outro Script Studio API", () => {
       url: `/api/channels/${channelId}/intro-outro-scripts/${project.project_id}`,
     });
     project = projectResponse.json<{ project: IntroOutroScriptProject }>().project;
-    expect(project.drafts.intro.content?.timeline.map((beat) => beat.end_seconds)).toEqual([2.5, 5.5, 8]);
+    expect(project.drafts.intro.content?.timeline.map((beat) => beat.end_seconds)).toEqual([2, 5, 8]);
     expect(project.drafts.outro.content?.identity.mascot_style_id).toBe(analyzed.context.mascot_style_id);
 
     const idempotentResponse = await app.server.inject({
@@ -241,7 +242,13 @@ describe("Intro/Outro Script Studio API", () => {
     expect(exportResponse.json<{ prompt: string }>().prompt).toContain("Rigid marker attached to the left edge");
     expect(introRevision.identity_snapshot?.profile_id).toBe(analyzed.identity.profile_id);
     expect(introRevision.quality_review).toBeUndefined();
-    expect(introRevision.template_version).toBe("intro-outro-script-v8");
+    expect(introRevision.template_version).toBe("intro-outro-script-v13");
+    expect(exportResponse.json<{ prompt: string }>().prompt.match(/Quiz time!/g)).toHaveLength(1);
+    expect(exportResponse.json<{ prompt: string }>().prompt).toContain("Each timed entry is one utterance");
+    expect(introRevision.content.production_policy).toBe("creative-performance-v3");
+    expect(exportResponse.json<{ prompt: string }>().prompt).toContain("BGM [0-8s]");
+    expect(exportResponse.json<{ prompt: string }>().prompt).toContain("one synchronized audiovisual clip");
+    expect(exportResponse.json<{ prompt: string }>().prompt).not.toContain("produce separately");
     expect(introRevision.content.production_directions?.voice_source).toBe("mascot");
     expect(introRevision.content.voiceover.lines[0].text).toBe("Quiz time!");
     expect(introRevision.content.dialogue_policy).toBe("mascot-direct-speech-v1");
@@ -262,7 +269,7 @@ describe("Intro/Outro Script Studio API", () => {
     ) as IntroOutroScriptRevision;
     expect(packagedRevision.identity_snapshot?.profile_id).toBe(analyzed.identity.profile_id);
     expect(packagedRevision.quality_review).toBeUndefined();
-    expect(packagedRevision.template_version).toBe("intro-outro-script-v8");
+    expect(packagedRevision.template_version).toBe("intro-outro-script-v13");
     expect(Buffer.from(entries.find((entry) => entry.filename === "prompt.txt")!.data).toString("utf8")).toContain(
       "Rigid marker attached to the left edge",
     );
@@ -353,7 +360,7 @@ describe("Intro/Outro Script Studio API", () => {
     }
   });
 
-  it.each(["invalidIntro", "malformedOutput"] as const)("fails %s after one call without automatic review or repair", async (failure) => {
+  it.each(["malformedOutput"] as const)("fails %s after one call without automatic review or repair", async (failure) => {
     fakeGemini[failure] = true;
     const calls = fakeGemini.generationPrompts.length;
     try {
@@ -653,5 +660,6 @@ describe("Intro/Outro Script Studio API", () => {
   });
   registerSinglePassScriptCases(() => ({ app, channelId, client: fakeGemini }), waitForJob);
   registerIndependentScriptCases(() => ({ app, channelId, client: fakeGemini }), waitForJob);
+  registerCreativeScriptCases(() => ({ app, channelId, client: fakeGemini }), waitForJob);
   registerAutomaticIdentityCases(() => ({ app, client: fakeGemini }), waitForJob);
 });

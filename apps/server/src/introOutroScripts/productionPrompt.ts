@@ -1,5 +1,7 @@
 import type { IntroOutroReferenceAsset, IntroOutroScriptRevision } from "@studio/shared";
 import { compileCompactProductionPrompt } from "./compactProductionPrompt.js";
+import { compileCreativeProductionPrompt } from "./creativeProductionPrompt.js";
+import { isCreativePolicy } from "./creativePolicy.js";
 
 export function referenceFilename(reference: IntroOutroReferenceAsset): string {
   const extension = reference.mime_type === "image/jpeg" ? "jpg" : reference.mime_type === "image/webp" ? "webp" : "png";
@@ -7,6 +9,7 @@ export function referenceFilename(reference: IntroOutroReferenceAsset): string {
 }
 
 export function compileProductionPrompt(revision: IntroOutroScriptRevision): string {
+  if (isCreativePolicy(revision.content) && revision.content.production_directions) return compileCreativeProductionPrompt(revision);
   if (revision.content.production_policy && revision.content.production_directions) return compileCompactProductionPrompt(revision);
   const { content, identity_snapshot: identity } = revision;
   const directions = content.production_directions;

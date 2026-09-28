@@ -1,3 +1,5 @@
+import type { IntroOutroScriptContent } from "@studio/shared";
+
 type ContentOptions = {
   imageAttachments?: Array<{ path: string; role: string }>;
 };
@@ -11,6 +13,7 @@ export class FakeGeminiFlashClient {
   identityGate?: () => Promise<void>;
   reviewFailure: "none" | "error" | "timeout" = "none";
   invalidIntro = false;
+  creativePerformance = false;
   malformedOutput = false;
   generationFailure: "none" | "error" | "timeout" | "reference" = "none";
   failOutro = false;
@@ -115,12 +118,13 @@ export class FakeGeminiFlashClient {
   }
 
   private clip(intro: boolean, duration: number) {
+    const events: IntroOutroScriptContent["audio"]["events"] = [];
     const roles = intro ? ["entrance", "brand_interaction", "handoff"] : ["recognition", "invitation", "farewell"];
-    return {
+    const clip = {
       production_directions: {
         reference_mode: "character_reference",
         logo_mode: "none",
-        voice_source: "none",
+        voice_source: "mascot",
         logo_placement: "No logo",
         opening_state: "Centered rigid mascot",
         closing_state: "Settled mascot",
@@ -135,21 +139,59 @@ export class FakeGeminiFlashClient {
       timeline: roles.map((role, index) => ({
         beat: index + 1,
         role,
-        start_seconds: [0, 2, 5][index],
-        end_seconds: [2, 5, 8][index],
+        start_seconds: [0, duration * 0.25, duration * 0.625][index],
+        end_seconds: [duration * 0.25, duration * 0.625, duration][index],
         action: intro && index === 0 && this.invalidIntro ? "Walks without permission" : `One clear ${role.replaceAll("_", " ")} action`,
         choreography: { primary_action: "hold", expression: "Warm", secondary_motion: "none", end_pose: "front_facing" },
-        capability_ids: [],
+        capability_ids: intro && index === 0 && this.invalidIntro ? ["waving"] : [],
         props: [],
         visible_feature_ids: ["side_marker"],
       })),
-      voiceover: { enabled: false, lines: [] },
-      audio: { music_direction: "Light family quiz cue", events: [] },
+      voiceover: {
+        enabled: true,
+        lines: [
+          {
+            start_seconds: duration * 0.35,
+            end_seconds: duration * 0.7,
+            text: intro ? "Quiz time!" : "See you next quiz!",
+            delivery: "Cheerful mascot",
+          },
+        ],
+      },
+      audio: { music_direction: "Light family quiz cue", events },
       camera: [
         { start_seconds: 0, end_seconds: duration - 1, framing: "Medium wide", movement: "Static" },
         { start_seconds: duration - 1, end_seconds: duration, framing: "Medium wide", movement: "Static locked camera" },
       ],
       consistency: { allowed_visible_text: [], restrictions: ["Keep side_marker rigid and attached"] },
     };
+    if (this.creativePerformance) {
+      clip.production_directions.end_hold_seconds = 0;
+      clip.production_directions.closing_state = "An amused silhouette remains beside the clear brand area";
+      clip.timeline.forEach((beat, index) => {
+        beat.start_seconds = [0, duration * 0.2, duration * 0.58][index];
+        beat.end_seconds = [duration * 0.2, duration * 0.58, duration][index];
+      });
+      clip.timeline[0].action = "A light moves across the stage, then pauses, then reveals the mascot silhouette";
+      clip.timeline[2].action =
+        "The mascot's reflection becomes a playful second silhouette; both remain readable as the final chime resolves";
+      clip.voiceover.lines = [
+        { start_seconds: duration * 0.3, end_seconds: duration * 0.38, text: "Uh-oh...", delivery: "First mascot, amused whisper" },
+        {
+          start_seconds: duration * 0.75,
+          end_seconds: duration * 0.94,
+          text: intro ? "Let's quiz!" : "Play again soon!",
+          delivery: "Second mascot, joyful answer",
+        },
+      ];
+      clip.audio.music_direction = intro
+        ? "Quiet opening, plucked notes answer the reaction, two comic accents resolve into the cut"
+        : "The same plucked theme slows into a warm farewell";
+      clip.audio.events = Array.from({ length: 8 }, (_, index) => ({
+        at_seconds: index === 7 ? duration - 0.15 : (duration * index) / 8,
+        direction: `Playful accent ${index + 1} matching the visible reaction`,
+      }));
+    }
+    return clip;
   }
 }

@@ -18,7 +18,8 @@ export function pairGenerationAnchor(
           : "Match the supplied mascot reference style, surface materials and rendering treatment",
       palette: input.identity.palette,
       staging: "A clean branded stage with soft frontal lighting, mascot centered and clear negative space",
-      motion_language: "Playful, readable single actions with gentle follow-through and a settled final pose",
+      motion_language:
+        "Expressive, readable cartoon performance with reference-compatible motion; author the rhythm and ending for each clip",
     },
     music_direction: "A bright playful quiz motif, quiet beneath the same cheerful mascot voice",
     logo_placement: input.context.logoReference ? "Official logo beside the mascot, fully readable with 6% edge clearance" : "No logo",

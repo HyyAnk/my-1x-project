@@ -7,6 +7,8 @@ import {
 } from "@studio/shared";
 import { validateProductionTiming } from "./temporalValidation.js";
 import { validateChoreography } from "./choreographyValidation.js";
+import { validateDialogueOwnership } from "./dialogueValidation.js";
+import { isCreativePolicy } from "./creativePolicy.js";
 
 const EPSILON = 0.011;
 
@@ -89,9 +91,11 @@ export function validateScriptContent(
         issues.push(
           issue(
             "CAPABILITY_REFERENCE_UNSUPPORTED",
-            "error",
+            isCreativePolicy(content) && parsed.success && identity.capabilities[parsed.data] === "unknown" ? "warning" : "error",
             `timeline.${index}.capability_ids`,
-            `Unsupported capability: ${capabilityId}.`,
+            isCreativePolicy(content) && parsed.success && identity.capabilities[parsed.data] === "unknown"
+              ? `Confirm ${capabilityId} against the mascot reference.`
+              : `Unsupported capability: ${capabilityId}.`,
           ),
         );
       }
@@ -130,7 +134,20 @@ export function validateScriptContent(
       issues.push(issue("VISIBLE_TEXT_REVIEW", "warning", "consistency.allowed_visible_text", `Review visible text: ${visibleText}.`));
     }
   }
-  return [...issues, ...validateProductionTiming(content, identity), ...validateChoreography(content, identity)];
+  const findings = [
+    ...issues,
+    ...validateProductionTiming(content, identity),
+    ...validateChoreography(content, identity),
+    ...validateDialogueOwnership(content),
+  ];
+  // Creative review is advisory; identity integrity and required export data still block processing.
+  return isCreativePolicy(content)
+    ? findings.map((finding) =>
+        ["IDENTITY_CONTEXT_MISMATCH", "PRODUCTION_DIRECTIONS_MISSING"].includes(finding.code)
+          ? finding
+          : { ...finding, severity: "warning" as const },
+      )
+    : findings;
 }
 
 export function hasBlockingIssues(issues: readonly IntroOutroValidationIssue[]): boolean {

@@ -1,37 +1,6 @@
-import { existsSync } from "node:fs";
 import os from "node:os";
-
-/**
- * Resolves the installed Google Chrome or Microsoft Edge executable path
- * to provide hardware-accelerated rendering on Windows and other OS.
- */
-export function resolveHardwareBrowserPath(): string | undefined {
-  if (process.env.HYPERFRAMES_BROWSER_PATH && existsSync(process.env.HYPERFRAMES_BROWSER_PATH)) {
-    return process.env.HYPERFRAMES_BROWSER_PATH;
-  }
-
-  if (process.platform === "win32") {
-    const programFiles = process.env.PROGRAMFILES || "C:\\Program Files";
-    const programFilesX86 = process.env["PROGRAMFILES(X86)"] || "C:\\Program Files (x86)";
-    const localAppData = process.env.LOCALAPPDATA || "";
-
-    const candidatePaths = [
-      `${programFiles}\\Google\\Chrome\\Application\\chrome.exe`,
-      `${programFilesX86}\\Google\\Chrome\\Application\\chrome.exe`,
-      localAppData ? `${localAppData}\\Google\\Chrome\\Application\\chrome.exe` : "",
-      `${programFiles}\\Microsoft\\Edge\\Application\\msedge.exe`,
-      `${programFilesX86}\\Microsoft\\Edge\\Application\\msedge.exe`,
-    ].filter(Boolean);
-
-    for (const candidate of candidatePaths) {
-      if (existsSync(candidate)) {
-        return candidate;
-      }
-    }
-  }
-
-  return undefined;
-}
+import { resolveHardwareBrowserPath } from "../../infrastructure/executables/browserDiscovery.js";
+export { resolveHardwareBrowserPath } from "../../infrastructure/executables/browserDiscovery.js";
 
 /**
  * Calculates the optimal number of parallel workers for HyperFrames rendering
@@ -64,9 +33,10 @@ export function calculateOptimalWorkers(configuredWorkers?: number): number {
  */
 export function getHyperframesExecutionEnv(): Record<string, string> {
   const browserPath = resolveHardwareBrowserPath();
+  const { HYPERFRAMES_BROWSER_PATH: _browserOverride, ...environment } = process.env;
 
   return {
-    ...process.env,
+    ...environment,
     PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS: process.env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS || "300000",
     PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS: process.env.PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS || "300000",
     PRODUCER_PLAYER_READY_TIMEOUT_MS: process.env.PRODUCER_PLAYER_READY_TIMEOUT_MS || "60000",

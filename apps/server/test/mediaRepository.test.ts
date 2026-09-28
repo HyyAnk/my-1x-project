@@ -163,6 +163,7 @@ describe("Media Repository Operations", () => {
       const narrationBuffer = new Uint8Array([5, 6, 7]);
       const quizNarrationPath = await repository.writeQuizNarrationAudio(channelId, episodeId, narrationBuffer);
       expect(quizNarrationPath).toContain("quiz-narration-");
+      expect(await repository.writeQuizNarrationAudio(channelId, episodeId, narrationBuffer)).toBe(quizNarrationPath);
     });
   });
 

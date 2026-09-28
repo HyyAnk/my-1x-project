@@ -1,6 +1,7 @@
 import type { IntroOutroScriptContent, IntroOutroValidationIssue, MascotStyleIdentityProfile } from "@studio/shared";
 
 import { ACTION_CAPABILITIES } from "./actionCapabilities.js";
+import { isCreativePolicy } from "./creativePolicy.js";
 
 export function validateProductionTiming(
   content: IntroOutroScriptContent,
@@ -8,11 +9,13 @@ export function validateProductionTiming(
 ): IntroOutroValidationIssue[] {
   const issues: IntroOutroValidationIssue[] = [];
   const duration = content.production.target_duration_seconds;
-  const add = (code: string, path: string, message: string) => issues.push({ code, path, message, severity: "error" });
+  const creative = isCreativePolicy(content);
+  const add = (code: string, path: string, message: string, severity: "error" | "warning" = "error") =>
+    issues.push({ code, path, message, severity });
   const roles =
     content.production.clip_kind === "intro" ? ["entrance", "brand_interaction", "handoff"] : ["recognition", "invitation", "farewell"];
   content.timeline.forEach((beat, index) => {
-    if (beat.beat !== index + 1 || beat.role !== roles[index])
+    if (!creative && (beat.beat !== index + 1 || beat.role !== roles[index]))
       add("BEAT_ORDER_INVALID", `timeline.${index}`, "Keep beats in narrative order with the correct roles.");
     if (index > 0 && beat.start_seconds < content.timeline[index - 1].end_seconds)
       add("BEAT_ORDER_INVALID", `timeline.${index}`, "Beats cannot overlap or be reordered.");
@@ -21,7 +24,10 @@ export function validateProductionTiming(
         add(
           "ACTION_CAPABILITY_MISSING",
           `timeline.${index}.capability_ids`,
-          `The described action requires the ${requirement.capability} capability. Add it or simplify the action.`,
+          creative
+            ? `Review whether this prose requires mascot ${requirement.capability}; the matching word may describe another subject.`
+            : `The described action requires the ${requirement.capability} capability. Add it or simplify the action.`,
+          creative ? "warning" : "error",
         );
       }
     }
@@ -54,10 +60,18 @@ export function validateProductionTiming(
   const holdStart = duration - directions.end_hold_seconds;
   if (
     content.dialogue_policy &&
-    (!content.voiceover.enabled || directions.voice_source !== "mascot" || content.voiceover.lines.length !== 1)
+    (creative
+      ? content.voiceover.enabled && directions.voice_source !== "mascot"
+      : !content.voiceover.enabled || directions.voice_source !== "mascot" || content.voiceover.lines.length !== 1)
   )
-    add("MASCOT_DIALOGUE_REQUIRED", "voiceover", "This production requires one line spoken by the visible mascot with lip-sync.");
-  if (holdStart < content.timeline[2].start_seconds)
+    add(
+      "MASCOT_DIALOGUE_REQUIRED",
+      "voiceover",
+      creative
+        ? "Scheduled speech must be performed by the visible mascot with lip-sync."
+        : "This production requires one line spoken by the visible mascot with lip-sync.",
+    );
+  if (holdStart < content.timeline[content.timeline.length - 1].start_seconds)
     add("END_HOLD_INVALID", "production_directions", "The final hold must fit inside the final beat.");
   if (content.voiceover.enabled !== (directions.voice_source !== "none"))
     add("VOICE_SOURCE_MISMATCH", "production_directions.voice_source", "Voice source must match the voiceover enabled state.");
@@ -68,7 +82,7 @@ export function validateProductionTiming(
     const words = line.text.trim().split(/\s+/).filter(Boolean).length;
     if (line.start_seconds < voiceEnd || line.end_seconds > holdStart)
       add("VOICE_OVERLAP_OR_HOLD", `voiceover.lines.${index}`, "Speech cannot overlap another line or the final hold.");
-    if (words / (160 / 60) + 0.3 > line.end_seconds - line.start_seconds + 0.011)
+    if (!creative && words / (160 / 60) + 0.3 > line.end_seconds - line.start_seconds + 0.011)
       add(
         "VOICE_BUDGET_EXCEEDED",
         `voiceover.lines.${index}`,

@@ -45,6 +45,8 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
   }
 
   function startJobExecution(job: MascotVideoProcessingJob): Promise<MascotVideoProcessingJob> {
+    const existing = runningJobs.get(job.id);
+    if (existing) return existing.promise;
     const slotKey = makeSlotKey(job.mascot_id, job.style_id, job.state, job.slot_index);
 
     // Cancel existing active attempt on the same slot if any
@@ -61,7 +63,9 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
 
     const promise = (async () => {
       try {
-        return await executePipeline(deps, job, abortController.signal);
+        const completed = await executePipeline(deps, job, abortController.signal);
+        await deps.completedAttemptCleanup?.(completed);
+        return completed;
       } catch (err: unknown) {
         return await handlePipelineFailure(deps, job, err, abortController.signal);
       } finally {
@@ -101,6 +105,7 @@ export function createOrchestratorQueue(deps: VideoProcessingOrchestratorDeps): 
     if (activeCtx) {
       return activeCtx.promise;
     }
+    if (job.status === "ready") return job;
 
     const queueIdx = queuedJobIds.indexOf(jobId);
     if (queueIdx >= 0) {

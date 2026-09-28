@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { type AnimationState } from "@studio/shared";
+import { writeMediaAtomic } from "../storage/identicalMediaLink.js";
 
 export class AnimationStorageSecurityError extends Error {
   public readonly code: string;
@@ -170,13 +171,9 @@ export function createAnimationStorageAdapter(storageRoot: string): AnimationSto
       throw new AnimationStorageSecurityError(`Unsafe filename: ${filename}`, "UNSAFE_PATH");
     }
 
-    const filePath = path.join(attemptDir, safeFilename);
-    await fs.writeFile(filePath, buffer);
-
-    const canonicalSourcePath = path.join(attemptDir, "source.mp4");
-    if (filePath !== canonicalSourcePath) {
-      await fs.copyFile(filePath, canonicalSourcePath);
-    }
+    // Keep one canonical source; callers use the stable source endpoint, not the upload filename.
+    const filePath = path.join(attemptDir, "source.mp4");
+    await writeMediaAtomic(filePath, buffer);
 
     const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
     const safeMascotId = sanitizeIdentifier(mascotId, "mascotId");

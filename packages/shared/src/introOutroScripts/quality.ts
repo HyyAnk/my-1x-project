@@ -6,9 +6,9 @@ export const ScriptProductionDirectionsSchema = z
     logo_mode: z.enum(["post_overlay", "supplied_reference", "none"]),
     voice_source: z.enum(["narrator", "mascot", "none"]),
     logo_placement: z.string().trim().min(1).max(400),
-    opening_state: z.string().trim().min(1).max(600),
-    closing_state: z.string().trim().min(1).max(600),
-    end_hold_seconds: z.number().min(0.5).max(2),
+    opening_state: z.string().trim().min(1),
+    closing_state: z.string().trim().min(1),
+    end_hold_seconds: z.number().finite().min(0),
   })
   .strict();
 

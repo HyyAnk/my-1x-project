@@ -11,7 +11,7 @@ import {
 import { IntroOutroScriptError } from "./errors.js";
 import { isSeedEligible } from "./seedCatalog.js";
 import { hasBlockingIssues, validateSeedSelection } from "./validation.js";
-import { compatibleSeeds, fitsProductionPolicy } from "./seedProductionPolicy.js";
+import { compatibleSeeds } from "./seedProductionPolicy.js";
 
 function dimensionsForClip(clipKind: IntroOutroClipKind): readonly CreativeSeedDimension[] {
   return clipKind === "intro" ? INTRO_SEED_DIMENSIONS : OUTRO_SEED_DIMENSIONS;
@@ -54,11 +54,7 @@ export function resolveSeedSelection(params: {
   const candidates = dimensions.map((dimension) => {
     const explicit = requested.get(dimension);
     const eligible = active.filter(
-      (seed) =>
-        seed.dimension === dimension &&
-        isSeedEligible(seed, params.identity) &&
-        fitsProductionPolicy(seed, params.durationSeconds ?? 8) &&
-        (!explicit || seed.id === explicit.id),
+      (seed) => seed.dimension === dimension && isSeedEligible(seed, params.identity) && (!explicit || seed.id === explicit.id),
     );
     if (!eligible.length) {
       throw new IntroOutroScriptError(`No compatible active seed is available for ${dimension}`, "SEED_COMBINATION_INVALID");
@@ -77,8 +73,7 @@ export function resolveSeedSelection(params: {
     return null;
   };
   const selected = search(0, []);
-  if (!selected)
-    throw new IntroOutroScriptError("Selected seeds conflict with the single-action production budget", "SEED_COMBINATION_INVALID");
+  if (!selected) throw new IntroOutroScriptError("Selected seeds explicitly conflict with each other", "SEED_COMBINATION_INVALID");
 
   const issues = validateSeedSelection(selected, params.identity, dimensions);
   if (hasBlockingIssues(issues)) {
@@ -89,7 +84,7 @@ export function resolveSeedSelection(params: {
       randomization_seed: params.randomizationSeed,
       selected_seed_ids: selected.map((seed) => seed.id),
       locked_dimensions: [...(params.lockedDimensions ?? [])],
-      algorithm_version: "2",
+      algorithm_version: "3",
     },
     seeds: selected,
   };

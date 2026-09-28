@@ -1,7 +1,10 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
+import { createCompletedAttemptCleanup } from "../../src/quiz/mascot/videoAnimation/storage/completedAttemptCleanup.js";
 import {
   MascotAnimationRevisionSchema,
   MascotAttemptMetadataSchema,
@@ -151,6 +154,7 @@ describe("Stage 11 — Video Processing Orchestration", () => {
     const mattingService = createFrameMattingService(storageAdapter, mattingAdapter);
     const registrationService = createFrameRegistrationService(storageAdapter);
     const packagingService = createAnimationPackagingService(storageAdapter);
+    const retentionLogger = { ok: vi.fn(), warn: vi.fn() };
 
     const orchestrator = createVideoProcessingOrchestrator({
       storageAdapter,
@@ -161,6 +165,7 @@ describe("Stage 11 — Video Processing Orchestration", () => {
       registrationService,
       packagingService,
       maxConcurrentJobs: options.maxConcurrentJobs,
+      completedAttemptCleanup: createCompletedAttemptCleanup(storageAdapter, ffmpegAdapter, retentionLogger),
     });
 
     return {
@@ -169,6 +174,7 @@ describe("Stage 11 — Video Processing Orchestration", () => {
       uploadService,
       orchestrator,
       mattedPngBytes,
+      retentionLogger,
     };
   }
 
@@ -183,7 +189,21 @@ describe("Stage 11 — Video Processing Orchestration", () => {
       const slotIndex = 1;
 
       // 1. Stage video
-      const fakeMp4 = Buffer.alloc(1024, "mock video bytes");
+      const sourceFixture = path.join(root, "source-fixture.mp4");
+      await promisify(execFile)("ffmpeg", [
+        "-v",
+        "error",
+        "-f",
+        "lavfi",
+        "-i",
+        "color=c=blue:s=1280x720:r=8",
+        "-t",
+        "1.5",
+        "-c:v",
+        "libx264",
+        sourceFixture,
+      ]);
+      const fakeMp4 = await fs.readFile(sourceFixture);
       const upload = await ctx.uploadService.validateAndStageSourceVideo({
         mascotId,
         styleId,
@@ -240,6 +260,19 @@ describe("Stage 11 — Video Processing Orchestration", () => {
       expect(metadata?.status).toBe("ready");
       expect(metadata?.progress).toBe(100);
       expect(() => MascotAttemptMetadataSchema.parse(metadata)).not.toThrow();
+      expect(ctx.retentionLogger.warn).not.toHaveBeenCalled();
+      expect(ctx.retentionLogger.ok).toHaveBeenCalledOnce();
+      expect(proj.active_revision?.frame_urls).toBeUndefined();
+      const attemptDir = ctx.storageAdapter.getAttemptDir(mascotId, styleId, state, slotIndex, 1);
+      expect(await fs.readdir(path.join(attemptDir, "frames", "source"))).toEqual([]);
+      expect(await fs.readdir(path.join(attemptDir, "frames", "matted"))).toEqual([]);
+      for (const artifact of ["video_transparent.webm", "manifest.json", "preview.webp"]) {
+        const resolved = await ctx.repository.resolveArtifactPath(mascotId, styleId, state, slotIndex, artifact, 1);
+        expect(resolved).toBe(path.join(attemptDir, artifact));
+        expect((await fs.stat(resolved!)).size).toBeGreaterThan(0);
+      }
+      await ctx.orchestrator.runJobSync(job.id);
+      expect(ctx.retentionLogger.ok).toHaveBeenCalledOnce();
     });
   });
 

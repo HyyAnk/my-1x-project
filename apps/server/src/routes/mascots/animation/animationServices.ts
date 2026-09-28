@@ -27,6 +27,7 @@ import {
   type VideoUploadService,
 } from "../../../quiz/mascot/videoAnimation/index.js";
 import type { MascotsRouteDeps } from "../mascotTypes.js";
+import { createCompletedAttemptCleanup } from "../../../quiz/mascot/videoAnimation/storage/completedAttemptCleanup.js";
 
 export interface MascotAnimationSpriteRouteDeps {
   repository: RepositoryService;
@@ -93,6 +94,7 @@ export function resolveMascotAnimationServices(deps: MascotsRouteDeps): Resolved
       mattingService,
       registrationService,
       packagingService,
+      completedAttemptCleanup: createCompletedAttemptCleanup(storageAdapter, ffmpegAdapter, logger),
     });
 
   deps.animationRepository = animRepo;

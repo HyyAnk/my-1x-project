@@ -142,7 +142,9 @@ export async function applyStyleRolloutPublish(
       const variant = {
         id: `${style.id}-${state}-${slotIndex}`,
         slot_index: slotIndex,
-        image_url: revision.frame_urls?.[0] || "",
+        image_url:
+          revision.frame_urls?.[0] ||
+          `/api/mascots/${mascot.id}/styles/${styleId}/animations/${state}/${slotIndex}/artifacts/preview.webp?attempt=${revision.attempt}`,
         status: "ready" as const,
         animation: asset,
       };

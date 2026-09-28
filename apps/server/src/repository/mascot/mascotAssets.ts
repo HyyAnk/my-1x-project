@@ -3,6 +3,8 @@ import path from "node:path";
 import { RepositoryError } from "../errors.js";
 import type { RepositoryRuntime } from "../runtime.js";
 import { deleteCachedTransparentAssetFile } from "./mascotTransparentCache.js";
+import { linkIdenticalMedia, writeMediaAtomic } from "../../quiz/mascot/videoAnimation/storage/identicalMediaLink.js";
+import { fileExists } from "../../quiz/mascot/videoAnimation/storage/archiveFiles.js";
 
 export async function saveMascotAsset(this: RepositoryRuntime, mascotId: string, filename: string, content: Uint8Array): Promise<string> {
   await this.ensureBootstrap();
@@ -10,7 +12,10 @@ export async function saveMascotAsset(this: RepositoryRuntime, mascotId: string,
   const assetDir = path.join(mascotDir, "assets");
   await mkdir(assetDir, { recursive: true });
   const targetFile = path.join(assetDir, filename);
-  await this.writeBinaryAtomic(targetFile, content);
+  await writeMediaAtomic(targetFile, content);
+  const counterpart = filename.includes("_raw") ? filename.replace("_raw_", "_").replace("_raw.png", ".png") : null;
+  if (counterpart && counterpart !== filename && (await fileExists(path.join(assetDir, counterpart))))
+    await linkIdenticalMedia(this.roots.mascots, path.join(assetDir, counterpart), targetFile);
   await deleteCachedTransparentAssetFile(this.roots.mascots, mascotId, filename);
   return `/api/mascots/${mascotId}/assets/${filename}`;
 }
