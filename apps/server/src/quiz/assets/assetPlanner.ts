@@ -11,30 +11,11 @@ import {
 } from "@studio/shared";
 import { resolveQuestionLayout } from "../layoutCompatibility.js";
 import { QUIZ_STYLE_CONTRACTS, isGraphicIdentitySubject } from "./promptCompiler.js";
+import { resolveChoiceAssetSubject, resolveGraphicChoiceSubject } from "./choiceSubjectEnricher.js";
 
 export const QUIZ_ASSET_SUBJECT_MAX_LENGTH = 280;
 
-export function resolveGraphicChoiceSubject(
-  choiceText: string,
-  question: { question: string; visual_opportunity?: string },
-): string {
-  const combined = `${question.question} ${question.visual_opportunity || ""}`.toLowerCase();
-  const text = choiceText.trim();
-  if (/\b(flag|flags)\b/i.test(combined)) {
-    if (!/\b(flag|flags)\b/i.test(text)) {
-      return `Official national flag of ${text}, clean 2D graphic vector illustration`;
-    }
-  } else if (/\b(logo|logos|brand|brands)\b/i.test(combined)) {
-    if (!/\b(logo|logos|brand)\b/i.test(text)) {
-      return `Official minimalist vector brand logo of ${text}, clean graphic design icon`;
-    }
-  } else if (/\b(emblem|insignia|crest|monogram|symbol)\b/i.test(combined)) {
-    if (!/\b(emblem|insignia|crest|symbol)\b/i.test(text)) {
-      return `Official vector emblem or symbol of ${text}, clean graphic design mark`;
-    }
-  }
-  return text;
-}
+export { resolveGraphicChoiceSubject };
 
 export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle: QuizImageStyle = "pixar_3d"): QuizAssetPlan {
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
@@ -151,7 +132,7 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         assets.push({
           asset_id: "asset-" + question.id + "-" + choice.id,
           question_id: question.id,
-          subject: isGraphicQuestion ? resolveGraphicChoiceSubject(choice.text, question) : choice.text,
+          subject: resolveChoiceAssetSubject({ choice, question, isGraphicQuestion }),
           purpose: "answer_option",
           style: "cute_illustration",
           aspect_ratio: ratio,

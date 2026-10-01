@@ -10,6 +10,7 @@ import {
   tryReuseCachedAsset,
   tryReuseExplicitBundleAsset,
 } from "./reusableAssetResolver.js";
+import { loadBundleReferenceImageBase64 } from "./bundleReferenceLoader.js";
 import type { ProviderCircuitBreaker } from "./circuitBreaker.js";
 import type { ResolveQuizAssetsInput } from "../resolveQuizAssets.js";
 
@@ -142,6 +143,16 @@ export async function resolveSingleAsset(params: SingleAssetResolveParams): Prom
     return { entry: reusable.entry, issue: reusable.issue, reused: true };
   }
 
+  const referenceImageBase64 =
+    request.purpose === "answer_option" && bundleNumber > 0
+      ? await loadBundleReferenceImageBase64({
+          repository: input.repository,
+          channelId: input.channelId,
+          episodeId: input.episodeId,
+          bundleNumber,
+        })
+      : undefined;
+
   const generated = await generateAssetWithProvider({
     repository: input.repository,
     channelId: input.channelId,
@@ -158,6 +169,7 @@ export async function resolveSingleAsset(params: SingleAssetResolveParams): Prom
     circuitBreaker,
     cancellationSignal: input.cancellationSignal,
     logger,
+    referenceImageBase64,
   });
   input.cancellationSignal?.throwIfAborted();
 
