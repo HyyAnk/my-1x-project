@@ -23,13 +23,7 @@ function resolveExternalLiveMascotPath(): string | null {
     return process.env.LIVE_MASCOT_PATH;
   }
   if (process.env.STUDIO_STORAGE_PATH) {
-    const candidate = path.join(
-      process.env.STUDIO_STORAGE_PATH,
-      ".quiz-studio",
-      "mascots",
-      "mascot_22cb190ece7b4475",
-      "mascot.json"
-    );
+    const candidate = path.join(process.env.STUDIO_STORAGE_PATH, ".quiz-studio", "mascots", "mascot_22cb190ece7b4475", "mascot.json");
     if (fs.existsSync(candidate)) return candidate;
   }
   const projectRoot = path.resolve(__dirname, "../../..");
@@ -38,16 +32,10 @@ function resolveExternalLiveMascotPath(): string | null {
     try {
       const parsed = JSON.parse(fs.readFileSync(storageConfig, "utf8")) as { storage_path?: string };
       if (parsed.storage_path) {
-        const candidate = path.join(
-          parsed.storage_path,
-          ".quiz-studio",
-          "mascots",
-          "mascot_22cb190ece7b4475",
-          "mascot.json"
-        );
+        const candidate = path.join(parsed.storage_path, ".quiz-studio", "mascots", "mascot_22cb190ece7b4475", "mascot.json");
         if (fs.existsSync(candidate)) return candidate;
       }
-    } catch { }
+    } catch {}
   }
   return null;
 }
@@ -160,6 +148,7 @@ describe("Phase 6 — Regression & Verification: Live Mascot Data & Edge Cases",
       const adapted = adaptMascotForQuestion(slot2OnlyMascot, "core", 0, {
         videoId: "live_test",
         questionId: "q_video_seek",
+        mediaMode: "animation",
       });
 
       expect(adapted).toBeDefined();
@@ -170,6 +159,7 @@ describe("Phase 6 — Regression & Verification: Live Mascot Data & Edge Cases",
         clipStartSeconds: 0,
         clipDurationSeconds: 10,
         styleId: "core",
+        mediaMode: "animation" as const,
         timelineEvents: [
           { type: "choices.enter" as const, at_seconds: 1.0 },
           { type: "countdown.start" as const, at_seconds: 2.0 },
@@ -277,7 +267,7 @@ describe("Phase 6 — Regression & Verification: Live Mascot Data & Edge Cases",
       expect(celebrateHtml).not.toContain("state-celebrate");
     });
 
-    it("verifies Police Style Celebrate with 0 variants gracefully falls back to its style anchor image", () => {
+    it("omits Police Style Celebrate when static mode has 0 usable variants", () => {
       const mascotWithPolice = liveMascot.styles?.some((s) => s.name === "Police") ? liveMascot : inTreeMascotFixture;
       const policeStyle = mascotWithPolice.styles?.find((s) => s.name === "Police");
       expect(policeStyle).toBeDefined();
@@ -288,8 +278,8 @@ describe("Phase 6 — Regression & Verification: Live Mascot Data & Edge Cases",
         questionId: "q_police_anchor",
       });
 
-      // When anchor is present, falls back to style anchor image
-      expect(adapted?.render_bundle?.assets?.actions?.celebrate?.image_url).toBe(policeStyle!.anchor_image_url);
+      // Static question states do not use the style anchor when no still variant exists.
+      expect(adapted?.render_bundle?.assets?.actions?.celebrate).toBeUndefined();
     });
 
     it("verifies Police Style Thinking (single variant) safely selects that variant without repeat-avoidance error", () => {

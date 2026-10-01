@@ -12,6 +12,7 @@ export const CreativeSeedDimensionSchema = z.enum([
   "outro_recognition",
   "outro_invitation",
   "outro_farewell",
+  "outro_kinematic_transition",
 ]);
 
 export type CreativeSeedDimension = z.infer<typeof CreativeSeedDimensionSchema>;

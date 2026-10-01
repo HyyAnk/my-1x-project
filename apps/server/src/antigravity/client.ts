@@ -140,6 +140,7 @@ export class AntigravityClient extends EventEmitter {
       target,
       session,
       threadConversations: this.threadConversations,
+      refreshSession: () => this.getActiveSession(true),
       onDelta: (delta: string) => {
         this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta } });
       },

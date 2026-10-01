@@ -137,6 +137,7 @@ export function createAnimationPackagingService(
       atlasManifestInfo: atlasResult.atlasManifestInfo,
       frameRects: atlasResult.frameRects,
       sequenceRegistration: cropBounds.sequenceRegistration,
+      videoRegistration: reg.registration,
       effectiveSourceFingerprint,
       sourceVideoFingerprint,
       atlasChecksum: atlasResult.atlasChecksum,

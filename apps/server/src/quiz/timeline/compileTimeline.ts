@@ -2,6 +2,7 @@ import {
   QuizTimelineSchema,
   gameplayTimingPolicy,
   resolveGameplayPolicy,
+  type BridgeSceneConfig,
   type DirectorPlan,
   type QuizTimeline,
   type QuizV2,
@@ -21,6 +22,9 @@ export type TimelineCompileInput = {
   timing?: Partial<QuizTimingPolicy>;
   introDuration?: number;
   outroDuration?: number;
+  channelName?: string;
+  topic?: string;
+  bridgeConfig?: BridgeSceneConfig;
 };
 
 export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
@@ -28,7 +32,12 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
   const ctx = new TimelineContext(policy, input.audioDurations);
 
   // 1. Intro Stage
-  compileIntroStage(ctx, input.director, input.voicePlan, input.introDuration);
+  compileIntroStage(ctx, input.director, input.voicePlan, input.introDuration, {
+    bridgeConfig: input.bridgeConfig,
+    channelName: input.channelName,
+    topic: input.topic,
+    questionCount: input.quiz.questions.length,
+  });
 
   // 2. Question Blocks
   for (const [questionIndex, question] of input.quiz.questions.entries()) {

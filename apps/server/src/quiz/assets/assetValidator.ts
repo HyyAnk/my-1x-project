@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import type { QuizAssetPlan, QuizAssetResolution, QuizImageStyle } from "@studio/shared";
+import type { ImageProviderId, QuizAssetPlan, QuizAssetResolution, QuizImageStyle } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { Gpti2QuizImageProvider } from "../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../providers/shopAiKeyImage.js";
@@ -15,7 +15,7 @@ export function resolveQuizImageProviderName(input: {
   imageConfig?: {
     api_key?: string;
     model?: string;
-    provider?: "gpti2" | "shopaikey" | "custom" | "imgstudio";
+    provider?: ImageProviderId;
     base_url?: string;
     quality?: string;
   };
@@ -49,7 +49,7 @@ export async function isQuizAssetResolutionComplete(input: {
   imageConfig?: {
     api_key?: string;
     model?: string;
-    provider?: "gpti2" | "shopaikey" | "custom";
+    provider?: ImageProviderId;
     base_url?: string;
     quality?: string;
   };

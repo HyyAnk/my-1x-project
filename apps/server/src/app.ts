@@ -141,6 +141,7 @@ export async function buildApp(
     close: async () => {
       mascotSlotJobManager.destroy();
       mascotStyleJobManager.destroy();
+      await tasks.close();
       await codex.close();
       await server.close();
       await repository.close();

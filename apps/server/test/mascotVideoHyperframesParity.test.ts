@@ -150,8 +150,8 @@ describe("Mascot Video HyperFrames Parity (Phase 4)", () => {
     });
   });
 
-  describe("Suite 3: Multi-Question Variant Rotation & Deterministic Replay", () => {
-    it("alternates between video and static slots while avoiding adjacent repetition", async () => {
+  describe("Suite 3: Multi-Question Variant Selection & Replay", () => {
+    it("uses animation variants and replays the snapshot exactly", async () => {
       const localizedMascot = (await prepareLocalizedMascot(channel, repository, renderRoot))!;
       const quiz = createMultiQuestionQuiz(5);
       const { director, timeline } = compileTestTimeline(quiz);
@@ -181,19 +181,14 @@ describe("Mascot Video HyperFrames Parity (Phase 4)", () => {
         expect(entry).toBeDefined();
         thinkingSlots.push(entry!.slot_index);
 
-        if (entry!.slot_index === 2) {
-          expect(qHtml).toContain("<video");
-          expect(qHtml).toContain("mascot-v2-animation-video");
-        } else {
-          expect(qHtml).toContain("<img");
-          expect(qHtml).toContain("mascot-v2-image");
-          expect(qHtml).toContain('data-mascot-motion-preset="sway"');
-        }
+        // Published animation variants take precedence over static source
+        // images for the whole state/style candidate pool.
+        expect(entry!.slot_index).toBe(2);
+        expect(qHtml).toContain("<video");
+        expect(qHtml).toContain("mascot-v2-animation-video");
       }
 
-      for (let i = 0; i < thinkingSlots.length - 1; i++) {
-        expect(thinkingSlots[i]).not.toBe(thinkingSlots[i + 1]);
-      }
+      expect(new Set(thinkingSlots)).toEqual(new Set([2]));
 
       const reRenderBundle = buildCandyArcadeCompositionBundle({
         quiz,

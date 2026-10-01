@@ -48,6 +48,7 @@ export function createAnimationAssetFromRevision(revision: MascotAnimationRevisi
     loop_policy: revision.loop_mode,
     frames,
     registration: revision.registration,
+    video_registration: revision.registration,
     content_fingerprint: revision.processing_fingerprint,
     source_fingerprint: revision.source_fingerprint,
     qa_report_url: revision.qa_report_url,

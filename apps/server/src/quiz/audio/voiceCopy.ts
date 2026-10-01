@@ -2,6 +2,8 @@ import { normalizeLanguageCode } from "@studio/shared";
 
 export interface QuizVoiceCopy {
   intro: string;
+  topicTeaser: (count: number, topic: string) => string;
+  subscribeCta: (channelName: string, customCtaText?: string) => string;
   question: (number: number, text: string) => string;
   choices: (choices: string[]) => string;
   thinking: readonly string[];
@@ -10,11 +12,46 @@ export interface QuizVoiceCopy {
   outro: string;
 }
 
+export const ENGLISH_TOPIC_TEASER_VARIANTS = [
+  (count: number, topic: string) => `Get ready, everyone! Today, we're taking on ${count} exciting mystery questions about ${topic}! Can you get every single one right?`,
+  (count: number, topic: string) => `Welcome to the challenge! Today, we have ${count} awesome mystery questions about ${topic}! Let's see if you can score a perfect 100%!`,
+  (count: number, topic: string) => `Fire up your brains! Today we're solving ${count} thrilling mystery questions about ${topic}! Let's jump right in!`,
+] as const;
+
+export const ENGLISH_SUBSCRIBE_CTA_VARIANTS = [
+  (channel: string) => `Quick shout-out! Smash that subscribe button for ${channel} right now and join our awesome quiz crew! You won't want to miss a single challenge!`,
+  (channel: string) => `Before question one kicks off, smash that subscribe button for ${channel} to unlock daily brain-busting fun!`,
+  (channel: string) => `Are you ready to play? Hit that subscribe button for ${channel} right now so you never miss our next epic showdown!`,
+] as const;
+
+export const ENGLISH_KICKOFF_VARIANTS = [
+  "Let's go!",
+  "Here we go!",
+  "Let's do this!",
+  "Ready? Let's go!",
+] as const;
+
 export const ENGLISH_OUTRO_CLOSING_VARIANTS = [
   "See you next time for even more fun! Bye bye!",
   "Catch you on the next challenge! Bye bye!",
   "See you next time, everybody! Bye bye!",
   "We'll see you on the next adventure! Bye bye!",
+] as const;
+
+export const CHINESE_TOPIC_TEASER_VARIANTS = [
+  (count: number, topic: string) => `\u4eca\u5929\u6211\u4eec\u6709${count}\u9053\u5173\u4e8e${topic}\u7684\u7cbe\u5f69\u95ee\u9898\uff01\u4f60\u80fd\u5168\u90e8\u731c\u5bf9\u5417\uff1f`,
+  (count: number, topic: string) => `\u51c6\u5907\u597d\u4e86\u5417\uff1f\u4eca\u5929\u6211\u4eec\u4e00\u8d77\u6311\u6218${count}\u9053\u5173\u4e8e${topic}\u7684\u6709\u8da3\u9898\u76ee\uff01`,
+] as const;
+
+export const CHINESE_SUBSCRIBE_CTA_VARIANTS = [
+  (channel: string) => `\u5728\u5f00\u59cb\u4e4b\u524d\uff0c\u522b\u5fd8\u4e86\u8ba2\u9605${channel}\uff0c\u4f53\u9a8c\u66f4\u591a\u6709\u8da3\u7684\u6311\u6218\uff01`,
+  (channel: string) => `\u5728\u5f00\u59cb\u7b2c\u4e00\u9898\u524d\uff0c\u8bb0\u5f97\u8ba2\u9605${channel}\uff0c\u63a2\u7d22\u66f4\u591a\u7cbe\u5f69\u95ee\u7b54\uff01`,
+] as const;
+
+export const CHINESE_KICKOFF_VARIANTS = [
+  "\u6211\u4eec\u9a6c\u4e0a\u5f00\u59cb\uff01",
+  "\u51c6\u5907\u597d\u4e86\u5417\uff1f\u51fa\u53d1\uff01",
+  "\u6765\u5427\uff0c\u7b2c\u4e00\u9898\uff01",
 ] as const;
 
 export const CHINESE_OUTRO_CLOSING_VARIANTS = [
@@ -24,13 +61,26 @@ export const CHINESE_OUTRO_CLOSING_VARIANTS = [
   "\u4e0b\u4e00\u6b21\u5192\u9669\u89c1\uff01\u62dc\u62dc\uff01",
 ] as const;
 
-function selectClosing(variants: readonly string[], seed?: string): string {
-  if (!seed) return variants[0] ?? "";
+function selectVariantIndex(variantsCount: number, seed?: string): number {
+  if (!seed || variantsCount <= 1) return 0;
   let hash = 0;
   for (let index = 0; index < seed.length; index++) {
     hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
   }
-  return variants[hash % variants.length] ?? variants[0] ?? "";
+  return hash % variantsCount;
+}
+
+function selectClosing(variants: readonly string[], seed?: string): string {
+  const index = selectVariantIndex(variants.length, seed);
+  return variants[index] ?? variants[0] ?? "";
+}
+
+function formatFirstQuestion(text: string, prefix: string, isChinese = false): string {
+  const trimmed = text.trim();
+  if (/^(?:first\s+question|question\s+1|第[一1]题)[.:：\s]/i.test(trimmed)) {
+    return trimmed;
+  }
+  return isChinese ? `${prefix}：${trimmed}` : `${prefix}: ${trimmed}`;
 }
 
 export function resolveOutroClosing(language: string, seed?: string): string {
@@ -38,10 +88,29 @@ export function resolveOutroClosing(language: string, seed?: string): string {
   return selectClosing(variants, seed);
 }
 
+export function resolveKickoffClosing(language: string, seed?: string): string {
+  const variants = normalizeLanguageCode(language) === "zh" ? CHINESE_KICKOFF_VARIANTS : ENGLISH_KICKOFF_VARIANTS;
+  return selectClosing(variants, seed);
+}
+
 function buildEnglishVoiceCopy(seed?: string): QuizVoiceCopy {
+  const topicVariantIndex = selectVariantIndex(ENGLISH_TOPIC_TEASER_VARIANTS.length, seed);
+  const ctaVariantIndex = selectVariantIndex(ENGLISH_SUBSCRIBE_CTA_VARIANTS.length, seed);
+
   return {
     intro: "Hey friends! Ready to test your brain? Let's jump right in!",
-    question: (_number, text) => text,
+    topicTeaser: (count, topic) => {
+      const template = ENGLISH_TOPIC_TEASER_VARIANTS[topicVariantIndex] ?? ENGLISH_TOPIC_TEASER_VARIANTS[0];
+      return template(count, topic.trim());
+    },
+    subscribeCta: (channelName, customCtaText) => {
+      if (customCtaText && customCtaText.trim()) return customCtaText.trim();
+      const template = ENGLISH_SUBSCRIBE_CTA_VARIANTS[ctaVariantIndex] ?? ENGLISH_SUBSCRIBE_CTA_VARIANTS[0];
+      const base = template(channelName.trim());
+      const kickoff = selectClosing(ENGLISH_KICKOFF_VARIANTS, seed);
+      return `${base} ${kickoff}`;
+    },
+    question: (number, text) => (number === 1 ? formatFirstQuestion(text, "First question") : text),
     choices: (choices) => (choices.length < 2 ? (choices[0] ?? "") : `${choices.slice(0, -1).join(", ")}, or ${choices.at(-1)}?`),
     thinking: ["Pick fast!", "Which one?", "What's your guess?", "Choose now!"],
     reveal: (answer) => `That's right! It's ${answer}!`,
@@ -51,9 +120,23 @@ function buildEnglishVoiceCopy(seed?: string): QuizVoiceCopy {
 }
 
 function buildChineseVoiceCopy(seed?: string): QuizVoiceCopy {
+  const topicVariantIndex = selectVariantIndex(CHINESE_TOPIC_TEASER_VARIANTS.length, seed);
+  const ctaVariantIndex = selectVariantIndex(CHINESE_SUBSCRIBE_CTA_VARIANTS.length, seed);
+
   return {
     intro: "\u670b\u53cb\u4eec\uff0c\u51c6\u5907\u597d\u6311\u6218\u5927\u8111\u4e86\u5417\uff1f\u9a6c\u4e0a\u5f00\u59cb\u5427\uff01",
-    question: (_number, text) => text,
+    topicTeaser: (count, topic) => {
+      const template = CHINESE_TOPIC_TEASER_VARIANTS[topicVariantIndex] ?? CHINESE_TOPIC_TEASER_VARIANTS[0];
+      return template(count, topic.trim());
+    },
+    subscribeCta: (channelName, customCtaText) => {
+      if (customCtaText && customCtaText.trim()) return customCtaText.trim();
+      const template = CHINESE_SUBSCRIBE_CTA_VARIANTS[ctaVariantIndex] ?? CHINESE_SUBSCRIBE_CTA_VARIANTS[0];
+      const base = template(channelName.trim());
+      const kickoff = selectClosing(CHINESE_KICKOFF_VARIANTS, seed);
+      return `${base} ${kickoff}`;
+    },
+    question: (number, text) => (number === 1 ? formatFirstQuestion(text, "\u7b2c\u4e00\u9898", true) : text),
     choices: (choices) =>
       choices.length < 2 ? (choices[0] ?? "") : `${choices.slice(0, -1).join("\u3001")}\uff0c\u8fd8\u662f${choices.at(-1)}\uff1f`,
     thinking: ["\u5feb\u9009\uff01", "\u4f60\u9009\u54ea\u4e2a\uff1f", "\u731c\u731c\u770b\uff01", "\u73b0\u5728\u9009\u62e9\uff01"],
@@ -66,3 +149,4 @@ function buildChineseVoiceCopy(seed?: string): QuizVoiceCopy {
 export function resolveQuizVoiceCopy(language: string, seed?: string): QuizVoiceCopy {
   return normalizeLanguageCode(language) === "zh" ? buildChineseVoiceCopy(seed) : buildEnglishVoiceCopy(seed);
 }
+

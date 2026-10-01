@@ -46,6 +46,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
 
       const currentConfig = await loadConfig(repository.rootDirectory).catch(() => state.config);
       const activeImageConfig = currentConfig.image_generation || state.config.image_generation;
+      const activeFallbackConfig = currentConfig.image_fallback || state.config.image_fallback;
 
       const manifest = await generateEpisodeThumbnail(repository, {
         channelId: params.channelId,
@@ -67,6 +68,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
               quality: activeImageConfig.quality,
             }
           : undefined,
+        imageFallbackConfig: activeFallbackConfig,
         throwOnError: true,
       });
 

@@ -34,9 +34,9 @@ describe("Mascot Stage default placement preset", () => {
       expect(initialConfig.statusCode).toBe(200);
       expect(initialConfig.json<AppConfig>().mascot_stage.default_placement).toEqual({
         position: "bottom_left",
-        scale: 3.66,
-        offset_x: 115,
-        offset_y: 180,
+        scale: 3.6,
+        offset_x: 121,
+        offset_y: 181,
         flip_x: false,
       });
 
@@ -66,6 +66,15 @@ describe("Mascot Stage default placement preset", () => {
       });
       const firstMascot = await app.repository.saveMascot({ name: "First Mascot" });
       const secondMascot = await app.repository.saveMascot({ name: "Second Mascot" });
+      for (const aspect of ["16:9", "9:16"] as const) {
+        expect(firstMascot.render_bundle?.config.placements[aspect]).toMatchObject({
+          anchor: "bottom_left",
+          scale: 3.6,
+          offset_x: 121,
+          offset_y: 181,
+          flip_x: false,
+        });
+      }
 
       const firstAssignment = await app.server.inject({
         method: "PUT",

@@ -170,15 +170,15 @@ describe("Mascot State Adapter Modular Architecture", () => {
       expect(adapted?.render_bundle?.assets?.actions?.celebrate?.image_url).toBe("https://example.com/celeb1.png");
     });
 
-    it("adapts mascot render bundle with secondary style anchor and asserts active style id", () => {
+    it("omits secondary style question states when static variants are missing", () => {
       const mascot = createMockMascot();
       const adapted = adaptMascotForQuestion(mascot, "secondary", 0);
       expect(adapted).toBeDefined();
       expect(adapted?.active_style_id).toBe("secondary");
       expect(adapted?.actions?.thinking).toBeUndefined();
       expect(adapted?.actions?.celebrate).toBeUndefined();
-      expect(adapted?.render_bundle?.assets?.actions?.thinking?.image_url).toBe("https://example.com/sec_anchor.png");
-      expect(adapted?.render_bundle?.assets?.actions?.celebrate?.image_url).toBe("https://example.com/sec_anchor.png");
+      expect(adapted?.render_bundle?.assets?.actions?.thinking).toBeUndefined();
+      expect(adapted?.render_bundle?.assets?.actions?.celebrate).toBeUndefined();
     });
   });
 

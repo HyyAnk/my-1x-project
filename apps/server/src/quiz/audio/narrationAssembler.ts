@@ -78,7 +78,7 @@ export async function assembleQuizNarration(input: {
         "-i",
         concatManifestPath,
         "-af",
-        `aformat=sample_rates=48000:channel_layouts=stereo,atrim=duration=${duration},asetpts=N/SR/TB,loudnorm=I=-16:TP=-1.5:LRA=7`,
+        `aformat=sample_rates=48000:channel_layouts=stereo,atrim=duration=${duration},asetpts=N/SR/TB,alimiter=level_in=1.0:level_out=1.0:limit=0.95:attack=5:release=50:asc=0`,
         "-ar",
         "48000",
         "-ac",

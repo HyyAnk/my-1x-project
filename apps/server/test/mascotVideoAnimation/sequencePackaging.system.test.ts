@@ -102,6 +102,8 @@ describe("Stage 09 — Mascot Sequence Packaging & Manifest", () => {
       expect(parsedManifest.frames.length).toBe(12);
       expect(parsedManifest.fingerprint).toBe(result.processingFingerprint);
       expect(parsedManifest.source_fingerprint).toBe("fp_test_source_video_sha256_abcdef");
+      expect(parsedManifest.video_registration).toMatchObject({ source_width: 640, source_height: 360, offset_x: 0, offset_y: 0 });
+      expect(parsedManifest.registration.source_width).toBeLessThan(640);
 
       // 4. Validate all 12 frame rectangles
       for (let i = 0; i < 12; i++) {

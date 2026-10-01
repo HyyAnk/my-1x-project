@@ -1,10 +1,10 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import type { Channel } from "@studio/shared";
+import { ChannelSchema, type Channel } from "@studio/shared";
 import { CHANNEL_ORDER_STORAGE_KEY, computeOrderedChannels, useChannelOrder } from "./useChannelOrder";
 
 function createMockChannel(id: string, name: string): Channel {
-  return {
+  return ChannelSchema.parse({
     channel_id: id,
     slug: id,
     display_name: name,
@@ -39,7 +39,7 @@ function createMockChannel(id: string, name: string): Channel {
       show_in_outro: true,
       show_in_question: true,
     },
-  };
+  });
 }
 
 describe("useChannelOrder - Step 1: State & Persistence", () => {

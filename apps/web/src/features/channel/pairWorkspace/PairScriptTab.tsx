@@ -29,6 +29,20 @@ export function PairScriptTab({
           {hasText ? <ArrowsClockwise size={18} /> : <Sparkle size={18} />} {hasText ? "Regenerate" : "Generate Script"}
         </button>
         <AutoIdentityControl checked={generation.autoIdentity} disabled={pending || uploading} onChange={generation.setAutoIdentity} />
+        <label className="pair-outro-duration-control">
+          <span>Outro:</span>
+          <select
+            aria-label="Outro duration"
+            value={generation.outroDuration}
+            disabled={disabled}
+            onChange={(e) => generation.setOutroDuration(Number(e.target.value))}
+          >
+            <option value={16}>16s (2-Part Match Cut)</option>
+            <option value={8}>8s (Single Clip)</option>
+            <option value={12}>12s (2-Part Sequence)</option>
+            <option value={20}>20s (2-Part Sequence)</option>
+          </select>
+        </label>
       </div>
       <PairGenerationStatus generation={generation} disabled={disabled} />
       <PairResources channelId={channelId} stylePresetId={stylePresetId} />

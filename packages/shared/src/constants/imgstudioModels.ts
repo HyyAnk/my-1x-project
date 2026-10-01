@@ -12,17 +12,29 @@ export interface ImgStudioModelDefinition {
 
 export const IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID = "c604136c-0756-49a0-a826-cfc72b68cb9a";
 export const IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID = "2d059365-a09a-4fd5-aa9e-b5335d09bbe9";
+export const IMGSTUDIO_KREA_2_TURBO_MODEL_ID = "fal-krea-2-turbo";
 
 export const IMGSTUDIO_DEFAULT_MODEL_ID = IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID;
 export const IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID = IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID;
 export const IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID = IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID;
+export const IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID = IMGSTUDIO_KREA_2_TURBO_MODEL_ID;
 
 export function resolveImgStudioFallbackLevel2Model(modelId?: string): string {
   const configuredModel = modelId?.trim() || IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID;
   return configuredModel === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID ? IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID : configuredModel;
 }
 
+export function resolveImgStudioFallbackLevel3Model(modelId?: string): string {
+  const configuredModel = modelId?.trim() || IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID;
+  return configuredModel;
+}
+
 export const IMGSTUDIO_MODELS: readonly ImgStudioModelDefinition[] = [
+  {
+    id: "fal-krea-2-turbo",
+    name: "Krea 2 Turbo",
+    max_resolution: "2K",
+  },
   {
     id: "2d059365-a09a-4fd5-aa9e-b5335d09bbe9",
     name: "Qwen Image 3.0 Pro",

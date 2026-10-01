@@ -1,6 +1,7 @@
-import type { Channel, Episode, MascotProfile, Scene } from "@studio/shared";
+import type { Channel, Episode, MascotProfile, MascotStateMediaMode, Scene } from "@studio/shared";
 import type { RequiredQuizRenderArtifacts } from "./quizRenderArtifacts.js";
 import type { IntroOutroMediaResolution } from "./introOutroMediaResolver.js";
+import type { ResolvedChannelBrandIdentity } from "../../quiz/brand/channelBrandAssetResolver.js";
 import { prepareQuizVideoRender } from "./quizVideoRenderPreparation.js";
 
 export interface CompileCompositionHtmlParams {
@@ -14,17 +15,20 @@ export interface CompileCompositionHtmlParams {
   bgmHistory: Array<{ track_id: string }>;
   mascotProfile: MascotProfile | null;
   introOutro: IntroOutroMediaResolution;
+  mascotMediaMode?: MascotStateMediaMode;
+  brandIdentity?: ResolvedChannelBrandIdentity;
 }
 
 export async function compileCompositionHtml(
   params: CompileCompositionHtmlParams,
 ): Promise<{ html: string; compositionFiles?: Record<string, string> }> {
-  const { artifacts, channel, episode, scenes, renderAspectRatio, renderFps, assetSources, bgmHistory, mascotProfile, introOutro } = params;
+  const { artifacts, channel, episode, scenes, renderAspectRatio, renderFps, assetSources, bgmHistory, mascotProfile, introOutro, brandIdentity } = params;
   const mascotAspectRatio = renderAspectRatio === "9:16" ? "9:16" : "16:9";
 
   const preparedQuizRender = await prepareQuizVideoRender({
     channel,
     episodeQuizConfig: episode.quiz_config,
+    topic: episode.topic?.title,
     quiz: artifacts.quiz,
     director: artifacts.director,
     timeline: artifacts.timeline,
@@ -46,6 +50,10 @@ export async function compileCompositionHtml(
     transitionType: introOutro.transitionType,
     transitionDurationSeconds: introOutro.transitionDurationSeconds,
     audioMode: introOutro.audioMode,
+    introHasAudio: introOutro.introHasAudio,
+    outroHasAudio: introOutro.outroHasAudio,
+    mascotMediaMode: params.mascotMediaMode,
+    brandIdentity,
   });
 
   return {

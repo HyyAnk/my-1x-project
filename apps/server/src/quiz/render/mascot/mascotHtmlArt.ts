@@ -1,4 +1,4 @@
-import { resolveAnimationFrameAtTime, resolveMascotRenderSpec } from "@studio/shared";
+import { resolveAnimationFrameAtTime, resolveMascotRenderSpec, type MascotStateMediaMode } from "@studio/shared";
 import { escAttr } from "../candyArcade/candyArcadeSvg.js";
 import { numberValue, px } from "./mascotHtmlStyles.js";
 
@@ -12,8 +12,9 @@ export function renderArt(
   sourceMapper: (url: string) => string,
   stateAtSeconds = 0,
   clipStartSeconds = 0,
+  mediaMode?: MascotStateMediaMode,
 ): string {
-  if (spec.asset.animation) {
+  if (mediaMode !== "static" && spec.asset.animation) {
     if (spec.asset.animation.transparent_video_url) {
       return renderVideoArt(spec, spec.asset.animation, timelineTime, duration, delay, sourceMapper, stateAtSeconds, clipStartSeconds);
     }
@@ -21,7 +22,7 @@ export function renderArt(
       return renderAtlasArt(spec.asset.animation, timelineTime, delay, playing, preview, sourceMapper, stateAtSeconds);
     }
   }
-  return renderStaticOrLegacyArt(spec, timelineTime, duration, delay, playing, preview, sourceMapper);
+  return renderStaticOrLegacyArt(spec, timelineTime, duration, delay, playing, preview, sourceMapper, mediaMode);
 }
 
 export function renderVideoArt(
@@ -39,8 +40,10 @@ export function renderVideoArt(
   const localizedVideoUrl = sourceMapper(animation.transparent_video_url || "");
   const isOneShot = animation.loop_policy === "one_shot_rest" || (!animation.loop && animation.loop_policy !== "loop");
   const isLoop = !isOneShot;
-  const cycle = animation.duration_ms ? animation.duration_ms / 1000 : animation.frame_count / animation.fps;
-  const seekTimeSeconds = isLoop ? animationTime % cycle : Math.min(animationTime, cycle);
+  const cycle = animation.frame_count && animation.fps && animation.fps > 0
+    ? animation.frame_count / animation.fps
+    : (animation.duration_ms ? animation.duration_ms / 1000 : 1);
+  const seekTimeSeconds = isLoop ? (cycle > 0 ? animationTime % cycle : 0) : Math.min(animationTime, cycle);
   const videoId = `mascot-video-${spec.asset.action}-${animation.slot_index ?? 0}-${Math.round(delay * 1000)}`;
 
   const videoStyle = [
@@ -87,7 +90,9 @@ export function renderAtlasArt(
   ];
 
   if (!preview && playing) {
-    const cycle = animation.frame_count / animation.fps;
+    const cycle = animation.frame_count && animation.fps && animation.fps > 0
+      ? animation.frame_count / animation.fps
+      : (animation.duration_ms ? animation.duration_ms / 1000 : 1);
     const isOneShot = animation.loop_policy === "one_shot_rest" || (!animation.loop && animation.loop_policy !== "loop");
     const animName = isOneShot ? "mascot-v2-atlas-oneshot" : "mascot-v2-atlas-loop";
     const iterations = isOneShot ? "1" : "infinite";
@@ -109,9 +114,10 @@ export function renderStaticOrLegacyArt(
   playing: boolean,
   preview: boolean,
   sourceMapper: (url: string) => string,
+  mediaMode?: MascotStateMediaMode,
 ): string {
   const style = [`--mascot-art-url:url('${escAttr(sourceMapper(spec.asset.image_url))}')`];
-  const legacy = spec.asset.legacy_animation;
+  const legacy = mediaMode === "static" ? undefined : spec.asset.legacy_animation;
   if (legacy) {
     const cycle = legacy.frames_count / legacy.fps;
     const previewFrame = Math.floor(timelineTime * legacy.fps) % legacy.frames_count;

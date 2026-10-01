@@ -58,6 +58,7 @@ export async function paceQuizVoiceAudio(
     await writeFile(inputPath, audio);
     const filters = atempoFilters(tempo);
     if (gainDb !== 0) filters.push(`volume=${Math.pow(10, gainDb / 20).toFixed(4)}`);
+    filters.push("loudnorm=I=-16:TP=-1.5:LRA=7");
     const filterArgs = filters.length > 0 ? ["-filter:a", filters.join(",")] : [];
     await execFileAsync("ffmpeg", ["-y", "-i", inputPath, ...filterArgs, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", outputPath], {
       timeout: 2 * 60_000,
@@ -79,7 +80,12 @@ export async function enforceQuizVoicePace(
 ): Promise<Uint8Array> {
   // Short energetic hook and closing segments should preserve natural punchy delivery
   // without atempo stretch degradation.
-  if (segment.role === "intro" || segment.role === "outro") {
+  if (
+    segment.role === "intro" ||
+    segment.role === "outro" ||
+    segment.role === "intro_topic" ||
+    segment.role === "intro_cta"
+  ) {
     return audio;
   }
   const actual = segmentPace(segment, wavDurationSeconds(audio));

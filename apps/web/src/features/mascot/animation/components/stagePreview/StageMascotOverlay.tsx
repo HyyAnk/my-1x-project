@@ -1,20 +1,23 @@
 import { useMemo } from "react";
 import {
+  MASCOT_BASE_BOX_PX,
   isMockFixtureIdentifier,
   resolveAnimationFrameAtTime,
   type MascotPublishedAnimationAsset,
   type MascotPlacementV2,
 } from "@studio/shared";
+import { resolveStageMascotFrameGeometry } from "./stageMascotGeometry";
+import { stageMascotContainerStyle, stageMascotSpriteStyle, stageMascotVideoStyle } from "./stageMascotStyles";
 
 export interface StageMascotOverlayProps {
   animation?: MascotPublishedAnimationAsset | null;
   fallbackImageUrl?: string;
   timeSeconds: number;
   placement: MascotPlacementV2;
-  canvasZoom?: number;
+  aspectRatio?: "16:9" | "9:16";
 }
 
-export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, placement, canvasZoom = 1.0 }: StageMascotOverlayProps) {
+export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, placement, aspectRatio = "16:9" }: StageMascotOverlayProps) {
   const rawVideoUrl = animation?.transparent_video_url;
   const videoUrl = rawVideoUrl && !isMockFixtureIdentifier(rawVideoUrl) ? rawVideoUrl : null;
   const validFallbackUrl = fallbackImageUrl && !isMockFixtureIdentifier(fallbackImageUrl) ? fallbackImageUrl : null;
@@ -24,29 +27,12 @@ export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, p
     return resolveAnimationFrameAtTime(animation, timeSeconds);
   }, [animation, timeSeconds]);
 
+  const frameGeometry = useMemo(() => {
+    if (!animation) return null;
+    return resolveStageMascotFrameGeometry(animation);
+  }, [animation]);
+
   const anchorClass = placement.anchor === "bottom_right" ? "anchor-bottom_right" : "anchor-bottom_left";
-
-  const containerStyle: React.CSSProperties = {
-    position: "absolute",
-    bottom: "24px",
-    left: placement.anchor === "bottom_right" ? "auto" : "36px",
-    right: placement.anchor === "bottom_right" ? "36px" : "auto",
-    transform: `translate(${placement.offset_x}px, ${placement.offset_y}px) scale(${placement.scale * canvasZoom}) scaleX(${placement.flip_x ? -1 : 1})`,
-    transformOrigin: "bottom center",
-    pointerEvents: "none",
-    zIndex: 20,
-    transition: "transform 0.1s ease-out",
-  };
-
-  const spriteStyle: React.CSSProperties = {
-    width: `${resolvedFrame?.frame.width ?? 220}px`,
-    height: `${resolvedFrame?.frame.height ?? 220}px`,
-    backgroundImage: animation?.atlas_url ? `url("${animation.atlas_url}")` : undefined,
-    backgroundPosition: resolvedFrame?.atlasOffsets.cssBackgroundPosition ?? "center bottom",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "auto",
-    filter: "drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45))",
-  };
 
   return (
     <div
@@ -57,7 +43,9 @@ export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, p
       data-offset-x={placement.offset_x}
       data-offset-y={placement.offset_y}
       data-flip-x={placement.flip_x}
-      style={containerStyle}
+      data-pivot-compensation-x={frameGeometry?.pivot_compensation_x ?? 0}
+      data-pivot-compensation-y={frameGeometry?.pivot_compensation_y ?? 0}
+      style={stageMascotContainerStyle(placement, aspectRatio)}
     >
       {videoUrl ? (
         <video
@@ -67,7 +55,7 @@ export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, p
           muted
           playsInline
           data-testid="mascot-transparent-video"
-          style={{ maxHeight: "220px", maxWidth: "100%", filter: "drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45))" }}
+          style={stageMascotVideoStyle(animation, frameGeometry, placement)}
           aria-label="Transparent WebM Mascot Animation"
         />
       ) : animation?.atlas_url && resolvedFrame ? (
@@ -75,7 +63,7 @@ export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, p
           className="candy-mascot-sprite"
           data-testid="mascot-sprite-frame"
           data-frame-index={resolvedFrame.frameIndex}
-          style={spriteStyle}
+          style={stageMascotSpriteStyle(animation, resolvedFrame, frameGeometry)}
           role="img"
           aria-label={`Frame ${resolvedFrame.frameIndex + 1} of ${animation?.frame_count ?? 0}`}
         />
@@ -83,7 +71,11 @@ export function StageMascotOverlay({ animation, fallbackImageUrl, timeSeconds, p
         <img
           src={validFallbackUrl}
           alt="Mascot preview"
-          style={{ maxHeight: "220px", filter: "drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45))" }}
+          style={{
+            maxHeight: `${MASCOT_BASE_BOX_PX}px`,
+            maxWidth: `${MASCOT_BASE_BOX_PX}px`,
+            filter: "drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45))",
+          }}
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}

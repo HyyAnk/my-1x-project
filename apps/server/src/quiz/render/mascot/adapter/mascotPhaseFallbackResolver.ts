@@ -1,6 +1,6 @@
 import {
   adaptMascotV1ToV2,
-  filterAvailableVariants,
+  filterPreferredVariants,
   isMockFixtureIdentifier,
   resolveMascotStyle,
   type MascotActionType,
@@ -9,6 +9,7 @@ import {
   type MascotProfile,
   type MascotPublishedAnimationAsset,
   type MascotRenderBundleV2,
+  type MascotStateMediaMode,
   type MascotStateVariant,
   type MascotStyle,
 } from "@studio/shared";
@@ -51,11 +52,15 @@ export function applyIntroPhaseFallback(
   celebrateVariants: MascotStateVariant[],
   thinkingVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   if (!hasDedicatedAction(mascot, "wave")) {
     const fallbackVariant = celebrateVariants[0] ?? thinkingVariants[0];
-    const fallbackUrl =
-      fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? getValidAnchorOrMaster(style, mascot);
+    const isAnimationMode = mediaMode === "animation";
+    const fallbackUrl = isAnimationMode
+      ? (fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? getValidAnchorOrMaster(style, mascot))
+      : (fallbackVariant?.image_url ?? fallbackVariant?.transparent_image_url ?? getValidAnchorOrMaster(style, mascot));
+    const animationAsset = isAnimationMode ? fallbackVariant?.animation : undefined;
     if (fallbackUrl) {
       apply(
         "wave",
@@ -63,7 +68,7 @@ export function applyIntroPhaseFallback(
         fallbackVariant?.motion_preset ?? "wave",
         fallbackVariant?.motion_speed ?? 1.0,
         fallbackVariant?.motion_intensity ?? "normal",
-        fallbackVariant?.animation,
+        animationAsset,
       );
     }
   }
@@ -78,11 +83,15 @@ export function applyOutroPhaseFallback(
   celebrateVariants: MascotStateVariant[],
   thinkingVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   if (!hasDedicatedAction(mascot, "outro")) {
     const fallbackVariant = (celebrateVariants.length > 1 ? celebrateVariants[1] : celebrateVariants[0]) ?? thinkingVariants[0];
-    const fallbackUrl =
-      fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? getValidAnchorOrMaster(style, mascot);
+    const isAnimationMode = mediaMode === "animation";
+    const fallbackUrl = isAnimationMode
+      ? (fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? getValidAnchorOrMaster(style, mascot))
+      : (fallbackVariant?.image_url ?? fallbackVariant?.transparent_image_url ?? getValidAnchorOrMaster(style, mascot));
+    const animationAsset = isAnimationMode ? fallbackVariant?.animation : undefined;
     if (fallbackUrl) {
       apply(
         "outro",
@@ -90,44 +99,51 @@ export function applyOutroPhaseFallback(
         fallbackVariant?.motion_preset ?? "wave",
         fallbackVariant?.motion_speed ?? 1.0,
         fallbackVariant?.motion_intensity ?? "normal",
-        fallbackVariant?.animation,
+        animationAsset,
       );
     }
   }
 }
 
 function applySecondaryQuestionFallback(
+  mascot: MascotProfile,
   style: MascotStyle,
   celebrateVariants: MascotStateVariant[],
   thinkingVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   const candidateAnchor = style.anchor_image_url?.trim();
-  const validAnchor = candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
+  const validAnchor = mediaMode === "animation" && candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
+  const isAnimationMode = mediaMode === "animation";
 
   const thinkingFallback = thinkingVariants[0];
-  const thinkingUrl = thinkingFallback?.animation?.transparent_video_url ?? thinkingFallback?.image_url ?? validAnchor;
-  if (thinkingUrl) {
+  const thinkingUrl = isAnimationMode
+    ? (thinkingFallback?.animation?.transparent_video_url ?? thinkingFallback?.image_url ?? validAnchor)
+    : (thinkingFallback?.image_url ?? thinkingFallback?.transparent_image_url ?? validAnchor);
+  if (thinkingUrl && !hasDedicatedAction(mascot, "thinking")) {
     apply(
       "thinking",
       thinkingUrl,
       thinkingFallback?.motion_preset ?? "sway",
       thinkingFallback?.motion_speed ?? 1.0,
       thinkingFallback?.motion_intensity ?? "normal",
-      thinkingFallback?.animation,
+      isAnimationMode ? thinkingFallback?.animation : undefined,
     );
   }
 
   const celebrateFallback = celebrateVariants[0];
-  const celebrateUrl = celebrateFallback?.animation?.transparent_video_url ?? celebrateFallback?.image_url ?? validAnchor;
-  if (celebrateUrl) {
+  const celebrateUrl = isAnimationMode
+    ? (celebrateFallback?.animation?.transparent_video_url ?? celebrateFallback?.image_url ?? validAnchor)
+    : (celebrateFallback?.image_url ?? celebrateFallback?.transparent_image_url ?? validAnchor);
+  if (celebrateUrl && !hasDedicatedAction(mascot, "celebrate")) {
     apply(
       "celebrate",
       celebrateUrl,
       celebrateFallback?.motion_preset ?? "jump",
       celebrateFallback?.motion_speed ?? 1.0,
       celebrateFallback?.motion_intensity ?? "normal",
-      celebrateFallback?.animation,
+      isAnimationMode ? celebrateFallback?.animation : undefined,
     );
   }
 }
@@ -137,10 +153,14 @@ function applyCoreThinkingFallback(
   validAnchor: string,
   thinkingVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   if (hasDedicatedAction(mascot, "thinking")) return;
   const fallbackVariant = thinkingVariants[0];
-  const fallbackUrl = fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? validAnchor;
+  const isAnimationMode = mediaMode === "animation";
+  const fallbackUrl = isAnimationMode
+    ? (fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? validAnchor)
+    : (fallbackVariant?.image_url ?? fallbackVariant?.transparent_image_url ?? validAnchor);
   if (!fallbackUrl) return;
   apply(
     "thinking",
@@ -148,7 +168,7 @@ function applyCoreThinkingFallback(
     fallbackVariant?.motion_preset ?? "sway",
     fallbackVariant?.motion_speed ?? 1.0,
     fallbackVariant?.motion_intensity ?? "normal",
-    fallbackVariant?.animation,
+    isAnimationMode ? fallbackVariant?.animation : undefined,
   );
 }
 
@@ -157,10 +177,14 @@ function applyCoreCelebrateFallback(
   validAnchor: string,
   celebrateVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   if (hasDedicatedAction(mascot, "celebrate")) return;
   const fallbackVariant = celebrateVariants[0];
-  const fallbackUrl = fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? validAnchor;
+  const isAnimationMode = mediaMode === "animation";
+  const fallbackUrl = isAnimationMode
+    ? (fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? validAnchor)
+    : (fallbackVariant?.image_url ?? fallbackVariant?.transparent_image_url ?? validAnchor);
   if (!fallbackUrl) return;
   apply(
     "celebrate",
@@ -168,7 +192,7 @@ function applyCoreCelebrateFallback(
     fallbackVariant?.motion_preset ?? "jump",
     fallbackVariant?.motion_speed ?? 1.0,
     fallbackVariant?.motion_intensity ?? "normal",
-    fallbackVariant?.animation,
+    isAnimationMode ? fallbackVariant?.animation : undefined,
   );
 }
 
@@ -178,12 +202,13 @@ function applyCoreQuestionFallback(
   celebrateVariants: MascotStateVariant[],
   thinkingVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   const candidateAnchor = style.anchor_image_url?.trim();
-  const validAnchor = candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
+  const validAnchor = mediaMode === "animation" && candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
 
-  applyCoreThinkingFallback(mascot, validAnchor, thinkingVariants, apply);
-  applyCoreCelebrateFallback(mascot, validAnchor, celebrateVariants, apply);
+  applyCoreThinkingFallback(mascot, validAnchor, thinkingVariants, apply, mediaMode);
+  applyCoreCelebrateFallback(mascot, validAnchor, celebrateVariants, apply, mediaMode);
 }
 
 /**
@@ -195,13 +220,14 @@ export function applyQuestionPhaseFallback(
   celebrateVariants: MascotStateVariant[],
   thinkingVariants: MascotStateVariant[],
   apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode = "static",
 ): void {
   const isSecondaryStyle = !style.is_default && style.id !== "core";
   if (isSecondaryStyle) {
-    applySecondaryQuestionFallback(style, celebrateVariants, thinkingVariants, apply);
+    applySecondaryQuestionFallback(mascot, style, celebrateVariants, thinkingVariants, apply, mediaMode);
     return;
   }
-  applyCoreQuestionFallback(mascot, style, celebrateVariants, thinkingVariants, apply);
+  applyCoreQuestionFallback(mascot, style, celebrateVariants, thinkingVariants, apply, mediaMode);
 }
 
 function pruneSecondaryPhaseActions(
@@ -209,12 +235,14 @@ function pruneSecondaryPhaseActions(
   style: MascotStyle,
   celebrateVariants: MascotStateVariant[],
   thinkingVariants: MascotStateVariant[],
+  mediaMode: MascotStateMediaMode,
 ): void {
+  if (!renderBundle) return;
   const isSecondaryStyle = !style.is_default && style.id !== "core";
-  if (!isSecondaryStyle || !renderBundle) return;
+  if (!isSecondaryStyle && mediaMode !== "static") return;
 
   const candidateAnchor = style.anchor_image_url?.trim();
-  const hasValidAnchor = Boolean(candidateAnchor && !isMockFixtureIdentifier(candidateAnchor));
+  const hasValidAnchor = mediaMode === "animation" && Boolean(candidateAnchor && !isMockFixtureIdentifier(candidateAnchor));
 
   if (celebrateVariants.length === 0 && !hasValidAnchor) {
     delete renderBundle.assets.actions.celebrate;
@@ -225,29 +253,33 @@ function pruneSecondaryPhaseActions(
     delete renderBundle.assets.actions.thinking;
     renderBundle.config.visibility.phase_rules.thinking.visible = false;
     renderBundle.config.visibility.phase_rules.choices.visible = false;
-    if (celebrateVariants.length === 0 && !hasValidAnchor) {
-      renderBundle.config.visibility.phase_rules.question.visible = false;
-    }
+    renderBundle.config.visibility.phase_rules.question.visible = false;
   }
 }
 
 /**
- * Graceful Fallback for Intro, Outro, and Question clips:
+ * Graceful fallback for intro, outro, and question clips:
  * - If the mascot lacks a dedicated wave action, intro clip uses the active style's celebrate[0] (or thinking[0] or style anchor or master concept).
  * - If the mascot lacks a dedicated outro action, outro clip uses the active style's celebrate[1] (or celebrate[0] or style anchor or master concept).
- * - If the mascot lacks thinking or celebrate in a question clip, falls back to active style's first variant or style anchor.
+ * - Question clips use the active style's first variant or, in animation mode, its style anchor when a state action is missing.
+ *   Static mode omits a missing state and does not use the style anchor as a question-state substitute.
  * Modernized to directly register actions into MascotRenderBundleV2 without legacy sprite action synthesis.
  */
 export function adaptMascotForPhase(
   mascot: MascotProfile | null | undefined,
   phase: "intro" | "question" | "outro",
   styleId?: string | null,
+  mediaMode: MascotStateMediaMode = "static",
 ): MascotProfile | null | undefined {
   if (!mascot) return mascot;
 
   const style = resolveMascotStyle(mascot, styleId ?? mascot.active_style_id);
-  const celebrateVariants = filterAvailableVariants(style.states?.celebrate);
-  const thinkingVariants = filterAvailableVariants(style.states?.thinking);
+  const celebrateVariants = filterPreferredVariants(style.states?.celebrate, mediaMode);
+  const thinkingVariants = filterPreferredVariants(style.states?.thinking, mediaMode);
+
+  if (phase === "question" && mediaMode === "static" && celebrateVariants.length === 0 && thinkingVariants.length === 0) {
+    return null;
+  }
 
   let adaptedRenderBundle = mascot.render_bundle ?? adaptMascotV1ToV2(mascot);
 
@@ -267,12 +299,12 @@ export function adaptMascotForPhase(
   };
 
   if (phase === "intro") {
-    applyIntroPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction);
+    applyIntroPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction, mediaMode);
   } else if (phase === "outro") {
-    applyOutroPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction);
+    applyOutroPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction, mediaMode);
   } else if (phase === "question") {
-    applyQuestionPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction);
-    pruneSecondaryPhaseActions(adaptedRenderBundle, style, celebrateVariants, thinkingVariants);
+    applyQuestionPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction, mediaMode);
+    pruneSecondaryPhaseActions(adaptedRenderBundle, style, celebrateVariants, thinkingVariants, mediaMode);
   }
 
   return {

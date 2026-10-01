@@ -347,9 +347,9 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       scenes,
     });
     const director = createDefaultDirectorPlan(quiz);
-    const voice = buildQuizVoicePlan(quiz);
+    const voice = buildQuizVoicePlan(quiz, { skipIntro: true, skipOutro: true });
     const voicePlan = { ...voice, segments: voice.segments.map((segment) => ({ ...segment, duration_seconds: 4 })) };
-    const timeline = compileQuizTimeline({ quiz, director, voicePlan });
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan, introDuration: 0, outroDuration: 0 });
 
     await repository.writeQuiz(channel.channel_id, episode.episode_id, quiz);
     await repository.writeDirectorPlan(channel.channel_id, episode.episode_id, director);

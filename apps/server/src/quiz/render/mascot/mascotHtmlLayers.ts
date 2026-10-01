@@ -7,12 +7,14 @@ import {
   type MascotRenderBundleV2,
   type MascotRenderPhase,
   type MascotRevealOutcome,
+  type MascotStateMediaMode,
 } from "@studio/shared";
 import { escAttr } from "../candyArcade/candyArcadeSvg.js";
 import {
   finiteNonNegative,
   formatBounds,
   formatPoint,
+  localAssetPivot,
   localPivot,
   motionStyle,
   numberValue,
@@ -20,6 +22,7 @@ import {
   px,
 } from "./mascotHtmlStyles.js";
 import { renderArt } from "./mascotHtmlArt.js";
+import { renderMascotRevealFx } from "./mascotRevealFx.js";
 
 export type MascotHtmlState = {
   phase: MascotRenderPhase;
@@ -38,6 +41,7 @@ export function renderState(
   sourceMapper: (url: string) => string,
   preview: boolean,
   clipStartSeconds = 0,
+  mediaMode?: MascotStateMediaMode,
 ): string {
   const timelineTime = finiteNonNegative(state.timelineTimeSeconds ?? state.atSeconds);
   const spec = resolveMascotRenderSpec(bundle, {
@@ -58,10 +62,12 @@ export function renderState(
   }
 
   const hasAnimation = Boolean(spec.asset.animation);
-  const effectiveMotion: MascotMotionConfig = hasAnimation ? { preset: "none", speed: 1, intensity: "normal" } : spec.motion;
+  const effectiveMotion: MascotMotionConfig =
+    mediaMode === "static" || hasAnimation ? { preset: "none", speed: 1, intensity: "normal" } : spec.motion;
 
   const geometry = resolveMascotRenderGeometry(spec);
   const pivot = localPivot(spec, geometry);
+  const assetPivot = localAssetPivot(spec, geometry);
   const duration = Math.max(0.04, finiteNonNegative(state.durationSeconds));
   const stateDelay = preview ? 0 : finiteNonNegative(state.atSeconds);
   const stateStyle = [
@@ -69,8 +75,12 @@ export function renderState(
     `--mascot-state-span:${numberValue(duration)}s`,
     `--mascot-pivot-x:${px(pivot.x)}`,
     `--mascot-pivot-y:${px(pivot.y)}`,
-    `--mascot-registration-x:${px(spec.asset.registration.offset_x)}`,
-    `--mascot-registration-y:${px(spec.asset.registration.offset_y)}`,
+    `--mascot-frame-pivot-x:${px(assetPivot.x)}`,
+    `--mascot-frame-pivot-y:${px(assetPivot.y)}`,
+    `--mascot-pivot-compensation-x:${px(geometry.pivot_compensation_x)}`,
+    `--mascot-pivot-compensation-y:${px(geometry.pivot_compensation_y)}`,
+    `--mascot-registration-x:${px(geometry.registration_offset_x)}`,
+    `--mascot-registration-y:${px(geometry.registration_offset_y)}`,
     ...motionStyle(effectiveMotion, timelineTime, duration, stateDelay, preview),
   ].join(";");
   const art = renderArt(
@@ -83,13 +93,18 @@ export function renderState(
     sourceMapper,
     finiteNonNegative(state.atSeconds),
     clipStartSeconds,
+    mediaMode,
   );
   const bounds = geometry.visible_content;
-  const assetUrl = spec.asset.animation
-    ? spec.asset.animation.atlas_url || spec.asset.animation.transparent_video_url || spec.asset.image_url
-    : spec.asset.image_url;
+  const assetUrl =
+    mediaMode !== "static" && spec.asset.animation
+      ? spec.asset.animation.atlas_url || spec.asset.animation.transparent_video_url || spec.asset.image_url
+      : spec.asset.image_url;
+  const enterTransition = phaseTransition(bundle, state.phase, "enter");
+  const exitTransition = phaseTransition(bundle, state.phase, "exit");
+  const revealFx = state.phase === "reveal" ? renderMascotRevealFx({ stateDelay, preview }) : "";
 
-  return `<div class="mascot-v2-state state-${spec.asset.action}" style="${stateStyle}" data-legacy-class="mascot-state-layer" data-mascot-visible="true" data-mascot-playing="${String(state.playing)}" data-mascot-phase="${state.phase}" data-mascot-action="${spec.asset.action}" data-mascot-asset-action="${spec.asset.action}" data-mascot-asset-url="${escAttr(sourceMapper(assetUrl))}" data-mascot-motion-preset="${effectiveMotion.preset}" data-mascot-motion-speed="${numberValue(effectiveMotion.speed)}" data-mascot-motion-intensity="${effectiveMotion.intensity}" data-mascot-registration-offset="${formatPoint(spec.asset.registration.offset_x, spec.asset.registration.offset_y)}" data-mascot-enter-transition="${phaseTransition(bundle, state.phase, "enter")}" data-mascot-exit-transition="${phaseTransition(bundle, state.phase, "exit")}" data-mascot-box="${formatBounds(geometry.box_x, geometry.box_y, geometry.box_width, geometry.box_height)}" data-mascot-pivot="${formatPoint(geometry.pivot_x, geometry.pivot_y)}" data-mascot-visible-bounds="${formatBounds(bounds.x, bounds.y, bounds.width, bounds.height)}"><div class="mascot-v2-motion motion-${effectiveMotion.preset}" style="--mascot-motion-delay:${numberValue(stateDelay)}s">${art}</div></div>`;
+  return `<div class="mascot-v2-state state-${spec.asset.action}" style="${stateStyle}" data-legacy-class="mascot-state-layer" data-mascot-visible="true" data-mascot-playing="${String(state.playing)}" data-mascot-phase="${state.phase}" data-mascot-action="${spec.asset.action}" data-mascot-asset-action="${spec.asset.action}" data-mascot-asset-url="${escAttr(sourceMapper(assetUrl))}" data-mascot-media-mode="${mediaMode ?? "legacy"}" data-mascot-motion-preset="${effectiveMotion.preset}" data-mascot-motion-speed="${numberValue(effectiveMotion.speed)}" data-mascot-motion-intensity="${effectiveMotion.intensity}" data-mascot-registration-offset="${formatPoint(spec.asset.registration.offset_x, spec.asset.registration.offset_y)}" data-mascot-enter-transition="${enterTransition}" data-mascot-exit-transition="${exitTransition}" data-mascot-box="${formatBounds(geometry.box_x, geometry.box_y, geometry.box_width, geometry.box_height)}" data-mascot-pivot="${formatPoint(geometry.pivot_x, geometry.pivot_y)}" data-mascot-visible-bounds="${formatBounds(bounds.x, bounds.y, bounds.width, bounds.height)}">${revealFx}<div class="mascot-v2-enter enter-${enterTransition}" style="--mascot-enter-delay:${numberValue(stateDelay)}s"><div class="mascot-v2-motion motion-${effectiveMotion.preset}" style="--mascot-motion-delay:${numberValue(stateDelay)}s">${art}</div></div></div>`;
 }
 
 export { renderArt };

@@ -1,14 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
 import { QuizV2Schema, registerTransition } from "@studio/shared";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { calculateIntroTransitionTiming } from "../src/quiz/render/candyArcade/customVideoClips.js";
-import { resolveAndCopyIntroOutro } from "../src/tasks/video/videoCompositionPreparer.js";
 
 const testQuiz = QuizV2Schema.parse({
   schema_version: 2,
@@ -274,23 +270,19 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
     const defaultBundle = createTestBundle({ transitionType: "stinger_swipe" });
     const defaultIntro = defaultBundle.files["compositions/custom-intro.html"];
     const defaultOutro = defaultBundle.files["compositions/custom-outro.html"];
-    expect(defaultIntro).toContain('data-has-audio="true"');
-    expect(defaultIntro).not.toContain('data-has-audio="false"');
-    expect(defaultIntro).not.toContain("muted");
-    expect(defaultOutro).toContain('data-has-audio="true"');
-    expect(defaultOutro).not.toContain('data-has-audio="false"');
-    expect(defaultOutro).not.toContain("muted");
+    expect(defaultIntro).toContain('id="custom-intro-audio"');
+    expect(defaultIntro).toContain('data-has-audio="false" muted');
+    expect(defaultOutro).toContain('id="custom-outro-audio"');
+    expect(defaultOutro).toContain('data-has-audio="false" muted');
 
     // Explicit audioMode: "use_video_audio"
     const explicitBundle = createTestBundle({ transitionType: "stinger_swipe", audioMode: "use_video_audio" });
     const explicitIntro = explicitBundle.files["compositions/custom-intro.html"];
     const explicitOutro = explicitBundle.files["compositions/custom-outro.html"];
-    expect(explicitIntro).toContain('data-has-audio="true"');
-    expect(explicitIntro).not.toContain('data-has-audio="false"');
-    expect(explicitIntro).not.toContain("muted");
-    expect(explicitOutro).toContain('data-has-audio="true"');
-    expect(explicitOutro).not.toContain('data-has-audio="false"');
-    expect(explicitOutro).not.toContain("muted");
+    expect(explicitIntro).toContain('id="custom-intro-audio"');
+    expect(explicitIntro).toContain('data-has-audio="false" muted');
+    expect(explicitOutro).toContain('id="custom-outro-audio"');
+    expect(explicitOutro).toContain('data-has-audio="false" muted');
   });
 
   it("mutes custom intro and outro videos when audio_mode is overlay_bgm", () => {
@@ -350,58 +342,32 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
     expect(lastEnd).toBeLessThanOrEqual(outroEvent!.at_seconds + 0.001);
   });
 
-  it("resolveAndCopyIntroOutro captures audio_mode from style and defaults cleanly", async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), "intro-outro-resolver-"));
-    const introPath = path.join(testRoot, "source-intro.mp4");
-    const outroPath = path.join(testRoot, "source-outro.mp4");
-    await Promise.all([writeFile(introPath, "intro"), writeFile(outroPath, "outro")]);
-    const mockChannel = {
-      channel_id: "chan-1",
-      slug: "chan-slug",
-      default_intro_outro_style_id: "style-1",
-    } as any;
-    const mockEpisode = {
-      episode_id: "ep-1",
-      quiz_config: {},
-    } as any;
+  it("applies dynamic question palette colors and schedules transition sfx for intro transition", () => {
+    const bundle = createTestBundle({
+      transitionType: "stinger_swipe",
+      transitionDurationSeconds: 0.8,
+      introDuration: 5.0,
+      premixedAudio: false,
+    });
 
-    const mockRepoDefault = {
-      getChannelIntroOutroStyle: async () => ({
-        style_id: "style-1",
-        intro: {},
-        outro: {},
-        transition_type: "crossfade",
-        transition_duration_seconds: 0.8,
-      }),
-      listChannelIntroOutroStyles: async () => [],
-      getIntroOutroClipPath: async (_channelId: string, _styleId: string, kind: "intro" | "outro") =>
-        kind === "intro" ? introPath : outroPath,
-    } as any;
+    const introHtml = bundle.files["compositions/custom-intro.html"];
+    expect(introHtml).toContain("transition-stinger");
+    expect(introHtml).toContain("--trans-from-color");
+    expect(introHtml).toContain("--trans-to-color");
+    // Verify that colors are not fallback black
+    expect(introHtml).not.toContain("--trans-from-color:#000000");
 
-    const defaultRenderRoot = path.join(testRoot, "default-render");
-    await mkdir(defaultRenderRoot);
-    const resDefault = await resolveAndCopyIntroOutro(mockRepoDefault, mockChannel, mockEpisode, defaultRenderRoot);
-    expect(resDefault.audioMode).toBe("use_video_audio");
-    expect(resDefault.transitionType).toBe("crossfade");
+    // Verify first question composition receives quiz-first-question class
+    const questionHtml = bundle.files["compositions/quiz-q1-5000.html"];
+    expect(questionHtml).toBeDefined();
+    expect(questionHtml).toContain("quiz-first-question");
 
-    const mockRepoOverlay = {
-      getChannelIntroOutroStyle: async () => ({
-        style_id: "style-1",
-        intro: {},
-        outro: {},
-        transition_type: "stinger_swipe",
-        transition_duration_seconds: 0.5,
-        audio_mode: "overlay_bgm",
-      }),
-      listChannelIntroOutroStyles: async () => [],
-      getIntroOutroClipPath: async (_channelId: string, _styleId: string, kind: "intro" | "outro") =>
-        kind === "intro" ? introPath : outroPath,
-    } as any;
-
-    const overlayRenderRoot = path.join(testRoot, "overlay-render");
-    await mkdir(overlayRenderRoot);
-    const resOverlay = await resolveAndCopyIntroOutro(mockRepoOverlay, mockChannel, mockEpisode, overlayRenderRoot);
-    expect(resOverlay.audioMode).toBe("overlay_bgm");
-    await rm(testRoot, { recursive: true, force: true });
+    // Verify audio tags include transition sfx at transition start
+    const sfxMatches = Array.from(bundle.html.matchAll(/<audio[^>]*id="sfx-transition-start-[^>]*>/g)).map((m) => m[0]);
+    expect(sfxMatches.length).toBeGreaterThan(0);
+    const introSfx = sfxMatches.find((m) => m.includes('data-start="4.200"'));
+    expect(introSfx).toBeDefined();
+    expect(introSfx).toContain("lightning_brush.wav");
   });
 });
+

@@ -10,6 +10,79 @@ export function compileCreativeProductionPrompt(revision: IntroOutroScriptRevisi
       : directions.logo_mode === "post_overlay"
         ? "Keep the logo area clear for the editor-only overlay; do not generate or physically interact with logo text."
         : "No logo.";
+  if (c.production.clip_kind === "outro" && c.production.target_duration_seconds >= 12) {
+    const midpoint = Number((c.production.target_duration_seconds / 2).toFixed(1));
+    const p1Beats = c.timeline.filter((b) => b.start_seconds < midpoint);
+    const p2Beats = c.timeline.filter((b) => b.end_seconds > midpoint);
+    const p1Voice = c.voiceover.lines.filter((l) => l.start_seconds < midpoint);
+    const p2Voice = c.voiceover.lines.filter((l) => l.end_seconds > midpoint);
+    const p1Camera = c.camera.filter((s) => s.start_seconds < midpoint);
+    const p2Camera = c.camera.filter((s) => s.end_seconds > midpoint);
+
+    return [
+      `Create one continuous ${c.production.clip_kind}`,
+      `================================================================================
+PART 1: THE RUN-UP & KINEMATIC TRANSITION (0.0s - ${midpoint}s)
+================================================================================
+REFERENCE ASSETS
+Attach mascot_subject as ${directions.reference_mode}.
+In-scene logo is not visible yet; reserve upper area for Part 2.
+
+FIXED SCENE ENVIRONMENT (MANDATORY CONSISTENCY)
+${c.style.description}
+${c.style.staging}
+${c.style.motion_language}
+Palette: ${c.style.palette.join(", ") || "Match reference"}
+Opening: ${directions.opening_state}
+
+ACTION & CAMERA (OVERLAPPING FAST PACING)
+${p1Beats.map((beat) => `[${beat.start_seconds}-${Math.min(beat.end_seconds, midpoint)}s] ${beat.action}`).join("\n")}
+Camera:
+${p1Camera.map((shot) => `[${shot.start_seconds}-${Math.min(shot.end_seconds, midpoint)}s] ${shot.framing}; ${shot.movement}`).join("\n")}
+
+AUDIO & VOICEOVER
+${p1Voice.length ? p1Voice.map((line) => `[${line.start_seconds}-${Math.min(line.end_seconds, midpoint)}s] "${line.text}" (${line.delivery})`).join("\n") : "No speech in Part 1."}
+Music & SFX:
+BGM [0-${midpoint}s]: ${c.audio.music_direction || "High-energy upbeat theme"}.
+${c.audio.events.filter((e) => e.at_seconds < midpoint).map((e) => `[${e.at_seconds}s] ${e.direction}`).join("\n")}
+
+CONTINUITY
+Vector: Sprint forward diagonally toward the transition stunt.
+The final 0.4s MUST culminate in a solid 100% whiteout/contact flash covering the entire frame. No subtitles or watermark.
+
+================================================================================
+PART 2: MOMENTUM RECOVERY, CTA & FAREWELL (${midpoint}s - ${c.production.target_duration_seconds}s)
+================================================================================
+REFERENCE ASSETS
+Attach mascot_subject as ${directions.reference_mode}. ${logo}
+Starting state: Seamless continuation matching Part 1 final frame emerging from the whiteout flash.
+
+FIXED SCENE ENVIRONMENT (EXACT MATCH TO PART 1)
+Identical 3D studio stage matching Part 1 exactly:
+${c.style.description}
+Palette: ${c.style.palette.join(", ") || "Match reference"}
+Logo placement: ${directions.logo_placement}
+
+ACTION & CAMERA (SNAPPY RECOVERY & INSTANT SPEECH)
+${p2Beats.map((beat) => `[${Math.max(beat.start_seconds, midpoint)}-${beat.end_seconds}s] ${beat.action}`).join("\n")}
+Camera:
+${p2Camera.map((shot) => `[${Math.max(shot.start_seconds, midpoint)}-${shot.end_seconds}s] ${shot.framing}; ${shot.movement}`).join("\n")}
+
+AUDIO & VOICEOVER
+${p2Voice.length ? p2Voice.map((line) => `[${line.start_seconds}-${line.end_seconds}s] "${line.text}" (${line.delivery})`).join("\n") : "No speech in Part 2."}
+Music & SFX:
+BGM [${midpoint}-${c.production.target_duration_seconds}s]: Continuing without interruption, resolving smoothly into the end.
+${c.audio.events.filter((e) => e.at_seconds >= midpoint).map((e) => `[${e.at_seconds}s] ${e.direction}`).join("\n")}
+
+CONTINUITY
+Momentum matches Part 1 exit vector directly.
+Mascot emerges with hands free to gesture and wave; do not catch, retrieve, or stow any prop thrown in Part 1.
+Keep the official logo intact.
+No subtitles or watermark.
+${directions.end_hold_seconds > 0 ? `Reserve the authored ${directions.end_hold_seconds}s final non-speaking hold with living follow-through.` : "No mandatory final hold; follow the authored ending."}`,
+    ].join("\n\n");
+  }
+
   return [
     `Create one continuous ${c.production.clip_kind}`,
     `REFERENCE ASSETS\nAttach mascot_subject as ${directions.reference_mode}. ${logo}`,

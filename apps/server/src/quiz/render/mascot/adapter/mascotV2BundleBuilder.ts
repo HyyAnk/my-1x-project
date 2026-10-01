@@ -1,4 +1,5 @@
 import {
+  resolveMascotAnimationRegistration,
   type MascotActionAssetV2,
   type MascotActionType,
   type MascotMotionIntensity,
@@ -36,7 +37,7 @@ export function buildBundleActionV2(
       speed: motionSpeed,
       intensity: motionIntensity,
     },
-    registration: animation?.registration ?? existing?.registration ?? DEFAULT_ACTION_REGISTRATION,
+    registration: animation?.registration ? resolveMascotAnimationRegistration(animation) : (existing?.registration ?? DEFAULT_ACTION_REGISTRATION),
     ...(existing?.legacy_animation ? { legacy_animation: existing.legacy_animation } : {}),
     ...(animation ? { animation } : existing?.animation ? { animation: existing.animation } : {}),
   };

@@ -11,6 +11,7 @@ import type {
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
   ResolvedQuizLayoutId,
+  MascotStateMediaMode,
 } from "@studio/shared";
 import type { QuizTemplateScene } from "../../visual/types.js";
 import type { ProductionMascotTimelineEvent } from "../productionMascotRenderer.js";
@@ -46,4 +47,5 @@ export type QuestionClipInput = {
   aspectRatio?: MascotRenderAspectRatio;
   channelBrandName?: string | null;
   styleCatalogRevision?: string;
+  mediaMode?: MascotStateMediaMode;
 };

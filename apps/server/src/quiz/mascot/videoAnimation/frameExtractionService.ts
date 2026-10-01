@@ -110,8 +110,12 @@ export function createFrameExtractionService(
     // Determine target FPS: explicit param > service options > source probed FPS > fallback REQUIRED_FPS
     const targetFps = paramTargetFps ?? serviceOptions?.configuredTargetFps ?? (sourceMetadata.fps > 0 ? sourceMetadata.fps : REQUIRED_FPS);
 
-    // Determine target frame count: explicit param > computed from duration & targetFps
-    const targetFrameCount = paramTargetFrameCount ?? Math.max(1, Math.round((sourceMetadata.durationMs / 1000) * targetFps));
+    // Determine target frame count: explicit param > source probed frameCount (if matching target FPS) > computed from duration & targetFps
+    const targetFrameCount =
+      paramTargetFrameCount ??
+      (targetFps === sourceMetadata.fps && sourceMetadata.frameCount && sourceMetadata.frameCount > 0
+        ? sourceMetadata.frameCount
+        : Math.max(1, Math.round((sourceMetadata.durationMs / 1000) * targetFps)));
 
     // 4. Extract sequential frames via adapter
     let extractionResult;

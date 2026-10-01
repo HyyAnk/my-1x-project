@@ -8,12 +8,15 @@ import type { ActiveSessionInfo } from "../types.js";
 const execFileAsync = promisify(execFile);
 
 function buildSessionEnv(session: ActiveSessionInfo): NodeJS.ProcessEnv {
-  return {
-    ...process.env,
-    ...(session.address ? { ANTIGRAVITY_LS_ADDRESS: session.address } : {}),
-    ...(session.csrfToken ? { ANTIGRAVITY_CSRF_TOKEN: session.csrfToken } : {}),
-    ...(session.projectId ? { ANTIGRAVITY_PROJECT_ID: session.projectId } : {}),
-  };
+  const env: NodeJS.ProcessEnv = { ...process.env };
+  if (session.address && session.csrfToken) {
+    env.ANTIGRAVITY_LS_ADDRESS = session.address;
+    env.ANTIGRAVITY_CSRF_TOKEN = session.csrfToken;
+  }
+  if (session.projectId) {
+    env.ANTIGRAVITY_PROJECT_ID = session.projectId;
+  }
+  return env;
 }
 
 function resolveModelArg(selectedModel: string): string {
@@ -59,11 +62,19 @@ export async function runAgentApiTurn(
     const errObj = execErr as { message?: string; stdout?: string; stderr?: string };
     const details = errObj.stderr?.trim() || errObj.stdout?.trim() || errObj.message || "Unknown error";
 
-    // Auto-heal: If language_server was restarted or port changed, refresh active session and retry once
-    const isConnErr = /(?:connectex|connection error|actively refused|Unavailable desc = connection error|dial tcp)/i.test(details);
-    if (isConnErr) {
+    // Auto-heal: If language_server was restarted, port changed, or CSRF token expired/unauthenticated, refresh active session and retry once
+    const isRecoverableSessionError =
+      /(?:connectex|connection error|actively refused|unavailable|unauthenticated|missing csrf token|invalid csrf token|csrf_token|dial tcp|transport: error while dialing)/i.test(
+        details,
+      );
+    if (isRecoverableSessionError) {
       try {
-        const refreshedSession = await discoverActiveSession(ctx.logger, true);
+        ctx.logger.warn(`Antigravity AgentAPI recoverable session error: ${details}. Refreshing session and retrying...`, {
+          step: "antigravity_agentapi_retry",
+        });
+        const refreshedSession = ctx.refreshSession
+          ? await ctx.refreshSession()
+          : await discoverActiveSession(ctx.logger, true);
         ctx.session = refreshedSession;
         result = await execFileAsync(ctx.target.command, args, {
           cwd: ctx.rootDirectory,

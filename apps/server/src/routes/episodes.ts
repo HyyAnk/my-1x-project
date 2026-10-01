@@ -44,6 +44,15 @@ export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCa
     server.patch("/api/channels/:channelId/episodes/:episodeId", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
       const input = EpisodeSettingsInputSchema.parse(request.body);
+      const changesMediaSelection =
+        input.intro_outro_selection !== undefined ||
+        input.intro_outro_style_id !== undefined ||
+        input.visual_style !== undefined ||
+        input.resolved_visual_style !== undefined ||
+        input.style_preset_id !== undefined;
+      if (changesMediaSelection && tasks.hasActiveEpisodeTasks(params.episodeId)) {
+        throw new RepositoryError("Wait for the active episode task or cancel it before changing media selection.", "EPISODE_TASK_ACTIVE");
+      }
       return repository.updateEpisodeSettings(
         params.channelId,
         params.episodeId,

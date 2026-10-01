@@ -2,6 +2,7 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { mkdir, open } from "node:fs/promises";
 import path from "node:path";
 import { parseHyperframesProgress, type HyperframesProgressSample } from "./hyperframesProgress.js";
+import { cleanOrphanedHeadlessBrowsers } from "../../infrastructure/executables/browserProcessCleaner.js";
 
 const OUTPUT_TAIL_LIMIT = 16_000;
 
@@ -47,22 +48,24 @@ async function waitForExit(child: ChildProcess): Promise<{ code: number | null; 
 }
 
 async function terminateProcessTree(child: ChildProcess): Promise<void> {
-  if (!child.pid || child.exitCode !== null) return;
-  if (process.platform === "win32") {
-    await new Promise<void>((resolve) => {
-      const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
-      killer.once("error", () => resolve());
-      killer.once("close", () => resolve());
-    });
-    if (child.exitCode === null) child.kill("SIGKILL");
-    return;
+  if (child.pid && child.exitCode === null) {
+    if (process.platform === "win32") {
+      await new Promise<void>((resolve) => {
+        const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
+        killer.once("error", () => resolve());
+        killer.once("close", () => resolve());
+      });
+      if (child.exitCode === null) child.kill("SIGKILL");
+    } else {
+      try {
+        process.kill(-child.pid, "SIGTERM");
+      } catch {
+        child.kill("SIGTERM");
+      }
+    }
   }
 
-  try {
-    process.kill(-child.pid, "SIGTERM");
-  } catch {
-    child.kill("SIGTERM");
-  }
+  await cleanOrphanedHeadlessBrowsers().catch(() => {});
 }
 
 function createLineConsumer(onLine: (line: string) => void): { push: (chunk: Buffer) => void; flush: () => void } {

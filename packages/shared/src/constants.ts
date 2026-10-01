@@ -23,6 +23,8 @@ export const FAILED_BUILD_RETENTION_MS = 48 * 60 * 60 * 1000;
  */
 export const DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE: Record<VoiceSegmentRole, number> = {
   intro: 1.12,
+  intro_topic: 1.12,
+  intro_cta: 1.12,
   question: 1.1,
   choice: 1.1,
   thinking_prompt: 1.04,

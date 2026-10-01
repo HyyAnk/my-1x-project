@@ -115,6 +115,12 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate, onOpe
                 <option value={8}>8 seconds</option>
                 <option value={9}>9 seconds</option>
                 <option value={10}>10 seconds</option>
+                <option value={12}>12 seconds</option>
+                <option value={14}>14 seconds</option>
+                <option value={16}>16 seconds</option>
+                <option value={20}>20 seconds</option>
+                <option value={24}>24 seconds</option>
+                <option value={30}>30 seconds</option>
               </select>
             </label>
           </div>

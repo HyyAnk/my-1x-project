@@ -2,7 +2,9 @@ import { IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID } from "@studio/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RepositoryService } from "../src/repository.js";
 import { generateImgStudioImageBytes } from "../src/providers/imgstudio/generator.js";
+import { generateImgStudioWithIdempotencyRecovery } from "../src/providers/imgstudio/recovery.js";
 import { createImgStudioIdempotencyKey, createImgStudioRunId } from "../src/providers/imgstudio/idempotency.js";
+import { ImgStudioApiError } from "../src/providers/imgstudio/errors.js";
 import { ImgStudioImageProvider, ImgStudioQuizImageProvider } from "../src/providers/imgstudio/provider.js";
 
 vi.mock("../src/providers/imgstudio/generator.js", () => ({
@@ -271,6 +273,87 @@ describe("ImgStudio idempotency identity", () => {
 
     await expect(provider.generateReference("A bundle image", controller.signal)).rejects.toThrow("Cancelled after bundle asset write");
     expect(repository.writeBundleImage).toHaveBeenCalledTimes(1);
-    expect(repository.recordImageUsage).not.toHaveBeenCalled();
   });
 });
+
+describe("generateImgStudioWithIdempotencyRecovery", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("automatically retries with a fresh salted key on HTTP 409 idempotency conflict", async () => {
+    const idempotencyError = new ImgStudioApiError(
+      "ImgStudio API idempotent task failed (409): Image generation request failed, please retry with a new Idempotency-Key",
+      "IMAGE_PROVIDER_IDEMPOTENCY_FAILED",
+      false,
+      409,
+    );
+
+    vi.mocked(generateImgStudioImageBytes)
+      .mockRejectedValueOnce(idempotencyError)
+      .mockResolvedValueOnce({
+        bytes: new Uint8Array([4, 5, 6]),
+        model: MODEL_A,
+        aspect_ratio: "1:1",
+        resolution: "1K",
+        price_vnd: 150,
+      });
+
+    let retriedKey = "";
+    const result = await generateImgStudioWithIdempotencyRecovery(
+      "A hero image",
+      { idempotencyKey: "test_key_123" },
+      (freshKey) => {
+        retriedKey = freshKey;
+      },
+    );
+
+    expect(result.bytes).toEqual(new Uint8Array([4, 5, 6]));
+    expect(generateImgStudioImageBytes).toHaveBeenCalledTimes(2);
+    expect(retriedKey).toContain("test_key_123_retry_");
+    expect(getGeneratedKey(1)).toBe(retriedKey);
+  });
+
+  it("propagates error when the recovery attempt also fails", async () => {
+    const idempotencyError = new ImgStudioApiError(
+      "ImgStudio API idempotent task failed (409): task failed",
+      "IMAGE_PROVIDER_IDEMPOTENCY_FAILED",
+      false,
+      409,
+    );
+
+    vi.mocked(generateImgStudioImageBytes)
+      .mockRejectedValueOnce(idempotencyError)
+      .mockRejectedValueOnce(idempotencyError);
+
+    await expect(
+      generateImgStudioWithIdempotencyRecovery("A hero image", { idempotencyKey: "test_key_fail" }),
+    ).rejects.toThrow("ImgStudio API idempotent task failed (409)");
+
+    expect(generateImgStudioImageBytes).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not retry if cancellation was requested before recovery", async () => {
+    const controller = new AbortController();
+    controller.abort(new Error("Operation cancelled"));
+
+    const idempotencyError = new ImgStudioApiError(
+      "ImgStudio API idempotent task failed (409): task failed",
+      "IMAGE_PROVIDER_IDEMPOTENCY_FAILED",
+      false,
+      409,
+    );
+
+    vi.mocked(generateImgStudioImageBytes).mockRejectedValueOnce(idempotencyError);
+
+    await expect(
+      generateImgStudioWithIdempotencyRecovery("A hero image", {
+        idempotencyKey: "test_key_abort",
+        cancellationSignal: controller.signal,
+      }),
+    ).rejects.toThrow("ImgStudio API idempotent task failed (409)");
+
+    expect(generateImgStudioImageBytes).toHaveBeenCalledTimes(1);
+  });
+});
+

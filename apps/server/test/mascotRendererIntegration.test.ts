@@ -371,6 +371,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         phase: "thinking",
         timelineTimeSeconds: 0.0,
         playing: true,
+        mediaMode: "animation",
       });
 
       expect(html0).toContain('data-mascot-animation-frame="0"');
@@ -386,6 +387,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         phase: "thinking",
         timelineTimeSeconds: 0.125,
         playing: true,
+        mediaMode: "animation",
       });
 
       expect(html1).toContain('data-mascot-animation-frame="1"');
@@ -397,6 +399,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         phase: "thinking",
         timelineTimeSeconds: 0.375,
         playing: true,
+        mediaMode: "animation",
       });
 
       expect(html3).toContain('data-mascot-animation-frame="3"');
@@ -408,6 +411,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         phase: "thinking",
         timelineTimeSeconds: 0.5,
         playing: true,
+        mediaMode: "animation",
       });
 
       expect(html4).toContain('data-mascot-animation-frame="4"');
@@ -419,6 +423,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         phase: "thinking",
         timelineTimeSeconds: 1.5,
         playing: true,
+        mediaMode: "animation",
       });
 
       expect(htmlWrap).toContain('data-mascot-animation-frame="0"');
@@ -432,6 +437,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         timelineTimeSeconds: 0.125,
         playing: true,
         sourceMapper: (url) => `https://cdn.hyperframes.local${url}`,
+        mediaMode: "animation",
       });
 
       expect(localizedHtml).toContain('data-mascot-animation-atlas="https://cdn.hyperframes.local/mascot/assets/owl/thinking/atlas.png"');
@@ -473,11 +479,12 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         { type: "answer.reveal", at_seconds: 7.0 },
       ],
       revealOutcome: "correct",
+      mediaMode: "animation",
     };
 
     it("production mascot timeline resolves deterministic frames across video duration", () => {
       // Create bundle by adapting mascot
-      const effectiveMascot = adaptMascotForPhase(animatedMascot, "question");
+      const effectiveMascot = adaptMascotForPhase(animatedMascot, "question", null, "animation");
       const bundle = adaptMascotV1ToV2(effectiveMascot, channelConfig);
       expect(bundle).toBeTruthy();
       if (effectiveMascot && hasDedicatedAction(effectiveMascot, "idle")) {
@@ -556,6 +563,23 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
       expect(stillHtml).toContain('data-mascot-motion-preset="sway"');
       expect(stillHtml).toContain('class="mascot-v2-motion motion-sway"');
       expect(stillHtml).not.toContain("mascot-v2-animation-art");
+    });
+
+    it("keeps static mascot variants completely still in static media mode", () => {
+      const staticOptions: ProductionMascotRenderOptions = {
+        ...renderOptions,
+        mediaMode: "static",
+      };
+
+      const html = renderProductionMascotAtTime(animatedMascot, channelConfig, staticOptions, 3.25);
+
+      expect(html).toContain('data-mascot-media-mode="static"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
+      expect(html).toContain('class="mascot-v2-motion motion-none"');
+      expect(html).toContain("mascot-v2-image");
+      expect(html).not.toContain("mascot-v2-animation-art");
+      expect(html).not.toContain("mascot-v2-animation-video");
+      expect(html).not.toContain("mascot-v2-legacy-art");
     });
 
     it("renders exact frame indices and background positions at every 125ms tick of thinking and celebrate", () => {
@@ -703,6 +727,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         videoId: "video-ep-101",
         questionId: "q-1",
         snapshot,
+        mediaMode: "animation",
       });
 
       expect(snapshot.entries.length).toBe(2); // thinking + celebrate
@@ -721,6 +746,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         videoId: "video-ep-101",
         questionId: "q-1",
         snapshot,
+        mediaMode: "animation",
       });
 
       expect(questionMascot2?.render_bundle?.assets.actions.thinking?.image_url).toBe(
@@ -740,6 +766,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         { type: "answer.reveal", at_seconds: 8.0 },
       ],
       revealOutcome: "correct",
+      mediaMode: "animation",
     };
 
     it("renders video element with transparent WebM and required data attributes", () => {
@@ -814,7 +841,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
     });
 
     it("timeline frame resolver matches HTML renderer seek time and frame calculation", () => {
-      const effectiveMascot = adaptMascotForPhase(videoAnimatedMascot, "question");
+      const effectiveMascot = adaptMascotForPhase(videoAnimatedMascot, "question", null, "animation");
       const bundle = adaptMascotV1ToV2(effectiveMascot, channelConfig);
       expect(bundle).toBeTruthy();
 
@@ -837,6 +864,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         videoId: "video-webm-202",
         questionId: "q-webm-1",
         snapshot,
+        mediaMode: "animation",
       });
 
       expect(adapted).toBeDefined();
@@ -1000,7 +1028,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
       ],
     };
 
-    it("multi-question composition executes randomized selector with repeat avoidance across questions", () => {
+    it("multi-question composition selects random state variants and allows repeats", () => {
       const quiz = createMultiQuestionQuiz(5);
       const director = createDefaultDirectorPlan(quiz);
       const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
@@ -1043,17 +1071,9 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         celebrateSlots.push(celebrateEntry!.slot_index);
       }
 
-      // 1. Repeat avoidance: adjacent questions must NEVER repeat the same slot
-      for (let i = 0; i < thinkingSlots.length - 1; i++) {
-        expect(thinkingSlots[i]).not.toBe(thinkingSlots[i + 1]);
-      }
-      for (let i = 0; i < celebrateSlots.length - 1; i++) {
-        expect(celebrateSlots[i]).not.toBe(celebrateSlots[i + 1]);
-      }
-
-      // 2. Diversity: across 5 questions with 4 available thinking slots, at least 2 distinct slots chosen
-      const uniqueThinking = new Set(thinkingSlots);
-      expect(uniqueThinking.size).toBeGreaterThanOrEqual(2);
+      // Each state chooses independently from the four available still variants.
+      expect(thinkingSlots.every((slot) => slot >= 1 && slot <= 4)).toBe(true);
+      expect(celebrateSlots.every((slot) => slot >= 1 && slot <= 4)).toBe(true);
 
       // 3. Re-rendering with persisted snapshot yields bit-for-bit identical composition
       const reRenderBundle = buildCandyArcadeCompositionBundle({
@@ -1086,7 +1106,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
         audioPath: "./narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
         mascot: multiSlotProductionMascot,
-        mascotConfig: channelConfig,
+        mascotConfig: { ...channelConfig, mascot_media_mode: "animation" },
       });
 
       const snapshot = bundle.mascotAnimationSnapshot!;
@@ -1124,6 +1144,7 @@ describe("Mascot Renderer Integration (Phase 7: Stages 13 & 14)", () => {
       const adaptedSlot2 = adaptMascotForQuestion(multiSlotProductionMascot, "core", 0, {
         videoId: "direct_slot2_test",
         questionId: "q_force_slot2",
+        mediaMode: "animation",
         snapshot: {
           version: 1,
           video_id: "direct_slot2_test",

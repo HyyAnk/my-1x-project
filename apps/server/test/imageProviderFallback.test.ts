@@ -8,7 +8,11 @@ import { RepositoryService } from "../src/repository.js";
 import { generateAssetWithProvider } from "../src/quiz/assets/resolvers/providerAssetResolver.js";
 import { resolveQuizAssets } from "../src/quiz/assets/resolveQuizAssets.js";
 import type { QuizAssetPlan } from "@studio/shared";
-import { IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID } from "@studio/shared";
+import {
+  IMGSTUDIO_DEFAULT_MODEL_ID,
+  IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+} from "@studio/shared";
 
 describe("image provider fallback engine", () => {
   let root: string;
@@ -16,6 +20,7 @@ describe("image provider fallback engine", () => {
   let logger: StudioLogger;
   let channelId: string;
   let episodeId: string;
+  let mockImageBytes: Uint8Array;
 
   beforeEach(async () => {
     root = await mkdtemp(path.join(os.tmpdir(), "image-fallback-test-"));
@@ -51,6 +56,14 @@ describe("image provider fallback engine", () => {
     await repository.saveTopicRun(channelId, [topic]);
     const episode = await repository.confirmTopic(channelId, "topic_fallback");
     episodeId = episode.episode_id;
+
+    mockImageBytes = new Uint8Array(
+      await sharp({
+        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
+      })
+        .png()
+        .toBuffer(),
+    );
   });
 
   afterEach(async () => {
@@ -71,20 +84,55 @@ describe("image provider fallback engine", () => {
     consistency_group_id: null,
   };
 
-  it("fails over to ImgStudio when primary provider encounters content filter rejection", async () => {
-    // Mock global fetch for ImgStudio:
-    // 1. Generation API POST
-    // 2. Image bytes download GET
-    const mockImageBytes = new Uint8Array(
-      await sharp({
-        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
-      })
-        .png()
-        .toBuffer(),
-    );
-    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, _init) => {
+  it("fails over to GPTi2 Level 1 fallback when primary fails and GPTi2 is configured", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
       const urlStr = String(url);
+      if (urlStr.includes("gpti2.store") || urlStr.includes("direct.shopaikey.com")) {
+        return {
+          ok: true,
+          status: 200,
+          text: async () =>
+            JSON.stringify({
+              data: [{ b64_json: Buffer.from(mockImageBytes).toString("base64") }],
+            }),
+        } as unknown as Response;
+      }
+      return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
+    });
+
+    const result = await generateAssetWithProvider({
+      repository,
+      channelId,
+      episodeId,
+      request: dummyRequest,
+      fingerprint: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      compiledPrompt: "A cute space cat on Mars",
+      configuredProvider: "invalid_unconfigured_primary",
+      activeEngine: "codex",
+      logger,
+      imageFallbackConfig: {
+        enabled: true,
+        provider: "imgstudio",
+        api_key: "sk-imgstudio-test-key",
+        gpti2_api_key: "sk-gpti2-test-key",
+      },
+    });
+
+    expect(result).toBeDefined();
+    expect(result.entry.source).toBe("fallback");
+    expect(result.entry.fallback_tier).toBe(1);
+    expect(result.entry.path).toBeDefined();
+  });
+
+  it("fails over to ImgStudio Level 2 (Gemini-3.1-Flash-Image) when primary fails and GPTi2 is unconfigured", async () => {
+    let requestedModel = "";
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      const urlStr = String(url);
+      const bodyStr = init?.body ? String(init.body) : "";
+
       if (urlStr.includes("api/v1/images/generate")) {
+        const parsed = JSON.parse(bodyStr) as { provider_id: string };
+        requestedModel = parsed.provider_id;
         return {
           ok: true,
           status: 200,
@@ -107,8 +155,6 @@ describe("image provider fallback engine", () => {
       return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
     });
 
-    // We configure primary provider as "gpti2" with an API key, but we'll mock Gpti2 to throw content filter error
-    // By passing a custom mock or forcing primary to fail with content filter:
     const result = await generateAssetWithProvider({
       repository,
       channelId,
@@ -123,7 +169,6 @@ describe("image provider fallback engine", () => {
         enabled: true,
         provider: "imgstudio",
         api_key: "sk-imgstudio-test-key",
-        model: IMGSTUDIO_DEFAULT_MODEL_ID,
         resolution: "2K",
         quality: "standard",
       },
@@ -131,9 +176,155 @@ describe("image provider fallback engine", () => {
 
     expect(result).toBeDefined();
     expect(result.entry.source).toBe("fallback");
-    expect(result.entry.fallback_tier).toBe(1);
-    expect(result.tier3Fallback).toBe(false);
+    expect(result.entry.fallback_tier).toBe(2);
+    expect(requestedModel).toBe(IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID);
     expect(result.entry.path).toBeDefined();
+  });
+
+  it("fails over to ImgStudio Level 3 (Krea 2 Turbo) when Level 2 (Gemini) fails", async () => {
+    const modelsCalled: string[] = [];
+    const idempotencyKeys: string[] = [];
+
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      const urlStr = String(url);
+      const bodyStr = init?.body ? String(init.body) : "";
+
+      if (urlStr.includes("api/v1/images/generate")) {
+        const parsedBody = JSON.parse(bodyStr) as { provider_id: string };
+        modelsCalled.push(parsedBody.provider_id);
+        idempotencyKeys.push(new Headers(init?.headers).get("Idempotency-Key") || "");
+
+        if (parsedBody.provider_id === IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID) {
+          return {
+            ok: false,
+            status: 409,
+            text: async () => JSON.stringify({ error: { message: "Gemini task failed" } }),
+          } as unknown as Response;
+        }
+
+        if (parsedBody.provider_id === IMGSTUDIO_KREA_2_TURBO_MODEL_ID) {
+          return {
+            ok: true,
+            status: 200,
+            text: async () =>
+              JSON.stringify({
+                id: "img-level-3",
+                status: "completed",
+                url: "/cdn/level3-recovered.png",
+                cost_vnd: 250,
+              }),
+          } as unknown as Response;
+        }
+      }
+
+      if (urlStr.includes("level3-recovered.png")) {
+        return {
+          ok: true,
+          status: 200,
+          headers: { get: () => "image/png" },
+          arrayBuffer: async () => mockImageBytes.buffer,
+        } as unknown as Response;
+      }
+
+      return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
+    });
+
+    const result = await generateAssetWithProvider({
+      repository,
+      channelId,
+      episodeId,
+      request: dummyRequest,
+      fingerprint: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      compiledPrompt: "A cute space cat on Mars",
+      configuredProvider: "invalid_unconfigured_primary",
+      activeEngine: "codex",
+      logger,
+      imageFallbackConfig: {
+        enabled: true,
+        provider: "imgstudio",
+        api_key: "sk-imgstudio-test-key",
+        resolution: "2K",
+        quality: "standard",
+      },
+    });
+
+    expect(result).toBeDefined();
+    expect(result.entry.source).toBe("fallback");
+    expect(result.entry.fallback_tier).toBe(3);
+    expect(modelsCalled).toEqual([IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID, IMGSTUDIO_KREA_2_TURBO_MODEL_ID]);
+    expect(idempotencyKeys[0]).toBeTruthy();
+    expect(idempotencyKeys[1]).toBeTruthy();
+    expect(idempotencyKeys[0]).not.toBe(idempotencyKeys[1]);
+    expect(result.entry.path).toBeDefined();
+  });
+
+  it("bypasses GPTi2 Level 1 when configured primary provider was already GPTi2", async () => {
+    let geminiCalled = false;
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      const urlStr = String(url);
+      const bodyStr = init?.body ? String(init.body) : "";
+
+      // Primary GPTi2 fails
+      if (urlStr.includes("gpti2.store") || urlStr.includes("direct.shopaikey.com")) {
+        return {
+          ok: false,
+          status: 500,
+          text: async () => JSON.stringify({ error: { message: "GPTi2 primary error" } }),
+        } as unknown as Response;
+      }
+
+      // ImgStudio Level 2 succeeds
+      if (urlStr.includes("api/v1/images/generate")) {
+        const parsed = JSON.parse(bodyStr) as { provider_id: string };
+        if (parsed.provider_id === IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID) {
+          geminiCalled = true;
+          return {
+            ok: true,
+            status: 200,
+            text: async () =>
+              JSON.stringify({
+                data: [{ url: "https://imgstudio.site/cdn/gemini-recovered.png" }],
+                usage: { price_vnd: 120 },
+              }),
+          } as unknown as Response;
+        }
+      }
+
+      if (urlStr.includes("gemini-recovered.png")) {
+        return {
+          ok: true,
+          status: 200,
+          headers: { get: () => "image/png" },
+          arrayBuffer: async () => mockImageBytes.buffer,
+        } as unknown as Response;
+      }
+
+      return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
+    });
+
+    const result = await generateAssetWithProvider({
+      repository,
+      channelId,
+      episodeId,
+      request: dummyRequest,
+      fingerprint: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      compiledPrompt: "A cute space cat on Mars",
+      configuredProvider: "gpti2",
+      activeEngine: "codex",
+      imageConfig: { provider: "gpti2", api_key: "sk-primary-gpti2" },
+      logger,
+      imageFallbackConfig: {
+        enabled: true,
+        provider: "imgstudio",
+        api_key: "sk-imgstudio-test-key",
+        gpti2_api_key: "sk-primary-gpti2",
+      },
+    });
+
+    expect(result).toBeDefined();
+    expect(result.entry.source).toBe("fallback");
+    expect(result.entry.fallback_tier).toBe(2);
+    expect(geminiCalled).toBe(true);
   });
 
   it("rethrows error when fallback is disabled", async () => {
@@ -179,13 +370,6 @@ describe("image provider fallback engine", () => {
   });
 
   it("successfully completes a batch when primary fails and fallback recovers", async () => {
-    const mockImageBytes = new Uint8Array(
-      await sharp({
-        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
-      })
-        .png()
-        .toBuffer(),
-    );
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
       const urlStr = String(url);
       if (urlStr.includes("api/v1/images/generate")) {
@@ -264,24 +448,17 @@ describe("image provider fallback engine", () => {
 
     expect(resolution.assets).toHaveLength(2);
     expect(resolution.assets[0].source).toBe("fallback");
+    expect(resolution.assets[0].fallback_tier).toBe(2);
     expect(resolution.assets[1].source).toBe("fallback");
+    expect(resolution.assets[1].fallback_tier).toBe(2);
     expect(issues.filter((i) => i.severity === "blocker")).toHaveLength(0);
   });
 
   it("recovers a partial batch where 1 asset fails on primary and falls back while another succeeds on primary", async () => {
-    const mockImageBytes = new Uint8Array(
-      await sharp({
-        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
-      })
-        .png()
-        .toBuffer(),
-    );
-
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
       const urlStr = String(url);
       const bodyStr = init?.body ? String(init.body) : "";
 
-      // ImgStudio fallback calls
       if (urlStr.includes("api/v1/images/generate")) {
         return {
           ok: true,
@@ -303,9 +480,7 @@ describe("image provider fallback engine", () => {
         } as unknown as Response;
       }
 
-      // Primary provider calls (Custom provider at custom endpoint)
       if (urlStr.includes("test-primary.ai/v1/images/generations")) {
-        // If prompt is for Sun, simulate primary content filter rejection!
         if (bodyStr.includes("Sun")) {
           return {
             ok: false,
@@ -313,7 +488,6 @@ describe("image provider fallback engine", () => {
             text: async () => JSON.stringify({ error: { message: "Safety system rejected prompt containing Sun" } }),
           } as unknown as Response;
         }
-        // If prompt is for Moon, primary succeeds!
         return {
           ok: true,
           status: 200,
@@ -385,93 +559,7 @@ describe("image provider fallback engine", () => {
 
     expect(moonAsset?.source).toBe("provider");
     expect(sunAsset?.source).toBe("fallback");
-    expect(sunAsset?.fallback_tier).toBe(1);
+    expect(sunAsset?.fallback_tier).toBe(2);
     expect(issues.filter((i) => i.severity === "blocker")).toHaveLength(0);
-  });
-
-  it("uses Gemini at Level 1 and the configured Qwen model at Level 2 with distinct idempotency keys", async () => {
-    const mockImageBytes = new Uint8Array(
-      await sharp({
-        create: { width: 1280, height: 720, channels: 4, background: { r: 100, g: 200, b: 100, alpha: 1 } },
-      })
-        .png()
-        .toBuffer(),
-    );
-
-    const modelsCalled: string[] = [];
-    const idempotencyKeys: string[] = [];
-
-    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
-      const urlStr = String(url);
-      const bodyStr = init?.body ? String(init.body) : "";
-
-      if (urlStr.includes("api/v1/images/generate")) {
-        const parsedBody = JSON.parse(bodyStr) as { provider_id: string };
-        modelsCalled.push(parsedBody.provider_id);
-        idempotencyKeys.push(new Headers(init?.headers).get("Idempotency-Key") || "");
-
-        if (parsedBody.provider_id === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID) {
-          return {
-            ok: false,
-            status: 409,
-            text: async () => JSON.stringify({ error: { message: "Level 1 task failed" } }),
-          } as unknown as Response;
-        }
-
-        if (parsedBody.provider_id === IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID) {
-          return {
-            ok: true,
-            status: 200,
-            text: async () =>
-              JSON.stringify({
-                id: "img-level-2",
-                status: "completed",
-                url: "/cdn/level2-recovered.png",
-                cost_vnd: 120,
-              }),
-          } as unknown as Response;
-        }
-      }
-
-      if (urlStr.includes("level2-recovered.png")) {
-        return {
-          ok: true,
-          status: 200,
-          headers: { get: () => "image/png" },
-          arrayBuffer: async () => mockImageBytes.buffer,
-        } as unknown as Response;
-      }
-
-      return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
-    });
-
-    const result = await generateAssetWithProvider({
-      repository,
-      channelId,
-      episodeId,
-      request: dummyRequest,
-      fingerprint: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-      compiledPrompt: "A cute space cat on Mars",
-      configuredProvider: "invalid_unconfigured_primary",
-      activeEngine: "codex",
-      logger,
-      imageFallbackConfig: {
-        enabled: true,
-        provider: "imgstudio",
-        api_key: "sk-imgstudio-test-key",
-        model: IMGSTUDIO_DEFAULT_MODEL_ID,
-        resolution: "2K",
-        quality: "standard",
-      },
-    });
-
-    expect(result).toBeDefined();
-    expect(result.entry.source).toBe("fallback");
-    expect(result.entry.fallback_tier).toBe(2);
-    expect(modelsCalled).toEqual([IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID]);
-    expect(idempotencyKeys[0]).toBeTruthy();
-    expect(idempotencyKeys[1]).toBeTruthy();
-    expect(idempotencyKeys[0]).not.toBe(idempotencyKeys[1]);
-    expect(result.entry.path).toBeDefined();
   });
 });

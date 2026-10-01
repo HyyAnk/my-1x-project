@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { type MascotPlacementPreset, RECOMMENDED_MASCOT_PLACEMENT_PRESETS } from "@studio/shared";
+import { type ChannelMascotMediaMode, type MascotPlacementPreset, RECOMMENDED_MASCOT_PLACEMENT_PRESETS } from "@studio/shared";
 import type { StageAspectRatio, StagePosition } from "../types";
 
 export function useStageTransformState(aspectRatio: StageAspectRatio = "16:9") {
@@ -10,6 +10,7 @@ export function useStageTransformState(aspectRatio: StageAspectRatio = "16:9") {
   const [showInIntro, setShowInIntro] = useState<boolean>(false);
   const [showInOutro, setShowInOutro] = useState<boolean>(false);
   const [showInQuestion, setShowInQuestion] = useState<boolean>(true);
+  const [mascotMediaMode, setMascotMediaMode] = useState<ChannelMascotMediaMode>("inherit");
 
   const currentPlacement = placements[aspectRatio] ?? RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"];
 
@@ -136,5 +137,7 @@ export function useStageTransformState(aspectRatio: StageAspectRatio = "16:9") {
     setShowInOutro,
     showInQuestion,
     setShowInQuestion,
+    mascotMediaMode,
+    setMascotMediaMode,
   };
 }

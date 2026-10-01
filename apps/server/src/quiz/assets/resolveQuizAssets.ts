@@ -1,25 +1,23 @@
 import type { QuizAssetPlan, QuizAssetResolution, QuizImageStyle, QuizIssue } from "@studio/shared";
-import { setTimeout as delay } from "node:timers/promises";
 import { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
 import { createImgStudioRunId } from "../../providers/imgstudio/idempotency.js";
-import { assetFingerprint } from "./assetFingerprint.js";
-import { compileQuizAssetPrompt } from "./promptCompiler.js";
-import { runConcurrent } from "../../utils/concurrency.js";
 import { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProviderName } from "./assetValidator.js";
-import { syncHeroImageToBundle } from "./resolvers/bundleAssetSync.js";
-import { generateAssetWithProvider } from "./resolvers/providerAssetResolver.js";
 import type { AntigravityClient } from "../../antigravity.js";
-import { classifyAssetError, createQuizAssetIssue } from "./resolvers/assetErrorClassifier.js";
 import { preloadValidExistingAssets } from "./resolvers/existingAssetPreloader.js";
-import {
-  hasExplicitAssetProvenance,
-  tryReuseCachedAsset,
-  tryReuseExplicitBundleAsset,
-} from "./resolvers/reusableAssetResolver.js";
+import { hasExplicitAssetProvenance } from "./resolvers/reusableAssetResolver.js";
 import { validateConsistencyGroups } from "./resolvers/consistencyGroupValidator.js";
+import { createProviderCircuitBreaker, ProviderCircuitBreaker } from "./resolvers/circuitBreaker.js";
+import { resolveSingleAsset } from "./resolvers/singleAssetResolver.js";
+import { executeResolutionRounds } from "./resolvers/resolutionRoundExecutor.js";
 
-export { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProviderName, hasExplicitAssetProvenance };
+export {
+  isValidQuizAsset,
+  isQuizAssetResolutionComplete,
+  resolveQuizImageProviderName,
+  hasExplicitAssetProvenance,
+  resolveSingleAsset,
+};
 
 export type ResolveQuizAssetsInput = {
   repository: RepositoryService;
@@ -45,107 +43,23 @@ export type ResolveQuizAssetsInput = {
     resolution?: "1K" | "2K" | "4K";
     quality?: "standard" | "high";
   };
+  circuitBreaker?: ProviderCircuitBreaker;
   onProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   maxRounds?: number;
   cancellationSignal?: AbortSignal;
 };
 
-async function resolveSingleAsset(params: {
-  request: QuizAssetPlan["assets"][number];
-  round: number;
-  maxRounds: number;
-  input: ResolveQuizAssetsInput;
-  byFingerprint: Map<string, QuizAssetResolution["assets"][number]>;
-  consistencyGroups: Map<string, QuizAssetPlan["consistency_groups"][number]>;
-  logger: StudioLogger;
-  activeEngine: "codex" | "antigravity";
-  imgStudioRunId: string;
-}): Promise<{
-  entry?: QuizAssetResolution["assets"][number];
-  issue?: QuizIssue;
-  reused: boolean;
-}> {
-  const { request, round, maxRounds, input, byFingerprint, consistencyGroups, logger, activeEngine, imgStudioRunId } = params;
-  input.cancellationSignal?.throwIfAborted();
-  const compiled = compileQuizAssetPrompt(
-    request,
-    request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
-    input.visualStyle ?? "pixar_3d",
-  );
-  logger.info(`Compiled prompt for ${request.asset_id}: ${JSON.stringify(compiled.prompt)} (round ${round}/${maxRounds})`, {
-    profileId: input.channelId,
-    workerId: input.episodeId,
-    step: "compile_asset_prompt",
-  });
-
-  const configuredProvider = input.imageConfig?.provider ?? "gpti2";
-  const providerName = resolveQuizImageProviderName({ imageConfig: input.imageConfig, activeEngine });
-  const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
-  const bundleNumber = request.question_id ? Number(/^question-(\d+)$/i.exec(request.question_id)?.[1] ?? 0) : 0;
-
-  const explicitEntry = await tryReuseExplicitBundleAsset({
-    repository: input.repository,
-    channelId: input.channelId,
-    episodeId: input.episodeId,
-    request,
-    fingerprint,
-    bundleNumber,
-  });
-  if (explicitEntry) {
-    return { entry: explicitEntry, reused: true };
-  }
-
-  const cached = byFingerprint.get(fingerprint);
-  const cachedResult = await tryReuseCachedAsset({
-    repository: input.repository,
-    channelId: input.channelId,
-    episodeId: input.episodeId,
-    request,
-    fingerprint,
-    cached,
-  });
-  if (cachedResult) {
-    return { entry: cachedResult.entry, issue: cachedResult.issue, reused: true };
-  }
-
-  const generated = await generateAssetWithProvider({
-    repository: input.repository,
-    channelId: input.channelId,
-    episodeId: input.episodeId,
-    request,
-    fingerprint,
-    compiledPrompt: compiled.prompt,
-    configuredProvider,
-    activeEngine,
-    antigravityClient: input.antigravityClient,
-    imageConfig: input.imageConfig,
-    imageFallbackConfig: input.imageFallbackConfig,
-    imgStudioRunId,
-    cancellationSignal: input.cancellationSignal,
-    logger,
-  });
-  input.cancellationSignal?.throwIfAborted();
-
-  let issue: QuizIssue | undefined;
-  if (generated.tier3Fallback) {
-    issue = createQuizAssetIssue(
-      request,
-      "asset_fallback_degraded",
-      "warning",
-      `Asset ${request.asset_id} used Tier 3 deterministic fallback. Visual review recommended.`,
-      "Inspect the generated fallback card or replace with a dedicated image.",
-    );
-  } else if (request.purpose === "hero_question_image") {
-    await syncHeroImageToBundle(input.repository, input.channelId, input.episodeId, bundleNumber, generated.entry.path);
-  }
-
-  return { entry: generated.entry, issue, reused: false };
-}
-
+/**
+ * Resolves all quiz visual assets across a 3-round execution flow with circuit breaker resilience.
+ *
+ * Coordinates provider resolution with a single ProviderCircuitBreaker instance maintained
+ * across all rounds, enabling early bypass of failing tiers and direct fallback execution.
+ */
 export async function resolveQuizAssets(
   input: ResolveQuizAssetsInput,
 ): Promise<{ resolution: QuizAssetResolution; issues: QuizIssue[] }> {
   input.cancellationSignal?.throwIfAborted();
+  const circuitBreaker = input.circuitBreaker ?? createProviderCircuitBreaker({ failureThreshold: 5 });
   const imgStudioRunId = createImgStudioRunId();
   const existing = await input.repository.readQuizAssetResolution(input.channelId, input.episodeId);
   const byFingerprint = new Map(existing?.assets.map((asset) => [asset.fingerprint, asset]) ?? []);
@@ -167,88 +81,18 @@ export async function resolveQuizAssets(
     imageConfig: input.imageConfig,
   });
 
-  const persistIncrementalResolution = async () => {
-    const currentAssets = input.plan.assets
-      .map((req) => resolvedMap.get(req.asset_id))
-      .filter((asset): asset is QuizAssetResolution["assets"][number] => Boolean(asset));
-    const partialResolution: QuizAssetResolution = {
-      schema_version: 2,
-      episode_id: input.episodeId,
-      template_id: "candy_arcade",
-      assets: currentAssets,
-    };
-    await input.repository.writeQuizAssetResolution(input.channelId, input.episodeId, partialResolution);
-  };
-
-  const ASSET_CONCURRENCY = 4;
-  const terminalFailed = new Set<string>();
-
-  for (let round = 1; round <= maxRounds; round++) {
-    input.cancellationSignal?.throwIfAborted();
-    const pendingRequests = input.plan.assets.filter(
-      (req) => !resolvedMap.has(req.asset_id) && !terminalFailed.has(req.asset_id),
-    );
-    if (pendingRequests.length === 0) break;
-
-    if (round > 1) {
-      logger.warn(`Quiz assets retry round ${round}/${maxRounds}: regenerating ${pendingRequests.length} missing assets...`, {
-        profileId: input.channelId,
-        workerId: input.episodeId,
-        step: "retry_quiz_assets",
-      });
-      await delay(round * 500, undefined, { signal: input.cancellationSignal });
-    } else if (resolvedMap.size > 0) {
-      await input.onProgress?.({ completed: resolvedMap.size, total: input.plan.assets.length, reused: true });
-    }
-
-    let persistQueue = Promise.resolve();
-    const safePersistIncrementalResolution = () => {
-      persistQueue = persistQueue.then(() => persistIncrementalResolution()).catch(() => undefined);
-      return persistQueue;
-    };
-
-    await runConcurrent(pendingRequests, ASSET_CONCURRENCY, async (request) => {
-      let reused = false;
-      try {
-        const result = await resolveSingleAsset({
-          request,
-          round,
-          maxRounds,
-          input,
-          byFingerprint,
-          consistencyGroups,
-          logger,
-          activeEngine,
-          imgStudioRunId,
-        });
-        if (result.entry) {
-          resolvedMap.set(request.asset_id, result.entry);
-        }
-        if (result.issue) {
-          issues.push(result.issue);
-        }
-        reused = result.reused;
-      } catch (error) {
-        if (input.cancellationSignal?.aborted) {
-          throw error;
-        }
-        const classified = classifyAssetError(request, error, round, maxRounds);
-        if (classified) {
-          if (classified.terminal) {
-            terminalFailed.add(request.asset_id);
-          }
-          issues.push(classified.issue);
-        }
-      } finally {
-        if (resolvedMap.has(request.asset_id)) {
-          void safePersistIncrementalResolution();
-        }
-        await input.onProgress?.({ completed: resolvedMap.size, total: input.plan.assets.length, reused });
-      }
-    });
-
-    await safePersistIncrementalResolution();
-  }
+  await executeResolutionRounds({
+    input,
+    resolvedMap,
+    byFingerprint,
+    consistencyGroups,
+    logger,
+    activeEngine,
+    imgStudioRunId,
+    circuitBreaker,
+    maxRounds,
+    issues,
+  });
 
   const assets = input.plan.assets
     .map((req) => resolvedMap.get(req.asset_id))

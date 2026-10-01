@@ -21,4 +21,19 @@ describe("useStageTransformState landscape state", () => {
     act(() => result.current.resetAllPlacements());
     expect(result.current.placements["16:9"]).toEqual(RECOMMENDED_MASCOT_PLACEMENT_PRESET);
   });
+
+  it("manages mascotMediaMode independently", () => {
+    const { result } = renderHook(() => useStageTransformState());
+    expect(result.current.mascotMediaMode).toBe("inherit");
+
+    act(() => {
+      result.current.setMascotMediaMode("static");
+    });
+    expect(result.current.mascotMediaMode).toBe("static");
+
+    act(() => {
+      result.current.setMascotMediaMode("animation");
+    });
+    expect(result.current.mascotMediaMode).toBe("animation");
+  });
 });

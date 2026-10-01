@@ -58,10 +58,11 @@ describe("ImgStudio Fallback Configuration & Catalog Tests", () => {
       assert.equal(resolveImgStudioFallbackLevel2Model("custom-provider-model"), "custom-provider-model");
     });
 
-    it("defines exactly 10 supported models with expected IDs and resolutions", () => {
-      assert.equal(IMGSTUDIO_MODELS.length, 10);
+    it("defines exactly 11 supported models with expected IDs and resolutions", () => {
+      assert.equal(IMGSTUDIO_MODELS.length, 11);
 
       const expectedCatalog: Record<string, { name: string; max_resolution: "1K" | "2K" }> = {
+        "fal-krea-2-turbo": { name: "Krea 2 Turbo", max_resolution: "2K" },
         "2d059365-a09a-4fd5-aa9e-b5335d09bbe9": { name: "Qwen Image 3.0 Pro", max_resolution: "2K" },
         "686ef278-e903-49a0-9e3c-2401fd396d22": { name: "GPT-Image-2", max_resolution: "2K" },
         "2924ac96-8708-4e2a-8700-df3eebbfa380": { name: "GPT-Image-2-Quality-Slow", max_resolution: "2K" },

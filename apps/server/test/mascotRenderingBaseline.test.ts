@@ -63,6 +63,7 @@ describe("current mascot rendering baseline", () => {
         mascot_action: "thinking",
         mascot_position: "bottom_left",
         mascot_scale: 1,
+        mascot_media_mode: "animation",
       },
       {
         ...BASELINE_MASCOT,

@@ -1,14 +1,20 @@
 import {
+  resolveEffectiveMascotMediaMode,
   type ChannelMascotConfig,
   type MascotProfile,
   type MascotRenderActionOverride,
   type MascotRenderAspectRatio,
   type MascotRenderPhase,
   type MascotRevealOutcome,
+  type MascotStateMediaMode,
 } from "@studio/shared";
 import { adaptMascotForPhase } from "./mascot/productionMascotStateAdapter.js";
 import { renderMascotHtmlFromBundle } from "./mascotHtmlRenderer.js";
-import { resolveEffectiveRenderBundle, synchronizeBundleVisibility } from "./productionMascotRenderer.js";
+import {
+  resolveEffectiveRenderBundle,
+  sanitizeMascotRenderBundleForMediaMode,
+  synchronizeBundleVisibility,
+} from "./productionMascotRenderer.js";
 
 export type PreviewMascotRenderOptions = {
   aspectRatio: MascotRenderAspectRatio;
@@ -19,6 +25,7 @@ export type PreviewMascotRenderOptions = {
   actionOverride?: MascotRenderActionOverride | null;
   playing: boolean;
   sourceMapper?: (url: string) => string;
+  mediaMode?: MascotStateMediaMode;
 };
 
 export function renderPreviewMascotHtmlLayer(
@@ -26,13 +33,15 @@ export function renderPreviewMascotHtmlLayer(
   config: ChannelMascotConfig | null | undefined,
   options: PreviewMascotRenderOptions,
 ): string {
+  const effectiveMediaMode = resolveEffectiveMascotMediaMode(config, options.mediaMode);
   const phaseForAdapter = options.phase === "intro" || options.phase === "outro" ? options.phase : "question";
-  const effectiveMascot = adaptMascotForPhase(mascot, phaseForAdapter, options.styleId);
+  const effectiveMascot = adaptMascotForPhase(mascot, phaseForAdapter, options.styleId, effectiveMediaMode);
   const bundle = resolveEffectiveRenderBundle(effectiveMascot, config);
   if (!bundle) return "";
-  synchronizeBundleVisibility(bundle, effectiveMascot);
+  const mediaBundle = sanitizeMascotRenderBundleForMediaMode(bundle, effectiveMediaMode);
+  synchronizeBundleVisibility(mediaBundle, effectiveMascot);
   return renderMascotHtmlFromBundle({
-    bundle,
+    bundle: mediaBundle,
     aspectRatio: options.aspectRatio,
     states: [
       {
@@ -48,5 +57,6 @@ export function renderPreviewMascotHtmlLayer(
     phaseClass: options.phase === "intro" ? "mascot-intro" : options.phase === "outro" ? "mascot-outro" : "mascot-stage",
     sourceMapper: options.sourceMapper,
     preview: true,
+    mediaMode: effectiveMediaMode,
   });
 }

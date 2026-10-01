@@ -22,6 +22,8 @@ export interface MascotFrameRectV1 extends MascotFrameRect {
 }
 
 export interface MascotAnimationAssetV1 {
+  /** Full video canvas registration, independent of cropped atlas cells. */
+  video_registration?: MascotAssetRegistration;
   version: 1;
   state: AnimationState;
   atlas_url: string;
@@ -44,6 +46,8 @@ export interface MascotAnimationAssetV1 {
 }
 
 export interface MascotVideoAnimationAsset {
+  /** Full video canvas registration, independent of cropped atlas cells. */
+  video_registration?: MascotAssetRegistration;
   version: 1;
   state: AnimationState;
   atlas_url?: string;
@@ -87,6 +91,8 @@ export interface MascotAnimationCurationMetadata {
 }
 
 export interface MascotAnimationManifest {
+  /** Full video canvas registration, independent of cropped atlas cells. */
+  video_registration?: MascotAssetRegistration;
   version: 1;
   state: AnimationState;
   recipe_id: string;

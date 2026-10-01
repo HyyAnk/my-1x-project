@@ -170,6 +170,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
         {
           mode: "rehearsal",
           aspect_ratio: "16:9",
+          layout_id: "baseline",
           mascot_id: fullMascotFixture.id,
           mascot_enabled: true,
           choices: ["Alpha", "Beta", "Gamma"],
@@ -274,7 +275,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
       // Initial state at 0s should resolve to idle pose
       expect(html).toContain('class="mascot-v2-state state-idle"');
       expect(html).toContain('data-mascot-action="idle"');
-      expect(html).toContain('data-mascot-motion-preset="breathe"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
       expect(html).toContain("/assets/mascots/hero/idle.png");
     });
 
@@ -303,7 +304,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
       // Without dedicated idle, question phase safely resolves to thinking
       expect(html).toContain('class="mascot-v2-state state-thinking"');
       expect(html).toContain('data-mascot-action="thinking"');
-      expect(html).toContain('data-mascot-motion-preset="sway"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
       expect(html).toContain("/assets/mascots/hero/thinking.png");
     });
 
@@ -327,7 +328,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
       // Thinking state layer at 2.47s
       expect(html).toContain('data-mascot-phase="thinking"');
       expect(html).toContain("--mascot-state-delay:2.47s");
-      expect(html).toContain('data-mascot-motion-preset="sway"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
     });
 
     it("resolves celebrate for correct reveal and oops for wrong reveal outcome", () => {
@@ -347,7 +348,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
       expect(correctHtml).toContain('data-mascot-phase="reveal"');
       expect(correctHtml).toContain('data-mascot-action="celebrate"');
       expect(correctHtml).toContain('class="mascot-v2-state state-celebrate"');
-      expect(correctHtml).toContain('data-mascot-motion-preset="jump"');
+      expect(correctHtml).toContain('data-mascot-motion-preset="none"');
       expect(correctHtml).toContain("/assets/mascots/hero/celebrate.png");
 
       const wrongHtml = renderProductionMascotHtmlLayer(fullMascotFixture, defaultChannelConfig, {
@@ -366,7 +367,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
       expect(wrongHtml).toContain('data-mascot-phase="reveal"');
       expect(wrongHtml).toContain('data-mascot-action="oops"');
       expect(wrongHtml).toContain('class="mascot-v2-state state-oops"');
-      expect(wrongHtml).toContain('data-mascot-motion-preset="shake"');
+      expect(wrongHtml).toContain('data-mascot-motion-preset="none"');
       expect(wrongHtml).toContain("/assets/mascots/hero/oops.png");
     });
 
@@ -413,6 +414,7 @@ describe("Stage 6: Mascot Motion & Multi-Phase Timeline Event Synchronization", 
         {
           mode: "rehearsal",
           aspect_ratio: "16:9",
+          layout_id: "baseline",
           mascot_id: fullMascotFixture.id,
           mascot_enabled: true,
           mascot_action: "wave",

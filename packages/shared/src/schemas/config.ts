@@ -1,8 +1,13 @@
 import { z } from "zod";
-import { EngineIdSchema, TaskTypeSchema } from "../enums.js";
+import { EngineIdSchema, ImageProviderIdSchema, MascotStateMediaModeSchema, TaskTypeSchema } from "../enums.js";
 import { MascotStageSettingsSchema } from "./mascot.js";
 import { IsoDate, QUIZ_MAX_CHOICES_PER_QUESTION } from "./common.js";
-import { IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, resolveImgStudioFallbackLevel2Model } from "../constants/imgstudioModels.js";
+import {
+  IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+  IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+  resolveImgStudioFallbackLevel2Model,
+} from "../constants/imgstudioModels.js";
 
 export const ImageFallbackConfigSchema = z.object({
   enabled: z.boolean().default(true),
@@ -11,6 +16,10 @@ export const ImageFallbackConfigSchema = z.object({
   api_key: z.string().default(""),
   has_api_key: z.boolean().optional(),
   model: z.string().transform(resolveImgStudioFallbackLevel2Model).default(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID),
+  level2_model: z.string().optional(),
+  level3_model: z.string().optional(),
+  gpti2_api_key: z.string().optional(),
+  gpti2_model: z.string().optional(),
   resolution: z.enum(["1K", "2K", "4K"]).default("2K"),
   quality: z.enum(["standard", "high"]).default("standard"),
 });
@@ -32,6 +41,7 @@ export const AppConfigSchema = z.object({
     aspect_ratio: z.literal("16:9").default("16:9"),
     max_concurrent_tasks: z.number().int().min(1).max(10).default(1),
     render_workers: z.number().int().min(1).max(16).optional(),
+    mascot_media_mode: MascotStateMediaModeSchema.default("static"),
     /**
      * Bypasses pre-render layout preflight checks for rapid drafting/dev.
      * Defaults to false so standard layout validation runs safely.
@@ -42,11 +52,12 @@ export const AppConfigSchema = z.object({
   image_generation: z.object({
     enabled: z.boolean().default(true),
     images_per_bundle: z.number().int().min(1).max(2).default(1),
-    provider: z.enum(["gpti2", "shopaikey", "custom"]).default("gpti2"),
+    provider: ImageProviderIdSchema.default("gpti2"),
     base_url: z.string().default(""),
     model: z.string().default("gpt-image-2"),
     api_key: z.string().default(""),
     has_api_key: z.boolean().optional(),
+    resolution: z.enum(["1K", "2K", "4K"]).optional(),
     quality: z.string().default("low"),
     max_concurrent_tasks: z.number().int().positive().default(3),
   }),

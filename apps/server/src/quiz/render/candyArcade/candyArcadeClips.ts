@@ -1,4 +1,4 @@
-import type { ChannelMascotConfig, MascotProfile, MascotRenderAspectRatio } from "@studio/shared";
+import type { ChannelMascotConfig, MascotProfile, MascotRenderAspectRatio, MascotStateMediaMode } from "@studio/shared";
 import { resolveChannelMascotPlacement } from "@studio/shared";
 import { motionCssClass } from "../../visual/candyArcade.js";
 import { esc } from "./candyArcadeSvg.js";
@@ -37,6 +37,12 @@ export {
   renderIntroTransitionOverlay,
   resolveTransitionDefinition,
 } from "./customVideoClips.js";
+export { bridgeTopicClip, cleanTopicForDisplay, type BridgeTopicClipInput } from "./bridgeTopicClip.js";
+export { renderBridgeTopicBackdrop, type BridgeTopicBackdropOptions } from "./bridgeTopicBackdrop.js";
+export { bridgeSubscribeCtaClip, type BridgeSubscribeCtaClipInput } from "./bridgeSubscribeCtaClip.js";
+export { brandLogoStingerClip, type BrandLogoStingerClipInput } from "./transitions/brandLogoStingerClip.js";
+export { energyWhipStingerClip, type EnergyWhipStingerClipInput } from "./transitions/energyWhipStingerClip.js";
+export { renderBrandLogoBadge, type RenderBrandLogoBadgeOptions } from "./transitions/brandLogoFallbackBadge.js";
 export type { QuestionClipInput } from "./candyArcadeClipTypes.js";
 
 export function mascotElement(
@@ -54,6 +60,7 @@ export function mascotElement(
     aspectRatio: options.aspectRatio ?? "16:9",
     sourceMapper: source,
     extraClass: options.extraClass,
+    mediaMode: options.mediaMode,
   });
 }
 
@@ -64,9 +71,15 @@ export function introClip(
   mascot?: MascotProfile | null,
   mascotConfig?: ChannelMascotConfig | null,
   aspectRatio: MascotRenderAspectRatio = "16:9",
+  mediaMode?: MascotStateMediaMode,
 ): string {
   if (end < 0.08) return "";
-  const mascotHtml = mascotElement(mascot, mascotConfig, "intro", { clipStartSeconds: 0, clipDurationSeconds: end, aspectRatio });
+  const mascotHtml = mascotElement(mascot, mascotConfig, "intro", {
+    clipStartSeconds: 0,
+    clipDurationSeconds: end,
+    aspectRatio,
+    mediaMode,
+  });
   const fallbackMascot = mascot || mascotHtml ? "" : `<div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div>`;
   return `<section id="candy-intro" class="clip candy-scene candy-intro" data-start="0" data-duration="${end.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="intro-dot dot-a"></div><div class="intro-dot dot-b"></div><div class="intro-card"><span>${esc(copy.quizTime)}</span><h1>${esc(copy.ready)}</h1><p>${count} ${esc(copy.questions(count))}</p><div class="intro-stars" data-layout-ignore aria-hidden="true">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div></div>${mascotHtml || fallbackMascot}</section>`;
 }
@@ -79,11 +92,13 @@ export function outroClip(
   mascot?: MascotProfile | null,
   mascotConfig?: ChannelMascotConfig | null,
   aspectRatio: MascotRenderAspectRatio = "16:9",
+  mediaMode?: MascotStateMediaMode,
 ): string {
   const mascotHtml = mascotElement(mascot, mascotConfig, "outro", {
     clipStartSeconds: start,
     clipDurationSeconds: Math.max(0.04, end - start),
     aspectRatio,
+    mediaMode,
   });
   return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(0.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
@@ -107,10 +122,9 @@ export function questionClip(input: QuestionClipInput): string {
     timelineEvents: input.mascotEvents,
     revealOutcome: "correct",
     aspectRatio: input.aspectRatio ?? "16:9",
+    mediaMode: input.mediaMode,
   });
-  const mascotEnabled = Boolean(
-    input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
-  );
+  const mascotEnabled = Boolean(mascotHtml);
   const mascotPlacement = resolveChannelMascotPlacement(input.mascotConfig, input.aspectRatio ?? "16:9");
   const mascot = mascotEnabled ? { occupied: true as const, anchor: mascotPlacement.position } : { occupied: false as const, anchor: null };
   const model = adaptProductionQuizScene({
@@ -158,6 +172,7 @@ export function questionClip(input: QuestionClipInput): string {
     "clip",
     "candy-scene",
     "quiz-question-clip",
+    input.questionIndex === 0 ? "quiz-first-question" : "",
     isUnified ? "quiz-frame-unified" : "",
     `layout-${model.layout.id}`,
     `archetype-${question.format}`,

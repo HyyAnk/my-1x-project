@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { resolveImgStudioFallbackLevel2Model } from "../constants/imgstudioModels.js";
-import { EngineIdSchema, ImageProviderIdSchema } from "../enums.js";
+import { EngineIdSchema, ImageProviderIdSchema, MascotStateMediaModeSchema } from "../enums.js";
 import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { KnowledgeBaseSettingsSchema } from "../schemas/config.js";
 
@@ -27,7 +27,8 @@ export const ImageSettingsInputSchema = z.object({
   base_url: z.string().trim().max(2000).optional(),
   model: z.string().trim().max(160).optional(),
   api_key: z.string().max(4000).optional(),
-  quality: z.enum(["low", "medium", "high"]).optional(),
+  resolution: z.enum(["1K", "2K", "4K"]).optional(),
+  quality: z.string().trim().max(50).optional(),
   max_concurrent_tasks: z.number().int().positive().max(16).optional(),
 });
 
@@ -38,6 +39,10 @@ export const ImageFallbackSettingsInputSchema = z.object({
   provider: z.literal("imgstudio").optional(),
   base_url: z.string().trim().max(2000).optional(),
   model: z.string().trim().max(160).transform(resolveImgStudioFallbackLevel2Model).optional(),
+  level2_model: z.string().trim().max(160).optional(),
+  level3_model: z.string().trim().max(160).optional(),
+  gpti2_api_key: z.string().max(4000).optional(),
+  gpti2_model: z.string().trim().max(160).optional(),
   api_key: z.string().max(4000).optional(),
   resolution: z.enum(["1K", "2K", "4K"]).optional(),
   quality: z.enum(["standard", "high"]).optional(),
@@ -65,6 +70,7 @@ export const VideoSettingsInputSchema = z.object({
   render_workers: z.number().int().min(1).max(16).optional(),
   render_quality: z.enum(["draft", "standard", "high"]).optional(),
   fps: z.number().int().min(24).max(60).optional(),
+  mascot_media_mode: MascotStateMediaModeSchema.optional(),
   /**
    * Bypasses pre-render layout preflight checks for rapid drafting/dev.
    * Contrast QA is non-blocking and will never abort video renders regardless of this setting.

@@ -24,9 +24,6 @@ export interface IntroOutroStyleDropdownProps {
 }
 
 function resolveSelection(episode: Episode): IntroOutroSelection {
-  const legacyStyleId = episode.quiz_config?.intro_outro_style_id;
-  if (legacyStyleId === "none") return { mode: "none" };
-  if (legacyStyleId) return { mode: "specific_pair", style_id: legacyStyleId };
   return episode.quiz_config?.intro_outro_selection ?? { mode: "style_builtin" };
 }
 
@@ -47,6 +44,8 @@ export function IntroOutroStyleDropdown({
   const category = BUILT_IN_PRESETS.find((preset) => preset.id === categoryId) ?? BUILT_IN_PRESETS[0];
   const readyInCategory = categories.find((item) => item.style_preset_id === category.id)?.ready_count ?? 0;
   const selectedStyle = selection.mode === "specific_pair" ? styles.find((style) => style.style_id === selection.style_id) : undefined;
+  const snapshot = episode.quiz_config?.intro_outro_snapshot;
+  const pinnedPair = snapshot?.pair_id ? styles.find((style) => style.style_id === snapshot.pair_id) : undefined;
 
   useEffect(() => {
     let cancelled = false;
@@ -64,7 +63,7 @@ export function IntroOutroStyleDropdown({
     return () => {
       cancelled = true;
     };
-  }, [channel.channel_id]);
+  }, [channel.channel_id, isOpen]);
 
   const displayValue =
     selection.mode === "none"
@@ -92,7 +91,12 @@ export function IntroOutroStyleDropdown({
             checked={selection.mode === "style_builtin"}
             onSelect={() => onSaveIntroOutroSelection({ mode: "style_builtin" })}
           />
-          {categories.length > 0 && readyInCategory === 0 ? (
+          {selection.mode === "style_builtin" && snapshot ? (
+            <div className="style-option-message" role="status">
+              {snapshot.pair_id ? `Selected pair: ${pinnedPair?.name ?? snapshot.pair_id}` : "No intro/outro for this episode"}
+            </div>
+          ) : null}
+          {!snapshot && categories.length > 0 && readyInCategory === 0 ? (
             <div className="style-option-message" role="status">
               No ready pairs in {category.name}
             </div>

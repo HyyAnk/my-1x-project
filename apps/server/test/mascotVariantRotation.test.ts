@@ -166,7 +166,7 @@ function getQuestionHtml(bundle: { files: Record<string, string> }, questionNumb
 }
 
 describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
-  it("rotates thinking and celebrate variants deterministically across questions", () => {
+  it("selects available thinking and celebrate variants independently for every question", () => {
     const quiz = createFiveQuestionQuiz();
     const director = createDefaultDirectorPlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
@@ -182,47 +182,19 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
       mascotConfig,
     });
 
-    // Question 1: think-2 and celeb-0
-    const q1Html = getQuestionHtml(bundle, 1);
-    expect(q1Html).toBeDefined();
-    expect(q1Html).toContain("/assets/think-2.png");
-    expect(q1Html).toContain("/assets/celeb-0.png");
-    expect(q1Html).not.toContain("/assets/think-0.png");
-    expect(q1Html).not.toContain("/assets/think-1.png");
-    expect(q1Html).not.toContain("/assets/celeb-1.png");
+    for (let questionNumber = 1; questionNumber <= 5; questionNumber += 1) {
+      const html = getQuestionHtml(bundle, questionNumber);
+      expect(html).toMatch(/\/assets\/think-[012]\.png/);
+      expect(html).toMatch(/\/assets\/celeb-[01]\.png/);
+      expect(html).toContain('data-mascot-motion-preset="none"');
+    }
 
-    // Question 2: think-0 and celeb-1
-    const q2Html = getQuestionHtml(bundle, 2);
-    expect(q2Html).toBeDefined();
-    expect(q2Html).toContain("/assets/think-0.png");
-    expect(q2Html).toContain("/assets/celeb-1.png");
-    expect(q2Html).not.toContain("/assets/think-1.png");
-    expect(q2Html).not.toContain("/assets/think-2.png");
-    expect(q2Html).not.toContain("/assets/celeb-0.png");
-
-    // Question 3: think-2 and celeb-0
-    const q3Html = getQuestionHtml(bundle, 3);
-    expect(q3Html).toBeDefined();
-    expect(q3Html).toContain("/assets/think-2.png");
-    expect(q3Html).toContain("/assets/celeb-0.png");
-    expect(q3Html).not.toContain("/assets/think-0.png");
-    expect(q3Html).not.toContain("/assets/think-1.png");
-    expect(q3Html).not.toContain("/assets/celeb-1.png");
-
-    // Question 4: think-0 and celeb-1
-    const q4Html = getQuestionHtml(bundle, 4);
-    expect(q4Html).toBeDefined();
-    expect(q4Html).toContain("/assets/think-0.png");
-    expect(q4Html).toContain("/assets/celeb-1.png");
-    expect(q4Html).not.toContain("/assets/think-1.png");
-    expect(q4Html).not.toContain("/assets/think-2.png");
-    expect(q4Html).not.toContain("/assets/celeb-0.png");
-
-    // Question 5: think-1 (advanced from natural 0 to avoid repeating Question 4) and celeb-0
-    const q5Html = getQuestionHtml(bundle, 5);
-    expect(q5Html).toBeDefined();
-    expect(q5Html).toContain("/assets/think-1.png");
-    expect(q5Html).toContain("/assets/celeb-0.png");
+    const entries = bundle.mascotAnimationSnapshot?.entries ?? [];
+    expect(entries).toHaveLength(10);
+    for (const entry of entries) {
+      expect(entry.slot_index).toBeGreaterThanOrEqual(1);
+      expect(entry.slot_index).toBeLessThanOrEqual(entry.state === "thinking" ? 3 : 2);
+    }
   });
 
   it("guarantees deterministic parity: running composition twice produces identical output", () => {
@@ -250,6 +222,7 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
       narrationDurationSeconds: timeline.duration_seconds,
       mascot: multiVariantMascot,
       mascotConfig,
+      mascotAnimationSnapshot: bundle1.mascotAnimationSnapshot,
     });
 
     expect(bundle1.html).toBe(bundle2.html);
@@ -515,13 +488,13 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
           mascot_enabled: true,
           mascot_action: "thinking",
           mascot_phase: "thinking",
-          question_number: 2, // 1-indexed -> questionIndex 1 -> think-1.png
+          question_number: 2,
         },
         multiVariantMascot,
       );
 
-      expect(preview.html).toContain("/assets/think-1.png");
-      expect(preview.html).not.toContain("/assets/think-0.png");
+      expect(preview.html).toMatch(/\/assets\/think-[012]\.png/);
+      expect(preview.html).toContain('data-mascot-motion-preset="none"');
     });
 
     it("renders the resolved style variant in rehearsal preview mode", () => {
@@ -531,13 +504,13 @@ describe("Mascot Variant Rotation & Style Resolution (Stage 8)", () => {
           mascot_id: multiVariantMascot.id,
           mascot_style_id: "core",
           mascot_enabled: true,
-          question_number: 3, // 1-indexed -> questionIndex 2 -> think-2.png
+          question_number: 3,
         },
         multiVariantMascot,
       );
 
-      expect(preview.html).toContain("/assets/think-0.png");
-      expect(preview.html).toContain("/assets/celeb-1.png");
+      expect(preview.html).toMatch(/\/assets\/think-[012]\.png/);
+      expect(preview.html).toMatch(/\/assets\/celeb-[01]\.png/);
     });
   });
 });

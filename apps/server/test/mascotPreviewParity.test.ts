@@ -45,7 +45,7 @@ const config: ChannelMascotConfig = {
 };
 
 describe("Mascot preview/editor parity", () => {
-  it("serializes the same canonical placement, asset registration, and motion as production", () => {
+  it("serializes the same canonical placement, asset registration, and static motion policy as production", () => {
     const preview = buildSandboxComposition(
       {
         mascot_id: mascot.id,
@@ -78,9 +78,10 @@ describe("Mascot preview/editor parity", () => {
       'data-mascot-flip-x="true"',
       'data-mascot-asset-action="thinking"',
       'data-mascot-registration-offset="14,-6"',
-      'data-mascot-motion-preset="sway"',
-      'data-mascot-motion-speed="1.25"',
-      'data-mascot-motion-intensity="dynamic"',
+      'data-mascot-media-mode="static"',
+      'data-mascot-motion-preset="none"',
+      'data-mascot-motion-speed="1"',
+      'data-mascot-motion-intensity="normal"',
     ]) {
       expect(preview).toContain(token);
       expect(production).toContain(token);

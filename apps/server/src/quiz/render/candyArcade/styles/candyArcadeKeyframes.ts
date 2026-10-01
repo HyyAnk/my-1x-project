@@ -52,6 +52,7 @@ export function candyArcadeKeyframesCss(): string {
 @keyframes quizProgressMarkerPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); } 25% { transform: translate(-50%, -50%) scale(1.12) rotate(4deg); } 55% { transform: translate(-50%, -50%) scale(0.96) rotate(-3deg); } 75% { transform: translate(-50%, -50%) scale(1.05) rotate(1deg); } }
 @keyframes progress-pop { 0% { transform: scale(1); } 58% { transform: scale(1.08); } 100% { transform: scale(1); } }
 @keyframes phase-exit { to { opacity: 0; } }
+@keyframes first-question-stage-enter { 0% { opacity: 0; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
 
 @keyframes mascot-sprite-play { from { background-position: 0% 0%; } to { background-position: 100% 0%; } }
 @keyframes mascot-single-breathe { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) scale(1.025, 0.98); } }

@@ -47,7 +47,7 @@ export function soundtrackFingerprint(
   return createHash("sha256")
     .update(
       JSON.stringify({
-        version: "master-soundtrack-v3-timed",
+        version: "master-soundtrack-v4-body-only",
         narrationModifiedAt,
         narrationSize,
         timelineEvents: timelineEvents.map((e) => ({

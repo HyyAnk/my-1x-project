@@ -1,6 +1,7 @@
 import {
   VoicePlanSchema,
   resolveGameplayPolicy,
+  type BridgeSceneConfig,
   type DirectorPlan,
   type QuizV2,
   type VoicePhrase,
@@ -8,13 +9,44 @@ import {
   type VoicePlan,
 } from "@studio/shared";
 import { sanitizeTextForSpeech, splitSmartPunctuationPhrases, canSplitBetweenWords } from "../../utils/speechSanitizer.js";
-import { resolveQuizVoiceCopy } from "./voiceCopy.js";
+import { resolveQuizVoiceCopy, resolveKickoffClosing } from "./voiceCopy.js";
 
-export { CHINESE_OUTRO_CLOSING_VARIANTS, ENGLISH_OUTRO_CLOSING_VARIANTS, resolveOutroClosing } from "./voiceCopy.js";
+export {
+  CHINESE_OUTRO_CLOSING_VARIANTS,
+  ENGLISH_OUTRO_CLOSING_VARIANTS,
+  resolveOutroClosing,
+  CHINESE_KICKOFF_VARIANTS,
+  ENGLISH_KICKOFF_VARIANTS,
+  resolveKickoffClosing,
+} from "./voiceCopy.js";
+
+export interface BuildQuizVoicePlanOptions {
+  skipIntro?: boolean;
+  skipOutro?: boolean;
+  director?: DirectorPlan;
+  channelName?: string;
+  topic?: string;
+  bridgeConfig?: BridgeSceneConfig;
+  customCtaText?: string;
+  includeBridgeSegments?: boolean;
+}
+
+export function cleanTopicForSpeech(rawTopic?: string): string {
+  if (!rawTopic || !rawTopic.trim()) return "today's quiz";
+  let topic = rawTopic.trim();
+  if (topic.includes(" - ")) {
+    const parts = topic.split(" - ");
+    if (parts[0] && parts[0].trim().length >= 4) topic = parts[0].trim();
+  } else if (topic.includes(": ")) {
+    const parts = topic.split(": ");
+    if (parts[0] && parts[0].trim().length >= 4) topic = parts[0].trim();
+  }
+  return topic.replace(/[!?,;.:]+$/, "").trim();
+}
 
 export function buildQuizVoicePlan(
   quiz: QuizV2,
-  options?: { skipIntro?: boolean; skipOutro?: boolean; director?: DirectorPlan },
+  options?: BuildQuizVoicePlanOptions,
 ): VoicePlan {
   const copy = resolveQuizVoiceCopy(quiz.language, quiz.episode_id);
   const segments: VoicePlan["segments"] = [];
@@ -27,6 +59,47 @@ export function buildQuizVoicePlan(
       duration_seconds: null,
       phrases: performancePhrases(copy.intro, "intro"),
     });
+  }
+
+  const shouldIncludeBridge =
+    options?.includeBridgeSegments ??
+    (options?.bridgeConfig?.enabled === true || Boolean(options?.channelName && options?.topic));
+
+  if (shouldIncludeBridge) {
+    if (options?.bridgeConfig?.enableTopicScene !== false) {
+      const topic = cleanTopicForSpeech(options?.topic || (quiz as { topic?: string }).topic);
+      const topicText = copy.topicTeaser(quiz.questions.length, topic);
+      segments.push(
+        withPhrases({
+          segment_id: "intro_topic",
+          role: "intro_topic",
+          question_id: null,
+          text: topicText,
+          duration_seconds: null,
+        }),
+      );
+    }
+
+    if (options?.bridgeConfig?.enableCtaScene !== false) {
+      const channelName = options?.channelName?.trim() || "our channel";
+      let ctaText = copy.subscribeCta(channelName, options?.customCtaText);
+      if (
+        options?.customCtaText &&
+        !/(?:let's\s+(?:go|do this|dive in)|here we go|game on|ready\?|出发|马上开始)/i.test(ctaText)
+      ) {
+        const kickoff = resolveKickoffClosing(quiz.language, quiz.episode_id);
+        ctaText = `${ctaText.replace(/[!.,\s]+$/, "")}! ${kickoff}`;
+      }
+      segments.push(
+        withPhrases({
+          segment_id: "intro_cta",
+          role: "intro_cta",
+          question_id: null,
+          text: ctaText,
+          duration_seconds: null,
+        }),
+      );
+    }
   }
   quiz.questions.forEach((question, index) => {
     const beat = options?.director?.beats.find((item) => item.question_id === question.id);
@@ -100,31 +173,40 @@ export function performancePhrases(text: string, role: VoiceSegmentRole): VoiceP
         : role === "intro"
           ? [normalized]
           : splitPunctuationPhrases(normalized);
-  return chunks.map((phrase, index) => ({
-    text: phrase,
-    delivery:
-      role === "reveal"
-        ? "emphasis"
-        : role === "fun_fact" || role === "explanation"
-          ? "warm"
-          : role === "outro" || role === "intro" || role === "thinking_prompt"
-            ? "playful"
-            : role === "question" && index === chunks.length - 1
-              ? "question_end"
-              : index === 1
-                ? "emphasis"
-                : "normal",
-    pause_after:
-      index === chunks.length - 1
-        ? "none"
-        : role === "outro" && index === 0
-          ? "long"
-          : role === "question"
-            ? "phrase"
-            : role === "reveal"
-              ? "anticipation"
-              : "micro",
-  }));
+  return chunks.map((phrase, index) => {
+    const isLastChunk = index === chunks.length - 1;
+    const isCtaKickoff =
+      role === "intro_cta" &&
+      (isLastChunk || /(?:let's\s+(?:go|do this|dive in)|here we go|game on|ready\?|出发|马上开始)/i.test(phrase));
+
+    return {
+      text: phrase,
+      delivery:
+        role === "reveal"
+          ? "emphasis"
+          : isCtaKickoff
+            ? "emphasis"
+            : role === "fun_fact" || role === "explanation" || role === "intro_topic"
+              ? "warm"
+              : role === "outro" || role === "intro" || role === "intro_cta" || role === "thinking_prompt"
+                ? "playful"
+                : role === "question" && isLastChunk
+                  ? "question_end"
+                  : index === 1
+                    ? "emphasis"
+                    : "normal",
+      pause_after:
+        isLastChunk
+          ? "none"
+          : role === "outro" && index === 0
+            ? "long"
+            : role === "question" || role === "intro_cta" || role === "intro_topic"
+              ? "phrase"
+              : role === "reveal"
+                ? "anticipation"
+                : "micro",
+    };
+  });
 }
 
 function splitQuestionPhrases(text: string): string[] {

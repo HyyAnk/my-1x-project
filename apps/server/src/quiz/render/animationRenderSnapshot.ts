@@ -5,7 +5,7 @@
  * to guarantee bit-for-bit reproducibility on resume and re-render.
  */
 
-import type { AnimationState } from "@studio/shared";
+import type { AnimationState, MascotStateMediaMode } from "@studio/shared";
 
 export interface MascotAnimationRenderSnapshotEntry {
   videoId: string;
@@ -20,6 +20,9 @@ export interface MascotAnimationRenderSnapshotEntry {
   atlas_url?: string;
   transparent_video_url?: string;
   alpha_codec?: string;
+  media_mode?: MascotStateMediaMode;
+  media_type?: "video" | "atlas" | "image";
+  image_url?: string;
 }
 
 export interface MascotAnimationRenderSnapshot {

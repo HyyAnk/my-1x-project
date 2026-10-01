@@ -31,7 +31,7 @@ export function SlotCardEmptyPrompt({ sourceImageUrl, onTriggerUpload }: SlotCar
         <div className="anim-empty-prompt">
           <UploadSimple size={24} weight="bold" />
           <span className="anim-empty-label">Upload Video</span>
-          <span className="anim-empty-hint">16:9 • 4–10s • MP4/MOV/WebM</span>
+          <span className="anim-empty-hint">4–10s • 30/60 FPS recommended • MP4/WebM</span>
         </div>
       )}
     </div>

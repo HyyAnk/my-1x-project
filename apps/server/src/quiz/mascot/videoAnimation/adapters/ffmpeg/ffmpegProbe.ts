@@ -33,6 +33,7 @@ interface FFProbeStream {
   avg_frame_rate?: string;
   duration?: string;
   codec_name?: string;
+  nb_frames?: string;
 }
 
 interface FFProbeFormat {
@@ -72,7 +73,10 @@ function parseFFProbeMetadata(stdout: string): VideoMetadata {
     const codec = String(stream.codec_name || "unknown");
     const formatName = String(format?.format_name || "unknown");
     const fileSizeBytes = parseInt(format?.size || "0", 10);
-    const frameCount = Math.max(1, Math.round((durationMs / 1000) * fps));
+    const parsedNbFrames = parseInt(String(stream.nb_frames ?? "0"), 10);
+    const frameCount = Number.isFinite(parsedNbFrames) && parsedNbFrames > 0
+      ? parsedNbFrames
+      : Math.max(1, Math.round((durationMs / 1000) * fps));
 
     return {
       width,
@@ -120,7 +124,7 @@ export async function probeVideo(filePath: string, options: ProbeVideoOptions = 
     "-select_streams",
     "v:0",
     "-show_entries",
-    "stream=width,height,r_frame_rate,avg_frame_rate,duration,codec_name:format=duration,size,format_name",
+    "stream=width,height,r_frame_rate,avg_frame_rate,duration,codec_name,nb_frames:format=duration,size,format_name",
     "-of",
     "json",
     filePath,

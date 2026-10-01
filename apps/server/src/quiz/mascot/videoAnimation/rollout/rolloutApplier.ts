@@ -81,6 +81,7 @@ function buildPublishedAsset(params: BuildPublishedAssetParams): MascotPublished
       duration_ms: f.duration_ms ?? frameDurationMs,
     })),
     registration: manifest.registration,
+    video_registration: revision.registration,
     content_fingerprint: revision.processing_fingerprint,
     source_fingerprint: revision.source_fingerprint,
     slot_index: slotIndex,

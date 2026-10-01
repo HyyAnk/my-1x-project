@@ -1,11 +1,15 @@
 import { createHash } from "node:crypto";
-import { copyFile, stat } from "node:fs/promises";
-import path from "node:path";
+import { stat } from "node:fs/promises";
 import type { Channel, Episode, IntroOutroTransitionType } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { selectIntroOutroPair, type IntroOutroSelectionSource } from "./introOutroSelectionService.js";
+import { pairFingerprint } from "../../quiz/introOutro/pairMedia.js";
+import { RepositoryError } from "../../repository/errors.js";
+import { prepareBookendMedia } from "./bookendMediaPreparation.js";
 
 export interface IntroOutroMediaResolution {
+  introHasAudio?: boolean;
+  outroHasAudio?: boolean;
   introVideoPath?: string;
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
@@ -54,9 +58,25 @@ export async function resolveAndCopyIntroOutro(
   }
 
   const { style } = selection;
-  const targetIntroPath = path.join(renderRoot, "intro.mp4");
-  const targetOutroPath = path.join(renderRoot, "outro.mp4");
-  await Promise.all([copyFile(selection.introSourcePath, targetIntroPath), copyFile(selection.outroSourcePath, targetOutroPath)]);
+  // Settle both copies before returning or failing so a retry cannot race an unfinished copy.
+  const prepared = await Promise.allSettled([
+    prepareBookendMedia("intro", selection.introSourcePath, renderRoot),
+    prepareBookendMedia("outro", selection.outroSourcePath, renderRoot),
+  ]);
+  const [intro, outro] = prepared;
+  if (intro.status === "rejected") throw intro.reason;
+  if (outro.status === "rejected") throw outro.reason;
+  const copiedFingerprint = await pairFingerprint({
+    style,
+    introSourcePath: intro.value.absolutePath,
+    outroSourcePath: outro.value.absolutePath,
+  });
+  if (copiedFingerprint !== selection.snapshot.fingerprint) {
+    throw new RepositoryError(
+      "Intro/Outro media changed during preparation. Restore the selected media and retry.",
+      "INTRO_OUTRO_PAIR_CHANGED",
+    );
+  }
   const selectionFingerprint = await createSelectionFingerprint(style.style_id, selection.introSourcePath, selection.outroSourcePath, {
     introSha256: style.intro.sha256,
     outroSha256: style.outro.sha256,
@@ -66,11 +86,13 @@ export async function resolveAndCopyIntroOutro(
   });
 
   return {
-    introVideoPath: "./intro.mp4",
-    outroVideoPath: "./outro.mp4",
+    introVideoPath: intro.value.videoPath,
+    outroVideoPath: outro.value.videoPath,
+    introHasAudio: selection.snapshot.intro_has_audio,
+    outroHasAudio: selection.snapshot.outro_has_audio,
     transitionType: style.transition_type,
     transitionDurationSeconds: style.transition_duration_seconds,
-    audioMode: style.audio_mode ?? "use_video_audio",
+    audioMode: "use_video_audio",
     styleId: style.style_id,
     stylePresetId: selection.stylePresetId,
     selectionSource: selection.source,

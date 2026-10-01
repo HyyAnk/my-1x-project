@@ -58,7 +58,9 @@
 .swipe-curtain {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--trans-from-color, #1e293b), var(--trans-to-color, #0f172a));
+  background: linear-gradient(110deg, var(--trans-from-color, #6366f1) 0%, var(--trans-to-color, #ec4899) 100%);
+  border-right: 5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset -4px 0 16px rgba(255, 255, 255, 0.35);
   transform: translateX(-100%);
   animation: swipe-in var(--trans-dur, 0.8s) cubic-bezier(0.4, 0, 0.2, 1) var(--trans-start, 0s) forwards;
 }
@@ -80,21 +82,27 @@
 .stinger-slash {
   position: absolute;
   inset: -50%;
-  background: var(--trans-from-color, #f59e0b);
+  background: linear-gradient(135deg, var(--trans-from-color, #f59e0b) 0%, rgba(255, 255, 255, 0.22) 48%, var(--trans-from-color, #f59e0b) 92%);
   transform: skewX(-25deg) translateX(-150%);
+  border-right: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.45), inset 6px 0 16px rgba(255, 255, 255, 0.35);
+  filter: drop-shadow(0 0 16px var(--trans-from-color, #f59e0b));
   animation: stinger-wipe var(--trans-dur, 0.8s) cubic-bezier(0.2, 0.8, 0.2, 1) var(--trans-start, 0s) forwards;
 }
 
 .stinger-slash.slash-b {
-  background: var(--trans-to-color, #ef4444);
+  background: linear-gradient(135deg, var(--trans-to-color, #ef4444) 0%, rgba(255, 255, 255, 0.28) 50%, var(--trans-to-color, #ef4444) 100%);
+  border-right: 4px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 0 20px var(--trans-to-color, #ef4444));
   animation-delay: calc(var(--trans-start, 0s) + 0.08s);
 }
 
 .stinger-flash {
   position: absolute;
   inset: 0;
-  background: #ffffff;
+  background: radial-gradient(circle at center, #ffffff 0%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0) 75%);
   opacity: 0;
+  pointer-events: none;
   animation: stinger-flash-burst 0.25s ease-out calc(var(--trans-start, 0s) + 0.4s) forwards;
 }
 

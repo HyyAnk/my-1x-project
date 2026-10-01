@@ -5,6 +5,8 @@ import { healQuizVoicePacingWithLLM } from "../../quiz/audio/voicePacingHealer.j
 import { generateVoice, resolveAssets, runQa, readQuizArtifacts } from "../../quiz/pipeline/orchestrator.js";
 import { RepositoryError } from "../../repository.js";
 import { hasValidNarrationAsset } from "./pipelineHelpers.js";
+import { resolveIntroOutroConfig } from "../../quiz/pipeline/stages/assetsVoiceStages.js";
+import { matchesBookendTiming } from "../../quiz/introOutro/renderTiming.js";
 
 export { handleVoicePacingClamp, createQuizPipelineInput } from "./voiceProgressTracker.js";
 
@@ -14,6 +16,7 @@ export async function shouldRegenerateQuizVoice(
   episodeNarrationAssetPath: string | null,
   artifacts: Awaited<ReturnType<typeof readQuizArtifacts>>,
 ): Promise<boolean> {
+  const media = await resolveIntroOutroConfig(runtime.repository, task.channel_id, task.episode_id!);
   const voicePaceNeedsRegeneration = artifacts.quiz
     ? quizVoicePlanNeedsRegeneration({
         voicePlan: artifacts.voice_plan,
@@ -24,6 +27,8 @@ export async function shouldRegenerateQuizVoice(
 
   return (
     !artifacts.voice_plan ||
+    !matchesBookendTiming(artifacts.timeline, media.introDuration, media.outroDuration) ||
+    artifacts.voice_plan.segments.some((segment) => segment.role === "intro" || segment.role === "outro") ||
     voicePaceNeedsRegeneration ||
     !(await hasValidNarrationAsset.call(runtime, task.channel_id, task.episode_id!, episodeNarrationAssetPath)) ||
     artifacts.voice_plan.segments.some((segment) => segment.duration_seconds === null)

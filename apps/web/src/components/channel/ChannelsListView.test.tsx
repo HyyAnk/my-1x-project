@@ -3,13 +3,13 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ChannelsListView } from "./ChannelsListView";
 import { LanguageProvider } from "../../i18n";
-import type { Channel } from "@studio/shared";
+import { ChannelSchema, type Channel } from "@studio/shared";
 import { CHANNEL_ORDER_STORAGE_KEY } from "../../features/channel/hooks/useChannelOrder";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvider>{children}</LanguageProvider>;
 
 function createMockChannel(id: string, name: string, episodeCount = 0): Channel {
-  return {
+  return ChannelSchema.parse({
     channel_id: id,
     slug: id,
     display_name: name,
@@ -44,7 +44,7 @@ function createMockChannel(id: string, name: string, episodeCount = 0): Channel 
       show_in_outro: true,
       show_in_question: true,
     },
-  };
+  });
 }
 
 describe("ChannelsListView - Reordering & Customization Integration", () => {

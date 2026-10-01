@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   DirectorArchetypeSchema,
   MascotActionTypeSchema,
+  MascotStateMediaModeSchema,
   QuizAnswerCardStyleSchema,
   QuizBackgroundStyleSchema,
   QuizQuestionBoxStyleSchema,
@@ -68,6 +69,7 @@ export const SandboxPreviewInputBaseSchema = z.object({
   mascot_show_in_intro: z.boolean().optional().default(true),
   mascot_show_in_outro: z.boolean().optional().default(true),
   mascot_show_in_question: z.boolean().optional().default(true),
+  mascot_media_mode: MascotStateMediaModeSchema.optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional().default(""),
   mode: z.enum(["snapshot", "rehearsal"]).optional().default("snapshot"),
   style_catalog_revision: z.string().trim().min(1).optional(),

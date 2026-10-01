@@ -73,7 +73,7 @@ export function SlotCardMediaPreview({ mascotId, styleId, state, slotIndex, proj
             border: "1px solid rgba(255,255,255,0.1)",
           }}
         >
-          {(activeRevision.duration_ms / 1000).toFixed(1)}s • {activeRevision.playback_fps} FPS
+          {(activeRevision.duration_ms / 1000).toFixed(1)}s • {activeRevision.playback_fps ?? 24} FPS • Loop
         </span>
       ) : null}
     </div>

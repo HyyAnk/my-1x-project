@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor, fireEvent } from "@testing-library/react";
-import type { Channel, MascotProfile } from "@studio/shared";
+import { ChannelSchema, type Channel, type MascotProfile } from "@studio/shared";
 import { MascotStudioView } from "./MascotStudio";
 import { LanguageProvider } from "../i18n";
 import { api } from "../api";
@@ -21,7 +21,7 @@ const mockMascot: MascotProfile = {
 };
 
 const mockChannels: Channel[] = [
-  {
+  ChannelSchema.parse({
     channel_id: "ch-1",
     slug: "ch-1",
     display_name: "Channel 1",
@@ -30,7 +30,7 @@ const mockChannels: Channel[] = [
     language: "en",
     country: "US",
     market: "general",
-    channel_dna_path: "",
+    channel_dna_path: "channels/ch-1/channel_dna.md",
     style_guide_path: null,
     status: "ACTIVE",
     episode_count: 0,
@@ -56,7 +56,7 @@ const mockChannels: Channel[] = [
     },
     created_at: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
-  },
+  }),
 ];
 
 describe("MascotStudioView Routing & Rehydration", () => {

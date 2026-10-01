@@ -69,7 +69,14 @@ CREATIVE BRIEF
 ${
   kind === "intro"
     ? "Create an immediately engaging, playful quiz opening with personality and a satisfying handoff, hard-cutting into Question 1."
-    : "Create a warm, playful farewell with a natural invitation to subscribe to the channel. Make subscribing the only call to action, expressed through a playful gesture or gag and, when speech is used, a short friendly spoken reminder. Use the full frame for the performance. Do not reserve space, move the mascot aside, point toward recommended videos, create video-card placeholders or lock the camera for end-screen overlays. Choose the action, rhythm and ending freely."
+    : duration >= 12
+      ? `Create a warm, playful, high-energy two-part outro sequence (${duration}s total). Structure the performance across two linked segments with a seamless kinematic match cut:
+1. Part 1 (0s to ${(duration / 2).toFixed(1)}s): Mascot celebrates enthusiastically and accelerates into an athletic run/sprint, speaking naturally on the run. At the midpoint, the mascot launches into a decisive kinematic stunt (e.g. diving into a golden energy ring, slapping the camera for a high-five, or an acrobatic vault), detonating a 100% whiteout/contact flash that washes out the entire frame.
+2. Part 2 (${(duration / 2).toFixed(1)}s to ${duration}s): The white flash dissipates as the mascot bursts out with matching momentum, landing, rolling, and popping upright into a sliding stop. The mascot immediately delivers the second clause of the sentence without filler words, gestures proudly to the intact in-scene 3D channel logo, and finishes with an affectionate farewell wave.
+3. Dialogue Enjambment: Part 1 and Part 2 form ONE grammatically continuous compound sentence. Part 1 ends with an ellipsis ('...') and Part 2 continues directly with an ellipsis ('...'). Do not use filler interjections like 'Boom!', 'Wait!', or 'Hey!'.
+4. Environment Anchoring: Maintain strict consistency across stage geometry, porcelain-white floor, glowing cyan perimeter LED ring, and cobalt-to-amber gradient horizon backdrop to prevent environmental drift.
+5. No Prop Catching or Stowing in Part 2: If an item or prop (badge, trophy, coin, ring, or high-five) was launched toward the camera in Part 1 to cause the flash wipe, do NOT have the mascot catch, retrieve, or stow the item in Part 2. The item has already detonated into light or passed beyond the camera. In Part 2, the mascot emerges with hands free, rolls and slides upright, immediately delivering speech and gesturing directly to the in-scene 3D channel logo.`
+      : "Create a warm, playful farewell with a natural invitation to subscribe to the channel. Make subscribing the only call to action, expressed through a playful gesture or gag and, when speech is used, a short friendly spoken reminder. Use the full frame for the performance. Do not reserve space, move the mascot aside, point toward recommended videos, create video-card placeholders or lock the camera for end-screen overlays. Choose the action, rhythm and ending freely."
 }
 Match the reference style, not a forced 3D aesthetic. Write a small entertaining performance, not a checklist of safe gestures.
 Use the selected seeds as inspiration. Vary the premise, entrance, emotional reactions, staging within the shared set, sound palette and ending. Do not always use an energy ball, chase, logo explosion or pointing pose.
@@ -105,6 +112,11 @@ TECHNICAL CONTRACT
 - Use real identity feature IDs and declare required capabilities. Do not use explicitly unsupported anatomy or skills. Unknown capabilities need cautious reference-based judgment, not invented limbs or joints. Preserve identity and rigid surfaces; natural occlusion is allowed.
 - ${logoMode === "supplied_reference" ? "supplied_reference: reveal the exact attached official logo intact in-scene; never redraw, warp or respell it." : logoMode === "post_overlay" ? "post_overlay: leave the supplied logo region for the editor; do not generate logo typography or require a physical logo." : "none: no logo or invented brand text."}
 - No subtitles or watermark. Include only necessary identity restrictions, not creative prohibitions. Replace example placeholders with authored content. The example timing is illustrative, not mandatory.
+${
+  kind === "outro" && duration >= 12
+    ? `- For two-part kinematic outro (${duration}s): Align the exit vector of Part 1 (e.g., 30-degree diagonal sprint) with the entry vector of Part 2 (landing roll and pop-up). Midpoint must culminate in a solid whiteout/contact flash covering the entire frame. Speech must be continuous and finish before the final 2.5s living hold. In Part 2, mascot emerges with hands free without catching, retrieving, or stowing any prop thrown in Part 1.`
+    : ""
+}
 
 OUTPUT SHAPE
 ${JSON.stringify(outputExample(kind, duration))}`;

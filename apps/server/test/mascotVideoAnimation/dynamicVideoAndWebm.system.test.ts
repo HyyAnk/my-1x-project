@@ -355,6 +355,38 @@ describe("Stage B2 — Dynamic Video Duration, FPS & Transparent WebM VP9 Encodi
       expect(result.codec).toBe("vp9_alpha");
     });
 
+    it("encodes with low-latency GOP and custom keyframeInterval for seamless looping", async () => {
+      const root = await createTestRoot("anim-webm-lowlatency-");
+      const framesDir = path.join(root, "frames");
+      await fs.mkdir(framesDir, { recursive: true });
+
+      for (let i = 1; i <= 30; i++) {
+        const pngBytes = createTransparentFramePng(160, 90, i);
+        await fs.writeFile(path.join(framesDir, `frame_${String(i).padStart(3, "0")}.png`), pngBytes);
+      }
+
+      const ffmpegAdapter = createFfmpegAdapter();
+      const outputWebmPath = path.join(root, "lowlatency.webm");
+
+      const encodeResult = await ffmpegAdapter.encodeFramesToTransparentWebm({
+        framesDir,
+        outputWebmPath,
+        fps: 30,
+        keyframeInterval: 15,
+      });
+
+      expect(encodeResult.fps).toBe(30);
+      expect(encodeResult.durationMs).toBe(1000);
+      expect(encodeResult.codec).toBe("vp9_alpha");
+      expect(encodeResult.fileSizeBytes).toBeGreaterThan(0);
+
+      const probed = await ffmpegAdapter.probeVideoMetadata(outputWebmPath);
+      expect(probed.codec).toBe("vp9");
+      expect(probed.fps).toBe(30);
+      expect(probed.width).toBe(160);
+      expect(probed.height).toBe(90);
+    });
+
     it("rejects with VideoEncodeError when frames directory does not exist", async () => {
       const root = await createTestRoot("anim-webm-nonexistent-");
       const ffmpegAdapter = createFfmpegAdapter();

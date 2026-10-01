@@ -119,6 +119,7 @@ export interface FpsAndDurationResult {
 }
 
 export interface BuildAnimationManifestParams {
+  videoRegistration?: MascotAssetRegistration;
   state: AnimationState;
   recipeId: string;
   styleId: string;

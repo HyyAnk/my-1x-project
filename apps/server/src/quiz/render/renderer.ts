@@ -8,11 +8,13 @@ import type {
   Scene,
   IntroOutroTransitionType,
   ResolvedTransitionInstance,
+  MascotStateMediaMode,
 } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 
 import type { MascotAnimationRenderSnapshot } from "./animationRenderSnapshot.js";
+import type { ResolvedChannelBrandIdentity } from "../brand/channelBrandAssetResolver.js";
 
 export type QuizRenderInput = {
   quiz: QuizV2;
@@ -38,7 +40,12 @@ export type QuizRenderInput = {
   transitionDurationSeconds?: number;
   transitionInstances?: Record<string, ResolvedTransitionInstance>;
   audioMode?: "use_video_audio" | "overlay_bgm";
+  introHasAudio?: boolean;
+  outroHasAudio?: boolean;
   mascotAnimationSnapshot?: MascotAnimationRenderSnapshot;
+  mascotMediaMode?: MascotStateMediaMode;
+  brandIdentity?: ResolvedChannelBrandIdentity;
+  topic?: string;
 };
 
 export type PreparedQuizRender = {

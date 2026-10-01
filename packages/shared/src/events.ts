@@ -8,6 +8,8 @@ const IsoDate = z.string().datetime({ offset: true });
 export const QuizTimelineEventTypeSchema = z.enum([
   "background.enter",
   "background.motion",
+  "bridge.topic.enter",
+  "bridge.cta.enter",
   "question.enter",
   "choices.enter",
   "countdown.start",

@@ -23,7 +23,7 @@ describe("confirmed Stage Studio preview source", () => {
     return { repository: { getChannel }, state: { config: DEFAULT_CONFIG } };
   }
 
-  it("uses the shared 366 percent default for every unassigned mascot", async () => {
+  it("uses the shared 360 percent default for every unassigned mascot", async () => {
     for (const mascot_id of ["fox", "owl", "cat"]) {
       const result = await resolvePreviewStageSource(
         SandboxPreviewInputBaseSchema.parse({
@@ -34,9 +34,9 @@ describe("confirmed Stage Studio preview source", () => {
         }),
         dependencies(),
       );
-      expect(result).toMatchObject({ mascot_id, mascot_scale: 3.66, mascot_offset_x: 115, mascot_offset_y: 180 });
+      expect(result).toMatchObject({ mascot_id, mascot_scale: 3.6, mascot_offset_x: 121, mascot_offset_y: 181 });
     }
-    expect(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale).toBe(3.66);
+    expect(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale).toBe(3.6);
   });
 
   it("ignores stale caller transforms and mascot identity for a channel source", async () => {
@@ -59,7 +59,46 @@ describe("confirmed Stage Studio preview source", () => {
       mascot_position: "bottom_right",
       mascot_flip_x: true,
       mascot_show_in_intro: false,
+      mascot_media_mode: "static",
     });
+  });
+
+  it("resolves channel mascot_media_mode override", async () => {
+    const animatedChannel = ChannelSchema.parse({
+      ...channel,
+      mascot_config: { ...channel.mascot_config, mascot_media_mode: "animation" },
+    });
+    const getChannel = vi.fn().mockResolvedValue(animatedChannel);
+    const deps = { repository: { getChannel }, state: { config: DEFAULT_CONFIG } };
+    const result = await resolvePreviewStageSource(
+      SandboxPreviewInputBaseSchema.parse({
+        mascot_placement_source: "channel",
+        mascot_channel_id: "source",
+      }),
+      deps,
+    );
+    expect(result.mascot_media_mode).toBe("animation");
+  });
+
+  it("inherits global video generation mascot_media_mode when channel is unset or inherit", async () => {
+    const inheritedChannel = ChannelSchema.parse({
+      ...channel,
+      mascot_config: { ...channel.mascot_config, mascot_media_mode: "inherit" },
+    });
+    const getChannel = vi.fn().mockResolvedValue(inheritedChannel);
+    const configWithAnimation = {
+      ...DEFAULT_CONFIG,
+      video_generation: { ...DEFAULT_CONFIG.video_generation, mascot_media_mode: "animation" as const },
+    };
+    const deps = { repository: { getChannel }, state: { config: configWithAnimation } };
+    const result = await resolvePreviewStageSource(
+      SandboxPreviewInputBaseSchema.parse({
+        mascot_placement_source: "channel",
+        mascot_channel_id: "source",
+      }),
+      deps,
+    );
+    expect(result.mascot_media_mode).toBe("animation");
   });
 
   it("keeps unsaved Stage Studio draft transforms", async () => {

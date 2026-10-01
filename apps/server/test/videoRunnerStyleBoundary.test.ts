@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -110,8 +110,16 @@ async function createFixture() {
   director.beats[0].answer_card_style = "auto";
   director.beats[0].background_style = "auto";
   const assetPlan = planQuizAssets(quiz, director);
-  const voice = buildQuizVoicePlan(quiz);
-  const timeline = compileQuizTimeline({ quiz, director, voicePlan: voice, targetDurationSeconds: 30 });
+  const plan = buildQuizVoicePlan(quiz, { skipIntro: true, skipOutro: true });
+  const voice = { ...plan, segments: plan.segments.map((segment) => ({ ...segment, duration_seconds: 4 })) };
+  const timeline = compileQuizTimeline({
+    quiz,
+    director,
+    voicePlan: voice,
+    introDuration: 0,
+    outroDuration: 0,
+    audioDurations: Object.fromEntries(voice.segments.map((segment) => [segment.segment_id, segment.duration_seconds])),
+  });
   const resolution = QuizAssetResolutionSchema.parse({
     schema_version: 2,
     episode_id: episodeId,
@@ -126,6 +134,11 @@ async function createFixture() {
   const narrationPath = path.join(root, "narration.wav");
   await writeFile(narrationPath, fakeWav());
   const repository = {
+    queueEpisodeArtifactMutation: async <T>(_channelId: string, _episodeId: string, action: () => Promise<T>) => action(),
+    writeJsonAtomic: async (target: string, value: unknown) => {
+      await mkdir(path.dirname(target), { recursive: true });
+      await writeFile(target, JSON.stringify(value));
+    },
     rootDirectory: root,
     resolvePath: (...segments: string[]) => path.join(root, ...segments),
     getEpisode: () => Promise.resolve(episode),

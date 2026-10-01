@@ -30,7 +30,9 @@ const BASE_TRANSITION_WRAPPERS_CSS = `
 .swipe-curtain {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--trans-from-color, #1E293B), var(--trans-to-color, #0F172A));
+  background: linear-gradient(110deg, var(--trans-from-color, #6366F1) 0%, var(--trans-to-color, #EC4899) 100%);
+  border-right: 5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset -4px 0 16px rgba(255, 255, 255, 0.35);
   transform: translateX(-100%);
   animation: swipe-in var(--trans-dur, 0.8s) cubic-bezier(0.4, 0, 0.2, 1) var(--trans-start, 0s) forwards;
 }

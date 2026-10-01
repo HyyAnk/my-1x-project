@@ -1,12 +1,12 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { Channel } from "@studio/shared";
+import { ChannelSchema, type Channel } from "@studio/shared";
 import { useChannelFilterSort } from "./useChannelFilterSort";
 
 afterEach(cleanup);
 
 function createMockChannel(overrides: Partial<Channel> = {}): Channel {
-  return {
+  return ChannelSchema.parse({
     channel_id: "ch_1",
     slug: "ch_1",
     display_name: "Channel One",
@@ -42,7 +42,7 @@ function createMockChannel(overrides: Partial<Channel> = {}): Channel {
       show_in_question: true,
     },
     ...overrides,
-  };
+  });
 }
 
 describe("useChannelFilterSort", () => {

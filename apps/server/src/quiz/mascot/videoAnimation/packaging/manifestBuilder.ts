@@ -21,9 +21,11 @@ import type {
  */
 export function calculateFpsAndDuration(params: CalculateFpsAndDurationParams): FpsAndDurationResult {
   const { targetCount, requestedFps, requestedDurationMs } = params;
-  const fps = requestedFps ?? (targetCount <= 36 ? REQUIRED_FPS : 24);
+  const fps = requestedFps && requestedFps > 0
+    ? requestedFps
+    : (targetCount === 12 ? REQUIRED_FPS : 24);
   const durationMs = requestedDurationMs ?? Math.round((targetCount / fps) * 1000);
-  const frameDurationMs = targetCount <= 36 && fps === REQUIRED_FPS ? FRAME_DURATION_MS : (1 / fps) * 1000;
+  const frameDurationMs = fps === REQUIRED_FPS && targetCount === 12 ? FRAME_DURATION_MS : (1 / fps) * 1000;
   return { fps, durationMs, frameDurationMs };
 }
 
@@ -101,6 +103,7 @@ export function buildAnimationManifest(params: BuildAnimationManifestParams): Bu
     frames: frameRects,
     registration: sequenceRegistration,
     fingerprint: processingFingerprint,
+    video_registration: params.videoRegistration,
     source_fingerprint: sourceVideoFingerprint,
     processing_fingerprint: processingFingerprint,
     transparent_video_url: "video_transparent.webm",

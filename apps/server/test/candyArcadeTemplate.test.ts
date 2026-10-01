@@ -822,6 +822,7 @@ describe("Candy Arcade visual template", () => {
       show_in_intro: false,
       show_in_outro: false,
       show_in_question: true,
+      mascot_media_mode: "animation",
     };
 
     const director = createDefaultDirectorPlan(candyArcadeQuiz);

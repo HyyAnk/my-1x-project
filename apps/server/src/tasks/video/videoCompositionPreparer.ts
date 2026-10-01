@@ -1,6 +1,7 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import {
+  resolveEffectiveMascotMediaMode,
   resolveMascotStyleIdForQuizConfig,
   type Channel,
   type Episode,
@@ -21,6 +22,10 @@ import { resolveAndCopyIntroOutro, type IntroOutroMediaResolution } from "./intr
 import { writeCompositionFiles } from "./compositionFileWriter.js";
 import { pinEpisodeStyleRevision } from "./episodeStylePinning.js";
 import { compileCompositionHtml } from "./compositionHtmlCompiler.js";
+import { resolveEpisodeIntroOutro } from "../../quiz/introOutro/episodeSelection.js";
+import { prepareIntroOutroTiming } from "./introOutroTimingPreparation.js";
+import { resolveChannelBrandIdentity } from "../../quiz/brand/channelBrandAssetResolver.js";
+import { resolveEffectiveBridgeConfig, resolveBridgeChannelDisplayName } from "../../quiz/bridge/resolveBridgeConfig.js";
 
 export {
   resolveAndCopyIntroOutro,
@@ -52,7 +57,13 @@ export function buildMascotRenderDependencies(mascot: MascotProfile | null, epis
   return [
     `mascot-profile:${mascot.id}:${mascot.updated_at}`,
     ...selectedStyles
-      .map((style) => `mascot-style:${style.id}:${style.built_in_preset_id ?? "legacy"}:${style.style_revision ?? 1}`)
+      .map((style) => {
+        const animationFingerprints = [...(style.states?.thinking ?? []), ...(style.states?.celebrate ?? [])]
+          .map((variant) => `${variant.slot_index}:${variant.generation_revision ?? 0}:${variant.animation?.content_fingerprint ?? "none"}`)
+          .sort()
+          .join(",");
+        return `mascot-style:${style.id}:${style.built_in_preset_id ?? "legacy"}:${style.style_revision ?? 1}:${animationFingerprints}`;
+      })
       .sort(),
   ];
 }
@@ -70,17 +81,28 @@ export async function prepareVideoComposition(options: {
 }): Promise<VideoCompositionContext> {
   const { runtime, repository, channel, scenes, renderAspectRatio, onProgress } = options;
 
-  const artifacts = await loadRequiredQuizRenderArtifacts(repository, channel.channel_id, options.episode.episode_id);
+  let artifacts = await loadRequiredQuizRenderArtifacts(repository, channel.channel_id, options.episode.episode_id);
   await ensureCurrentAssetSizing(repository, channel.channel_id, options.episode.episode_id, artifacts);
   const episode = await pinEpisodeStyleRevision(repository, channel, options.episode);
 
-  const narration = await repository.getEpisodeAudioFile(
+  let narration = await repository.getEpisodeAudioFile(
     channel.channel_id,
     episode.episode_id,
     path.basename(episode.narration_asset_path!),
   );
   const renderRoot = repository.resolvePath("runtime", "hyperframes", episode.episode_id);
   await mkdir(renderRoot, { recursive: true });
+  const { snapshot } = await resolveEpisodeIntroOutro(repository, channel, episode);
+  const bridgeConfig = resolveEffectiveBridgeConfig(channel);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig);
+  const timing = await prepareIntroOutroTiming(repository, renderRoot, artifacts, snapshot, narration, {
+    topic: episode.topic?.title,
+    channelName,
+    bridgeConfig,
+  });
+  artifacts = timing.artifacts;
+  narration = { ...narration, ...timing.narration };
+  episode.narration_duration_seconds = artifacts.timeline.duration_seconds;
   const compositionPath = path.join(renderRoot, "index.html");
   const outputPath = path.join(renderRoot, "quiz-video.mp4");
   const renderAudioPath = path.join(renderRoot, "narration.wav");
@@ -127,6 +149,8 @@ export async function prepareVideoComposition(options: {
   });
 
   const renderFps = runtime.videoConfig?.fps ?? 30;
+  const effectiveMediaMode = resolveEffectiveMascotMediaMode(channel.mascot_config, runtime.videoConfig?.mascot_media_mode);
+  const brandIdentity = await resolveChannelBrandIdentity({ channel, repository, renderRoot });
 
   const { html, compositionFiles } = await compileCompositionHtml({
     artifacts,
@@ -139,6 +163,8 @@ export async function prepareVideoComposition(options: {
     bgmHistory,
     mascotProfile,
     introOutro,
+    mascotMediaMode: effectiveMediaMode,
+    brandIdentity,
   });
 
   await writeCompositionFiles(renderRoot, compositionPath, html, compositionFiles);
@@ -146,6 +172,7 @@ export async function prepareVideoComposition(options: {
   const { fontFingerprints } = await syncStaticMediaAssets(renderRoot, repository.rootDirectory);
   const renderDependencies = [
     ...fontFingerprints,
+    `mascot-media-mode:${effectiveMediaMode}`,
     ...buildMascotRenderDependencies(mascotProfile, episode),
     ...(introOutro.selectionFingerprint ? [`intro-outro:${introOutro.selectionFingerprint}`] : []),
   ];

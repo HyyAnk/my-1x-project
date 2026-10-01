@@ -3,12 +3,12 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ChannelCard } from "./ChannelCard";
 import { LanguageProvider } from "../../i18n";
-import type { Channel } from "@studio/shared";
+import { ChannelSchema, type Channel } from "@studio/shared";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvider>{children}</LanguageProvider>;
 
 function createMockChannel(overrides?: Partial<Channel>): Channel {
-  return {
+  return ChannelSchema.parse({
     channel_id: "ch_test",
     slug: "ch-test",
     display_name: "Test Channel",
@@ -44,7 +44,7 @@ function createMockChannel(overrides?: Partial<Channel>): Channel {
       show_in_question: true,
     },
     ...overrides,
-  };
+  });
 }
 
 describe("ChannelCard - Video Count Highlight Badge", () => {

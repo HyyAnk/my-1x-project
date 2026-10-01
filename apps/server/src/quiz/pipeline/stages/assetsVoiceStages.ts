@@ -11,6 +11,8 @@ import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js"
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
+import { resolveEpisodeIntroOutro } from "../../introOutro/episodeSelection.js";
+import { resolveEffectiveBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
 
 export async function planAssets(
   input: QuizOrchestratorInput,
@@ -86,44 +88,39 @@ export async function resolveAssets(
 }
 
 export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput["repository"], channelId: string, episodeId: string) {
-  const [channel, episode] = await Promise.all([
-    repository.getChannel(channelId).catch(() => null),
-    repository.getEpisode(channelId, episodeId).catch(() => null),
-  ]);
-  const styleId =
-    episode?.quiz_config?.intro_outro_style_id !== undefined
-      ? episode.quiz_config.intro_outro_style_id
-      : (channel?.default_intro_outro_style_id ?? null);
-
-  if (styleId === "none") {
-    return { style: null, skipIntro: true, skipOutro: true, introDuration: 0, outroDuration: 0 };
-  }
-  if (styleId) {
-    const style = await repository.getChannelIntroOutroStyle(channelId, styleId).catch(() => null);
-    if (style) {
-      return {
-        style,
-        skipIntro: style.intro.has_audio,
-        skipOutro: style.outro.has_audio,
-        introDuration: style.intro.duration_seconds,
-        outroDuration: style.outro.duration_seconds,
-      };
-    }
-  }
-  return { style: null, skipIntro: false, skipOutro: false, introDuration: undefined, outroDuration: undefined };
+  const [channel, episode] = await Promise.all([repository.getChannel(channelId), repository.getEpisode(channelId, episodeId)]);
+  const { snapshot, pair } = await resolveEpisodeIntroOutro(repository, channel, episode);
+  return {
+    style: pair?.style ?? null,
+    skipIntro: true,
+    skipOutro: true,
+    introDuration: snapshot.intro_duration_seconds,
+    outroDuration: snapshot.outro_duration_seconds,
+  };
 }
 
 export async function planVoice(
   input: QuizOrchestratorInput,
 ): Promise<{ voice_plan: VoicePlan; artifact_path: string; invalidated: string[] }> {
-  const quiz = await input.repository.readQuiz(input.channelId, input.episodeId);
+  const [quiz, channel, episode] = await Promise.all([
+    input.repository.readQuiz(input.channelId, input.episodeId),
+    input.repository.getChannel(input.channelId),
+    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
+  ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning voice", "QUIZ_REQUIRED");
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
   const director = await input.repository.readDirectorPlan(input.channelId, input.episodeId);
+  const bridgeConfig = resolveEffectiveBridgeConfig(channel);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig);
   const voice_plan = buildQuizVoicePlan(quiz, {
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
     director: director ?? undefined,
+    channelName,
+    topic: episode?.topic?.title,
+    bridgeConfig,
+    customCtaText: bridgeConfig.customCtaText,
+    includeBridgeSegments: bridgeConfig.enabled !== false,
   });
   const artifact_path = await input.repository.writeVoicePlan(input.channelId, input.episodeId, voice_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
@@ -140,9 +137,11 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   timeline_path: string;
   invalidated: string[];
 }> {
-  const [quiz, director_plan] = await Promise.all([
+  const [quiz, director_plan, channel, episode] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
+    input.repository.getChannel(input.channelId),
+    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before generating voice", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before generating voice", "DIRECTOR_REQUIRED");
@@ -150,10 +149,17 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const bridgeConfig = resolveEffectiveBridgeConfig(channel);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig);
   const plannedVoice = buildQuizVoicePlan(quiz, {
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
     director: director_plan,
+    channelName,
+    topic: episode?.topic?.title,
+    bridgeConfig,
+    customCtaText: bridgeConfig.customCtaText,
+    includeBridgeSegments: bridgeConfig.enabled !== false,
   });
   const measured = await synthesizeQuizVoiceSegments({
     repository: input.repository,
@@ -177,6 +183,9 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
     audioDurations,
     introDuration: introOutro.introDuration,
     outroDuration: introOutro.outroDuration,
+    channelName,
+    topic: episode?.topic?.title,
+    bridgeConfig,
   });
   const narration = await assembleQuizNarration({
     repository: input.repository,

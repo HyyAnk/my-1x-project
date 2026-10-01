@@ -71,12 +71,52 @@ function resolveEventSfxConfig(event: QuizTimeline["events"][number]) {
     };
   }
   if (event.type === "transition.start") {
+    if (
+      event.payload?.instance_id === "bridge_topic_to_cta" ||
+      event.payload?.transition_id === "brand_logo_stinger" ||
+      event.event_id === "transition_bridge_topic_to_cta" ||
+      event.payload?.instance_id === "bridge_cta_to_question" ||
+      event.payload?.transition_id === "energy_whip" ||
+      event.event_id === "transition_bridge_cta_to_question"
+    ) {
+      return null;
+    }
     const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
     return {
       intent: isLightning ? "transition_fast" : "transition_soft",
       filename: isLightning ? "lightning_brush.wav" : "bubble_splash.wav",
       dur: isLightning ? 0.7 : 0.65,
       vol: 0.6,
+    };
+  }
+  if (event.type === "sfx.play") {
+    const soundIntent = (event.payload?.sound as string) || (event.payload?.name as string) || "ui_pop";
+    let filename = "ui_pop.wav";
+    let dur = event.duration_seconds || 0.35;
+    const vol = typeof event.payload?.volume === "number" ? event.payload.volume : 0.6;
+
+    if (soundIntent === "transition_fast" || soundIntent === "whoosh") {
+      filename = "lightning_brush.wav";
+      dur = dur || 0.65;
+    } else if (soundIntent === "transition_soft" || soundIntent === "splash") {
+      filename = "bubble_splash.wav";
+      dur = dur || 0.65;
+    } else if (soundIntent === "correct_small" || soundIntent === "ding" || soundIntent === "sparkle") {
+      filename = "correct_ding.wav";
+      dur = dur || 0.55;
+    } else if (soundIntent === "correct_big" || soundIntent === "triumph") {
+      filename = "correct_triumph.wav";
+      dur = dur || 1.2;
+    } else if (soundIntent === "streak" || soundIntent === "score_gain") {
+      filename = "streak.wav";
+      dur = dur || 0.8;
+    }
+
+    return {
+      intent: soundIntent,
+      filename,
+      dur,
+      vol,
     };
   }
   return null;

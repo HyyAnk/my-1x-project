@@ -45,6 +45,19 @@ export class TaskAbortRegistry {
     }
   }
 
+  abortAll(): void {
+    for (const controller of this.videoControllers.values()) {
+      controller.abort();
+    }
+    for (const controller of this.imageControllers.values()) {
+      controller.abort();
+    }
+    for (const controller of this.shortReelControllers.values()) {
+      controller.abort();
+    }
+    this.clearAll();
+  }
+
   clearAll(): void {
     this.imageControllers.clear();
     this.videoControllers.clear();

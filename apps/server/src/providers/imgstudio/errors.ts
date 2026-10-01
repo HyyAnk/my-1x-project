@@ -15,7 +15,8 @@ export class ImgStudioApiError extends RepositoryError {
 
 export function createImgStudioHttpError(status: number, errorMessage: string): ImgStudioApiError {
   const isContentFilter =
-    (status === 400 || status === 422) && /(?:content filter|safety|moderation|policy|prohibited|inappropriate|violat)/i.test(errorMessage);
+    (status === 400 || status === 422 || status === 500) &&
+    /(?:content filter|safety|moderation|policy|prohibited|inappropriate|violat|prohibited_content|finish_reason)/i.test(errorMessage);
 
   if (isContentFilter) {
     return new ImgStudioApiError(

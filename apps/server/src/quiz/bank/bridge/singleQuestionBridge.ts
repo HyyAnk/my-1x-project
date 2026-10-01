@@ -16,6 +16,7 @@ import { convertBankQuestionToQuizQuestionLossless } from "./bankQuestionConvert
 import { buildSingleQuestionDirectorPlan } from "./bankDirectorPlanFactory.js";
 import { buildEpisodeRecord, resolveEpisodeVisualStyles, resolveRenderAspect, triggerPipelineTask } from "./bootstrapperHelpers.js";
 import { stageAndPublishSingleQuestionEpisodeFiles } from "./episodeStagingPublisher.js";
+import { pinIntroOutroSelection } from "../../introOutro/episodeSelection.js";
 import type { CreateEpisodeFromQuestionBankInput, CreateEpisodeFromQuestionBankResult } from "./bankEpisodeBootstrapper.js";
 
 /** Validates question existence and checks cooldown constraints. */
@@ -154,6 +155,7 @@ export async function createEpisodeFromQuestionBank(deps: {
     targetLayout,
   });
 
+  await pinIntroOutroSelection(repository, channel, episode);
   await stageAndPublishSingleQuestionEpisodeFiles({
     repository,
     channelSlug: channel.slug,

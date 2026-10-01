@@ -80,4 +80,34 @@ describe("IntroOutroStyleDropdown", () => {
 
     expect(onSave).toHaveBeenCalledWith({ mode: "style_builtin" });
   });
+
+  it("shows the pinned pair and ignores conflicting legacy fields", async () => {
+    const pinned: Episode = {
+      ...episode,
+      quiz_config: {
+        ...episode.quiz_config,
+        intro_outro_style_id: "none",
+        intro_outro_selection: { mode: "style_builtin" },
+        intro_outro_snapshot: {
+          version: 1,
+          selection_key: "test",
+          style_preset_id: "preset_cyber_neon",
+          resolved_visual_style: "pixar_3d",
+          pair_id: "pair-active",
+          fingerprint: "test",
+          intro_duration_seconds: 2,
+          outro_duration_seconds: 3,
+          intro_has_audio: true,
+          outro_has_audio: true,
+          selected_at: new Date().toISOString(),
+        },
+      },
+    };
+    render(
+      <IntroOutroStyleDropdown channel={channel} episode={pinned} isOpen={true} onToggle={vi.fn()} onSaveIntroOutroSelection={vi.fn()} />,
+    );
+    expect(await screen.findByText("Selected pair: Neon Pulse")).toBeDefined();
+    expect(screen.queryByText("No ready pairs in Cyber Neon Pulse")).toBeNull();
+    expect((screen.getByRole("radio", { name: "Built-in Style · Cyber Neon Pulse" }) as HTMLInputElement).checked).toBe(true);
+  });
 });

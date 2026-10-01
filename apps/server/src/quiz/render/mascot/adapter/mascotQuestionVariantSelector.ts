@@ -1,6 +1,7 @@
+import { randomInt } from "node:crypto";
 import {
   adaptMascotV1ToV2,
-  filterAvailableVariants,
+  filterPreferredVariants,
   isMockFixtureIdentifier,
   resolveMascotStyle,
   selectQuestionMascotVariantResult,
@@ -9,6 +10,7 @@ import {
   type MascotProfile,
   type MascotRenderBundleV2,
   type MascotSpriteAction,
+  type MascotStateMediaMode,
   type MascotStateVariant,
   type MascotStyle,
 } from "@studio/shared";
@@ -46,7 +48,8 @@ export function resolveQuestionAction(
 ): MascotSpriteAction | undefined {
   const defaultPreset: MascotMotionPreset = type === "thinking" ? "sway" : "jump";
   if (variant) {
-    const mediaUrl = variant.animation?.transparent_video_url || variant.image_url || variant.transparent_image_url;
+    const mediaUrl =
+      variant.animation?.transparent_video_url || variant.animation?.atlas_url || variant.image_url || variant.transparent_image_url;
     if (mediaUrl) {
       return buildLegacySpriteAction(
         type,
@@ -80,21 +83,48 @@ export function resolveQuestionBundleAction(
   anchorImageUrl: string | null | undefined,
   existing?: MascotActionAssetV2 | null,
   isSecondaryStyle = false,
+  mediaMode: MascotStateMediaMode = "static",
 ): MascotActionAssetV2 | undefined {
   const defaultPreset: MascotMotionPreset = type === "thinking" ? "sway" : "jump";
   if (variant) {
-    const mediaUrl = variant.animation?.transparent_video_url || variant.image_url || variant.transparent_image_url;
-    if (mediaUrl) {
-      return buildBundleActionV2(
-        type,
-        mediaUrl,
-        variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
-        variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
-        variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
-        existing,
-        variant.animation,
-      );
+    const isStatic = mediaMode === "static";
+    const imageUrl = (variant.image_url || variant.transparent_image_url)?.trim();
+    const animVideoUrl = variant.animation?.transparent_video_url?.trim();
+    const animAtlasUrl = variant.animation?.atlas_url?.trim();
+
+    if (isStatic) {
+      // Static mode requires a real still image. Animation-only variants are not
+      // rendered and the style anchor is not used as a question-state fallback.
+      if (imageUrl) {
+        const sanitizedExisting = existing ? { ...existing, animation: undefined, legacy_animation: undefined } : undefined;
+        return buildBundleActionV2(
+          type,
+          imageUrl,
+          variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
+          variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
+          variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
+          sanitizedExisting,
+          undefined,
+        );
+      }
+    } else {
+      // In animation mode: prioritize video or atlas URL and attach animation asset
+      const mediaUrl = animVideoUrl || animAtlasUrl || imageUrl;
+      if (mediaUrl) {
+        return buildBundleActionV2(
+          type,
+          mediaUrl,
+          variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
+          variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
+          variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
+          existing,
+          variant.animation ?? undefined,
+        );
+      }
     }
+  }
+  if (mediaMode === "static") {
+    return undefined;
   }
   const candidateAnchor = anchorImageUrl?.trim();
   if (candidateAnchor && !isMockFixtureIdentifier(candidateAnchor)) {
@@ -117,6 +147,9 @@ export interface MascotQuestionAdaptOptions {
     celebrate?: number;
   };
   snapshot?: MascotAnimationRenderSnapshot;
+  mediaMode?: MascotStateMediaMode;
+  /** Optional random seed source used once for each state selection. */
+  randomSeed?: () => number;
 }
 
 function tryResolveSnapshotVariant(
@@ -138,7 +171,8 @@ function tryResolveSnapshotVariant(
 }
 
 /**
- * Deterministically selects a state variant for a question using render snapshot or pseudo-random selection.
+ * Randomly selects a state variant for a question using the render snapshot when
+ * available. Thinking and celebrate call this function independently.
  */
 export function selectVariantForQuestionState(
   state: "thinking" | "celebrate",
@@ -151,11 +185,10 @@ export function selectVariantForQuestionState(
 
   const videoId = options?.videoId || "preview_video";
   const questionId = options?.questionId || `q_${questionIndex}`;
+  const mediaMode: MascotStateMediaMode = options?.mediaMode ?? "static";
 
   const cached = tryResolveSnapshotVariant(options, videoId, questionId, state, styleId, variants);
   if (cached) return cached;
-
-  const prevSlot = state === "thinking" ? options?.previousSlotIndex?.thinking : options?.previousSlotIndex?.celebrate;
 
   const selection = selectQuestionMascotVariantResult({
     videoId,
@@ -163,12 +196,21 @@ export function selectVariantForQuestionState(
     state,
     styleId,
     variants,
-    previousSlotIndex: prevSlot,
+    mediaMode,
+    randomSeed: options?.randomSeed?.() ?? randomInt(0, 0x1_0000_0000),
   });
 
   if (!selection) return null;
 
   if (options?.snapshot) {
+    const selectedVariant = selection.variant;
+    const isStatic = mediaMode === "static";
+    const imageUrl = (selectedVariant.image_url || selectedVariant.transparent_image_url)?.trim() || undefined;
+    const hasVideo = Boolean(selectedVariant.animation?.transparent_video_url?.trim());
+    const hasAtlas = Boolean(selectedVariant.animation?.atlas_url?.trim());
+
+    const mediaType: "video" | "atlas" | "image" = isStatic ? "image" : hasVideo ? "video" : hasAtlas ? "atlas" : "image";
+
     recordMascotAnimationSnapshotEntry(options.snapshot, {
       videoId,
       questionId,
@@ -182,6 +224,9 @@ export function selectVariantForQuestionState(
       atlas_url: selection.variant.animation?.atlas_url,
       transparent_video_url: selection.variant.animation?.transparent_video_url,
       alpha_codec: selection.variant.animation?.alpha_codec,
+      media_mode: mediaMode,
+      media_type: mediaType,
+      image_url: imageUrl,
     });
   }
 
@@ -194,6 +239,7 @@ function adaptRenderBundleForQuestion(
   thinkingVariant: MascotStateVariant | null,
   celebrateVariant: MascotStateVariant | null,
   isSecondaryStyle: boolean,
+  mediaMode: MascotStateMediaMode = "static",
 ): MascotRenderBundleV2 {
   const actionsCopy = { ...(bundle.assets?.actions ?? {}) };
   const bundleThinking = resolveQuestionBundleAction(
@@ -202,6 +248,7 @@ function adaptRenderBundleForQuestion(
     style.anchor_image_url,
     actionsCopy.thinking,
     isSecondaryStyle,
+    mediaMode,
   );
   if (bundleThinking) {
     actionsCopy.thinking = bundleThinking;
@@ -215,6 +262,7 @@ function adaptRenderBundleForQuestion(
     style.anchor_image_url,
     actionsCopy.celebrate,
     isSecondaryStyle,
+    mediaMode,
   );
   if (bundleCelebrate) {
     actionsCopy.celebrate = bundleCelebrate;
@@ -249,8 +297,8 @@ function adaptRenderBundleForQuestion(
 }
 
 /**
- * Adapts a MascotProfile for a specific question clip by deterministically selecting
- * thinking and celebrate variants according to questionId, videoId, and styleId.
+ * Adapts a MascotProfile for a specific question clip by randomly selecting
+ * thinking and celebrate variants independently according to the active media mode.
  * Modernized to directly adapt MascotRenderBundleV2 without legacy sprite action mutation.
  */
 export function adaptMascotForQuestion(
@@ -261,9 +309,10 @@ export function adaptMascotForQuestion(
 ): MascotProfile | null | undefined {
   if (!mascot) return mascot;
 
+  const mediaMode: MascotStateMediaMode = options?.mediaMode ?? "static";
   const style = resolveMascotQuestionStyle(mascot, styleId, questionIndex);
-  const thinkingVariants = filterAvailableVariants(style.states?.thinking);
-  const celebrateVariants = filterAvailableVariants(style.states?.celebrate);
+  const thinkingVariants = filterPreferredVariants(style.states?.thinking, mediaMode);
+  const celebrateVariants = filterPreferredVariants(style.states?.celebrate, mediaMode);
 
   const thinkingVariant = selectVariantForQuestionState("thinking", thinkingVariants, style.id, questionIndex, options);
   const celebrateVariant = selectVariantForQuestionState("celebrate", celebrateVariants, style.id, questionIndex, options);
@@ -272,13 +321,15 @@ export function adaptMascotForQuestion(
 
   const baseBundle = mascot.render_bundle ?? adaptMascotV1ToV2(mascot);
   const adaptedRenderBundle = baseBundle
-    ? adaptRenderBundleForQuestion(baseBundle, style, thinkingVariant, celebrateVariant, isSecondaryStyle)
+    ? adaptRenderBundleForQuestion(baseBundle, style, thinkingVariant, celebrateVariant, isSecondaryStyle, mediaMode)
     : undefined;
 
   const actionsCopy = mascot.actions ? { ...mascot.actions } : undefined;
-  if (isSecondaryStyle && actionsCopy) {
-    if (!thinkingVariant && !style.anchor_image_url) delete actionsCopy.thinking;
-    if (!celebrateVariant && !style.anchor_image_url) delete actionsCopy.celebrate;
+  if (actionsCopy) {
+    if (mediaMode === "static" || isSecondaryStyle) {
+      if (!thinkingVariant) delete actionsCopy.thinking;
+      if (!celebrateVariant) delete actionsCopy.celebrate;
+    }
   }
 
   return {

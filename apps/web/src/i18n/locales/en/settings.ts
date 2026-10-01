@@ -28,6 +28,11 @@ export const settingsEn = {
     videoTimingTitle: "Video Timing & Pacing",
     sceneDurationAndSpeed: "Scene Duration & Speed",
     parallelEpisodeBuilds: "Parallel Episode Builds (Queue Limit)",
+    mascotMediaModeTitle: "Mascot State Media Mode",
+    mascotMediaModeStatic: "Static Variants (Style Stills · Focused & Crisp - Recommended)",
+    mascotMediaModeAnimation: "Looping Animations (WebM / Spritesheet)",
+    mascotMediaModeHelp:
+      "Prioritizes high-resolution static emotion variants for Thinking and Celebrate states to keep viewers focused on quiz questions, while still rotating poses per question.",
     maxSceneDuration: "Max Scene Duration (seconds)",
     narrationPace: "Narration pace (words/sec)",
     saveVideoSettings: "Save Video Settings",

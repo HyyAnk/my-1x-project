@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { type Channel, type ChannelMascotConfig, type MascotPlacementPreset, type MascotProfile } from "@studio/shared";
+import {
+  type Channel,
+  type ChannelMascotConfig,
+  type ChannelMascotMediaMode,
+  type MascotPlacementPreset,
+  type MascotProfile,
+} from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { StageAspectRatio, StagePosition } from "../types";
@@ -10,6 +16,7 @@ export interface BuildDecoupledChannelMascotConfigParams {
   showInIntro?: boolean;
   showInOutro?: boolean;
   showInQuestion?: boolean;
+  mascotMediaMode?: ChannelMascotMediaMode;
 }
 
 export function buildDecoupledChannelMascotConfig({
@@ -17,6 +24,7 @@ export function buildDecoupledChannelMascotConfig({
   showInIntro = false,
   showInOutro = false,
   showInQuestion = true,
+  mascotMediaMode = "inherit",
 }: BuildDecoupledChannelMascotConfigParams): ChannelMascotConfig {
   const resolvedPlacements: Record<StageAspectRatio, MascotPlacementPreset> = {
     "16:9": { ...activePlacement },
@@ -33,6 +41,7 @@ export function buildDecoupledChannelMascotConfig({
     show_in_outro: showInOutro,
     show_in_question: showInQuestion,
     placements: resolvedPlacements,
+    mascot_media_mode: mascotMediaMode,
   };
 }
 
@@ -51,6 +60,7 @@ export function useStageSaveAction(options: {
   showInIntro: boolean;
   showInOutro: boolean;
   showInQuestion: boolean;
+  mascotMediaMode?: ChannelMascotMediaMode;
   onNotice: (notice: NonNullable<Notice>) => void;
   onSaved: () => Promise<void>;
   onClose: () => void;
@@ -71,6 +81,7 @@ export function useStageSaveAction(options: {
     showInIntro,
     showInOutro,
     showInQuestion,
+    mascotMediaMode,
     onNotice,
     onSaved,
     onClose,
@@ -96,6 +107,7 @@ export function useStageSaveAction(options: {
           showInIntro,
           showInOutro,
           showInQuestion,
+          mascotMediaMode,
         });
 
       if (isSingleChannelMode && targetChannel) {

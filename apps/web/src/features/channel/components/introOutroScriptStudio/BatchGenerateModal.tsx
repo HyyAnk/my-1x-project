@@ -164,7 +164,7 @@ export function BatchGenerateModal({ isOpen, onClose, onSubmit, busy, hasLockedS
                     disabled={busy || !included[kind]}
                     aria-label={`${kind} duration`}
                   >
-                    {[6, 7, 8, 9, 10].map((sec) => (
+                    {[6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30].map((sec) => (
                       <option key={sec} value={sec}>
                         {sec}s
                       </option>

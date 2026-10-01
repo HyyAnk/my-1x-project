@@ -88,6 +88,77 @@
   font-size: 12px;
 }
 
+.script-two-part-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.script-two-part-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.script-part-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 12px;
+  gap: 8px;
+}
+
+.script-part-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.script-part-box-header h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.script-part-box-header span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.script-part-box textarea {
+  min-height: 180px;
+  max-height: 40vh;
+}
+
+.script-full-prompt-details {
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--surface);
+}
+
+.script-full-prompt-details summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  user-select: none;
+}
+
+.script-full-prompt-details summary:hover {
+  color: var(--ink);
+}
+
+.script-full-prompt-content {
+  margin-top: 8px;
+}
+
 @media (max-width: 640px) {
   .script-prompt-panel {
     margin-top: 12px;

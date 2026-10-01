@@ -2,6 +2,7 @@ import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
 import type { RepositoryService } from "../../../../repository.js";
 import type { StudioLogger } from "../../../../logger.js";
 import type { AntigravityClient } from "../../../../antigravity.js";
+import type { ProviderCircuitBreaker } from "../circuitBreaker.js";
 
 export interface ProviderAssetImageConfig {
   api_key?: string;
@@ -9,6 +10,8 @@ export interface ProviderAssetImageConfig {
   provider?: "gpti2" | "shopaikey" | "custom" | "google" | "imgstudio";
   base_url?: string;
   quality?: string;
+  gpti2_api_key?: string;
+  gpti2_model?: string;
 }
 
 export interface ProviderAssetImageFallbackConfig {
@@ -19,6 +22,10 @@ export interface ProviderAssetImageFallbackConfig {
   model?: string;
   resolution?: "1K" | "2K" | "4K";
   quality?: "standard" | "high";
+  gpti2_api_key?: string;
+  gpti2_model?: string;
+  level2_model?: string;
+  level3_model?: string;
 }
 
 export interface ProviderAssetInput {
@@ -34,6 +41,7 @@ export interface ProviderAssetInput {
   imageConfig?: ProviderAssetImageConfig;
   imageFallbackConfig?: ProviderAssetImageFallbackConfig;
   imgStudioRunId?: string;
+  circuitBreaker?: ProviderCircuitBreaker;
   cancellationSignal?: AbortSignal;
   logger: StudioLogger;
   referenceImageBase64?: string;

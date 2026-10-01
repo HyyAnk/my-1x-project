@@ -21,7 +21,7 @@ const ProductionLayerSchema = z
     clip_kind: IntroOutroClipKindSchema,
     language: z.literal("English"),
     aspect_ratio: z.literal("16:9"),
-    target_duration_seconds: z.number().min(6).max(10),
+    target_duration_seconds: z.number().min(4).max(60),
   })
   .strict();
 
@@ -47,8 +47,8 @@ const TimelineBeatSchema = z
   .object({
     beat: z.number().int().min(1),
     role: z.string().trim().min(1).max(80),
-    start_seconds: z.number().min(0).max(10),
-    end_seconds: z.number().positive().max(10),
+    start_seconds: z.number().min(0).max(60),
+    end_seconds: z.number().positive().max(60),
     action: z.string().trim().min(1),
     choreography: ScriptChoreographySchema.optional(),
     capability_ids: z.array(z.string().trim().min(1).max(80)).max(8).default([]),
@@ -59,8 +59,8 @@ const TimelineBeatSchema = z
 
 const VoiceLineSchema = z
   .object({
-    start_seconds: z.number().min(0).max(10),
-    end_seconds: z.number().positive().max(10),
+    start_seconds: z.number().min(0).max(60),
+    end_seconds: z.number().positive().max(60),
     text: z.string().trim().min(1),
     delivery: z.string().trim().min(1),
   })
@@ -68,15 +68,15 @@ const VoiceLineSchema = z
 
 const TimedDirectionSchema = z
   .object({
-    at_seconds: z.number().min(0).max(10),
+    at_seconds: z.number().min(0).max(60),
     direction: z.string().trim().min(1),
   })
   .strict();
 
 const CameraDirectionSchema = z
   .object({
-    start_seconds: z.number().min(0).max(10),
-    end_seconds: z.number().positive().max(10),
+    start_seconds: z.number().min(0).max(60),
+    end_seconds: z.number().positive().max(60),
     framing: z.string().trim().min(1),
     movement: z.string().trim().min(1),
   })

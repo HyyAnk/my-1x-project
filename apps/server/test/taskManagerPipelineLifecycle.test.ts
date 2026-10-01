@@ -132,7 +132,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const director = createDefaultDirectorPlan(quiz);
     director.beats[0].layout_id = "full_stack_list";
     director.beats[0].asset_intents = [];
-    const voice = buildQuizVoicePlan(quiz);
+    const voice = buildQuizVoicePlan(quiz, { skipIntro: true, skipOutro: true });
     const measuredVoice = { ...voice, segments: voice.segments.map((segment) => ({ ...segment, duration_seconds: 4 })) };
     const assetPlan = planQuizAssets(quiz, director);
     await repository.writeQuiz(channel.channel_id, episode.episode_id, quiz);
@@ -157,7 +157,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     await repository.writeQuizTimeline(
       channel.channel_id,
       episode.episode_id,
-      compileQuizTimeline({ quiz, director, voicePlan: measuredVoice }),
+      compileQuizTimeline({ quiz, director, voicePlan: measuredVoice, introDuration: 0, outroDuration: 0 }),
     );
     await repository.writeQuizAssessment(
       channel.channel_id,

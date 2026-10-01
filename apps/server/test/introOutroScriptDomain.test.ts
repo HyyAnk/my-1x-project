@@ -7,6 +7,9 @@ import { resolveIntroOutroScriptModel } from "../src/introOutroScripts/model.js"
 import { buildScriptGenerationPrompt, compileProductionPrompt } from "../src/introOutroScripts/promptCompiler.js";
 import { reviewScriptQuality } from "../src/introOutroScripts/qualityReview.js";
 import { normalizeGeneratedContent } from "../src/introOutroScripts/generatedNormalization.js";
+import { exportScriptPackage } from "../src/introOutroScripts/exportPackage.js";
+import { parseZipArchive } from "../src/quiz/zipHelper.js";
+import type { IntroOutroScriptRepository } from "../src/introOutroScripts/repository.js";
 
 import { identity, productionContent } from "./fixtures/introOutroDomainFixture.js";
 
@@ -304,4 +307,131 @@ describe("Intro/Outro script domain", () => {
     expect(seedIds).toContain("C08");
     expect(seedIds).toContain("D08");
   });
+
+  it("validates and scales an extended 16-second outro script without timing or voice budget errors", () => {
+    const content = productionContent();
+    content.production.clip_kind = "outro";
+    content.production.target_duration_seconds = 16;
+    const outroIdentity: MascotStyleIdentityProfile = {
+      ...identity,
+      capabilities: {
+        ...identity.capabilities,
+        pointing: "supported",
+        waving: "supported",
+        facial_expression: "supported",
+      },
+    };
+    content.timeline = [
+      {
+        beat: 1,
+        role: "recognition",
+        start_seconds: 0,
+        end_seconds: 5,
+        action: "The mascot enthusiastically celebrates the audience with a broad smile",
+        choreography: { primary_action: "smile", expression: "excited", secondary_motion: "natural_follow_through", end_pose: "front_facing" },
+        capability_ids: ["facial_expression"],
+        props: [],
+        visible_feature_ids: [],
+      },
+      {
+        beat: 2,
+        role: "invitation",
+        start_seconds: 5,
+        end_seconds: 11,
+        action: "The mascot points up to the channel logo and invites everyone to subscribe",
+        choreography: { primary_action: "point", expression: "cheerful", secondary_motion: "natural_follow_through", end_pose: "pointing_up" },
+        capability_ids: ["pointing"],
+        props: [],
+        visible_feature_ids: [],
+      },
+      {
+        beat: 3,
+        role: "farewell",
+        start_seconds: 11,
+        end_seconds: 16,
+        action: "The mascot waves warmly and settles into a gentle living smile",
+        choreography: { primary_action: "wave", expression: "warm", secondary_motion: "none", end_pose: "front_facing" },
+        capability_ids: ["waving"],
+        props: [],
+        visible_feature_ids: [],
+      },
+    ];
+    content.camera = [
+      { start_seconds: 0, end_seconds: 15, framing: "Medium", movement: "Static" },
+      { start_seconds: 15, end_seconds: 16, framing: "Medium", movement: "Static locked camera" },
+    ];
+    content.voiceover = {
+      enabled: true,
+      lines: [
+        {
+          start_seconds: 5.5,
+          end_seconds: 10.5,
+          text: "What an incredible quiz round! Subscribe to Novy for more daily challenges!",
+          delivery: "Warm, spirited and clear",
+        },
+      ],
+    };
+    content.production_directions!.end_hold_seconds = 1;
+    const issues = validateScriptContent(content, outroIdentity, []);
+    expect(issues.filter((i) => i.severity === "error")).toEqual([]);
+  });
+
+  it("exports a two-part 16s outro script package with separate Part 1 and Part 2 prompt files", async () => {
+    const content = productionContent();
+    content.production.clip_kind = "outro";
+    content.production.target_duration_seconds = 16;
+    content.production_directions!.end_hold_seconds = 1;
+    content.production_policy = "creative-performance-v3";
+
+    const revision = IntroOutroScriptRevisionSchema.parse({
+      schema_version: 1,
+      revision_id: "script_outro_16s",
+      project_id: "project_1",
+      channel_id: "channel_1",
+      style_preset_id: "preset_arcade_classic",
+      clip_kind: "outro",
+      revision_number: 1,
+      origin: "generated",
+      content,
+      identity_snapshot: identity,
+      seed_selection: { randomization_seed: "test", selected_seed_ids: ["H01"], locked_dimensions: [], algorithm_version: "1" },
+      seed_snapshot: [],
+      references: [
+        { role: "mascot_subject", asset_id: "asset_1", url: "/reference.png", sha256: "a".repeat(64), mime_type: "image/png" },
+      ],
+      context_fingerprint: "c".repeat(64),
+      template_version: "intro-outro-script-v4",
+      requested_model: "gemini-3.7-flash-high",
+      effective_model: null,
+      validation_issues: [],
+      warning_acknowledgements: [],
+      created_at: "2026-09-22T00:00:00.000Z",
+    });
+
+    const mockRepo: Partial<IntroOutroScriptRepository> = {
+      readReferenceSnapshot: async () => Buffer.from("fake-image-bytes"),
+    };
+
+    const zipBuffer = await exportScriptPackage(mockRepo as IntroOutroScriptRepository, revision);
+    const entries = parseZipArchive(zipBuffer);
+    const filenames = entries.map((e) => e.filename);
+
+    expect(filenames).toContain("prompt.txt");
+    expect(filenames).toContain("part1_prompt.txt");
+    expect(filenames).toContain("part2_prompt.txt");
+    expect(filenames).toContain("revision.json");
+    expect(filenames).toContain("README.md");
+    expect(filenames).toContain("mascot_subject.png");
+
+    const part1Entry = entries.find((e) => e.filename === "part1_prompt.txt")!;
+    const part2Entry = entries.find((e) => e.filename === "part2_prompt.txt")!;
+    const part1Text = Buffer.from(part1Entry.data).toString("utf-8");
+    const part2Text = Buffer.from(part2Entry.data).toString("utf-8");
+
+    expect(part1Text).toContain("Create one continuous outro");
+    expect(part1Text).toContain("PART 1: THE RUN-UP & KINEMATIC TRANSITION (0.0s - 8s)");
+    expect(part2Text).toContain("PART 2: MOMENTUM RECOVERY, CTA & FAREWELL (8s - 16s)");
+    expect(part2Text).not.toContain("PART 1: THE RUN-UP");
+  });
 });
+

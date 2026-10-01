@@ -4,10 +4,23 @@
  * Core specifications for twelve-frame mascot animation rows.
  */
 
+/**
+ * Legacy Sprite Sheet Animation Constants (12-Frame Row)
+ */
+export const LEGACY_SPRITE_FRAME_COUNT = 12 as const;
+export const LEGACY_SPRITE_FPS = 8 as const;
 export const REQUIRED_FRAME_COUNT = 12 as const;
 export const REQUIRED_FPS = 8 as const;
 export const FRAME_DURATION_MS = 125 as const;
 export const ANIMATION_CYCLE_SECONDS = 1.5 as const;
+
+/**
+ * Modern High-Framerate Video Animation Constants
+ */
+export const STANDARD_VIDEO_FPS = 24 as const;
+export const HIGH_SMOOTHNESS_VIDEO_FPS = 30 as const;
+export const TIMELINE_SYNC_VIDEO_FPS = 60 as const;
+export const DEFAULT_VIDEO_FPS = 24 as const;
 
 export const DEFAULT_REQUIRED_FRAME_COUNT = 12 as const;
 export const DEFAULT_REQUIRED_FPS = 8 as const;

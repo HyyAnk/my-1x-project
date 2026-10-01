@@ -1,10 +1,12 @@
 import { z } from "zod";
 import {
+  ChannelMascotMediaModeSchema,
   MascotActionTypeSchema,
   MascotMotionIntensitySchema,
   MascotMotionPresetSchema,
   QuizImageStyleSchema,
   type MascotMotionPreset,
+  type MascotStateMediaMode,
 } from "../enums.js";
 import { MascotRenderBundleV2Schema } from "../mascot/renderSchema.js";
 import type { MascotActionAssetV2 } from "../mascot/renderTypes.js";
@@ -241,9 +243,21 @@ export const ChannelMascotConfigSchema = z.object({
     .strict()
     .optional(),
   mascot_style_id: z.string().optional(),
+  mascot_media_mode: ChannelMascotMediaModeSchema.optional(),
 });
 
 export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
+
+export function resolveEffectiveMascotMediaMode(
+  channelMascotConfig?: Partial<ChannelMascotConfig> | ChannelMascotConfig | null,
+  globalMode?: MascotStateMediaMode,
+): MascotStateMediaMode {
+  const channelMode = channelMascotConfig?.mascot_media_mode;
+  if (channelMode === "static" || channelMode === "animation") {
+    return channelMode;
+  }
+  return globalMode ?? "static";
+}
 
 export function resolveChannelMascotPlacement(
   config: Partial<ChannelMascotConfig> | ChannelMascotConfig | null | undefined,

@@ -33,13 +33,16 @@ export async function prepareSoundtrack({
   let selectedBgmTrackId: string | null = null;
   let selectedBgmFilename: string | null = null;
 
-  const firstQuestionStart = timeline.events.find((event) => event.type === "question.enter")?.at_seconds;
+  const firstPlayStart =
+    timeline.events.find(
+      (event) => event.type === "bridge.topic.enter" || event.type === "bridge.cta.enter" || event.type === "question.enter",
+    )?.at_seconds;
   const outroStart = timeline.events.find(
     (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
   )?.at_seconds;
 
   const bgmStartSeconds =
-    introOutro?.introVideoPath && typeof firstQuestionStart === "number" ? Math.max(0, firstQuestionStart) : firstQuestionStart;
+    introOutro?.introVideoPath && typeof firstPlayStart === "number" ? Math.max(0, firstPlayStart) : (firstPlayStart ?? 0);
 
   const bgmOutroStartSeconds = introOutro?.outroVideoPath && typeof outroStart === "number" ? outroStart : outroStart;
 
@@ -69,7 +72,8 @@ export async function prepareSoundtrack({
     const mixResult = await mixMasterSoundtrack({
       narrationPath: narration.absolutePath,
       timeline,
-      durationSeconds: episode.narration_duration_seconds ?? timeline.duration_seconds,
+      durationSeconds: timeline.duration_seconds,
+      activeWindow: { start: bgmStartSeconds, end: outroStart ?? timeline.duration_seconds },
       workingDirectory: path.join(renderRoot, "audio-mix-temp"),
       outputPath: renderSoundtrackPath,
       bgmOptions: {

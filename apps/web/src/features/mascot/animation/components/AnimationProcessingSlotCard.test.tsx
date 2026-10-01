@@ -172,7 +172,7 @@ describe("AnimationProcessingSlotCard", () => {
 
     render(<AnimationProcessingSlotCard {...baseProps} projection={projection} />);
 
-    expect(screen.getByText("4.0s • 24 FPS")).toBeTruthy();
+    expect(screen.getByText(/4\.0s • 24 FPS • Loop/)).toBeTruthy();
     const videoEl = screen.getByTestId("anim-video-thinking-1") as HTMLVideoElement;
     expect(videoEl).toBeDefined();
     expect(videoEl.tagName.toLowerCase()).toBe("video");
@@ -186,7 +186,7 @@ describe("AnimationProcessingSlotCard", () => {
   it("displays empty hint with 4-10s support when slot is empty and without source image", () => {
     render(<AnimationProcessingSlotCard {...baseProps} sourceImageUrl={null} />);
 
-    expect(screen.getByText("16:9 • 4–10s • MP4/MOV/WebM")).toBeTruthy();
+    expect(screen.getByText("4–10s • 30/60 FPS recommended • MP4/WebM")).toBeTruthy();
   });
 
   it("renders queued state with In Queue badge, waiting message, and cancel control", () => {

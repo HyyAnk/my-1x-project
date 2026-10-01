@@ -28,6 +28,7 @@ import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 import { attachTaskManagerClientEvents, type ConnectionStatus } from "./taskClientEvents.js";
 import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
 import { TaskManagerLifecycleBase } from "./lifecycle/taskLifecycleMaintenance.js";
+import { cleanOrphanedHeadlessBrowsers } from "../infrastructure/executables/browserProcessCleaner.js";
 
 const ACTIVE_TERMINAL_STATUSES = ["QUEUED", "RUNNING", "WAITING_APPROVAL"] as const;
 const DEFAULT_AUDIO_CONFIG: AppConfig["audio_generation"] = {
@@ -282,5 +283,14 @@ export class TaskManager extends TaskManagerLifecycleBase implements TaskManager
   }
   emitEvent(event: TaskEvent): void {
     this.emit("event", event);
+  }
+
+  async close(): Promise<void> {
+    if (this.failedBuildCleanupTimer) {
+      clearInterval(this.failedBuildCleanupTimer);
+      this.failedBuildCleanupTimer = null;
+    }
+    this.abortRegistry.abortAll();
+    await cleanOrphanedHeadlessBrowsers({ logger: this.logger });
   }
 }

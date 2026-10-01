@@ -117,6 +117,7 @@ export interface TaskManagerRuntime {
     parentTaskId?: string,
   ): Task;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
+  close(): Promise<void>;
   waitForTaskTerminal(
     taskId: string,
     run: PipelineRun,

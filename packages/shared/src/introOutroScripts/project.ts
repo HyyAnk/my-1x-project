@@ -6,7 +6,7 @@ import { IntroOutroClipKindSchema, IntroOutroSeedSelectionSchema } from "./seeds
 export const IntroOutroScriptDraftSchema = z
   .object({
     clip_kind: IntroOutroClipKindSchema,
-    target_duration_seconds: z.number().min(8).max(10).default(8),
+    target_duration_seconds: z.number().min(4).max(60).default(8),
     seed_selection: IntroOutroSeedSelectionSchema.nullable().default(null),
     content: IntroOutroScriptContentSchema.nullable().default(null),
     validation_issues: z.array(IntroOutroValidationIssueSchema).default([]),

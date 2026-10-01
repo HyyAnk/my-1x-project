@@ -16,6 +16,7 @@ import { ChannelMascotConfigSchema } from "./mascot.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { TopicSourceBindingSetSchema } from "./topicSourceBinding.js";
 import { QuizGameplayIdSchema } from "../quizGameplaySchema.js";
+import { BridgeSceneConfigSchema } from "./quiz/bridgeScenes.js";
 
 export const ChannelSchema = z
   .object({
@@ -44,6 +45,7 @@ export const ChannelSchema = z
     mascot_id: z.string().nullable().default(null),
     mascot_config: ChannelMascotConfigSchema.default({}),
     default_intro_outro_style_id: z.string().nullable().optional(),
+    bridge_scene_config: BridgeSceneConfigSchema.optional().default({}),
   })
   .strict();
 
@@ -114,6 +116,21 @@ export const IntroOutroSelectionSchema = z.discriminatedUnion("mode", [
 
 export type IntroOutroSelection = z.infer<typeof IntroOutroSelectionSchema>;
 
+export const IntroOutroSnapshotSchema = z.object({
+  version: z.literal(1),
+  selection_key: z.string(),
+  style_preset_id: z.string(),
+  resolved_visual_style: QuizImageStyleSchema,
+  pair_id: z.string().nullable(),
+  fingerprint: z.string().nullable(),
+  intro_duration_seconds: z.number().nonnegative(),
+  outro_duration_seconds: z.number().nonnegative(),
+  intro_has_audio: z.boolean(),
+  outro_has_audio: z.boolean(),
+  selected_at: IsoDate,
+});
+export type IntroOutroSnapshot = z.infer<typeof IntroOutroSnapshotSchema>;
+
 export const MascotStyleSelectionSchema = z.discriminatedUnion("mode", [
   z.object({ mode: z.literal("style_builtin") }),
   z.object({ mode: z.literal("specific_style"), style_id: z.string().min(1) }),
@@ -148,6 +165,7 @@ export const QuizConfigSchema = z.object({
   /** @deprecated Use mascot_style_selection. Retained while legacy episodes migrate. */
   mascot_style_id: z.string().nullable().optional(),
   intro_outro_selection: IntroOutroSelectionSchema.optional().default({ mode: "style_builtin" }),
+  intro_outro_snapshot: IntroOutroSnapshotSchema.optional(),
   /** @deprecated Use intro_outro_selection. Retained while legacy episodes migrate. */
   intro_outro_style_id: z.string().nullable().optional(),
 });

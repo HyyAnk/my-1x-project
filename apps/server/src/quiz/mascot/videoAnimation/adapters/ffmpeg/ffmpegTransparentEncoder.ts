@@ -76,6 +76,10 @@ export async function encodeTransparentWebm(
   const procTimeoutMs = encodeOptions.timeoutMs ?? context.timeoutMs ?? Math.max(DEFAULT_ENCODE_WEBM_TIMEOUT_MS, frameCount * 2000);
   const inputPattern = path.join(encodeOptions.framesDir, framePattern);
 
+  const gopSize = encodeOptions.keyframeInterval && encodeOptions.keyframeInterval > 0
+    ? encodeOptions.keyframeInterval
+    : Math.min(frameCount, Math.max(12, Math.round(fps)));
+
   const args = ["-y", "-framerate", String(fps), "-i", inputPattern];
 
   if (encodeOptions.width && encodeOptions.height) {
@@ -99,8 +103,16 @@ export async function encodeTransparentWebm(
     "1",
     "-threads",
     "0",
+    "-g",
+    String(gopSize),
+    "-keyint_min",
+    String(gopSize),
     "-auto-alt-ref",
     "0",
+    "-lag-in-frames",
+    "0",
+    "-r",
+    String(fps),
     encodeOptions.outputWebmPath,
   );
 

@@ -16,6 +16,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     narration_words_per_second: 2.3,
     aspect_ratio: "16:9",
     max_concurrent_tasks: 1,
+    mascot_media_mode: "static",
     // Bypasses pre-render layout preflight checks for rapid drafting/dev; contrast QA is non-blocking regardless of this setting
     fast_render_mode: false,
   },

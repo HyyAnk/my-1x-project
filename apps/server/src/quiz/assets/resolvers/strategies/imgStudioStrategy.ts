@@ -4,7 +4,7 @@ import type { ProviderAssetInput, ProviderAssetOutput } from "../types/providerA
 
 export interface ImgStudioAssetOptions {
   modelOverride?: string;
-  fallbackTier?: 1 | 2;
+  fallbackTier?: 1 | 2 | 3;
   idempotencyScope?: string;
 }
 

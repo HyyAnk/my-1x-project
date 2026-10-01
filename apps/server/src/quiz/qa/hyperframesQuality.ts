@@ -28,7 +28,7 @@ export function parseHyperframesCheckReport(output: string | undefined): Hyperfr
   }
 }
 
-const DECORATIVE_GLYPH_PATTERN = /^[\s\u00A0\u2000-\u200B✦★☆•✓✕✖✗×?✧⚡○●·»«►◄▲▼♪♫🔥🏆💎|/:_#\-–—]*$/u;
+const DECORATIVE_GLYPH_PATTERN = /^[\s\u00A0\u2000-\u200B✦★☆•✓✕✖✗×?✧⚡✨🔔🎯○●·»«►◄▲▼♪♫🔥🏆💎|/:_#\-–—]*$/u;
 const CHOICE_BADGE_PATTERN = /^[([]?[A-F1-4][.:)\]]?$/i;
 const COUNTDOWN_DIGIT_PATTERN = /^(?:[0-9]{1,2}|\?)$/;
 

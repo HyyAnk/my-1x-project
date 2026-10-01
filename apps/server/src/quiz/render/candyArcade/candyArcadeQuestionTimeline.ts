@@ -1,15 +1,17 @@
-import type {
-  ChannelMascotConfig,
-  MascotProfile,
-  MascotRenderAspectRatio,
-  QuizTimeline,
-  QuizTimelineEvent,
-  QuizV2,
-  ResolvedTransitionInstance,
+import {
+  resolveEffectiveMascotMediaMode,
+  type ChannelMascotConfig,
+  type MascotProfile,
+  type MascotRenderAspectRatio,
+  type MascotStateMediaMode,
+  type QuizTimeline,
+  type QuizTimelineEvent,
+  type QuizV2,
+  type ResolvedTransitionInstance,
 } from "@studio/shared";
 import type { ResolvedCandyArcadeQuestion } from "./candyArcadeQuestionResolution.js";
 import { questionClip, type Copy } from "./candyArcadeClips.js";
-import { adaptMascotForQuestion, findSnapshotEntry, type MascotAnimationRenderSnapshot } from "../productionMascotRenderer.js";
+import { adaptMascotForQuestion, type MascotAnimationRenderSnapshot } from "../productionMascotRenderer.js";
 import type { QuizRenderStyleContext } from "../quizRenderStyleContext.js";
 import { resolveCandyArcadeSceneTransition } from "./candyArcadeTransitionResolver.js";
 
@@ -30,6 +32,7 @@ export type CandyArcadeQuestionTimelineInput = {
   fps: number;
   canvas: { width: number; height: number };
   customTransitionInstances?: Record<string, ResolvedTransitionInstance>;
+  mediaMode?: MascotStateMediaMode;
 };
 
 export type CandyArcadeQuestionTimelineResult = {
@@ -113,9 +116,8 @@ export function buildCandyArcadeQuestionTimeline(input: CandyArcadeQuestionTimel
   const resolvedQuestionById = new Map(resolvedQuestions.map((item) => [item.question.id, item]));
   const clips: string[] = [];
   const transitionInstances: Record<string, ResolvedTransitionInstance> = {};
+  const effectiveMediaMode = resolveEffectiveMascotMediaMode(mascotConfig, input.mediaMode);
 
-  let lastThinkingSlot: number | undefined;
-  let lastCelebrateSlot: number | undefined;
   const episodeId = quiz.episode_id || "default_video";
 
   resolvedQuestions.forEach(({ question, questionIndex, beat, style, layoutResolution, visual }) => {
@@ -126,34 +128,15 @@ export function buildCandyArcadeQuestionTimeline(input: CandyArcadeQuestionTimel
     const questionMascot = adaptMascotForQuestion(mascot, chosenStyleId, questionIndex, {
       videoId: episodeId,
       questionId: question.id,
-      previousSlotIndex: {
-        thinking: lastThinkingSlot,
-        celebrate: lastCelebrateSlot,
-      },
       snapshot,
+      mediaMode: effectiveMediaMode,
     });
-
-    const effectiveStyleId = questionMascot?.active_style_id || chosenStyleId || "";
-    const recordedThinking = findSnapshotEntry(snapshot, {
-      videoId: episodeId,
-      questionId: question.id,
-      state: "thinking",
-      styleId: effectiveStyleId,
-    });
-    lastThinkingSlot = recordedThinking?.slot_index;
-
-    const recordedCelebrate = findSnapshotEntry(snapshot, {
-      videoId: episodeId,
-      questionId: question.id,
-      state: "celebrate",
-      styleId: effectiveStyleId,
-    });
-    lastCelebrateSlot = recordedCelebrate?.slot_index;
 
     if (timing.end - timing.start > 0.04) {
       clips.push(
         questionClip({
-          countdownSeconds: input.events.filter((event) => event.question_id === question.id && event.type === "countdown.tick").length || undefined,
+          countdownSeconds:
+            input.events.filter((event) => event.question_id === question.id && event.type === "countdown.tick").length || undefined,
           start: timing.start,
           questionNarrationStart: timing.questionNarrationStart,
           choicesStart: timing.choicesStart,
@@ -182,6 +165,7 @@ export function buildCandyArcadeQuestionTimeline(input: CandyArcadeQuestionTimel
           backgroundStyle: style.backgroundStyle,
           channelBrandName: style.channelBrandName,
           styleCatalogRevision: styleContext.styleCatalogRevision ?? undefined,
+          mediaMode: effectiveMediaMode,
         }),
       );
     }

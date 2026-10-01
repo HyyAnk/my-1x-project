@@ -169,9 +169,11 @@ export function resolveProductionMascotTimelineAtTime(
   if (markers.length === 0) return null;
 
   let activeMarker = markers[0];
+  let activeIndex = 0;
   for (let i = 0; i < markers.length; i++) {
     if (markers[i].atSeconds <= targetTime) {
       activeMarker = markers[i];
+      activeIndex = i;
     } else {
       break;
     }
@@ -202,7 +204,35 @@ export function resolveProductionMascotTimelineAtTime(
   };
 
   if (spec.asset.animation) {
-    const elapsedSeconds = Math.max(0, targetTime - activeMarker.atSeconds);
+    const hasIdle = Boolean(bundle.assets.actions.idle?.image_url?.trim());
+    let segmentStartTime = activeMarker.atSeconds;
+    for (let i = activeIndex - 1; i >= 0; i--) {
+      const prevMarker = markers[i];
+      if (hasIdle && activeMarker.phase === "thinking" && prevMarker.phase !== "thinking") {
+        break;
+      }
+      const prevSpec = resolveMascotRenderSpec(bundle, {
+        aspect_ratio: options.aspectRatio ?? "16:9",
+        phase: prevMarker.phase,
+        reveal_outcome: prevMarker.revealOutcome ?? null,
+        action_override: prevMarker.actionOverride ?? null,
+        timeline_time_seconds: prevMarker.atSeconds,
+        playing: true,
+      });
+      if (
+        prevSpec &&
+        prevSpec.asset.action === spec.asset.action &&
+        prevSpec.asset.animation?.slot_index === spec.asset.animation?.slot_index &&
+        prevSpec.asset.animation?.transparent_video_url === spec.asset.animation?.transparent_video_url &&
+        prevSpec.asset.animation?.atlas_url === spec.asset.animation?.atlas_url
+      ) {
+        segmentStartTime = prevMarker.atSeconds;
+      } else {
+        break;
+      }
+    }
+
+    const elapsedSeconds = Math.max(0, targetTime - segmentStartTime);
     const resolved = resolveAnimationFrameAtTime(spec.asset.animation, elapsedSeconds);
     result.animationFrameIndex = resolved.frameIndex;
     result.animationFrame = resolved.frame;

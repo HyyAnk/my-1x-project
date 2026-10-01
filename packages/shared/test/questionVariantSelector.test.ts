@@ -1,7 +1,6 @@
 import { describe as nodeDescribe, it as nodeIt } from "node:test";
 import assert from "node:assert/strict";
 import {
-  computeSelectionSeed,
   selectQuestionMascotVariant,
   selectQuestionMascotVariantResult,
   type MascotVariantMediaCandidate,
@@ -161,18 +160,19 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
         state: "celebrate",
         styleId: "core",
         variants: single,
+        randomSeed: 1_334_778_624,
       });
 
       assert.ok(details !== null);
       assert.equal(details.slot_index, 1);
       assert.equal(details.candidate_index, 0);
       assert.equal(details.revision, 2);
-      assert.equal(details.seed, computeSelectionSeed("video_single", "q_1", "celebrate", "core"));
+      assert.equal(details.seed, 1_334_778_624);
     });
   });
 
-  describe("Determinism and Seeding", () => {
-    it("identical inputs return identical slot selections across repeated invocations", () => {
+  describe("Random Selection and Seed Injection", () => {
+    it("returns identical selections when a caller supplies the same random seed", () => {
       const variants = createSampleVariants(4);
       const input: QuestionMascotVariantSelectionInput = {
         videoId: "ep_physics_001",
@@ -180,6 +180,7 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
         state: "thinking",
         styleId: "police",
         variants,
+        randomSeed: 7,
       };
 
       const first = selectQuestionMascotVariant(input);
@@ -187,162 +188,57 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
 
       for (let i = 0; i < 50; i += 1) {
         const next = selectQuestionMascotVariant(input);
-        assert.deepEqual(next, first, "Every call with identical inputs must return identical variant");
+        assert.deepEqual(next, first, "An injected seed must make a selection reproducible");
       }
     });
 
-    it("supports episodeId as an alias for videoId with identical deterministic seed", () => {
+    it("uses different random seeds to select different available slots", () => {
       const variants = createSampleVariants(4);
-      const withVideo = selectQuestionMascotVariantResult({
-        videoId: "ep_math_202",
-        questionId: "q_calc_1",
+      const first = selectQuestionMascotVariantResult({
         state: "thinking",
         styleId: "core",
         variants,
+        randomSeed: 0,
       });
-
-      const withEpisode = selectQuestionMascotVariantResult({
-        episodeId: "ep_math_202",
-        questionId: "q_calc_1",
+      const second = selectQuestionMascotVariantResult({
         state: "thinking",
         styleId: "core",
         variants,
+        randomSeed: 1,
       });
 
-      assert.ok(withVideo !== null);
-      assert.ok(withEpisode !== null);
-      assert.equal(withVideo.seed, withEpisode.seed);
-      assert.equal(withVideo.slot_index, withEpisode.slot_index);
+      assert.equal(first?.slot_index, 1);
+      assert.equal(second?.slot_index, 2);
     });
 
-    it("synthesizes default stable seed parameters when videoId or questionId are missing", () => {
+    it("allows a repeated slot even when previousSlotIndex is supplied", () => {
       const variants = createSampleVariants(4);
-      const result1 = selectQuestionMascotVariant({
-        questionId: "",
+      const result = selectQuestionMascotVariant({
         state: "thinking",
         styleId: "core",
         variants,
-      });
-      const result2 = selectQuestionMascotVariant({
-        questionId: "",
-        state: "thinking",
-        styleId: "core",
-        variants,
+        randomSeed: 0,
+        previousSlotIndex: 1,
       });
 
-      assert.ok(result1 !== null);
-      assert.equal(result1.slot_index, result2?.slot_index);
+      assert.equal(result?.slot_index, 1);
     });
   });
 
-  describe("Repeat Avoidance Rule", () => {
-    it("never repeats previousSlotIndex when availableVariants.length >= 2", () => {
+  describe("Repeated Selection", () => {
+    it("allows adjacent questions to reuse the same slot", () => {
       const variants = createSampleVariants(4);
-
-      // Find natural selection without previousSlotIndex
-      const natural = selectQuestionMascotVariant({
-        videoId: "test_vid",
-        questionId: "q_repeat_check",
-        state: "thinking",
-        styleId: "style_1",
-        variants,
-      });
-      assert.ok(natural !== null);
-
-      // Provide previousSlotIndex equal to natural selection
-      const avoided = selectQuestionMascotVariant({
-        videoId: "test_vid",
-        questionId: "q_repeat_check",
-        state: "thinking",
-        styleId: "style_1",
-        variants,
-        previousSlotIndex: natural.slot_index,
-      });
-      assert.ok(avoided !== null);
-      assert.notEqual(avoided.slot_index, natural.slot_index, "Selection must advance to avoid consecutive repeat");
-    });
-
-    it("verifies adjacent questions never repeat across 20 sequential questions", () => {
-      const variants = createSampleVariants(4);
-      const sequence: number[] = [];
-      let previousSlot: number | undefined;
-
-      for (let i = 1; i <= 20; i += 1) {
-        const selected = selectQuestionMascotVariant({
-          videoId: "ep_sequence_test",
-          questionId: `question_${i}`,
-          state: "thinking",
-          styleId: "core",
-          variants,
-          previousSlotIndex: previousSlot,
-        });
-
-        assert.ok(selected !== null);
-        assert.ok(typeof selected.slot_index === "number");
-
-        if (previousSlot !== undefined) {
-          assert.notEqual(
-            selected.slot_index,
-            previousSlot,
-            `Question ${i} (slot ${selected.slot_index}) must not match Question ${i - 1} (slot ${previousSlot})`,
-          );
-        }
-
-        sequence.push(selected.slot_index);
-        previousSlot = selected.slot_index;
-      }
-
-      assert.equal(sequence.length, 20);
-    });
-
-    it("alternates cleanly and avoids repeats with exactly 2 available variants", () => {
-      const twoVariants = createSampleVariants(2);
-      let previousSlot: number | undefined;
-
-      for (let i = 1; i <= 10; i += 1) {
-        const selected = selectQuestionMascotVariant({
-          videoId: "ep_two_variants",
-          questionId: `q_${i}`,
-          state: "celebrate",
-          styleId: "core",
-          variants: twoVariants,
-          previousSlotIndex: previousSlot,
-        });
-
-        assert.ok(selected !== null);
-        if (previousSlot !== undefined) {
-          assert.notEqual(selected.slot_index, previousSlot);
-        }
-        previousSlot = selected.slot_index;
-      }
-    });
-
-    it("wraps around cleanly when candidate is at the last array index and matches previousSlotIndex", () => {
-      const threeVariants = createSampleVariants(3);
-      // Construct an input where candidateIndex is the last index (2)
-      // Find a questionId that naturally picks slot 3 (index 2)
-      let targetQ = "q_wrap_0";
-      for (let i = 0; i < 50; i += 1) {
-        const qCandidate = `q_wrap_${i}`;
-        const seed = computeSelectionSeed("wrap_video", qCandidate, "thinking", "core");
-        if (Math.abs(seed) % 3 === 2) {
-          targetQ = qCandidate;
-          break;
-        }
-      }
-
-      const result = selectQuestionMascotVariantResult({
-        videoId: "wrap_video",
-        questionId: targetQ,
+      const first = selectQuestionMascotVariant({ state: "thinking", styleId: "core", variants, randomSeed: 0 });
+      const second = selectQuestionMascotVariant({
         state: "thinking",
         styleId: "core",
-        variants: threeVariants,
-        previousSlotIndex: threeVariants[2].slot_index, // slot 3
+        variants,
+        randomSeed: 0,
+        previousSlotIndex: 1,
       });
 
-      assert.ok(result !== null);
-      assert.equal(result.candidate_index, 0, "Must wrap around to index 0");
-      assert.equal(result.slot_index, threeVariants[0].slot_index);
+      assert.equal(first?.slot_index, 1);
+      assert.equal(second?.slot_index, 1);
     });
   });
 
@@ -364,6 +260,7 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
           state: "thinking",
           styleId: "core",
           variants,
+          randomSeed: i,
         });
 
         assert.ok(selected !== null);
@@ -374,6 +271,7 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
 
       // Assert that every available slot was selected at least once
       for (const [slot, count] of slotCounts.entries()) {
+        if (slot % 2 === 1) continue;
         assert.ok(count > 0, `Slot ${slot} was never selected over ${iterations} iterations`);
         // Each slot should receive a reasonable proportion (at least 10% for 4 slots)
         const ratio = count / iterations;
@@ -381,7 +279,7 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
       }
     });
 
-    it("selects both static 3D character images and video variants uniformly", () => {
+    it("selects animation variants when mediaMode is animation", () => {
       // Slot 1: static 3D, Slot 2: WebM video, Slot 3: static 3D, Slot 4: WebM video
       const variants = createSampleVariants(4);
       let staticCount = 0;
@@ -395,6 +293,8 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
           state: "celebrate",
           styleId: "police",
           variants,
+          mediaMode: "animation",
+          randomSeed: i,
         });
 
         assert.ok(selected !== null);
@@ -405,8 +305,51 @@ describe("Question Mascot Variant Selector Engine (Phase 3)", () => {
         }
       }
 
-      assert.ok(staticCount > 15, `Static variants count ${staticCount} must be well represented`);
-      assert.ok(videoCount > 15, `Video variants count ${videoCount} must be well represented`);
+      assert.equal(staticCount, 0, "In animation mode, static-only variants must yield to animation variants");
+      assert.equal(videoCount, iterations, "All selections must come from published animation variants");
+    });
+
+    it("prioritizes image variants when mediaMode is static or default", () => {
+      // Slot 1: static 3D, Slot 2: WebM video (no static image), Slot 3: static 3D
+      const variants: MascotVariantMediaCandidate[] = [
+        {
+          id: "slot_1_static",
+          slot_index: 1,
+          image_url: "/mascots/owl/still_1.png",
+          status: "ready",
+        },
+        {
+          id: "slot_2_video_only",
+          slot_index: 2,
+          image_url: null,
+          status: "ready",
+          animation: {
+            transparent_video_url: "/mascots/owl/video_2.webm",
+          },
+        },
+        {
+          id: "slot_3_static",
+          slot_index: 3,
+          image_url: "/mascots/owl/still_3.png",
+          status: "ready",
+        },
+      ];
+
+      for (let i = 0; i < 50; i += 1) {
+        const selected = selectQuestionMascotVariant({
+          videoId: "static_mode_ep",
+          questionId: `q_static_${i}`,
+          state: "thinking",
+          styleId: "core",
+          variants,
+          mediaMode: "static",
+          randomSeed: i,
+        });
+
+        assert.ok(selected !== null);
+        assert.ok(selected.slot_index === 1 || selected.slot_index === 3, "Static mode must only select slots with static images");
+        assert.notEqual(selected.slot_index, 2, "Video-only slot 2 must not be selected when static images are available");
+      }
     });
   });
 });

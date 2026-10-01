@@ -46,6 +46,10 @@ import {
   candyArcadeStageCss,
   candyArcadeAnimationCss,
   candyArcadeReducedMotionCss,
+  candyArcadeBridgeTopicStylesCss,
+  candyArcadeBridgeCtaStylesCss,
+  candyArcadeBrandLogoStingerStylesCss,
+  candyArcadeEnergyWhipStylesCss,
 } from "./styles/index.js";
 
 export function candyArcadeHeroAreaRatio(layout: QuizPreviewLayoutId, aspectRatio: MascotRenderAspectRatio = "16:9"): number {
@@ -72,6 +76,10 @@ ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 ${candyArcadeSystemFontFaceCss()}
 ${candyArcadeRootVarsCss()}
 ${candyArcadeStageCss({ canvas, aspectRatio, baselineRenderMetrics })}
+${candyArcadeBridgeTopicStylesCss()}
+${candyArcadeBridgeCtaStylesCss()}
+${candyArcadeBrandLogoStingerStylesCss()}
+${candyArcadeEnergyWhipStylesCss()}
 
 /* === Choice Components & State Styles (ADR-003) === */
 ${baseChoiceStyles()}

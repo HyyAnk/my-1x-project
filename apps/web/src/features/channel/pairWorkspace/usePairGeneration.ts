@@ -8,6 +8,7 @@ export const isPendingJob = (job: IntroOutroScriptJob | null) => job?.status ===
 
 export function usePairGeneration(channelId: string, draft: ReturnType<typeof usePairDraft>) {
   const [autoIdentity, setAutoIdentity] = useState(true);
+  const [outroDuration, setOutroDuration] = useState<number>(16);
   const [job, setJob] = useState<IntroOutroScriptJob | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,8 +55,9 @@ export function usePairGeneration(channelId: string, draft: ReturnType<typeof us
     };
   }, [channelId, job?.job_id, job?.status, job?.result_revision_ids.length]);
 
-  const generate = async (kinds: IntroOutroClipKind[] = ["intro", "outro"]) => {
+  const generate = async (kinds: IntroOutroClipKind[] = ["intro", "outro"], customOutroDuration?: number) => {
     if (lock.current || isPendingJob(job)) return;
+    const effectiveOutroDuration = customOutroDuration ?? outroDuration;
     const manuallyEdited = kinds.some(
       (kind) =>
         draft.texts[kind] &&
@@ -74,7 +76,11 @@ export function usePairGeneration(channelId: string, draft: ReturnType<typeof us
             expected_version: project.version,
             auto_identity: autoIdentity,
             idempotency_key: crypto.randomUUID(),
-            clips: kinds.map((kind) => ({ clip_kind: kind, duration_seconds: 8, randomization_seed: crypto.randomUUID() })),
+            clips: kinds.map((kind) => ({
+              clip_kind: kind,
+              duration_seconds: kind === "outro" ? effectiveOutroDuration : 8,
+              randomization_seed: crypto.randomUUID(),
+            })),
           },
         };
       const result = await pairWorkspaceApi.generate(channelId, uncertain.current.projectId, uncertain.current.request);
@@ -105,5 +111,5 @@ export function usePairGeneration(channelId: string, draft: ReturnType<typeof us
       if (alive.current) setSubmitting(false);
     }
   };
-  return { autoIdentity, setAutoIdentity, job, pending, submitting, error, generate, cancel };
+  return { autoIdentity, setAutoIdentity, outroDuration, setOutroDuration, job, pending, submitting, error, generate, cancel };
 }

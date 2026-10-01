@@ -8,6 +8,7 @@ import { defaultSfxCandidateDirectories, resolveSfxCandidatePath } from "../../q
 import { RepositoryError } from "../../repository.js";
 import type { QuizV2RouteDeps } from "./quizV2Types.js";
 import { resolvePreviewStageSource } from "./resolvePreviewStageSource.js";
+import { loadMascotRenderProfile } from "../../repository/mascot/mascotRenderProfile.js";
 
 /**
  * Registers media preview, static font resolution, SFX streaming, and soundtrack routes for Quiz V2.
@@ -25,7 +26,7 @@ export function registerQuizV2MediaRoutes(server: FastifyInstance, deps: QuizV2R
         issues: layoutIssues,
       });
     }
-    const mascot = input.mascot_id ? await repository.getMascot(input.mascot_id).catch(() => null) : null;
+    const mascot = input.mascot_id ? await loadMascotRenderProfile(repository, input.mascot_id) : null;
     const mascotStyleId = resolveMascotStyleIdForQuizConfig(mascot, {
       mascot_style_selection: input.mascot_style_selection,
       mascot_style_id: input.mascot_style_id,

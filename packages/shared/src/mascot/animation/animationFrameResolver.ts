@@ -1,5 +1,5 @@
 import type { MascotAssetRegistration } from "../renderTypes.js";
-import { REQUIRED_FPS, REQUIRED_FRAME_COUNT, type AnimationLoopPolicy } from "./animationConstants.js";
+import { DEFAULT_VIDEO_FPS, REQUIRED_FPS, REQUIRED_FRAME_COUNT, type AnimationLoopPolicy } from "./animationConstants.js";
 import type { AnimationPlaybackTarget, MascotAnimationAssetV1, MascotFrameRect } from "./animationTypes.js";
 
 /**
@@ -76,14 +76,17 @@ export function resolveAnimationFrameAtTime(
   animation: MascotAnimationAssetV1 | AnimationPlaybackTarget,
   timeSeconds: number,
 ): ResolvedAnimationFrame {
-  const fps = animation.fps ?? (animation as { playback_fps?: number }).playback_fps ?? REQUIRED_FPS;
+  const isVideoTarget = Boolean((animation as { transparent_video_url?: string }).transparent_video_url);
+  const fps = animation.fps ?? (animation as { playback_fps?: number }).playback_fps ?? (isVideoTarget ? DEFAULT_VIDEO_FPS : REQUIRED_FPS);
   const frameCount =
     animation.frame_count ||
     (animation.frames && animation.frames.length > 0 ? animation.frames.length : undefined) ||
     REQUIRED_FRAME_COUNT;
-  const cycleSeconds = (animation as { duration_ms?: number }).duration_ms
-    ? (animation as { duration_ms?: number }).duration_ms! / 1000
-    : frameCount / fps;
+  const cycleSeconds = (frameCount && fps && fps > 0)
+    ? frameCount / fps
+    : ((animation as { duration_ms?: number }).duration_ms
+        ? (animation as { duration_ms?: number }).duration_ms! / 1000
+        : frameCount / fps);
   const normalizedTime = Number.isFinite(timeSeconds) ? Math.max(0, timeSeconds) : 0;
 
   const loopPolicy = animation.loop_policy ?? (animation as { loop_mode?: AnimationLoopPolicy }).loop_mode;

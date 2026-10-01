@@ -11,6 +11,8 @@ export interface LibraryDocument {
   value?: unknown;
 }
 
+const IGNORED_DIRECTORY_NAMES = new Set(["node_modules", ".git", ".venv", "venv", ".turbo", ".next", "dist", "build"]);
+
 /** Maintenance journals are not live references. Everything else is inspected conservatively. */
 export async function readLibraryDocuments(library: string): Promise<LibraryDocument[]> {
   const result: LibraryDocument[] = [];
@@ -20,6 +22,7 @@ export async function readLibraryDocuments(library: string): Promise<LibraryDocu
       if (file === path.join(library, ".quiz-studio", "maintenance")) continue;
       if (entry.isSymbolicLink()) throw new Error(`Linked library entry: ${file}`);
       if (entry.isDirectory()) {
+        if (IGNORED_DIRECTORY_NAMES.has(entry.name)) continue;
         await visit(file);
         continue;
       }
@@ -28,7 +31,7 @@ export async function readLibraryDocuments(library: string): Promise<LibraryDocu
       if (MEDIA.has(extension) || extension === ".lock" || extension === ".lock-journal") continue;
       await assertContainedPath(library, file);
       const buffer = await readFile(file);
-      const text = buffer.toString("utf8");
+      const text = buffer.toString("utf8").replace(/^\uFEFF/, "");
       result.push({
         file,
         hash: await hashFile(file),

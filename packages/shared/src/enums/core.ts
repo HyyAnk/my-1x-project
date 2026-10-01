@@ -65,7 +65,7 @@ export type ShortReelGenerationTarget = z.infer<typeof ShortReelGenerationTarget
 export const EngineIdSchema = z.enum(["codex", "antigravity"]);
 export type EngineId = z.infer<typeof EngineIdSchema>;
 
-export const ImageProviderIdSchema = z.enum(["gpti2", "shopaikey", "custom"]);
+export const ImageProviderIdSchema = z.enum(["gpti2", "shopaikey", "custom", "imgstudio"]);
 export type ImageProviderId = z.infer<typeof ImageProviderIdSchema>;
 
 export const ImageModelIdSchema = z.enum(["gpt-image-2", "nano-banana-2"]);

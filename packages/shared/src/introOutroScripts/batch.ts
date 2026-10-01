@@ -10,8 +10,8 @@ export const BatchGenerateIntroOutroScriptsInputSchema = z
     locked_seed_ids: z.array(z.string().trim().min(1)).default([]),
     durations: z
       .object({
-        intro: z.number().int().min(6).max(10).default(8),
-        outro: z.number().int().min(6).max(10).default(8),
+        intro: z.number().int().min(4).max(60).default(8),
+        outro: z.number().int().min(4).max(60).default(8),
       })
       .default({ intro: 8, outro: 8 }),
     included_clips: z.array(IntroOutroClipKindSchema).min(1).default(["intro", "outro"]),

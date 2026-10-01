@@ -4,13 +4,13 @@ import { isContentFilterError } from "../../../../utils/promptSanitizer.js";
 import type { ProviderAssetInput, ProviderAssetOutput } from "../types/providerAsset.types.js";
 import { trackShopAiKeyUsage } from "../utils/assetPricingTracker.js";
 
-const MAX_GENERATION_ATTEMPTS = 2; // Initial attempt + max 1 retry
-
 /**
- * Strategy for generating quiz image assets using the ShopAiKey / Custom OpenAI-compatible provider.
+ * Strategy for generating quiz image assets using the ShopAiKey / Custom OpenAI-compatible provider (single attempt).
  */
 export async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, configuredProvider, imageConfig, logger } = input;
+  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, configuredProvider, imageConfig } = input;
+  input.cancellationSignal?.throwIfAborted();
+
   const provider = new ShopAiKeyQuizImageProvider(
     repository,
     { channelId, episodeId },
@@ -24,36 +24,26 @@ export async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise
     },
   );
 
-  let generated: Awaited<ReturnType<typeof provider.generateAsset>> | null = null;
-
-  for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
-    input.cancellationSignal?.throwIfAborted();
-    try {
-      generated = await provider.generateAsset({
+  let generated: Awaited<ReturnType<typeof provider.generateAsset>>;
+  try {
+    generated = await provider.generateAsset(
+      {
         assetId: request.asset_id,
         fingerprint,
         prompt: compiledPrompt,
         aspect_ratio: request.aspect_ratio,
-      }, input.cancellationSignal);
-      break;
-    } catch (err) {
-      input.cancellationSignal?.throwIfAborted();
-      if (
-        isContentFilterError(err) ||
-        (err instanceof RepositoryError && err.code === "image_request_size_conflict")
-      ) {
-        throw err;
-      }
-      if (attempt < MAX_GENERATION_ATTEMPTS) {
-        logger.warn(
-          `Quiz asset ${request.asset_id} ${configuredProvider} generation attempt ${attempt} failed (${err instanceof Error ? err.message : String(err)}). Retrying in ${attempt * 500}ms...`,
-          { profileId: channelId, workerId: episodeId },
-        );
-        await new Promise((resolve) => setTimeout(resolve, attempt * 500));
-        continue;
-      }
+      },
+      input.cancellationSignal,
+    );
+  } catch (err) {
+    input.cancellationSignal?.throwIfAborted();
+    if (
+      isContentFilterError(err) ||
+      (err instanceof RepositoryError && err.code === "image_request_size_conflict")
+    ) {
       throw err;
     }
+    throw err;
   }
 
   if (!generated) {

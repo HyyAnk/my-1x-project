@@ -1,4 +1,4 @@
-import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio, type MascotRenderBundleV2 } from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio, type MascotRenderBundleV2, type MascotStateMediaMode } from "@studio/shared";
 import {
   buildContainerClass,
   buildContainerStyle,
@@ -19,13 +19,16 @@ export type MascotHtmlRenderInput = {
   extraClass?: string;
   preview?: boolean;
   clipStartSeconds?: number;
+  mediaMode?: MascotStateMediaMode;
 };
 
 export function renderMascotHtmlFromBundle(input: MascotHtmlRenderInput): string {
   const sourceMapper = input.sourceMapper ?? ((url: string) => url);
   const clipStartSeconds = finiteNonNegative(input.clipStartSeconds ?? 0);
   const layers = input.states
-    .map((state) => renderState(input.bundle, input.aspectRatio, state, sourceMapper, Boolean(input.preview), clipStartSeconds))
+    .map((state) =>
+      renderState(input.bundle, input.aspectRatio, state, sourceMapper, Boolean(input.preview), clipStartSeconds, input.mediaMode),
+    )
     .filter((layer): layer is string => Boolean(layer));
   if (layers.length === 0) return "";
 

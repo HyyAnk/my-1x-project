@@ -15,6 +15,8 @@ export interface VideoTimingSettingsCardProps {
   setRenderQuality?: (val: "draft" | "standard" | "high") => void;
   fps?: number;
   setFps?: (val: number) => void;
+  mascotMediaMode?: "static" | "animation";
+  setMascotMediaMode?: (val: "static" | "animation") => void;
   maxSceneDuration: number;
   setMaxSceneDuration: (val: number) => void;
   narrationWordsPerSecond: number;
@@ -36,6 +38,8 @@ export function VideoTimingSettingsCard({
   setRenderQuality,
   fps = 30,
   setFps,
+  mascotMediaMode = "static",
+  setMascotMediaMode,
   maxSceneDuration,
   setMaxSceneDuration,
   narrationWordsPerSecond,
@@ -60,6 +64,10 @@ export function VideoTimingSettingsCard({
         label="Render Workers / Quality"
         value={`${renderWorkers ? `${renderWorkers} workers` : "Auto (RAM/CPU based)"} · ${renderQuality.toUpperCase()} @ ${fps}fps`}
       />
+      <StatusLine
+        label="Mascot Media Mode"
+        value={mascotMediaMode === "animation" ? "Looping Animations (WebM / Spritesheet)" : "Static Variants (Style Stills)"}
+      />
       <form className="codex-form" onSubmit={(event) => void onSaveVideo(event)}>
         <label>
           Output aspect ratio
@@ -68,6 +76,21 @@ export function VideoTimingSettingsCard({
           </select>
           <small className="field-help">The same canvas is used by Visual Sandbox, Stage Studio, and production video renders.</small>
         </label>
+        {setMascotMediaMode && (
+          <label>
+            Mascot State Media Mode
+            <select
+              value={mascotMediaMode}
+              onChange={(event) => setMascotMediaMode(event.target.value as "static" | "animation")}
+            >
+              <option value="static">Static Variants (Style Stills · Focused & Crisp - Recommended)</option>
+              <option value="animation">Looping Animations (WebM / Spritesheet)</option>
+            </select>
+            <small className="field-help">
+              Prioritizes high-resolution static emotion variants for Thinking and Celebrate states to keep viewers focused on quiz questions, while still rotating poses per question.
+            </small>
+          </label>
+        )}
         <label>
           Parallel Episode Builds (Queue Limit)
           <select value={maxConcurrentVideoTasks} onChange={(event) => setMaxConcurrentVideoTasks(Number(event.target.value))}>

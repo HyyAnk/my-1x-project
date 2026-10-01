@@ -5,6 +5,7 @@ import { failReelUnitAttempt } from "../../shortReel/unitLifecycle.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { pruneStaleHyperframesDirectories } from "../storage/artifactRetentionPruner.js";
 import { ACTIVE_TASK_STATUSES, abortAndCleanupTaskResources } from "./taskPruning.js";
+import { cleanOrphanedHeadlessBrowsers } from "../../infrastructure/executables/browserProcessCleaner.js";
 
 async function collectValidEntityIds(
   repository: TaskManagerRuntime["repository"],
@@ -198,6 +199,7 @@ export async function reconcileStartupState(
         { step: "startup_reconciliation" },
       );
     }
+    await cleanOrphanedHeadlessBrowsers({ logger: runtime.logger }).catch(() => {});
     return result;
   } catch (error) {
     runtime.logger.warn(`Stale hyperframes pruning failed during startup: ${error instanceof Error ? error.message : "unknown error"}`, {

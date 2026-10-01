@@ -1,6 +1,7 @@
 import { ALL_QUIZ_IMAGE_STYLES, EpisodeSchema, nowIso, type Episode, type EpisodeSettingsInput, type QuizImageStyle } from "@studio/shared";
 import { estimateQuizTargetDurationMinutes, estimateQuizTargetWordCount } from "./helpers.js";
 import type { RepositoryRuntime } from "./runtime.js";
+import { pinIntroOutroSelection } from "../quiz/introOutro/episodeSelection.js";
 
 function resolveNextResolvedStyle(
   inputStyle?: QuizImageStyle | "mixed",
@@ -120,6 +121,7 @@ export async function updateEpisodeSettings(
     updated_at: nowIso(),
   });
 
+  await pinIntroOutroSelection(this, channel, next);
   await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
   this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
 

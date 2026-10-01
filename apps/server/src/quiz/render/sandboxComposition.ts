@@ -67,9 +67,11 @@ function buildSandboxRehearsalComposition(
   const questionIndex = Math.max(0, (parsed.question_number ?? 1) - 1);
   const videoId = parsed.episode_id || "sandbox_preview";
   const questionId = parsed.question_id || `sandbox_q_${questionIndex}`;
+  const effectiveMediaMode = parsed.mascot_media_mode ?? "static";
   const adaptedMascot = adaptMascotForQuestion(mascotProfile, parsed.mascot_style_id, questionIndex, {
     videoId,
     questionId,
+    mediaMode: effectiveMediaMode,
   });
   const actionAtSeconds =
     parsed.mascot_phase === "choices"
@@ -120,6 +122,7 @@ function buildSandboxRehearsalComposition(
           timelineEvents,
           revealOutcome: parsed.mascot_reveal_outcome ?? "correct",
           aspectRatio: parsed.aspect_ratio,
+          mediaMode: effectiveMediaMode,
         })
       : "";
 
@@ -219,16 +222,18 @@ function renderSandboxMascot(
 ): string {
   const enabled = input.mascot_enabled !== false && input.mascot_id !== "none";
   if (!enabled || !mascotProfile) return "";
+  const effectiveMediaMode = input.mascot_media_mode ?? "static";
   const phase = input.mascot_phase ?? scenePhase;
   const questionIndex = Math.max(0, (input.question_number ?? 1) - 1);
   const videoId = input.episode_id || "sandbox_preview";
   const questionId = input.question_id || `sandbox_q_${questionIndex}`;
-  let adaptedMascot = adaptMascotForQuestion(mascotProfile, input.mascot_style_id, questionIndex, {
+  let adaptedMascot = adaptMascotForQuestion(input.mascot_id ? mascotProfile : null, input.mascot_style_id, questionIndex, {
     videoId,
     questionId,
+    mediaMode: effectiveMediaMode,
   });
   if (phase === "intro" || phase === "outro") {
-    adaptedMascot = adaptMascotForPhase(adaptedMascot, phase, input.mascot_style_id);
+    adaptedMascot = adaptMascotForPhase(adaptedMascot, phase, input.mascot_style_id, effectiveMediaMode);
   }
   const action = input.mascot_action || (phase === "reveal" ? "celebrate" : phase === "explain" ? "point" : "thinking");
   const timelineTime = input.mascot_timeline_time_seconds ?? input.timeline_time_seconds ?? sandboxPreviewTimeForPhase(phase);
@@ -252,6 +257,7 @@ function renderSandboxMascot(
       revealOutcome: phase === "reveal" ? input.mascot_reveal_outcome : null,
       actionOverride: action,
       playing: input.mascot_playing,
+      mediaMode: effectiveMediaMode,
     },
   );
 }

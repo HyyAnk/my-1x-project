@@ -19,6 +19,7 @@ import {
 import { normalizeTargetLanguage } from "../quiz/bank/localization/productLocalization.js";
 import type { RepositoryService } from "../repository/service.js";
 import type { RepositoryRuntime } from "../repository/runtime.js";
+import { pinIntroOutroSelection } from "../quiz/introOutro/episodeSelection.js";
 import {
   DEFAULT_NARRATION_WORDS_PER_SECOND,
   estimateQuizTargetDurationMinutes,
@@ -206,6 +207,7 @@ async function executeTopicConfirmation(
     timestamp,
   });
 
+  await pinIntroOutroSelection(repo, channel, episode);
   await initializeEpisodeFiles(repo, episodeDirectory, candidate, boundResult);
   await repo.writeJsonAtomic(path.join(episodeDirectory, "episode.json"), episode);
   repo.entityIdResolver.setEpisodeSlug(channelId, episode.episode_id, episode.slug);

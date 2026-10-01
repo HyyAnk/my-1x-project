@@ -1,4 +1,9 @@
-import { resolveChannelMascotPlacement, resolveMascotStageDefaultPlacement, type SandboxPreviewInput } from "@studio/shared";
+import {
+  resolveChannelMascotPlacement,
+  resolveEffectiveMascotMediaMode,
+  resolveMascotStageDefaultPlacement,
+  type SandboxPreviewInput,
+} from "@studio/shared";
 import { RepositoryError } from "../../repository.js";
 import type { QuizV2RouteDeps } from "./quizV2Types.js";
 
@@ -24,8 +29,11 @@ export async function resolvePreviewStageSource(input: SandboxPreviewInput, deps
           mascot_show_in_intro: config?.show_in_intro ?? false,
           mascot_show_in_outro: config?.show_in_outro ?? false,
           mascot_show_in_question: config?.show_in_question ?? true,
+          mascot_media_mode: resolveEffectiveMascotMediaMode(config, deps.state.config.video_generation?.mascot_media_mode),
         }
-      : {}),
+      : {
+          mascot_media_mode: input.mascot_media_mode ?? deps.state.config.video_generation?.mascot_media_mode ?? "static",
+        }),
     mascot_position: placement.position,
     mascot_scale: placement.scale,
     mascot_offset_x: placement.offset_x,

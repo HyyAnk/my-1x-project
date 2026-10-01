@@ -24,7 +24,12 @@ export async function renderPerformanceSegment(
     const renderedPhrases = await Promise.all(
       phrases.map(async (phrase, phraseIndex) => {
         const raw = await synthesizeWav(voicePerformanceConfig(config, segment.role), phrase.text, voice);
-        const gainDb = segment.role === "reveal" ? 2.0 : segment.role === "intro" || segment.role === "outro" ? 1.5 : 0;
+        const gainDb =
+          segment.role === "reveal" || segment.role === "intro_topic" || segment.role === "intro_cta"
+            ? 2.5
+            : segment.role === "intro" || segment.role === "outro"
+              ? 2.0
+              : 1.0;
         const paced = await paceQuizVoiceAudio(raw, quizVoiceTempo(segment.role), directory, segmentNumber * 100 + phraseIndex + 1, gainDb);
         const phrasePath = path.join(directory, `segment-${String(segmentNumber).padStart(3, "0")}-phrase-${phraseIndex + 1}.wav`);
         await writeFile(phrasePath, paced);

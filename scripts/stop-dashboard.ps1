@@ -99,6 +99,31 @@ foreach ($process in $launcher) {
   }
 }
 
+# Stop any orphaned or lingering headless browser instances (Chrome, Edge, Chromium)
+Write-Log "STEP" "browser" "Checking for lingering headless browser instances" ([ConsoleColor]::Blue)
+$headlessProcesses = @(
+  Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
+    ($_.Name -match '^(chrome|msedge|chromium|chrome-headless-shell)\.exe$') -and
+    ($_.CommandLine -match '--headless|chrome-headless-shell') -and
+    ($_.CommandLine -match 'remote-debugging|user-data-dir|begin-frame|deterministic-mode|puppeteer')
+  }
+)
+
+if ($headlessProcesses.Count -gt 0) {
+  foreach ($browserProc in $headlessProcesses) {
+    Write-Log "STEP" "browser" ("Stopping headless browser PID {0} ({1})" -f $browserProc.ProcessId, $browserProc.Name) ([ConsoleColor]::Blue)
+    & taskkill.exe /PID $browserProc.ProcessId /T /F >$null 2>&1
+    if ($LASTEXITCODE -eq 0) {
+      $stopped++
+      Write-Log "OK" "browser" ("Stopped headless browser PID {0}" -f $browserProc.ProcessId) ([ConsoleColor]::Green)
+    } else {
+      Stop-Process -Id $browserProc.ProcessId -Force -ErrorAction SilentlyContinue
+    }
+  }
+} else {
+  Write-Log "INFO" "browser" "No lingering headless browser instances found"
+}
+
 $elapsed = [math]::Round(((Get-Date) - $startedAt).TotalSeconds, 1)
 if ($failed -gt 0) {
   Write-Log "ERROR" "summary" ("total={0} | stopped={1} | failed={2} | elapsed={3}s" -f $ports.Count, $stopped, $failed, $elapsed) ([ConsoleColor]::Red)

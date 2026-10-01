@@ -13,5 +13,21 @@ describe("buildDecoupledChannelMascotConfig", () => {
       offset_y: placement.offset_y,
       flip_x: placement.flip_x,
     });
+    expect(config.mascot_media_mode).toBe("inherit");
+  });
+
+  it("propagates explicit mascot_media_mode overrides", () => {
+    const placement = { position: "bottom_left" as const, scale: 1.0, offset_x: 0, offset_y: 0, flip_x: false };
+    const staticConfig = buildDecoupledChannelMascotConfig({
+      activePlacement: placement,
+      mascotMediaMode: "static",
+    });
+    expect(staticConfig.mascot_media_mode).toBe("static");
+
+    const animationConfig = buildDecoupledChannelMascotConfig({
+      activePlacement: placement,
+      mascotMediaMode: "animation",
+    });
+    expect(animationConfig.mascot_media_mode).toBe("animation");
   });
 });

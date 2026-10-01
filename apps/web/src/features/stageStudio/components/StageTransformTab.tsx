@@ -3,6 +3,7 @@ import { StagePlacementControls } from "./StagePlacementControls";
 import { StageQuestionLayoutSelect } from "./StageQuestionLayoutSelect";
 import { StageVisibilityControls } from "./StageVisibilityControls";
 import { StageDefaultPresetControls } from "./StageDefaultPresetControls";
+import { StageMediaModeControls } from "./StageMediaModeControls";
 
 type StageTransformTabProps = {
   studio: ReturnType<typeof useStageStudio>;
@@ -15,6 +16,7 @@ export function StageTransformTab({ studio }: StageTransformTabProps) {
       <StagePlacementControls studio={studio} />
       <StageDefaultPresetControls studio={studio} />
       <StageVisibilityControls studio={studio} />
+      <StageMediaModeControls studio={studio} />
     </div>
   );
 }

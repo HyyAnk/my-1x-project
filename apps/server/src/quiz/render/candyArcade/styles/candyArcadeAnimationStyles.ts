@@ -43,8 +43,8 @@ export function candyArcadeAnimationCss(): string {
 .reward-big i { font-size: 71px; }
 .episode-progress.streak { animation: progress-pop .52s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + .12s) both; }
 .episode-progress.streak i { margin-left: 2px; color: var(--surface-accent); font-size: 24px; font-style: normal; }
-.is-final-scene .question-card-inner { border-color: #FF708A; box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(255,182,193,0.35), inset 0 -5px 0 rgba(230,60,90,0.25), 0 16px 0 rgba(230,60,90,0.32), 0 26px 42px rgba(10,25,60,0.2); }
 .quiz-question-clip .question-title { animation: question-card-enter 0.52s cubic-bezier(0.18, 1.42, 0.34, 1) var(--clip-start) both, question-card-float 4.2s ease-in-out calc(var(--clip-start) + 0.52s) infinite alternate both; }
+.quiz-first-question .game-stage { animation: first-question-stage-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) var(--clip-start) both; }
 ${TRANSITION_STYLES_CSS}
 
 ${candyArcadeKeyframesCss()}
@@ -52,6 +52,7 @@ ${candyArcadeKeyframesCss()}
 @media (prefers-reduced-motion: reduce) { .milestone-star { animation: none; } }
 
 .candy-mascot-sprite { width: 220px; height: 220px; background-image: var(--sprite-url); background-repeat: no-repeat; background-position: center bottom; background-size: contain; transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)); filter: drop-shadow(0 14px 18px rgba(13,35,71,.35)); }
+.candy-mascot-container[data-mascot-media-mode="static"] .candy-mascot-sprite { animation: none !important; }
 .mascot-state-layer { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.15s ease-out; }
 .mascot-state-layer:not([style*="--mascot-frames:1;"]):not([style*="--mascot-frames: 1;"]) .candy-mascot-sprite { background-size: calc(var(--mascot-frames, 1) * 100%) 100%; background-position: 0% 50%; animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
 .state-idle[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-idle[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-breathe 3.2s ease-in-out infinite alternate; }

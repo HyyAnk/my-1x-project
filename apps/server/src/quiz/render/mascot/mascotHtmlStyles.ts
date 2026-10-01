@@ -81,9 +81,26 @@ export function localPivot(
   spec: { placement: { anchor: string; offset_x: number; offset_y: number }; canvas: { width: number; height: number } },
   geometry: { pivot_x: number; pivot_y: number },
 ): { x: number; y: number } {
-  const originX = (spec.placement.anchor === "bottom_right" ? spec.canvas.width - MASCOT_BASE_BOX_PX : 0) + spec.placement.offset_x;
-  const originY = spec.canvas.height - MASCOT_BASE_BOX_PX + spec.placement.offset_y;
+  const { originX, originY } = mascotStageOrigin(spec);
   return { x: geometry.pivot_x - originX, y: geometry.pivot_y - originY };
+}
+
+export function localAssetPivot(
+  spec: { placement: { anchor: string; offset_x: number; offset_y: number }; canvas: { width: number; height: number } },
+  geometry: { asset_pivot_x: number; asset_pivot_y: number },
+): { x: number; y: number } {
+  const { originX, originY } = mascotStageOrigin(spec);
+  return { x: geometry.asset_pivot_x - originX, y: geometry.asset_pivot_y - originY };
+}
+
+function mascotStageOrigin(spec: {
+  placement: { anchor: string; offset_x: number; offset_y: number };
+  canvas: { width: number; height: number };
+}) {
+  return {
+    originX: (spec.placement.anchor === "bottom_right" ? spec.canvas.width - MASCOT_BASE_BOX_PX : 0) + spec.placement.offset_x,
+    originY: spec.canvas.height - MASCOT_BASE_BOX_PX + spec.placement.offset_y,
+  };
 }
 
 export function phaseTransition(bundle: MascotRenderBundleV2, phase: MascotRenderPhase, direction: "enter" | "exit"): string {

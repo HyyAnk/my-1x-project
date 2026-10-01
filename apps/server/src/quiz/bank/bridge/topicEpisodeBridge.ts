@@ -15,6 +15,7 @@ import { resolveBoundTopicSources } from "./boundSourceResolver.js";
 import { convertBankQuestionToQuizQuestionLossless } from "./bankQuestionConverter.js";
 import { resolveRenderAspect, triggerPipelineTask } from "./bootstrapperHelpers.js";
 import { withTopicConfirmationLock } from "./topicConfirmationLock.js";
+import { pinIntroOutroSelection } from "../../introOutro/episodeSelection.js";
 import { stageAndPublishTopicEpisodeFiles } from "./episodeStagingPublisher.js";
 import {
   findAndValidateTopicCandidate,
@@ -237,6 +238,7 @@ export async function executeEpisodeConfirmation(deps: {
     status: "preparing",
   });
 
+  await pinIntroOutroSelection(repository, channel, episode, true);
   const sourcesContent = buildSourcesMarkdown(boundResult.questionIds, boundResult.sourceContentHashes);
 
   await stageAndPublishTopicEpisodeFiles({

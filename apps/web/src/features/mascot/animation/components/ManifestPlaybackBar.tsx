@@ -107,7 +107,7 @@ export function ManifestPlaybackBar({
           onClick={onToggleContactSheet}
           data-testid="toggle-contact-sheet-btn"
         >
-          <span>{showContactSheet ? "Hide Contact Sheet" : "Contact Sheet (12 Frames)"}</span>
+          <span>{showContactSheet ? "Hide Contact Sheet" : (frameCount > 36 ? "Sprite Sheet (Skipped >36f)" : `Contact Sheet (${frameCount} Frames)`)}</span>
         </button>
       </div>
 

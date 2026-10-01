@@ -32,6 +32,7 @@ export function candyArcadeStageCss(options: CandyArcadeStageStyleOptions = {}):
   --safe-zone-right: 96px;
 }
 .clip { position: absolute; inset: 0; }
+.sub-composition.candy-transition { position: absolute; inset: 0; pointer-events: none; z-index: 900; }
 .candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 33px 80px 16px; background: var(--bg-primary); color: var(--ink); contain: layout paint; }
 ${counterQuestionLayoutCss(".candy-scene:not(.quiz-frame-unified)", LEGACY_QUESTION_CARD_GEOMETRY)}
 .hanging-wood-sign { --counter-badge-mount-height: 64px; --counter-badge-body-height: 150px; position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 250px; transform-origin: 50% 0; animation: hanging-sign-enter .64s cubic-bezier(.18,1.42,.34,1) var(--clip-start) both, hanging-sign-sway 4.8s ease-in-out calc(var(--clip-start) + .64s) infinite alternate both; will-change: transform; }

@@ -371,35 +371,10 @@ describe("Deterministic Variant Selection & Resume/Rerender Parity (Stage 15)", 
       expect(files1[key]).toBe(files2[key]);
     }
 
-    // Verify no consecutive questions repeated the exact same thinking or celebrate slot
-    for (let q = 1; q <= 4; q++) {
-      const qCurrentThinking = findSnapshotEntry(snapshot, {
-        videoId: "ep-science-101",
-        questionId: `q-astro-0${q}`,
-        state: "thinking",
-        styleId: "style-academic",
-      })!;
-      const qNextThinking = findSnapshotEntry(snapshot, {
-        videoId: "ep-science-101",
-        questionId: `q-astro-0${q + 1}`,
-        state: "thinking",
-        styleId: "style-academic",
-      })!;
-      expect(qCurrentThinking.slot_index).not.toBe(qNextThinking.slot_index);
-
-      const qCurrentCelebrate = findSnapshotEntry(snapshot, {
-        videoId: "ep-science-101",
-        questionId: `q-astro-0${q}`,
-        state: "celebrate",
-        styleId: "style-academic",
-      })!;
-      const qNextCelebrate = findSnapshotEntry(snapshot, {
-        videoId: "ep-science-101",
-        questionId: `q-astro-0${q + 1}`,
-        state: "celebrate",
-        styleId: "style-academic",
-      })!;
-      expect(qCurrentCelebrate.slot_index).not.toBe(qNextCelebrate.slot_index);
+    // Every state selects from its own available pool; adjacent questions may reuse a slot.
+    for (const entry of snapshot.entries) {
+      expect(entry.slot_index).toBeGreaterThanOrEqual(1);
+      expect(entry.slot_index).toBeLessThanOrEqual(10);
     }
   });
 

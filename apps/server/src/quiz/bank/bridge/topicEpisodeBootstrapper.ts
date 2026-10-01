@@ -23,6 +23,7 @@ import {
 } from "./bootstrapperHelpers.js";
 import type { BootstrapEpisodeResult } from "./bootstrapperTypes.js";
 import { synthesizeScenesFromQuiz } from "../../domain/quizArtifactSynthesizer.js";
+import { pinIntroOutroSelection } from "../../introOutro/episodeSelection.js";
 
 export interface BootstrapTopicEpisodeParams {
   repository: RepositoryService;
@@ -102,6 +103,7 @@ export async function bootstrapTopicEpisode(params: BootstrapTopicEpisodeParams)
     timestamp,
   });
 
+  await pinIntroOutroSelection(repository, channel, episode);
   await repository.writeJsonAtomic(path.join(episodeDirectory, "episode.json"), episode);
   await repository.writeJsonAtomic(
     path.join(repository.resolvePath("channels", channel.slug), "topic_database.json"),

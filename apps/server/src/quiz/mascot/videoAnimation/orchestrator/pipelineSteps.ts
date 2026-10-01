@@ -88,7 +88,7 @@ function buildAnimationRevision(
   const alphaCodec = hasTransparentWebm ? (manifest.alpha_codec ?? "vp9_alpha") : undefined;
 
   const frameCount = manifest.frame_count ?? 12;
-  const playbackFps = manifest.fps ?? 8;
+  const playbackFps = manifest.fps ?? 24;
   const durationMs = manifest.duration_ms ?? Math.round((frameCount / playbackFps) * 1000);
   const atlasUrl = packagingResult.atlasPath || manifest.atlas ? `${basePath}/atlas.png` : undefined;
 
@@ -146,7 +146,7 @@ export async function executePipeline(
   if (signal.aborted) throw new OrchestrationError("Aborted before extraction", "CANCELLED");
 
   // 2. Extract frames
-  await deps.extractionService.extractAttemptFrames({
+  const extractionResult = await deps.extractionService.extractAttemptFrames({
     mascotId: mascot_id,
     styleId: style_id,
     state,
@@ -191,6 +191,9 @@ export async function executePipeline(
     attemptId: attempt,
     sourceVideoFingerprint: job.source_video_fingerprint,
     cropToContent: true,
+    fps: extractionResult.fps,
+    durationMs: extractionResult.durationMs,
+    frameCount: extractionResult.frameCount,
   });
   await deps.repository.updateJobStatus(job.id, "processing", 90);
   if (signal.aborted) throw new OrchestrationError("Aborted before persistence", "CANCELLED");

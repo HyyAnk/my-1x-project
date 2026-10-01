@@ -136,6 +136,42 @@ const definitions: Record<CreativeSeedDimension, SeedDefinition[]> = {
     ["G06", "Friendly Closing Pose", "End with a friendly silhouette-readable pose."],
     ["G07", "Stage Close", "Use a simple stage-closing element without trapping or obscuring the mascot."],
   ],
+  outro_kinematic_transition: [
+    [
+      "H01",
+      "Portal Ring Dive & Roll",
+      "Sprint forward and dive into a floating golden energy ring detonating a 100% whiteout lens flare, bursting out into a parkour roll and slide.",
+      ["locomotion"],
+    ],
+    [
+      "H02",
+      "Virtual High-Five Lens Wipe",
+      "Sprint toward the camera and slap the lens affectionately for a high-five, creating an explosive starburst contact flash that wipes the frame.",
+    ],
+    [
+      "H03",
+      "Hyper-Speed Whip-Pan Swipe",
+      "Dash across frame with heavy motion blur, triggering an aggressive 90-degree camera whip-pan that seamlessly masks the cut into a slide stop.",
+      ["locomotion"],
+    ],
+    [
+      "H04",
+      "Acrobatic Vault & Particle Bloom",
+      "Launch into an aerial vault detonating festive confetti and fireworks that bleach the screen before a hero landing.",
+      ["locomotion"],
+    ],
+    [
+      "H05",
+      "Quiz Trophy Badge Toss",
+      "Flick a gleaming golden Quiz Champion badge directly toward the lens, bleaching the screen in gold before a seamless momentum roll.",
+    ],
+    [
+      "H06",
+      "Low Slide & Light Underpass",
+      "Execute an athletic slide under an illuminated neon structure, using the blinding light beam to wash the frame into a slide-stop.",
+      ["locomotion"],
+    ],
+  ],
 };
 
 function clipKindForDimension(dimension: CreativeSeedDimension): IntroOutroClipKind {
@@ -156,7 +192,7 @@ export const BUILT_IN_INTRO_OUTRO_SEEDS: CreativeSeed[] = Object.entries(definit
     allowed_props: [],
     allowed_text: [],
     forbidden_seed_ids: [],
-    complexity: ["A04", "A05", "A08", "A09", "A10", "B01", "B05", "B10", "B11", "C07", "C08", "C09"].includes(id) ? "medium" : "low",
+    complexity: ["A04", "A05", "A08", "A09", "A10", "B01", "B05", "B10", "B11", "C07", "C08", "C09", "H01", "H03", "H04", "H06"].includes(id) ? "medium" : "low",
     selection_weight: 1,
     origin: "built_in",
     status: "active",

@@ -5,6 +5,7 @@ import {
   nowIso,
   type Channel,
   type Episode,
+  type ImageProviderId,
   type ThumbnailAspectRatio,
   type ThumbnailHistoryItem,
   type ThumbnailLayoutType,
@@ -14,7 +15,9 @@ import type { RepositoryService } from "../../repository.js";
 import type { ImageProvider } from "../../providers/index.js";
 import type { AntigravityClient } from "../../antigravity.js";
 import { generateAssetWithProvider } from "../assets/resolvers/providerAssetResolver.js";
+import type { ProviderCircuitBreaker } from "../assets/resolvers/circuitBreaker.js";
 import type { MascotVisualAnchor, QuizThumbnailPlan } from "./thumbnailTypes.js";
+import { resolveThumbnailImageConfigs } from "./thumbnailImageConfigResolver.js";
 
 export type GenerateEpisodeThumbnailOptions = {
   channelId: string;
@@ -29,7 +32,7 @@ export type GenerateEpisodeThumbnailOptions = {
   imageConfig?: {
     api_key?: string;
     model?: string;
-    provider?: "google" | "gpti2" | "shopaikey" | "custom";
+    provider?: ImageProviderId | "google";
     base_url?: string;
     quality?: string;
   };
@@ -42,6 +45,7 @@ export type GenerateEpisodeThumbnailOptions = {
     resolution?: "1K" | "2K" | "4K";
     quality?: "standard" | "high";
   };
+  circuitBreaker?: ProviderCircuitBreaker;
   throwOnError?: boolean;
   signal?: AbortSignal;
 };
@@ -210,6 +214,10 @@ type GenerateProviderAssetParams = {
 async function generateProviderAsset(params: GenerateProviderAssetParams): Promise<void> {
   const { repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets, visualAnchor } = params;
   const fingerprint = createHash("sha256").update(prompt).digest("hex");
+  const { configuredProvider, imageConfig, imageFallbackConfig } = resolveThumbnailImageConfigs(
+    options.imageConfig,
+    options.imageFallbackConfig,
+  );
   const generated = await generateAssetWithProvider({
     repository,
     channelId: channel.channel_id,
@@ -228,12 +236,13 @@ async function generateProviderAsset(params: GenerateProviderAssetParams): Promi
     },
     fingerprint,
     compiledPrompt: prompt,
-    configuredProvider: options.imageConfig?.provider ?? "gpti2",
+    configuredProvider,
     activeEngine: options.activeEngine ?? "codex",
     antigravityClient: options.antigravityClient,
-    imageConfig: options.imageConfig,
-    imageFallbackConfig: options.imageFallbackConfig,
+    imageConfig,
+    imageFallbackConfig,
     referenceImageBase64: visualAnchor?.base64,
+    circuitBreaker: options.circuitBreaker,
     cancellationSignal: options.signal,
     logger,
   });

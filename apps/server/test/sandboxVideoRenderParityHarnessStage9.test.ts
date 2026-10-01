@@ -174,7 +174,7 @@ describe("Stage 9: Comprehensive Regression Test Suite & Parity Harness (apps/se
 
       expect(html).toContain('class="mascot-v2-state state-idle"');
       expect(html).toContain('data-mascot-action="idle"');
-      expect(html).toContain('data-mascot-motion-preset="breathe"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
       expect(html).toContain("--mascot-state-delay:0s");
     });
 
@@ -350,7 +350,7 @@ describe("Stage 9: Comprehensive Regression Test Suite & Parity Harness (apps/se
 
       expect(html).toContain('data-mascot-phase="thinking"');
       expect(html).toContain('data-mascot-action="thinking"');
-      expect(html).toContain('data-mascot-motion-preset="sway"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
       expect(html).toContain("--mascot-state-delay:2.47s");
       expect(html).toContain("--mascot-state-span:5s");
     });
@@ -451,7 +451,7 @@ describe("Stage 9: Comprehensive Regression Test Suite & Parity Harness (apps/se
       expect(html).toContain('data-mascot-phase="reveal"');
       expect(html).toContain('data-mascot-action="celebrate"');
       expect(html).toContain('class="mascot-v2-state state-celebrate"');
-      expect(html).toContain('data-mascot-motion-preset="jump"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
       expect(html).toContain("--mascot-state-delay:7.47s");
       expect(html).toContain("--mascot-state-span:0.8s");
     });
@@ -473,7 +473,7 @@ describe("Stage 9: Comprehensive Regression Test Suite & Parity Harness (apps/se
       expect(html).toContain('data-mascot-phase="reveal"');
       expect(html).toContain('data-mascot-action="oops"');
       expect(html).toContain('class="mascot-v2-state state-oops"');
-      expect(html).toContain('data-mascot-motion-preset="shake"');
+      expect(html).toContain('data-mascot-motion-preset="none"');
     });
 
     it("verifies fact card and reward remain hidden (8.10s < 8.27s)", () => {

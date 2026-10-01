@@ -42,6 +42,7 @@ export interface EncodeTransparentWebmOptions {
   framePattern?: string; // default "frame_%03d.png"
   timeoutMs?: number;
   signal?: AbortSignal;
+  keyframeInterval?: number;
 }
 
 export interface EncodeTransparentWebmResult {

@@ -45,6 +45,8 @@ describe("executeHyperframesRender", () => {
     mocks.runHyperframesProcess.mockImplementation(async (options: RunHyperframesProcessOptions) => {
       expect(options.signal).toBe(controller.signal);
       expect(options.logPath).toBe(path.join(renderRoot, "render.log"));
+      expect(options.env.PRODUCER_FORCE_SCREENSHOT).toBe("true");
+      expect(options.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE).toBe("false");
       await options.onProgress({
         kind: "measured",
         sample: { phase: "capture_streaming", framesCompleted: 200, totalFrames: 400, workerCount: 6, elapsedMs: 10_000, etaSeconds: 10 },

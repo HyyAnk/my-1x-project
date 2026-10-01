@@ -22,21 +22,27 @@ export const stingerSwipeTransition: TransitionImplementation = {
 .stinger-slash {
   position: absolute;
   inset: -50%;
-  background: var(--trans-from-color, #F59E0B);
+  background: linear-gradient(135deg, var(--trans-from-color, #F59E0B) 0%, rgba(255, 255, 255, 0.22) 48%, var(--trans-from-color, #F59E0B) 92%);
   transform: skewX(-25deg) translateX(-150%);
+  border-right: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.45), inset 6px 0 16px rgba(255, 255, 255, 0.35);
+  filter: drop-shadow(0 0 16px var(--trans-from-color, #F59E0B));
   animation: stinger-wipe var(--trans-dur, 0.8s) cubic-bezier(0.2, 0.8, 0.2, 1) var(--trans-start, 0s) forwards;
 }
 
 .stinger-slash.slash-b {
-  background: var(--trans-to-color, #EF4444);
+  background: linear-gradient(135deg, var(--trans-to-color, #EF4444) 0%, rgba(255, 255, 255, 0.28) 50%, var(--trans-to-color, #EF4444) 100%);
+  border-right: 4px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 0 20px var(--trans-to-color, #EF4444));
   animation-delay: calc(var(--trans-start, 0s) + 0.08s);
 }
 
 .stinger-flash {
   position: absolute;
   inset: 0;
-  background: #FFFFFF;
+  background: radial-gradient(circle at center, #FFFFFF 0%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0) 75%);
   opacity: 0;
+  pointer-events: none;
   animation: stinger-flash-burst 0.25s ease-out calc(var(--trans-start, 0s) + 0.4s) forwards;
 }
 

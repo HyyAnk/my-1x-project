@@ -25,7 +25,12 @@ export class HyperframesRenderer implements QuizRenderer {
       transitionDurationSeconds: input.transitionDurationSeconds,
       transitionInstances: input.transitionInstances,
       audioMode: input.audioMode,
+      introHasAudio: input.introHasAudio,
+      outroHasAudio: input.outroHasAudio,
       mascotAnimationSnapshot: input.mascotAnimationSnapshot,
+      mascotMediaMode: input.mascotMediaMode,
+      brandIdentity: input.brandIdentity,
+      topic: input.topic,
     });
     return Promise.resolve({
       html: composition.html,

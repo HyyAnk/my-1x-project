@@ -11,14 +11,18 @@ import { resolveIntroOutroConfig } from "./assetsVoiceStages.js";
 export async function compileTimeline(
   input: QuizOrchestratorInput,
 ): Promise<{ timeline: QuizTimeline; artifact_path: string; invalidated: string[] }> {
-  const [quiz, director_plan, voice_plan] = await Promise.all([
+  const [quiz, director_plan, voice_plan, episode] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
     input.repository.readVoicePlan(input.channelId, input.episodeId),
+    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before compiling the timeline", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before compiling the timeline", "DIRECTOR_REQUIRED");
   if (!voice_plan) throw new RepositoryError("Generate the voice plan before compiling the timeline", "VOICE_PLAN_REQUIRED");
+  if (voice_plan.segments.some((segment) => segment.role === "intro" || segment.role === "outro")) {
+    throw new RepositoryError("Regenerate episode voice before rebuilding a legacy Intro/Outro timeline.", "INTRO_OUTRO_VOICE_STALE");
+  }
   assertDirectorPlanValid(quiz, director_plan);
   const audioDurations: Record<string, number> = {};
   for (const segment of voice_plan.segments) {
@@ -32,6 +36,7 @@ export async function compileTimeline(
     audioDurations,
     introDuration: introOutro.introDuration,
     outroDuration: introOutro.outroDuration,
+    topic: episode?.topic?.title,
   });
   const artifact_path = await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
   const invalidatedStages = invalidateQuizArtifacts("timeline");

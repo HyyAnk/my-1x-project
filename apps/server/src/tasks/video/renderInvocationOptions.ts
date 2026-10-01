@@ -8,6 +8,9 @@ export type RenderInvocationPaths = {
   workers?: number;
   browserTimeoutSeconds?: number;
   timeoutMs?: number;
+  /** Override capture routing for compositions that are unsafe for experimental capture. */
+  forceScreenshot?: boolean;
+  useDrawElement?: boolean;
 };
 
 export type RenderInvocation = {
@@ -21,7 +24,11 @@ export function buildRenderInvocation(snapshot: RenderEngineSnapshot, paths: Ren
   const browserTimeout = String(paths.browserTimeoutSeconds ?? process.env.HYPERFRAMES_BROWSER_TIMEOUT_SECONDS ?? 300);
   const timeoutMs = paths.timeoutMs ?? (Number(process.env.HYPERFRAMES_RENDER_TIMEOUT_MS) || 120 * 60_000);
   const workers = paths.workers !== undefined ? paths.workers : calculateOptimalWorkers();
-  const env = getHyperframesExecutionEnv();
+  const env = {
+    ...getHyperframesExecutionEnv(),
+    ...(paths.forceScreenshot === undefined ? {} : { PRODUCER_FORCE_SCREENSHOT: String(paths.forceScreenshot) }),
+    ...(paths.useDrawElement === undefined ? {} : { PRODUCER_EXPERIMENTAL_FAST_CAPTURE: String(paths.useDrawElement) }),
+  };
 
   const extraArgs: string[] = [];
   if (snapshot.gpu) extraArgs.push("--gpu");

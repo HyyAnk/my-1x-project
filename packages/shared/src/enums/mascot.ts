@@ -17,6 +17,12 @@ export type MascotPosition = z.infer<typeof MascotPositionSchema>;
 export const MascotStateSchema = z.enum(["idle", "wave", "curious", "thinking", "point", "surprised", "celebrate", "encourage"]);
 export type MascotState = z.infer<typeof MascotStateSchema>;
 
+export const MascotStateMediaModeSchema = z.enum(["static", "animation"]);
+export type MascotStateMediaMode = z.infer<typeof MascotStateMediaModeSchema>;
+
+export const ChannelMascotMediaModeSchema = z.enum(["static", "animation", "inherit"]);
+export type ChannelMascotMediaMode = z.infer<typeof ChannelMascotMediaModeSchema>;
+
 // Re-export extracted constants and utilities for 100% backward compatibility
 export * from "../mascot/constants/mascotPoses.js";
 export * from "../mascot/constants/mascotActionMeta.js";

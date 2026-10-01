@@ -4,6 +4,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   BUILT_IN_PRESETS,
+  MASCOT_SCALE_MAX,
   MascotProfileSchema,
   QuizV2Schema,
   adaptMascotV1ToV2,
@@ -120,7 +121,7 @@ describe("Mascot V2 core engine", () => {
       { scale: 99, offset_y: -5000 },
     );
 
-    expect(bundle?.config.placements["16:9"].scale).toBe(3);
+    expect(bundle?.config.placements["16:9"].scale).toBe(MASCOT_SCALE_MAX);
     expect(bundle?.config.placements["16:9"].offset_y).toBe(-1500);
     expect(bundle?.assets.actions.wave?.legacy_animation).toMatchObject({
       frames_count: 8,
@@ -336,6 +337,45 @@ describe("Canonical V2 Render Bundle native resolution", () => {
     });
     expect(portraitSpec?.placement.scale).toBe(1.2);
     expect(portraitSpec?.placement.flip_x).toBe(true);
+  });
+
+  it("aligns 16:9 assets with different registered pivots to one canonical stage anchor", () => {
+    const makeSpec = (pivot: { x: number; y: number }) =>
+      resolveMascotRenderSpec(
+        {
+          ...nativeV2Bundle,
+          assets: {
+            ...nativeV2Bundle.assets,
+            actions: {
+              ...nativeV2Bundle.assets.actions,
+              thinking: {
+                ...nativeV2Bundle.assets.actions.thinking!,
+                registration: {
+                  ...nativeV2Bundle.assets.actions.thinking!.registration,
+                  source_width: 1280,
+                  source_height: 720,
+                  content_bounds: { x: 0, y: 0, width: 1280, height: 720 },
+                  pivot,
+                },
+              },
+            },
+          },
+        },
+        {
+          aspect_ratio: "16:9",
+          phase: "thinking",
+          timeline_time_seconds: 0,
+          playing: false,
+        },
+      );
+
+    const first = resolveMascotRenderGeometry(makeSpec({ x: 420, y: 719 })!);
+    const second = resolveMascotRenderGeometry(makeSpec({ x: 760, y: 719 })!);
+
+    expect(first.pivot_x).toBeCloseTo(second.pivot_x);
+    expect(first.pivot_y).toBeCloseTo(second.pivot_y);
+    expect(first.asset_pivot_x).not.toBeCloseTo(second.asset_pivot_x);
+    expect(first.pivot_compensation_x).not.toBeCloseTo(second.pivot_compensation_x);
   });
 });
 
@@ -596,8 +636,8 @@ describe("Mascot portrait canvas and storage migration", () => {
   });
 });
 
-describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
-  it("adapts thinking and celebrate actions to style.anchor_image_url when style has 0 slot variants", () => {
+describe("Mascot Style Anchor Omission (Step 5)", () => {
+  it("omits thinking and celebrate actions when static mode has 0 slot variants", () => {
     const mascotWithAnchor: MascotProfile = {
       id: "anchor-mascot",
       name: "Anchor Mascot",
@@ -633,15 +673,8 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
     const adapted = adaptMascotForQuestion(mascotWithAnchor, "cyberpunk-anchor", 0);
     expect(adapted).toBeDefined();
     const fallbackActions = adapted?.render_bundle?.assets.actions;
-    expect(fallbackActions?.thinking?.image_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(fallbackActions?.thinking?.motion?.preset).toBe("sway");
-    expect(fallbackActions?.thinking?.motion?.speed).toBe(1.0);
-    expect(fallbackActions?.thinking?.motion?.intensity).toBe("normal");
-
-    expect(fallbackActions?.celebrate?.image_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(fallbackActions?.celebrate?.motion?.preset).toBe("jump");
-    expect(fallbackActions?.celebrate?.motion?.speed).toBe(1.0);
-    expect(fallbackActions?.celebrate?.motion?.intensity).toBe("normal");
+    expect(fallbackActions?.thinking).toBeUndefined();
+    expect(fallbackActions?.celebrate).toBeUndefined();
 
     // Also verify render_bundle adaptation when render_bundle is present
     const bundleMascot: MascotProfile = {
@@ -650,10 +683,8 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
     };
     const adaptedBundle = adaptMascotForQuestion(bundleMascot, "cyberpunk-anchor", 0);
     const bundleActions = adaptedBundle?.render_bundle?.assets.actions;
-    expect(bundleActions?.thinking?.image_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(bundleActions?.thinking?.motion?.preset).toBe("sway");
-    expect(bundleActions?.celebrate?.image_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(bundleActions?.celebrate?.motion?.preset).toBe("jump");
+    expect(bundleActions?.thinking).toBeUndefined();
+    expect(bundleActions?.celebrate).toBeUndefined();
   });
 
   it("prioritizes slot variants over anchor_image_url when both are present", () => {
@@ -751,7 +782,7 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
     expect(urls).toContain("/assets/style-2-thinking.png");
   });
 
-  it("renders style anchor fallback in candy arcade composition when mascot_style_id has 0 slot variants", () => {
+  it("omits the question mascot when static style has 0 usable variants", () => {
     const quiz = QuizV2Schema.parse({
       schema_version: 2,
       episode_id: "anchor-composition-quiz",
@@ -821,14 +852,13 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
       mascotConfig: { enabled: true, show_in_question: true, show_in_intro: true, show_in_outro: true },
     });
 
-    expect(bundle.html).toContain("cyberpunk-anchor.png");
-    expect(bundle.html).toContain('rel="preload"');
-
     const introScene = bundle.files["compositions/candy-intro.html"];
     expect(introScene).toContain("/assets/cyberpunk-anchor.png");
 
     const questionClipEntry = Object.entries(bundle.files).find(([k]) => k.includes("quiz-q1-"));
     expect(questionClipEntry).toBeDefined();
-    expect(questionClipEntry![1]).toContain("/assets/cyberpunk-anchor.png");
+    expect(questionClipEntry![1]).not.toContain("/assets/cyberpunk-anchor.png");
+    expect(questionClipEntry![1]).not.toContain("mascot-v2-container");
+    expect(questionClipEntry![1]).not.toContain("has-mascot");
   });
 });

@@ -16,6 +16,7 @@ export type TurnRunnerContext = {
   threadConversations: Map<string, string>;
   onDelta: (delta: string) => void;
   onCompleted: (status: "completed" | "interrupted" | "failed", error?: string) => void;
+  refreshSession?: () => Promise<ActiveSessionInfo>;
 };
 
 export { runAgentApiTurn, runGoogleApiTurn, runCliTurn };

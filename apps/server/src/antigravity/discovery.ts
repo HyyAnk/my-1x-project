@@ -154,7 +154,9 @@ export async function discoverActiveSession(logger: StudioLogger, forceRefresh =
   if (process.platform === "win32" && (forceRefresh || !address || !csrfToken)) {
     try {
       const psScript = `
-        $proc = Get-CimInstance Win32_Process -Filter "Name = 'language_server.exe'" | Select-Object -First 1 ProcessId, CommandLine
+        $procs = Get-CimInstance Win32_Process -Filter "Name = 'language_server.exe'"
+        $proc = $procs | Where-Object { $_.CommandLine -match '--csrf_token' } | Select-Object -First 1 ProcessId, CommandLine
+        if (-not $proc) { $proc = $procs | Select-Object -First 1 ProcessId, CommandLine }
         if (-not $proc) { exit 1 }
         $csrf = if ($proc.CommandLine -match '--csrf_token\\s+([a-zA-Z0-9\\-]+)') { $matches[1] } else { '' }
         $conns = Get-NetTCPConnection -OwningProcess $proc.ProcessId -State Listen -ErrorAction SilentlyContinue

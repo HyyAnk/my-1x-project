@@ -227,13 +227,21 @@ describe("Mascot Variant Media Availability & Fallback Contracts (Phase 2)", () 
         },
       ];
 
-      const result = resolveStateVariantWithFallback(variants, "/anchor.png");
+      const result = resolveStateVariantWithFallback(variants, "/anchor.png", undefined, "animation");
       assert.ok(result !== null);
       assert.equal(result.visible, true);
       assert.equal(result.isAnchorFallback, false);
       assert.equal(result.mediaType, "video");
       assert.equal(result.mediaUrl, "/artifacts/video_transparent.webm");
       assert.equal(result.variant?.id, "slot_video");
+
+      const staticResult = resolveStateVariantWithFallback(variants, "/anchor.png", undefined, "static");
+      assert.ok(staticResult !== null);
+      assert.equal(staticResult.visible, true);
+      assert.equal(staticResult.isAnchorFallback, false);
+      assert.equal(staticResult.mediaType, "image");
+      assert.equal(staticResult.mediaUrl, "/fallback_image.png");
+      assert.equal(staticResult.variant?.id, "slot_video");
     });
 
     it("falls back to style anchor image when 0 available variants exist", () => {

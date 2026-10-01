@@ -151,6 +151,12 @@ export type MascotRenderGeometry = {
   box_height: number;
   pivot_x: number;
   pivot_y: number;
+  /** The asset's registered pivot before canonical stage alignment. */
+  asset_pivot_x: number;
+  asset_pivot_y: number;
+  /** Local translation that maps the registered pivot to the canonical stage pivot. */
+  pivot_compensation_x: number;
+  pivot_compensation_y: number;
   visible_content: MascotBounds;
   registration_offset_x: number;
   registration_offset_y: number;

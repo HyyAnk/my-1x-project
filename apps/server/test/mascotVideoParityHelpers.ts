@@ -38,6 +38,7 @@ export const parityChannelConfig: ChannelMascotConfig = {
   show_in_intro: true,
   show_in_outro: true,
   show_in_question: true,
+  mascot_media_mode: "animation",
 };
 
 export function createMultiQuestionQuiz(count = 4): QuizV2 {

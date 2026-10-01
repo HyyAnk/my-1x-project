@@ -41,6 +41,7 @@ export const MascotFrameRectV1Schema = MascotFrameRectSchema.extend({
 
 export const MascotAnimationAssetV1Schema = z
   .object({
+    video_registration: MascotAssetRegistrationSchema.optional(),
     version: z.literal(1),
     state: AnimationStateSchema,
     atlas_url: z.string().trim().min(1, "Atlas URL cannot be empty"),
@@ -98,6 +99,7 @@ export const MascotAnimationCurationMetadataSchema = z.object({
 
 export const MascotAnimationManifestSchema = z
   .object({
+    video_registration: MascotAssetRegistrationSchema.optional(),
     version: z.literal(1),
     state: AnimationStateSchema,
     recipe_id: z.string().trim().min(1),
@@ -141,6 +143,7 @@ export const MascotAnimationManifestSchema = z
   });
 
 export const MascotVideoAnimationAssetSchema = z.object({
+  video_registration: MascotAssetRegistrationSchema.optional(),
   version: z.literal(1),
   state: AnimationStateSchema,
   atlas_url: z.string().trim().optional(),

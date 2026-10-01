@@ -10,6 +10,7 @@ import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.
 import { pruneRenderRootIntermediateFiles } from "./storage/artifactRetentionPruner.js";
 import { packageEpisodeExport } from "./export/index.js";
 import { synthesizeScenesFromQuiz } from "../quiz/domain/quizArtifactSynthesizer.js";
+import { cleanOrphanedHeadlessBrowsers } from "../infrastructure/executables/browserProcessCleaner.js";
 
 function ensureVideoTaskActive(runtime: TaskManagerRuntime, taskId: string, signal: AbortSignal): void {
   if (signal.aborted || runtime.get(taskId).status === "CANCELLED") throw new Error("Video render cancelled");
@@ -223,5 +224,8 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       // Ignore release error
     }
     if (this.activeVideoControllers.get(task.task_id) === controller) this.activeVideoControllers.delete(task.task_id);
+    if (controller.signal.aborted || this.activeVideoControllers.size === 0) {
+      await cleanOrphanedHeadlessBrowsers({ logger: this.logger }).catch(() => {});
+    }
   }
 }

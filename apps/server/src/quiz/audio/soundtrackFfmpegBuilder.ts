@@ -7,6 +7,7 @@ export const DEFAULT_DUCKING_ATTACK_MS = 100;
 export const DEFAULT_DUCKING_RELEASE_MS = 300;
 
 export interface MasterSoundtrackPlan {
+  activeWindow?: { start: number; end: number };
   durationSeconds: number;
   narrationPath: string;
   bgmItems: BgmScheduleItem[];
@@ -108,6 +109,7 @@ function buildMasterMixFilter(
   targetLufs: number,
   truePeak: number,
   lra: number,
+  activeWindow?: { start: number; end: number },
 ): string {
   const mixLabels = mixInputs.join("");
   const masterFilters: string[] = [
@@ -119,6 +121,16 @@ function buildMasterMixFilter(
     masterFilters.push(`loudnorm=I=${targetLufs}:TP=${truePeak}:LRA=${lra}`);
   }
   masterFilters.push("aformat=sample_rates=48000:channel_layouts=stereo");
+  if (activeWindow) {
+    masterFilters.push(
+      `atrim=start=${activeWindow.start}:end=${activeWindow.end}`,
+      "asetpts=N/SR/TB",
+      `adelay=${Math.round(activeWindow.start * 1000)}:all=1`,
+      "asetpts=N/SR/TB",
+      `apad=whole_dur=${durationSeconds}`,
+      `atrim=duration=${durationSeconds}`,
+    );
+  }
   return `${mixLabels}${masterFilters.join(",")}[out_master]`;
 }
 
@@ -181,6 +193,7 @@ export function buildFilterGraphScript(plan: MasterSoundtrackPlan, inputIndices:
       plan.targetLufs ?? -14,
       plan.truePeakDb ?? -1.0,
       plan.loudnessRange ?? 7,
+      plan.activeWindow,
     ),
   );
 

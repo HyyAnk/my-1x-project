@@ -13,8 +13,12 @@ import { isSeedEligible } from "./seedCatalog.js";
 import { hasBlockingIssues, validateSeedSelection } from "./validation.js";
 import { compatibleSeeds } from "./seedProductionPolicy.js";
 
-function dimensionsForClip(clipKind: IntroOutroClipKind): readonly CreativeSeedDimension[] {
-  return clipKind === "intro" ? INTRO_SEED_DIMENSIONS : OUTRO_SEED_DIMENSIONS;
+function dimensionsForClip(clipKind: IntroOutroClipKind, catalog: readonly CreativeSeed[]): readonly CreativeSeedDimension[] {
+  if (clipKind === "intro") return INTRO_SEED_DIMENSIONS;
+  const hasTransition = catalog.some((s) => s.dimension === "outro_kinematic_transition" && s.status === "active");
+  return hasTransition
+    ? (["outro_recognition", "outro_kinematic_transition", "outro_invitation", "outro_farewell"] as const)
+    : OUTRO_SEED_DIMENSIONS;
 }
 
 function latestCatalog(catalog: readonly CreativeSeed[]): CreativeSeed[] {
@@ -40,7 +44,7 @@ export function resolveSeedSelection(params: {
   lockedDimensions?: readonly CreativeSeedDimension[];
   durationSeconds?: number;
 }): { selection: IntroOutroSeedSelection; seeds: CreativeSeed[] } {
-  const dimensions = dimensionsForClip(params.clipKind);
+  const dimensions = dimensionsForClip(params.clipKind, params.catalog);
   const active = latestCatalog(params.catalog).filter((seed) => seed.clip_kind === params.clipKind && seed.status === "active");
   const requested = new Map(active.filter((seed) => params.selectedSeedIds?.includes(seed.id)).map((seed) => [seed.dimension, seed]));
   if (params.lockedDimensions?.some((dimension) => !requested.has(dimension)))

@@ -92,4 +92,35 @@ describe("useStageStudioChannels", () => {
     });
     expect(result.current.selectedMascotId).toBe("mascot-2");
   });
+
+  it("syncs mascot_media_mode from channel mascot_config", () => {
+    const channelWithMediaMode: Channel = {
+      ...dummyChannel,
+      mascot_config: {
+        ...dummyChannel.mascot_config!,
+        mascot_media_mode: "animation",
+      },
+    };
+    const setMascotMediaModeMock = vi.fn();
+
+    renderHook(() =>
+      useStageStudioChannels({
+        isOpen: true,
+        singleChannelId: "ch-1",
+        channels: [channelWithMediaMode],
+        allMascots: [dummyMascot],
+        aspectRatio: "16:9",
+        presetReady: true,
+        defaultPlacements: { "16:9": RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
+        initPlacements: vi.fn(),
+        setShowInIntro: vi.fn(),
+        setShowInOutro: vi.fn(),
+        setShowInQuestion: vi.fn(),
+        setMascotMediaMode: setMascotMediaModeMock,
+        setQuestionLayoutId: vi.fn(),
+      }),
+    );
+
+    expect(setMascotMediaModeMock).toHaveBeenCalledWith("animation");
+  });
 });

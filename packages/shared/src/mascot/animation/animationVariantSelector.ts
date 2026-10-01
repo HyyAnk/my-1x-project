@@ -1,24 +1,18 @@
 /**
- * Deterministic Question Mascot Animation Selector (Stage 15)
+ * Mascot variant selectors.
  *
- * Implements pure deterministic variant selection:
- *   seed = hash(videoId + ":" + questionId + ":" + state + ":" + styleId)
- *   candidateIndex = Math.abs(seed) % readyVariants.length
- *   candidate = readyVariants[candidateIndex]
- *
- * Repeat avoidance:
- *   If previousSlotIndex !== undefined and candidate.slot_index === previousSlotIndex and readyVariants.length >= 2:
- *     nextIndex = (candidateIndex + 1) % readyVariants.length
- *     candidate = readyVariants[nextIndex]
- *
- * Pure determinism: ZERO Date.now() or Math.random(). Same inputs guarantee same outputs.
+ * Animation-slot selection remains deterministic for legacy animation workflows.
+ * Question mascot selection is intentionally random per selection so each quiz
+ * question can use any available state variant. Render snapshots preserve the
+ * selected result when a render is retried or resumed.
  */
 
+import type { MascotStateMediaMode } from "../../enums/mascot.js";
 import type { MascotStyle } from "../../schemas/mascot.js";
 import type { AnimationState } from "./animationConstants.js";
 import { isAnimationSlotPublishEligible } from "./animationSchema.js";
 import type { MascotAnimatedStateVariant } from "./animationTypes.js";
-import { filterAvailableVariants, type MascotVariantMediaCandidate } from "./variantAvailability.js";
+import { filterPreferredVariants, type MascotVariantMediaCandidate } from "./variantAvailability.js";
 
 /**
  * 32-bit FNV-1a deterministic hash returning an unsigned 32-bit integer.
@@ -130,7 +124,11 @@ export interface QuestionMascotVariantSelectionInput<T extends MascotVariantMedi
   state: string;
   styleId: string;
   variants?: T[] | null;
+  /** @deprecated Repeated variants are allowed and this value is ignored. */
   previousSlotIndex?: number;
+  mediaMode?: MascotStateMediaMode;
+  /** Optional injectable random seed for deterministic tests and callers. */
+  randomSeed?: number;
 }
 
 export interface QuestionMascotVariantSelectionResult<T extends MascotVariantMediaCandidate = MascotVariantMediaCandidate> {
@@ -142,24 +140,26 @@ export interface QuestionMascotVariantSelectionResult<T extends MascotVariantMed
 }
 
 /**
- * Deterministically selects a mascot variant for a question state (thinking or celebrate).
- * Filters variants with filterAvailableVariants so only renderable media (transparent video or 3D image) are considered.
+ * Randomly selects a mascot variant for a question state (thinking or celebrate).
+ * Filters variants so only renderable media for the requested mode are considered.
  * Returns null if available variants count is 0.
  * Returns the only variant if count is 1 without error.
- * If count > 1, picks deterministically using FNV-1a seed and avoids consecutive repeats when previousSlotIndex matches.
+ * Repeated selections are allowed, including across adjacent questions.
  */
 export function selectQuestionMascotVariantResult<T extends MascotVariantMediaCandidate = MascotVariantMediaCandidate>(
   input: QuestionMascotVariantSelectionInput<T>,
 ): QuestionMascotVariantSelectionResult<T> | null {
-  const availableVariants = filterAvailableVariants(input.variants);
+  const availableVariants = filterPreferredVariants(input.variants, input.mediaMode ?? "static");
 
   if (availableVariants.length === 0) {
     return null;
   }
 
-  const effectiveVideoId = input.videoId || input.episodeId || "preview_video";
-  const effectiveQuestionId = input.questionId || "q_0";
-  const seed = computeSelectionSeed(effectiveVideoId, effectiveQuestionId, input.state, input.styleId);
+  const providedSeed = input.randomSeed;
+  const seed =
+    typeof providedSeed === "number" && Number.isSafeInteger(providedSeed) && providedSeed >= 0
+      ? providedSeed
+      : Math.floor(Math.random() * 0x1_0000_0000);
 
   if (availableVariants.length === 1) {
     const candidate = availableVariants[0];
@@ -178,14 +178,8 @@ export function selectQuestionMascotVariantResult<T extends MascotVariantMediaCa
     };
   }
 
-  const initialIndex = Math.abs(seed) % availableVariants.length;
-  let selectedIndex = initialIndex;
-  let candidate = availableVariants[initialIndex];
-
-  if (input.previousSlotIndex !== undefined && candidate.slot_index === input.previousSlotIndex && availableVariants.length >= 2) {
-    selectedIndex = (initialIndex + 1) % availableVariants.length;
-    candidate = availableVariants[selectedIndex];
-  }
+  const selectedIndex = seed % availableVariants.length;
+  const candidate = availableVariants[selectedIndex];
 
   const revision =
     (candidate as { generation_revision?: number }).generation_revision ??

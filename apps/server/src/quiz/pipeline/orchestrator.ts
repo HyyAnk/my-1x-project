@@ -134,6 +134,7 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
             base_url: input.config.image_generation.base_url,
           }
         : undefined,
+      imageFallbackConfig: input.config.image_fallback,
     });
   } catch {
     // Non-blocking

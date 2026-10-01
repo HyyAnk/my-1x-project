@@ -115,6 +115,8 @@ export type QuizAssetAspectRatio = z.infer<typeof QuizAssetAspectRatioSchema>;
 
 export const VoiceSegmentRoleSchema = z.enum([
   "intro",
+  "intro_topic",
+  "intro_cta",
   "question",
   "choice",
   "thinking_prompt",

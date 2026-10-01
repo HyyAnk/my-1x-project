@@ -1,4 +1,4 @@
-import type { MascotProfile, MascotRenderAspectRatio, QuizBackgroundStyle, QuizTimeline } from "@studio/shared";
+import type { MascotActionType, MascotProfile, MascotRenderAspectRatio, QuizBackgroundStyle, QuizTimeline } from "@studio/shared";
 import type { ResolveBgmOptions } from "../../audio/bgmRegistry.js";
 import { buildBgmClips, buildSfxClips, source } from "./candyArcadeAudio.js";
 import { candyArcadeCss } from "./candyArcadeStyles.js";
@@ -93,7 +93,26 @@ export type AssembledCandyArcadeDocument = {
 
 export function assembleCandyArcadeDocument(input: AssembleCandyArcadeDocumentInput): AssembledCandyArcadeDocument {
   const scenes = input.clips.filter(Boolean).map((clip) => toSubComposition(clip, input.aspectRatio));
-  const mascotPreloads = getMascotPreloadTags(input.mascot, source);
+  // Candy Arcade renders these states in its timeline; preload only their
+  // image assets instead of every action in the mascot bundle. Videos are extracted
+  // and injected by HyperFrames so browser video preloading is redundant and causes stalls.
+  const requiredMascotActions = new Set<MascotActionType>(["thinking", "celebrate"]);
+  const rawMascotPreloads = getMascotPreloadTags(input.mascot, source, requiredMascotActions, { includeVideos: false });
+  // Only preload assets that are actually referenced in the composition clips,
+  // preventing browsers from issuing warnings or downloading unused images during render.
+  const allClipsText = input.clips.join("\n");
+  const mascotPreloads = rawMascotPreloads
+    ? rawMascotPreloads
+        .split("\n")
+        .filter((tag) => {
+          const match = tag.match(/href="([^"]+)"/);
+          if (!match) return false;
+          const href = match[1];
+          const stripped = href.replace(/^\.\//, "");
+          return allClipsText.includes(href) || allClipsText.includes(stripped);
+        })
+        .join("\n")
+    : "";
   const audioTags = buildCandyArcadeAudioTags({
     audioPath: input.audioPath,
     duration: input.duration,

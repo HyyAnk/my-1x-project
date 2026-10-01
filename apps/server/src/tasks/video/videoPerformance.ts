@@ -24,8 +24,11 @@ export function calculateOptimalWorkers(configuredWorkers?: number): number {
   // Allocate up to 50% of CPU threads to Chromium rendering workers to leave ample headroom for FFmpeg and OS
   const cpuTargetWorkers = Math.max(2, Math.floor(totalCpus * 0.5));
 
-  // Scale gracefully up to 16 workers based on available CPU threads and free memory
-  return Math.min(16, Math.max(2, Math.min(cpuTargetWorkers, memorySafeWorkers)));
+  // On Windows, each worker runs a separate GPU-accelerated Chromium process.
+  // Running more than 4 workers causes severe Direct3D/GPU lock contention, IPC bottlenecks,
+  // and browser launch timeouts. Cap default Windows workers at 4, while other platforms scale to 16.
+  const platformMax = process.platform === "win32" ? 4 : 16;
+  return Math.min(platformMax, Math.max(2, Math.min(cpuTargetWorkers, memorySafeWorkers)));
 }
 
 /**
@@ -43,6 +46,7 @@ export function getHyperframesExecutionEnv(): Record<string, string> {
     PRODUCER_EXPERIMENTAL_FAST_CAPTURE: process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE || "true",
     PRODUCER_ENABLE_STREAMING_ENCODE: process.env.PRODUCER_ENABLE_STREAMING_ENCODE || "true",
     HF_DE_PARALLEL_STREAM: process.env.HF_DE_PARALLEL_STREAM || "true",
+    HF_DE_STALL_MS: process.env.HF_DE_STALL_MS || "600000",
     HF_FAST_CAPTURE_CSSFX: process.env.HF_FAST_CAPTURE_CSSFX || "true",
     ...(browserPath ? { HYPERFRAMES_BROWSER_PATH: browserPath } : {}),
   };

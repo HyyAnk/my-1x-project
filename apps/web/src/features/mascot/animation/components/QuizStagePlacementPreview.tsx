@@ -1,5 +1,6 @@
 import type { MascotPublishedAnimationAsset, MascotPlacementV2 } from "@studio/shared";
 import { MockStageOverlay, StageGuidesOverlay, StagePreviewControls, StageMascotOverlay } from "./stagePreview";
+import { useStagePreviewViewport } from "../hooks/useStagePreviewViewport";
 
 export interface QuizStagePlacementPreviewProps {
   animation?: MascotPublishedAnimationAsset | null;
@@ -26,8 +27,10 @@ export function QuizStagePlacementPreview({
   onToggleGuides,
   showControls = false,
 }: QuizStagePlacementPreviewProps) {
+  const viewport = useStagePreviewViewport(aspectRatio);
   return (
     <div
+      ref={viewport.viewportRef}
       className="quiz-stage-preview-viewport"
       data-testid="quiz-stage-preview"
       style={{
@@ -41,8 +44,26 @@ export function QuizStagePlacementPreview({
         boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
       }}
     >
-      <MockStageOverlay aspectRatio={aspectRatio} />
-      <StageGuidesOverlay showGuides={showGuides} aspectRatio={aspectRatio} />
+      <div
+        data-testid="mascot-logical-stage"
+        style={{
+          position: "absolute",
+          width: viewport.width,
+          height: viewport.height,
+          transform: `scale(${viewport.scale * canvasZoom})`,
+          transformOrigin: "0 0",
+        }}
+      >
+        <MockStageOverlay aspectRatio={aspectRatio} />
+        <StageGuidesOverlay showGuides={showGuides} aspectRatio={aspectRatio} />
+        <StageMascotOverlay
+          animation={animation}
+          fallbackImageUrl={fallbackImageUrl}
+          timeSeconds={timeSeconds}
+          placement={placement}
+          aspectRatio={aspectRatio}
+        />
+      </div>
 
       {showControls && (
         <StagePreviewControls
@@ -53,32 +74,6 @@ export function QuizStagePlacementPreview({
           style={{ position: "absolute", top: "12px", right: "12px" }}
         />
       )}
-
-      <StageMascotOverlay
-        animation={animation}
-        fallbackImageUrl={fallbackImageUrl}
-        timeSeconds={timeSeconds}
-        placement={placement}
-        canvasZoom={canvasZoom}
-      />
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: "8px",
-          right: "12px",
-          background: "rgba(15, 23, 42, 0.85)",
-          padding: "3px 8px",
-          borderRadius: "6px",
-          fontSize: "10.5px",
-          color: "#94a3b8",
-          fontFamily: "monospace",
-          border: "1px solid rgba(255,255,255,0.1)",
-          zIndex: 30,
-        }}
-      >
-        Placement: {placement.anchor} | Scale: {placement.scale}x | Offset: ({placement.offset_x}px, {placement.offset_y}px)
-      </div>
     </div>
   );
 }

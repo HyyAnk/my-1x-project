@@ -1,5 +1,11 @@
 import os from "node:os";
-import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, type QuizAssetPlan } from "@studio/shared";
+import {
+  IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+  type QuizAssetPlan,
+} from "@studio/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { StudioLogger } from "../src/logger.js";
 import type { RepositoryService } from "../src/repository.js";
@@ -88,10 +94,10 @@ describe("quiz ImgStudio retry and cancellation", () => {
     const firstInvocation = generatedCalls();
 
     expect(firstInvocation.map(({ model }) => model)).toEqual([
-      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
-      IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
-      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
-      IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+      IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+      IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+      IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+      IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
     ]);
     expect(firstInvocation[0]?.key).toBe(firstInvocation[2]?.key);
     expect(firstInvocation[1]?.key).toBe(firstInvocation[3]?.key);

@@ -40,7 +40,7 @@ export function isContentFilterError(error: unknown): boolean {
     return true;
   }
   const message = formatUnknownError(error);
-  return /(?:rejected by (?:the )?content filter|content filter|safety filter|safety system|policy violation|prohibited content|inappropriate content|moderation filter|safety guidelines|trigger(?:ed)? (?:a |the )?safety)/i.test(
+  return /(?:rejected by (?:the )?content filter|content filter|safety filter|safety system|policy violation|prohibited content|prohibited_content|finish_reason|inappropriate content|moderation filter|safety guidelines|trigger(?:ed)? (?:a |the )?safety)/i.test(
     message,
   );
 }

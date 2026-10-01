@@ -16,6 +16,7 @@ export * from "./soundtrackBgmPlanner.js";
 export * from "./soundtrackFfmpegBuilder.js";
 
 export interface MixMasterSoundtrackOptions {
+  activeWindow?: { start: number; end: number };
   narrationPath: string;
   timeline: QuizTimeline;
   durationSeconds: number;
@@ -64,6 +65,7 @@ export async function mixMasterSoundtrack(options: MixMasterSoundtrackOptions): 
   const bgmItems = resolveBgmScheduleItems(duration, bgmCandidateDirs, bgmOptions, options.bgmRegistry, outroStartSeconds);
 
   const plan: MasterSoundtrackPlan = {
+    activeWindow: options.activeWindow,
     durationSeconds: duration,
     narrationPath: options.narrationPath,
     bgmItems,

@@ -221,7 +221,19 @@ export async function saveImageFallbackSettings(rootDirectory: string, input: Im
       ? (currentLocal.image_fallback as Record<string, unknown>)
       : {};
   const nextFallback = { ...currentFallback } as Record<string, unknown>;
-  for (const key of ["enabled", "provider", "base_url", "model", "api_key", "resolution", "quality"] as const) {
+  for (const key of [
+    "enabled",
+    "provider",
+    "base_url",
+    "model",
+    "level2_model",
+    "level3_model",
+    "gpti2_api_key",
+    "gpti2_model",
+    "api_key",
+    "resolution",
+    "quality",
+  ] as const) {
     const value = parsed[key];
     if (value !== undefined) nextFallback[key] = value;
   }

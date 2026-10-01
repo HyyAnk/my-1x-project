@@ -5,6 +5,7 @@ import type { RepositoryService } from "../../repository.js";
 import { type AnimationAssetContext } from "./mascotAnimationResolver.js";
 import { type AssetLocalizer, createMascotAssetLocalizer, isSafeLocalAssetUrl } from "./mascotAssetDiskCopier.js";
 import { localizeActions } from "./mascotActionFallback.js";
+import { loadMascotRenderProfile } from "../../repository/mascot/mascotRenderProfile.js";
 
 export { createMascotAssetLocalizer, type AssetLocalizer } from "./mascotAssetDiskCopier.js";
 export { localizeActions } from "./mascotActionFallback.js";
@@ -138,7 +139,7 @@ export async function prepareLocalizedMascot(
   renderRoot: string,
 ): Promise<MascotProfile | null> {
   if (!channel.mascot_id) return null;
-  const mascotProfile = await repository.getMascot(channel.mascot_id).catch(() => null);
+  const mascotProfile = await loadMascotRenderProfile(repository, channel.mascot_id);
   if (!mascotProfile) return null;
 
   const renderMascotDir = path.join(renderRoot, "mascot-assets");

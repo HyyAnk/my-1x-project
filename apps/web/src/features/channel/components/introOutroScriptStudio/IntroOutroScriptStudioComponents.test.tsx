@@ -535,6 +535,52 @@ describe("Intro/Outro Script Studio components", () => {
     );
   });
 
+  it("exposes direct copy actions for Part 1 and Part 2 when viewing a two-part prompt", async () => {
+    const twoPartPrompt = `Create one continuous outro
+
+================================================================================
+PART 1: THE RUN-UP & KINEMATIC TRANSITION (0.0s - 8s)
+================================================================================
+Sprint across the room and jump through the portal ring.
+
+================================================================================
+PART 2: MOMENTUM RECOVERY, CTA & FAREWELL (8s - 16s)
+================================================================================
+Roll onto the stage and deliver the farewell line.`;
+
+    const onLoadPrompt = vi.fn().mockResolvedValue(twoPartPrompt);
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    mockClipboard(writeText);
+
+    render(<ScriptPromptPanel revision={{ ...revision, clip_kind: "outro" }} onLoadPrompt={onLoadPrompt} />);
+
+    await screen.findByRole("textbox", { name: "Outro final video prompt" });
+    const part1Box = screen.getByRole("textbox", { name: "Outro final video prompt (Part 1)" }) as HTMLTextAreaElement;
+    const part2Box = screen.getByRole("textbox", { name: "Outro final video prompt (Part 2)" }) as HTMLTextAreaElement;
+    expect(part1Box.value).toContain("PART 1: THE RUN-UP & KINEMATIC TRANSITION");
+    expect(part2Box.value).toContain("PART 2: MOMENTUM RECOVERY, CTA & FAREWELL");
+    expect(part2Box.value).not.toContain("PART 1: THE RUN-UP");
+
+    const copyPart1Btn = screen.getByRole("button", { name: "Copy Part 1" });
+    const copyPart2Btn = screen.getByRole("button", { name: "Copy Part 2" });
+    expect(copyPart1Btn).toBeDefined();
+    expect(copyPart2Btn).toBeDefined();
+
+    fireEvent.click(copyPart1Btn);
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith(
+        `Create one continuous outro\n\n================================================================================\nPART 1: THE RUN-UP & KINEMATIC TRANSITION (0.0s - 8s)\n================================================================================\nSprint across the room and jump through the portal ring.`,
+      ),
+    );
+
+    fireEvent.click(copyPart2Btn);
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith(
+        `================================================================================\nPART 2: MOMENTUM RECOVERY, CTA & FAREWELL (8s - 16s)\n================================================================================\nRoll onto the stage and deliver the farewell line.`,
+      ),
+    );
+  });
+
   it("explains upload selection and exposes the upload step after selection", async () => {
     const onApprove = vi.fn().mockResolvedValue(undefined);
     const onContinueToUpload = vi.fn();
