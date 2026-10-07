@@ -55,6 +55,7 @@ export function getHyperframesExecutionEnv(): Record<string, string> {
     HF_CAPTURE_PARALLEL_STREAM: process.env.HF_CAPTURE_PARALLEL_STREAM || "true",
     HF_DE_STALL_MS: process.env.HF_DE_STALL_MS || "600000",
     HF_FAST_CAPTURE_CSSFX: process.env.HF_FAST_CAPTURE_CSSFX || "true",
+    HYPERFRAMES_RENDER_DETACHED: process.env.HYPERFRAMES_RENDER_DETACHED || "1",
     ...(browserPath ? { HYPERFRAMES_BROWSER_PATH: browserPath } : {}),
   };
 }

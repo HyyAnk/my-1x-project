@@ -29,8 +29,7 @@ export function applyEditorialDesign(plan: QuizThumbnailPlan, input: ResolveThum
   const isOdd = seed.design.template === "comparison" && seed.design.candidateCount === 4;
 
   const defaultHook = input.customHookText || (input.editorialFallback ? seed.hookText : plan.hookText);
-  const subjectsToUse =
-    input.editorialFallback && seed.subjectAnchors.length > 0 ? seed.subjectAnchors : plan.subjectAnchors;
+  const subjectsToUse = input.editorialFallback && seed.subjectAnchors.length > 0 ? seed.subjectAnchors : plan.subjectAnchors;
 
   let resolvedProp = plan.mascotPersona?.prop;
   let resolvedExpression = plan.mascotPersona?.expression;
@@ -42,6 +41,14 @@ export function applyEditorialDesign(plan: QuizThumbnailPlan, input: ResolveThum
     resolvedExpression = seed.mascotPose.expression;
     resolvedPose = seed.mascotPose.poseDescription;
   }
+
+  // Preserve AI planner's custom subjects and layout by clearing seed-specific spatial composition when not in fallback
+  const editorialDesign = input.editorialFallback
+    ? seed.design
+    : {
+        ...seed.design,
+        spatialComposition: undefined,
+      };
 
   return {
     ...plan,
@@ -55,6 +62,6 @@ export function applyEditorialDesign(plan: QuizThumbnailPlan, input: ResolveThum
       expression: resolvedExpression || "curious",
       poseDescription: resolvedPose || "looking toward the puzzle",
     },
-    editorial: seed.design,
+    editorial: editorialDesign,
   };
 }

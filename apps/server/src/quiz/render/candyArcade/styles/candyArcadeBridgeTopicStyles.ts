@@ -866,7 +866,8 @@ export function candyArcadeBridgeTopicStylesCss(): string {
     transform: translateX(50%);
   }
   .bridge-topic-scene.has-showcase {
-    padding-top: 48px;
+    padding-top: 36px;
+    padding-bottom: 210px;
   }
   .bridge-topic-card.has-showcase {
     padding: 10px 16px;
@@ -875,7 +876,9 @@ export function candyArcadeBridgeTopicStylesCss(): string {
     box-shadow: none;
   }
   .bridge-topic-scene.has-showcase .bridge-topic-title {
-    font-size: 64px;
+    font-family: "SVN-Hello Headline", "Fredoka", "Baloo 2", "Nunito", sans-serif;
+    font-size: clamp(52px, 14vw, 80px);
+    letter-spacing: -0.5px;
     -webkit-text-stroke: 3px #0F172A;
     text-shadow:
       0 3px 0 #0F172A,
@@ -884,17 +887,15 @@ export function candyArcadeBridgeTopicStylesCss(): string {
       0 16px 28px rgba(0, 0, 0, 0.6);
   }
   .bridge-showcase-row {
-    bottom: 28px;
-    gap: 14px;
+    bottom: 24px;
+    gap: 16px;
     padding: 0 12px;
   }
   .bridge-showcase-item {
-    width: 120px;
-    height: 120px;
-  }
-  .bridge-showcase-item.is-photo-card {
-    width: 115px;
-    height: 115px;
+    width: 150px;
+    height: 150px;
+    border-width: 4px;
+    border-radius: 16px;
   }
 }
 
@@ -907,7 +908,8 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding-top: 48px;
+  padding-top: 44px;
+  padding-bottom: 310px;
 }
 
 .bridge-topic-card.has-showcase {
@@ -918,9 +920,9 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   align-items: center;
   justify-content: center;
   text-align: center;
-  max-width: 1350px;
-  width: min(94vw, 1350px);
-  padding: 24px 32px;
+  max-width: 1400px;
+  width: min(96vw, 1400px);
+  padding: 20px 32px;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -941,14 +943,14 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 
 .bridge-topic-scene.has-showcase .bridge-topic-title {
   margin: 0;
-  max-width: 1300px;
-  width: 100%;
+  max-width: 1360px;
+  width: min(96vw, 1360px);
   color: #FFDE59;
-  font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif;
-  font-size: 100px;
+  font-family: "SVN-Hello Headline", "Fredoka", "Baloo 2", "Nunito", sans-serif;
+  font-size: clamp(72px, 9.5vw, 122px);
   font-weight: 900;
-  line-height: 1.08;
-  letter-spacing: -1.5px;
+  line-height: 1.05;
+  letter-spacing: -1px;
   text-transform: uppercase;
   -webkit-text-stroke: 4px #0F172A;
   text-shadow:
@@ -956,7 +958,7 @@ export function candyArcadeBridgeTopicStylesCss(): string {
     0 8px 0 #0F172A,
     0 12px 0 #0F172A,
     0 16px 0 #0F172A,
-    0 24px 38px rgba(0, 0, 0, 0.65);
+    0 26px 40px rgba(0, 0, 0, 0.65);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -975,68 +977,46 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 
 .bridge-showcase-row {
   position: absolute;
-  bottom: 52px;
+  bottom: 40px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 32px;
+  gap: 36px;
   z-index: 20;
   pointer-events: none;
 }
 
+/* All showcase items: unified framed photo card block */
 .bridge-showcase-item {
   position: relative;
-  width: 175px;
-  height: 175px;
+  width: 240px;
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
   will-change: transform, opacity;
   transform-origin: center bottom;
-  filter: drop-shadow(0 14px 26px rgba(15, 12, 41, 0.45));
-}
-
-/* Die-cut sticker presentation */
-.bridge-showcase-item.is-sticker img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: url(#bridge-sticker-filter) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
-}
-
-/* Fallback drop-shadow multi-layer stroke if SVG filter is unsupported */
-@supports not (filter: url(#test)) {
-  .bridge-showcase-item.is-sticker img {
-    filter: 
-      drop-shadow(-4px -4px 0 #FFFFFF)
-      drop-shadow(4px -4px 0 #FFFFFF)
-      drop-shadow(-4px 4px 0 #FFFFFF)
-      drop-shadow(4px 4px 0 #FFFFFF)
-      drop-shadow(0 12px 22px rgba(0, 0, 0, 0.4));
-  }
-}
-
-/* Framed photo card presentation */
-.bridge-showcase-item.is-photo-card {
-  width: 168px;
-  height: 168px;
   background: #FFFFFF;
-  border: 5px solid #FFFFFF;
-  border-radius: 18px;
-  box-shadow: 0 16px 32px rgba(15, 12, 41, 0.4), 0 4px 10px rgba(0, 0, 0, 0.2);
+  border: 6px solid #FFFFFF;
+  border-radius: 22px;
+  box-shadow:
+    0 8px 0 rgba(255, 255, 255, 0.4),
+    0 20px 0 rgba(0, 0, 0, 0.12),
+    0 28px 50px rgba(15, 12, 41, 0.55);
   overflow: hidden;
   box-sizing: border-box;
 }
 
-.bridge-showcase-item.is-photo-card img {
+.bridge-showcase-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 13px;
   display: block;
 }
+
+
 
 .bridge-item-placeholder {
   display: flex;

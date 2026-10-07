@@ -6,7 +6,8 @@ import type { EditorialDomainSeed } from "./seedTypes.js";
 export const WONDERS_DOMAIN_SEED: EditorialDomainSeed = {
   id: "geography_nature_wonders",
   domainName: "Earth's Wildest Wonders",
-  pattern: /\b(wonder|wonders|marvel|marvels|landmark|waterfall|geyser|glacier|canyon|volcano|earth|planet earth|mountain|summit|abyss|lake baikal)\b/i,
+  pattern:
+    /\b(wonder|wonders|marvel|marvels|landmark|waterfall|geyser|glacier|canyon|volcano|earth|planet earth|mountain|summit|abyss|lake baikal)\b/i,
   preferredLayout: "mega_grid",
   preferredTemplate: "big_object",
   background: "bright",
@@ -78,8 +79,7 @@ export const CLINIC_DOMAIN_SEED: EditorialDomainSeed = {
       mascotPose: {
         prop: "none",
         expression: "Reassuring, caring, and curious medical-helper expression",
-        poseDescription:
-          "Hands placed gently over heart or in an attentive helpful posture, curious tilt of the head, zero handheld tools",
+        poseDescription: "Hands placed gently over heart or in an attentive helpful posture, curious tilt of the head, zero handheld tools",
       },
     },
   ],
@@ -120,8 +120,7 @@ export const GAMING_DOMAIN_SEED: EditorialDomainSeed = {
       keywords: ["controller", "d-pad", "cheat", "code", "secret"],
       hook: "ONLY 1% KNOWS!",
       background: "bright",
-      backgroundAtmosphere:
-        "Clean dark glass studio reflection with crisp golden spotlight highlighting secret button inputs.",
+      backgroundAtmosphere: "Clean dark glass studio reflection with crisp golden spotlight highlighting secret button inputs.",
       spatialComposition:
         "CONTROLLER PUZZLE STAGING: Mascot on the left (~35% width) in playful secret wink; classic retro d-pad controller on reflective dark glass on the right (~65% width); headline block top-left.",
       visualPrompt:
@@ -141,7 +140,8 @@ export const GAMING_DOMAIN_SEED: EditorialDomainSeed = {
 export const BRAND_DOMAIN_SEED: EditorialDomainSeed = {
   id: "mystery_brand_silhouette",
   domainName: "Mystery Brands & Icons",
-  pattern: /\b(brand|brands|silhouette|sneaker|sneakers|logo|unmask|iconic label|trademark|label)\b/i,
+  pattern:
+    /\b(brand|brands|sneaker|sneakers|shoe brand|fashion brand|apparel|footwear|famous logo|commercial logo|trademark|iconic label)\b/i,
   preferredLayout: "mystery_silhouette",
   preferredTemplate: "big_object",
   background: "bright",
@@ -150,13 +150,13 @@ export const BRAND_DOMAIN_SEED: EditorialDomainSeed = {
   subjects: [
     {
       label: "Mystery Sneaker Silhouette",
-      keywords: ["sneaker", "brand", "silhouette", "unmask", "label", "logo"],
+      keywords: ["sneaker", "brand", "shoe", "footwear", "logo"],
       hook: "UNMASK THE BRAND!",
       background: "bright",
       backgroundAtmosphere:
         "Warm golden-amber geometric studio rim lighting creating razor-sharp silhouette contrast against glowing backlight; striking and clean.",
       spatialComposition:
-        "SILHOUETTE UNMASK STAGING: Mascot on the left (~35% width) in keen deduction pose; iconic basketball sneaker silhouette on the right (~65% width); headline block top-left.",
+        "SILHOUETTE UNMASK STAGING: Mascot on the left (~35% width) in keen deduction pose; dramatic mystery silhouette of the subject on the right (~65% width); headline block top-left.",
       visualPrompt:
         "high-contrast moody studio silhouette of an iconic high-top basketball sneaker against a bright warm amber geometric backlight, subtle textural hints of premium leather perforations and stitching barely visible along the rim",
       mascotPose: {

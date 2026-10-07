@@ -196,10 +196,10 @@ describe("Stage 5: CandyArcade Bridge Scene 1 (Topic Teaser)", () => {
         },
       });
 
-      // Contains SVG filter shader definition
-      expect(html).toContain('id="bridge-sticker-filter"');
-      expect(html).toContain("feMorphology");
-      expect(html).toContain("bridge-svg-filters");
+      // No sticker SVG filter — all items are unified photo card blocks
+      expect(html).not.toContain('id="bridge-sticker-filter"');
+      expect(html).not.toContain("feMorphology");
+      expect(html).not.toContain("bridge-svg-filters");
 
       // Scene layout classes
       expect(html).toContain('class="clip candy-scene bridge-topic-scene has-showcase"');
@@ -208,11 +208,15 @@ describe("Stage 5: CandyArcade Bridge Scene 1 (Topic Teaser)", () => {
       // Showcase row container
       expect(html).toContain('class="bridge-showcase-row" data-count="4"');
 
-      // Items 1 through 4 with presentation classes and rotation styles
-      expect(html).toContain('class="bridge-showcase-item item-1 is-sticker" style="transform: rotate(-2deg);" data-asset-id="predator-1"');
-      expect(html).toContain('class="bridge-showcase-item item-2 is-sticker" style="transform: rotate(3deg);" data-asset-id="predator-2"');
-      expect(html).toContain('class="bridge-showcase-item item-3 is-photo-card" style="transform: rotate(-1deg);" data-asset-id="predator-3"');
-      expect(html).toContain('class="bridge-showcase-item item-4 is-sticker" style="transform: rotate(2deg);" data-asset-id="predator-4"');
+      // All items use the unified class — no is-sticker / is-photo-card / rotation style
+      expect(html).toContain('class="bridge-showcase-item item-1" data-asset-id="predator-1"');
+      expect(html).toContain('class="bridge-showcase-item item-2" data-asset-id="predator-2"');
+      expect(html).toContain('class="bridge-showcase-item item-3" data-asset-id="predator-3"');
+      expect(html).toContain('class="bridge-showcase-item item-4" data-asset-id="predator-4"');
+      expect(html).not.toContain("is-sticker");
+      expect(html).not.toContain("is-photo-card");
+      expect(html).not.toContain("rotate(-2deg)");
+      expect(html).not.toContain("rotate(3deg)");
 
       // Image URLs resolved correctly
       expect(html).toContain('src="./assets/showcase/trex.png"');
@@ -220,7 +224,7 @@ describe("Stage 5: CandyArcade Bridge Scene 1 (Topic Teaser)", () => {
       expect(html).toContain('src="./assets/showcase/megalodon.png"');
       expect(html).toContain('src="./assets/showcase/spino.png"');
 
-      // Caption
+      // Caption still works
       expect(html).toContain('<span class="bridge-item-caption">Fossilized</span>');
     });
 

@@ -109,7 +109,10 @@ export async function runHyperframesProcess(options: RunHyperframesProcessOption
 
   const child = spawn(options.command, options.args, {
     cwd: options.cwd,
-    env: options.env,
+    env: {
+      HYPERFRAMES_RENDER_DETACHED: "1",
+      ...options.env,
+    },
     windowsHide: true,
     detached: process.platform !== "win32",
     stdio: options.ipc ? ["ignore", "pipe", "pipe", "ipc"] : ["ignore", "pipe", "pipe"],

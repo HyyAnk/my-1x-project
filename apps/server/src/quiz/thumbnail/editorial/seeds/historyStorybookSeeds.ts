@@ -6,7 +6,8 @@ import type { EditorialDomainSeed } from "./seedTypes.js";
 export const HISTORY_DOMAIN_SEED: EditorialDomainSeed = {
   id: "history_mythology",
   domainName: "History & Ancient Wonders",
-  pattern: /\b(history|historical|ancient egypt|ancient greece|ancient rome|ancient relic|ancient world|pharaoh|pyramid|pyramids|tomb|mythology|mythical|gods|goddess|viking|vikings|norse|thor|odin|loki|valkyrie|asgard|gladiator|relic|artifact)\b/i,
+  pattern:
+    /\b(history|historical|ancient egypt|ancient greece|ancient rome|ancient relic|ancient world|pharaoh|pyramid|pyramids|tomb|mythology|mythical|gods|goddess|viking|vikings|norse|thor|odin|loki|valkyrie|asgard|gladiator|relic|artifact)\b/i,
   preferredLayout: "mega_grid",
   preferredTemplate: "big_object",
   background: "bright",
@@ -45,7 +46,8 @@ export const HISTORY_DOMAIN_SEED: EditorialDomainSeed = {
       mascotPose: {
         prop: "none",
         expression: "Solemn respectful wonder, tilted head",
-        poseDescription: "Hands clasped reverently in front of chest, tilted head gazing in deep historical appreciation at the golden relic",
+        poseDescription:
+          "Hands clasped reverently in front of chest, tilted head gazing in deep historical appreciation at the golden relic",
       },
     },
     {
@@ -74,7 +76,8 @@ export const HISTORY_DOMAIN_SEED: EditorialDomainSeed = {
 export const LITERATURE_DOMAIN_SEED: EditorialDomainSeed = {
   id: "literature_storybook",
   domainName: "Storybooks & Classic Literature",
-  pattern: /\b(storybook|storybooks|literature|classic book|famous book|book character|novel|fairy tale|fable|sherlock|detective book|excalibur|sword in the stone|legendary character)\b/i,
+  pattern:
+    /\b(storybook|storybooks|literature|classic book|famous book|book character|novel|fairy tale|fable|fantasy|fantasy realm|epic hero|mythical hero|sherlock|detective book|excalibur|sword in the stone|legendary character)\b/i,
   preferredLayout: "mega_grid",
   preferredTemplate: "big_object",
   background: "bright",

@@ -213,6 +213,43 @@ describe("editorial seed catalog and domain diversity", () => {
     expect(plan.subjectAnchors[0].visualPrompt).toContain("waterfall");
     expect(plan.mascotPersona?.poseDescription).toContain("panoramic grandeur");
   });
+
+  it("does not hijack fantasy unmask topics into sneaker brand domain", async () => {
+    const plan = await planThumbnailWithAI({
+      topicTitle: "Fantasy Realm Mystery Reveal: Can You Unmask Every Epic Hero",
+      topicSummary: "Test your knowledge of legendary fantasy heroes and magical wizards",
+      editorial: true,
+    });
+    expect(plan.hookText).not.toBe("UNMASK THE BRAND!");
+    expect(plan.subjectAnchors[0].visualPrompt).not.toContain("sneaker");
+    const prompt = compileThumbnailPrompt(plan, "16:9");
+    expect(prompt).not.toContain("sneaker");
+  });
+
+  it("preserves AI planned hero subjects in compiled mystery silhouette prompt", () => {
+    const basePlan = resolveThumbnailLayout({
+      topicTitle: "Fantasy Realm Mystery Reveal: Can You Unmask Every Epic Hero",
+      layoutOverride: "mystery_silhouette",
+    });
+    const heroVisualPrompt = "Gandalf the Grey in pointed wizard hat holding staff Glamdring";
+    const planned = {
+      ...basePlan,
+      layout: "mystery_silhouette" as const,
+      hookText: "WHO IS THIS?",
+      subjectAnchors: [{ label: "Hero Silhouette", visualPrompt: heroVisualPrompt }],
+    };
+    const editorialPlan = applyEditorialDesign(planned, {
+      topicTitle: "Fantasy Realm Mystery Reveal: Can You Unmask Every Epic Hero",
+      editorial: true,
+      editorialFallback: false,
+    });
+
+    expect(editorialPlan.subjectAnchors[0].visualPrompt).toBe(heroVisualPrompt);
+    expect(editorialPlan.editorial?.spatialComposition).toBeUndefined();
+
+    const compiledPrompt = compileThumbnailPrompt(editorialPlan, "16:9");
+    expect(compiledPrompt).toContain("Gandalf the Grey");
+    expect(compiledPrompt).toContain("dramatic mystery dark silhouette of the hero subject");
+    expect(compiledPrompt).not.toContain("sneaker");
+  });
 });
-
-

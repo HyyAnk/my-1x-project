@@ -5,7 +5,7 @@ import type {
   MascotRenderAspectRatio,
   MascotStateMediaMode,
 } from "@studio/shared";
-import { esc, renderBridgeStickerFilterSvg } from "./candyArcadeSvg.js";
+import { esc } from "./candyArcadeSvg.js";
 import { assetFor, source } from "./candyArcadeAudio.js";
 import { renderProductionMascotHtmlLayer, type ProductionMascotTimelineEvent } from "../productionMascotRenderer.js";
 import { renderBridgeTopicBackdrop } from "./bridgeTopicBackdrop.js";
@@ -59,17 +59,11 @@ function renderShowcaseItemsHtml(
 
   const itemsHtml = items.slice(0, 4).map((item, index) => {
     const itemIndex = index + 1;
-    const isPhoto = item.presentation === "photo_card";
-    const modeClass = isPhoto ? "is-photo-card" : "is-sticker";
 
     const rawSrc = item.asset_path
       ? source(item.asset_path)
       : (assets ? assetFor(assets, item.asset_id, `asset-${item.asset_id}`) : null)
       ?? "";
-
-    const rotationStyle = typeof item.rotation_deg === "number" && item.rotation_deg !== 0
-      ? `style="transform: rotate(${item.rotation_deg}deg);"`
-      : "";
 
     const imgTag = rawSrc
       ? `<img src="${esc(rawSrc)}" alt="${esc(item.subject)}" loading="eager" />`
@@ -79,11 +73,12 @@ function renderShowcaseItemsHtml(
       ? `<span class="bridge-item-caption">${esc(item.caption)}</span>`
       : "";
 
-    return `<div class="bridge-showcase-item item-${itemIndex} ${modeClass}" ${rotationStyle} data-asset-id="${esc(item.asset_id)}">${imgTag}${captionHtml}</div>`;
+    return `<div class="bridge-showcase-item item-${itemIndex}" data-asset-id="${esc(item.asset_id)}">${imgTag}${captionHtml}</div>`;
   }).join("");
 
   return `<div class="bridge-showcase-row" data-count="${Math.min(items.length, 4)}">${itemsHtml}</div>`;
 }
+
 
 export function bridgeTopicClip(input: BridgeTopicClipInput): string {
   const duration = Math.max(0.04, input.duration);
@@ -131,10 +126,8 @@ export function bridgeTopicClip(input: BridgeTopicClipInput): string {
     ? "bridge-topic-card has-showcase"
     : "bridge-topic-card";
 
-  const filterSvgHtml = `<svg class="bridge-svg-filters" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true">${renderBridgeStickerFilterSvg()}</svg>`;
 
   return `<section id="candy-bridge-topic-${Math.round(input.start * 1000)}" class="${sceneClass}" data-start="${input.start.toFixed(3)}" data-duration="${duration.toFixed(3)}" data-track-index="0" style="--clip-start:0s;">` +
-    filterSvgHtml +
     backdropHtml +
     `<div class="${cardClass}">` +
       `<span class="bridge-decor-star bridge-star-tl" data-layout-ignore aria-hidden="true">★</span>` +

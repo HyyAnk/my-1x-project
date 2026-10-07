@@ -8,8 +8,14 @@ export function compileEditorialPrompt(plan: QuizThumbnailPlan, ratio: Thumbnail
   const subjects = plan.subjectAnchors.map((subject) => subject.visualPrompt).join("; ");
   const landscape = ratio === "16:9";
 
+  const isMystery = plan.layout === "mystery_silhouette";
+
+  const mysteryLayout = landscape
+    ? `BALANCED TWO-BLOCK COMPOSITION: Left block (~35-40% width) features expressive mascot staged on middle-to-lower left in keen deduction pose with headline typography positioned prominently above it; Right block (~60-65% width) features ONE dramatic mystery dark silhouette of the hero subject (${subjects}) backlit by warm golden-amber geometric rim lighting with crisp edge separation, creating an intriguing guessing challenge; do not reveal the fully lit subject.`
+    : `BALANCED TWO-BLOCK COMPOSITION: Upper area features headline typography and ONE dramatic mystery dark silhouette of the hero subject (${subjects}), with expressive mascot positioned beside it, all essential action above y=1440.`;
+
   const blockLayout =
-    design.spatialComposition ||
+    (isMystery ? mysteryLayout : design.spatialComposition) ||
     (design.template === "comparison"
       ? design.candidateCount === 4
         ? "BALANCED THREE-BLOCK COMPOSITION: Bottom row (y=50% to 95%) contains 4 distinct candidates arranged evenly in a clean horizontal row on a pristine bright surface; Top-left features headline typography; Upper-right features mascot leaning down in keen scrutiny."
