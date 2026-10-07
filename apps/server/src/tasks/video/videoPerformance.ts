@@ -45,7 +45,14 @@ export function getHyperframesExecutionEnv(): Record<string, string> {
     PRODUCER_PLAYER_READY_TIMEOUT_MS: process.env.PRODUCER_PLAYER_READY_TIMEOUT_MS || "60000",
     PRODUCER_EXPERIMENTAL_FAST_CAPTURE: process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE || "true",
     PRODUCER_ENABLE_STREAMING_ENCODE: process.env.PRODUCER_ENABLE_STREAMING_ENCODE || "true",
+    // Long quiz episodes otherwise fall back to writing every PNG frame to disk
+    // once they exceed the producer's conservative 240 second default.
+    PRODUCER_STREAMING_ENCODE_MAX_DURATION_SECONDS:
+      process.env.PRODUCER_STREAMING_ENCODE_MAX_DURATION_SECONDS || "900",
     HF_DE_PARALLEL_STREAM: process.env.HF_DE_PARALLEL_STREAM || "true",
+    // Screenshot capture is the stable Windows path. Keep its workers streaming
+    // into FFmpeg so parallel capture does not wait for a frame directory merge.
+    HF_CAPTURE_PARALLEL_STREAM: process.env.HF_CAPTURE_PARALLEL_STREAM || "true",
     HF_DE_STALL_MS: process.env.HF_DE_STALL_MS || "600000",
     HF_FAST_CAPTURE_CSSFX: process.env.HF_FAST_CAPTURE_CSSFX || "true",
     ...(browserPath ? { HYPERFRAMES_BROWSER_PATH: browserPath } : {}),

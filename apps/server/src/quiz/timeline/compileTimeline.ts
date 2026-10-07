@@ -12,6 +12,7 @@ import { timingPolicyForAgeBand, type QuizTimingPolicy } from "./timingPolicy.js
 import { TimelineContext, round } from "./compilers/timelineContext.js";
 import { compileIntroStage } from "./compilers/introCompiler.js";
 import { compileQuestionBlock } from "./compilers/questionCompiler.js";
+import { compilePreOutroStage } from "./compilers/preOutroCompiler.js";
 import { compileOutroStage } from "./compilers/outroCompiler.js";
 
 export type TimelineCompileInput = {
@@ -50,10 +51,19 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
   }
   ctx.policy = policy;
 
-  // 3. Outro Stage
+  // 3. Pre-Outro Stage
+  const hasOutro =
+    (input.outroDuration !== undefined && input.outroDuration > 0) ||
+    input.voicePlan.segments.some((segment) => segment.role === "outro");
+  compilePreOutroStage(ctx, input.voicePlan, {
+    bridgeConfig: input.bridgeConfig,
+    hasNextOutro: hasOutro,
+  });
+
+  // 4. Outro Stage
   compileOutroStage(ctx, input.voicePlan, input.outroDuration);
 
-  // 4. Validate All Voice Segments Were Scheduled
+  // 5. Validate All Voice Segments Were Scheduled
   const missingNarration = input.voicePlan.segments.filter((segment) => !ctx.scheduled.has(segment.segment_id));
   if (missingNarration.length) {
     throw new Error("Timeline omitted voice segments: " + missingNarration.map((segment) => segment.segment_id).join(", "));

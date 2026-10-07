@@ -5,6 +5,7 @@ import { QuestionContentTypeSchema, type QuestionContentType } from "./config.js
 export const BankGameplayArchetypeIdSchema = z.enum([
   "deep_trivia",
   "visual_spotting",
+  "verdict_yes_no",
   "verdict_true_false",
   "verdict_fact_myth",
   "versus_faceoff",
@@ -55,7 +56,7 @@ export type BankTranslationChoice = z.infer<typeof BankTranslationChoiceSchema>;
 
 export function bankRequiredChoiceCountForArchetype(archetypeId: BankGameplayArchetypeId): number {
   if (archetypeId === "mystery_reveal") return 1;
-  return archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth" || archetypeId === "versus_faceoff" ? 2 : 3;
+  return archetypeId === "verdict_yes_no" || archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth" || archetypeId === "versus_faceoff" ? 2 : 3;
 }
 
 export const BankTranslationContentSchema = z.object({

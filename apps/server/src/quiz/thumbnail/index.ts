@@ -14,4 +14,5 @@ export * from "./thumbnailLoaders.js";
 export * from "./thumbnailService.js";
 export * from "./thumbnailLocale.js";
 export * from "./thumbnailHookGuardrail.js";
+export * from "./thumbnailPromptSanitizer.js";
 export { isValidShortHookText } from "./thumbnailHookGuardrail.js";

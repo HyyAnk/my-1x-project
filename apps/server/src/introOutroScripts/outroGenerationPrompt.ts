@@ -1,5 +1,2 @@
-import { buildCreativeGenerationPrompt, type CreativePromptInput } from "./creativeGenerationPrompt.js";
-
-export function buildOutroGenerationPrompt(input: CreativePromptInput): string {
-  return buildCreativeGenerationPrompt(input, "outro");
-}
+export type { CreativePromptInput } from "./prompts/index.js";
+export { buildOutroGenerationPrompt } from "./prompts/index.js";

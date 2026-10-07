@@ -1,15 +1,13 @@
 import path from "node:path";
 import { QUESTION_BANK_DIR } from "../bankPathResolver.js";
 import type { BankQuestion, BankSubtopicBatch } from "@studio/shared";
+import { normalizeVerdictQuestion } from "../bankQuestionNormalizer.js";
 
 /**
- * Normalizes question archetype identifiers and defaults.
+ * Normalizes question archetype identifiers, formats, and choices.
  */
 export function normalizeBankQuestion(question: BankQuestion): BankQuestion {
-  return {
-    ...question,
-    archetype_id: question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id,
-  };
+  return normalizeVerdictQuestion(question);
 }
 
 /**
@@ -27,10 +25,12 @@ export function resolveBatchCandidatePaths(
   if (!isRedirectedRuntime) {
     candidatePaths.push(path.join(rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, archetypeId, domainId, `${subtopicId}.json`));
   }
-  if (archetypeId === "verdict_true_false") {
-    candidatePaths.push(path.join(runtimeBankRoot, "verdict_fact_myth", domainId, `${subtopicId}.json`));
-    if (!isRedirectedRuntime) {
-      candidatePaths.push(path.join(rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, "verdict_fact_myth", domainId, `${subtopicId}.json`));
+  if (archetypeId === "verdict_yes_no" || archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth") {
+    for (const legacyArch of ["verdict_yes_no", "verdict_true_false", "verdict_fact_myth"]) {
+      candidatePaths.push(path.join(runtimeBankRoot, legacyArch, domainId, `${subtopicId}.json`));
+      if (!isRedirectedRuntime) {
+        candidatePaths.push(path.join(rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, legacyArch, domainId, `${subtopicId}.json`));
+      }
     }
   }
   return [...new Set(candidatePaths)];

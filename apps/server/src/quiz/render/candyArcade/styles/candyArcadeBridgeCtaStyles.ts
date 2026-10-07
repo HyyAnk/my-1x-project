@@ -26,9 +26,9 @@ export function candyArcadeBridgeCtaStylesCss(): string {
 .bridge-cta-rays {
   position: absolute;
   inset: -50%;
-  opacity: 0.28;
+  opacity: 0.07;
   background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.95) 0 6deg, transparent 6deg 18deg);
-  animation: ray-spin 28s linear infinite both;
+  animation: ray-spin 90s linear infinite both;
   transform-origin: center center;
   mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.85) 45%, rgba(0, 0, 0, 0.15) 75%, transparent 100%);
   -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.85) 45%, rgba(0, 0, 0, 0.15) 75%, transparent 100%);

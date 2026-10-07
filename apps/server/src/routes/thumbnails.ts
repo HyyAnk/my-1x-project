@@ -12,6 +12,7 @@ import {
   setActiveThumbnailVersion,
 } from "../quiz/thumbnail/index.js";
 import type { AntigravityClient } from "../antigravity.js";
+import type { CodexAppServerClient } from "../codex.js";
 import type { ImageProvider } from "../providers/index.js";
 import { refreshEpisodeExport } from "../tasks/export/episodeExportPackager.js";
 
@@ -19,6 +20,7 @@ export type ThumbnailsRouteDeps = {
   repository: RepositoryService;
   state: AppState;
   antigravity?: AntigravityClient;
+  codex?: CodexAppServerClient;
   imageProvider?: ImageProvider;
 };
 
@@ -37,7 +39,7 @@ const SetActiveThumbnailBodySchema = z.object({
 
 export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
-    const { repository, state, antigravity } = deps;
+    const { repository, state, antigravity, codex } = deps;
 
     // 1. Generate Thumbnail Endpoint
     server.post("/api/channels/:channelId/episodes/:episodeId/thumbnail/generate", async (request, reply) => {
@@ -57,6 +59,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
         badgeOverride: body.badge_override,
         activeEngine: currentConfig.active_engine || state.config.active_engine,
         antigravityClient: antigravity,
+        codexClient: codex,
         imageProvider: deps.imageProvider,
 
         imageConfig: activeImageConfig

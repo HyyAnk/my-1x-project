@@ -1,4 +1,9 @@
-export type ProviderTier = "primary" | "fallback-level-1" | "fallback-level-2" | "fallback-level-3";
+export type ProviderTier =
+  | "primary"
+  | "fallback-level-1"
+  | "fallback-level-2"
+  | "fallback-level-3"
+  | "fallback-gpti2-bridge";
 
 export interface CircuitBreakerOptions {
   failureThreshold?: number;
@@ -17,6 +22,7 @@ export const PROVIDER_TIERS: readonly ProviderTier[] = [
   "fallback-level-1",
   "fallback-level-2",
   "fallback-level-3",
+  "fallback-gpti2-bridge",
 ] as const;
 
 interface InternalTierState {

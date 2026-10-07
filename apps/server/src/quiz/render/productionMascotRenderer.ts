@@ -199,29 +199,35 @@ export function consolidateAdjacentMascotAnimationStates(
       playing: state.playing,
     });
 
-    const isAnimatable = Boolean(
-      spec?.asset.animation && (spec.asset.animation.transparent_video_url || spec.asset.animation.atlas_url),
-    );
-
     if (!currentGroup) {
       currentGroup = { state: { ...state }, spec };
       result.push(currentGroup.state);
       continue;
     }
 
-    const prevSpec = currentGroup.spec;
-    const canMerge =
-      isAnimatable &&
-      Boolean(prevSpec?.asset.animation) &&
-      prevSpec?.asset.action === spec?.asset.action &&
-      prevSpec?.asset.animation?.slot_index === spec?.asset.animation?.slot_index &&
-      prevSpec?.asset.animation?.transparent_video_url === spec?.asset.animation?.transparent_video_url &&
-      prevSpec?.asset.animation?.atlas_url === spec?.asset.animation?.atlas_url &&
+    const prevSpec: ReturnType<typeof resolveMascotRenderSpec> = currentGroup.spec;
+    const isAnimatable = Boolean(
+      spec?.asset.animation && (spec.asset.animation.transparent_video_url || spec.asset.animation.atlas_url),
+    );
+    const isPrevAnimatable = Boolean(
+      prevSpec?.asset.animation && (prevSpec.asset.animation.transparent_video_url || prevSpec.asset.animation.atlas_url),
+    );
+
+    const samePlacement =
       prevSpec?.placement.anchor === spec?.placement.anchor &&
       prevSpec?.placement.offset_x === spec?.placement.offset_x &&
       prevSpec?.placement.offset_y === spec?.placement.offset_y &&
       prevSpec?.placement.scale === spec?.placement.scale &&
       prevSpec?.placement.flip_x === spec?.placement.flip_x;
+
+    const canMerge =
+      isAnimatable &&
+      isPrevAnimatable &&
+      prevSpec?.asset.action === spec?.asset.action &&
+      prevSpec?.asset.animation?.slot_index === spec?.asset.animation?.slot_index &&
+      prevSpec?.asset.animation?.transparent_video_url === spec?.asset.animation?.transparent_video_url &&
+      prevSpec?.asset.animation?.atlas_url === spec?.asset.animation?.atlas_url &&
+      samePlacement;
 
     if (canMerge) {
       currentGroup.state.durationSeconds += state.durationSeconds;
@@ -286,7 +292,8 @@ export function renderProductionMascotAtTime(
   });
 
   let segmentStartTime = activeMarker.atSeconds;
-  if (activeSpec?.asset.animation) {
+  if (activeSpec) {
+    const isStatic = effectiveMediaMode === "static" || !activeSpec.asset.animation;
     for (let i = activeIndex - 1; i >= 0; i--) {
       const prevMarker = markers[i];
       const prevSpec = resolveMascotRenderSpec(mediaBundle, {
@@ -297,13 +304,26 @@ export function renderProductionMascotAtTime(
         timeline_time_seconds: prevMarker.atSeconds,
         playing: true,
       });
-      if (
-        prevSpec &&
-        prevSpec.asset.action === activeSpec.asset.action &&
-        prevSpec.asset.animation?.slot_index === activeSpec.asset.animation?.slot_index &&
-        prevSpec.asset.animation?.transparent_video_url === activeSpec.asset.animation?.transparent_video_url &&
-        prevSpec.asset.animation?.atlas_url === activeSpec.asset.animation?.atlas_url
-      ) {
+      if (!prevSpec) break;
+
+      const samePlacement =
+        prevSpec.placement.anchor === activeSpec.placement.anchor &&
+        prevSpec.placement.offset_x === activeSpec.placement.offset_x &&
+        prevSpec.placement.offset_y === activeSpec.placement.offset_y &&
+        prevSpec.placement.scale === activeSpec.placement.scale &&
+        prevSpec.placement.flip_x === activeSpec.placement.flip_x;
+
+      const matches = isStatic
+        ? Boolean(prevSpec.asset.image_url) &&
+          prevSpec.asset.image_url === activeSpec.asset.image_url &&
+          samePlacement
+        : prevSpec.asset.action === activeSpec.asset.action &&
+          prevSpec.asset.animation?.slot_index === activeSpec.asset.animation?.slot_index &&
+          prevSpec.asset.animation?.transparent_video_url === activeSpec.asset.animation?.transparent_video_url &&
+          prevSpec.asset.animation?.atlas_url === activeSpec.asset.animation?.atlas_url &&
+          samePlacement;
+
+      if (matches) {
         segmentStartTime = prevMarker.atSeconds;
       } else {
         break;

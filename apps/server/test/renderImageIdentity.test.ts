@@ -44,6 +44,26 @@ describe("renderImageIdentity", () => {
     expect(keyForSameInputs).toBe(keyForSmallBounds);
   });
 
+  it("produces distinct cache identities when target format changes", () => {
+    const keyPng = createRenderImageIdentity({
+      sourceFingerprint: "sha256-content-abc",
+      targetBounds: { width: 672, height: 504 },
+      fit: "inside",
+      quality: 90,
+      format: "png",
+    });
+
+    const keyWebp = createRenderImageIdentity({
+      sourceFingerprint: "sha256-content-abc",
+      targetBounds: { width: 672, height: 504 },
+      fit: "inside",
+      quality: 90,
+      format: "webp",
+    });
+
+    expect(keyPng).not.toBe(keyWebp);
+  });
+
   it("invalidates optimized copy when target bounds change even if target mtime is newer (regression test)", async () => {
     const sourcePath = path.join(tempDir, "source.png");
     const targetPath = path.join(tempDir, "optimized-output.png");

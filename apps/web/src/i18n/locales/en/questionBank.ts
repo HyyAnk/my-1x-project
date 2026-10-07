@@ -41,6 +41,7 @@ export const questionBankEn = {
     // Archetypes
     archetypes: {
       all: "All Archetypes",
+      verdict_yes_no: "Yes or No",
       verdict_true_false: "True or False",
       verdict_fact_myth: "True or False",
       speed_blitz: "Speed Blitz",
@@ -164,6 +165,7 @@ export const questionBankEn = {
       subtopicLabel: "Subtopic ID (slug):",
       formatLabel: "Question Format:",
       formatMultipleChoice: "Multiple Choice",
+      formatYesNo: "Yes / No",
       formatTrueFalse: "True / False",
       questionTextLabel: "Question Content:",
       questionTextPlaceholder: "Enter question content...",

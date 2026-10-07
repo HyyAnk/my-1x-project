@@ -1,4 +1,4 @@
-import { CheckCircle, CircleNotch } from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch, Trash } from "@phosphor-icons/react";
 import { ALL_QUIZ_IMAGE_STYLES, type QuizImageStyle, type TopicAvailability, type TopicCandidate } from "@studio/shared";
 import { getTopicAvailabilityPresentation, getTopicFormatBadge } from "../../utils/topicHistoryHelpers";
 import { TopicLayoutPreviewButton } from "../TopicLayoutPreviewButton";
@@ -10,7 +10,9 @@ export interface TopicHistoryRowProps {
   channelStyles?: QuizImageStyle[];
   availability?: TopicAvailability;
   onConfirm: (questionCount: number, visualStyle: QuizImageStyle | "mixed") => void;
+  onDelete?: (topic: TopicCandidate) => void;
   busy: boolean;
+  deleting?: boolean;
   disabled: boolean;
 }
 
@@ -20,7 +22,9 @@ export function TopicHistoryRow({
   channelStyles: _channelStyles = ALL_QUIZ_IMAGE_STYLES,
   availability,
   onConfirm,
+  onDelete,
   busy,
+  deleting,
   disabled,
 }: TopicHistoryRowProps) {
   const formatBadge = getTopicFormatBadge(topic);
@@ -35,9 +39,11 @@ export function TopicHistoryRow({
   const shortReelArchetypeLabel =
     topic.archetype === "versus_faceoff"
       ? "Versus Face-off"
-      : topic.archetype === "verdict_true_false"
-        ? "True or False"
-        : "Deep Trivia";
+      : topic.archetype === "verdict_yes_no"
+        ? "Yes or No"
+        : topic.archetype === "verdict_true_false"
+          ? "True or False"
+          : "Deep Trivia";
 
   return (
     <div className="topic-history-row">
@@ -102,6 +108,19 @@ export function TopicHistoryRow({
           {busy ? <CircleNotch className="spin" size={13} /> : <CheckCircle size={13} weight="bold" />}
           <span>{busy ? "Selecting…" : "Select"}</span>
         </button>
+        {onDelete && (
+          <button
+            type="button"
+            className="topic-history-delete-btn"
+            disabled={disabled || deleting || busy}
+            aria-busy={deleting}
+            onClick={() => onDelete(topic)}
+            title={`Remove topic from history: ${topic.title}`}
+            aria-label={`Remove topic: ${topic.title}`}
+          >
+            {deleting ? <CircleNotch className="spin" size={13} /> : <Trash size={14} weight="bold" />}
+          </button>
+        )}
       </div>
     </div>
   );

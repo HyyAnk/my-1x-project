@@ -3,6 +3,7 @@ import {
   getQuizImageSlotGeometry,
   recommendImageSizing,
   resolveQuizLayoutAssetAspectRatio,
+  type BridgeSceneConfig,
   type DirectorPlan,
   type PersistedImageSizing,
   type QuizAssetPlan,
@@ -12,12 +13,23 @@ import {
 import { resolveQuestionLayout } from "../layoutCompatibility.js";
 import { QUIZ_STYLE_CONTRACTS, isGraphicIdentitySubject } from "./promptCompiler.js";
 import { resolveChoiceAssetSubject, resolveGraphicChoiceSubject } from "./choiceSubjectEnricher.js";
+import { extractBridgeShowcaseItems } from "./bridgeTopicEntityExtractor.js";
 
 export const QUIZ_ASSET_SUBJECT_MAX_LENGTH = 280;
 
 export { resolveGraphicChoiceSubject };
 
-export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle: QuizImageStyle = "pixar_3d"): QuizAssetPlan {
+export interface PlanQuizAssetsOptions {
+  bridgeConfig?: BridgeSceneConfig;
+  includeBridgeShowcase?: boolean;
+}
+
+export function planQuizAssets(
+  quiz: QuizV2,
+  director: DirectorPlan,
+  visualStyle: QuizImageStyle = "pixar_3d",
+  options?: PlanQuizAssetsOptions,
+): QuizAssetPlan {
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const assets: QuizAssetPlan["assets"] = [];
   const consistencyGroups: QuizAssetPlan["consistency_groups"] = [];
@@ -132,7 +144,10 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         assets.push({
           asset_id: "asset-" + question.id + "-" + choice.id,
           question_id: question.id,
-          subject: resolveChoiceAssetSubject({ choice, question, isGraphicQuestion }),
+          subject: compactQuizAssetSubject(
+            resolveChoiceAssetSubject({ choice, question, isGraphicQuestion }),
+            choice.text,
+          ),
           purpose: "answer_option",
           style: "cute_illustration",
           aspect_ratio: ratio,
@@ -145,6 +160,34 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
       );
     }
   }
+
+  const shouldIncludeBridgeShowcase =
+    options?.includeBridgeShowcase === true ||
+    (options?.includeBridgeShowcase !== false &&
+      Boolean(options?.bridgeConfig && options.bridgeConfig.enabled !== false && options.bridgeConfig.enableTopicScene !== false));
+
+  if (shouldIncludeBridgeShowcase) {
+    const showcaseItems = extractBridgeShowcaseItems(quiz, {
+      bridgeConfig: options?.bridgeConfig,
+      visualStyle,
+    });
+
+    for (const item of showcaseItems) {
+      assets.push({
+        asset_id: item.asset_id,
+        question_id: null,
+        subject: compactQuizAssetSubject(item.subject, "Showcase item"),
+        purpose: "bridge_topic_item",
+        style: item.presentation === "die_cut_sticker" ? "cute_illustration" : "photo_reference",
+        aspect_ratio: item.presentation === "die_cut_sticker" ? "1:1" : "4:3",
+        transparent_background: item.transparent_background,
+        required: false,
+        semantic_key: `bridge:showcase:${item.asset_id}`,
+        consistency_group_id: null,
+      });
+    }
+  }
+
   return QuizAssetPlanSchema.parse({ schema_version: 2, episode_id: quiz.episode_id, assets, consistency_groups: consistencyGroups });
 }
 

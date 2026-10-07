@@ -19,7 +19,7 @@ import {
   resolveImgStudioAspectRatio,
   resolveImgStudioResolution,
 } from "../src/providers/imgstudio/index.js";
-import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
+import { IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_KREA_2_TURBO_MODEL_ID } from "@studio/shared";
 import { RepositoryService } from "../src/repository.js";
 
 const roots: string[] = [];
@@ -142,6 +142,49 @@ describe("ImgStudio Client Transport (callImgStudioApi)", () => {
       cost_vnd: 150,
       balance_vnd: 9_850,
     });
+  });
+
+  it("sends n=4 and omits count=1 when generating with Krea 2 Turbo", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers(),
+      text: async () =>
+        JSON.stringify({
+          id: "krea-batch-1",
+          status: "completed",
+          url: "/api/v1/images/krea-1/file",
+          cost_vnd: 400,
+          count: 4,
+          images: [
+            { id: "krea-1", url: "/api/v1/images/krea-1/file" },
+            { id: "krea-2", url: "/api/v1/images/krea-2/file" },
+            { id: "krea-3", url: "/api/v1/images/krea-3/file" },
+            { id: "krea-4", url: "/api/v1/images/krea-4/file" },
+          ],
+        }),
+    });
+    globalThis.fetch = fetchMock;
+
+    await callImgStudioApi(
+      {
+        provider_id: IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+        prompt: "A cute little blue bird, 3d pixar style",
+        aspect_ratio: "1:1",
+        resolution: "1K",
+        quality: "high",
+      },
+      {
+        apiKey: "krea-test-key",
+      },
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [, options] = fetchMock.mock.calls[0];
+    const parsedBody = JSON.parse(options.body as string);
+    expect(parsedBody.provider_id).toBe(IMGSTUDIO_KREA_2_TURBO_MODEL_ID);
+    expect(parsedBody.n).toBe(4);
+    expect(parsedBody).not.toHaveProperty("count");
   });
 
   it("replays 202 responses with the exact same body and idempotency key", async () => {
@@ -871,6 +914,73 @@ describe("ImgStudio Generator (generateImgStudioImageBytes)", () => {
     await expect(generateImgStudioImageBytes("test prompt", {})).rejects.toThrowError(
       expect.objectContaining({ code: "IMAGE_PROVIDER_NOT_CONFIGURED" }),
     );
+  });
+
+  it("selects only the first image when ImgStudio returns multiple images (e.g. 4 images from Krea 2 Turbo)", async () => {
+    const rawPngBytes1 = Buffer.from(TINY_PNG_BASE64, "base64");
+
+    globalThis.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("/api/v1/images/generate")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          text: async () =>
+            JSON.stringify({
+              id: "krea-task-id",
+              status: "completed",
+              data: [
+                { url: "/cdn/image-0.png" },
+                { url: "/cdn/image-1.png" },
+                { url: "/cdn/image-2.png" },
+                { url: "/cdn/image-3.png" },
+              ],
+              cost_vnd: 150,
+            }),
+        });
+      }
+      if (url.includes("/cdn/image-0.png")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          arrayBuffer: async () =>
+            rawPngBytes1.buffer.slice(rawPngBytes1.byteOffset, rawPngBytes1.byteOffset + rawPngBytes1.byteLength),
+        });
+      }
+      return Promise.reject(new Error(`Unexpected fetch for non-first image: ${url}`));
+    });
+
+    const result = await generateImgStudioImageBytes("Krea prompt", {
+      apiKey: "test-key",
+      model: "be34a90e-db63-4aad-a832-fee6a4d4ab28",
+      aspect_ratio: "16:9",
+    });
+
+    expect(result.bytes).toEqual(new Uint8Array(rawPngBytes1));
+    expect(result.url).toBe("https://imgstudio.site/cdn/image-0.png");
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("selects only the first image from base64 array response", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () =>
+        JSON.stringify({
+          data: [
+            { b64_json: `data:image/png;base64,${TINY_PNG_BASE64}` },
+            { b64_json: "c2Vjb25kLWltYWdl" },
+            { b64_json: "dGhpcmQtaW1hZ2U=" },
+            { b64_json: "Zm91cnRoLWltYWdl" },
+          ],
+        }),
+    });
+
+    const result = await generateImgStudioImageBytes("Prompt", {
+      apiKey: "test-key",
+      model: "be34a90e-db63-4aad-a832-fee6a4d4ab28",
+    });
+
+    expect(result.bytes).toEqual(new Uint8Array(Buffer.from(TINY_PNG_BASE64, "base64")));
   });
 });
 

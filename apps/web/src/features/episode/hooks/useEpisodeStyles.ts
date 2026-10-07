@@ -178,6 +178,15 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     }
   };
 
+  const saveFastRenderMode = async (enabled: boolean) => {
+    if (!episode || enabled === (episode.quiz_config?.fast_render_mode ?? true)) return;
+    await saveQuizStyles(
+      "fast-render-mode",
+      { fast_render_mode: enabled },
+      enabled ? "Fast render mode enabled" : "Standard render mode enabled",
+    );
+  };
+
   return {
     questionCountDraft,
     setQuestionCountDraft,
@@ -197,5 +206,6 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     saveIntroOutroSelection,
     applyStylePreset,
     saveDuration,
+    saveFastRenderMode,
   };
 }

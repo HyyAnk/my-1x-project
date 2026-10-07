@@ -39,6 +39,11 @@ export function EpisodeCard({ episode, tasks, onOpen, onDelete }: EpisodeCardPro
         </div>
         <div className="episode-card-content">
           <h3 className="episode-card-title">{episode.topic.title}</h3>
+          {viewModel.domainTitle ? (
+            <span className="episode-card-domain-badge" title={`Domain: ${viewModel.domainTitle}`}>
+              🏛️ {viewModel.domainTitle}
+            </span>
+          ) : null}
           <span className="episode-card-layout">{viewModel.layoutLabel}</span>
           <span className="episode-card-status">
             <span className="episode-card-status-dot" aria-hidden="true" />

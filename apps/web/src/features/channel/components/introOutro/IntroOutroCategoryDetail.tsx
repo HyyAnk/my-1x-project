@@ -9,24 +9,28 @@ type Props = {
   category: IntroOutroCategorySummary;
   styles: IntroOutroStyle[];
   channelId: string;
+  defaultStyleId?: string | null;
   busyAction: string | null;
   onBack: () => void;
   onUploaded: () => Promise<void>;
   onPreview: (clip: IntroOutroPreviewClip) => void;
   onDelete: (styleId: string, name: string) => void;
   onAssignCategory: (styleId: string, stylePresetId: string) => void;
+  onSetDefault?: (styleId: string | null) => void;
 };
 
 export function IntroOutroCategoryDetail({
   category,
   styles,
   channelId,
+  defaultStyleId,
   busyAction,
   onBack,
   onUploaded,
   onPreview,
   onDelete,
   onAssignCategory,
+  onSetDefault,
 }: Props) {
   const isUncategorized = category.style_preset_id === "uncategorized";
   return (
@@ -57,9 +61,12 @@ export function IntroOutroCategoryDetail({
             channelId={channelId}
             isDeleting={busyAction === `delete_${style.style_id}`}
             isAssigning={busyAction === `assign_${style.style_id}`}
+            isDefault={defaultStyleId === style.style_id}
+            isSettingDefault={busyAction === `default_${style.style_id}` || busyAction === "default_clear"}
             onPreviewClip={onPreview}
             onDelete={onDelete}
-            onAssignCategory={isUncategorized ? onAssignCategory : undefined}
+            onAssignCategory={onAssignCategory}
+            onSetDefault={onSetDefault}
           />
         ))}
       </div>

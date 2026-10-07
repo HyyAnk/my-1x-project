@@ -14,9 +14,11 @@ export function ShortReelSourceCard({ source }: ShortReelSourceCardProps) {
   const archetypeDisplay =
     source.archetype_id === "versus_faceoff"
       ? "Versus Face-off"
-      : source.archetype_id === "verdict_true_false"
-        ? "True / False"
-        : "Deep Trivia";
+      : source.archetype_id === "verdict_yes_no"
+        ? "Yes / No"
+        : source.archetype_id === "verdict_true_false"
+          ? "True / False"
+          : "Deep Trivia";
   const domainId = "original_question" in source && source.original_question ? source.original_question.domain_id : undefined;
   const subtopicId = "original_question" in source && source.original_question ? source.original_question.subtopic_id : undefined;
 

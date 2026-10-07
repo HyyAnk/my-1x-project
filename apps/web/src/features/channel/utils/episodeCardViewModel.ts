@@ -1,4 +1,10 @@
-import { QUIZ_SECONDS_PER_QUESTION, type Episode, type Task } from "@studio/shared";
+import {
+  QUIZ_SECONDS_PER_QUESTION,
+  formatCanonicalDomainName,
+  inferCanonicalDomainFromText,
+  type Episode,
+  type Task,
+} from "@studio/shared";
 import { isTaskActive } from "../../../lib/utils";
 
 export type EpisodeThumbnailRatio = "16:9" | "9:16";
@@ -9,6 +15,7 @@ export type EpisodeCardViewModel = {
   durationLabel: string;
   thumbnailRatio: EpisodeThumbnailRatio | null;
   createdDateLabel: string;
+  domainTitle: string | null;
 };
 
 const stageLabels: Record<Episode["stage"], string> = {
@@ -56,6 +63,7 @@ const taskLabels: Record<Task["task_type"], string> = {
 function resolveLayoutLabel(format?: Episode["quiz_config"]["quiz_format"]): string {
   if (format === "odd_one_out") return "Visual choices";
   if (format === "image_guess") return "Image + choices";
+  if (format === "yes_no") return "Yes / no";
   if (format === "true_false") return "True / false";
   return "Media + choices";
 }
@@ -93,6 +101,16 @@ function resolveThumbnailRatio(episode: Episode): EpisodeThumbnailRatio | null {
   return null;
 }
 
+export function resolveEpisodeDomainTitle(episode: Episode): string | null {
+  const domainId =
+    episode.topic?.domain_id ||
+    inferCanonicalDomainFromText(episode.topic?.title) ||
+    inferCanonicalDomainFromText(episode.topic?.premise);
+  if (!domainId) return null;
+  const name = formatCanonicalDomainName(domainId);
+  return name || null;
+}
+
 export function buildEpisodeCardViewModel(episode: Episode, tasks: Task[]): EpisodeCardViewModel {
   return {
     layoutLabel: resolveLayoutLabel(episode.quiz_config?.quiz_format),
@@ -100,5 +118,6 @@ export function buildEpisodeCardViewModel(episode: Episode, tasks: Task[]): Epis
     durationLabel: resolveDurationLabel(episode),
     thumbnailRatio: resolveThumbnailRatio(episode),
     createdDateLabel: new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(episode.created_at)),
+    domainTitle: resolveEpisodeDomainTitle(episode),
   };
 }

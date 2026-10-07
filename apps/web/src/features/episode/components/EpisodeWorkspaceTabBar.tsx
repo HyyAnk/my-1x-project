@@ -23,6 +23,17 @@ export function EpisodeWorkspaceTabBar({
 }: EpisodeWorkspaceTabBarProps) {
   return (
     <div className="channel-group-tabs" role="tablist" aria-label="Episode creation workspace" style={{ margin: "24px 0 26px" }}>
+      <a
+        role="tab"
+        aria-selected={pipeline.workflowTab === "question_images"}
+        className={`channel-group-tab ${pipeline.workflowTab === "question_images" ? "is-selected" : ""}`}
+        {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "question_images" }), () =>
+          pipeline.switchWorkflowTab("question_images"),
+        )}
+      >
+        <Image size={17} weight={pipeline.workflowTab === "question_images" ? "fill" : "regular"} />
+        <span>{!simplifyMode ? "1. Question Images" : "Question Images"}</span>
+      </a>
       {!simplifyMode ? (
         <a
           role="tab"
@@ -33,7 +44,7 @@ export function EpisodeWorkspaceTabBar({
           )}
         >
           <FileText size={17} weight={pipeline.workflowTab === "script" ? "fill" : "regular"} />
-          <span>1. Script</span>
+          <span>2. Script</span>
           {pipeline.readiness.script ? <CheckCircle size={14} weight="fill" style={{ color: "var(--green)" }} /> : null}
         </a>
       ) : null}
@@ -64,7 +75,7 @@ export function EpisodeWorkspaceTabBar({
             )}
           >
             <Image size={17} weight={pipeline.workflowTab === "visual" ? "fill" : "regular"} />
-            <span>2. Visual & Continuity</span>
+            <span>3. Visual & Continuity</span>
             {bundleImages.length > 0 ? <small>{bundleImages.length}</small> : null}
           </a>
           <a
@@ -76,7 +87,7 @@ export function EpisodeWorkspaceTabBar({
             )}
           >
             <FilmSlate size={17} weight={pipeline.workflowTab === "timeline" ? "fill" : "regular"} />
-            <span>3. Timeline & Shots</span>
+            <span>4. Timeline & Shots</span>
             {sceneCount > 0 ? <small>{sceneCount}</small> : null}
           </a>
         </>

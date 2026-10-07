@@ -126,6 +126,20 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
     hookTextTemplate: "CAN YOU BEAT LEVEL 4?",
     badgeTemplate: "IQ 140+ TEST 🧠",
   },
+  yes_no: {
+    id: "yes_no",
+    name: "Yes or No",
+    description: "Engaging claim with tactile 3D Yes and No arcade buttons.",
+    psychologicalTrigger: "Intuition challenge and rapid reaction test.",
+    mascotPersona: {
+      role: "Truth Checker / Quizmaster",
+      defaultCostume: "Show host bowtie and glowing cybernetic earpiece",
+      defaultProp: "Hand resting thoughtfully under chin in skeptical contemplation",
+      defaultExpression: "Winking with raised eyebrow, challenging the viewer",
+    },
+    hookTextTemplate: "YES OR NO?",
+    badgeTemplate: "CAN YOU PASS? 🎯",
+  },
   true_false: {
     id: "true_false",
     name: "True or False",
@@ -134,11 +148,11 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
     mascotPersona: {
       role: "Truth Checker / Quizmaster",
       defaultCostume: "Show host bowtie and glowing cybernetic earpiece",
-      defaultProp: "Green 'TRUE' paddle in one hand, red 'FALSE' paddle in the other",
+      defaultProp: "Hand resting thoughtfully under chin in skeptical contemplation",
       defaultExpression: "Winking with raised eyebrow, challenging the viewer",
     },
     hookTextTemplate: "TRUE OR FALSE?",
-    badgeTemplate: "TRUE OR FALSE? ⚡",
+    badgeTemplate: "CAN YOU PASS? 🎯",
   },
 };
 

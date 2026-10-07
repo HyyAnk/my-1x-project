@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import type { AppConfig, ImageProviderId } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, type AppConfig, type ImageProviderId } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 
@@ -16,13 +16,13 @@ export function useImageProviderSettingsState({ appConfig, onImageSaved, onNotic
     (appConfig?.image_generation?.provider as ImageProviderId) ?? "gpti2",
   );
   const [imageBaseUrl, setImageBaseUrl] = useState(appConfig?.image_generation?.base_url ?? "");
-  const [imageModel, setImageModel] = useState(appConfig?.image_generation?.model ?? "gpt-image-2");
+  const [imageModel, setImageModel] = useState(appConfig?.image_generation?.model ?? DEFAULT_GPTI2_MODEL);
   const [imageApiKey, setImageApiKey] = useState(appConfig?.image_generation?.api_key ?? "");
   const [showImageKey, setShowImageKey] = useState(false);
   const [hasImageApiKey, setHasImageApiKey] = useState(
     Boolean(appConfig?.image_generation?.has_api_key || appConfig?.image_generation?.api_key),
   );
-  const [maxConcurrentImageTasks, setMaxConcurrentImageTasks] = useState(appConfig?.image_generation?.max_concurrent_tasks ?? 3);
+  const [maxConcurrentImageTasks, setMaxConcurrentImageTasks] = useState(appConfig?.image_generation?.max_concurrent_tasks ?? 6);
   const [savingImage, setSavingImage] = useState(false);
   const [checkingImageBalance, setCheckingImageBalance] = useState(false);
   const [imageBalanceInfo, setImageBalanceInfo] = useState<{ balance_vnd: number; rpm?: number } | null>(null);
@@ -33,8 +33,8 @@ export function useImageProviderSettingsState({ appConfig, onImageSaved, onNotic
       setImagesPerBundle(appConfig.image_generation.images_per_bundle);
       setImageProvider(appConfig.image_generation.provider ?? "gpti2");
       setImageBaseUrl(appConfig.image_generation.base_url ?? "");
-      setImageModel(appConfig.image_generation.model ?? "gpt-image-2");
-      setMaxConcurrentImageTasks(appConfig.image_generation.max_concurrent_tasks ?? 3);
+      setImageModel(appConfig.image_generation.model ?? DEFAULT_GPTI2_MODEL);
+      setMaxConcurrentImageTasks(appConfig.image_generation.max_concurrent_tasks ?? 6);
       setHasImageApiKey(Boolean(appConfig.image_generation.has_api_key || appConfig.image_generation.api_key));
       setImageApiKey(appConfig.image_generation.api_key ?? "");
     }
@@ -49,7 +49,7 @@ export function useImageProviderSettingsState({ appConfig, onImageSaved, onNotic
         images_per_bundle: imagesPerBundle,
         provider: imageProvider,
         base_url: imageBaseUrl.trim(),
-        model: imageModel.trim() || "gpt-image-2",
+        model: imageModel.trim() || DEFAULT_GPTI2_MODEL,
         quality: "low",
         max_concurrent_tasks: maxConcurrentImageTasks,
         ...(imageApiKey.trim() ? { api_key: imageApiKey.trim() } : {}),

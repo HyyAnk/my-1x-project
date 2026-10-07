@@ -137,7 +137,7 @@ export async function planReelCoverWithAI(input: PlanReelCoverInput): Promise<Re
     const plannerPrompt = buildReelCoverPlannerPrompt(input.record, candidatePool);
     const rawResponse = await executeSinglePromptText(input.llmClient, plannerPrompt, {
       signal: input.signal,
-      timeoutMs: 30000,
+      timeoutMs: 300_000,
       modelOverride: "flash",
     });
 

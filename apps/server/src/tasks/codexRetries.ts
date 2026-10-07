@@ -73,9 +73,12 @@ export async function retrySequenceScenes(this: TaskManagerRuntime, active: Acti
     ? await this.repository.getEpisode(active.task.channel_id, active.task.episode_id).catch(() => null)
     : null;
   const isTrueFalse = episode?.quiz_config?.quiz_format === "true_false";
-  const choiceRequirement = isTrueFalse
-    ? "visible choices (strictly exactly 2 choices: True and False only; never add a 3rd option)"
-    : "visible choices (strictly exactly 3 choices: A, B, C only; never add or omit a choice)";
+  const isYesNo = episode?.quiz_config?.quiz_format === "yes_no";
+  const choiceRequirement = isYesNo
+    ? "visible choices (strictly exactly 2 choices: Yes and No only; never add a 3rd option)"
+    : isTrueFalse
+      ? "visible choices (strictly exactly 2 choices: True and False only; never add a 3rd option)"
+      : "visible choices (strictly exactly 3 choices: A, B, C only; never add or omit a choice)";
   const sequenceNumber = active.task.scene_number ?? 1;
   const script = await this.repository.getEpisodeFile(active.task.channel_id, active.task.episode_id!, "script.md");
   const section = extractNarrationSections(script.content)[sequenceNumber - 1];

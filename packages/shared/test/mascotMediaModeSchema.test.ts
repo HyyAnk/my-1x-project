@@ -92,7 +92,7 @@ describe("Mascot State Media Mode Schema & Contracts (Phase 1)", () => {
         images_per_bundle: 1,
         provider: "gpti2" as const,
         base_url: "",
-        model: "gpt-image-2",
+        model: "gpt-image-2.5-flare",
         api_key: "",
         quality: "low",
         max_concurrent_tasks: 3,

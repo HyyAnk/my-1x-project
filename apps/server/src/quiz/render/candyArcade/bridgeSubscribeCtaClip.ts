@@ -10,6 +10,7 @@ import {
   renderProductionMascotHtmlLayer,
   type ProductionMascotTimelineEvent,
 } from "../productionMascotRenderer.js";
+import { normalizeMascotTimelineEventsToZeroBased } from "./candyArcadeTiming.js";
 
 export interface BridgeSubscribeCtaClipInput {
   start: number;
@@ -152,9 +153,9 @@ export function bridgeSubscribeCtaClip(input: BridgeSubscribeCtaClipInput): stri
   const mascotHtml = showMascot && input.mascot
     ? renderProductionMascotHtmlLayer(input.mascot, input.mascotConfig, {
         phase: "intro",
-        clipStartSeconds: input.start,
+        clipStartSeconds: 0,
         clipDurationSeconds: duration,
-        timelineEvents: input.mascotEvents,
+        timelineEvents: normalizeMascotTimelineEventsToZeroBased(input.mascotEvents, input.start),
         aspectRatio: input.aspectRatio ?? "16:9",
         sourceMapper: source,
         mediaMode: input.mediaMode,
@@ -178,7 +179,7 @@ export function bridgeSubscribeCtaClip(input: BridgeSubscribeCtaClipInput): stri
       })
     : renderCtaHeroWidget(channel, modeClass, minimalClass);
 
-  return `<section id="candy-bridge-cta-${Math.round(input.start * 1000)}" class="clip candy-scene bridge-cta-scene" data-start="${input.start.toFixed(3)}" data-duration="${duration.toFixed(3)}" data-track-index="0" style="--clip-start:${input.start.toFixed(3)}s;">` +
+  return `<section id="candy-bridge-cta-${Math.round(input.start * 1000)}" class="clip candy-scene bridge-cta-scene" data-start="${input.start.toFixed(3)}" data-duration="${duration.toFixed(3)}" data-track-index="0" style="--clip-start:0s;">` +
     backdropHtml +
     bodyHtml +
     mascotHtml +

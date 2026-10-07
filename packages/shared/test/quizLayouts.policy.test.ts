@@ -37,4 +37,14 @@ test("landscape automatic layout resolution remains available", () => {
   });
   assert.equal(result.ok, true);
   if (result.ok) assert.equal(result.layoutId, "verdict_true_false");
+
+  const yesNoResult = resolveQuizLayout({
+    requestedLayout: "auto",
+    archetype: "yes_no",
+    questionFormat: "yes_no",
+    choiceCount: 2,
+    aspectRatio: "16:9",
+  });
+  assert.equal(yesNoResult.ok, true);
+  if (yesNoResult.ok) assert.equal(yesNoResult.layoutId, "verdict_yes_no");
 });

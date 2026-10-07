@@ -30,12 +30,12 @@ export function ProviderConfigFields({
   const handleProviderChange = (nextProvider: ImageProviderId) => {
     setImageProvider(nextProvider);
     if (nextProvider === "gpti2") {
-      if (imageModel !== "gpt-image-2" && imageModel !== "nano-banana-2") {
-        setImageModel("gpt-image-2");
+      if (imageModel !== "gpt-image-2.5-flare" && imageModel !== "nano-banana-2") {
+        setImageModel("gpt-image-2.5-flare");
       }
     } else if (nextProvider === "shopaikey") {
       if (!imageBaseUrl) setImageBaseUrl("https://direct.shopaikey.com/v1");
-      if (imageModel === "nano-banana-2") setImageModel("gpt-image-2");
+      if (imageModel === "nano-banana-2") setImageModel("gpt-image-2.5-flare");
     } else if (nextProvider === "custom") {
       if (!imageBaseUrl) setImageBaseUrl("https://api.openai.com/v1");
     }
@@ -46,7 +46,7 @@ export function ProviderConfigFields({
       <label>
         Image Provider Service
         <select value={imageProvider} onChange={(e) => handleProviderChange(e.target.value as ImageProviderId)}>
-          <option value="gpti2">gpti2.store (Default - Low cost VND, gpt-image-2 & nano-banana-2)</option>
+          <option value="gpti2">gpti2.store (Default - Low cost VND, gpt-image-2.5-flare & nano-banana-2)</option>
           <option value="shopaikey">ShopAiKey (Direct OpenAI-compatible proxy)</option>
           <option value="custom">Custom Provider (OpenAI-compatible Endpoint)</option>
         </select>
@@ -54,7 +54,7 @@ export function ProviderConfigFields({
           {imageProvider === "gpti2"
             ? "Optimized for high-volume automated video assets with VND pricing and balance check."
             : imageProvider === "shopaikey"
-              ? "Direct OpenAI proxy endpoint supporting gpt-image-2, gpt-image-1.5, dall-e-3."
+              ? "Direct OpenAI proxy endpoint supporting gpt-image-2.5-flare, gpt-image-1.5, dall-e-3."
               : "Connect any custom OpenAI-compatible image endpoint (OneAPI, NewAPI, Fal, OpenRouter, Local AI)."}
         </small>
       </label>
@@ -80,7 +80,7 @@ export function ProviderConfigFields({
         <label>
           Default Model
           <select value={imageModel} onChange={(event) => setImageModel(event.target.value)}>
-            <option value="gpt-image-2">gpt-image-2 (50 VND / image - Economy)</option>
+            <option value="gpt-image-2.5-flare">gpt-image-2.5-flare (50 VND / image - Default)</option>
             <option value="nano-banana-2">nano-banana-2 (100 VND / image - 2K HD)</option>
           </select>
         </label>
@@ -88,7 +88,7 @@ export function ProviderConfigFields({
         <label>
           Default Model
           <select value={imageModel} onChange={(event) => setImageModel(event.target.value)}>
-            <option value="gpt-image-2">gpt-image-2 (Default)</option>
+            <option value="gpt-image-2.5-flare">gpt-image-2.5-flare (Default)</option>
             <option value="gpt-image-1.5">gpt-image-1.5</option>
             <option value="gpt-image-1">gpt-image-1</option>
             <option value="gpt-image-2-all">gpt-image-2-all</option>
@@ -101,11 +101,11 @@ export function ProviderConfigFields({
           <input
             value={imageModel}
             onChange={(event) => setImageModel(event.target.value)}
-            placeholder="e.g. dall-e-3, gpt-image-2, flux-schnell, sdxl"
+            placeholder="e.g. dall-e-3, gpt-image-2.5-flare, flux-schnell, sdxl"
             list="custom-image-models"
           />
           <datalist id="custom-image-models">
-            <option value="gpt-image-2" />
+            <option value="gpt-image-2.5-flare" />
             <option value="dall-e-3" />
             <option value="flux-schnell" />
             <option value="flux-dev" />
@@ -121,8 +121,11 @@ export function ProviderConfigFields({
         <select value={maxConcurrentImageTasks} onChange={(event) => setMaxConcurrentImageTasks(Number(event.target.value))}>
           <option value="1">1 worker</option>
           <option value="2">2 workers</option>
-          <option value="3">3 workers (Recommended)</option>
+          <option value="3">3 workers</option>
           <option value="4">4 workers</option>
+          <option value="6">6 workers (Recommended)</option>
+          <option value="8">8 workers</option>
+          <option value="10">10 workers</option>
         </select>
       </label>
 

@@ -302,6 +302,37 @@
   cursor: not-allowed;
 }
 
+.topic-history-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.topic-history-delete-btn:hover:not(:disabled) {
+  background: var(--soft-coral, rgba(239, 68, 68, 0.1));
+  color: var(--danger, #ef4444);
+  border-color: color-mix(in srgb, var(--danger, #ef4444) 30%, transparent);
+}
+
+.topic-history-delete-btn:focus-visible {
+  outline: 2px solid var(--danger, #ef4444);
+  outline-offset: 1px;
+}
+
+.topic-history-delete-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 /* Backward compatibility aliases */
 .topic-history-main,
 .topic-history-meta {
@@ -319,6 +350,47 @@
   flex-wrap: wrap;
   margin-top: 32px;
   margin-bottom: 14px;
+}
+
+.topic-history-heading-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.topic-history-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.topic-history-clear-btn:hover:not(:disabled) {
+  color: var(--danger, #ef4444);
+  background: var(--soft-coral, rgba(239, 68, 68, 0.08));
+  border-color: color-mix(in srgb, var(--danger, #ef4444) 30%, var(--line));
+}
+
+.topic-history-clear-btn:focus-visible {
+  outline: 2px solid var(--danger, #ef4444);
+  outline-offset: 1px;
+}
+
+.topic-history-clear-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .topic-history-heading-left {

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { resolveImgStudioResolution } from "../imgstudio/dimensions.js";
-import { generateImgStudioImageBytes } from "../imgstudio/generator.js";
+import { generateImgStudioWithIdempotencyRecovery } from "../imgstudio/recovery.js";
 import { createImgStudioIdempotencyKey } from "../imgstudio/idempotency.js";
 import { GenerationError } from "../../shortReel/generationErrors.js";
 import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
@@ -55,7 +55,7 @@ export class ImgStudioPortraitAdapter implements PortraitImageClient {
     const referenceImage = Buffer.from(request.reference.bytes).toString("base64");
 
     try {
-      const result = await generateImgStudioImageBytes(request.prompt, {
+      const result = await generateImgStudioWithIdempotencyRecovery(request.prompt, {
         apiKey,
         baseUrl: this.options.baseUrl,
         model,

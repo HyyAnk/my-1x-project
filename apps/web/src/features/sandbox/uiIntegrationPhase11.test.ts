@@ -87,6 +87,15 @@ describe("Phase 11 - Dashboard, Preview and Requirements Synchronization", () =>
       expect(requirements[0].recommended).toEqual({ width: 1216, height: 912 });
       expect(requirements[0].fit).toBe("cover");
     });
+
+    it("returns 4:3 cover hero requirement for verdict_yes_no", () => {
+      const requirements = resolveLayoutRequirements("verdict_yes_no");
+      expect(requirements).toHaveLength(1);
+      expect(requirements[0].role).toBe("hero");
+      expect(requirements[0].aspectRatio).toBe("4:3");
+      expect(requirements[0].recommended).toEqual({ width: 1216, height: 912 });
+      expect(requirements[0].fit).toBe("cover");
+    });
   });
 
   describe("Episode Preview Request Single-Answer Mystery Protection", () => {
@@ -286,6 +295,12 @@ describe("Phase 11 - Dashboard, Preview and Requirements Synchronization", () =>
 
     it("classifies verdict_true_false with preview verdict", () => {
       const uiDef = getQuizLayoutUiDefinition("verdict_true_false");
+      expect(uiDef.preview).toBe("verdict");
+      expect(uiDef.icon).toBe("split");
+    });
+
+    it("classifies verdict_yes_no with preview verdict", () => {
+      const uiDef = getQuizLayoutUiDefinition("verdict_yes_no");
       expect(uiDef.preview).toBe("verdict");
       expect(uiDef.icon).toBe("split");
     });

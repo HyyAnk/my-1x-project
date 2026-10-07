@@ -25,7 +25,7 @@ import { compileCompositionHtml } from "./compositionHtmlCompiler.js";
 import { resolveEpisodeIntroOutro } from "../../quiz/introOutro/episodeSelection.js";
 import { prepareIntroOutroTiming } from "./introOutroTimingPreparation.js";
 import { resolveChannelBrandIdentity } from "../../quiz/brand/channelBrandAssetResolver.js";
-import { resolveEffectiveBridgeConfig, resolveBridgeChannelDisplayName } from "../../quiz/bridge/resolveBridgeConfig.js";
+import { resolveEffectiveBridgeConfig, resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../quiz/bridge/resolveBridgeConfig.js";
 
 export {
   resolveAndCopyIntroOutro,
@@ -93,8 +93,8 @@ export async function prepareVideoComposition(options: {
   const renderRoot = repository.resolvePath("runtime", "hyperframes", episode.episode_id);
   await mkdir(renderRoot, { recursive: true });
   const { snapshot } = await resolveEpisodeIntroOutro(repository, channel, episode);
-  const bridgeConfig = resolveEffectiveBridgeConfig(channel);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig);
+  const bridgeConfig = resolveEpisodeBridgeConfig(channel, artifacts.quiz);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode.quiz_config?.channel_brand_name);
   const timing = await prepareIntroOutroTiming(repository, renderRoot, artifacts, snapshot, narration, {
     topic: episode.topic?.title,
     channelName,

@@ -144,5 +144,11 @@ describe("Mascot Reveal VFX Transition (Option A)", () => {
     expect(css).toContain("@media (prefers-reduced-motion: reduce) {");
     expect(css).toContain(".candy-mascot-container.mascot-v2-container .mascot-reveal-fx");
     expect(css).toContain(".candy-mascot-container.mascot-v2-container .mascot-v2-enter");
+
+    // Verify static media mode overrides (Stage 2)
+    expect(css).toContain('.mascot-v2-state[data-mascot-media-mode="static"] .mascot-fx-bloom {');
+    expect(css).toContain('.mascot-stage .mascot-v2-state[data-mascot-media-mode="static"] .mascot-v2-enter');
+    expect(css).toContain('.mascot-v2-state[data-mascot-media-mode="static"] .mascot-v2-motion {');
   });
 });
+

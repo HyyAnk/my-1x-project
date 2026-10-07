@@ -12,19 +12,25 @@ import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 import { resolveEpisodeIntroOutro } from "../../introOutro/episodeSelection.js";
-import { resolveEffectiveBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
+import { resolveEffectiveBridgeConfig, resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
 
 export async function planAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_plan: QuizAssetPlan; artifact_path: string; invalidated: string[] }> {
-  const [quiz, director_plan] = await Promise.all([
+  const [quiz, director_plan, channel, episode] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
+    input.repository.getChannel(input.channelId).catch(() => null),
+    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning visual assets", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before planning visual assets", "DIRECTOR_REQUIRED");
+  const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
+  const planOptions = { bridgeConfig, includeBridgeShowcase: true };
   const existingPlan = await input.repository.readAssetPlan(input.channelId, input.episodeId);
-  const asset_plan = existingPlan ? reconcileQuizAssetSizing(quiz, director_plan, existingPlan).plan : planQuizAssets(quiz, director_plan);
+  const asset_plan = existingPlan
+    ? reconcileQuizAssetSizing(quiz, director_plan, existingPlan, null, planOptions).plan
+    : planQuizAssets(quiz, director_plan, undefined, planOptions);
   const artifact_path = await input.repository.writeAssetPlan(input.channelId, input.episodeId, asset_plan);
   const invalidatedStages = invalidateQuizArtifacts("assets");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
@@ -73,6 +79,7 @@ export async function resolveAssets(
           provider: input.config.image_generation.provider,
           base_url: input.config.image_generation.base_url,
           quality: input.config.image_generation.quality,
+          max_concurrent_tasks: input.config.image_generation.max_concurrent_tasks,
         }
       : undefined,
     imageFallbackConfig: input.config.image_fallback,
@@ -111,7 +118,7 @@ export async function planVoice(
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
   const director = await input.repository.readDirectorPlan(input.channelId, input.episodeId);
   const bridgeConfig = resolveEffectiveBridgeConfig(channel);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode?.quiz_config?.channel_brand_name);
   const voice_plan = buildQuizVoicePlan(quiz, {
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
@@ -149,8 +156,8 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
-  const bridgeConfig = resolveEffectiveBridgeConfig(channel);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig);
+  const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode?.quiz_config?.channel_brand_name);
   const plannedVoice = buildQuizVoicePlan(quiz, {
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,

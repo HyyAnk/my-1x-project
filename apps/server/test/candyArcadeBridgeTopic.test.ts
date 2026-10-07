@@ -134,7 +134,128 @@ describe("Stage 5: CandyArcade Bridge Scene 1 (Topic Teaser)", () => {
       });
 
       expect(html).toContain('class="monogram-logo-img"');
-      expect(html).toContain('src="assets/brand/chronos-logo.png"');
+      expect(html).toContain("background-image:url('assets/brand/chronos-logo.png')");
+    });
+
+    it("guarantees zero-based --clip-start:0s regardless of non-zero start time", () => {
+      const html = bridgeTopicClip({
+        start: 8.0,
+        duration: 8.58,
+        topic: "Sensory System",
+        questionCount: 3,
+      });
+
+      expect(html).toContain('data-start="8.000"');
+      expect(html).toContain('data-duration="8.580"');
+      expect(html).toContain('style="--clip-start:0s;"');
+      expect(html).not.toContain("--clip-start:8.000s");
+    });
+
+    it("renders 4 showcase items with stickers, photo-cards, and SVG sticker filter", () => {
+      const html = bridgeTopicClip({
+        start: 0,
+        duration: 3.5,
+        topic: "Prehistoric Predators",
+        questionCount: 4,
+        showcaseItems: [
+          {
+            asset_id: "predator-1",
+            subject: "T-Rex Skull",
+            presentation: "die_cut_sticker",
+            rotation_deg: -2,
+            transparent_background: true,
+          },
+          {
+            asset_id: "predator-2",
+            subject: "Velociraptor Claw",
+            presentation: "die_cut_sticker",
+            rotation_deg: 3,
+            transparent_background: true,
+          },
+          {
+            asset_id: "predator-3",
+            subject: "Megalodon Tooth",
+            presentation: "photo_card",
+            rotation_deg: -1,
+            transparent_background: false,
+            caption: "Fossilized",
+          },
+          {
+            asset_id: "predator-4",
+            subject: "Spinosaurus Sail",
+            presentation: "die_cut_sticker",
+            rotation_deg: 2,
+            transparent_background: true,
+          },
+        ],
+        assets: {
+          "predator-1": "./assets/showcase/trex.png",
+          "predator-2": "./assets/showcase/raptor.png",
+          "predator-3": "./assets/showcase/megalodon.png",
+          "predator-4": "./assets/showcase/spino.png",
+        },
+      });
+
+      // Contains SVG filter shader definition
+      expect(html).toContain('id="bridge-sticker-filter"');
+      expect(html).toContain("feMorphology");
+      expect(html).toContain("bridge-svg-filters");
+
+      // Scene layout classes
+      expect(html).toContain('class="clip candy-scene bridge-topic-scene has-showcase"');
+      expect(html).toContain('class="bridge-topic-card has-showcase"');
+
+      // Showcase row container
+      expect(html).toContain('class="bridge-showcase-row" data-count="4"');
+
+      // Items 1 through 4 with presentation classes and rotation styles
+      expect(html).toContain('class="bridge-showcase-item item-1 is-sticker" style="transform: rotate(-2deg);" data-asset-id="predator-1"');
+      expect(html).toContain('class="bridge-showcase-item item-2 is-sticker" style="transform: rotate(3deg);" data-asset-id="predator-2"');
+      expect(html).toContain('class="bridge-showcase-item item-3 is-photo-card" style="transform: rotate(-1deg);" data-asset-id="predator-3"');
+      expect(html).toContain('class="bridge-showcase-item item-4 is-sticker" style="transform: rotate(2deg);" data-asset-id="predator-4"');
+
+      // Image URLs resolved correctly
+      expect(html).toContain('src="./assets/showcase/trex.png"');
+      expect(html).toContain('src="./assets/showcase/raptor.png"');
+      expect(html).toContain('src="./assets/showcase/megalodon.png"');
+      expect(html).toContain('src="./assets/showcase/spino.png"');
+
+      // Caption
+      expect(html).toContain('<span class="bridge-item-caption">Fossilized</span>');
+    });
+
+    it("renders placeholder when asset path cannot be resolved", () => {
+      const html = bridgeTopicClip({
+        start: 0,
+        duration: 3.0,
+        topic: "Mystery Animals",
+        questionCount: 3,
+        showcaseItems: [
+          {
+            asset_id: "missing-1",
+            subject: "Unknown Creature",
+            presentation: "die_cut_sticker",
+            rotation_deg: 0,
+            transparent_background: true,
+          },
+        ],
+      });
+
+      expect(html).toContain('class="bridge-item-placeholder" aria-label="Unknown Creature"');
+      expect(html).toContain("Unknown Creature</span>");
+    });
+
+    it("gracefully falls back when showcaseItems is not provided", () => {
+      const html = bridgeTopicClip({
+        start: 0,
+        duration: 3.0,
+        topic: "General Knowledge",
+        questionCount: 5,
+      });
+
+      expect(html).not.toContain("bridge-showcase-row");
+      expect(html).not.toContain("has-showcase");
+      expect(html).toContain('class="bridge-topic-card"');
     });
   });
 

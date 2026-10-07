@@ -153,6 +153,7 @@ async function setActiveVersion(
   const updatedManifest: ThumbnailManifest = ThumbnailManifestSchema.parse({
     ...manifest,
     layout: is169 ? targetItem.layout : manifest.layout,
+    design_template: targetItem.design_template,
     hook_text: is169 ? targetItem.hook_text : manifest.hook_text,
     active_16_9_id: is169 ? versionId : manifest.active_16_9_id,
     active_9_16_id: !is169 ? versionId : manifest.active_9_16_id,
@@ -266,6 +267,8 @@ export async function persistThumbnailManifest(params: PersistThumbnailManifestP
     episode_id: episode.episode_id,
     channel_id: channel.channel_id,
     layout: plan.layout,
+    design_template: plan.editorial?.template,
+    badge_text: plan.badgeText,
     hook_text: plan.hookText,
     mascot_persona: `${plan.mascotPersona.role}: ${plan.mascotPersona.costume} with ${plan.mascotPersona.prop}`,
     asset_path_16_9: assetPath169,

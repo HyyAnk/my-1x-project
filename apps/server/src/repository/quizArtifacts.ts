@@ -35,4 +35,10 @@ export { readUsageLedger, reconcileUsageLedgerFromDisk, recordVoiceUsage, record
 
 export { invalidateQuizArtifacts } from "./quiz/quizArtifactsInvalidation.js";
 
+export {
+  listEpisodeQuestionImages,
+  saveUploadedQuestionImage,
+  deleteUploadedQuestionImage,
+} from "./quiz/questionImagesRepository.js";
+
 export { getQuestionBankQuestion, type BankCooldownScope } from "./quiz/questionBankRepository.js";

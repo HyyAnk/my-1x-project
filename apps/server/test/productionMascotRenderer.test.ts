@@ -306,4 +306,78 @@ describe("production mascot renderer", () => {
     expect(html).toContain('data-start="15.45"');
     expect(html).toContain('data-duration="7.87"');
   });
+
+  it("renders static mascot state layers with correct timing and static media mode", () => {
+    const staticMascot: MascotProfile = {
+      id: "novy-dragon-static",
+      name: "Novy Dragon",
+      description: "Static mascot fixture",
+      visual_style: "pixar_3d",
+      master_prompt: "Static mascot fixture",
+      master_image_url: "/assets/novy-master.png",
+      color_theme: "#f97316",
+      actions: {},
+      styles: [
+        {
+          id: "style-novy",
+          name: "Default Style",
+          keyword: "default",
+          anchor_image_url: "/assets/novy-master.png",
+          is_default: true,
+          created_at: "2026-08-29T00:00:00.000Z",
+          updated_at: "2026-08-29T00:00:00.000Z",
+          states: {
+            thinking: [
+              {
+                id: "novy-thinking-img",
+                slot_index: 1,
+                image_url: "/assets/novy-thinking.png",
+                status: "ready",
+              },
+            ],
+            celebrate: [
+              {
+                id: "novy-celebrate-img",
+                slot_index: 2,
+                image_url: "/assets/novy-celebrate.png",
+                status: "ready",
+              },
+            ],
+          },
+        },
+      ],
+      assigned_channel_ids: [],
+      created_at: "2026-08-29T00:00:00.000Z",
+      updated_at: "2026-08-29T00:00:00.000Z",
+    };
+
+    const staticConfig = {
+      ...config,
+      mascot_media_mode: "static" as const,
+    };
+
+    const html = renderProductionMascotHtmlLayer(staticMascot, staticConfig, {
+      phase: "question",
+      clipStartSeconds: 0,
+      clipDurationSeconds: 23.32,
+      timelineEvents: [
+        { type: "choices.enter", at_seconds: 0.48 },
+        { type: "countdown.start", at_seconds: 9.4 },
+        { type: "mascot.state", at_seconds: 10.9, payload: { state: "thinking" } },
+        { type: "answer.reveal", at_seconds: 15.45 },
+        { type: "mascot.state", at_seconds: 16.03, payload: { state: "celebrate" } },
+        { type: "fact.enter", at_seconds: 18.14 },
+      ],
+    });
+
+    expect(html).toContain('data-mascot-media-mode="static"');
+    expect(html).toContain('data-mascot-action="thinking"');
+    expect(html).toContain("--mascot-state-delay:0s");
+    expect(html).toContain("/assets/novy-thinking.png");
+
+    expect(html).toContain('data-mascot-action="celebrate"');
+    expect(html).toContain("--mascot-state-delay:15.45s");
+    expect(html).toContain("/assets/novy-celebrate.png");
+  });
 });
+

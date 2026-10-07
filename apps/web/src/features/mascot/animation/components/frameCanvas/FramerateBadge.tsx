@@ -15,7 +15,8 @@ function getSyncLabel(fps: number): string {
 
 export function FramerateBadge({ animation }: FramerateBadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false);
-  const fps = animation?.fps ?? (animation?.transparent_video_url ? 24 : 12);
+  const isVideo = Boolean(animation?.transparent_video_url);
+  const fps = animation?.fps ?? (isVideo ? 24 : 12);
   const syncLabel = getSyncLabel(fps);
 
   return (
@@ -40,7 +41,7 @@ export function FramerateBadge({ animation }: FramerateBadgeProps) {
       aria-label={`Framerate: ${fps} FPS (${syncLabel})`}
     >
       <span>
-        {animation?.transparent_video_url ? "WebM Alpha • " : ""}
+        {isVideo ? "WebM Alpha • " : ""}
         {fps} FPS ({syncLabel})
       </span>
       <button

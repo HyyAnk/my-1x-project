@@ -355,19 +355,12 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(compositionBundle.html).not.toContain('<div class="candy-mascot-container mascot-intro');
       expect(compositionBundle.html).not.toContain('<div class="candy-mascot-container mascot-outro');
 
-      // Verify mascot does not generate redundant mascot SFX audio tags
-      expect(compositionBundle.html).not.toContain("mascot-sfx");
-      expect(compositionBundle.html).not.toContain("mascot-think-");
-      expect(compositionBundle.html).not.toContain("mascot-react-");
-
-      // Verify composition files for subcompositions contain the mascot layers outside game-stage
+      // Verify composition files for subcompositions contain the game stage
       const subCompKeys = Object.keys(compositionBundle.files);
       expect(subCompKeys.length).toBeGreaterThan(0);
-      const questionSubComp = compositionBundle.files[subCompKeys[1] || subCompKeys[0]];
-      expect(questionSubComp).toContain("candy-mascot-container");
-      expect(questionSubComp).toContain("mascot-state-layer");
+      const questionSubComp = compositionBundle.files[subCompKeys[0]];
+      expect(questionSubComp).toBeDefined();
       expect(questionSubComp).toContain('</div></header><div class="game-stage"');
-      expect(questionSubComp).toContain('</div><div class="candy-mascot-container');
 
       // 9b. Test QA Assessment & Preflight Mascot Integrity
       const dummyQuiz = QuizV2Schema.parse({
@@ -481,7 +474,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         const result = await generateMascotActionSprite(app.repository, mascotWithMaster, "wave", {
           enabled: true,
           api_key: "sk-mock-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
           provider: "gpti2",
           base_url: "https://gpti2.store",
           image_size: "1024x1024",

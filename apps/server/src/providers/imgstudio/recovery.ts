@@ -18,14 +18,22 @@ export async function generateImgStudioWithIdempotencyRecovery(
   try {
     return await generateImgStudioImageBytes(prompt, options);
   } catch (error) {
-    if (
-      error instanceof ImgStudioApiError &&
-      error.code === "IMAGE_PROVIDER_IDEMPOTENCY_FAILED" &&
-      !options.cancellationSignal?.aborted
-    ) {
+    const isIdempotencyError =
+      (error instanceof ImgStudioApiError &&
+        (error.code === "IMAGE_PROVIDER_IDEMPOTENCY_FAILED" || error.status === 409)) ||
+      (typeof error === "object" &&
+        error !== null &&
+        (("code" in error && (error as { code?: unknown }).code === "IMAGE_PROVIDER_IDEMPOTENCY_FAILED") ||
+          ("status" in error && (error as { status?: unknown }).status === 409) ||
+          ("message" in error &&
+            typeof (error as { message?: unknown }).message === "string" &&
+            (error as { message: string }).message.includes("409"))));
+
+    if (isIdempotencyError && !options.cancellationSignal?.aborted) {
       const baseKey = options.idempotencyKey || "imgstudio";
       const freshKey = `${baseKey}_retry_${randomUUID().slice(0, 8)}`;
-      onRetry?.(freshKey, error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      onRetry?.(freshKey, errorMessage);
       return await generateImgStudioImageBytes(prompt, {
         ...options,
         idempotencyKey: freshKey,

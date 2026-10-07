@@ -7,6 +7,7 @@ export const ThumbnailLayoutTypeSchema = z.enum([
   "mystery_silhouette",
   "odd_one_out",
   "difficulty_tier",
+  "yes_no",
   "true_false",
 ]);
 
@@ -15,6 +16,9 @@ export type ThumbnailLayoutType = z.infer<typeof ThumbnailLayoutTypeSchema>;
 export const ThumbnailAspectRatioSchema = z.enum(["16:9", "9:16"]);
 
 export type ThumbnailAspectRatio = z.infer<typeof ThumbnailAspectRatioSchema>;
+
+export const ThumbnailDesignTemplateSchema = z.enum(["big_object", "reaction", "comparison"]);
+export type ThumbnailDesignTemplate = z.infer<typeof ThumbnailDesignTemplateSchema>;
 
 export const ThumbnailRatioModeSchema = z.enum(["auto", "16:9", "9:16", "both"]).default("auto");
 
@@ -33,6 +37,7 @@ export const ThumbnailGenerationRequestSchema = z.object({
 export type ThumbnailGenerationRequest = z.infer<typeof ThumbnailGenerationRequestSchema>;
 
 export const ThumbnailHistoryItemSchema = z.object({
+  design_template: ThumbnailDesignTemplateSchema.optional(),
   id: z.string(),
   aspect_ratio: ThumbnailAspectRatioSchema,
   layout: ThumbnailLayoutTypeSchema,
@@ -47,6 +52,7 @@ export const ThumbnailHistoryItemSchema = z.object({
 export type ThumbnailHistoryItem = z.infer<typeof ThumbnailHistoryItemSchema>;
 
 export const ThumbnailManifestSchema = z.object({
+  design_template: ThumbnailDesignTemplateSchema.optional(),
   episode_id: z.string().min(1),
   channel_id: z.string().default(""),
   layout: ThumbnailLayoutTypeSchema,

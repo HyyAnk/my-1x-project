@@ -23,11 +23,13 @@ export {
 export interface BuildQuizVoicePlanOptions {
   skipIntro?: boolean;
   skipOutro?: boolean;
+  skipPreOutro?: boolean;
   director?: DirectorPlan;
   channelName?: string;
   topic?: string;
   bridgeConfig?: BridgeSceneConfig;
   customCtaText?: string;
+  customPreOutroText?: string;
   includeBridgeSegments?: boolean;
 }
 
@@ -153,6 +155,27 @@ export function buildQuizVoicePlan(
       }),
     );
   });
+
+  const shouldIncludePreOutro =
+    !options?.skipPreOutro &&
+    shouldIncludeBridge &&
+    options?.bridgeConfig?.enablePreOutroScene !== false;
+
+  if (shouldIncludePreOutro) {
+    const preOutroText = copy.preOutro(
+      options?.customPreOutroText || options?.bridgeConfig?.customPreOutroText,
+    );
+    segments.push(
+      withPhrases({
+        segment_id: "pre_outro",
+        role: "pre_outro",
+        question_id: null,
+        text: preOutroText,
+        duration_seconds: null,
+      }),
+    );
+  }
+
   if (!options?.skipOutro) {
     segments.push(withPhrases({ segment_id: "outro", role: "outro", question_id: null, text: copy.outro, duration_seconds: null }));
   }
@@ -186,7 +209,11 @@ export function performancePhrases(text: string, role: VoiceSegmentRole): VoiceP
           ? "emphasis"
           : isCtaKickoff
             ? "emphasis"
-            : role === "fun_fact" || role === "explanation" || role === "intro_topic"
+            : role === "pre_outro"
+              ? isLastChunk
+                ? "emphasis"
+                : "playful"
+              : role === "fun_fact" || role === "explanation" || role === "intro_topic"
               ? "warm"
               : role === "outro" || role === "intro" || role === "intro_cta" || role === "thinking_prompt"
                 ? "playful"

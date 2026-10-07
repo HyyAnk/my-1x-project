@@ -1,10 +1,11 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
+import { DEFAULT_GPTI2_MODEL } from "@studio/shared";
 import type { RepositoryRuntime } from "../runtime.js";
 
 const IMAGE_FILE_PATTERN = /\.(png|jpe?g|webp)$/i;
 const QUIZ_IMAGE_FALLBACK_PRICE_VND = 50;
-const QUIZ_IMAGE_FALLBACK_MODEL = "gpt-image-2";
+const QUIZ_IMAGE_FALLBACK_MODEL = DEFAULT_GPTI2_MODEL;
 const SECONDARY_IMAGE_ASSET_SUBDIRS = ["thumbnails", "bundles"] as const;
 
 export interface VoiceDiskMetrics {

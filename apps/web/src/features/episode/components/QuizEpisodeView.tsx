@@ -27,6 +27,8 @@ type QuizEpisodeViewProps = {
   imageGenerationEnabled: boolean;
   imagesPerBundle: number;
   onNotice: (notice: NonNullable<Notice>) => void;
+  fastRenderMode?: boolean;
+  onToggleFastRender?: () => void;
 };
 
 export function QuizEpisodeView({
@@ -46,6 +48,8 @@ export function QuizEpisodeView({
   imageGenerationEnabled,
   imagesPerBundle,
   onNotice,
+  fastRenderMode,
+  onToggleFastRender,
 }: QuizEpisodeViewProps) {
   return (
     <>
@@ -91,6 +95,8 @@ export function QuizEpisodeView({
         episodeClock={pipeline.episodeClock}
         busy={pipeline.busy}
         onOpenVideoFolder={pipeline.openVideoFolder}
+        fastRenderMode={fastRenderMode}
+        onToggleFastRender={onToggleFastRender}
       />
 
       <ThumbnailPreviewCard
@@ -127,6 +133,7 @@ export function QuizEpisodeView({
         narrationWordsPerSecond={narrationWordsPerSecond}
         imageGenerationEnabled={imageGenerationEnabled}
         imagesPerBundle={imagesPerBundle}
+        onNotice={onNotice}
       />
     </>
   );

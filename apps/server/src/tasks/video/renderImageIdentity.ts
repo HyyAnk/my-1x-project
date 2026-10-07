@@ -8,15 +8,16 @@ export interface RenderImageIdentityInput {
   };
   fit: "cover" | "contain" | "inside";
   quality: number;
+  format?: string;
   optimizerVersion?: number;
 }
 
 /**
  * Pure function producing a stable string key from source content/fingerprint,
- * recommended output bounds, fit, quality, and optimizer version.
+ * recommended output bounds, fit, quality, format, and optimizer version.
  */
 export function createRenderImageIdentity(input: RenderImageIdentityInput): string {
-  const optimizerVersion = input.optimizerVersion ?? 1;
+  const optimizerVersion = input.optimizerVersion ?? 2;
   return createHash("sha256")
     .update(
       JSON.stringify({
@@ -28,6 +29,7 @@ export function createRenderImageIdentity(input: RenderImageIdentityInput): stri
         },
         fit: input.fit,
         quality: Math.round(input.quality),
+        format: input.format ?? "original",
       }),
     )
     .digest("hex");

@@ -37,6 +37,18 @@ function resolveInitialChoices(initial?: BankChoice[], arch?: BankGameplayArchet
   if (arch === "mystery_reveal") {
     return [{ id: "A", text: "Reveal Answer", is_correct: true }];
   }
+  if (arch === "verdict_yes_no") {
+    return [
+      { id: "A", text: "Yes", is_correct: true },
+      { id: "B", text: "No", is_correct: false },
+    ];
+  }
+  if (arch === "verdict_true_false") {
+    return [
+      { id: "A", text: "True", is_correct: true },
+      { id: "B", text: "False", is_correct: false },
+    ];
+  }
   return [
     { id: "A", text: "Option A", is_correct: true },
     { id: "B", text: "Option B", is_correct: false },
@@ -88,6 +100,18 @@ export function useQuestionBankForm({ initialQuestion, taxonomy, onSave, onClose
     if (newArch === "mystery_reveal") {
       const correctChoice = choices.find((c) => c.is_correct) || choices[0] || { id: "A", text: "Reveal Answer", is_correct: true };
       setChoices([{ id: "A", text: correctChoice.text || "Reveal Answer", is_correct: true }]);
+    } else if (newArch === "verdict_yes_no") {
+      const isYes = choices[0]?.text?.toLowerCase() === "yes" ? choices[0]?.is_correct ?? true : true;
+      setChoices([
+        { id: "A", text: "Yes", is_correct: isYes },
+        { id: "B", text: "No", is_correct: !isYes },
+      ]);
+    } else if (newArch === "verdict_true_false") {
+      const isTrue = choices[0]?.text?.toLowerCase() === "true" ? choices[0]?.is_correct ?? true : true;
+      setChoices([
+        { id: "A", text: "True", is_correct: isTrue },
+        { id: "B", text: "False", is_correct: !isTrue },
+      ]);
     } else if (choices.length < 2) {
       setChoices([
         { id: "A", text: choices[0]?.text || "Option A", is_correct: true },

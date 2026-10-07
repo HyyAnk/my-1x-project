@@ -13,10 +13,9 @@ import { assertSafeBankFilesystemPath, assertSafeBankPathSegments } from "../ban
 export function matchesArchetypeFilter(dirArchetype: string, filterArchetype?: string): boolean {
   if (!filterArchetype) return true;
   if (dirArchetype === filterArchetype) return true;
-  if (
-    (filterArchetype === "verdict_true_false" || filterArchetype === "verdict_fact_myth") &&
-    (dirArchetype === "verdict_true_false" || dirArchetype === "verdict_fact_myth")
-  ) {
+  const isVerdict = (arch: string) =>
+    arch === "verdict_yes_no" || arch === "verdict_true_false" || arch === "verdict_fact_myth";
+  if (isVerdict(filterArchetype) && isVerdict(dirArchetype)) {
     return true;
   }
   return false;

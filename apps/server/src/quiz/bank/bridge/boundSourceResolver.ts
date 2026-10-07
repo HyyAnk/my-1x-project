@@ -59,8 +59,8 @@ function checkEpisodeEligibility(candidate: TopicRunCandidate, bankQuestion: Ban
   const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
   const candQuizFormat = (candidate as { quiz_format?: string; format?: string }).quiz_format ?? (candidate as { format?: string }).format;
   const expectedFormat =
-    candQuizFormat === "true_false"
-      ? "true_false"
+    candQuizFormat === "yes_no" || candQuizFormat === "true_false"
+      ? "yes_no"
       : candQuizFormat === "multiple_choice" || candQuizFormat === "knowledge"
         ? "multiple_choice"
         : undefined;

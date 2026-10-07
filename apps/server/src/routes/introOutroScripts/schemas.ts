@@ -4,6 +4,7 @@ import {
   IntroOutroClipKindSchema,
   IntroOutroScriptContentSchema,
   IntroOutroSeedSelectionSchema,
+  IntroOutroTransitionStyleSchema,
   MascotStyleIdentityProfileSchema,
 } from "@studio/shared";
 import { z } from "zod";
@@ -125,6 +126,7 @@ const GenerateClipInputSchema = z
     selected_seed_ids: z.array(z.string().trim().min(1).max(80)).max(7).optional(),
     locked_dimensions: z.array(CreativeSeedDimensionSchema).max(7).optional(),
     logo_mode: z.enum(["post_overlay", "supplied_reference", "none"]).optional(),
+    transition_style: IntroOutroTransitionStyleSchema.optional(),
   })
   .strict();
 

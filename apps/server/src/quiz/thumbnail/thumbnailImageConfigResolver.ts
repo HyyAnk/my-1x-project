@@ -1,6 +1,9 @@
 import {
+  DEFAULT_GPTI2_MODEL,
   IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
   IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
+  resolveImgStudioFallbackLevel3Model,
 } from "@studio/shared";
 import type {
   ProviderAssetImageConfig,
@@ -18,7 +21,7 @@ export interface ResolvedThumbnailImageConfigs {
  *
  * Operational contract:
  * - Primary provider is strictly GPTi2 due to superior fidelity for complex thumbnail compositions.
- * - Fallback 1 is ImgStudio with Qwen Image 3.0 Pro (2d059365-a09a-4fd5-aa9e-b5335d09bbe9).
+ * - Fallback cascade: Tier 1 Qwen Image 3.0 Pro -> Tier 2 Gemini 3.1 Flash -> Tier 3 Krea 2 Turbo.
  * - Custom provider with an explicit base URL (e.g., in unit test harnesses) is preserved if specified.
  */
 export function resolveThumbnailImageConfigs(
@@ -41,7 +44,7 @@ export function resolveThumbnailImageConfigs(
     imageConfig?.gpti2_model ||
     imageFallbackConfig?.gpti2_model ||
     (imageConfig?.provider === "gpti2" ? imageConfig?.model : undefined) ||
-    "gpt-image-2.5-flare";
+    DEFAULT_GPTI2_MODEL;
 
   // 3. Resolve ImgStudio API Key for Fallback Thumbnail generation
   const imgStudioApiKey =
@@ -64,12 +67,10 @@ export function resolveThumbnailImageConfigs(
     provider: "imgstudio",
     api_key: imgStudioApiKey,
     base_url: imageFallbackConfig?.base_url || "https://imgstudio.site",
-    // In our 3-tier cascade, when primary is GPTi2, Level 1 (GPTi2) is skipped,
-    // so level2_model is the first fallback tier executed.
-    // For thumbnail, this must be ImgStudio Qwen Image 3.0 Pro.
     model: IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
-    level2_model: IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
-    level3_model: imageFallbackConfig?.level3_model || IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+    level1_model: imageFallbackConfig?.level1_model || IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
+    level2_model: imageFallbackConfig?.level2_model || IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+    level3_model: resolveImgStudioFallbackLevel3Model(imageFallbackConfig?.level3_model),
     resolution: imageFallbackConfig?.resolution || "2K",
     quality: imageFallbackConfig?.quality || "standard",
     gpti2_api_key: gpti2ApiKey,

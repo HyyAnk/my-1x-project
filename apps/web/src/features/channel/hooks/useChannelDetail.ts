@@ -43,6 +43,8 @@ export function useChannelDetail({
   const [deleteEpisodeTarget, setDeleteEpisodeTarget] = useState<Episode | null>(null);
   const [deleteShortReelTarget, setDeleteShortReelTarget] = useState<ShortReelRecord | null>(null);
   const [loadingChannel, setLoadingChannel] = useState(true);
+  const [deletingTopicId, setDeletingTopicId] = useState<string | null>(null);
+  const [clearingTopicHistory, setClearingTopicHistory] = useState(false);
 
   const routeTab = simplifyMode && activeTab === "dna" ? null : activeTab;
   const [channelTab, switchTab] = useRouteTab({
@@ -212,6 +214,37 @@ export function useChannelDetail({
     await onRefresh();
   };
 
+  const deleteTopic = async (topic: TopicCandidate) => {
+    if (deletingTopicId) return;
+    setDeletingTopicId(topic.topic_id);
+    try {
+      await api.deleteTopic(channel.channel_id, topic.topic_id);
+      setTopics((current) => current.filter((t) => t.topic_id !== topic.topic_id));
+      onNotice({ tone: "good", message: `Removed topic "${topic.title}" from history` });
+    } catch (error) {
+      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete topic idea" });
+    } finally {
+      setDeletingTopicId(null);
+    }
+  };
+
+  const clearTopicHistory = async (unselectedOnly: boolean = false) => {
+    if (clearingTopicHistory) return;
+    setClearingTopicHistory(true);
+    try {
+      const result = await api.clearTopicHistory(channel.channel_id, unselectedOnly);
+      await load();
+      onNotice({
+        tone: "good",
+        message: result.deleted_count > 0 ? `Cleared ${result.deleted_count} older topic idea(s)` : "No older topic ideas to clear",
+      });
+    } catch (error) {
+      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not clear topic history" });
+    } finally {
+      setClearingTopicHistory(false);
+    }
+  };
+
   const archive = async () => {
     try {
       await api.updateChannel(channel.channel_id, {
@@ -239,6 +272,8 @@ export function useChannelDetail({
     setShowDna: dnaHook.setShowDna,
     busy,
     confirmingTopicId,
+    deletingTopicId,
+    clearingTopicHistory,
     deleteEpisodeTarget,
     setDeleteEpisodeTarget,
     deleteShortReelTarget,
@@ -263,6 +298,8 @@ export function useChannelDetail({
     handleMascotConfigUpdate: mascotHook.handleMascotConfigUpdate,
     suggest,
     confirmTopic,
+    deleteTopic,
+    clearTopicHistory,
     handleEpisodeDeleted,
     handleShortReelDeleted,
     saveDna: dnaHook.saveDna,

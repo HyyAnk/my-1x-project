@@ -2,6 +2,7 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import {
   TopicConfirmInputSchema,
+  inferCanonicalDomainFromText,
   makeId,
   nowIso,
   type Channel,
@@ -176,6 +177,13 @@ async function executeTopicConfirmation(
       topicId,
       requestedQuestionCount: selectedQuestionCount,
     });
+  }
+
+  if (!candidate.domain_id && boundResult?.questions?.[0]?.domain_id) {
+    candidate.domain_id = boundResult.questions[0].domain_id;
+  }
+  if (!candidate.domain_id) {
+    candidate.domain_id = inferCanonicalDomainFromText(candidate.title) || inferCanonicalDomainFromText(candidate.premise);
   }
 
   const { requestedStyle, resolvedStyle } = resolveCandidateStyles(

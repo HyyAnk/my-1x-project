@@ -2,25 +2,21 @@ import { BankSubtopicBatchSchema, type BankSubtopicBatch } from "@studio/shared"
 import { RepositoryError } from "../../../errors.js";
 import { matchesArchetypeFilter } from "./bankBatchPathGuard.js";
 
+import { normalizeVerdictQuestion } from "../bankQuestionNormalizer.js";
+
 /**
- * Normalizes legacy archetype ID synonyms (e.g. verdict_fact_myth -> verdict_true_false).
+ * Normalizes legacy archetype ID synonyms (e.g. verdict_fact_myth / verdict_true_false -> verdict_yes_no).
  */
-/**
- * Normalizes legacy archetype ID synonyms (e.g. verdict_fact_myth -> verdict_true_false).
- */
-export function normalizeLegacyArchetype<T extends string>(archetypeId: T): T | "verdict_true_false" {
-  return archetypeId === "verdict_fact_myth" ? "verdict_true_false" : archetypeId;
+export function normalizeLegacyArchetype<T extends string>(archetypeId: T): T | "verdict_yes_no" {
+  return archetypeId === "verdict_fact_myth" || archetypeId === "verdict_true_false" ? "verdict_yes_no" : archetypeId;
 }
 
 /**
- * Normalizes legacy archetype IDs in both the batch and its nested questions.
+ * Normalizes legacy archetype IDs and questions in both the batch and its nested questions.
  */
 export function normalizeBatchLegacyArchetypes(batch: BankSubtopicBatch): BankSubtopicBatch {
-  const normalizedArch: BankSubtopicBatch["archetype_id"] =
-    batch.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : batch.archetype_id;
-  const questions = batch.questions.map((question) =>
-    question.archetype_id === "verdict_fact_myth" ? { ...question, archetype_id: "verdict_true_false" as const } : question,
-  );
+  const normalizedArch: BankSubtopicBatch["archetype_id"] = normalizeLegacyArchetype(batch.archetype_id);
+  const questions = batch.questions.map((question) => normalizeVerdictQuestion(question));
   return {
     ...batch,
     archetype_id: normalizedArch,

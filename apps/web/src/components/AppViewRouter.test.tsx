@@ -101,7 +101,7 @@ function createDefaultProps(overrides: Partial<AppViewRouterProps> = {}): AppVie
     appConfig: null,
     activeEngine: "codex",
     currentModel: "gpt-4o",
-    currentImageModel: "gpt-image-2",
+    currentImageModel: "gpt-image-2.5-flare",
     imageBalance: null,
     voiceMetrics: null,
     storage: null,

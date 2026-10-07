@@ -39,4 +39,12 @@ export const channelApi = {
         render_aspect_ratio: renderAspectRatio,
       }),
     }),
+  deleteTopic: (channelId: string, topicId: string) =>
+    request<{ ok: true; topic_id: string }>(`/api/channels/${channelId}/topics/${topicId}`, {
+      method: "DELETE",
+    }),
+  clearTopicHistory: (channelId: string, unselectedOnly: boolean = false) =>
+    request<{ ok: true; deleted_count: number }>(`/api/channels/${channelId}/topics/history?unselected_only=${unselectedOnly}`, {
+      method: "DELETE",
+    }),
 };

@@ -5,6 +5,7 @@ import type { RepositoryService } from "../../repository.js";
 import type { loadProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
 import { loadMasterReferenceImageBase64 } from "../mascot/services/mascotAssetLoader.js";
 import type { MascotVisualAnchor } from "./thumbnailTypes.js";
+import { projectThumbnailChoices } from "./thumbnailQuestionProjection.js";
 
 export interface EpisodeQuestionItem {
   question: string;
@@ -81,17 +82,13 @@ export async function loadChannelMascotVisualAnchor(
       fingerprint,
     };
   } catch (err) {
-    logger?.warn(
-      `Failed to extract mascot visual anchor for ${mascotId}: ${err instanceof Error ? err.message : String(err)}`,
-      {
-        profileId: channelId,
-        workerId: episodeId,
-      },
-    );
+    logger?.warn(`Failed to extract mascot visual anchor for ${mascotId}: ${err instanceof Error ? err.message : String(err)}`, {
+      profileId: channelId,
+      workerId: episodeId,
+    });
     return null;
   }
 }
-
 
 /**
  * Loads parsed quiz questions from repository scene data for an episode.
@@ -102,7 +99,7 @@ export async function loadEpisodeQuestions(
   episodeId: string,
 ): Promise<EpisodeQuestionItem[]> {
   try {
-    const scenes = (await repository.readScenes(channelId, episodeId)) as unknown[];
+    const scenes = (await repository.readScenes(channelId, episodeId).catch(() => [])) as unknown[];
     const result: EpisodeQuestionItem[] = [];
 
     for (const s of scenes) {
@@ -118,6 +115,23 @@ export async function loadEpisodeQuestions(
         });
       }
     }
+
+    if (result.length === 0 && typeof repository.readQuiz === "function") {
+      const quiz = await repository.readQuiz(channelId, episodeId).catch(() => null);
+      if (quiz?.questions && Array.isArray(quiz.questions)) {
+        for (const q of quiz.questions) {
+          if (q.question && typeof q.question === "string" && q.question.trim().length > 0) {
+            const { choices, answer } = projectThumbnailChoices(q.choices, q.correct_choice_id);
+            result.push({
+              question: q.question,
+              choices,
+              answer,
+            });
+          }
+        }
+      }
+    }
+
     return result;
   } catch {
     return [];

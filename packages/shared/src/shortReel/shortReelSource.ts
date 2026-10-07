@@ -101,10 +101,11 @@ export function createEnglishSourceSnapshot(
   if (
     originalQuestion.archetype_id !== "versus_faceoff" &&
     originalQuestion.archetype_id !== "deep_trivia" &&
+    originalQuestion.archetype_id !== "verdict_yes_no" &&
     originalQuestion.archetype_id !== "verdict_true_false"
   ) {
     throw new Error(
-      `Invalid source question: archetype must be 'versus_faceoff', 'deep_trivia', or 'verdict_true_false', received '${originalQuestion.archetype_id}'`,
+      `Invalid source question: archetype must be 'versus_faceoff', 'deep_trivia', 'verdict_yes_no', or 'verdict_true_false', received '${originalQuestion.archetype_id}'`,
     );
   }
 

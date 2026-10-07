@@ -88,8 +88,12 @@ const seeds: CreativeSeed[] = [
   creativeSeed("B02", "intro_brand_interaction", "intro", "Light Activation"),
   creativeSeed("C01", "intro_performance_tone", "intro", "Energetic"),
   creativeSeed("C03", "intro_performance_tone", "intro", "Thoughtful"),
-  creativeSeed("D01", "intro_verbal_hook", "intro", "Friendly Challenge"),
-  creativeSeed("D07", "intro_verbal_hook", "intro", "Shared Play"),
+  creativeSeed("D01", "intro_verbal_hook", "intro", "Friendly Knowledge Challenge"),
+  creativeSeed("D07", "intro_verbal_hook", "intro", "Shared Playful Cheer"),
+  creativeSeed("D11", "intro_verbal_hook", "intro", "Perfect Score Bet"),
+  creativeSeed("D24", "intro_verbal_hook", "intro", "Pop Quiz Surprise"),
+  creativeSeed("I01", "intro_environment", "intro", "Neon Cyber Arcade"),
+  creativeSeed("I02", "intro_environment", "intro", "Grand Trivia Arena"),
   creativeSeed("E01", "outro_recognition", "outro", "Delighted Response"),
   creativeSeed("E07", "outro_recognition", "outro", "Victory Motion"),
   creativeSeed("F02", "outro_invitation", "outro", "Return Invitation"),
@@ -293,7 +297,7 @@ describe("Intro/Outro Script Studio components", () => {
           target_duration_seconds: 10,
           seed_selection: {
             randomization_seed: "persisted-randomization-seed",
-            selected_seed_ids: ["A07", "B02", "C03", "D07"],
+            selected_seed_ids: ["A07", "B02", "C03", "D07", "I02"],
             locked_dimensions: ["intro_entrance", "intro_performance_tone"],
             algorithm_version: "1",
           },
@@ -350,6 +354,7 @@ describe("Intro/Outro Script Studio components", () => {
     expect((screen.getByLabelText("intro brand interaction") as HTMLSelectElement).value).toBe("B02");
     expect((screen.getByLabelText("intro performance tone") as HTMLSelectElement).value).toBe("C03");
     expect((screen.getByLabelText("intro verbal hook") as HTMLSelectElement).value).toBe("D07");
+    expect((screen.getByLabelText("intro environment") as HTMLSelectElement).value).toBe("I02");
     expect((screen.getByLabelText("outro recognition") as HTMLSelectElement).value).toBe("E07");
     expect((screen.getByLabelText("outro invitation") as HTMLSelectElement).value).toBe("F01");
     expect((screen.getByLabelText("outro farewell") as HTMLSelectElement).value).toBe("G05");
@@ -365,7 +370,7 @@ describe("Intro/Outro Script Studio components", () => {
         duration_seconds: 10,
         randomization_seed: "persisted-randomization-seed",
         logo_mode: "supplied_reference",
-        selected_seed_ids: ["A07", "B02", "C03", "D07"],
+        selected_seed_ids: ["A07", "B02", "C03", "D07", "I02"],
         locked_dimensions: ["intro_entrance", "intro_performance_tone"],
       },
       {
@@ -377,6 +382,72 @@ describe("Intro/Outro Script Studio components", () => {
         locked_dimensions: ["outro_farewell"],
       },
     ]);
+  });
+
+  it("exposes transition style selection when outro duration is 12s or greater", async () => {
+    const onGenerate = vi.fn().mockResolvedValue(undefined);
+    const longOutroProject: IntroOutroScriptProject = {
+      ...project,
+      version: 5,
+      drafts: {
+        intro: { ...project.drafts.intro, target_duration_seconds: 8 },
+        outro: { ...project.drafts.outro, target_duration_seconds: 16 },
+      },
+    };
+
+    render(
+      <ScriptConfigureStep
+        channelId="channel_1"
+        stylePresetId="preset_arcade_classic"
+        contextBundle={{
+          context: {
+            channel_id: "channel_1",
+            style_preset_id: "preset_arcade_classic",
+            mascot_id: "mascot_1",
+            mascot_name: "Shape Guide",
+            mascot_style_id: "style_1",
+            mascot_style_name: "Flat Style",
+            mascot_style_revision: 1,
+            mascot_reference_url: "/mascot.png",
+            logo_reference_url: null,
+            identity_profile_id: identity.profile_id,
+            identity_status: "reviewed",
+            issues: [],
+          },
+          identity,
+          seeds,
+        }}
+        project={longOutroProject}
+        job={null}
+        busy={null}
+        onCreateProject={vi.fn()}
+        onAnalyzeIdentity={vi.fn()}
+        onReviewIdentity={vi.fn()}
+        onGenerate={onGenerate}
+        onRefresh={vi.fn()}
+      />,
+    );
+
+    const transitionSelect = screen.getByLabelText("Two-part transition style") as HTMLSelectElement;
+    expect(transitionSelect).toBeDefined();
+    expect(transitionSelect.value).toBe("auto");
+
+    await act(async () => {
+      fireEvent.change(transitionSelect, { target: { value: "occlusion_wipe" } });
+    });
+    expect(transitionSelect.value).toBe("occlusion_wipe");
+
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Generate scripts" })));
+
+    expect(onGenerate).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          clip_kind: "outro",
+          duration_seconds: 16,
+          transition_style: "occlusion_wipe",
+        }),
+      ]),
+    );
   });
 
   it("shows live identity analysis state and prevents generation while review is pending", () => {

@@ -18,7 +18,6 @@ function stingerStageAndBackdropStyles(): string {
   overflow: hidden;
   display: grid;
   place-items: center;
-  perspective: 1200px;
 }
 
 .brand-stinger-backdrop {
@@ -122,7 +121,6 @@ function stingerBadgeAndPillStyles(): string {
   justify-content: center;
   pointer-events: none;
   will-change: transform, opacity;
-  transform-style: preserve-3d;
   animation: stinger-content-stage var(--trans-dur, 1.3s) linear var(--clip-start, 0s) both;
 }
 

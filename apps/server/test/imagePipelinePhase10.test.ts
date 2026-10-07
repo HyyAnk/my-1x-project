@@ -522,14 +522,14 @@ describe("Phase 10 - Image Prompt, Request and Cache Propagation", () => {
   });
 
   describe("Provider aspect ratio validation and error handling", () => {
-    it("resolveImageDimensions rejects unsupported aspect ratio for GPT-image-2", () => {
-      expect(() => resolveImageDimensions("7:5", "gpt-image-2")).toThrow(/Unsupported aspect ratio/);
+    it("resolveImageDimensions rejects unsupported aspect ratio for GPT-image-2.5-flare", () => {
+      expect(() => resolveImageDimensions("7:5", "gpt-image-2.5-flare")).toThrow(/Unsupported aspect ratio/);
     });
 
     it("resolveImageDimensions returns valid dimensions for all 6 supported ratios", () => {
       const ratios = ["16:9", "4:3", "1:1", "3:4", "9:16", "3:2", "2:3"];
       for (const r of ratios) {
-        const resolved = resolveImageDimensions(r, "gpt-image-2");
+        const resolved = resolveImageDimensions(r, "gpt-image-2.5-flare");
         expect(resolved.aspect_ratio).toBe(r);
         expect(resolved.size).toBeDefined();
       }

@@ -14,6 +14,8 @@ import type {
   UsageLedger,
   VideoDescription,
   VoicePlan,
+  QuestionImageItem,
+  QuestionImagesOverviewResponse,
 } from "@studio/shared";
 import type { BundleImageMeta } from "../types.js";
 
@@ -62,6 +64,21 @@ export interface IQuizArtifactRepository {
     meta?: BundleImageMeta,
   ): Promise<string>;
   resolveQuizAssetPath(channelId: string, episodeId: string, assetPath: string): Promise<string>;
+  listEpisodeQuestionImages(channelId: string, episodeId: string): Promise<QuestionImagesOverviewResponse>;
+  saveUploadedQuestionImage(
+    channelId: string,
+    episodeId: string,
+    questionNumber: number,
+    content: Uint8Array,
+    filename?: string,
+    options?: { slotId?: string; assetId?: string },
+  ): Promise<{ item: QuestionImageItem; invalidated: string[] }>;
+  deleteUploadedQuestionImage(
+    channelId: string,
+    episodeId: string,
+    questionNumber: number,
+    options?: { slotId?: string; assetId?: string },
+  ): Promise<{ item: QuestionImageItem; invalidated: string[] }>;
   readQuizTimeline(channelId: string, episodeId: string): Promise<QuizTimeline | null>;
   writeQuizTimeline(channelId: string, episodeId: string, timeline: QuizTimeline): Promise<string>;
   readQuizAssessment(channelId: string, episodeId: string): Promise<QuizAssessment | null>;

@@ -11,7 +11,7 @@ export function introOutroSelectionKey(episode: Episode): string {
 
 async function choosePair(repository: PairRepository, channel: Channel, episode: Episode): Promise<ReadyPair | null> {
   const selection = episode.quiz_config.intro_outro_selection;
-  if (selection.mode === "none") return null;
+  if (selection.mode === "none" || selection.mode === "motion_template") return null;
   if (selection.mode === "specific_pair") {
     const style = await repository.getChannelIntroOutroStyle(channel.channel_id, selection.style_id);
     const pair = style ? await readyPair(repository, channel.channel_id, style) : null;
@@ -24,8 +24,16 @@ async function choosePair(repository: PairRepository, channel: Channel, episode:
     await Promise.all(
       styles.filter((style) => style.style_preset_id === category).map((style) => readyPair(repository, channel.channel_id, style)),
     )
-  ).filter((pair) => pair !== null);
-  return candidates.length ? candidates[randomInt(candidates.length)] : null;
+  ).filter((pair): pair is ReadyPair => pair !== null);
+  if (candidates.length) return candidates[randomInt(candidates.length)];
+  if (channel.default_intro_outro_style_id) {
+    const defaultStyle = styles.find((style) => style.style_id === channel.default_intro_outro_style_id);
+    if (defaultStyle && !defaultStyle.style_preset_id) {
+      const pair = await readyPair(repository, channel.channel_id, defaultStyle);
+      if (pair) return pair;
+    }
+  }
+  return null;
 }
 
 async function createSnapshot(repository: PairRepository, channel: Channel, episode: Episode): Promise<IntroOutroSnapshot> {

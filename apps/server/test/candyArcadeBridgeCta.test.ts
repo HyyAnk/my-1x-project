@@ -79,6 +79,20 @@ describe("Stage 6: CandyArcade Bridge Scene 2 (Subscribe CTA)", () => {
       expect(html).toContain("Shorts Channel");
       expect(html).toContain("bridge-cta-hero-container");
     });
+
+    it("guarantees zero-based --clip-start:0s regardless of non-zero start time", () => {
+      const html = bridgeSubscribeCtaClip({
+        start: 16.58,
+        duration: 9.43,
+        channelName: "Quazzie",
+        ctaMode: "hero_action",
+      });
+
+      expect(html).toContain('data-start="16.580"');
+      expect(html).toContain('data-duration="9.430"');
+      expect(html).toContain('style="--clip-start:0s;"');
+      expect(html).not.toContain("--clip-start:16.580s");
+    });
   });
 
   describe("candyArcadeBridgeCtaStylesCss", () => {

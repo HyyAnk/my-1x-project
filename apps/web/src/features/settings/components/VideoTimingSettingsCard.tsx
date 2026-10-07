@@ -17,6 +17,8 @@ export interface VideoTimingSettingsCardProps {
   setFps?: (val: number) => void;
   mascotMediaMode?: "static" | "animation";
   setMascotMediaMode?: (val: "static" | "animation") => void;
+  fastRenderMode?: boolean;
+  setFastRenderMode?: (val: boolean) => void;
   maxSceneDuration: number;
   setMaxSceneDuration: (val: number) => void;
   narrationWordsPerSecond: number;
@@ -40,6 +42,8 @@ export function VideoTimingSettingsCard({
   setFps,
   mascotMediaMode = "static",
   setMascotMediaMode,
+  fastRenderMode = true,
+  setFastRenderMode,
   maxSceneDuration,
   setMaxSceneDuration,
   narrationWordsPerSecond,
@@ -67,6 +71,10 @@ export function VideoTimingSettingsCard({
       <StatusLine
         label="Mascot Media Mode"
         value={mascotMediaMode === "animation" ? "Looping Animations (WebM / Spritesheet)" : "Static Variants (Style Stills)"}
+      />
+      <StatusLine
+        label="Fast Render Mode"
+        value={fastRenderMode ? "Enabled (Bypasses preflight layout check)" : "Disabled (Runs full preflight check)"}
       />
       <form className="codex-form" onSubmit={(event) => void onSaveVideo(event)}>
         <label>
@@ -174,6 +182,16 @@ export function VideoTimingSettingsCard({
             Standard spoken speed calibration ({narrationWordsPerSecond} words/sec ≈ {estimatedWpm} words/min).
           </small>
         </label>
+        {setFastRenderMode && (
+          <label className="checkbox-field" style={{ display: "flex", alignItems: "center", gap: "8px", margin: "12px 0", cursor: "pointer" }}>
+            <input
+              type="checkbox"
+              checked={fastRenderMode}
+              onChange={(event) => setFastRenderMode(event.target.checked)}
+            />
+            <span style={{ fontWeight: 600 }}>Fast Render Mode (Skip layout & media preflight checks)</span>
+          </label>
+        )}
         <button className="primary-button" disabled={savingVideo}>
           {savingVideo ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
           <span>Save Video Settings</span>

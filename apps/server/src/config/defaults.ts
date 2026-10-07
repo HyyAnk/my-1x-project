@@ -1,4 +1,4 @@
-import { IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, RECOMMENDED_MASCOT_PLACEMENT_PRESET, type AppConfig } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID, RECOMMENDED_MASCOT_PLACEMENT_PRESET, type AppConfig } from "@studio/shared";
 
 export const DEFAULT_CONFIG: AppConfig = {
   active_engine: "codex",
@@ -18,17 +18,17 @@ export const DEFAULT_CONFIG: AppConfig = {
     max_concurrent_tasks: 1,
     mascot_media_mode: "static",
     // Bypasses pre-render layout preflight checks for rapid drafting/dev; contrast QA is non-blocking regardless of this setting
-    fast_render_mode: false,
+    fast_render_mode: true,
   },
   image_generation: {
     enabled: true,
     images_per_bundle: 1,
     provider: "gpti2",
     base_url: "",
-    model: "gpt-image-2",
+    model: DEFAULT_GPTI2_MODEL,
     api_key: "",
     quality: "low",
-    max_concurrent_tasks: 3,
+    max_concurrent_tasks: 6,
   },
   image_fallback: {
     enabled: true,

@@ -116,8 +116,9 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
   });
 }
 
-function defaultArchetype(format: "multiple_choice" | "image_guess" | "true_false" | "odd_one_out", presentation: "text" | "visual") {
+function defaultArchetype(format: "multiple_choice" | "image_guess" | "yes_no" | "true_false" | "odd_one_out", presentation: "text" | "visual") {
   if (format === "odd_one_out") return "visual_multiple_choice" as const;
+  if (format === "yes_no") return "yes_no" as const;
   if (format === "true_false") return "true_false" as const;
   return presentation === "visual" ? ("visual_multiple_choice" as const) : ("text_multiple_choice" as const);
 }

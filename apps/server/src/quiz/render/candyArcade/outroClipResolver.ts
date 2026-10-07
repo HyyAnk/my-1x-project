@@ -4,10 +4,12 @@ import {
   type MascotProfile,
   type MascotRenderAspectRatio,
   type MascotStateMediaMode,
+  type MotionTemplateOptions,
 } from "@studio/shared";
 import { customOutroVideoClip } from "./customOutroVideoClip.js";
-import { outroClip, type Copy } from "./candyArcadeClips.js";
+import { mascotElement, outroClip, type Copy } from "./candyArcadeClips.js";
 import { adaptMascotForPhase } from "../productionMascotRenderer.js";
+import { renderMotionOutroClip } from "../motion/index.js";
 
 export type ResolveCandyArcadeOutroClipInput = {
   hasAudio?: boolean;
@@ -22,6 +24,11 @@ export type ResolveCandyArcadeOutroClipInput = {
   copy: Copy;
   aspectRatio: MascotRenderAspectRatio;
   mediaMode?: MascotStateMediaMode;
+  motionTemplateId?: string;
+  motionTemplateOptions?: MotionTemplateOptions;
+  topic?: string;
+  channelName?: string;
+  brandLogoHtml?: string;
 };
 
 export function resolveCandyArcadeOutroClip(input: ResolveCandyArcadeOutroClipInput): string | undefined {
@@ -36,5 +43,26 @@ export function resolveCandyArcadeOutroClip(input: ResolveCandyArcadeOutroClipIn
 
   const effectiveMode = resolveEffectiveMascotMediaMode(input.mascotConfig, input.mediaMode);
   const outroMascot = adaptMascotForPhase(input.mascot, "outro", input.chosenStyleId, effectiveMode);
+
+  if (input.motionTemplateId) {
+    const outroDuration = input.duration - input.outroStart;
+    const mascotHtml = mascotElement(outroMascot, input.mascotConfig, "outro", {
+      clipStartSeconds: 0,
+      clipDurationSeconds: outroDuration,
+      aspectRatio: input.aspectRatio,
+      mediaMode: effectiveMode,
+    });
+    return renderMotionOutroClip(input.motionTemplateId, {
+      topicTitle: input.topic,
+      channelName: input.channelName,
+      startSeconds: input.outroStart,
+      durationSeconds: outroDuration,
+      aspectRatio: input.aspectRatio,
+      options: input.motionTemplateOptions,
+      mascotHtml,
+      brandLogoHtml: input.brandLogoHtml,
+    });
+  }
+
   return outroClip(input.outroStart, input.duration, input.questionCount, input.copy, outroMascot, input.mascotConfig, input.aspectRatio, effectiveMode);
 }

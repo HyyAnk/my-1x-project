@@ -1,6 +1,7 @@
 import {
   QuizV2Schema,
   resolveEffectiveMascotMediaMode,
+  type BridgeShowcaseItem,
   type ChannelMascotConfig,
   type DirectorPlan,
   type MascotProfile,
@@ -10,6 +11,7 @@ import {
   type MascotStateMediaMode,
   type IntroOutroTransitionType,
   type ResolvedTransitionInstance,
+  type MotionTemplateOptions,
   MASCOT_CANVAS_SIZES,
 } from "@studio/shared";
 import { type ResolveBgmOptions } from "../audio/bgmRegistry.js";
@@ -21,6 +23,7 @@ import {
   candyArcadeSystemFontFaceCss,
 } from "./candyArcade/candyArcadeStyles.js";
 import { highlightQuestionMarkup, illustrationDataUri, QUESTION_KEYWORD_STOP_WORDS, esc, escAttr } from "./candyArcade/candyArcadeSvg.js";
+import { extractBridgeShowcaseItems } from "../assets/bridgeTopicEntityExtractor.js";
 import { assetFor, buildBgmClips, buildSfxClips, sfxSource, source } from "./candyArcade/candyArcadeAudio.js";
 import {
   introClip,
@@ -30,6 +33,7 @@ import {
   questionClip,
   bridgeTopicClip,
   bridgeSubscribeCtaClip,
+  preOutroClip,
   quizCopy,
   subCompositionMount,
   toSubComposition,
@@ -38,6 +42,7 @@ import {
   calculateIntroTransitionTiming,
   brandLogoStingerClip,
   energyWhipStingerClip,
+  celebrationStingerClip,
 } from "./candyArcade/candyArcadeClips.js";
 import { renderChannelBrandMark } from "./candyArcade/channelBrandMark.js";
 import { createMascotAnimationRenderSnapshot, type MascotAnimationRenderSnapshot } from "./productionMascotRenderer.js";
@@ -75,6 +80,11 @@ export type CandyArcadeCompositionInput = {
   mascotMediaMode?: MascotStateMediaMode;
   brandIdentity?: ResolvedChannelBrandIdentity;
   topic?: string;
+  introMotionTemplateId?: string;
+  introMotionTemplateOptions?: MotionTemplateOptions;
+  outroMotionTemplateId?: string;
+  outroMotionTemplateOptions?: MotionTemplateOptions;
+  channelName?: string;
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -106,6 +116,7 @@ export {
   bridgeSubscribeCtaClip,
   brandLogoStingerClip,
   energyWhipStingerClip,
+  celebrationStingerClip,
   transitionClip,
   mascotElement,
   quizCopy,
@@ -130,10 +141,16 @@ function resolveFirstAndOutroTiming(events: QuizTimeline["events"], firstQuestio
   const firstStart = firstQuestionId
     ? (events.find((event) => event.question_id === firstQuestionId && event.type === "question.enter")?.at_seconds ?? 0)
     : 0;
+  const preOutroStart = events.find(
+    (event) =>
+      event.segment_id === "pre_outro" ||
+      (event.type === "narration.segment" && event.segment_id === "pre_outro") ||
+      event.type === "pre_outro.enter",
+  )?.at_seconds;
   const outroStart = events.find(
     (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
   )?.at_seconds;
-  return { firstStart, outroStart };
+  return { firstStart, outroStart, questionEndStart: preOutroStart ?? outroStart };
 }
 
 export function buildCandyArcadeComposition(input: CandyArcadeCompositionInput): string {
@@ -157,7 +174,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   const usedBackgroundStyles = new Set(resolvedQuestions.map(({ style }) => style.backgroundStyle));
 
   const events = [...input.timeline.events];
-  const { firstStart, outroStart } = resolveFirstAndOutroTiming(events, input.quiz.questions[0]?.id);
+  const { firstStart, outroStart, questionEndStart } = resolveFirstAndOutroTiming(events, input.quiz.questions[0]?.id);
   const chosenStyleId = resolveChosenMascotStyleId(input);
   const snapshot = input.mascotAnimationSnapshot ?? createMascotAnimationRenderSnapshot(input.quiz.episode_id || "default_video");
   const effectiveMediaMode = resolveEffectiveMascotMediaMode(input.mascotConfig, input.mascotMediaMode);
@@ -165,6 +182,27 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   const bridgeTopicEvent = events.find((event) => event.type === "bridge.topic.enter");
   const bridgeCtaEvent = events.find((event) => event.type === "bridge.cta.enter");
   const introEnd = bridgeTopicEvent?.at_seconds ?? bridgeCtaEvent?.at_seconds ?? firstStart;
+
+  const topicPayload = bridgeTopicEvent?.payload?.topic as string | undefined;
+  const resolvedTopic =
+    input.topic?.trim() ||
+    (topicPayload && topicPayload !== "Today's Quiz" && topicPayload !== "Today's Challenge" ? topicPayload : undefined) ||
+    (input.quiz as { topic?: { title?: string } }).topic?.title ||
+    topicPayload ||
+    "Today's Challenge";
+
+  const channelName =
+    input.channelName ||
+    input.brandIdentity?.channelName ||
+    (bridgeCtaEvent?.payload?.channelName as string) ||
+    (input.quiz as { quiz_config?: { channel_name?: string } }).quiz_config?.channel_name ||
+    (input.quiz as { channel_name?: string }).channel_name ||
+    "Quiz";
+
+  const brandLogoHtml =
+    input.brandIdentity?.hasCustomLogo && input.brandIdentity.logoRelativeUrl
+      ? `<img src="${escAttr(input.brandIdentity.logoRelativeUrl)}" alt="Logo" class="motion-brand-logo" />`
+      : undefined;
 
   const firstQuestionPalette = resolvedQuestions[0]?.visual.palette;
   const intro = resolveCandyArcadeIntroClip({
@@ -185,6 +223,11 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     chosenStyleId,
     palette: firstQuestionPalette,
     mediaMode: effectiveMediaMode,
+    motionTemplateId: input.introMotionTemplateId,
+    motionTemplateOptions: input.introMotionTemplateOptions,
+    topic: resolvedTopic,
+    channelName,
+    brandLogoHtml,
   });
 
   if (introEnd > 0.04 && (input.transitionType ?? "stinger_swipe") !== "cut") {
@@ -213,20 +256,15 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   const clips: string[] = intro.clip ? [intro.clip] : [];
 
   if (bridgeTopicEvent) {
-    const topicPayload = bridgeTopicEvent.payload?.topic as string | undefined;
-    const resolvedTopic =
-      input.topic?.trim() ||
-      (topicPayload && topicPayload !== "Today's Quiz" && topicPayload !== "Today's Challenge" ? topicPayload : undefined) ||
-      (input.quiz as { topic?: { title?: string } }).topic?.title ||
-      topicPayload ||
-      "Today's Challenge";
+    const rawShowcaseItems = bridgeTopicEvent.payload?.showcaseItems as BridgeShowcaseItem[] | undefined;
+    const isShowcaseDisabled =
+      (bridgeTopicEvent.payload as { enableShowcase?: boolean })?.enableShowcase === false ||
+      (input.quiz as { bridge_config?: { enableShowcase?: boolean } })?.bridge_config?.enableShowcase === false;
 
-    const channelName =
-      input.brandIdentity?.channelName ||
-      (bridgeCtaEvent?.payload?.channelName as string) ||
-      (input.quiz as { quiz_config?: { channel_name?: string } }).quiz_config?.channel_name ||
-      (input.quiz as { channel_name?: string }).channel_name ||
-      "Quiz";
+    const showcaseItems =
+      (rawShowcaseItems && rawShowcaseItems.length > 0)
+        ? rawShowcaseItems
+        : (!isShowcaseDisabled ? extractBridgeShowcaseItems(input.quiz) : undefined);
 
     clips.push(
       bridgeTopicClip({
@@ -250,6 +288,8 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         logoUrl: input.brandIdentity?.logoRelativeUrl,
         fallbackInitial:
           input.brandIdentity?.fallbackInitial ?? (channelName.trim().charAt(0).toUpperCase() || "★"),
+        showcaseItems,
+        assets: input.assets,
       }),
     );
   }
@@ -438,7 +478,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     resolvedQuestions,
     events,
     duration,
-    outroStart,
+    outroStart: questionEndStart,
     mascot: input.mascot,
     mascotConfig: input.mascotConfig,
     chosenStyleId,
@@ -456,6 +496,20 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   clips.push(...timeline.clips);
   Object.assign(transitionInstances, timeline.transitionInstances);
 
+  const preOutroEvent = events.find(
+    (event) => event.type === "pre_outro.enter" || event.segment_id === "pre_outro",
+  );
+  if (preOutroEvent) {
+    clips.push(
+      preOutroClip({
+        start: preOutroEvent.at_seconds,
+        duration: preOutroEvent.duration_seconds,
+        headline: preOutroEvent.payload?.headline as string | undefined,
+        aspectRatio,
+      }),
+    );
+  }
+
   const outroClip = resolveCandyArcadeOutroClip({
     hasAudio: input.outroHasAudio,
     outroStart,
@@ -469,8 +523,40 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     copy,
     aspectRatio,
     mediaMode: effectiveMediaMode,
+    motionTemplateId: input.outroMotionTemplateId,
+    motionTemplateOptions: input.outroMotionTemplateOptions,
+    topic: resolvedTopic,
+    channelName,
+    brandLogoHtml,
   });
   if (outroClip) clips.push(outroClip);
+
+  const preOutroToOutroEvent = events.find(
+    (event) =>
+      event.type === "transition.start" &&
+      (event.payload?.instance_id === "pre_outro_to_outro" ||
+        event.payload?.transition_id === "celebration_stinger" ||
+        event.event_id === "transition_pre_outro_to_outro"),
+  );
+
+  if (preOutroEvent && outroClip) {
+    const celebrationDuration = preOutroToOutroEvent?.duration_seconds ?? 2.0;
+    const boundary = typeof outroStart === "number" ? outroStart : (preOutroEvent.at_seconds + preOutroEvent.duration_seconds);
+    const halfDuration = celebrationDuration * 0.5;
+    const celebrationStart = Math.max(0, Math.round((boundary - halfDuration) * 1000) / 1000);
+
+    clips.push(
+      celebrationStingerClip({
+        start: celebrationStart,
+        duration: celebrationDuration,
+        aspectRatio,
+        instanceId: (preOutroToOutroEvent?.payload?.instance_id as string) ?? "pre_outro_to_outro",
+        fromColor: firstQuestionPalette?.accent ?? "#F59E0B",
+        toColor: firstQuestionPalette?.backgroundPrimary ?? "#7C3AED",
+        accentColor: "#FEF08A",
+      }),
+    );
+  }
 
   const document = assembleCandyArcadeDocument({
     clips,

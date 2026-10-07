@@ -94,20 +94,24 @@ describe("quiz ImgStudio retry and cancellation", () => {
     const firstInvocation = generatedCalls();
 
     expect(firstInvocation.map(({ model }) => model)).toEqual([
+      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
       IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
       IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
       IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
       IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
     ]);
-    expect(firstInvocation[0]?.key).toBe(firstInvocation[2]?.key);
-    expect(firstInvocation[1]?.key).toBe(firstInvocation[3]?.key);
+    expect(firstInvocation[0]?.key).toBe(firstInvocation[3]?.key);
+    expect(firstInvocation[1]?.key).toBe(firstInvocation[4]?.key);
+    expect(firstInvocation[2]?.key).toBe(firstInvocation[5]?.key);
 
     await resolveWithFallback(repository, 1);
-    const secondInvocation = generatedCalls().slice(4);
+    const secondInvocation = generatedCalls().slice(6);
 
-    expect(secondInvocation).toHaveLength(2);
+    expect(secondInvocation).toHaveLength(3);
     expect(secondInvocation[0]?.key).not.toBe(firstInvocation[0]?.key);
     expect(secondInvocation[1]?.key).not.toBe(firstInvocation[1]?.key);
+    expect(secondInvocation[2]?.key).not.toBe(firstInvocation[2]?.key);
   });
 
   it("stops automatic rounds after a non-retryable provider failure", async () => {
@@ -117,7 +121,8 @@ describe("quiz ImgStudio retry and cancellation", () => {
 
     const result = await resolveWithFallback(createRepositoryStub(), 3);
 
-    expect(generateImgStudioImageBytes).toHaveBeenCalledTimes(2);
+    // Each tier attempts once and then retries once with a salted key upon 409 (2 calls x 3 tiers = 6 calls)
+    expect(generateImgStudioImageBytes).toHaveBeenCalledTimes(6);
     expect(result.issues).toEqual([
       expect.objectContaining({
         code: "asset_generation_failed",

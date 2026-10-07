@@ -151,6 +151,10 @@ export function ChannelDetail(props: ChannelDetailProps) {
             confirmingTopicId={state.confirmingTopicId}
             onSuggest={state.suggest}
             onConfirmTopic={state.confirmTopic}
+            onDeleteTopic={state.deleteTopic}
+            onClearHistory={state.clearTopicHistory}
+            deletingTopicId={state.deletingTopicId}
+            clearingTopicHistory={state.clearingTopicHistory}
           />
         ) : null}
         {/* Tab 4: Channel DNA & Identity */}

@@ -1,6 +1,7 @@
 import type { BankQuestion } from "@studio/shared";
 import type { RepositoryService } from "../../repository/service.js";
 import { runBatchAutoQa } from "./questionBankAutoQa.js";
+import { remediateLeakedQuestionsBatch } from "./remediation/index.js";
 import { loadAllKnowledgeEntities } from "./knowledgeBaseLoader.js";
 import { calculateMatrixCoverageStats, planBatchChunks } from "./matrixCoverageService.js";
 import {
@@ -62,6 +63,44 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
     const existingQuestions = existingResult.questions;
 
     const qaReport = runBatchAutoQa(input.rawCandidatesOverride, { existingQuestions });
+
+    let remediatedLeakCount = 0;
+    if (input.llmClient && qaReport.rejectedQuestions.length > 0) {
+      const leakedItems = qaReport.rejectedQuestions
+        .map((r) => {
+          const leakIssue = r.issues.find(
+            (i) => i.details?.leakType === "eponymous_franchise_leak" || i.details?.leakType === "verbatim_stem_leak",
+          );
+          return leakIssue ? { question: r.question, issue: leakIssue } : null;
+        })
+        .filter((item): item is { question: BankQuestion; issue: any } => item !== null);
+
+      if (leakedItems.length > 0) {
+        try {
+          const remediation = await remediateLeakedQuestionsBatch(leakedItems, {
+            llmClient: input.llmClient,
+            modelOverride: input.modelOverride,
+          });
+
+          if (remediation.remediatedCount > 0) {
+            remediatedLeakCount = remediation.remediatedCount;
+            const fixedIds = new Set(remediation.remediatedQuestions.map((q) => q.id));
+
+            for (const fixed of remediation.remediatedQuestions) {
+              qaReport.approvedQuestions.push(fixed);
+              qaReport.passedCount++;
+            }
+
+            const remainingRejected = qaReport.rejectedQuestions.filter((r) => !fixedIds.has(r.question.id));
+            qaReport.rejectedQuestions = remainingRejected;
+            qaReport.rejectedCount = qaReport.rejectedQuestions.length;
+          }
+        } catch (remErr) {
+          console.warn("[QuestionBankBatch] Raw candidates auto-remediation error:", remErr);
+        }
+      }
+    }
+
     const savedQuestions: BankQuestion[] = [];
 
     if (persist && qaReport.approvedQuestions.length > 0) {
@@ -94,6 +133,7 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
       generatedCount: input.rawCandidatesOverride.length,
       approvedCount: qaReport.passedCount,
       rejectedCount: qaReport.rejectedCount,
+      remediatedLeakCount,
       qaSummary: qaReport.summary,
       savedQuestions,
       rejectedQuestions: qaReport.rejectedQuestions,
@@ -158,6 +198,7 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
     generatedCount: scheduled.allGenerated.length,
     approvedCount: scheduled.totalApproved,
     rejectedCount: scheduled.totalRejected,
+    remediatedLeakCount: scheduled.remediatedLeakCount ?? 0,
     qaSummary: scheduled.combinedSummary,
     savedQuestions: scheduled.allSaved,
     rejectedQuestions: scheduled.allRejected,

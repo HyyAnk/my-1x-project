@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { IntroOutroScriptRevisionSchema, type IntroOutroScriptContent } from "@studio/shared";
-import { BUILT_IN_INTRO_OUTRO_SEEDS } from "../src/introOutroScripts/seedCatalog.js";
+import { BUILT_IN_INTRO_OUTRO_SEEDS, listEligibleSeeds } from "../src/introOutroScripts/seedCatalog.js";
 import { resolveSeedSelection } from "../src/introOutroScripts/seedSelection.js";
 import { validateScriptContent } from "../src/introOutroScripts/validation.js";
 import { resolveIntroOutroScriptModel } from "../src/introOutroScripts/model.js";
@@ -93,6 +93,44 @@ describe("Intro/Outro script domain", () => {
     expect(second.selection.selected_seed_ids).toEqual(first.selection.selected_seed_ids);
     expect(first.seeds.some((seed) => seed.required_capabilities.includes("grasping"))).toBe(false);
     expect(first.seeds.some((seed) => seed.required_capabilities.includes("ride_vehicle"))).toBe(false);
+  });
+
+  it("keeps all 23 intro entrance seeds eligible for mascots with standard locomotion when props are used", () => {
+    const standardIdentity = {
+      ...identity,
+      capabilities: {
+        ...identity.capabilities,
+        locomotion: "supported" as const,
+        ride_vehicle: "unknown" as const,
+        flight: "unknown" as const,
+        grasping: "unknown" as const,
+      },
+    };
+    const eligibleIntroEntranceSeeds = listEligibleSeeds(BUILT_IN_INTRO_OUTRO_SEEDS, standardIdentity).filter(
+      (seed) => seed.dimension === "intro_entrance",
+    );
+    expect(eligibleIntroEntranceSeeds).toHaveLength(23);
+    const eligibleIds = new Set(eligibleIntroEntranceSeeds.map((seed) => seed.id));
+    for (const id of ["A04", "A12", "A13", "A14", "A15", "A16", "A18", "A19", "A20", "A22", "A23"]) {
+      expect(eligibleIds.has(id)).toBe(true);
+    }
+  });
+
+  it("keeps all 30 outro entrance seeds eligible for mascots with standard locomotion when props are used", () => {
+    const standardIdentity = {
+      ...identity,
+      capabilities: {
+        ...identity.capabilities,
+        locomotion: "supported" as const,
+        ride_vehicle: "unknown" as const,
+        flight: "unknown" as const,
+        grasping: "unknown" as const,
+      },
+    };
+    const eligibleOutroEntranceSeeds = listEligibleSeeds(BUILT_IN_INTRO_OUTRO_SEEDS, standardIdentity).filter(
+      (seed) => seed.dimension === "outro_entrance",
+    );
+    expect(eligibleOutroEntranceSeeds).toHaveLength(30);
   });
 
   it("rejects invented capabilities and unknown feature IDs", () => {
@@ -302,10 +340,35 @@ describe("Intro/Outro script domain", () => {
   it("includes high-energy entertainment seeds in the built-in seed catalog", () => {
     const seedIds = BUILT_IN_INTRO_OUTRO_SEEDS.map((s) => s.id);
     expect(seedIds).toContain("A08");
+    expect(seedIds).toContain("A12");
+    expect(seedIds).toContain("A13");
+    expect(seedIds).toContain("A14");
+    expect(seedIds).toContain("A15");
+    expect(seedIds).toContain("A16");
+    expect(seedIds).toContain("A17");
+    expect(seedIds).toContain("A18");
+    expect(seedIds).toContain("A19");
+    expect(seedIds).toContain("A20");
+    expect(seedIds).toContain("A21");
+    expect(seedIds).toContain("A22");
+    expect(seedIds).toContain("A23");
     expect(seedIds).toContain("B08");
     expect(seedIds).toContain("B09");
     expect(seedIds).toContain("C08");
     expect(seedIds).toContain("D08");
+    expect(seedIds).toContain("D11");
+    expect(seedIds).toContain("D17");
+    expect(seedIds).toContain("D22");
+    expect(seedIds).toContain("D24");
+    expect(seedIds).toContain("D30");
+    expect(seedIds).toContain("I01");
+    expect(seedIds).toContain("I02");
+    expect(seedIds).toContain("I03");
+    expect(seedIds).toContain("I04");
+    expect(seedIds).toContain("I05");
+    expect(seedIds).toContain("I06");
+    expect(seedIds).toContain("I07");
+    expect(seedIds).toContain("I08");
   });
 
   it("validates and scales an extended 16-second outro script without timing or voice budget errors", () => {
@@ -432,6 +495,163 @@ describe("Intro/Outro script domain", () => {
     expect(part1Text).toContain("PART 1: THE RUN-UP & KINEMATIC TRANSITION (0.0s - 8s)");
     expect(part2Text).toContain("PART 2: MOMENTUM RECOVERY, CTA & FAREWELL (8s - 16s)");
     expect(part2Text).not.toContain("PART 1: THE RUN-UP");
+  });
+
+  it("compiles production prompt and exports two-part package for foreground occlusion wipe transition", async () => {
+    const content = productionContent();
+    content.production.clip_kind = "outro";
+    content.production.target_duration_seconds = 16;
+    content.production_directions!.end_hold_seconds = 1;
+    content.production_directions!.transition_style = "occlusion_wipe";
+    content.production_policy = "creative-performance-v3";
+
+    const revision = IntroOutroScriptRevisionSchema.parse({
+      schema_version: 1,
+      revision_id: "script_outro_16s_occlusion",
+      project_id: "project_1",
+      channel_id: "channel_1",
+      style_preset_id: "preset_arcade_classic",
+      clip_kind: "outro",
+      revision_number: 1,
+      origin: "generated",
+      content,
+      identity_snapshot: identity,
+      seed_selection: { randomization_seed: "test", selected_seed_ids: ["H07"], locked_dimensions: [], algorithm_version: "1" },
+      seed_snapshot: [],
+      references: [
+        { role: "mascot_subject", asset_id: "asset_1", url: "/reference.png", sha256: "a".repeat(64), mime_type: "image/png" },
+      ],
+      context_fingerprint: "c".repeat(64),
+      template_version: "intro-outro-script-v4",
+      requested_model: "gemini-3.7-flash-high",
+      effective_model: null,
+      validation_issues: [],
+      warning_acknowledgements: [],
+      created_at: "2026-09-22T00:00:00.000Z",
+    });
+
+    const mockRepo: Partial<IntroOutroScriptRepository> = {
+      readReferenceSnapshot: async () => Buffer.from("fake-image-bytes"),
+    };
+
+    const zipBuffer = await exportScriptPackage(mockRepo as IntroOutroScriptRepository, revision);
+    const entries = parseZipArchive(zipBuffer);
+    const part1Entry = entries.find((e) => e.filename === "part1_prompt.txt")!;
+    const part2Entry = entries.find((e) => e.filename === "part2_prompt.txt")!;
+    const part1Text = Buffer.from(part1Entry.data).toString("utf-8");
+    const part2Text = Buffer.from(part2Entry.data).toString("utf-8");
+
+    expect(part1Text).toContain("PART 1: CELEBRATION & FOREGROUND OCCLUSION WIPE (0.0s - 8s)");
+    expect(part1Text).toContain("100% frame occlusion wipe");
+    expect(part2Text).toContain("PART 2: STAGE REVEAL, CTA & FAREWELL (8s - 16s)");
+    expect(part2Text).toContain("foreground occluding element clears");
+  });
+
+  it("supports all defined transition archetypes with distinctive prompt directions", () => {
+    const archetypes = ["flash_stunt", "occlusion_wipe", "kinetic_match_cut", "elemental_burst", "whip_orbit", "comic_freeze"] as const;
+
+    for (const style of archetypes) {
+      const content = productionContent();
+      content.production.clip_kind = "outro";
+      content.production.target_duration_seconds = 16;
+      content.production_directions!.transition_style = style;
+      content.production_policy = "creative-performance-v3";
+
+      const revision = IntroOutroScriptRevisionSchema.parse({
+        schema_version: 1,
+        revision_id: `script_outro_${style}`,
+        project_id: "project_1",
+        channel_id: "channel_1",
+        style_preset_id: "preset_arcade_classic",
+        clip_kind: "outro",
+        revision_number: 1,
+        origin: "generated",
+        content,
+        identity_snapshot: identity,
+        seed_selection: { randomization_seed: "test", selected_seed_ids: [], locked_dimensions: [], algorithm_version: "1" },
+        seed_snapshot: [],
+        references: [
+          { role: "mascot_subject", asset_id: "asset_1", url: "/reference.png", sha256: "a".repeat(64), mime_type: "image/png" },
+        ],
+        context_fingerprint: "c".repeat(64),
+        template_version: "intro-outro-script-v4",
+        requested_model: "gemini-3.7-flash-high",
+        effective_model: null,
+        validation_issues: [],
+        warning_acknowledgements: [],
+        created_at: "2026-09-22T00:00:00.000Z",
+      });
+
+      const prompt = compileProductionPrompt(revision);
+      expect(prompt).toContain("PART 1:");
+      expect(prompt).toContain("PART 2:");
+      expect(prompt).toContain("================================================================================");
+    }
+  });
+
+  it("ensures fixed scene environment is identical and self-contained in both Part 1 and Part 2 without cross-clip references", async () => {
+    const content = productionContent();
+    content.production.clip_kind = "outro";
+    content.production.target_duration_seconds = 16;
+    content.production_directions!.transition_style = "kinetic_match_cut";
+    content.production_policy = "creative-performance-v3";
+    content.style.description = "Reflective polished concrete floor with circular light rim";
+    content.style.staging = "Center stage with warm amber background wash and depth";
+    content.style.motion_language = "Volumetric rim lighting and subtle atmospheric haze";
+    content.style.palette = ["Cobalt Blue", "Warm Amber", "Pure White"];
+
+    const revision = IntroOutroScriptRevisionSchema.parse({
+      schema_version: 1,
+      revision_id: "script_outro_16s_match_cut_env",
+      project_id: "project_1",
+      channel_id: "channel_1",
+      style_preset_id: "preset_arcade_classic",
+      clip_kind: "outro",
+      revision_number: 1,
+      origin: "generated",
+      content,
+      identity_snapshot: identity,
+      seed_selection: { randomization_seed: "test", selected_seed_ids: ["H08"], locked_dimensions: [], algorithm_version: "1" },
+      seed_snapshot: [],
+      references: [
+        { role: "mascot_subject", asset_id: "asset_1", url: "/reference.png", sha256: "a".repeat(64), mime_type: "image/png" },
+      ],
+      context_fingerprint: "c".repeat(64),
+      template_version: "intro-outro-script-v4",
+      requested_model: "gemini-3.7-flash-high",
+      effective_model: null,
+      validation_issues: [],
+      warning_acknowledgements: [],
+      created_at: "2026-09-22T00:00:00.000Z",
+    });
+
+    const mockRepo: Partial<IntroOutroScriptRepository> = {
+      readReferenceSnapshot: async () => Buffer.from("fake-image-bytes"),
+    };
+
+    const zipBuffer = await exportScriptPackage(mockRepo as IntroOutroScriptRepository, revision);
+    const entries = parseZipArchive(zipBuffer);
+    const part1Entry = entries.find((e) => e.filename === "part1_prompt.txt")!;
+    const part2Entry = entries.find((e) => e.filename === "part2_prompt.txt")!;
+    const part1Text = Buffer.from(part1Entry.data).toString("utf-8");
+    const part2Text = Buffer.from(part2Entry.data).toString("utf-8");
+
+    const expectedEnvBlock = [
+      "FIXED SCENE ENVIRONMENT (MANDATORY CONSISTENCY)",
+      "Stage & Architecture: Reflective polished concrete floor with circular light rim",
+      "Staging & Spatial Depth: Center stage with warm amber background wash and depth",
+      "Atmosphere & Lighting Dynamics: Volumetric rim lighting and subtle atmospheric haze",
+      "Visual Color Scheme & Lighting Tones: Cobalt Blue, Warm Amber, Pure White",
+    ].join("\n");
+
+    expect(part1Text).toContain(expectedEnvBlock);
+    expect(part2Text).toContain(expectedEnvBlock);
+
+    // Ensure zero cross-clip shorthand references in part 2
+    expect(part2Text).not.toContain("EXACT MATCH TO PART 1");
+    expect(part2Text).not.toContain("matching Part 1");
+    expect(part2Text).not.toContain("same as Part 1");
+    expect(part2Text).not.toContain("as in Part 1");
   });
 });
 

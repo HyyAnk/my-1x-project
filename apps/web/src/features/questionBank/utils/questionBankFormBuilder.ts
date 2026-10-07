@@ -26,7 +26,12 @@ export function buildBankQuestion(params: BuildBankQuestionParams): BankQuestion
     subtopic_id: params.subtopicId,
     language: "en",
     question: params.questionText.trim(),
-    format: params.format,
+    format:
+      params.archetypeId === "verdict_yes_no"
+        ? "yes_no"
+        : params.archetypeId === "verdict_true_false"
+          ? "true_false"
+          : params.format,
     choices: params.choices,
     correct_choice_id: correct ? correct.id : "",
     explanation: params.explanation.trim(),

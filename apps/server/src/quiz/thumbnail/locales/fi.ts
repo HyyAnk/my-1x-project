@@ -7,6 +7,7 @@ export const fiLocale: ThumbnailLocalization = {
     mystery_silhouette: "KUKA TÄMÄ ON?",
     odd_one_out: "ETSI ERILAINEN!",
     difficulty_tier: "LÄPÄISETKÖ TASON 4?",
+    yes_no: "KYLLÄ VAI EI?",
     true_false: "TOTTA VAI TARUA?",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const fiLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "VAIN 1% TIETÄÄ! 🔥",
     odd_one_out: () => "10 SEKUNTIA! ⏱️",
     difficulty_tier: () => "VAIN IQ 140+ 🔥",
+    yes_no: () => "KYLLÄ VAI EI? ⚡",
     true_false: () => "TOTTA VAI TARUA? ⚡",
   },
 };

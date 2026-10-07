@@ -19,6 +19,11 @@ import type { QuizSceneTiming } from "../scene/quizScene.types.js";
 import type { Copy } from "./quizCopy.js";
 import { rewardFx, styleAttributes } from "./candyArcadeClipElements.js";
 import type { QuestionClipInput } from "./candyArcadeClipTypes.js";
+import {
+  assertZeroBasedTiming,
+  normalizeMascotTimelineEventsToZeroBased,
+  normalizeSceneTimingToZeroBased,
+} from "./candyArcadeTiming.js";
 
 export { quizCopy, type Copy } from "./quizCopy.js";
 export {
@@ -26,6 +31,7 @@ export {
   requiredAttribute,
   rootRelativeSubCompositionAssets,
   subCompositionMount,
+  sanitizeSubCompositionRootStyle,
   type SubComposition,
 } from "./subCompositionParser.js";
 export { rewardFx, imageCard, revealPanel, sceneDecorations, styleAttributes } from "./candyArcadeClipElements.js";
@@ -40,9 +46,19 @@ export {
 export { bridgeTopicClip, cleanTopicForDisplay, type BridgeTopicClipInput } from "./bridgeTopicClip.js";
 export { renderBridgeTopicBackdrop, type BridgeTopicBackdropOptions } from "./bridgeTopicBackdrop.js";
 export { bridgeSubscribeCtaClip, type BridgeSubscribeCtaClipInput } from "./bridgeSubscribeCtaClip.js";
+export { preOutroClip, type PreOutroClipInput } from "./preOutroClip.js";
 export { brandLogoStingerClip, type BrandLogoStingerClipInput } from "./transitions/brandLogoStingerClip.js";
 export { energyWhipStingerClip, type EnergyWhipStingerClipInput } from "./transitions/energyWhipStingerClip.js";
+export { celebrationStingerClip, type CelebrationStingerClipInput } from "./transitions/celebrationStingerClip.js";
 export { renderBrandLogoBadge, type RenderBrandLogoBadgeOptions } from "./transitions/brandLogoFallbackBadge.js";
+export {
+  roundTimingSeconds,
+  toZeroBasedOffset,
+  toZeroBasedDuration,
+  normalizeSceneTimingToZeroBased,
+  normalizeMascotTimelineEventsToZeroBased,
+  assertZeroBasedTiming,
+} from "./candyArcadeTiming.js";
 export type { QuestionClipInput } from "./candyArcadeClipTypes.js";
 
 export function mascotElement(
@@ -94,13 +110,14 @@ export function outroClip(
   aspectRatio: MascotRenderAspectRatio = "16:9",
   mediaMode?: MascotStateMediaMode,
 ): string {
+  const duration = Math.max(0.04, end - start);
   const mascotHtml = mascotElement(mascot, mascotConfig, "outro", {
-    clipStartSeconds: start,
-    clipDurationSeconds: Math.max(0.04, end - start),
+    clipStartSeconds: 0,
+    clipDurationSeconds: duration,
     aspectRatio,
     mediaMode,
   });
-  return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(0.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
+  return `<section id="candy-outro" class="clip candy-scene candy-outro" style="--clip-start: 0s;" data-start="${start.toFixed(3)}" data-duration="${duration.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
 export function questionClip(input: QuestionClipInput): string {
@@ -116,10 +133,14 @@ export function questionClip(input: QuestionClipInput): string {
     rewardStart: input.rewardStart,
     end: input.end,
   };
+  const localTiming = normalizeSceneTimingToZeroBased(timing);
+  assertZeroBasedTiming(localTiming);
+
+  const localMascotEvents = normalizeMascotTimelineEventsToZeroBased(input.mascotEvents, input.start);
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question", {
-    clipStartSeconds: input.start,
-    clipDurationSeconds: Math.max(0.04, input.end - input.start),
-    timelineEvents: input.mascotEvents,
+    clipStartSeconds: 0,
+    clipDurationSeconds: localTiming.end,
+    timelineEvents: localMascotEvents,
     revealOutcome: "correct",
     aspectRatio: input.aspectRatio ?? "16:9",
     mediaMode: input.mediaMode,
@@ -134,8 +155,8 @@ export function questionClip(input: QuestionClipInput): string {
     archetype: input.archetype,
     layoutResolution: input.layoutResolution,
     visual,
-    timing,
-    atSeconds: input.start,
+    timing: localTiming,
+    atSeconds: 0,
     assets: input.assets,
     aspectRatio: input.aspectRatio ?? "16:9",
     mascot,
@@ -155,14 +176,14 @@ export function questionClip(input: QuestionClipInput): string {
   const config = styleAttributes(
     visual,
     parts.question.layout,
-    input.start,
-    input.choicesStart,
-    input.thinkingStart,
-    input.revealStart,
-    input.rewardStart,
-    input.end,
-    input.timerHideAt,
-    input.countdownSeconds,
+    0,
+    localTiming.choicesStart,
+    localTiming.thinkingStart,
+    localTiming.revealStart,
+    localTiming.rewardStart,
+    localTiming.end,
+    localTiming.timerHideAt,
+    localTiming.countdownSeconds,
   );
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });
@@ -182,7 +203,7 @@ export function questionClip(input: QuestionClipInput): string {
   ]
     .filter(Boolean)
     .join(" ");
-  const thinkingHtml = renderQuizSceneThinkingPart(parts, timing);
+  const thinkingHtml = renderQuizSceneThinkingPart(parts, localTiming);
   const factHtml = `<div class="fact-card" data-layout-allow-occlusion><p>${esc(parts.phase.factText)}</p></div>`;
   const phaseHtml = renderQuizScenePhaseParts({
     layoutId: model.layout.id,
@@ -198,5 +219,5 @@ export function questionClip(input: QuestionClipInput): string {
   });
   const body = `<div class="game-stage" data-layout-allow-overflow>${layoutBody}</div>`;
   const revealAtSeconds = Math.max(0, input.revealStart - input.start).toFixed(3);
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0" data-reveal-at="${revealAtSeconds}">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-quiz-fixed="counter" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0" data-reveal-at="${revealAtSeconds}">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: 0, duration: localTiming.end })}<header class="game-header" data-quiz-fixed="counter" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }

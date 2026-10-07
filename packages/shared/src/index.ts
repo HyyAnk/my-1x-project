@@ -79,3 +79,5 @@ export {
 } from "./schemas/mascotAudit.js";
 export * from "./mascot/variantExport.js";
 export * from "./schemas/brandIdentityExport.js";
+export * from "./taxonomy/canonicalDomains.js";
+export * from "./motionTemplates/index.js";

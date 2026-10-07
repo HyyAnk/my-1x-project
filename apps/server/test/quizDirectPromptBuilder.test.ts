@@ -79,4 +79,18 @@ describe("buildDirectQuizOutputContract", () => {
     );
     expect(contract).toContain('VISUAL PROMPT LANGUAGE: The "visual_opportunity" field MUST ALWAYS be written 100% in English');
   });
+
+  it("enforces strict JSON escaping and single quote mandate inside string values", () => {
+    const contract = buildDirectQuizOutputContract({
+      taskType: "GENERATE_QUIZ",
+      episode: makeEpisode(),
+      quizQuestionCount: 5,
+      quizLastClaimId: "C05",
+      quizSourceMinimum: 3,
+    });
+
+    expect(contract).toContain("STRICT JSON ESCAPING & QUOTATION");
+    expect(contract).toContain("NEVER use unescaped double quotes");
+    expect(contract).toContain("Always use single quotes (') for all titles, names, spoken dialogue, quotes, and nicknames");
+  });
 });

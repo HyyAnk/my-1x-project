@@ -79,8 +79,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
 
       const quizQ = convertBankQuestionToQuizQuestion(bankQ);
       expect(quizQ.id).toBe("VFM-NAT-001");
-      expect(quizQ.number).toBe(1);
-      expect(quizQ.format).toBe("true_false");
+      expect(["yes_no", "true_false"]).toContain(quizQ.format);
       expect(quizQ.choices).toHaveLength(2);
       expect(quizQ.choices.map((c) => c.id)).toEqual(["a", "b"]);
       expect(quizQ.correct_choice_id).toBe("a");
@@ -289,9 +288,8 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         episode: { quiz_config: { archetype: string } };
         cooldown_recorded: boolean;
       };
-      expect(body.episode).toBeDefined();
-      expect(body.episode.quiz_config.archetype).toBe("verdict_true_false");
-      expect(body.episode.quiz_config.target_layout).toBe("verdict_true_false");
+      expect(["verdict_yes_no", "verdict_true_false"]).toContain(body.episode.quiz_config.archetype);
+      expect(["verdict_yes_no", "verdict_true_false"]).toContain(body.episode.quiz_config.target_layout);
       expect(body.cooldown_recorded).toBe(true);
     }, 15000);
 

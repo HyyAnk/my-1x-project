@@ -55,7 +55,7 @@ describe("ShopAIKey image provider", () => {
 
     await generateShopAiKeyImageBytes("A cheerful quiz image");
 
-    expect(models).toEqual(["gpt-image-2", "gpt-image-1.5", "gpt-image-1", "gpt-image-2-all"]);
+    expect(models).toEqual(["gpt-image-2.5-flare", "gpt-image-1.5", "gpt-image-1", "gpt-image-2-all"]);
   });
 
   it("posts to exactly one /v1/images/generations route and persists b64_json PNG output", async () => {
@@ -92,7 +92,7 @@ describe("ShopAIKey image provider", () => {
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
     process.env.SHOPAIKEY_API_KEY = "test-key";
     process.env.SHOPAIKEY_BASE_URL = "https://direct.shopaikey.com/v1/";
-    process.env.SHOPAIKEY_IMAGE_MODEL = "gpt-image-2-test";
+    process.env.SHOPAIKEY_IMAGE_MODEL = "gpt-image-2.5-test";
     const png = "iVBORw0KGgo=";
     globalThis.fetch = vi.fn<typeof fetch>((input, init) => {
       expect(toUrlString(input)).toBe("https://direct.shopaikey.com/v1/images/generations");
@@ -100,7 +100,7 @@ describe("ShopAIKey image provider", () => {
       expect(headers.authorization).toBe("Bearer test-key");
       const body = JSON.parse(init?.body as string) as Record<string, unknown>;
       expect(body).toMatchObject({
-        model: "gpt-image-2-test",
+        model: "gpt-image-2.5-test",
         size: "1536x1024",
         quality: "low",
         output_format: "png",

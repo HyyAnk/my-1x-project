@@ -2,7 +2,7 @@ import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
 import type { ImageProvider } from "../index.js";
 import { type RepositoryService } from "../../repository.js";
 import { resolveImgStudioAspectRatio, resolveImgStudioResolution } from "./dimensions.js";
-import { generateImgStudioImageBytes } from "./generator.js";
+import { generateImgStudioWithIdempotencyRecovery } from "./recovery.js";
 import { createImgStudioIdempotencyKey, createImgStudioRunId } from "./idempotency.js";
 import { validateReturnedImageDimensions } from "../../quiz/assets/imageDimensionValidator.js";
 import type { ImgStudioImageTarget } from "./types.js";
@@ -41,6 +41,7 @@ export class ImgStudioQuizImageProvider {
       referenceImageBase64?: string;
     },
     cancellationSignal?: AbortSignal,
+    onRetry?: (freshKey: string, reason: string) => void,
   ): Promise<{
     path: string;
     price_vnd?: number;
@@ -68,17 +69,21 @@ export class ImgStudioQuizImageProvider {
       model,
     });
 
-    const result = await generateImgStudioImageBytes(input.prompt, {
-      apiKey: this.options.apiKey,
-      baseUrl: this.options.baseUrl,
-      model,
-      aspect_ratio: aspectRatio,
-      resolution,
-      quality,
-      referenceImage: input.referenceImageBase64,
-      idempotencyKey,
-      cancellationSignal,
-    });
+    const result = await generateImgStudioWithIdempotencyRecovery(
+      input.prompt,
+      {
+        apiKey: this.options.apiKey,
+        baseUrl: this.options.baseUrl,
+        model,
+        aspect_ratio: aspectRatio,
+        resolution,
+        quality,
+        referenceImage: input.referenceImageBase64,
+        idempotencyKey,
+        cancellationSignal,
+      },
+      onRetry,
+    );
     cancellationSignal?.throwIfAborted();
 
     validateReturnedImageDimensions(result.bytes, aspectRatio, result.resolution);
@@ -152,6 +157,7 @@ export class ImgStudioImageProvider implements ImageProvider {
   async generateReference(
     prompt: string,
     cancellationSignal?: AbortSignal,
+    onRetry?: (freshKey: string, reason: string) => void,
   ): Promise<{
     asset_path: string;
     price_vnd?: number;
@@ -182,16 +188,20 @@ export class ImgStudioImageProvider implements ImageProvider {
       model,
     });
 
-    const result = await generateImgStudioImageBytes(prompt, {
-      apiKey: this.options.apiKey,
-      baseUrl: this.options.baseUrl,
-      model,
-      aspect_ratio: aspectRatio,
-      resolution,
-      quality,
-      idempotencyKey,
-      cancellationSignal,
-    });
+    const result = await generateImgStudioWithIdempotencyRecovery(
+      prompt,
+      {
+        apiKey: this.options.apiKey,
+        baseUrl: this.options.baseUrl,
+        model,
+        aspect_ratio: aspectRatio,
+        resolution,
+        quality,
+        idempotencyKey,
+        cancellationSignal,
+      },
+      onRetry,
+    );
     cancellationSignal?.throwIfAborted();
 
     const assetPath = await this.repository.writeBundleImage(

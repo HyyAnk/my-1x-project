@@ -31,6 +31,14 @@ describe("Choice Subject Enricher & Franchise Inheritance", () => {
         ),
       ).toBe("Dragon Ball Z");
     });
+
+    it("rejects franchise candidate when 'In <Clause>,' pattern exceeds 40 characters", () => {
+      expect(
+        extractFranchiseContext(
+          "In the 18th century during the Industrial Revolution across Western Europe, which invention revolutionized textiles?",
+        ),
+      ).toBeNull();
+    });
   });
 
   describe("resolveChoiceAssetSubject", () => {

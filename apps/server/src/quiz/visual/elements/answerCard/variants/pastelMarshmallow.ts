@@ -7,12 +7,7 @@ export const pastelMarshmallowVariant: AnswerCardSkin = {
   className: "ac-pastel-marshmallow",
   cardClassName: ({ order }) => `marshmallow-card-${order}`,
   renderDecorations: () => ({
-    beforeLabelHtml:
-      '<div class="marshmallow-inner-glow" aria-hidden="true"></div>' +
-      '<span class="marshmallow-sprinkle sprinkle-1" aria-hidden="true">✦</span>' +
-      '<span class="marshmallow-sprinkle sprinkle-2" aria-hidden="true">●</span>' +
-      '<span class="marshmallow-sprinkle sprinkle-3" aria-hidden="true">✦</span>' +
-      '<span class="marshmallow-sprinkle sprinkle-4" aria-hidden="true">●</span>',
+    beforeLabelHtml: '<div class="marshmallow-inner-glow" aria-hidden="true"></div>',
     labelSuffixHtml: '<span class="marshmallow-badge-swirl" aria-hidden="true"></span>',
   }),
   renderCss(): string {
@@ -94,51 +89,6 @@ export const pastelMarshmallowVariant: AnswerCardSkin = {
   z-index: 2;
 }
 
-/* Playful Confection Sprinkles */
-.ac-pastel-marshmallow .marshmallow-sprinkle {
-  position: absolute;
-  pointer-events: none;
-  z-index: 3;
-  line-height: 1;
-  user-select: none;
-  animation: ac-pastel-marshmallow-sprinkle-bob 3.2s ease-in-out infinite alternate;
-}
-.ac-pastel-marshmallow .sprinkle-1 {
-  top: 9px;
-  right: 24px;
-  font-size: 15px;
-  color: var(--bg-accent, #FF6584);
-  opacity: 0.88;
-  filter: drop-shadow(0 1px 2px rgba(255, 101, 132, 0.35));
-  animation-delay: 0s;
-}
-.ac-pastel-marshmallow .sprinkle-2 {
-  bottom: 9px;
-  right: 50px;
-  font-size: 8px;
-  color: #A78BFA;
-  opacity: 0.88;
-  filter: drop-shadow(0 1px 2px rgba(167, 139, 250, 0.35));
-  animation-delay: 0.8s;
-}
-.ac-pastel-marshmallow .sprinkle-3 {
-  top: 11px;
-  right: 76px;
-  font-size: 11px;
-  color: #FBBF24;
-  opacity: 0.88;
-  filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.35));
-  animation-delay: 1.6s;
-}
-.ac-pastel-marshmallow .sprinkle-4 {
-  bottom: 11px;
-  right: 102px;
-  font-size: 7px;
-  color: #38BDF8;
-  opacity: 0.88;
-  filter: drop-shadow(0 1px 2px rgba(56, 189, 248, 0.35));
-  animation-delay: 2.4s;
-}
 
 /* Circular Marshmallow Macaron Badge (Letter A, B, C, D) */
 .ac-pastel-marshmallow > b,
@@ -389,11 +339,6 @@ export const pastelMarshmallowVariant: AnswerCardSkin = {
 @keyframes ac-pastel-marshmallow-swirl {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-@keyframes ac-pastel-marshmallow-sprinkle-bob {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-2px) rotate(8deg); }
 }
 `;
   },

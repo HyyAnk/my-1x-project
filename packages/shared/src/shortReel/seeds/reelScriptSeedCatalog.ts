@@ -17,6 +17,7 @@ export {
 export const DEFAULT_SEED_BY_ARCHETYPE: Record<ReelArchetype, ReelScriptSeedId> = {
   versus_faceoff: "vf_arena_clash",
   deep_trivia: "dt_mystery_investigation",
+  verdict_yes_no: "tf_mythbusters_lab",
   verdict_true_false: "tf_mythbusters_lab",
 };
 
@@ -26,6 +27,7 @@ export function getScriptSeedsForArchetype(archetype: ReelArchetype): readonly R
       return VERSUS_FACEOFF_SEEDS;
     case "deep_trivia":
       return DEEP_TRIVIA_SEEDS;
+    case "verdict_yes_no":
     case "verdict_true_false":
       return TRUE_FALSE_SEEDS;
     default:

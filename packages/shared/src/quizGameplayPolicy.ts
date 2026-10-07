@@ -41,6 +41,15 @@ export const QUIZ_GAMEPLAY_POLICIES = {
     countdown: 3,
     cycle: [13, 28],
   },
+  verdict_yes_no: {
+    id: "verdict_yes_no",
+    choiceCount: 2,
+    readChoices: false,
+    thinkingPrompt: false,
+    thinking: [4, 6],
+    countdown: 3,
+    cycle: [10, 23],
+  },
   verdict_true_false: {
     id: "verdict_true_false",
     choiceCount: 2,
@@ -92,6 +101,7 @@ const LAYOUT_GAMEPLAY: Partial<Record<QuizLayoutId, QuizGameplayArchetypeId>> = 
   media_left_choices_right: "deep_trivia",
   visual_choices_three: "visual_identification",
   visual_choices_three_pure: "visual_spotting",
+  verdict_yes_no: "verdict_yes_no",
   verdict_true_false: "verdict_true_false",
   split_versus_two: "versus_faceoff",
   full_stack_list: "speed_blitz",

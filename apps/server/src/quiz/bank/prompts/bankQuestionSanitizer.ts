@@ -49,5 +49,20 @@ export function sanitizeBankQuestionText(
     }
   }
 
+  const isVerdict =
+    archetypeId === "verdict_yes_no" ||
+    archetypeId === "verdict_true_false" ||
+    archetypeId === "verdict_fact_myth";
+
+  if (isVerdict) {
+    const tfRegex = /\s*[:\-—–]?\s*(?:true\s+or\s+false|fact\s+or\s+myth)\s*\??$/i;
+    if (tfRegex.test(cleaned)) {
+      cleaned = cleaned.replace(tfRegex, " Yes or No?").trim();
+    }
+    cleaned = cleaned.replace(/\s*[:\-—–]\s*yes\s+or\s+no\s*\??$/i, " Yes or No?").trim();
+    cleaned = cleaned.replace(/\?+/g, "?");
+    cleaned = cleaned.replace(/\s{2,}/g, " ");
+  }
+
   return cleaned;
 }

@@ -123,6 +123,28 @@ describe("episode preview questions", () => {
     );
   });
 
+  it("builds a 2-choice topic template preview question for yes_no format", () => {
+    const episodeYesNo = {
+      episode_id: "ep-yn-1",
+      topic: { title: "Can penguins fly?", premise: "Bird trivia", hook: "Yes or No?" },
+      quiz_config: {
+        quiz_format: "yes_no" as const,
+        question_count: 5,
+      },
+    } as unknown as Episode;
+
+    const questions = buildEpisodePreviewQuestions(null, null, episodeYesNo);
+    expect(questions).toHaveLength(1);
+    expect(questions[0]).toEqual(
+      expect.objectContaining({
+        layoutId: "verdict_yes_no",
+        layoutSource: "topic_template",
+        choices: ["Yes", "No"],
+        correctChoiceIndex: 0,
+      }),
+    );
+  });
+
   it("returns an empty array when both quiz and episode are null", () => {
     expect(buildEpisodePreviewQuestions(null, null, null)).toEqual([]);
   });

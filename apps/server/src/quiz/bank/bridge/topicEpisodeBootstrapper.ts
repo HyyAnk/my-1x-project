@@ -88,6 +88,8 @@ export async function bootstrapTopicEpisode(params: BootstrapTopicEpisodeParams)
     title: topic.title,
     premise: topic.premise,
     hook: topic.hook,
+    domainId: topic.domain_id,
+    subtopicId: topic.subtopic_id,
     targetDurationMinutes,
     targetWordCount,
     questionCount: quizQuestions.length,

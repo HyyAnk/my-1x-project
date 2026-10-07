@@ -38,6 +38,8 @@ export async function listBundleImages(this: RepositoryRuntime, channelId: strin
         price_breakdown: meta.price_breakdown,
         model: meta.model,
         aspect_ratio: meta.aspect_ratio,
+        provenance: meta.provenance,
+        user_selected: meta.user_selected,
       });
     } catch {
       // Ignore an image that disappeared during a refresh.

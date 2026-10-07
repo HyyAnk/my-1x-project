@@ -44,7 +44,7 @@ describe("TopicHistoryRow", () => {
 
     const domainBadge = container.querySelector(".topic-domain-badge");
     expect(domainBadge).not.toBeNull();
-    expect(domainBadge?.textContent).toContain("Space Earth");
+    expect(domainBadge?.textContent).toContain("Space & Earth");
 
     const layoutButton = container.querySelector(".topic-layout-badge-btn");
     expect(layoutButton).not.toBeNull();
@@ -75,11 +75,30 @@ describe("TopicHistoryRow", () => {
     expect(archetypeTag?.textContent).toBe("Versus Face-off");
 
     const domainBadge = container.querySelector(".topic-domain-badge");
-    expect(domainBadge?.textContent).toContain("Nature Animals");
+    expect(domainBadge?.textContent).toContain("Nature & Animals");
 
     // Layout preview button is not rendered for short_reel
     const previewButton = container.querySelector(".topic-layout-badge-btn");
     expect(previewButton).toBeNull();
+  });
+
+  it("renders Yes or No archetype tag for short_reel topic with verdict_yes_no", () => {
+    const ynTopic: TopicCandidate = {
+      ...baseTopic,
+      content_kind: "short_reel",
+      aspect_ratio: "9:16",
+      question_count: 1,
+      archetype: "verdict_yes_no",
+      domain_id: "nature_animals",
+    };
+
+    const { container } = render(
+      <TopicHistoryRow topic={ynTopic} index={2} busy={false} disabled={false} onConfirm={vi.fn()} />,
+    );
+
+    const archetypeTag = container.querySelector(".topic-archetype-tag");
+    expect(archetypeTag).not.toBeNull();
+    expect(archetypeTag?.textContent).toBe("Yes or No");
   });
 
   it("renders empty domain placeholder when domain_id is not specified", () => {
@@ -88,9 +107,7 @@ describe("TopicHistoryRow", () => {
       domain_id: undefined,
     };
 
-    const { container } = render(
-      <TopicHistoryRow topic={noDomainTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} />,
-    );
+    const { container } = render(<TopicHistoryRow topic={noDomainTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} />);
 
     const emptyDomain = container.querySelector(".topic-domain-empty");
     expect(emptyDomain).not.toBeNull();
@@ -196,5 +213,29 @@ describe("TopicHistoryRow", () => {
 
     expect(getByText("Selecting…")).toBeDefined();
     expect(container.querySelector(".spin")).not.toBeNull();
+  });
+
+  it("invokes onDelete when delete button is clicked", () => {
+    const onDeleteMock = vi.fn();
+    const { getByRole } = render(
+      <TopicHistoryRow topic={baseTopic} index={1} busy={false} disabled={false} onConfirm={vi.fn()} onDelete={onDeleteMock} />,
+    );
+
+    const deleteBtn = getByRole("button", { name: /Remove topic/i });
+    expect(deleteBtn).toBeDefined();
+    fireEvent.click(deleteBtn);
+
+    expect(onDeleteMock).toHaveBeenCalledTimes(1);
+    expect(onDeleteMock).toHaveBeenCalledWith(baseTopic);
+  });
+
+  it("disables delete button and shows spinner when deleting is true", () => {
+    const { getByRole, container } = render(
+      <TopicHistoryRow topic={baseTopic} index={1} busy={false} deleting={true} disabled={false} onConfirm={vi.fn()} onDelete={vi.fn()} />,
+    );
+
+    const deleteBtn = getByRole("button", { name: /Remove topic/i }) as HTMLButtonElement;
+    expect(deleteBtn.disabled).toBe(true);
+    expect(container.querySelector(".topic-history-delete-btn .spin")).not.toBeNull();
   });
 });

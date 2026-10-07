@@ -54,6 +54,11 @@ export async function compileCompositionHtml(
     outroHasAudio: introOutro.outroHasAudio,
     mascotMediaMode: params.mascotMediaMode,
     brandIdentity,
+    introMotionTemplateId: introOutro.introMotionTemplateId,
+    introMotionTemplateOptions: introOutro.introMotionTemplateOptions,
+    outroMotionTemplateId: introOutro.outroMotionTemplateId,
+    outroMotionTemplateOptions: introOutro.outroMotionTemplateOptions,
+    channelName: brandIdentity?.channelName ?? channel.display_name,
   });
 
   return {

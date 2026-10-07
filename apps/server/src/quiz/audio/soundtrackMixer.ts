@@ -1,8 +1,10 @@
 import { execFile } from "node:child_process";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { promisify } from "node:util";
 import type { QuizTimeline } from "@studio/shared";
 import { wavDurationSeconds } from "../../utils/binary.js";
+import { buildFfmpegFilterComplexArgs } from "../../utils/ffmpegFilterScript.js";
 import { diagnoseMasterSoundtrack } from "./audioDiagnostics.js";
 import type { BgmRegistry, ResolveBgmOptions } from "./bgmRegistry.js";
 import { defaultSfxCandidateDirectories, resolveSfxSchedule } from "./soundtrackSfxPlanner.js";
@@ -87,14 +89,16 @@ export async function mixMasterSoundtrack(options: MixMasterSoundtrackOptions): 
   const inputIndices = new Map<string, number>(allInputFiles.map((file, idx) => [file, idx]));
 
   const filterScript = buildFilterGraphScript(plan, inputIndices);
+  const filterScriptPath = path.join(workingDir, "soundtrack-filter.txt");
+  await writeFile(filterScriptPath, filterScript, "utf8");
+  const filterArgs = await buildFfmpegFilterComplexArgs(filterScriptPath);
 
   const ffmpegArgs: string[] = ["-y"];
   for (const file of allInputFiles) {
     ffmpegArgs.push("-i", file);
   }
   ffmpegArgs.push(
-    "-filter_complex",
-    filterScript,
+    ...filterArgs,
     "-map",
     "[out_master]",
     "-c:a",

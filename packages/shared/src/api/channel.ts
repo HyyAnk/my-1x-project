@@ -133,7 +133,7 @@ export type ConfirmTopicResponse = z.infer<typeof ConfirmTopicResponseSchema>;
 export const EpisodeSettingsInputSchema = z.object({
   target_duration_minutes: z.number().min(3).max(60).optional(),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).optional(),
-  quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "true_false", "odd_one_out"]).optional(),
+  quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "yes_no", "true_false", "odd_one_out"]).optional(),
   age_band: z.enum(["4-6", "7-9", "10-12", "family"]).optional(),
   answer_mode: z.enum(["voice_and_reveal", "voice_only"]).optional(),
   visual_theme: QuizVisualThemeSchema.optional(),
@@ -155,6 +155,7 @@ export const EpisodeSettingsInputSchema = z.object({
   mascot_style_id: z.string().nullable().optional(),
   intro_outro_selection: IntroOutroSelectionSchema.optional(),
   intro_outro_style_id: z.string().nullable().optional(),
+  fast_render_mode: z.boolean().optional(),
 });
 
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;

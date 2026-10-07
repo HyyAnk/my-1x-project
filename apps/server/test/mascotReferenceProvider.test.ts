@@ -133,7 +133,7 @@ describe("Stage 3: Image Provider Reference-First Integration", () => {
 
     vi.mocked(generateGpti2ImageBytes).mockResolvedValue({
       bytes: dummyImageBytes,
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       aspect_ratio: "16:9",
       size: "1280x720",
       price_vnd: 50,

@@ -4,6 +4,7 @@ import type { ResolvedQuizLayoutId } from "./quizLayouts.catalog.js";
 export type QuizGameplayArchetypeId =
   | "deep_trivia"
   | "visual_spotting"
+  | "verdict_yes_no"
   | "verdict_true_false"
   | "verdict_fact_myth"
   | "versus_faceoff"
@@ -37,6 +38,20 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
     defaultFormat: "odd_one_out",
     targetLayout: "visual_choices_three_pure",
     creativeAngles: ["Find the Anomaly", "Real vs AI Generated", "Spot the Flaw", "Identify the Impostor"],
+  },
+  {
+    id: "verdict_yes_no",
+    name: "Yes or No",
+    description:
+      "Verdict evaluation question testing Yes vs No with a cinematic background visual and 2 prominent YES / NO buttons.",
+    defaultFormat: "yes_no",
+    targetLayout: "verdict_yes_no",
+    creativeAngles: [
+      "Surprising Realities & Misconceptions",
+      "Human Body Surprises",
+      "Counter-Intuitive Truths",
+      "Strange Laws Around the World",
+    ],
   },
   {
     id: "verdict_true_false",

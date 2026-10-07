@@ -9,10 +9,16 @@ allowBuilds:
   puppeteer: false
   sharp: false
 minimumReleaseAgeExclude:
-  - hyperframes@0.8.17
+  - hyperframes@0.8.111
+  - '@hyperframes/core@0.8.111'
+  - '@hyperframes/engine@0.8.111'
+  - '@hyperframes/lint@0.8.111'
+  - '@hyperframes/parsers@0.8.111'
+  - '@hyperframes/producer@0.8.111'
+  - '@hyperframes/studio-server@0.8.111'
 overrides:
-  "@hyperframes/core": "0.8.17"
-  "@hyperframes/engine": "0.8.17"
-  "@hyperframes/lint": "0.8.17"
-  "@hyperframes/parsers": "0.8.17"
-  "@hyperframes/studio-server": "0.8.17"
+  "@hyperframes/core": "0.8.111"
+  "@hyperframes/engine": "0.8.111"
+  "@hyperframes/lint": "0.8.111"
+  "@hyperframes/parsers": "0.8.111"
+  "@hyperframes/studio-server": "0.8.111"

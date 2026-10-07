@@ -142,8 +142,8 @@ export const SPLIT_VERSUS_TWO_GEOMETRY: QuizLayoutGeometry = Object.freeze({
   }),
 });
 
-export const VERDICT_TRUE_FALSE_GEOMETRY: QuizLayoutGeometry = Object.freeze({
-  layoutId: "verdict_true_false",
+export const VERDICT_YES_NO_GEOMETRY: QuizLayoutGeometry = Object.freeze({
+  layoutId: "verdict_yes_no",
   arena: Object.freeze({ x: 380, y: 253, width: 1420, height: 565 }),
   hero: Object.freeze({ x: 380, y: 253, width: 820, height: 565 }),
   imageSlot: Object.freeze({
@@ -169,6 +169,11 @@ export const VERDICT_TRUE_FALSE_GEOMETRY: QuizLayoutGeometry = Object.freeze({
   extra: Object.freeze({
     heroAndAnswerCenterY: 535.5,
   }),
+});
+
+export const VERDICT_TRUE_FALSE_GEOMETRY: QuizLayoutGeometry = Object.freeze({
+  ...VERDICT_YES_NO_GEOMETRY,
+  layoutId: "verdict_true_false",
 });
 
 export const FULL_STACK_LIST_GEOMETRY: QuizLayoutGeometry = Object.freeze({
@@ -241,6 +246,7 @@ export const QUIZ_LAYOUT_GEOMETRY: Readonly<Record<QuizLandscapeLayoutId, QuizLa
   visual_choices_three: VISUAL_CHOICES_THREE_GEOMETRY,
   visual_choices_three_pure: VISUAL_CHOICES_THREE_PURE_GEOMETRY,
   split_versus_two: SPLIT_VERSUS_TWO_GEOMETRY,
+  verdict_yes_no: VERDICT_YES_NO_GEOMETRY,
   verdict_true_false: VERDICT_TRUE_FALSE_GEOMETRY,
   full_stack_list: FULL_STACK_LIST_GEOMETRY,
   mystery_reveal: MYSTERY_REVEAL_GEOMETRY,

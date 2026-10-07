@@ -80,7 +80,12 @@ function createResult(
         source_content_hash: hashEligibleSource(episode.candidate),
       });
     }
-    if (question.archetype_id === "deep_trivia" || question.archetype_id === "versus_faceoff" || question.archetype_id === "verdict_true_false") {
+    if (
+      question.archetype_id === "deep_trivia" ||
+      question.archetype_id === "versus_faceoff" ||
+      question.archetype_id === "verdict_yes_no" ||
+      question.archetype_id === "verdict_true_false"
+    ) {
       const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
       if (shortReel.eligible) {
         eligibleByPolicy.short_reel += 1;
@@ -181,6 +186,7 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         if (
           question.archetype_id === "deep_trivia" ||
           question.archetype_id === "versus_faceoff" ||
+          question.archetype_id === "verdict_yes_no" ||
           question.archetype_id === "verdict_true_false"
         ) {
           const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
@@ -241,6 +247,7 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         if (
           question.archetype_id === "deep_trivia" ||
           question.archetype_id === "versus_faceoff" ||
+          question.archetype_id === "verdict_yes_no" ||
           question.archetype_id === "verdict_true_false"
         ) {
           const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });

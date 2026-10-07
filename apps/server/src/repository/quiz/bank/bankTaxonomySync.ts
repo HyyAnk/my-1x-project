@@ -1,103 +1,12 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { BankTaxonomySchema, type BankDomainMeta, type BankTaxonomy } from "@studio/shared";
+import { BankTaxonomySchema, CANONICAL_DOMAIN_META, type BankDomainMeta, type BankTaxonomy } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath } from "./bankPathResolver.js";
 import { withBankRead } from "./bankSerializationBoundary.js";
 
-export const CANONICAL_DOMAIN_META: Record<string, { title: string; description: string; icon: string }> = {
-  careers_occupations: {
-    title: "Careers & Occupations",
-    description: "Professions, skilled trades, emergency services, and extreme careers.",
-    icon: "Briefcase",
-  },
-  countries_nations: {
-    title: "Countries & Nations",
-    description: "World geography, iconic landmarks, flags, and cultural heritage.",
-    icon: "Globe",
-  },
-  daily_objects: {
-    title: "Daily Objects & Household Essentials",
-    description: "Everyday personal items, home living objects, tools, and kitchenware.",
-    icon: "House",
-  },
-  food_gastronomy: {
-    title: "Food & Gastronomy",
-    description: "Culinary traditions, global cuisine, pastries, ingredients, and street food.",
-    icon: "Utensils",
-  },
-  human_body: {
-    title: "Human Body & Biology",
-    description: "Anatomy, biological systems, senses, organs, and physiology.",
-    icon: "Heart",
-  },
-  music_instruments_gear: {
-    title: "Music Instruments & Audio Gear",
-    description: "Acoustic and electric instruments, studio hardware, sound engineering, and gear.",
-    icon: "Music",
-  },
-  mythology_creatures: {
-    title: "Mythology & Creatures",
-    description: "Mythological pantheons, legendary beasts, folklore, and epic lore.",
-    icon: "Flame",
-  },
-  nature_animals: {
-    title: "Nature & Animals",
-    description: "Wildlife, animal superpowers, marine ecosystems, and biodiversity.",
-    icon: "PawPrint",
-  },
-  places_facilities: {
-    title: "Places & Facilities",
-    description: "Urban infrastructure, historic sites, architectural wonders, and civic spaces.",
-    icon: "Building",
-  },
-  pop_culture_classics: {
-    title: "Pop Culture & Classics",
-    description: "Cinema legends, animation, gaming icons, classic literature, and art.",
-    icon: "Film",
-  },
-  school_learning: {
-    title: "School & Learning",
-    description: "Classroom tools, educational science, foundational learning, and academic concepts.",
-    icon: "GraduationCap",
-  },
-  space_earth: {
-    title: "Space & Earth",
-    description: "Cosmic wonders, astronomy, planetary science, and natural phenomena.",
-    icon: "Compass",
-  },
-  sports_games: {
-    title: "Sports & Games",
-    description: "Athletic sports, board games, tabletop challenges, and competitive play.",
-    icon: "Trophy",
-  },
-  vehicles_technology: {
-    title: "Vehicles & Technology",
-    description: "Aviation, automotive, robotics, computing breakthroughs, and transport.",
-    icon: "Cpu",
-  },
-  global_brands: {
-    title: "Global Brands & Icons",
-    description: "World-famous corporate brands, iconic logos, tech giants, automotive legends, and consumer empires.",
-    icon: "Award",
-  },
-  anime_manga: {
-    title: "Anime & Manga Universe",
-    description: "Iconic anime series, legendary shonen heroes, psychological thrillers, mecha epics, and Studio Ghibli masterpieces.",
-    icon: "Tv",
-  },
-  gaming_esports: {
-    title: "Video Games & Esports",
-    description: "Legendary video game franchises, esports titles, gaming icons, sandbox worlds, and RPG lore.",
-    icon: "Gamepad2",
-  },
-  modern_cinema_tv: {
-    title: "Modern Pop Franchises & Cinema",
-    description: "Iconic movie franchises, superhero universes, sci-fi space sagas, fantasy epics, and binge-worthy TV series.",
-    icon: "Film",
-  },
-};
+export { CANONICAL_DOMAIN_META };
 
 /**
  * Formats a snake_case or hyphenated identifier into a human-readable title.

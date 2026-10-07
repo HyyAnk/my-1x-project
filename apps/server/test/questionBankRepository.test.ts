@@ -173,7 +173,7 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
   it("rejects missing and foreign-language question writes before touching storage", async () => {
     const baseQuestion = await repo.getQuestionBankQuestion("VFM-NAT-OCN-0001");
     expect(baseQuestion).toBeDefined();
-    const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_true_false", "nature_animals", "marine_life.json");
+    const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_yes_no", "nature_animals", "marine_life.json");
     const before = await readFile(batchPath, "utf8");
 
     await expect(repo.saveQuestionBankQuestion({ ...baseQuestion!, id: "MISSING-LANGUAGE", language: undefined })).rejects.toMatchObject({
@@ -208,7 +208,7 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
 
   it("rejects all translation persistence without scanning or mutating the bank", async () => {
     const questionId = "VFM-NAT-OCN-0001";
-    const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_true_false", "nature_animals", "marine_life.json");
+    const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_yes_no", "nature_animals", "marine_life.json");
     const before = await readFile(batchPath, "utf8");
 
     await expect(

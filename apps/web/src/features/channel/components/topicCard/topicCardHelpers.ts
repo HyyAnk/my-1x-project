@@ -1,10 +1,15 @@
-import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QUIZ_SECONDS_PER_QUESTION } from "@studio/shared";
+import {
+  QUIZ_MAX_QUESTION_COUNT,
+  QUIZ_MIN_QUESTION_COUNT,
+  QUIZ_SECONDS_PER_QUESTION,
+  formatCanonicalDomainName,
+} from "@studio/shared";
 
 /**
- * Formats a domain identifier into title case with spaces.
+ * Formats a domain identifier into the canonical title case name.
  */
 export function formatDomain(domainId: string): string {
-  return domainId.replace(/_/g, " ").replace(/\b\w/g, (character) => character.toUpperCase());
+  return formatCanonicalDomainName(domainId);
 }
 
 /**

@@ -183,7 +183,7 @@ describe("Authorized Content End-to-End Pipeline Integration (P6)", () => {
         compiledPrompt: originalPrompt,
         configuredProvider: "gpti2",
         activeEngine: "codex",
-        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
         logger,
       }),
     ).rejects.toBe(contentFilterRejection);

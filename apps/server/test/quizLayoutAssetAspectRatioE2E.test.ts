@@ -114,7 +114,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       expect(compiled.prompt).toContain("Output framing: 4:3.");
 
       // 3. Provider Target Sizing
-      const gpti2Size = resolveImageDimensions(hero?.aspect_ratio, "gpt-image-2");
+      const gpti2Size = resolveImageDimensions(hero?.aspect_ratio, "gpt-image-2.5-flare");
       expect(gpti2Size).toEqual({ size: "1024x768", aspect_ratio: "4:3" });
       const nanoBananaSize = resolveImageDimensions(hero?.aspect_ratio, "nano-banana-2");
       expect(nanoBananaSize).toEqual({ size: "2K", aspect_ratio: "4:3" });
@@ -240,7 +240,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
         const compiled = compileQuizAssetPrompt(choice);
         expect(compiled.prompt).toContain("Output framing: 1:1.");
 
-        const gpti2Size = resolveImageDimensions(choice.aspect_ratio, "gpt-image-2");
+        const gpti2Size = resolveImageDimensions(choice.aspect_ratio, "gpt-image-2.5-flare");
         expect(gpti2Size).toEqual({ size: "1024x1024", aspect_ratio: "1:1" });
 
         const nanoSize = resolveImageDimensions(choice.aspect_ratio, "nano-banana-2");
@@ -320,7 +320,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const compiled = compileQuizAssetPrompt(hero!);
       expect(compiled.prompt).toContain("Output framing: 16:9.");
 
-      const gpti2Size = resolveImageDimensions(hero?.aspect_ratio, "gpt-image-2");
+      const gpti2Size = resolveImageDimensions(hero?.aspect_ratio, "gpt-image-2.5-flare");
       expect(gpti2Size).toEqual({ size: "1280x720", aspect_ratio: "16:9" });
 
       const dims = getOptimalAssetDimensions("hero", "mystery_reveal");
@@ -336,7 +336,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const framing = framingRules("3:4", "hero_question_image");
       expect(framing).toContain("Output aspect ratio: 3:4.");
 
-      const gpti2 = resolveImageDimensions("3:4", "gpt-image-2");
+      const gpti2 = resolveImageDimensions("3:4", "gpt-image-2.5-flare");
       expect(gpti2).toEqual({ size: "768x1024", aspect_ratio: "3:4" });
 
       const nano = resolveImageDimensions("3:4", "nano-banana-2");
@@ -574,7 +574,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
         expect(standard.dimensions).toBeDefined();
 
         // GPT-Image-2 provider dimensions
-        const gpti2 = resolveImageDimensions(ratio, "gpt-image-2");
+        const gpti2 = resolveImageDimensions(ratio, "gpt-image-2.5-flare");
         expect(gpti2.aspect_ratio).toBe(ratio);
         expect(gpti2.size).toMatch(/^\d+x\d+$/);
 

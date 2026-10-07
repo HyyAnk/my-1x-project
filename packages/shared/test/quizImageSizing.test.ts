@@ -203,6 +203,7 @@ test("quizImageSizing - all six target layouts match planning ratios and recomme
     { layoutId: "visual_choices_three", purpose: "answer_option", presentation: "visual", ratio: "1:1", rw: 664, rh: 664 },
     { layoutId: "visual_choices_three_pure", purpose: "answer_option", presentation: "visual", ratio: "3:4", rw: 648, rh: 864 },
     { layoutId: "split_versus_two", purpose: "answer_option", presentation: "visual", ratio: "16:9", rw: 1152, rh: 648 },
+    { layoutId: "verdict_yes_no", purpose: "hero_question_image", ratio: "4:3", rw: 1216, rh: 912 },
     { layoutId: "verdict_true_false", purpose: "hero_question_image", ratio: "4:3", rw: 1216, rh: 912 },
     { layoutId: "mystery_reveal", purpose: "hero_question_image", ratio: "16:9", rw: 1408, rh: 792 },
   ];

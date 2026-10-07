@@ -42,7 +42,10 @@ export function resolveGraphicChoiceSubject(
 export function extractFranchiseContext(questionText: string, visualOpportunity?: string): string | null {
   const match = questionText.match(FRANCHISE_PREFIX_REGEX);
   if (match && match[1]) {
-    return match[1].trim();
+    const candidate = match[1].trim();
+    if (candidate.length <= 40) {
+      return candidate;
+    }
   }
 
   // Fallback: check visual opportunity for "from <Franchise>" pattern

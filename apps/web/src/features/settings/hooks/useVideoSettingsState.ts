@@ -17,6 +17,7 @@ export interface BuildVideoPayloadOptions {
   renderQuality: "draft" | "standard" | "high";
   fps: number;
   mascotMediaMode: MascotStateMediaMode;
+  fastRenderMode?: boolean;
 }
 
 export function buildVideoPayload(options: BuildVideoPayloadOptions): Partial<AppConfig["video_generation"]> {
@@ -29,6 +30,7 @@ export function buildVideoPayload(options: BuildVideoPayloadOptions): Partial<Ap
     render_quality: options.renderQuality,
     fps: options.fps,
     mascot_media_mode: options.mascotMediaMode,
+    ...(options.fastRenderMode !== undefined ? { fast_render_mode: options.fastRenderMode } : {}),
   };
 }
 
@@ -43,6 +45,7 @@ export function useVideoSettingsState({ appConfig, onVideoSaved, onNotice }: Use
   const [mascotMediaMode, setMascotMediaMode] = useState<MascotStateMediaMode>(
     appConfig?.video_generation.mascot_media_mode ?? "static",
   );
+  const [fastRenderMode, setFastRenderMode] = useState<boolean>(appConfig?.video_generation.fast_render_mode ?? true);
   const [savingVideo, setSavingVideo] = useState(false);
 
   useEffect(() => {
@@ -56,6 +59,7 @@ export function useVideoSettingsState({ appConfig, onVideoSaved, onNotice }: Use
       setRenderQuality(video.render_quality ?? "draft");
       setFps(video.fps ?? 30);
       setMascotMediaMode(video.mascot_media_mode ?? "static");
+      setFastRenderMode(video.fast_render_mode ?? true);
     }
   }, [appConfig]);
 
@@ -71,6 +75,7 @@ export function useVideoSettingsState({ appConfig, onVideoSaved, onNotice }: Use
         renderQuality,
         fps,
         mascotMediaMode,
+        fastRenderMode,
       });
       const next = await api.saveVideoSettings(payload);
       await onVideoSaved(next.video_generation);
@@ -99,6 +104,8 @@ export function useVideoSettingsState({ appConfig, onVideoSaved, onNotice }: Use
     setFps,
     mascotMediaMode,
     setMascotMediaMode,
+    fastRenderMode,
+    setFastRenderMode,
     savingVideo,
     saveVideo,
   };

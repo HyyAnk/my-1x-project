@@ -7,6 +7,7 @@ export const jaLocale: ThumbnailLocalization = {
     mystery_silhouette: "この人は誰？",
     odd_one_out: "間違い探し！",
     difficulty_tier: "レベル4解ける？",
+    yes_no: "YESかNOか！？",
     true_false: "ウソ？ホント？",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const jaLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "正解率1%！🔥",
     odd_one_out: () => "10秒で見つけて！⏱️",
     difficulty_tier: () => "IQ140以上のみ🔥",
+    yes_no: () => "YESかNOか！？✅",
     true_false: () => "○か✕か！？✅",
   },
 };

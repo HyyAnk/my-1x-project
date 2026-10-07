@@ -76,3 +76,36 @@ void nodeTest("QuizQuestionSchema validates true_false questions with 2 choices 
   assert.equal(parsed.choices[0].id, "A");
   assert.equal(parsed.choices[1].id, "B");
 });
+
+void nodeTest("QuizQuestionSchema validates yes_no questions with 2 choices (Yes, No)", () => {
+  const question = {
+    id: "q_yn_1",
+    number: 1,
+    format: "yes_no",
+    difficulty: 1,
+    question: "Can penguins fly? Yes or No?",
+    choices: [
+      { id: "A", text: "Yes" },
+      { id: "B", text: "No" },
+    ],
+    correct_choice_id: "B",
+    explanation: "Penguins are flightless birds adapted for swimming.",
+    fun_fact: "Penguins can swim up to 15 miles per hour.",
+    source_ids: [],
+    visual_opportunity: "",
+    validation: {
+      semantic_status: "validated" as const,
+      source_coverage: false,
+      fact_locked: true,
+    },
+  };
+
+  const parsed = QuizQuestionSchema.parse(question);
+  assert.equal(parsed.id, "q_yn_1");
+  assert.equal(parsed.format, "yes_no");
+  assert.equal(parsed.choices.length, 2);
+  assert.equal(parsed.choices[0].text, "Yes");
+  assert.equal(parsed.choices[1].text, "No");
+  assert.equal(parsed.correct_choice_id, "B");
+});
+

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IntroOutroTransitionStyleSchema } from "./transitions.js";
 
 export const ScriptProductionDirectionsSchema = z
   .object({
@@ -9,6 +10,7 @@ export const ScriptProductionDirectionsSchema = z
     opening_state: z.string().trim().min(1),
     closing_state: z.string().trim().min(1),
     end_hold_seconds: z.number().finite().min(0),
+    transition_style: IntroOutroTransitionStyleSchema.optional(),
   })
   .strict();
 

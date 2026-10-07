@@ -5,15 +5,16 @@
  * and slot generator integration.
  */
 
-import type {
-  AppConfig,
-  CancelSlotGenerationInput,
-  MascotProfile,
-  MascotSlotBatchJob,
-  MascotSlotGenerationJob,
-  MascotStateVariant,
-  QueueSlotGenerationInput,
-  SlotBatchStatusResponse,
+import {
+  DEFAULT_GPTI2_MODEL,
+  type AppConfig,
+  type CancelSlotGenerationInput,
+  type MascotProfile,
+  type MascotSlotBatchJob,
+  type MascotSlotGenerationJob,
+  type MascotStateVariant,
+  type QueueSlotGenerationInput,
+  type SlotBatchStatusResponse,
 } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import type { StudioLogger } from "../../../logger.js";
@@ -69,7 +70,7 @@ export const DEFAULT_IMAGE_CONFIG: AppConfig["image_generation"] = {
   provider: "shopaikey",
   base_url: "",
   api_key: "",
-  model: "gpt-image-2",
+  model: DEFAULT_GPTI2_MODEL,
   quality: "standard",
   max_concurrent_tasks: 2,
   images_per_bundle: 1,

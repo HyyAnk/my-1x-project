@@ -9,6 +9,8 @@ export type PreviewImageData = {
   priceVnd?: number;
   model?: string;
   aspectRatio?: string;
+  subtitle?: string;
+  counter?: string;
 };
 
 export type ArtifactName = "research.md" | "treatment.md" | "script.md" | "visual_bible.md";

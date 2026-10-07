@@ -1,3 +1,4 @@
+import { DEFAULT_GPTI2_MODEL } from "@studio/shared";
 import { RepositoryError } from "../../../../repository.js";
 import { Gpti2QuizImageProvider } from "../../../../providers/gpti2Image.js";
 import { isContentFilterError } from "../../../../utils/promptSanitizer.js";
@@ -32,7 +33,7 @@ export async function generateGpti2Asset(
     (isFallback ? imageFallbackConfig?.gpti2_model : undefined) ||
     imageConfig?.gpti2_model ||
     imageConfig?.model ||
-    "gpt-image-2.5-flare";
+    DEFAULT_GPTI2_MODEL;
 
   const provider = new Gpti2QuizImageProvider(
     repository,
@@ -80,7 +81,7 @@ export async function generateGpti2Asset(
   }
 
   const gpti2PriceVnd = generated.price_vnd ?? 50;
-  const modelName = imageConfig?.model || generated.model || "gpt-image-2";
+  const modelName = imageConfig?.model || generated.model || DEFAULT_GPTI2_MODEL;
 
   await trackGpti2Usage(
     repository,

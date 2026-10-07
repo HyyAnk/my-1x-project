@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowsClockwise, Lock, LockOpen, Sparkle } from "@phosphor-icons/react";
-import type { CreativeSeed, CreativeSeedDimension, IntroOutroClipKind, IntroOutroScriptProject } from "@studio/shared";
+import {
+  type CreativeSeed,
+  type CreativeSeedDimension,
+  type IntroOutroClipKind,
+  type IntroOutroScriptProject,
+  type IntroOutroTransitionStyle,
+  INTRO_OUTRO_TRANSITION_OPTIONS,
+} from "@studio/shared";
 import type { GenerateScriptClipInput } from "../../../../api/introOutroScriptApi";
 
 type Props = {
@@ -16,10 +23,11 @@ const newRandomSeed = () =>
 
 export function ScriptSeedControls({ seeds, project, disabled, onGenerate, onOpenBatchModal }: Props) {
   const [included, setIncluded] = useState<Record<IntroOutroClipKind, boolean>>({ intro: true, outro: true });
-  const [durations, setDurations] = useState<Record<IntroOutroClipKind, number>>({ intro: 8, outro: 8 });
+  const [durations, setDurations] = useState<Record<IntroOutroClipKind, number>>({ intro: 10, outro: 10 });
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [locked, setLocked] = useState<Set<CreativeSeedDimension>>(new Set());
   const [logoMode, setLogoMode] = useState<"supplied_reference" | "post_overlay" | "none">("supplied_reference");
+  const [transitionStyle, setTransitionStyle] = useState<IntroOutroTransitionStyle>("auto");
   const [randomizationSeed, setRandomizationSeed] = useState(newRandomSeed);
   const groups = useMemo(() => {
     const map = new Map<CreativeSeedDimension, CreativeSeed[]>();
@@ -39,8 +47,8 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate, onOpe
     }
     setIncluded({ intro: true, outro: true });
     setDurations({
-      intro: project.drafts.intro.target_duration_seconds,
-      outro: project.drafts.outro.target_duration_seconds,
+      intro: project.drafts.intro.target_duration_seconds || 10,
+      outro: project.drafts.outro.target_duration_seconds || 10,
     });
     setSelected(restored);
     setLocked(new Set(drafts.flatMap((draft) => draft.seed_selection?.locked_dimensions ?? [])));
@@ -80,6 +88,7 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate, onOpe
         duration_seconds: durations[kind],
         randomization_seed: randomizationSeed,
         logo_mode: logoMode,
+        ...(kind === "outro" && durations.outro >= 12 ? { transition_style: transitionStyle } : {}),
         selected_seed_ids: groups
           .filter(([, options]) => options[0]?.clip_kind === kind)
           .map(([dimension]) => selected[dimension])
@@ -139,6 +148,25 @@ export function ScriptSeedControls({ seeds, project, disabled, onGenerate, onOpe
             </select>
           </label>
         </div>
+        {durations.outro >= 12 && included.outro ? (
+          <div className="script-clip-option">
+            <label>
+              <span>Transition style</span>
+              <select
+                value={transitionStyle}
+                onChange={(event) => setTransitionStyle(event.target.value as IntroOutroTransitionStyle)}
+                disabled={disabled}
+                aria-label="Two-part transition style"
+              >
+                {INTRO_OUTRO_TRANSITION_OPTIONS.map((option) => (
+                  <option value={option.value} key={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        ) : null}
       </div>
 
       <div className="script-section-heading">

@@ -32,6 +32,8 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onImag
     setFps,
     mascotMediaMode,
     setMascotMediaMode,
+    fastRenderMode,
+    setFastRenderMode,
     savingVideo,
     saveVideo,
     imageEnabled,
@@ -116,6 +118,8 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onImag
         setFps={setFps}
         mascotMediaMode={mascotMediaMode}
         setMascotMediaMode={setMascotMediaMode}
+        fastRenderMode={fastRenderMode}
+        setFastRenderMode={setFastRenderMode}
         maxSceneDuration={maxSceneDuration}
         setMaxSceneDuration={setMaxSceneDuration}
         narrationWordsPerSecond={narrationWordsPerSecond}

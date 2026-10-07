@@ -55,7 +55,7 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
     return { status: "passed", reused: true, bypassed: false, samplesCount: 0 };
   }
 
-  const isFastMode = Boolean(fastRenderMode || process.env.FAST_RENDER_MODE === "true");
+  const isFastMode = fastRenderMode !== undefined ? fastRenderMode : process.env.FAST_RENDER_MODE === "true";
   if (isFastMode) {
     if (onProgress) {
       await onProgress("Video · fast render mode: layout check skipped", 58);

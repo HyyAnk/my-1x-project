@@ -5,14 +5,15 @@
  * runtime batches, and style generator integration.
  */
 
-import type {
-  AppConfig,
-  CancelStyleGenerationInput,
-  MascotProfile,
-  MascotStyleBatchJob,
-  MascotStyleConceptJob,
-  QueueStyleGenerationInput,
-  StyleBatchStatusResponse,
+import {
+  DEFAULT_GPTI2_MODEL,
+  type AppConfig,
+  type CancelStyleGenerationInput,
+  type MascotProfile,
+  type MascotStyleBatchJob,
+  type MascotStyleConceptJob,
+  type QueueStyleGenerationInput,
+  type StyleBatchStatusResponse,
 } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import type { StudioLogger } from "../../../logger.js";
@@ -62,7 +63,7 @@ export const DEFAULT_STYLE_IMAGE_CONFIG: AppConfig["image_generation"] = {
   provider: "shopaikey",
   base_url: "",
   api_key: "",
-  model: "gpt-image-2",
+  model: DEFAULT_GPTI2_MODEL,
   quality: "standard",
   max_concurrent_tasks: 2,
   images_per_bundle: 1,

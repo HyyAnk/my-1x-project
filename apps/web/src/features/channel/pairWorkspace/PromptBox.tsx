@@ -4,11 +4,13 @@ import { Check, Copy } from "@phosphor-icons/react";
 export function PromptBox({
   kind,
   value,
+  duration,
   disabled,
   onChange,
 }: {
   kind: "intro" | "outro";
   value: string;
+  duration?: number;
   disabled: boolean;
   onChange: (text: string) => void;
 }) {
@@ -27,7 +29,11 @@ export function PromptBox({
   };
 
   const partDelimiter = "================================================================================\nPART 2:";
-  const isTwoPart = kind === "outro" && value.includes("PART 1:") && value.includes(partDelimiter);
+  const isTwoPart =
+    kind === "outro" &&
+    (duration === undefined || duration >= 12) &&
+    value.includes("PART 1:") &&
+    value.includes(partDelimiter);
   const part2Index = isTwoPart ? value.indexOf(partDelimiter) : -1;
   const part1Text = isTwoPart && part2Index !== -1 ? value.slice(0, part2Index).trim() : "";
   const part2Text = isTwoPart && part2Index !== -1 ? value.slice(part2Index).trim() : "";
@@ -47,7 +53,7 @@ export function PromptBox({
     return (
       <section className="pair-prompt-box pair-prompt-two-part">
         <header>
-          <label htmlFor={`pair-prompt-${kind}`}>{label} (16s · 2-Part Sequence)</label>
+          <label htmlFor={`pair-prompt-${kind}`}>{label} ({duration ?? 16}s · 2-Part Sequence)</label>
           <button
             type="button"
             className="quiet-button"
@@ -135,7 +141,10 @@ export function PromptBox({
   return (
     <section className="pair-prompt-box">
       <header>
-        <label htmlFor={`pair-prompt-${kind}`}>{label}</label>
+        <label htmlFor={`pair-prompt-${kind}`}>
+          {label}
+          {kind === "outro" && duration ? ` (${duration}s · Single Clip)` : ""}
+        </label>
         <button
           type="button"
           className="quiet-button"

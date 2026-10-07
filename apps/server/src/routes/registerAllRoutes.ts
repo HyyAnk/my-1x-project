@@ -41,6 +41,7 @@ import { registerSystemRoutes } from "./system.js";
 import { registerTasksRoutes } from "./tasks.js";
 import { registerThumbnailsRoutes } from "./thumbnails.js";
 import { registerTransitionPreviewsRoutes } from "./transitionPreviews.js";
+import { registerMotionRoutes } from "./motionRoutes.js";
 import { registerVisualBibleRoutes } from "./visualBible.js";
 import { registerVoicesRoutes } from "./voices.js";
 
@@ -112,7 +113,7 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   await server.register(registerVisualBibleRoutes({ repository, tasks, state }));
   await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));
   await server.register(registerTasksRoutes({ tasks, codex }));
-  await server.register(registerThumbnailsRoutes({ repository, state, antigravity }));
+  await server.register(registerThumbnailsRoutes({ repository, state, antigravity, codex }));
   await server.register(registerAnalyticsRoutes({ repository }));
   await server.register(registerEventsRoutes({ tasks, clients }));
   await server.register(registerStylePresetsRoutes({ repository }));
@@ -140,4 +141,5 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
       store: transitionPreviewStore,
     }),
   );
+  await server.register(registerMotionRoutes({ repository }));
 }

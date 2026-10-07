@@ -1,6 +1,7 @@
 import type { BankQuestion } from "@studio/shared";
 import { normalizeGenerationLanguage } from "../batchGeneratorPrompt.js";
 import { runBatchAutoQa, QuestionBankAutoQaIndex, type BatchAutoQaReport } from "../questionBankAutoQa.js";
+import { remediateLeakedQuestionsBatch } from "../remediation/index.js";
 import type { PlannedBatchChunk } from "../matrixCoverageService.js";
 import { AdaptiveRateLimiter } from "./adaptiveRateLimiter.js";
 import { getDynamicDeficitChunk } from "../matrix/matrixDeficitPlanner.js";
@@ -58,6 +59,7 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
   const failedChunks: FailedBatchChunk[] = [];
   let totalApproved = 0;
   let totalRejected = 0;
+  let totalRemediatedLeaks = 0;
   let completedChunksCount = 0;
 
   const combinedSummary: BatchAutoQaReport["summary"] = {
@@ -122,6 +124,44 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
     if (normalizedInput.signal?.aborted) return;
 
     const qaReport = runBatchAutoQa(chunkCandidates, { existingQuestions: allBankQuestions, existingIndex: sharedQaIndex });
+
+    // Auto-remediate stem-answer leaks prior to persistence if LLM client is available
+    if (normalizedInput.llmClient && qaReport.rejectedQuestions.length > 0) {
+      const leakedItems = qaReport.rejectedQuestions
+        .map((r) => {
+          const leakIssue = r.issues.find(
+            (i) => i.details?.leakType === "eponymous_franchise_leak" || i.details?.leakType === "verbatim_stem_leak",
+          );
+          return leakIssue ? { question: r.question, issue: leakIssue } : null;
+        })
+        .filter((item): item is { question: BankQuestion; issue: any } => item !== null);
+
+      if (leakedItems.length > 0) {
+        try {
+          const remediation = await remediateLeakedQuestionsBatch(leakedItems, {
+            llmClient: normalizedInput.llmClient,
+            modelOverride: normalizedInput.modelOverride,
+          });
+
+          if (remediation.remediatedCount > 0) {
+            totalRemediatedLeaks += remediation.remediatedCount;
+            const fixedIds = new Set(remediation.remediatedQuestions.map((q) => q.id));
+
+            for (const fixed of remediation.remediatedQuestions) {
+              qaReport.approvedQuestions.push(fixed);
+              qaReport.passedCount++;
+            }
+
+            const remainingRejected = qaReport.rejectedQuestions.filter((r) => !fixedIds.has(r.question.id));
+            qaReport.rejectedQuestions.length = 0;
+            qaReport.rejectedQuestions.push(...remainingRejected);
+            qaReport.rejectedCount = qaReport.rejectedQuestions.length;
+          }
+        } catch (remErr) {
+          console.warn("[QuestionBankBatch] Auto-remediation non-blocking error:", remErr);
+        }
+      }
+    }
 
     try {
       await retryChunkOperation(
@@ -234,6 +274,7 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
     allRejected,
     totalApproved,
     totalRejected,
+    remediatedLeakCount: totalRemediatedLeaks,
     combinedSummary,
     failedChunks,
   };

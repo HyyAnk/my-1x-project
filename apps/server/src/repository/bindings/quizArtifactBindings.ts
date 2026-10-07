@@ -32,6 +32,9 @@ import {
   recordVoiceUsage,
   recordImageUsage,
   invalidateQuizArtifacts,
+  listEpisodeQuestionImages,
+  saveUploadedQuestionImage,
+  deleteUploadedQuestionImage,
 } from "../quizArtifacts.js";
 import { quizArtifactTarget, readQuizArtifact, writeQuizArtifact } from "../quizArtifactTarget.js";
 
@@ -69,6 +72,9 @@ export const quizArtifactBindings = {
   readBgmHistory,
   appendBgmHistory,
   invalidateQuizArtifacts,
+  listEpisodeQuestionImages,
+  saveUploadedQuestionImage,
+  deleteUploadedQuestionImage,
   quizArtifactTarget,
   readQuizArtifact,
   writeQuizArtifact,

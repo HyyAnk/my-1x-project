@@ -12,12 +12,17 @@ export interface ImgStudioModelDefinition {
 
 export const IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID = "c604136c-0756-49a0-a826-cfc72b68cb9a";
 export const IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID = "2d059365-a09a-4fd5-aa9e-b5335d09bbe9";
-export const IMGSTUDIO_KREA_2_TURBO_MODEL_ID = "fal-krea-2-turbo";
+export const IMGSTUDIO_KREA_2_TURBO_MODEL_ID = "be34a90e-db63-4aad-a832-fee6a4d4ab28";
+export const IMGSTUDIO_KREA_2_TURBO_LEGACY_MODEL_ID = "fal-krea-2-turbo";
 
 export const IMGSTUDIO_DEFAULT_MODEL_ID = IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID;
-export const IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID = IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID;
-export const IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID = IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID;
+export const IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID = IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID;
+export const IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID = IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID;
 export const IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID = IMGSTUDIO_KREA_2_TURBO_MODEL_ID;
+
+export function resolveImgStudioFallbackLevel1Model(modelId?: string): string {
+  return modelId?.trim() || IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID;
+}
 
 export function resolveImgStudioFallbackLevel2Model(modelId?: string): string {
   const configuredModel = modelId?.trim() || IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID;
@@ -26,12 +31,15 @@ export function resolveImgStudioFallbackLevel2Model(modelId?: string): string {
 
 export function resolveImgStudioFallbackLevel3Model(modelId?: string): string {
   const configuredModel = modelId?.trim() || IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID;
+  if (configuredModel === "fal-krea-2-turbo") {
+    return IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID;
+  }
   return configuredModel;
 }
 
 export const IMGSTUDIO_MODELS: readonly ImgStudioModelDefinition[] = [
   {
-    id: "fal-krea-2-turbo",
+    id: "be34a90e-db63-4aad-a832-fee6a4d4ab28",
     name: "Krea 2 Turbo",
     max_resolution: "2K",
   },
@@ -98,6 +106,9 @@ const RESOLUTION_LEVEL_MAP: Record<string, number> = {
  * Returns the provided modelId if not found in the catalog.
  */
 export function resolveImgStudioModelName(modelId: string): string {
+  if (modelId === "fal-krea-2-turbo") {
+    return "Krea 2 Turbo";
+  }
   const model = IMGSTUDIO_MODELS.find((m) => m.id === modelId);
   return model ? model.name : modelId;
 }
@@ -106,7 +117,8 @@ export function resolveImgStudioModelName(modelId: string): string {
  * Checks whether the requested resolution is supported by the specified ImgStudio model.
  */
 export function isSupportedImgStudioResolution(modelId: string, resolution: string): boolean {
-  const model = IMGSTUDIO_MODELS.find((m) => m.id === modelId);
+  const normalizedId = modelId === "fal-krea-2-turbo" ? IMGSTUDIO_KREA_2_TURBO_MODEL_ID : modelId;
+  const model = IMGSTUDIO_MODELS.find((m) => m.id === normalizedId);
   if (!model) {
     return false;
   }

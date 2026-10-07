@@ -14,8 +14,9 @@ export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArche
         return "deep_trivia";
       case "visual_choices_three_pure":
         return "visual_spotting";
+      case "verdict_yes_no":
       case "verdict_true_false":
-        return "verdict_true_false";
+        return "verdict_yes_no";
       case "split_versus_two":
         return "versus_faceoff";
       case "visual_choices_three":
@@ -26,8 +27,8 @@ export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArche
         return "mystery_reveal";
     }
   }
-  if (topic.quiz_format === "true_false") {
-    return "verdict_true_false";
+  if (topic.quiz_format === "yes_no" || topic.quiz_format === "true_false") {
+    return "verdict_yes_no";
   }
   if (topic.quiz_format === "odd_one_out") {
     return "visual_spotting";

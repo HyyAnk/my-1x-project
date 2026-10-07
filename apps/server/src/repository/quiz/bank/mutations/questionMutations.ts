@@ -29,8 +29,8 @@ export async function saveQuestionBankQuestionUnlocked(this: RepositoryRuntime, 
     const { batch, toSave } = prepareBatchForSave(existing, validated);
 
     const legacyPath =
-      validated.archetype_id === "verdict_true_false"
-        ? getQuestionBankWritePath.call(this, "verdict_fact_myth", validated.domain_id, `${validated.subtopic_id}.json`)
+      validated.archetype_id === "verdict_yes_no" || validated.archetype_id === "verdict_true_false"
+        ? getQuestionBankWritePath.call(this, "verdict_true_false", validated.domain_id, `${validated.subtopic_id}.json`)
         : null;
     const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
     const containmentRoot = isInside(runtimeBankRoot, batchFilePath) ? this.roots.runtime : defaultProjectRuntime;

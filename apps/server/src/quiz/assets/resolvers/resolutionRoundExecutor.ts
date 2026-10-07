@@ -139,7 +139,7 @@ export async function executeResolutionRounds(params: ResolutionRoundsParams): P
     issues,
   } = params;
 
-  const ASSET_CONCURRENCY = 4;
+  const assetConcurrency = Math.max(1, Math.min(16, input.imageConfig?.max_concurrent_tasks ?? 6));
   const terminalFailed = new Set<string>();
 
   for (let round = 1; round <= maxRounds; round++) {
@@ -168,7 +168,7 @@ export async function executeResolutionRounds(params: ResolutionRoundsParams): P
       return persistQueue;
     };
 
-    await runConcurrent(pendingRequests, ASSET_CONCURRENCY, (request) =>
+    await runConcurrent(pendingRequests, assetConcurrency, (request) =>
       processAssetInRound({
         request,
         round,

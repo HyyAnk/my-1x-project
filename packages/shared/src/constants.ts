@@ -33,6 +33,7 @@ export const DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE: Record<VoiceSegmentRole, number> 
   explanation: 1.0,
   fun_fact: 1.0,
   midpoint: 1.06,
+  pre_outro: 1.12,
   outro: 1.12,
 };
 

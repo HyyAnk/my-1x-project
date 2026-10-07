@@ -7,6 +7,7 @@ export const koLocale: ThumbnailLocalization = {
     mystery_silhouette: "이 사람은 누구?",
     odd_one_out: "다른 그림 찾기!",
     difficulty_tier: "레벨 4 풀 수 있을까?",
+    yes_no: "YES or NO 퀴즈",
     true_false: "O vs X 퀴즈",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const koLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "정답률 1%! 🔥",
     odd_one_out: () => "10초 도전! ⏱️",
     difficulty_tier: () => "IQ 140 이상만🔥",
+    yes_no: () => "YES or NO? ⚡",
     true_false: () => "진실 혹은 거짓? ⚡",
   },
 };

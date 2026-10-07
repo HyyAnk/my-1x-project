@@ -44,7 +44,7 @@ function buildColumnGroupItems(channelName: string, columnIndex: number, count =
 function renderColumnGroup(items: MonogramItem[], options: BridgeTopicBackdropOptions): string {
   const initial = (options.fallbackInitial?.trim() || options.channelName?.trim().charAt(0) || "★").toUpperCase();
   const badgeHtml = options.hasCustomLogo && options.logoUrl
-    ? `<img src="${esc(options.logoUrl)}" class="monogram-logo-img" alt="" />`
+    ? `<span class="monogram-logo-img" style="background-image:url('${esc(options.logoUrl)}')" aria-hidden="true"></span>`
     : `<span class="monogram-initial-badge">${esc(initial)}</span>`;
 
   const itemsHtml = items.map((item) => {

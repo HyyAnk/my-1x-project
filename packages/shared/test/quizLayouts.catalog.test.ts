@@ -21,7 +21,12 @@ test("QUIZ_LAYOUT_CATALOG enforces standardized asset metrics and aspect ratios"
     aspectRatio: "4:3",
   });
 
-  // verdict_true_false: 4:3 question asset
+  // verdict_yes_no and verdict_true_false: 4:3 question asset
+  assert.deepEqual(QUIZ_LAYOUT_CATALOG.verdict_yes_no.metrics.assets.question, {
+    maxWidth: 1216,
+    maxHeight: 912,
+    aspectRatio: "4:3",
+  });
   assert.deepEqual(QUIZ_LAYOUT_CATALOG.verdict_true_false.metrics.assets.question, {
     maxWidth: 1216,
     maxHeight: 912,
@@ -77,6 +82,7 @@ test("resolveQuizLayoutAssetAspectRatio resolves question asset ratios correctly
   assert.equal(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "hero_question_image"), "4:3");
   assert.equal(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "question_illustration"), "4:3");
   assert.equal(resolveQuizLayoutAssetAspectRatio("split_versus_two", "hero_question_image"), "4:3");
+  assert.equal(resolveQuizLayoutAssetAspectRatio("verdict_yes_no", "hero_question_image"), "4:3");
   assert.equal(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image"), "4:3");
 
   // 16:9 layouts

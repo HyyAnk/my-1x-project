@@ -8,3 +8,5 @@ export * from "./candyArcadeBridgeTopicStyles.js";
 export * from "./candyArcadeBridgeCtaStyles.js";
 export * from "./candyArcadeBrandLogoStingerStyles.js";
 export * from "./candyArcadeEnergyWhipStyles.js";
+export * from "./candyArcadePreOutroStyles.js";
+export * from "./candyArcadeCelebrationStingerStyles.js";

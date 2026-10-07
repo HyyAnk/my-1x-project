@@ -203,7 +203,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     });
     expect(prompt).toContain("verdict_fact_myth");
     expect(prompt).toContain("ocean_giants");
-    expect(prompt).toContain("true_false");
+    expect(prompt).toContain("yes_no");
     expect(prompt).toContain("STRICT CONTENT POLICY");
 
     // Test parsing output wrapped in markdown code fence

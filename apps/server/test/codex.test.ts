@@ -30,7 +30,7 @@ describe("Cockpit OpenAI-compatible transport", () => {
       JSON.stringify({
         models: [
           { slug: "gpt-5.6-luna", display_name: "GPT-5.6-Luna", visibility: "list" },
-          { slug: "gpt-image-2", display_name: "GPT Image 2", visibility: "hide" },
+          { slug: "gpt-image-2.5-flare", display_name: "GPT Image 2.5 Flare", visibility: "hide" },
           { slug: "gpt-5.3-codex", display_name: "gpt-5.3-codex", visibility: "list" },
         ],
       }),

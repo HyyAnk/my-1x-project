@@ -87,10 +87,14 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
       const count = Number(row.count || 0);
       if (count <= 0) continue;
 
-      const arch = row.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : row.archetype_id;
+      const arch =
+        row.archetype_id === "verdict_fact_myth" || row.archetype_id === "verdict_true_false"
+          ? "verdict_yes_no"
+          : row.archetype_id;
       this.currentTotal += count;
       this.byArchetype[arch] = (this.byArchetype[arch] || 0) + count;
-      if (arch === "verdict_true_false") {
+      if (arch === "verdict_yes_no") {
+        this.byArchetype.verdict_true_false = (this.byArchetype.verdict_true_false || 0) + count;
         this.byArchetype.verdict_fact_myth = (this.byArchetype.verdict_fact_myth || 0) + count;
       }
       this.byDomain[row.domain_id] = (this.byDomain[row.domain_id] || 0) + count;
@@ -224,11 +228,15 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
   private applyDelta(meta: QuestionMutationMeta, sign: 1 | -1): void {
     if (meta.status && meta.status !== "approved") return;
 
-    const arch = meta.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : meta.archetype_id;
+    const arch =
+      meta.archetype_id === "verdict_fact_myth" || meta.archetype_id === "verdict_true_false"
+        ? "verdict_yes_no"
+        : meta.archetype_id;
     this.currentTotal = Math.max(0, this.currentTotal + sign);
 
     this.byArchetype[arch] = Math.max(0, (this.byArchetype[arch] || 0) + sign);
-    if (arch === "verdict_true_false") {
+    if (arch === "verdict_yes_no") {
+      this.byArchetype.verdict_true_false = Math.max(0, (this.byArchetype.verdict_true_false || 0) + sign);
       this.byArchetype.verdict_fact_myth = Math.max(0, (this.byArchetype.verdict_fact_myth || 0) + sign);
     }
 

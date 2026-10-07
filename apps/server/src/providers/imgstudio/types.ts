@@ -6,6 +6,8 @@ export interface ImgStudioGenerationRequest {
   aspect_ratio: string;
   resolution: string;
   quality: "standard" | "high" | (string & {});
+  count?: number;
+  n?: number;
   /** Raw base64 PNG or an image data URL. Requests with this field use the native edit endpoint. */
   image?: string;
 }

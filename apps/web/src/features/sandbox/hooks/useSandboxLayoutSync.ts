@@ -18,7 +18,10 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
   const handleLayoutChange = useCallback(
     (newLayoutId: QuizPreviewLayoutId) => {
       design.setLayoutId(newLayoutId);
-      const isTfChoices = question.choices.length === 2 && question.choices[0] === "True" && question.choices[1] === "False";
+      const isBinaryChoices =
+        question.choices.length === 2 &&
+        ((question.choices[0] === "True" && question.choices[1] === "False") ||
+          (question.choices[0] === "Yes" && question.choices[1] === "No"));
 
       if (newLayoutId === "mystery_reveal") {
         if (question.choices.length > 1) {
@@ -30,22 +33,30 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
         const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || "Pikachu";
         question.setChoices([currentAnswer]);
         question.setCorrectChoiceIndex(0);
+      } else if (newLayoutId === "verdict_yes_no") {
+        const isYnChoices = question.choices.length === 2 && question.choices[0] === "Yes" && question.choices[1] === "No";
+        if (question.choices.length !== 2 || !isYnChoices) {
+          question.setChoices(["Yes", "No"]);
+          if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
+        }
       } else if (newLayoutId === "verdict_true_false") {
+        const isTfChoices = question.choices.length === 2 && question.choices[0] === "True" && question.choices[1] === "False";
         if (question.choices.length !== 2 || !isTfChoices) {
           question.setChoices(["True", "False"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
       } else if (newLayoutId === "split_versus_two") {
-        if (question.choices.length !== 2 || isTfChoices) {
+        if (question.choices.length !== 2 || isBinaryChoices) {
           if (
             cachedDraftChoicesRef.current &&
             cachedDraftChoicesRef.current.choices.length === 2 &&
-            !cachedDraftChoicesRef.current.choices.includes("True")
+            !cachedDraftChoicesRef.current.choices.includes("True") &&
+            !cachedDraftChoicesRef.current.choices.includes("Yes")
           ) {
             question.setChoices([...cachedDraftChoicesRef.current.choices]);
             question.setCorrectChoiceIndex(Math.min(cachedDraftChoicesRef.current.correctIndex, 1));
           } else {
-            question.setChoices(question.choices.length > 2 && !isTfChoices ? question.choices.slice(0, 2) : ["Option A", "Option B"]);
+            question.setChoices(question.choices.length > 2 && !isBinaryChoices ? question.choices.slice(0, 2) : ["Option A", "Option B"]);
             if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
           }
         }
@@ -61,7 +72,7 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
           question.setChoices([...cached.choices]);
           question.setCorrectChoiceIndex(cached.correctIndex);
         } else if (question.choices.length < 3) {
-          if (isTfChoices) {
+          if (isBinaryChoices) {
             question.setChoices(["Option A", "Option B", "Option C"]);
           } else if (question.choices.length <= 1) {
             const firstChoice = question.choices[0] || "Option A";
@@ -79,13 +90,16 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
     (sample: PresetSampleQuestion) => {
       question.handleApplyPresetQuestion(sample);
       let targetLayout: ResolvedQuizLayoutId = "media_left_choices_right";
-      if (sample.type === "true_false") {
+      if (sample.type === "yes_no") {
+        targetLayout = "verdict_yes_no";
+      } else if (sample.type === "true_false") {
         targetLayout = "verdict_true_false";
       } else if (sample.type === "versus") {
         targetLayout = "split_versus_two";
       } else if (sample.type === "mystery_reveal") {
         targetLayout = "mystery_reveal";
       } else if (
+        design.layoutId === "verdict_yes_no" ||
         design.layoutId === "verdict_true_false" ||
         design.layoutId === "split_versus_two" ||
         design.layoutId === "mystery_reveal"

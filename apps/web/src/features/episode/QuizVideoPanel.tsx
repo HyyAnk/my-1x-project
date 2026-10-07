@@ -1,4 +1,4 @@
-import { CircleNotch, DownloadSimple, FolderOpen } from "@phosphor-icons/react";
+import { CircleNotch, DownloadSimple, FolderOpen, Lightning } from "@phosphor-icons/react";
 import type { Channel, Episode, Task } from "@studio/shared";
 import { api } from "../../api";
 import { isTaskActive, latestTask } from "../../lib/utils";
@@ -13,9 +13,21 @@ type QuizVideoPanelProps = {
   episodeClock: number;
   busy: string | null;
   onOpenVideoFolder: () => void;
+  fastRenderMode?: boolean;
+  onToggleFastRender?: () => void;
 };
 
-export function QuizVideoPanel({ channel, episode, episodeId, episodeTasks, episodeClock, busy, onOpenVideoFolder }: QuizVideoPanelProps) {
+export function QuizVideoPanel({
+  channel,
+  episode,
+  episodeId,
+  episodeTasks,
+  episodeClock,
+  busy,
+  onOpenVideoFolder,
+  fastRenderMode = true,
+  onToggleFastRender,
+}: QuizVideoPanelProps) {
   const videoTask = latestTask(episodeTasks, ["GENERATE_VIDEO"]);
   const showProgress =
     videoTask &&
@@ -27,6 +39,24 @@ export function QuizVideoPanel({ channel, episode, episodeId, episodeTasks, epis
         <div>
           <h2>Quiz Video</h2>
         </div>
+        {onToggleFastRender && (
+          <button
+            type="button"
+            className={`fast-render-toggle-btn compact ${fastRenderMode ? "is-active" : ""}`}
+            onClick={onToggleFastRender}
+            disabled={Boolean(videoTask && isTaskActive(videoTask)) || busy === "fast-render-mode"}
+            title={
+              fastRenderMode
+                ? "Fast Render enabled: Bypasses layout & media preflight checks for maximum speed"
+                : "Standard mode: Runs layout & media preflight checks before rendering"
+            }
+            aria-pressed={fastRenderMode}
+            aria-label="Toggle Fast Render Mode"
+          >
+            <Lightning size={13} weight={fastRenderMode ? "fill" : "regular"} />
+            <span>Fast Render: {fastRenderMode ? "ON" : "OFF"}</span>
+          </button>
+        )}
       </div>
       {showProgress ? (
         <TaskProgressPanel

@@ -20,6 +20,10 @@ type ChannelTopicsTabProps = {
   confirmingTopicId: string | null;
   onSuggest: (overrideHint?: string) => Promise<void>;
   onConfirmTopic: (topic: TopicCandidate, questionCount: number, visualStyle?: QuizImageStyle | "mixed") => Promise<void>;
+  onDeleteTopic?: (topic: TopicCandidate) => Promise<void> | void;
+  onClearHistory?: (unselectedOnly?: boolean) => Promise<void> | void;
+  deletingTopicId?: string | null;
+  clearingTopicHistory?: boolean;
   availabilityMap?: Map<string, TopicAvailability>;
 };
 
@@ -36,6 +40,10 @@ export function ChannelTopicsTab({
   confirmingTopicId,
   onSuggest,
   onConfirmTopic,
+  onDeleteTopic,
+  onClearHistory,
+  deletingTopicId,
+  clearingTopicHistory,
   availabilityMap: externalAvailabilityMap,
 }: ChannelTopicsTabProps) {
   const internalAvailability = useTopicAvailability({
@@ -210,6 +218,10 @@ export function ChannelTopicsTab({
               confirmingTopicId={confirmingTopicId}
               channelStatus={channel.status}
               onConfirmTopic={onConfirmTopic}
+              onDeleteTopic={onDeleteTopic}
+              onClearHistory={onClearHistory}
+              deletingTopicId={deletingTopicId}
+              clearingTopicHistory={clearingTopicHistory}
             />
           ) : null}
         </>

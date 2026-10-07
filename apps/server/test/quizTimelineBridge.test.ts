@@ -180,4 +180,114 @@ describe("Quiz Timeline Bridge Scenes & Rhythm Engineering (Stage 4)", () => {
     assert.ok(q1Enter);
     assert.equal(q1Enter.at_seconds, introVideoDuration);
   });
+
+  it("synchronizes 4 staggered ui_pop SFX events when showcaseItems are present", () => {
+    const quiz = createTestQuiz();
+    const director = createDefaultDirectorPlan(quiz);
+    const voicePlan = buildQuizVoicePlan(quiz, {
+      director,
+      includeBridgeSegments: true,
+      skipIntro: true,
+      skipOutro: true,
+      topicNarration: "Today we explore four prehistoric giant predators!",
+      ctaNarration: "Subscribe now for daily prehistoric adventures!",
+    });
+
+    const introVideoDuration = 8.0;
+    const audioDurations = {
+      intro_channel: 2.0,
+      intro_topic: 3.5,
+      intro_cta: 2.8,
+      "q1:question": 3.0,
+      "q1:reveal": 2.0,
+      "q1:explanation": 2.5,
+      "q2:question": 3.0,
+      "q2:reveal": 2.0,
+      "q2:explanation": 2.5,
+      outro: 3.0,
+    };
+
+    const showcaseItems = [
+      {
+        asset_id: "showcase-1",
+        subject: "Tyrannosaurus Rex",
+        presentation: "die_cut_sticker" as const,
+        rotation_deg: -2,
+        transparent_background: true,
+      },
+      {
+        asset_id: "showcase-2",
+        subject: "Triceratops",
+        presentation: "die_cut_sticker" as const,
+        rotation_deg: 1,
+        transparent_background: true,
+      },
+      {
+        asset_id: "showcase-3",
+        subject: "Velociraptor",
+        presentation: "photo_card" as const,
+        rotation_deg: -3,
+        transparent_background: false,
+      },
+      {
+        asset_id: "showcase-4",
+        subject: "Spinosaurus",
+        presentation: "die_cut_sticker" as const,
+        rotation_deg: 2,
+        transparent_background: true,
+      },
+    ];
+
+    const timeline = compileQuizTimeline({
+      quiz,
+      director,
+      voicePlan,
+      introDuration: introVideoDuration,
+      audioDurations,
+      channelName: "DinoQuiz",
+      topic: "Prehistoric Predators",
+      bridgeConfig: {
+        enabled: true,
+        enableTopicScene: true,
+        enableCtaScene: true,
+        timing: {
+          topicPauseSeconds: 1.0,
+          ctaPauseSeconds: 0.5,
+        },
+        showcaseItems,
+      },
+    });
+
+    QuizTimelineSchema.parse(timeline);
+
+    const topicEnter = timeline.events.find((e) => e.type === "bridge.topic.enter");
+    assert.ok(topicEnter, "bridge.topic.enter event must exist");
+    assert.deepEqual(topicEnter.payload.showcaseItems, showcaseItems);
+
+    const topicSfxEvents = timeline.events.filter(
+      (e) => e.type === "sfx.play" && e.segment_id === "intro_topic",
+    );
+
+    // 1 entrance whoosh + 4 showcase pops + 1 sparkle = 6 events
+    assert.equal(topicSfxEvents.length, 6);
+
+    // Scene entrance at 8.0
+    assert.equal(topicSfxEvents[0].at_seconds, 8.0);
+    assert.equal(topicSfxEvents[0].payload.sound, "transition_fast");
+
+    // 4 staggered ui_pop events at +0.30s, +0.42s, +0.54s, +0.66s
+    const expectedPopTimestamps = [8.30, 8.42, 8.54, 8.66];
+    for (let i = 0; i < 4; i++) {
+      const popEvent = topicSfxEvents[i + 1];
+      assert.equal(popEvent.payload.sound, "ui_pop");
+      assert.equal(popEvent.at_seconds, expectedPopTimestamps[i]);
+      assert.equal(popEvent.payload.volume, 0.7);
+      assert.equal(popEvent.payload.name, `showcase_item_pop_${i + 1}`);
+      assert.equal(popEvent.payload.target_item, showcaseItems[i].subject);
+    }
+
+    // Sparkle at 8.70
+    assert.equal(topicSfxEvents[5].at_seconds, 8.7);
+    assert.equal(topicSfxEvents[5].payload.sound, "correct_small");
+  });
 });

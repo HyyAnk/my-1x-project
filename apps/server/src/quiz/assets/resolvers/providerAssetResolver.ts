@@ -73,10 +73,12 @@ async function attemptPrimaryProvider(input: ProviderAssetInput): Promise<Provid
  */
 export async function resolveProviderAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
   const { channelId, episodeId, request, imageConfig, imageFallbackConfig, logger } = input;
-  const fallbackModels = resolveImgStudioFallbackModels(
-    imageFallbackConfig?.level2_model,
-    imageFallbackConfig?.level3_model,
-  );
+  const fallbackModels = resolveImgStudioFallbackModels({
+    level1_model: imageFallbackConfig?.level1_model,
+    level2_model: imageFallbackConfig?.level2_model,
+    level3_model: imageFallbackConfig?.level3_model,
+    model: imageFallbackConfig?.model,
+  });
   const imgStudioFallbackKey = imageFallbackConfig?.api_key;
   const gpti2FallbackKey = imageFallbackConfig?.gpti2_api_key;
   const isFallbackEnabled =
@@ -107,9 +109,7 @@ export async function resolveProviderAsset(input: ProviderAssetInput): Promise<P
         throw primaryError;
       }
       const reason = primaryError instanceof Error ? primaryError.message : String(primaryError);
-      const nextStepDesc = input.configuredProvider === "gpti2"
-        ? `Starting Level 2 with ${describeImgStudioModel(fallbackModels.level2)}`
-        : "Starting Level 1 with GPTi2";
+      const nextStepDesc = `Starting Level 1 with ${describeImgStudioModel(fallbackModels.level1)}`;
       logger.warn(
         `Primary image provider failed for asset ${request.asset_id} (${reason}). ${nextStepDesc}.`,
         { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_TRIGGERED" },

@@ -78,3 +78,26 @@ function fallbackSubjectArtwork(subject: string, hue: number): string {
     return `<path d="M390 416c6-143 59-228 167-286-7 117-55 223-167 286Z" fill="#6fd66a"/><path d="M388 416C299 346 255 263 254 143c111 39 165 129 134 273Z" fill="#9fe779"/><path d="M398 406 306 193M398 406 520 177" stroke="#2f9867" stroke-width="16" stroke-linecap="round"/>`;
   return `<circle cx="400" cy="255" r="160" fill="#fff" opacity=".94"/><path d="M400 156l31 63 70 10-51 50 12 70-62-33-62 33 12-70-51-50 70-10z" fill="hsl(${(hue + 35) % 360} 95% 52%)"/>`;
 }
+
+/**
+ * Renders an inline SVG defs block defining the studio-grade die-cut sticker shader filter.
+ * Dilates the alpha channel by 7px with pure white fill, adds a soft 3D drop shadow underneath,
+ * and composites the original graphic cleanly on top.
+ */
+export function renderBridgeStickerFilterSvg(): string {
+  return `<svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true">` +
+    `<defs>` +
+      `<filter id="bridge-sticker-filter" x="-30%" y="-30%" width="160%" height="160%">` +
+        `<feMorphology in="SourceAlpha" result="DILATED" operator="dilate" radius="7"/>` +
+        `<feFlood flood-color="#FFFFFF" flood-opacity="1" result="WHITE_FLOOD"/>` +
+        `<feComposite in="WHITE_FLOOD" in2="DILATED" operator="in" result="STROKE"/>` +
+        `<feDropShadow in="STROKE" dx="0" dy="12" stdDeviation="10" flood-color="#0F0C29" flood-opacity="0.45" result="SHADOW"/>` +
+        `<feMerge>` +
+          `<feMergeNode in="SHADOW"/>` +
+          `<feMergeNode in="STROKE"/>` +
+          `<feMergeNode in="SourceGraphic"/>` +
+        `</feMerge>` +
+      `</filter>` +
+    `</defs>` +
+  `</svg>`;
+}

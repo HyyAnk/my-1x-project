@@ -32,7 +32,12 @@ function resolveBridgeTopicParams(options?: CompileIntroOptions) {
   };
 }
 
-function addBridgeTopicSfx(ctx: TimelineContext, topicStart: number, segmentId: string): void {
+function addBridgeTopicSfx(
+  ctx: TimelineContext,
+  topicStart: number,
+  segmentId: string,
+  options?: CompileIntroOptions,
+): void {
   ctx.add({
     type: "sfx.play",
     at_seconds: topicStart,
@@ -43,15 +48,39 @@ function addBridgeTopicSfx(ctx: TimelineContext, topicStart: number, segmentId: 
     payload: { sound: "transition_fast", name: "scene_entrance" },
   });
 
-  ctx.add({
-    type: "sfx.play",
-    at_seconds: round(topicStart + 0.28),
-    duration_seconds: 0.35,
-    question_id: null,
-    choice_id: null,
-    segment_id: segmentId,
-    payload: { sound: "ui_pop", name: "count_sticker_bounce" },
-  });
+  const showcaseItems = options?.bridgeConfig?.showcaseItems;
+  const itemCount = showcaseItems && showcaseItems.length > 0 ? Math.min(showcaseItems.length, 4) : 0;
+
+  if (itemCount > 0) {
+    const popOffsets = [0.30, 0.42, 0.54, 0.66];
+    for (let i = 0; i < itemCount; i++) {
+      const item = showcaseItems![i];
+      ctx.add({
+        type: "sfx.play",
+        at_seconds: round(topicStart + popOffsets[i]),
+        duration_seconds: 0.35,
+        question_id: null,
+        choice_id: null,
+        segment_id: segmentId,
+        payload: {
+          sound: "ui_pop",
+          name: `showcase_item_pop_${i + 1}`,
+          volume: 0.7,
+          ...(item?.subject ? { target_item: item.subject } : {}),
+        },
+      });
+    }
+  } else {
+    ctx.add({
+      type: "sfx.play",
+      at_seconds: round(topicStart + 0.28),
+      duration_seconds: 0.35,
+      question_id: null,
+      choice_id: null,
+      segment_id: segmentId,
+      payload: { sound: "ui_pop", name: "count_sticker_bounce" },
+    });
+  }
 
   ctx.add({
     type: "sfx.play",
@@ -138,10 +167,12 @@ function compileBridgeTopicSegment(
       ...(subtitle ? { subtitle } : {}),
       ...(visualStyle ? { visualStyle } : {}),
       ...(mascotAction ? { mascotAction } : {}),
+      ...(options?.bridgeConfig?.enableShowcase !== undefined ? { enableShowcase: options.bridgeConfig.enableShowcase } : {}),
+      ...(options?.bridgeConfig?.showcaseItems ? { showcaseItems: options.bridgeConfig.showcaseItems } : {}),
     },
   });
 
-  addBridgeTopicSfx(ctx, topicStart, topicSegment.segment_id);
+  addBridgeTopicSfx(ctx, topicStart, topicSegment.segment_id, options);
 
   ctx.add({
     type: "mascot.state",

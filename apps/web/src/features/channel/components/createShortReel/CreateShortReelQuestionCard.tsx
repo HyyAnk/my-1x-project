@@ -15,6 +15,8 @@ function formatArchetypeLabel(archetypeId: string): string {
       return "Deep Trivia";
     case "visual_spotting":
       return "Visual Spotting";
+    case "verdict_yes_no":
+      return "Yes or No";
     case "verdict_true_false":
     case "verdict_fact_myth":
       return "True or False";

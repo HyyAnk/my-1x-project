@@ -26,7 +26,7 @@ export function assembleCreativeTimeline(raw: unknown, duration: number, kind: I
   const groups = z.array(z.record(z.unknown())).min(1).parse(raw);
   return IntroOutroScriptContentSchema.shape.timeline.parse(
     groups.map((group, index) => ({
-      ...(groups.length === 3
+      ...(groups.length === defaults.length
         ? defaults[index]
         : {
             beat: index + 1,

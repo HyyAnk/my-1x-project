@@ -50,7 +50,7 @@ describe("Single-Attempt Provider Strategies Modernization", () => {
     it("executes a single attempt and records usage on success", async () => {
       const generateSpy = vi
         .spyOn(Gpti2QuizImageProvider.prototype, "generateAsset")
-        .mockResolvedValue({ path: "/assets/gpti2-puppy.png", price_vnd: 50, model: "gpt-image-2" });
+        .mockResolvedValue({ path: "/assets/gpti2-puppy.png", price_vnd: 50, model: "gpt-image-2.5-flare" });
       const trackSpy = vi.spyOn(pricingTracker, "trackGpti2Usage").mockResolvedValue(undefined);
 
       const input = createMockInput();

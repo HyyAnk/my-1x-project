@@ -37,7 +37,7 @@ export function makeAuthorizedBankQuestion(subject: string): BankQuestion {
     subtopic_id: "tricky_riddles",
     language: "en",
     format: "multiple_choice",
-    question: `Which subject is shown: ${subject}?`,
+    question: `Which featured character is shown in this illustration?`,
     choices: [
       { id: "A", text: subject, is_correct: true },
       { id: "B", text: "A mountain", is_correct: false },

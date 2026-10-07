@@ -222,10 +222,11 @@ describe("Mascot Multi-Question Lifecycle & Global Timeline", () => {
       expect(html).toContain("state-celebrate");
       expect(html).not.toContain("master_concept.png");
 
-      // Verify that the thinking state starts at the global question entrance time
-      expect(html).toContain(`--mascot-state-delay:${qEnter.at_seconds}s`);
-      // Verify that the celebrate state starts at the global reveal time
-      expect(html).toContain(`--mascot-state-delay:${reveal.at_seconds}s`);
+      // Verify that the thinking state starts at zero-based question entrance time (0s in sub-composition)
+      expect(html).toContain(`--mascot-state-delay:0s`);
+      // Verify that the celebrate state starts at the relative reveal time within the sub-composition clip
+      const localRevealDelay = Number((reveal.at_seconds - qEnter.at_seconds).toFixed(3));
+      expect(html).toContain(`--mascot-state-delay:${localRevealDelay}s`);
     }
   });
 

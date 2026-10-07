@@ -29,7 +29,7 @@ describe("Short-Reel Usage Accounting & Ledger Boundary (Phase 02 / I08)", () =>
       channelId: "ch_nature_01",
       episodeId: "ep_volcano_01",
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       count: 1,
     });
 
@@ -53,7 +53,7 @@ describe("Short-Reel Usage Accounting & Ledger Boundary (Phase 02 / I08)", () =>
       channelId: "ch_nature_01",
       reelId: "sreel_predators_999",
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       count: 1,
       costVnd: 50,
       note: "Short-Reel style generation",
@@ -80,7 +80,7 @@ describe("Short-Reel Usage Accounting & Ledger Boundary (Phase 02 / I08)", () =>
       channelId: "ch_1",
       episodeId: "ep_1",
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       count: 2,
     });
 
@@ -89,7 +89,7 @@ describe("Short-Reel Usage Accounting & Ledger Boundary (Phase 02 / I08)", () =>
       channelId: "ch_1",
       reelId: "sreel_1",
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       count: 1,
       costVnd: 50,
     });

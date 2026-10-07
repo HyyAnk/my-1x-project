@@ -9,6 +9,7 @@ export interface QuizVoiceCopy {
   thinking: readonly string[];
   reveal: (answer: string) => string;
   explanation: (text: string) => string;
+  preOutro: (customText?: string) => string;
   outro: string;
 }
 
@@ -115,6 +116,10 @@ function buildEnglishVoiceCopy(seed?: string): QuizVoiceCopy {
     thinking: ["Pick fast!", "Which one?", "What's your guess?", "Choose now!"],
     reveal: (answer) => `That's right! It's ${answer}!`,
     explanation: (text) => text,
+    preOutro: (customText) =>
+      customText && customText.trim()
+        ? customText.trim()
+        : "And that's the end of this quiz series! I bet you did amazing today!",
     outro: `How many did you get right? Leave your score in the comments below! Remember to like and subscribe for more fun quizzes. ${selectClosing(ENGLISH_OUTRO_CLOSING_VARIANTS, seed)}`,
   };
 }
@@ -142,6 +147,10 @@ function buildChineseVoiceCopy(seed?: string): QuizVoiceCopy {
     thinking: ["\u5feb\u9009\uff01", "\u4f60\u9009\u54ea\u4e2a\uff1f", "\u731c\u731c\u770b\uff01", "\u73b0\u5728\u9009\u62e9\uff01"],
     reveal: (answer) => `\u7b54\u5bf9\u4e86\uff01\u7b54\u6848\u662f${answer}\uff01`,
     explanation: (text) => text,
+    preOutro: (customText) =>
+      customText && customText.trim()
+        ? customText.trim()
+        : "\u8fd9\u5c31\u662f\u4eca\u5929\u7684\u5168\u90e8\u95ee\u7b54\u7cfb\u5217\u5566\uff01\u76f8\u4fe1\u4f60\u4eca\u5929\u8868\u73b0\u5f97\u8d85\u7ea7\u68d2\uff01",
     outro: `\u4f60\u7b54\u5bf9\u4e86\u591a\u5c11\u9898\uff1f\u5728\u8bc4\u8bba\u533a\u7559\u4e0b\u4f60\u7684\u5206\u6570\u5427\uff01\u8bb0\u5f97\u70b9\u8d5e\u5e76\u8ba2\u9605\uff0c\u4f53\u9a8c\u66f4\u591a\u6709\u8da3\u7684\u95ee\u7b54\u6311\u6218\u3002${selectClosing(CHINESE_OUTRO_CLOSING_VARIANTS, seed)}`,
   };
 }

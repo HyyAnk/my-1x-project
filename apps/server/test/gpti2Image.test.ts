@@ -22,7 +22,7 @@ function toUrlString(input: RequestInfo | URL): string {
 }
 
 describe("gpti2.store Image Provider", () => {
-  it("generates image synchronously for gpt-image-2 with quality low", async () => {
+  it("generates image synchronously for gpt-image-2.5-flare with quality low", async () => {
     // 1x1 transparent PNG base64
     const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
@@ -39,11 +39,11 @@ describe("gpti2.store Image Provider", () => {
 
     const result = await generateGpti2ImageBytes("A scenic mountain at sunrise", {
       apiKey: "sk-test-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
     });
 
     expect(result.price_vnd).toBe(50);
-    expect(result.model).toBe("gpt-image-2");
+    expect(result.model).toBe("gpt-image-2.5-flare");
     expect(result.bytes.length).toBeGreaterThan(10);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -53,10 +53,35 @@ describe("gpti2.store Image Provider", () => {
     expect(headers["Idempotency-Key"]).toBeDefined();
     const body = JSON.parse(init.body as string) as { quality: string; model: string };
     expect(body.quality).toBe("low");
-    expect(body.model).toBe("gpt-image-2");
+    expect(body.model).toBe("gpt-image-2.5-flare");
   });
 
-  it("handles 202 async response with job polling for gpt-image-2", async () => {
+  it("defaults to gpt-image-2.5-flare when no model is specified", async () => {
+    const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: [{ b64_json: fakeBase64 }],
+          price_vnd: 50,
+          price_breakdown: { images_vnd: 50 },
+        }),
+        { status: 200 },
+      ),
+    );
+    globalThis.fetch = fetchMock;
+
+    const result = await generateGpti2ImageBytes("A vibrant sunrise over the ocean", {
+      apiKey: "sk-test-key",
+    });
+
+    expect(result.price_vnd).toBe(50);
+    expect(result.model).toBe("gpt-image-2.5-flare");
+    const init = fetchMock.mock.calls[0]?.[1];
+    const body = JSON.parse(init?.body as string) as { quality: string; model: string };
+    expect(body.model).toBe("gpt-image-2.5-flare");
+  });
+
+  it("handles 202 async response with job polling for gpt-image-2.5-flare", async () => {
     const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     let pollCount = 0;
     const fetchMock = vi.fn<typeof fetch>().mockImplementation((input: RequestInfo | URL) => {
@@ -87,7 +112,7 @@ describe("gpti2.store Image Provider", () => {
 
     const result = await generateGpti2ImageBytes("A bustling retro market", {
       apiKey: "sk-test-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       pollIntervalMs: 10,
     });
 
@@ -185,7 +210,7 @@ describe("gpti2.store Image Provider", () => {
       },
       {
         apiKey: "sk-test",
-        model: "gpt-image-2",
+        model: "gpt-image-2.5-flare",
       },
     );
 
@@ -195,11 +220,11 @@ describe("gpti2.store Image Provider", () => {
     const images = await repository.listBundleImages(channel.channel_id, episode.episode_id);
     expect(images.length).toBe(1);
     expect(images[0].price_vnd).toBe(50);
-    expect(images[0].model).toBe("gpt-image-2");
+    expect(images[0].model).toBe("gpt-image-2.5-flare");
     expect(images[0].aspect_ratio).toBe("16:9");
   });
 
-  it("maps aspect ratios correctly for gpt-image-2 (size) and nano-banana-2 (aspect_ratio)", async () => {
+  it("maps aspect ratios correctly for gpt-image-2.5-flare (size) and nano-banana-2 (aspect_ratio)", async () => {
     const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
       Promise.resolve(
@@ -220,46 +245,46 @@ describe("gpti2.store Image Provider", () => {
       return JSON.parse(init?.body as string) as { size?: string; aspect_ratio?: string };
     };
 
-    // Test 1:1 square for gpt-image-2
+    // Test 1:1 square for gpt-image-2.5-flare
     await generateGpti2ImageBytes("A red apple on white background", {
       apiKey: "sk-test",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       aspect_ratio: "1:1",
     });
     let requestBody = getRequestBody(0);
     expect(requestBody.size).toBe("1024x1024");
 
-    // Test 9:16 portrait for gpt-image-2
+    // Test 9:16 portrait for gpt-image-2.5-flare
     await generateGpti2ImageBytes("A tall skyscraper", {
       apiKey: "sk-test",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       aspect_ratio: "9:16",
     });
     requestBody = getRequestBody(1);
     expect(requestBody.size).toBe("720x1280");
 
-    // Test 4:3 for gpt-image-2
+    // Test 4:3 for gpt-image-2.5-flare
     await generateGpti2ImageBytes("A vintage television", {
       apiKey: "sk-test",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       aspect_ratio: "4:3",
     });
     requestBody = getRequestBody(2);
     expect(requestBody.size).toBe("1024x768");
 
-    // Test 3:4 for gpt-image-2
+    // Test 3:4 for gpt-image-2.5-flare
     await generateGpti2ImageBytes("A portrait card hero", {
       apiKey: "sk-test",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       aspect_ratio: "3:4",
     });
     requestBody = getRequestBody(3);
     expect(requestBody.size).toBe("768x1024");
 
-    // Test 16:9 for gpt-image-2
+    // Test 16:9 for gpt-image-2.5-flare
     await generateGpti2ImageBytes("A widescreen panorama", {
       apiKey: "sk-test",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       aspect_ratio: "16:9",
     });
     requestBody = getRequestBody(4);
@@ -309,7 +334,7 @@ describe("gpti2.store Image Provider", () => {
     expect(balance.rpm).toBe(10);
   });
 
-  it("attaches referenceImageBase64 to gpt-image-2 payload correctly", async () => {
+  it("attaches referenceImageBase64 to gpt-image-2.5-flare payload correctly", async () => {
     const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       new Response(
@@ -324,7 +349,7 @@ describe("gpti2.store Image Provider", () => {
 
     await generateGpti2ImageBytes("Character waving", {
       apiKey: "sk-test-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       referenceImageBase64: fakeBase64,
       referenceStrength: 0.8,
     });

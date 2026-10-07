@@ -31,6 +31,11 @@ export class HyperframesRenderer implements QuizRenderer {
       mascotMediaMode: input.mascotMediaMode,
       brandIdentity: input.brandIdentity,
       topic: input.topic,
+      introMotionTemplateId: input.introMotionTemplateId,
+      introMotionTemplateOptions: input.introMotionTemplateOptions,
+      outroMotionTemplateId: input.outroMotionTemplateId,
+      outroMotionTemplateOptions: input.outroMotionTemplateOptions,
+      channelName: input.channelName,
     });
     return Promise.resolve({
       html: composition.html,

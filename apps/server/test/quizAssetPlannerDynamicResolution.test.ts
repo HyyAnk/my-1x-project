@@ -339,4 +339,40 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     expect(STANDARD_ASPECT_RATIO_DIMENSIONS["3:4"].dimensions).toBe("720x960");
     expect(STANDARD_ASPECT_RATIO_DIMENSIONS["9:16"].dimensions).toBe("720x1280");
   });
+
+  it("compacts choice subjects and bridge items so they never exceed 280 characters", () => {
+    const longChoiceText = "A".repeat(300);
+    const quiz = buildTestQuiz([
+      {
+        id: "q-long-choices",
+        number: 1,
+        format: "multiple_choice",
+        difficulty: 1,
+        question: "Which of the following descriptions matches the ancient artifact?",
+        choices: [
+          { id: "c-1", text: longChoiceText.slice(0, 150) },
+          { id: "c-2", text: longChoiceText.slice(0, 160) },
+          { id: "c-3", text: longChoiceText.slice(0, 170) },
+        ],
+        correct_choice_id: "c-1",
+        explanation: "Correct explanation",
+        visual_opportunity: "In an epic magical fantasy kingdom of legends, an ancient glowing crystal",
+      },
+    ]);
+
+    const director = buildTestDirectorPlan([
+      {
+        question_id: "q-long-choices",
+        archetype: "visual_multiple_choice",
+        layout_id: "visual_choices_three",
+        asset_intents: ["question_illustration", "choice_illustration"],
+      },
+    ]);
+
+    const plan = planQuizAssets(quiz, director, "pixar_3d");
+    expect(plan.assets.length).toBeGreaterThan(0);
+    for (const asset of plan.assets) {
+      expect(asset.subject.length).toBeLessThanOrEqual(280);
+    }
+  });
 });

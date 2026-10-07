@@ -22,7 +22,7 @@ const afterEach = runner.afterEach;
 const testImageConfig: AppConfig["image_generation"] = {
   enabled: false,
   provider: "shopaikey",
-  model: "gpt-image-2",
+  model: "gpt-image-2.5-flare",
   api_key: "",
 };
 

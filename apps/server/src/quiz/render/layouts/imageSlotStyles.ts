@@ -49,6 +49,14 @@ export function imageSlotStyles(): string {
   --slot-hero-viewport-height: ${ml.viewport.height}px;
 }
 
+.layout-verdict_yes_no {
+  --slot-hero-width: ${vtf.cardBorderBox.width}px;
+  --slot-hero-height: ${vtf.cardBorderBox.height}px;
+  --slot-hero-border-width: ${vtf.borderEachSide}px;
+  --slot-hero-viewport-width: ${vtf.viewport.width}px;
+  --slot-hero-viewport-height: ${vtf.viewport.height}px;
+}
+
 .layout-verdict_true_false {
   --slot-hero-width: ${vtf.cardBorderBox.width}px;
   --slot-hero-height: ${vtf.cardBorderBox.height}px;

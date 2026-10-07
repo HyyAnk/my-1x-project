@@ -150,6 +150,8 @@ export function useEpisodePipeline({
     saveIntroOutroSelection: styles.saveIntroOutroSelection,
     applyStylePreset: styles.applyStylePreset,
     saveDuration: styles.saveDuration,
+    fastRenderMode: episode?.quiz_config?.fast_render_mode ?? true,
+    saveFastRenderMode: styles.saveFastRenderMode,
 
     // From useEpisodeRemix
     historyCheck: remix.historyCheck,

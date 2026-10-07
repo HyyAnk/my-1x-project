@@ -68,7 +68,9 @@ export type EngineId = z.infer<typeof EngineIdSchema>;
 export const ImageProviderIdSchema = z.enum(["gpti2", "shopaikey", "custom", "imgstudio"]);
 export type ImageProviderId = z.infer<typeof ImageProviderIdSchema>;
 
-export const ImageModelIdSchema = z.enum(["gpt-image-2", "nano-banana-2"]);
+export const DEFAULT_GPTI2_MODEL = "gpt-image-2.5-flare";
+
+export const ImageModelIdSchema = z.enum(["gpt-image-2.5-flare", "nano-banana-2"]);
 export type ImageModelId = z.infer<typeof ImageModelIdSchema>;
 
 export const ImageAspectRatioSchema = z.enum(["1:1", "16:9", "9:16", "4:3", "3:4", "2:3", "3:2"]);

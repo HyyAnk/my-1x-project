@@ -127,18 +127,35 @@ function buildAndValidateBankQuestion(opts: BuildQuestionOptions): BankQuestion 
     return null;
   }
 
-  const normalizedChoices =
+  let normalizedChoices =
     opts.archetypeId === "mystery_reveal"
       ? item.choices
       : normalizeChoices(item.choices, opts.expectedChoiceCount, item.correct_choice_id, opts.distractorPool);
+
+  const isVerdict =
+    opts.archetypeId === "verdict_yes_no" ||
+    opts.archetypeId === "verdict_true_false" ||
+    opts.archetypeId === "verdict_fact_myth";
+
+  if (isVerdict && Array.isArray(normalizedChoices)) {
+    normalizedChoices = normalizedChoices.map((c) => {
+      if (typeof c === "object" && c !== null && "text" in c) {
+        const text = String((c as { text: unknown }).text).trim();
+        if (/^(true|fact)$/i.test(text)) return { ...c, text: "Yes" };
+        if (/^(false|myth)$/i.test(text)) return { ...c, text: "No" };
+      }
+      return c;
+    });
+  }
 
   const candidate: Record<string, unknown> = {
     ...item,
     question: sanitizedQuestion,
     choices: normalizedChoices ?? item.choices,
+    format: isVerdict ? "yes_no" : (typeof item.format === "string" ? item.format : "multiple_choice"),
     id: typeof item.id === "string" && item.id.trim() ? item.id.trim() : makeUniqueBankId(opts.archetypeId, opts.domainId, opts.subtopicId),
     entity_id: opts.entityId,
-    archetype_id: opts.archetypeId,
+    archetype_id: isVerdict ? "verdict_yes_no" : opts.archetypeId,
     domain_id: opts.domainId,
     subtopic_id: opts.subtopicId,
     status: "approved",

@@ -34,7 +34,7 @@ export function energyWhipStingerClip(input: EnergyWhipStingerClipInput): string
     `data-track-index="1" ` +
     `data-aspect-ratio="${aspectRatio}" ` +
     `data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow ` +
-    `style="--clip-start:${start.toFixed(3)}s;--whip-dur:${duration.toFixed(3)}s;--whip-from:${fromColor};--whip-to:${toColor};--whip-accent:${accentColor};">` +
+    `style="--clip-start:0s;--whip-dur:${duration.toFixed(3)}s;--whip-from:${fromColor};--whip-to:${toColor};--whip-accent:${accentColor};">` +
       `<div class="energy-whip-backdrop" aria-hidden="true">` +
         `<div class="energy-whip-slash slash-primary"></div>` +
         `<div class="energy-whip-slash slash-secondary"></div>` +

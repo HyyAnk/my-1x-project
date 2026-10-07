@@ -64,8 +64,10 @@ export function SandboxQuestionInputs({
                   ? t("visualSandbox.sampleShort")
                   : sq.type === "long"
                     ? t("visualSandbox.sampleLong")
-                    : sq.type === "true_false"
-                      ? t("visualSandbox.sampleTrueFalse")
+                    : sq.type === "yes_no"
+                      ? t("visualSandbox.sampleYesNo") || "Yes/No (2)"
+                      : sq.type === "true_false"
+                        ? t("visualSandbox.sampleTrueFalse")
                       : sq.type === "versus"
                         ? t("visualSandbox.sampleVersus")
                         : (sq.type as string) === "mystery_reveal"

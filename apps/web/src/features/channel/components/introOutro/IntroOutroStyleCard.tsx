@@ -9,9 +9,12 @@ export interface IntroOutroStyleCardProps {
   channelId: string;
   isDeleting: boolean;
   isAssigning?: boolean;
+  isDefault?: boolean;
+  isSettingDefault?: boolean;
   onPreviewClip: (clip: IntroOutroPreviewClip) => void;
   onDelete: (styleId: string, name: string) => void;
   onAssignCategory?: (styleId: string, stylePresetId: string) => void;
+  onSetDefault?: (styleId: string | null) => void;
 }
 
 export function IntroOutroStyleCard({
@@ -19,9 +22,12 @@ export function IntroOutroStyleCard({
   channelId,
   isDeleting,
   isAssigning = false,
+  isDefault = false,
+  isSettingDefault = false,
   onPreviewClip,
   onDelete,
   onAssignCategory,
+  onSetDefault,
 }: IntroOutroStyleCardProps) {
   const linkedProvenance = style.intro.script_provenance ?? style.outro.script_provenance;
   const provenanceMismatch = Boolean(linkedProvenance && linkedProvenance.style_preset_id !== style.style_preset_id);
@@ -177,8 +183,23 @@ export function IntroOutroStyleCard({
 
       {/* Card Info */}
       <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: "var(--ink)" }}>{style.name}</h3>
+          {isDefault ? (
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                background: "rgba(245, 158, 11, 0.15)",
+                padding: "2px 8px",
+                borderRadius: 4,
+                color: "#d97706",
+                border: "1px solid rgba(245, 158, 11, 0.35)",
+              }}
+            >
+              ★ Channel Default
+            </span>
+          ) : null}
         </div>
 
         <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
@@ -231,11 +252,13 @@ export function IntroOutroStyleCard({
             marginTop: "auto",
             paddingTop: 14,
             borderTop: "1px solid var(--line)",
+            gap: 8,
           }}
         >
           {onAssignCategory ? (
             <IntroOutroCategoryAssignment
               styleName={style.name}
+              currentPresetId={style.style_preset_id}
               disabled={isAssigning}
               onAssign={(stylePresetId) => onAssignCategory(style.style_id, stylePresetId)}
             />
@@ -243,20 +266,42 @@ export function IntroOutroStyleCard({
             <span />
           )}
 
-          <button
-            type="button"
-            className="icon-button danger"
-            title="Delete Style"
-            onClick={() => {
-              if (confirm(`Delete style "${style.name}"?`)) {
-                onDelete(style.style_id, style.name);
-              }
-            }}
-            disabled={isDeleting}
-            aria-label={`Delete style ${style.name}`}
-          >
-            <Trash size={15} />
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {onSetDefault ? (
+              <button
+                type="button"
+                className="quiet-button"
+                title={isDefault ? "Clear channel default" : "Set as channel default"}
+                onClick={() => onSetDefault(isDefault ? null : style.style_id)}
+                disabled={isSettingDefault}
+                style={{
+                  fontSize: 11,
+                  padding: "4px 8px",
+                  borderRadius: 4,
+                  border: "1px solid var(--line)",
+                  background: isDefault ? "rgba(245, 158, 11, 0.12)" : undefined,
+                  color: isDefault ? "#d97706" : "var(--ink)",
+                }}
+              >
+                {isDefault ? "★ Default" : "Set Default"}
+              </button>
+            ) : null}
+
+            <button
+              type="button"
+              className="icon-button danger"
+              title="Delete Style"
+              onClick={() => {
+                if (confirm(`Delete style "${style.name}"?`)) {
+                  onDelete(style.style_id, style.name);
+                }
+              }}
+              disabled={isDeleting}
+              aria-label={`Delete style ${style.name}`}
+            >
+              <Trash size={15} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

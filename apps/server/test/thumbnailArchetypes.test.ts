@@ -267,5 +267,50 @@ describe("Thumbnail Mascot 10 Abstract Archetypes & Random Selection", () => {
       expect(prompt).not.toContain('e.g. "99% FAIL! 🔥"');
       expect(prompt).toContain("Dynamically pick ONE psychological hook");
     });
+
+    it("injects cultural authenticity directives and episode quiz questions into planner prompt", () => {
+      const prompt = buildAiPlannerPrompt({
+        topicTitle: "Norse Legends & Heroes Quiz: Can You Spot Every Mythical Legend?",
+        topicSummary: "Test your knowledge of Thor, Odin, Loki, and Asgard",
+        language: "English",
+        questions: [
+          { question: "What is the name of Thor's hammer?", choices: ["Mjolnir", "Gungnir", "Excalibur"], answer: "Mjolnir" },
+          { question: "Who is the ruler of Asgard?", choices: ["Odin", "Thor", "Loki"], answer: "Odin" },
+        ],
+      });
+
+      // Strict cultural authenticity rules
+      expect(prompt).toContain("STRICT CULTURAL & THEMATIC AUTHENTICITY");
+      expect(prompt).toContain("NEVER default to a generic wizard robe");
+      expect(prompt).toContain("Thor, Odin, Loki, and Asgard");
+
+      // Questions injected
+      expect(prompt).toContain("What is the name of Thor's hammer?");
+      expect(prompt).toContain("Mjolnir");
+      expect(prompt).toContain("Who is the ruler of Asgard?");
+    });
+
+    it("logs a structured warning when LLM client is missing and returns topic fallback", async () => {
+      const mockLogger = {
+        warn: vi.fn(),
+        info: vi.fn(),
+        ok: vi.fn(),
+        error: vi.fn(),
+      };
+
+      const plan = await planThumbnailWithAI({
+        topicTitle: "Norse Legends & Heroes Quiz",
+        language: "English",
+        logger: mockLogger as any,
+        channelId: "ch-test",
+        episodeId: "ep-test",
+      });
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("AI thumbnail planning skipped: no active LLM client provided"),
+        expect.objectContaining({ profileId: "ch-test", workerId: "ep-test" }),
+      );
+      expect(plan.hookText).toBe("NORSE LEGENDS QUIZ!");
+    });
   });
 });

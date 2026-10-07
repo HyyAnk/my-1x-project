@@ -1,4 +1,8 @@
 import { randomUUID } from "node:crypto";
+import {
+  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+  IMGSTUDIO_KREA_2_TURBO_LEGACY_MODEL_ID,
+} from "@studio/shared";
 import { RepositoryError } from "../../repository.js";
 import type { ImgStudioGenerationRequest, ImgStudioGenerationResponse, ImgStudioGenerationResponseItem } from "./types.js";
 
@@ -140,39 +144,91 @@ function createEditRequestPayload(request: ImgStudioGenerationRequest): ImgStudi
   };
 }
 
+export function isKreaModel(providerId?: string): boolean {
+  const normalized = providerId?.trim().toLowerCase() || "";
+  return (
+    normalized === IMGSTUDIO_KREA_2_TURBO_MODEL_ID ||
+    normalized === IMGSTUDIO_KREA_2_TURBO_LEGACY_MODEL_ID ||
+    normalized.includes("krea")
+  );
+}
+
 export function createRequestPayload(request: ImgStudioGenerationRequest): ImgStudioRequestPayload {
   if (request.image) return createEditRequestPayload(request);
+  const isKrea = isKreaModel(request.provider_id);
+  const payloadBody: Record<string, unknown> = {
+    prompt: request.prompt,
+    provider_id: request.provider_id,
+    aspect_ratio: request.aspect_ratio,
+    resolution: request.resolution,
+    quality: request.quality,
+  };
+
+  if (isKrea) {
+    payloadBody.n = request.n ?? 4;
+    if (typeof request.count === "number" && request.count !== 1) {
+      payloadBody.count = request.count;
+    }
+  } else {
+    payloadBody.count = request.count ?? 1;
+    if (typeof request.n === "number") {
+      payloadBody.n = request.n;
+    }
+  }
+
   return {
     endpointPath: "/api/v1/images/generate",
-    body: JSON.stringify({
-      prompt: request.prompt,
-      provider_id: request.provider_id,
-      aspect_ratio: request.aspect_ratio,
-      resolution: request.resolution,
-      quality: request.quality,
-      count: 1,
-    }),
+    body: JSON.stringify(payloadBody),
     contentType: "application/json",
   };
 }
 
 function parseResponseItem(value: unknown): ImgStudioGenerationResponseItem | undefined {
-  if (!value || typeof value !== "object") return undefined;
+  if (!value) return undefined;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+    if (trimmed.startsWith("data:image/") || trimmed.length > 500) {
+      return { b64_json: trimmed };
+    }
+    return { url: trimmed };
+  }
+  if (typeof value !== "object") return undefined;
   const item = value as Record<string, unknown>;
+  const rawUrl = Array.isArray(item.url) ? item.url[0] : item.url;
+  const rawB64 = Array.isArray(item.b64_json) ? item.b64_json[0] : item.b64_json;
   return {
-    url: readString(item, "url"),
-    b64_json: readString(item, "b64_json"),
+    url: typeof rawUrl === "string" ? rawUrl : undefined,
+    b64_json: typeof rawB64 === "string" ? rawB64 : undefined,
     revised_prompt: readString(item, "revised_prompt"),
     price_vnd: readNumber(item, "price_vnd"),
   };
 }
 
 export function parseGenerationResponse(payload: Record<string, unknown>): ImgStudioGenerationResponse {
-  const data = Array.isArray(payload.data)
-    ? payload.data.map(parseResponseItem).filter((item): item is ImgStudioGenerationResponseItem => Boolean(item))
-    : parseResponseItem(payload.data);
+  const outputObj = typeof payload.output === "object" && payload.output !== null ? (payload.output as Record<string, unknown>) : undefined;
+  const rawArray = Array.isArray(payload.data)
+    ? payload.data
+    : Array.isArray(payload.images)
+      ? payload.images
+      : Array.isArray(payload.result)
+        ? payload.result
+        : Array.isArray(payload.urls)
+          ? payload.urls
+          : outputObj && Array.isArray(outputObj.images)
+            ? outputObj.images
+            : Array.isArray(payload.output)
+              ? payload.output
+              : undefined;
+
+  const data = rawArray
+    ? rawArray.map(parseResponseItem).filter((item): item is ImgStudioGenerationResponseItem => Boolean(item))
+    : parseResponseItem(payload.data || payload.image || payload.result || payload.output);
   const errorPayload = payload.error && typeof payload.error === "object" ? (payload.error as Record<string, unknown>) : undefined;
   const errorCode = errorPayload?.code;
+
+  const rawUrl = Array.isArray(payload.url) ? payload.url[0] : payload.url;
+  const rawB64 = Array.isArray(payload.b64_json) ? payload.b64_json[0] : payload.b64_json;
 
   return {
     id: readString(payload, "id"),
@@ -190,8 +246,8 @@ export function parseGenerationResponse(payload: Record<string, unknown>): ImgSt
     code: readNumber(payload, "code"),
     message: readString(payload, "message"),
     data,
-    url: readString(payload, "url"),
-    b64_json: readString(payload, "b64_json"),
+    url: typeof rawUrl === "string" ? rawUrl : undefined,
+    b64_json: typeof rawB64 === "string" ? rawB64 : undefined,
     price_vnd: readNumber(payload, "price_vnd"),
     error: errorPayload
       ? {

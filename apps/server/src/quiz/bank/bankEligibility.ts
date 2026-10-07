@@ -32,7 +32,7 @@ interface SharedEligibilityOptions {
 }
 
 export interface ShortReelEligibilityOptions {
-  targetArchetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false";
+  targetArchetype: "versus_faceoff" | "deep_trivia" | "verdict_yes_no" | "verdict_true_false";
 }
 
 export interface EpisodeEligibilityOptions extends SharedEligibilityOptions {
@@ -134,7 +134,11 @@ function validateStructure(question: BankQuestionWithCooldown, options: BankElig
     return reject("EMPTY_QUESTION_OR_EXPLANATION", "Question text or explanation is empty");
   if (
     options.expectedFormat &&
-    (options.expectedFormat === "knowledge" ? question.format !== "multiple_choice" : question.format !== options.expectedFormat)
+    (options.expectedFormat === "knowledge"
+      ? question.format !== "multiple_choice"
+      : options.expectedFormat === "yes_no" || options.expectedFormat === "true_false"
+        ? question.format !== "yes_no" && question.format !== "true_false"
+        : question.format !== options.expectedFormat)
   ) {
     return reject(
       "INCOMPATIBLE_FORMAT",

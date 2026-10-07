@@ -81,4 +81,14 @@ Roll onto the floor and wave goodbye.`;
     fireEvent.click(screen.getByRole("button", { name: "Copy outro script" }));
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(twoPartScript));
   });
+
+  it("renders a single prompt box when duration is 10s even if value contains legacy two-part delimiter", () => {
+    const onChange = vi.fn();
+    const twoPartScript = `Create one continuous outro\nPART 1:\n================================================================================\nPART 2:`;
+    render(<PromptBox kind="outro" value={twoPartScript} duration={10} disabled={false} onChange={onChange} />);
+
+    expect(screen.getByText("Outro (10s · Single Clip)")).toBeDefined();
+    expect(screen.getByRole("textbox", { name: "Outro script" })).toBeDefined();
+    expect(screen.queryByText(/Part 1/)).toBeNull();
+  });
 });

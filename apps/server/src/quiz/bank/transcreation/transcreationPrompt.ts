@@ -17,6 +17,8 @@ export interface BuildQuestionTranscreationPromptParams {
 const ARCHETYPE_TRANSCREATION_NUANCE: Record<Exclude<BankGameplayArchetypeId, "clue_deduction">, string> & {
   [archetype: string]: string | undefined;
 } = {
+  verdict_yes_no:
+    "Archetype: 'Yes or No'. The question asks a direct question or asserts a bold statement ending in 'Yes or No?' (or localized equivalent). Choice translations must strictly be Yes and No (e.g. 'Yes' / 'No', 'Sí' / 'No'). Explanations must convincingly clarify the scientific or factual reasoning.",
   verdict_true_false:
     "Archetype: 'True or False'. The question asserts a bold statement that sparks curiosity and challenges intuition, ending in 'True or False?' (or localized equivalent). Choice translations must strictly be True and False (e.g. 'True' / 'False', 'Verdadero' / 'Falso'). Explanations must convincingly clarify the scientific or factual reasoning.",
   verdict_fact_myth:

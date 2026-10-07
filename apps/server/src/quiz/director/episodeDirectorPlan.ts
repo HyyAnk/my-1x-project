@@ -28,13 +28,15 @@ export function createEpisodeDirectorPlan(quiz: QuizV2, config: QuizConfig): Dir
   const archetype: DirectorBeat["archetype"] =
     requestedLayout === "mystery_reveal"
       ? "mystery_reveal"
-      : requestedLayout === "verdict_true_false"
-        ? "true_false"
-        : visualChoices
-          ? "visual_multiple_choice"
-          : config.archetype === "speed_blitz"
-            ? "speed_round"
-            : "text_multiple_choice";
+      : requestedLayout === "verdict_yes_no"
+        ? "yes_no"
+        : requestedLayout === "verdict_true_false"
+          ? "true_false"
+          : visualChoices
+            ? "visual_multiple_choice"
+            : config.archetype === "speed_blitz"
+              ? "speed_round"
+              : "text_multiple_choice";
   const assetIntents: DirectorBeat["asset_intents"] =
     requestedLayout === "mystery_reveal"
       ? ["question_illustration", "answer_reveal"]
@@ -75,7 +77,8 @@ export function matchesEpisodeLayout(plan: DirectorPlan, config: QuizConfig): bo
           if (beat.layout_id !== expected || !beat.gameplay_id) return false;
           const policy = resolveGameplayPolicy({ layout_id: expected });
           const compatibleBinary =
-            beat.gameplay_id === "verdict_true_false" && ["media_left_choices_right", "full_stack_list"].includes(expected);
+            (beat.gameplay_id === "verdict_yes_no" || beat.gameplay_id === "verdict_true_false") &&
+            ["media_left_choices_right", "full_stack_list"].includes(expected);
           if (beat.gameplay_id !== policy.id && !compatibleBinary) return false;
           const media = getQuizLayoutCapability(expected).media;
           return media.required.every((kind) =>

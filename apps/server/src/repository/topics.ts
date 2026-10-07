@@ -55,3 +55,5 @@ export async function saveTopicRun(
 export async function markTopicSelected(this: RepositoryRuntime, channelId: string, topicId: string, questionCount: number): Promise<void> {
   return projectTopicSelected(this, channelId, topicId, questionCount);
 }
+
+export { deleteTopicCandidate, clearTopicHistory, type ClearTopicHistoryOptions } from "./topicDeletion.js";

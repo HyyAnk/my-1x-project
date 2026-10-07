@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { AntigravitySettingsResponse, AppConfig, CodexSettingsResponse } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, type AntigravitySettingsResponse, type AppConfig, type CodexSettingsResponse } from "@studio/shared";
 import { api } from "../api";
 
 export function useEngineState(
@@ -10,7 +10,7 @@ export function useEngineState(
 ) {
   const [activeEngine, setActiveEngine] = useState<"codex" | "antigravity">("codex");
   const [currentModel, setCurrentModel] = useState<string>("");
-  const [currentImageModel, setCurrentImageModel] = useState<string>("gpt-image-2");
+  const [currentImageModel, setCurrentImageModel] = useState<string>(DEFAULT_GPTI2_MODEL);
   const [models, setModels] = useState<Array<{ id: string; label: string }>>([]);
   const [loadingModels, setLoadingModels] = useState(false);
   const [modelsError, setModelsError] = useState<string | null>(null);

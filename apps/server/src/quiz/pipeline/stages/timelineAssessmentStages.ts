@@ -5,17 +5,20 @@ import { preflightQuizRender } from "../../qa/preflight.js";
 import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js";
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
-import { readQuizArtifacts, type QuizArtifacts, type QuizOrchestratorInput } from "../orchestrator.js";
+import { readQuizArtifacts } from "./quizGenerationStage.js";
+import type { QuizArtifacts, QuizOrchestratorInput } from "../orchestrator.js";
 import { resolveIntroOutroConfig } from "./assetsVoiceStages.js";
+import { resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
 
 export async function compileTimeline(
   input: QuizOrchestratorInput,
 ): Promise<{ timeline: QuizTimeline; artifact_path: string; invalidated: string[] }> {
-  const [quiz, director_plan, voice_plan, episode] = await Promise.all([
+  const [quiz, director_plan, voice_plan, episode, channel] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
     input.repository.readVoicePlan(input.channelId, input.episodeId),
     input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
+    input.repository.getChannel(input.channelId).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before compiling the timeline", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before compiling the timeline", "DIRECTOR_REQUIRED");
@@ -29,6 +32,8 @@ export async function compileTimeline(
     if (segment.duration_seconds !== null) audioDurations[segment.segment_id] = segment.duration_seconds;
   }
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode?.quiz_config?.channel_brand_name);
   const timeline = compileQuizTimeline({
     quiz,
     director: director_plan,
@@ -36,7 +41,9 @@ export async function compileTimeline(
     audioDurations,
     introDuration: introOutro.introDuration,
     outroDuration: introOutro.outroDuration,
+    channelName,
     topic: episode?.topic?.title,
+    bridgeConfig,
   });
   const artifact_path = await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
   const invalidatedStages = invalidateQuizArtifacts("timeline");

@@ -29,8 +29,15 @@ export function queryBankQuestionsSqlite(
 
   if (params.archetypeId === "verdict_fact_myth") {
     questions = questions.map((q) => {
-      if (q.archetype_id === "verdict_true_false") {
+      if (q.archetype_id === "verdict_yes_no" || q.archetype_id === "verdict_true_false") {
         return { ...q, archetype_id: "verdict_fact_myth" as const };
+      }
+      return q;
+    });
+  } else if (params.archetypeId === "verdict_true_false") {
+    questions = questions.map((q) => {
+      if (q.archetype_id === "verdict_yes_no") {
+        return { ...q, archetype_id: "verdict_true_false" as const };
       }
       return q;
     });
@@ -57,8 +64,12 @@ function buildWhereClause(params: QueryQuestionBankParams): { whereClause: strin
   const bindings: SqlBinding[] = [];
 
   if (params.archetypeId) {
-    if (params.archetypeId === "verdict_fact_myth" || params.archetypeId === "verdict_true_false") {
-      conditions.push("archetype_id IN ('verdict_true_false', 'verdict_fact_myth')");
+    if (
+      params.archetypeId === "verdict_yes_no" ||
+      params.archetypeId === "verdict_fact_myth" ||
+      params.archetypeId === "verdict_true_false"
+    ) {
+      conditions.push("archetype_id IN ('verdict_yes_no', 'verdict_true_false', 'verdict_fact_myth')");
     } else {
       conditions.push("archetype_id = ?");
       bindings.push(params.archetypeId);

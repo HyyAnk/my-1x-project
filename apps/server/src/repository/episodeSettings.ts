@@ -81,6 +81,7 @@ function computeUpdatedQuizConfig(
     ...(input.mascot_style_id === undefined ? {} : { mascot_style_id: input.mascot_style_id }),
     ...(input.intro_outro_selection === undefined ? {} : { intro_outro_selection: input.intro_outro_selection }),
     ...(input.intro_outro_style_id === undefined ? {} : { intro_outro_style_id: input.intro_outro_style_id }),
+    ...(input.fast_render_mode === undefined ? {} : { fast_render_mode: input.fast_render_mode }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
   };

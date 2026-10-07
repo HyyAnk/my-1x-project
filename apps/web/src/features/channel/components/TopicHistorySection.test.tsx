@@ -123,4 +123,53 @@ describe("TopicHistorySection", () => {
     expect(collapseBtn.getAttribute("aria-expanded")).toBe("true");
     expect(getByText("Title ep_1")).toBeDefined();
   });
+
+  it("renders Clear History button and invokes onClearHistory after confirmation", () => {
+    const topics = [createEpisodeTopic("ep_1")];
+    const onClearMock = vi.fn();
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+    const { getByRole } = render(
+      <TopicHistorySection
+        historyTopics={topics}
+        latestRunTopicsCount={0}
+        availabilityMap={new Map()}
+        confirmingTopicId={null}
+        onConfirmTopic={vi.fn()}
+        onClearHistory={onClearMock}
+      />,
+    );
+
+    const clearBtn = getByRole("button", { name: /Clear older ideas history/i });
+    expect(clearBtn).toBeDefined();
+
+    fireEvent.click(clearBtn);
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(onClearMock).toHaveBeenCalledTimes(1);
+
+    confirmSpy.mockRestore();
+  });
+
+  it("invokes onDeleteTopic when row delete button is clicked in the section", () => {
+    const topics = [createEpisodeTopic("ep_1")];
+    const onDeleteMock = vi.fn();
+
+    const { getByRole } = render(
+      <TopicHistorySection
+        historyTopics={topics}
+        latestRunTopicsCount={0}
+        availabilityMap={new Map()}
+        confirmingTopicId={null}
+        onConfirmTopic={vi.fn()}
+        onDeleteTopic={onDeleteMock}
+      />,
+    );
+
+    const deleteBtn = getByRole("button", { name: /Remove topic/i });
+    expect(deleteBtn).toBeDefined();
+
+    fireEvent.click(deleteBtn);
+    expect(onDeleteMock).toHaveBeenCalledTimes(1);
+    expect(onDeleteMock).toHaveBeenCalledWith(topics[0]);
+  });
 });

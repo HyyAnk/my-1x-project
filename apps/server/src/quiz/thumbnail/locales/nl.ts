@@ -7,6 +7,7 @@ export const nlLocale: ThumbnailLocalization = {
     mystery_silhouette: "WIE IS DIT?",
     odd_one_out: "ZOEK DE FOUT!",
     difficulty_tier: "KAN JIJ LEVEL 4 AAN?",
+    yes_no: "JA OF NEE?",
     true_false: "WAAR OF NIET WAAR?",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const nlLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "SLECHTS 1% WEET HET! 🔥",
     odd_one_out: () => "10 SECONDEN! ⏱️",
     difficulty_tier: () => "ALLEEN IQ 140+ 🔥",
+    yes_no: () => "JA OF NEE? ⚡",
     true_false: () => "WAAR OF NIET WAAR? ⚡",
   },
 };

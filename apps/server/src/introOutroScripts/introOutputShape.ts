@@ -15,7 +15,7 @@ export function introOutputShape(duration: number, voiceover: IntroOutroScriptCo
         production_directions: {
           reference_mode: "character_reference",
           voice_source: "mascot",
-          opening_state: "...",
+          opening_state: "Mascot is already in dynamic kinetic motion at 0.0s (e.g. mid-pedal, mid-flight, mid-surf, or mid-sprint)...",
           closing_state: "...",
         },
         timeline: ["arrival", "reveal", "celebrate"].map((primary_action) => ({

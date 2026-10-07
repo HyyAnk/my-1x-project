@@ -109,7 +109,7 @@ function phase08cChannel() {
 function phase08cConfig() {
   return {
     video_generation: { aspect_ratio: "16:9", fast_render_mode: true, render_quality: "medium", fps: 30, render_workers: 1 },
-    image_generation: { enabled: false, model: "gpt-image-2" },
+    image_generation: { enabled: false, model: "gpt-image-2.5-flare" },
     audio_generation: { provider: "none", service_url: "", max_concurrent_tasks: 1 },
     codex: { max_concurrent_tasks: 1, transport: "app_server", command: "codex", model: "" },
   };

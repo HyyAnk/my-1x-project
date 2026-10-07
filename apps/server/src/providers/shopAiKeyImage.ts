@@ -16,7 +16,7 @@ type ImageResponse = {
 };
 
 const DEFAULT_BASE_URL = "https://direct.shopaikey.com/v1";
-const DEFAULT_MODELS = ["gpt-image-2", "gpt-image-1.5", "gpt-image-1", "gpt-image-2-all"] as const;
+const DEFAULT_MODELS = ["gpt-image-2.5-flare", "gpt-image-1.5", "gpt-image-1", "gpt-image-2-all"] as const;
 const DEFAULT_SIZE = "1536x1024";
 const DEFAULT_QUALITY = "low";
 const MAX_ATTEMPTS = 3;

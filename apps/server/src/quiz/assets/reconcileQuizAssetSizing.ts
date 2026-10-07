@@ -5,7 +5,7 @@ import {
   type QuizAssetResolution,
   type QuizV2,
 } from "@studio/shared";
-import { planQuizAssets } from "./assetPlanner.js";
+import { planQuizAssets, type PlanQuizAssetsOptions } from "./assetPlanner.js";
 
 export type SizingChange = {
   assetId: string;
@@ -24,8 +24,14 @@ export function reconcileQuizAssetSizing(
   director: DirectorPlan,
   plan: QuizAssetPlan,
   resolution?: QuizAssetResolution | null,
+  options?: PlanQuizAssetsOptions,
 ): AssetSizingReconciliation {
-  const targetPlan = planQuizAssets(quiz, director);
+  const hasExistingShowcase = plan.assets.some((a) => a.purpose === "bridge_topic_item");
+  const effectiveOptions: PlanQuizAssetsOptions = {
+    ...options,
+    includeBridgeShowcase: options?.includeBridgeShowcase ?? (hasExistingShowcase ? true : undefined),
+  };
+  const targetPlan = planQuizAssets(quiz, director, undefined, effectiveOptions);
   const existingBySemanticKey = new Map(plan.assets.map((asset) => [asset.semantic_key, asset]));
   const existingById = new Map(plan.assets.map((asset) => [asset.asset_id, asset]));
   const resolvedById = resolution ? new Map(resolution.assets.map((a) => [a.asset_id, a])) : null;

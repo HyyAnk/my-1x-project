@@ -1,4 +1,12 @@
-import { listTopics, saveTopicRun, confirmTopic, updateEpisodeSettings, markTopicSelected } from "../topics.js";
+import {
+  listTopics,
+  saveTopicRun,
+  confirmTopic,
+  updateEpisodeSettings,
+  markTopicSelected,
+  deleteTopicCandidate,
+  clearTopicHistory,
+} from "../topics.js";
 
 export const topicBindings = {
   listTopics,
@@ -6,4 +14,6 @@ export const topicBindings = {
   confirmTopic,
   updateEpisodeSettings,
   markTopicSelected,
+  deleteTopicCandidate,
+  clearTopicHistory,
 };

@@ -1,5 +1,5 @@
-import { CircleNotch, Play, Stop } from "@phosphor-icons/react";
-import type { Channel, Episode, Task } from "@studio/shared";
+import { CircleNotch, Lightning, Play, Stop } from "@phosphor-icons/react";
+import { formatCanonicalDomainName, inferCanonicalDomainFromText, type Channel, type Episode, type Task } from "@studio/shared";
 import { EpisodeBreadcrumb } from "../../components/Breadcrumbs";
 import { EpisodeAssetPills, StageBadge } from "../../components/AppChrome";
 
@@ -12,6 +12,8 @@ type EpisodeHeaderProps = {
   busy: string | null;
   cancelling: boolean;
   readiness: { video: boolean };
+  fastRenderMode?: boolean;
+  onToggleFastRender?: () => void;
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
   onNavigateChannel?: () => void;
@@ -29,6 +31,8 @@ export function EpisodeHeader({
   busy,
   cancelling,
   readiness,
+  fastRenderMode = true,
+  onToggleFastRender,
   onNavigateHome,
   onNavigateChannels,
   onNavigateChannel,
@@ -36,6 +40,12 @@ export function EpisodeHeader({
   onCreateTask,
   onCancelActiveTask,
 }: EpisodeHeaderProps) {
+  const domainId =
+    episode.topic?.domain_id ||
+    inferCanonicalDomainFromText(episode.topic?.title) ||
+    inferCanonicalDomainFromText(episode.topic?.premise);
+  const domainTitle = formatCanonicalDomainName(domainId);
+
   return (
     <>
       <EpisodeBreadcrumb
@@ -54,6 +64,11 @@ export function EpisodeHeader({
         </div>
         <div className="detail-actions">
           <div className="episode-detail-badges">
+            {domainTitle ? (
+              <span className="episode-header-domain-badge" title={`Domain: ${domainTitle}`}>
+                🏛️ {domainTitle}
+              </span>
+            ) : null}
             <StageBadge stage={episode.stage} />
             <EpisodeAssetPills episode={episode} tasks={episodeTasks} />
           </div>
@@ -62,6 +77,24 @@ export function EpisodeHeader({
               💰 {totalImageCostVnd.toLocaleString("en-US")} VND
             </span>
           ) : null}
+          {onToggleFastRender && (
+            <button
+              type="button"
+              className={`fast-render-toggle-btn ${fastRenderMode ? "is-active" : ""}`}
+              onClick={onToggleFastRender}
+              disabled={Boolean(activeEpisodeTask) || busy === "fast-render-mode"}
+              title={
+                fastRenderMode
+                  ? "Fast Render enabled: Bypasses layout & media preflight checks for maximum speed"
+                  : "Standard mode: Runs layout & media preflight checks before rendering"
+              }
+              aria-pressed={fastRenderMode}
+              aria-label="Toggle Fast Render Mode"
+            >
+              <Lightning size={14} weight={fastRenderMode ? "fill" : "regular"} />
+              <span>Fast Render: {fastRenderMode ? "ON" : "OFF"}</span>
+            </button>
+          )}
           <button
             className="primary-button"
             disabled={Boolean(activeEpisodeTask) || busy === "GENERATE_PIPELINE"}

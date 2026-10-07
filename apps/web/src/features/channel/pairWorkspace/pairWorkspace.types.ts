@@ -6,7 +6,12 @@ export type PairGenerationRequest = {
   expected_version: number;
   auto_identity: boolean;
   idempotency_key: string;
-  clips: Array<{ clip_kind: IntroOutroClipKind; duration_seconds: number; randomization_seed: string }>;
+  clips: Array<{
+    clip_kind: IntroOutroClipKind;
+    duration_seconds: number;
+    randomization_seed: string;
+    selected_seed_ids?: string[];
+  }>;
 };
 export type SaveStatus = "saved" | "saving" | "unsaved" | "failed";
 export const emptyPairTexts = (): PairTexts => ({ intro: "", outro: "" });

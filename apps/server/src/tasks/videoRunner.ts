@@ -122,7 +122,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       renderRoot: comp.renderRoot,
       rootDir: this.repository.rootDirectory,
       sourceFingerprint: comp.sourceFingerprint,
-      fastRenderMode: this.videoConfig.fast_render_mode,
+      fastRenderMode: episode.quiz_config?.fast_render_mode ?? this.videoConfig.fast_render_mode,
       renderQuality: this.videoConfig.render_quality,
       onProgress: async (message, percent) => {
         await this.update(task.task_id, { progress_message: message, progress_percent: percent });

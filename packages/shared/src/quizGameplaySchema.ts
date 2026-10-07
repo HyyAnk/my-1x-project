@@ -3,6 +3,7 @@ import { z } from "zod";
 export const QuizGameplayIdSchema = z.enum([
   "deep_trivia",
   "visual_spotting",
+  "verdict_yes_no",
   "verdict_true_false",
   "verdict_fact_myth",
   "versus_faceoff",

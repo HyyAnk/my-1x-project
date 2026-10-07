@@ -16,6 +16,7 @@ export const ARCHETYPE_LAYOUT_MAP: Record<string, string> = {
   visual_spotting: "visual_choices_three_pure",
   visual_identification: "visual_choices_three",
   speed_blitz: "full_stack_list",
+  verdict_yes_no: "verdict_yes_no",
   verdict_true_false: "verdict_true_false",
   verdict_fact_myth: "verdict_true_false",
   deep_trivia: "media_left_choices_right",
@@ -65,6 +66,17 @@ export const LAYOUT_CATALOG: Record<string, LayoutMeta> = {
     format: "Visual Identification",
     desc: "3 square image cards placed in parallel with clear text labels below each image for subject identification.",
     assets: "3 option illustrations (A, B, C)",
+  },
+  verdict_yes_no: {
+    id: "verdict_yes_no",
+    name: "Yes or No",
+    badge: "✨ Yes or No",
+    tagClass: "tag-yn",
+    btnClass: "is-yes-no",
+    icon: "✨",
+    format: "Yes / No",
+    desc: "1 prominent illustration on the left paired with 2 large verdict buttons: YES (Emerald) and NO (Crimson) on the right.",
+    assets: "1 main hero subject illustration",
   },
   verdict_true_false: {
     id: "verdict_true_false",
@@ -121,6 +133,7 @@ export function resolveLayoutMeta(
 
   if (!resolvedId) {
     if (quizFormat === "odd_one_out") resolvedId = "visual_choices_three";
+    else if (quizFormat === "yes_no") resolvedId = "verdict_yes_no";
     else if (quizFormat === "true_false") resolvedId = "verdict_true_false";
     else resolvedId = "media_left_choices_right";
   }

@@ -14,7 +14,7 @@ import type { RepositoryService } from "../src/repository.js";
 const testImageConfig: AppConfig["image_generation"] = {
   enabled: false,
   provider: "shopaikey",
-  model: "gpt-image-2",
+  model: "gpt-image-2.5-flare",
   api_key: "",
 };
 

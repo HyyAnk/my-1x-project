@@ -71,12 +71,12 @@ describe("Stage 5: Topic Batch Availability Route", () => {
     q2 = makeBankQuestion("avail-q-2", { question: "Which planet has the most moons?" });
     q3 = makeBankQuestion("avail-q-3", { question: "What is the largest mammal?" });
     q4 = makeBankQuestion("avail-q-4", {
-      format: "true_false",
+      format: "yes_no",
       archetype_id: "versus_faceoff",
       question: "Is water composed of hydrogen and oxygen?",
       choices: [
-        { id: "c1", text: "True", is_correct: true },
-        { id: "c2", text: "False", is_correct: false },
+        { id: "c1", text: "Yes", is_correct: true },
+        { id: "c2", text: "No", is_correct: false },
       ],
     });
 

@@ -103,4 +103,27 @@ describe("buildEpisodeCardViewModel", () => {
 
     expect(buildEpisodeCardViewModel(episode, []).thumbnailRatio).toBe("16:9");
   });
+
+  it("resolves the canonical domain title when domain_id is provided", () => {
+    const episode = createEpisode({
+      topic: {
+        title: "Dragon Ball Heroes",
+        premise: "A quiz about legendary shonen battles",
+        hook: "Can you guess them all?",
+        domain_id: "anime_manga",
+      },
+    });
+    expect(buildEpisodeCardViewModel(episode, []).domainTitle).toBe("Anime & Manga Universe");
+  });
+
+  it("infers the canonical domain title from topic title keywords when domain_id is missing", () => {
+    const episode = createEpisode({
+      topic: {
+        title: "Ocean Giants",
+        premise: "A quiz about deep sea animals",
+        hook: "Can you name them?",
+      },
+    });
+    expect(buildEpisodeCardViewModel(episode, []).domainTitle).toBe("Nature & Animals");
+  });
 });

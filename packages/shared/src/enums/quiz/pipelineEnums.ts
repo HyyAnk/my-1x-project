@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ImageAspectRatioSchema } from "../core.js";
 
-export const QuizQuestionFormatSchema = z.enum(["multiple_choice", "image_guess", "true_false", "odd_one_out"]);
+export const QuizQuestionFormatSchema = z.enum(["multiple_choice", "image_guess", "yes_no", "true_false", "odd_one_out"]);
 export type QuizQuestionFormat = z.infer<typeof QuizQuestionFormatSchema>;
 
 export const QuizAgeBandSchema = z.enum(["4-6", "7-9", "10-12", "family"]);
@@ -12,6 +12,7 @@ export const DirectorArchetypeSchema = z.enum([
   "illustrated_multiple_choice",
   "visual_multiple_choice",
   "image_guess",
+  "yes_no",
   "true_false",
   "odd_one_out",
   "visual_reveal",
@@ -31,6 +32,7 @@ export const QuizLayoutIdSchema = z.enum([
   "visual_choices_three",
   "visual_choices_three_pure",
   "split_versus_two",
+  "verdict_yes_no",
   "verdict_true_false",
   "full_stack_list",
   "mystery_reveal",
@@ -106,7 +108,9 @@ export const QuizAssetPurposeSchema = z.enum([
   "answer_reveal",
   "background",
   "mascot",
+  "bridge_topic_item",
 ]);
+export type QuizAssetPurpose = z.infer<typeof QuizAssetPurposeSchema>;
 
 export const QuizAssetStyleSchema = z.enum(["cute_illustration", "bold_icon", "photo_reference", "abstract_shape", "mascot_pose"]);
 
@@ -125,6 +129,7 @@ export const VoiceSegmentRoleSchema = z.enum([
   "explanation",
   "fun_fact",
   "midpoint",
+  "pre_outro",
   "outro",
 ]);
 export type VoiceSegmentRole = z.infer<typeof VoiceSegmentRoleSchema>;

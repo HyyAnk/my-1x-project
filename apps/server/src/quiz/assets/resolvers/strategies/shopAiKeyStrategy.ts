@@ -1,3 +1,4 @@
+import { DEFAULT_GPTI2_MODEL } from "@studio/shared";
 import { RepositoryError } from "../../../../repository.js";
 import { ShopAiKeyQuizImageProvider } from "../../../../providers/shopAiKeyImage.js";
 import { isContentFilterError } from "../../../../utils/promptSanitizer.js";
@@ -19,7 +20,7 @@ export async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise
       baseUrl:
         imageConfig?.base_url ||
         (configuredProvider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://api.openai.com/v1"),
-      model: imageConfig?.model || "gpt-image-2",
+      model: imageConfig?.model || DEFAULT_GPTI2_MODEL,
       quality: imageConfig?.quality,
     },
   );
@@ -57,7 +58,7 @@ export async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise
     request.asset_id,
     request.purpose,
     configuredProvider || "shopaikey",
-    imageConfig?.model || "gpt-image-2",
+    imageConfig?.model || DEFAULT_GPTI2_MODEL,
   );
 
   return {

@@ -5,3 +5,4 @@ export * from "./api/system.js";
 export * from "./api/stylePresets.js";
 export * from "./api/pagination.js";
 export * from "./api/transitionPreview.js";
+export * from "./api/motion.js";

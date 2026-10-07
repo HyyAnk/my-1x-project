@@ -140,6 +140,23 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       const task = tasks.submit("SUGGEST_TOPICS", channelId, null, undefined, undefined, input.topic_hint);
       return reply.code(202).send({ task });
     });
+    server.delete("/api/channels/:channelId/topics/history", async (request, reply) => {
+      const channelId = (request.params as { channelId: string }).channelId;
+      await repository.getChannel(channelId);
+      const query = (request.query as { unselected_only?: string }) || {};
+      const unselectedOnly = query.unselected_only === "true" || query.unselected_only === "1";
+      const result = await repository.clearTopicHistory(channelId, { unselectedOnly });
+      return reply.code(200).send({ ok: true, deleted_count: result.deleted_count });
+    });
+    server.delete("/api/channels/:channelId/topics/:topicId", async (request, reply) => {
+      const { channelId, topicId } = request.params as { channelId: string; topicId: string };
+      await repository.getChannel(channelId);
+      const deleted = await repository.deleteTopicCandidate(channelId, topicId);
+      if (!deleted) {
+        throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
+      }
+      return reply.code(200).send({ ok: true, topic_id: topicId });
+    });
     server.post("/api/channels/:channelId/topics/:topicId/confirm", async (request, reply) => {
       const params = request.params as { channelId: string; topicId: string };
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};

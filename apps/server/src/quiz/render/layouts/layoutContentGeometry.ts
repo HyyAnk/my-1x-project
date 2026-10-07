@@ -40,6 +40,11 @@ export const LAYOUT_CONTENT_GEOMETRY: Readonly<Record<ResolvedQuizLayoutId, Layo
     answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.split_versus_two.answerVariants),
   }),
 
+  verdict_yes_no: Object.freeze({
+    hero: QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.hero,
+    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.answerVariants),
+  }),
+
   verdict_true_false: Object.freeze({
     hero: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.hero,
     answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.verdict_true_false.answerVariants),

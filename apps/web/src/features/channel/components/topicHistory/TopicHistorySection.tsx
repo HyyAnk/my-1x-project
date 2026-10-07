@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CaretDown, CaretRight, CaretUp } from "@phosphor-icons/react";
+import { CaretDown, CaretRight, CaretUp, CircleNotch, Trash } from "@phosphor-icons/react";
 import type { QuizImageStyle, TopicAvailability, TopicCandidate } from "@studio/shared";
 import type { TopicHistoryFilter } from "../../types/history.types";
 import { calculateTopicHistoryMetrics, filterHistoryTopics } from "../../utils/topicHistoryHelpers";
@@ -16,6 +16,10 @@ export interface TopicHistorySectionProps {
   confirmingTopicId: string | null;
   channelStatus?: string;
   onConfirmTopic: (topic: TopicCandidate, questionCount: number, visualStyle?: QuizImageStyle | "mixed") => Promise<void>;
+  onDeleteTopic?: (topic: TopicCandidate) => Promise<void> | void;
+  onClearHistory?: (unselectedOnly?: boolean) => Promise<void> | void;
+  deletingTopicId?: string | null;
+  clearingTopicHistory?: boolean;
 }
 
 export function TopicHistorySection({
@@ -26,6 +30,10 @@ export function TopicHistorySection({
   confirmingTopicId,
   channelStatus,
   onConfirmTopic,
+  onDeleteTopic,
+  onClearHistory,
+  deletingTopicId,
+  clearingTopicHistory,
 }: TopicHistorySectionProps) {
   const [activeFilter, setActiveFilter] = useState<TopicHistoryFilter>("all");
   const [showAll, setShowAll] = useState(false);
@@ -42,6 +50,16 @@ export function TopicHistorySection({
   const handleFilterChange = (newFilter: TopicHistoryFilter) => {
     setActiveFilter(newFilter);
     setShowAll(false);
+  };
+
+  const handleClearHistory = () => {
+    if (clearingTopicHistory || !onClearHistory) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to clear older ideas history? This will clean up previous brainstorm suggestions without affecting your created episodes or 30-day question cooldowns.",
+    );
+    if (confirmed) {
+      void onClearHistory();
+    }
   };
 
   return (
@@ -66,7 +84,22 @@ export function TopicHistorySection({
         </div>
 
         {isSectionExpanded ? (
-          <TopicHistoryFilterBar activeFilter={activeFilter} metrics={metrics} onFilterChange={handleFilterChange} />
+          <div className="topic-history-heading-right">
+            <TopicHistoryFilterBar activeFilter={activeFilter} metrics={metrics} onFilterChange={handleFilterChange} />
+            {onClearHistory && historyTopics.length > 0 && (
+              <button
+                type="button"
+                className="topic-history-clear-btn"
+                disabled={Boolean(confirmingTopicId) || Boolean(clearingTopicHistory) || channelStatus === "ARCHIVED"}
+                onClick={handleClearHistory}
+                title="Clear older ideas history (does not affect created episodes or question cooldowns)"
+                aria-label="Clear older ideas history"
+              >
+                {clearingTopicHistory ? <CircleNotch className="spin" size={13} /> : <Trash size={13} weight="bold" />}
+                <span>{clearingTopicHistory ? "Clearing…" : "Clear History"}</span>
+              </button>
+            )}
+          </div>
         ) : (
           <span className="count-note">Section collapsed</span>
         )}
@@ -91,8 +124,15 @@ export function TopicHistorySection({
                     channelStyles={channelStyles}
                     availability={availabilityMap.get(topic.topic_id)}
                     busy={confirmingTopicId === topic.topic_id}
-                    disabled={Boolean(confirmingTopicId) || channelStatus === "ARCHIVED"}
+                    deleting={deletingTopicId === topic.topic_id}
+                    disabled={
+                      Boolean(confirmingTopicId) ||
+                      Boolean(deletingTopicId) ||
+                      Boolean(clearingTopicHistory) ||
+                      channelStatus === "ARCHIVED"
+                    }
                     onConfirm={(qCount, style) => void onConfirmTopic(topic, qCount, style)}
+                    onDelete={onDeleteTopic ? (t) => void onDeleteTopic(t) : undefined}
                   />
                 );
               })}

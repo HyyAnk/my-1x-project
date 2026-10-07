@@ -80,6 +80,18 @@ describe("TopicLayoutPreviewButton", () => {
     expect(getAllByText(/FALSE/).length).toBeGreaterThanOrEqual(1);
   });
 
+  it("resolves Yes or No / verdict_yes_no when quizFormat is yes_no", () => {
+    const { getByRole, getByText, getAllByText } = render(<TopicLayoutPreviewButton quizFormat="yes_no" />);
+
+    const button = getByRole("button", { name: /Layout: Yes or No/i });
+    expect(button).toBeDefined();
+
+    fireEvent.click(button);
+    expect(getByText(/verdict_yes_no/)).toBeDefined();
+    expect(getAllByText(/YES/).length).toBeGreaterThanOrEqual(1);
+    expect(getAllByText(/NO/).length).toBeGreaterThanOrEqual(1);
+  });
+
   it("ignores legacy portrait ratio hints and resolves landscape Episode layouts", () => {
     const { getByRole } = render(<TopicLayoutPreviewButton quizFormat="multiple_choice" aspectRatio="9:16" />);
     expect(getByRole("button", { name: /Layout: Deep Trivia/i })).toBeDefined();

@@ -84,6 +84,8 @@ export function EpisodeDetail({
         busy={pipeline.busy}
         cancelling={pipeline.cancelling}
         readiness={pipeline.readiness}
+        fastRenderMode={pipeline.fastRenderMode}
+        onToggleFastRender={() => void pipeline.saveFastRenderMode(!pipeline.fastRenderMode)}
         onNavigateHome={onNavigateHome}
         onNavigateChannels={onNavigateChannels}
         onNavigateChannel={onNavigateChannel}
@@ -122,6 +124,8 @@ export function EpisodeDetail({
         imageGenerationEnabled={imageGenerationEnabled}
         imagesPerBundle={imagesPerBundle}
         onNotice={onNotice}
+        fastRenderMode={pipeline.fastRenderMode}
+        onToggleFastRender={() => void pipeline.saveFastRenderMode(!pipeline.fastRenderMode)}
       />
 
       {pipeline.previewImage ? <ImagePreviewModal image={pipeline.previewImage} onClose={() => pipeline.setPreviewImage(null)} /> : null}

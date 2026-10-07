@@ -226,6 +226,7 @@ export async function saveImageFallbackSettings(rootDirectory: string, input: Im
     "provider",
     "base_url",
     "model",
+    "level1_model",
     "level2_model",
     "level3_model",
     "gpti2_api_key",

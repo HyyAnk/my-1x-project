@@ -35,15 +35,17 @@ function formatSourceChoices(source: CompleteShortReelSourceSnapshot): string {
 }
 
 function formatArchetypeAndSeedGuidance(
-  archetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false",
+  archetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false" | "verdict_yes_no",
   seed: ReelScriptSeed,
 ): string {
   const archetypeHeader =
     archetype === "versus_faceoff"
       ? "Archetype: VERSUS FACEOFF (9:16 portrait duel/comparison)"
-      : archetype === "verdict_true_false"
-        ? "Archetype: TRUE OR FALSE (9:16 portrait verdict showdown)"
-        : "Archetype: DEEP TRIVIA (9:16 portrait curiosity/mystery)";
+      : archetype === "verdict_yes_no"
+        ? "Archetype: YES OR NO (9:16 portrait verdict showdown)"
+        : archetype === "verdict_true_false"
+          ? "Archetype: TRUE OR FALSE (9:16 portrait verdict showdown)"
+          : "Archetype: DEEP TRIVIA (9:16 portrait curiosity/mystery)";
 
   return [
     `=== DIRECTORIAL SEED: ${seed.name.toUpperCase()} (${archetypeHeader}) ===`,

@@ -88,6 +88,21 @@ export function LayoutWireframeModal({ layoutId, layoutInfo }: LayoutWireframeMo
                 </div>
               </div>
             </div>
+          ) : layoutId === "verdict_yes_no" ? (
+            <div className="wf-media-row">
+              <div className="wf-hero-box">
+                <div className="wf-hero-icon">🖼️</div>
+                <div className="wf-hero-lbl">HERO TOPIC (580px)</div>
+              </div>
+              <div className="wf-choices-col wf-choices-yn">
+                <div className="wf-choice-pill wf-yn-yes">
+                  <b className="wf-badge-yes">✓</b> <span>YES</span>
+                </div>
+                <div className="wf-choice-pill wf-yn-no">
+                  <b className="wf-badge-no">✗</b> <span>NO</span>
+                </div>
+              </div>
+            </div>
           ) : layoutId === "verdict_true_false" ? (
             <div className="wf-media-row">
               <div className="wf-hero-box">

@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
+  DEFAULT_GPTI2_MODEL,
   nowIso,
   type Channel,
   type Episode,
@@ -14,10 +15,12 @@ import type { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
 import type { ImageProvider } from "../../providers/index.js";
 import type { AntigravityClient } from "../../antigravity.js";
+import type { CodexAppServerClient } from "../../codex.js";
 import { generateAssetWithProvider } from "../assets/resolvers/providerAssetResolver.js";
 import type { ProviderCircuitBreaker } from "../assets/resolvers/circuitBreaker.js";
 import type { MascotVisualAnchor, QuizThumbnailPlan } from "./thumbnailTypes.js";
 import { resolveThumbnailImageConfigs } from "./thumbnailImageConfigResolver.js";
+import { writeGeneratedThumbnail } from "./thumbnailImageWriter.js";
 
 export type GenerateEpisodeThumbnailOptions = {
   channelId: string;
@@ -29,6 +32,7 @@ export type GenerateEpisodeThumbnailOptions = {
   imageProvider?: ImageProvider;
   activeEngine?: "codex" | "antigravity";
   antigravityClient?: AntigravityClient;
+  codexClient?: CodexAppServerClient;
   imageConfig?: {
     api_key?: string;
     model?: string;
@@ -100,6 +104,7 @@ export async function generateThumbnailVariant(params: GenerateVariantParams): P
         episode,
         ratio,
         prompt,
+        plan,
         options,
         targets,
         assertCurrent: params.assertCurrent,
@@ -111,6 +116,7 @@ export async function generateThumbnailVariant(params: GenerateVariantParams): P
         episode,
         ratio,
         prompt,
+        plan,
         options,
         logger,
         versionId,
@@ -161,6 +167,7 @@ function resolveVariantFileTargets(
 }
 
 type CopyProviderGeneratedImageParams = {
+  plan: QuizThumbnailPlan;
   assertCurrent?: () => Promise<void>;
   repository: RepositoryService;
   channel: Channel;
@@ -172,22 +179,19 @@ type CopyProviderGeneratedImageParams = {
 };
 
 async function copyProviderGeneratedImage(params: CopyProviderGeneratedImageParams): Promise<void> {
-  const { repository, channel, episode, ratio, prompt, options, targets } = params;
+  const { repository, channel, episode, ratio, prompt, options } = params;
   const generated = await options.imageProvider!.generateReference(prompt, options.signal);
   const sourceAbsolute = path.isAbsolute(generated.asset_path)
     ? generated.asset_path
     : path.resolve(repository.storageRoot, generated.asset_path);
   const fileData = await readFile(sourceAbsolute);
-  await params.assertCurrent?.();
-  options.signal?.throwIfAborted();
-  await repository.writeBinaryAtomic(targets.variantAbsolute, fileData);
-  await repository.writeBinaryAtomic(targets.activeAbsolute, fileData);
+  await writeGeneratedThumbnail({ ...params, source: fileData, signal: options.signal });
   await repository
     .recordImageUsage({
       channelId: channel.channel_id,
       episodeId: episode.episode_id,
       provider: options.imageConfig?.provider ?? (options.activeEngine === "antigravity" ? "antigravity" : "gpti2"),
-      model: options.imageConfig?.model || "gpt-image-2",
+      model: options.imageConfig?.model || DEFAULT_GPTI2_MODEL,
       count: 1,
       costVnd: 50,
       costUsd: 0.002,
@@ -197,6 +201,7 @@ async function copyProviderGeneratedImage(params: CopyProviderGeneratedImagePara
 }
 
 type GenerateProviderAssetParams = {
+  plan: QuizThumbnailPlan;
   assertCurrent?: () => Promise<void>;
   repository: RepositoryService;
   channel: Channel;
@@ -212,7 +217,7 @@ type GenerateProviderAssetParams = {
 };
 
 async function generateProviderAsset(params: GenerateProviderAssetParams): Promise<void> {
-  const { repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, targets, visualAnchor } = params;
+  const { repository, channel, episode, ratio, prompt, options, logger, versionId, nowTimestamp, visualAnchor } = params;
   const fingerprint = createHash("sha256").update(prompt).digest("hex");
   const { configuredProvider, imageConfig, imageFallbackConfig } = resolveThumbnailImageConfigs(
     options.imageConfig,
@@ -252,10 +257,9 @@ async function generateProviderAsset(params: GenerateProviderAssetParams): Promi
       ? generated.entry.path
       : path.resolve(repository.storageRoot, generated.entry.path);
     const fileData = await readFile(sourceAbsolute);
-    await params.assertCurrent?.();
-    options.signal?.throwIfAborted();
-    await repository.writeBinaryAtomic(targets.variantAbsolute, fileData);
-    await repository.writeBinaryAtomic(targets.activeAbsolute, fileData);
+    await writeGeneratedThumbnail({ ...params, source: fileData, signal: options.signal });
+  } else {
+    throw new Error("Thumbnail provider returned no image. Retry generation.");
   }
 }
 
@@ -280,6 +284,7 @@ function buildVariantResult(params: BuildVariantResultParams): VariantGeneration
       id: versionId,
       aspect_ratio: ratio,
       layout: plan.layout,
+      design_template: plan.editorial?.template,
       hook_text: plan.hookText,
       badge_text: plan.badgeText,
       prompt,
@@ -310,7 +315,7 @@ async function recoverFromVariantGenerationFailure(params: VariantGenerationFail
     profileId: channel.channel_id,
     workerId: episode.episode_id,
   });
-  if (options.throwOnError) {
+  if (options.throwOnError || plan.editorial) {
     throw new Error(`Failed to generate ${ratio} thumbnail: ${(err as Error).message}`, { cause: err });
   }
   try {

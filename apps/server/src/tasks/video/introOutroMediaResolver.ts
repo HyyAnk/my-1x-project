@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { stat } from "node:fs/promises";
-import type { Channel, Episode, IntroOutroTransitionType } from "@studio/shared";
+import type { Channel, Episode, IntroOutroTransitionType, MotionTemplateOptions } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { selectIntroOutroPair, type IntroOutroSelectionSource } from "./introOutroSelectionService.js";
 import { pairFingerprint } from "../../quiz/introOutro/pairMedia.js";
@@ -20,6 +20,10 @@ export interface IntroOutroMediaResolution {
   selectionSource: IntroOutroSelectionSource;
   selectionFingerprint?: string;
   unavailableReason?: string;
+  introMotionTemplateId?: string;
+  introMotionTemplateOptions?: MotionTemplateOptions;
+  outroMotionTemplateId?: string;
+  outroMotionTemplateOptions?: MotionTemplateOptions;
 }
 
 async function createSelectionFingerprint(
@@ -49,6 +53,25 @@ export async function resolveAndCopyIntroOutro(
   taskId = `${episode.episode_id}:legacy`,
 ): Promise<IntroOutroMediaResolution> {
   const selection = await selectIntroOutroPair(repository, channel, episode, taskId);
+  if (selection.source === "motion_template") {
+    const motionSelection = episode.quiz_config.intro_outro_selection;
+    const isMotion = motionSelection.mode === "motion_template";
+    const introTemplateId = isMotion ? (motionSelection.intro_template_id ?? motionSelection.template_id) : undefined;
+    const introOptions = isMotion ? (motionSelection.intro_options ?? motionSelection.options) : undefined;
+    const outroTemplateId = isMotion
+      ? (motionSelection.outro_template_id ?? (motionSelection.template_id === "minimal_sleek" ? "minimal_sleek" : "interactive_cta"))
+      : undefined;
+    const outroOptions = isMotion ? (motionSelection.outro_options ?? motionSelection.options) : undefined;
+
+    return {
+      selectionSource: "motion_template",
+      stylePresetId: selection.stylePresetId,
+      introMotionTemplateId: introTemplateId,
+      introMotionTemplateOptions: introOptions,
+      outroMotionTemplateId: outroTemplateId,
+      outroMotionTemplateOptions: outroOptions,
+    };
+  }
   if (!selection.style || !selection.introSourcePath || !selection.outroSourcePath) {
     return {
       selectionSource: selection.source,

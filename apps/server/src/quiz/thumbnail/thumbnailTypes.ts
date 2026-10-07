@@ -1,4 +1,5 @@
 import type { MascotProfile, QuizImageStyle, ThumbnailAspectRatio, ThumbnailLayoutType } from "@studio/shared";
+import type { EditorialThumbnailDesign } from "./editorial/editorialTypes.js";
 
 export type MascotThemedPersona = {
   role: string;
@@ -26,6 +27,7 @@ export type QuizSubjectAnchor = {
 };
 
 export type QuizThumbnailPlan = {
+  editorial?: EditorialThumbnailDesign;
   layout: ThumbnailLayoutType;
   hookText: string;
   badgeText: string;
@@ -43,6 +45,8 @@ export type QuizThumbnailPlan = {
 };
 
 export type ResolveThumbnailInput = {
+  editorial?: boolean;
+  editorialFallback?: boolean;
   topicTitle: string;
   topicSummary?: string;
   questionCount?: number;
@@ -75,4 +79,3 @@ export interface MascotVisualAnchor {
   sourceUrl?: string; // relative asset url
   fingerprint: string; // sha256 hex of raw bytes
 }
-

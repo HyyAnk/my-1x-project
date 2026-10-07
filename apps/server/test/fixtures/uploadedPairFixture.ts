@@ -62,7 +62,7 @@ export async function uploadedPairFixture() {
     ],
     { windowsHide: true },
   );
-  const addPair = async (id: string, category = resolveBuiltInPresetCategoryId(episode("probe").quiz_config)) => {
+  const addPair = async (id: string, category: string | null = resolveBuiltInPresetCategoryId(episode("probe").quiz_config)) => {
     const style = IntroOutroStyleSchema.parse({
       style_id: id,
       channel_id: channel.channel_id,

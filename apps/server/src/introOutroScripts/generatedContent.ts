@@ -65,6 +65,13 @@ export function parseGeneratedClip(
               ? "No logo"
               : (anchor?.logo_placement ?? companion?.production_directions?.logo_placement ?? shared.logo_placement),
           end_hold_seconds: record(raw.production_directions).end_hold_seconds ?? (clip.clipKind === "intro" ? 0 : 1),
+          ...(clip.clipKind === "outro" && clip.durationSeconds >= 12
+            ? {
+                transition_style:
+                  (record(raw.production_directions).transition_style as any) ??
+                  (clip.transitionStyle && clip.transitionStyle !== "auto" ? clip.transitionStyle : "flash_stunt"),
+              }
+            : {}),
         },
       },
       clipKind: clip.clipKind,

@@ -95,7 +95,7 @@ function createWhiteBackgroundPng(): Uint8Array {
 const mockAiConfig: AppConfig["image_generation"] = {
   enabled: true,
   provider: "shopaikey",
-  model: "gpt-image-2",
+  model: "gpt-image-2.5-flare",
   api_key: "test-shopaikey-key",
   base_url: "https://direct.shopaikey.com/v1",
 };

@@ -90,7 +90,7 @@ export class IntroOutroProjectStore {
 function emptyDraft(clipKind: IntroOutroClipKind, now: string): IntroOutroScriptProject["drafts"]["intro"] {
   return {
     clip_kind: clipKind,
-    target_duration_seconds: 8,
+    target_duration_seconds: clipKind === "outro" ? 16 : 10,
     seed_selection: null,
     content: null,
     validation_issues: [],

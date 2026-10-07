@@ -1,5 +1,10 @@
 import { ShieldCheck } from "@phosphor-icons/react";
-import { IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID, resolveImgStudioModelName } from "@studio/shared";
+import {
+  IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID,
+  resolveImgStudioModelName,
+} from "@studio/shared";
 import { StatusLine } from "../../../../components/AppChrome";
 
 export interface ImageFallbackCardHeaderProps {
@@ -30,7 +35,8 @@ export function ImageFallbackCardHeader({ fallbackEnabled, fallbackModel }: Imag
         }
       />
       <StatusLine label="Level 1 Model" value={resolveImgStudioModelName(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID)} />
-      <StatusLine label="Level 2 Model" value={resolveImgStudioModelName(fallbackModel)} />
+      <StatusLine label="Level 2 Model" value={resolveImgStudioModelName(fallbackModel || IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID)} />
+      <StatusLine label="Level 3 Model" value={resolveImgStudioModelName(IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID)} />
     </>
   );
 }

@@ -80,6 +80,15 @@ export function framingRules(
     ].join("\n");
   }
 
+  if (purpose === "bridge_topic_item") {
+    return [
+      `Output aspect ratio: ${aspectRatio}.`,
+      "Create one iconic, clearly recognizable subject centered within the frame with comfortable breathing room.",
+      "Ensure complete silhouette with no clipping at the edges.",
+      "Do not draw card borders, guidelines, measurement markings, frames, captions, watermarks, or interface elements.",
+    ].join("\n");
+  }
+
   return [
     `Output aspect ratio: ${aspectRatio}.`,
     "Create one large, clearly recognizable subject with a complete silhouette.",
@@ -89,6 +98,9 @@ export function framingRules(
 }
 
 export function purposeRules(purpose: QuizAssetRequirement["purpose"]): string {
+  if (purpose === "bridge_topic_item") {
+    return "Bridge topic showcase item. Crisp, iconic visual subject designed to be displayed in the intro topic presentation row. Keep subject fully centered with generous margin and clear silhouette.";
+  }
   if (purpose === "hero_question_image" || purpose === "question_illustration") {
     return "Hero question image. Keep one clear focal subject, with room around it for the quiz card and no distracting details.";
   }

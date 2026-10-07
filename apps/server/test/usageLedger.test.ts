@@ -178,7 +178,7 @@ describe("UsageLedger Analytics & Persistence", () => {
       channelId: "ch-1",
       episodeId: "ep-1",
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       count: 3,
       costVnd: 1500,
       costUsd: 0.06,
@@ -189,7 +189,7 @@ describe("UsageLedger Analytics & Persistence", () => {
       channelId: "ch-1",
       episodeId: "ep-1",
       provider: "shopaikey",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       count: 2,
       costVnd: 1000,
       costUsd: 0.04,
@@ -202,7 +202,7 @@ describe("UsageLedger Analytics & Persistence", () => {
     expect(ledger.image.estimated_cost_usd).toBeCloseTo(0.1, 4);
     expect(ledger.image.by_provider.gpti2).toBe(3);
     expect(ledger.image.by_provider.shopaikey).toBe(2);
-    expect(ledger.image.by_model["gpt-image-2"]).toBe(5);
+    expect(ledger.image.by_model["gpt-image-2.5-flare"]).toBe(5);
     expect(ledger.recent_events.length).toBe(2);
   });
 

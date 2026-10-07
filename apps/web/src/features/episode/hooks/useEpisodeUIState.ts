@@ -9,15 +9,15 @@ type UseEpisodeUIStateProps = {
   simplifyMode?: boolean;
 };
 
-const WORKFLOW_TABS = ["script", "visual", "timeline", "remix"] as const;
-type WorkflowTab = (typeof WORKFLOW_TABS)[number];
+const WORKFLOW_TABS = ["question_images", "script", "visual", "timeline", "remix"] as const;
+export type WorkflowTab = (typeof WORKFLOW_TABS)[number];
 
 export function useEpisodeUIState({ activeTab, onTabChange, simplifyMode = true }: UseEpisodeUIStateProps) {
-  const routeTab = simplifyMode && activeTab !== "remix" ? null : activeTab;
+  const routeTab = simplifyMode && activeTab !== "remix" && activeTab !== "question_images" ? null : activeTab;
   const [workflowTab, switchWorkflowTab] = useRouteTab<WorkflowTab>({
     value: routeTab,
     allowedTabs: WORKFLOW_TABS,
-    fallback: simplifyMode ? "remix" : "timeline",
+    fallback: "question_images",
     onChange: onTabChange,
   });
   const [previewImage, setPreviewImage] = useState<PreviewImageData | null>(null);

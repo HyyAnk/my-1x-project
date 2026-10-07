@@ -101,6 +101,27 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
     }
   };
 
+  const handleSetDefaultStyle = async (styleId: string | null) => {
+    setBusyAction(`default_${styleId ?? "clear"}`);
+    try {
+      const res = await api.setDefaultIntroOutroStyle(channel.channel_id, styleId);
+      if (onChannelUpdate) {
+        onChannelUpdate(res.channel);
+      }
+      onNotice({
+        tone: "good",
+        message: styleId ? "Channel default Intro/Outro pair updated." : "Channel default Intro/Outro pair cleared.",
+      });
+    } catch (error) {
+      onNotice({
+        tone: "bad",
+        message: error instanceof Error ? error.message : "Failed to update channel default Intro/Outro pair",
+      });
+    } finally {
+      setBusyAction(null);
+    }
+  };
+
   return {
     styles,
     categories,
@@ -112,5 +133,6 @@ export function useChannelIntroOutro({ channel, onNotice, onChannelUpdate }: Use
     handleCreateStyle,
     handleDeleteStyle,
     handleAssignStyle,
+    handleSetDefaultStyle,
   };
 }

@@ -435,16 +435,6 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
         if (event === "notification") {
           setTimeout(() => {
             cb({
-              method: "turn/completed",
-              params: {
-                turn: {
-                  status: "completed",
-                },
-              },
-            });
-          }, 10);
-          setTimeout(() => {
-            cb({
               method: "item/agentMessage/delta",
               params: {
                 delta: JSON.stringify({
@@ -463,6 +453,14 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
                     { label: "Option B", visualPrompt: "3D Norse Mjolnir thunder warhammer" },
                   ],
                 }),
+              },
+            });
+            cb({
+              method: "turn/completed",
+              params: {
+                turn: {
+                  status: "completed",
+                },
               },
             });
           }, 5);
@@ -657,6 +655,25 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       expect(plan.hookText).toBe("TRUE OR FALSE?");
     });
 
+    it("AI Planner replaces generic 'TRUE OR FALSE?' hook with topic-derived headline", async () => {
+      const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+      const mockLlm = createMockLlm({
+        hook_text: "TRUE OR FALSE?",
+        badge_text: "CAN YOU PASS? 🎯",
+        layout: "true_false",
+      });
+
+      const plan = await planThumbnailWithAI({
+        topicTitle: "Arcade Game Secrets: True or False Gaming Showdown",
+        questionFormat: "true_false",
+        language: "English",
+        llmClient: mockLlm,
+        mascotProfile: sampleMascot,
+      });
+
+      expect(plan.hookText).toBe("ARCADE GAME SECRETS");
+    });
+
     it("AI Planner prioritizes sanitized manual customHookText over AI output", async () => {
       const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
       const mockLlm = createMockLlm({
@@ -843,6 +860,38 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       const descWithoutProp = resolveMascotDescription(plan, sampleMascot, sampleVisualAnchor);
       expect(descWithoutProp).not.toContain("Thematic Prop:");
       expect(descWithoutProp).not.toMatch(/\s{2,}/);
+    });
+
+    it("sanitizes true/false paddles from mascot prop in true_false layout", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Arcade Myths",
+        questionFormat: "true_false",
+        mascotProfile: sampleMascot,
+      });
+
+      plan.layout = "true_false";
+      plan.mascotPersona.prop = "Green 'TRUE' paddle in one hand, red 'FALSE' paddle in the other";
+      const desc = resolveMascotDescription(plan, sampleMascot, null);
+      expect(desc).not.toContain("paddle");
+      expect(desc).toContain("hand resting thoughtfully under chin");
+    });
+
+    it("compiles true_false prompt with prominent centerpiece hero artwork and strict deduplication", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Arcade Game Secrets",
+        questionFormat: "true_false",
+        mascotProfile: sampleMascot,
+      });
+      plan.subjectAnchors = [{ label: "Statement Subject", visualPrompt: "Vibrant retro arcade cabinet with glowing joystick" }];
+
+      const prompt169 = compileThumbnailPrompt(plan, "16:9", sampleMascot, null);
+      expect(prompt169).toContain("Center focal point showcases a prominent, oversized, highly-detailed 3D hero artwork of Vibrant retro arcade cabinet with glowing joystick");
+      expect(prompt169).toContain("Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'TRUE' and red 'FALSE'");
+      expect(prompt169).toContain("STRICT: The ONLY place displaying 'TRUE' and 'FALSE' in the entire image must be the two tactile buttons at the base");
+
+      const prompt916 = compileThumbnailPrompt(plan, "9:16", sampleMascot, null);
+      expect(prompt916).toContain("Center safe zone showcases an oversized, highly-detailed 3D hero artwork of Vibrant retro arcade cabinet with glowing joystick");
+      expect(prompt916).toContain("STRICT: The ONLY place displaying 'TRUE' and 'FALSE' must be the two tactile buttons");
     });
   });
 });

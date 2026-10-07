@@ -4,7 +4,7 @@ import { RepositoryError } from "../repository.js";
 export type SupportedAspectRatio = "1:1" | "16:9" | "9:16" | "4:3" | "3:4" | "2:3" | "3:2";
 
 export const DEFAULT_BASE_URL = "https://gpti2.store";
-export const DEFAULT_MODEL = "gpt-image-2";
+export const DEFAULT_MODEL = "gpt-image-2.5-flare";
 export const DEFAULT_SIZE = "1536x1024";
 export const DEFAULT_ASPECT_RATIO = "16:9";
 export const POLL_INTERVAL_MS = 3_000;
@@ -44,7 +44,7 @@ export function resolveImageDimensions(
     return { aspect_ratio: normRatio, size: "2K" };
   }
 
-  // gpt-image-2 exact supported sizes on gpti2.store (quality: low)
+  // gpt-image-2.5-flare exact supported sizes on gpti2.store (quality: low)
   const sizeMap: Record<string, string> = {
     "16:9": "1280x720",
     "9:16": "720x1280",

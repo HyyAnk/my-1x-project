@@ -13,7 +13,16 @@ export interface ChannelIntroOutroTabProps {
 }
 
 export function ChannelIntroOutroTab({ channel, onNotice, onChannelUpdate }: ChannelIntroOutroTabProps) {
-  const { styles, categories, loading, busyAction, refreshStyles, handleDeleteStyle, handleAssignStyle } = useChannelIntroOutro({
+  const {
+    styles,
+    categories,
+    loading,
+    busyAction,
+    refreshStyles,
+    handleDeleteStyle,
+    handleAssignStyle,
+    handleSetDefaultStyle,
+  } = useChannelIntroOutro({
     channel,
     onNotice,
     onChannelUpdate,
@@ -35,12 +44,14 @@ export function ChannelIntroOutroTab({ channel, onNotice, onChannelUpdate }: Cha
           category={selectedCategory}
           styles={categoryStyles}
           channelId={channel.channel_id}
+          defaultStyleId={channel.default_intro_outro_style_id}
           busyAction={busyAction}
           onBack={() => setSelectedCategoryId(null)}
           onUploaded={() => refreshStyles(true)}
           onPreview={setPreviewClip}
           onDelete={(id, name) => void handleDeleteStyle(id, name)}
           onAssignCategory={(styleId, stylePresetId) => void handleAssignStyle(styleId, stylePresetId)}
+          onSetDefault={(styleId) => void handleSetDefaultStyle(styleId)}
         />
       ) : (
         <>

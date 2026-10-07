@@ -43,8 +43,8 @@ function createTestQuiz(layoutId: string, format: QuizQuestionFormat, choices: s
 
 describe("Quiz All 6 Layouts End-to-End Integration", () => {
   describe("1. Topic Suggestion & Archetype Blueprint Registry", () => {
-    it("exports 7 production gameplay archetypes with concrete format and layout mappings", () => {
-      expect(QUIZ_GAMEPLAY_ARCHETYPES).toHaveLength(7);
+    it("exports 8 production gameplay archetypes with concrete format and layout mappings", () => {
+      expect(QUIZ_GAMEPLAY_ARCHETYPES).toHaveLength(8);
 
       const archetypesById = new Map(QUIZ_GAMEPLAY_ARCHETYPES.map((a) => [a.id, a]));
 
@@ -56,6 +56,11 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       expect(archetypesById.get("visual_spotting")).toMatchObject({
         defaultFormat: "odd_one_out",
         targetLayout: "visual_choices_three_pure",
+      });
+
+      expect(archetypesById.get("verdict_yes_no")).toMatchObject({
+        defaultFormat: "yes_no",
+        targetLayout: "verdict_yes_no",
       });
 
       expect(archetypesById.get("verdict_true_false")).toMatchObject({
@@ -88,11 +93,18 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
   describe("2. Topic Confirmation & Director Layout Auto-Resolution", () => {
     const testCases: Array<{
       name: string;
-      archetype: "text_multiple_choice" | "visual_multiple_choice" | "true_false";
-      questionFormat: "multiple_choice" | "odd_one_out" | "true_false";
+      archetype: "text_multiple_choice" | "visual_multiple_choice" | "yes_no" | "true_false";
+      questionFormat: "multiple_choice" | "odd_one_out" | "yes_no" | "true_false";
       choiceCount: number;
       expectedLayout: QuizPreviewLayoutId;
     }> = [
+      {
+        name: "Yes/No format routes to verdict_yes_no",
+        archetype: "yes_no",
+        questionFormat: "yes_no",
+        choiceCount: 2,
+        expectedLayout: "verdict_yes_no",
+      },
       {
         name: "True/False format routes to verdict_true_false",
         archetype: "true_false",
@@ -272,6 +284,14 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         aspectRatios: ["16:9"],
       },
       {
+        layoutId: "verdict_yes_no",
+        archetype: "yes_no",
+        format: "yes_no",
+        choices: ["Yes", "No"],
+        assetIntents: ["question_illustration"],
+        aspectRatios: ["16:9"],
+      },
+      {
         layoutId: "verdict_true_false",
         archetype: "true_false",
         format: "true_false",
@@ -292,9 +312,9 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
     for (const scenario of layoutScenarios) {
       for (const ar of scenario.aspectRatios) {
         it(`renders production composition bundle for ${scenario.layoutId} in ${ar}`, () => {
-          // QuizV2Schema requires 2 choices for true_false and exactly 3 choices for standard questions
+          // QuizV2Schema requires 2 choices for true_false / yes_no and exactly 3 choices for standard questions
           const effectiveChoices = scenario.choices.length > 3 ? scenario.choices.slice(0, 3) : scenario.choices;
-          const quizFormat = effectiveChoices.length === 2 ? "true_false" : scenario.format;
+          const quizFormat = effectiveChoices.length === 2 ? (scenario.format === "yes_no" ? "yes_no" : "true_false") : scenario.format;
           const quiz = createTestQuiz(scenario.layoutId, quizFormat, effectiveChoices);
 
           const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
@@ -402,13 +422,14 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       });
     }
 
-    it("verifies QUIZ_LAYOUTS contains all 7 landscape production layouts", () => {
-      expect(QUIZ_LAYOUTS).toHaveLength(7);
+    it("verifies QUIZ_LAYOUTS contains all 8 landscape production layouts", () => {
+      expect(QUIZ_LAYOUTS).toHaveLength(8);
       expect(QUIZ_LAYOUTS.map((l) => l.id)).toEqual([
         "media_left_choices_right",
         "visual_choices_three",
         "visual_choices_three_pure",
         "split_versus_two",
+        "verdict_yes_no",
         "verdict_true_false",
         "full_stack_list",
         "mystery_reveal",

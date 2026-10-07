@@ -8,7 +8,11 @@ export const isPendingJob = (job: IntroOutroScriptJob | null) => job?.status ===
 
 export function usePairGeneration(channelId: string, draft: ReturnType<typeof usePairDraft>) {
   const [autoIdentity, setAutoIdentity] = useState(true);
-  const [outroDuration, setOutroDuration] = useState<number>(16);
+  const [introDuration, setIntroDuration] = useState<number>(10);
+  const [outroDuration, setOutroDuration] = useState<number>(10);
+  const [outroMotionSeed, setOutroMotionSeed] = useState<string>("");
+  const [outroToneSeed, setOutroToneSeed] = useState<string>("");
+  const [outroDialogueSeed, setOutroDialogueSeed] = useState<string>("");
   const [job, setJob] = useState<IntroOutroScriptJob | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,8 +59,13 @@ export function usePairGeneration(channelId: string, draft: ReturnType<typeof us
     };
   }, [channelId, job?.job_id, job?.status, job?.result_revision_ids.length]);
 
-  const generate = async (kinds: IntroOutroClipKind[] = ["intro", "outro"], customOutroDuration?: number) => {
+  const generate = async (
+    kinds: IntroOutroClipKind[] = ["intro", "outro"],
+    customOutroDuration?: number,
+    customIntroDuration?: number,
+  ) => {
     if (lock.current || isPendingJob(job)) return;
+    const effectiveIntroDuration = customIntroDuration ?? introDuration;
     const effectiveOutroDuration = customOutroDuration ?? outroDuration;
     const manuallyEdited = kinds.some(
       (kind) =>
@@ -78,8 +87,13 @@ export function usePairGeneration(channelId: string, draft: ReturnType<typeof us
             idempotency_key: crypto.randomUUID(),
             clips: kinds.map((kind) => ({
               clip_kind: kind,
-              duration_seconds: kind === "outro" ? effectiveOutroDuration : 8,
+              duration_seconds: kind === "outro" ? effectiveOutroDuration : effectiveIntroDuration,
               randomization_seed: crypto.randomUUID(),
+              ...(kind === "outro"
+                ? {
+                    selected_seed_ids: [outroMotionSeed, outroToneSeed, outroDialogueSeed].filter(Boolean),
+                  }
+                : {}),
             })),
           },
         };
@@ -111,5 +125,24 @@ export function usePairGeneration(channelId: string, draft: ReturnType<typeof us
       if (alive.current) setSubmitting(false);
     }
   };
-  return { autoIdentity, setAutoIdentity, outroDuration, setOutroDuration, job, pending, submitting, error, generate, cancel };
+  return {
+    autoIdentity,
+    setAutoIdentity,
+    introDuration,
+    setIntroDuration,
+    outroDuration,
+    setOutroDuration,
+    outroMotionSeed,
+    setOutroMotionSeed,
+    outroToneSeed,
+    setOutroToneSeed,
+    outroDialogueSeed,
+    setOutroDialogueSeed,
+    job,
+    pending,
+    submitting,
+    error,
+    generate,
+    cancel,
+  };
 }

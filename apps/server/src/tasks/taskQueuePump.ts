@@ -84,7 +84,7 @@ export function pumpTaskQueue(
   }
 
   // 4. Image Generation Lane
-  const maxImageConcurrent = runtime.imageConfig.max_concurrent_tasks ?? 3;
+  const maxImageConcurrent = runtime.imageConfig.max_concurrent_tasks ?? 6;
   while (runtime.runningImageCount < maxImageConcurrent) {
     const next = runtime
       .list()

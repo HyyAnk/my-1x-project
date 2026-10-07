@@ -9,29 +9,37 @@ import { resolveQuizPromptGameplay } from "./quizPromptGameplay.js";
 export function buildDirectQuizOutputContract(input: OutputContractInput): string {
   const { episode, quizQuestionCount } = input;
   const quizConfig = episode?.quiz_config;
-  const { isVersus, isMystery, isTrueFalse, questionFormat } = resolveQuizPromptGameplay(quizConfig);
+  const { isVersus, isMystery, isYesNo, isTrueFalse, questionFormat } = resolveQuizPromptGameplay(quizConfig);
   const targetLanguage = input.channelLanguage?.trim() || "en";
   const choiceCountDesc = isMystery
     ? "strictly exactly 1 choice with id 'choice-a' (the single canonical correct answer revealed after suspense)"
     : isVersus
       ? "exactly 2 choices with ids 'choice-a' and 'choice-b' (the two compared entities, not True / False labels)"
-      : isTrueFalse
-        ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
-        : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
-  const questionPhrasingRule = isTrueFalse
-    ? "Question phrasing & punctuation: Every question MUST end with a question mark '?'. Never write a flat declarative statement ending with a period. Phrase it either as an interrogative challenge (e.g. 'Did player two steer the ducks in Duck Hunt?', 'Do classic arcade light guns shoot real laser beams?') or as an engaging True/False question prompt (e.g. 'Is it true that player two could steer the ducks in Duck Hunt?')."
-    : "Question phrasing & punctuation: Every question MUST always be an interrogative sentence ending with a question mark '?'. Never omit the question mark or end with a period.";
-  const questionExample = isTrueFalse
-    ? "Ultra-concise question ending with '?' (under 10 words, e.g. 'Did player two steer the ducks in Duck Hunt?' or 'Is it true that...?')"
-    : "Ultra-concise child-friendly question ending with '?' (under 10 words, clear interrogative phrasing)";
+      : isYesNo
+        ? "exactly 2 choices with ids 'choice-yes' and 'choice-no' (texts: 'Yes' / 'No')"
+        : isTrueFalse
+          ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
+          : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
+  const questionPhrasingRule = isYesNo
+    ? "Question phrasing & punctuation: Every question MUST end with ' Yes or No?'. Phrase it as a concise direct question ending with ' Yes or No?' (e.g. 'Can penguins fly in the sky? Yes or No?')."
+    : isTrueFalse
+      ? "Question phrasing & punctuation: Every question MUST end with a question mark '?'. Never write a flat declarative statement ending with a period. Phrase it either as an interrogative challenge (e.g. 'Did player two steer the ducks in Duck Hunt?', 'Do classic arcade light guns shoot real laser beams?') or as an engaging True/False question prompt (e.g. 'Is it true that player two could steer the ducks in Duck Hunt?')."
+      : "Question phrasing & punctuation: Every question MUST always be an interrogative sentence ending with a question mark '?'. Never omit the question mark or end with a period.";
+  const questionExample = isYesNo
+    ? "Ultra-concise question ending with ' Yes or No?' (under 10 words, e.g. 'Can penguins fly? Yes or No?')"
+    : isTrueFalse
+      ? "Ultra-concise question ending with '?' (under 10 words, e.g. 'Did player two steer the ducks in Duck Hunt?' or 'Is it true that...?')"
+      : "Ultra-concise child-friendly question ending with '?' (under 10 words, clear interrogative phrasing)";
 
   const choicesJson = isMystery
     ? `    { "id": "choice-a", "text": "Canonical correct answer text" }`
     : isVersus
       ? `    { "id": "choice-a", "text": "First compared entity" },\n    { "id": "choice-b", "text": "Second compared entity" }`
-      : isTrueFalse
-        ? `    { "id": "choice-true", "text": "True" },\n    { "id": "choice-false", "text": "False" }`
-        : `    { "id": "choice-a", "text": "Short distinct choice text" },\n    { "id": "choice-b", "text": "Short distinct choice text" },\n    { "id": "choice-c", "text": "Short distinct choice text" }`;
+      : isYesNo
+        ? `    { "id": "choice-yes", "text": "Yes" },\n    { "id": "choice-no", "text": "No" }`
+        : isTrueFalse
+          ? `    { "id": "choice-true", "text": "True" },\n    { "id": "choice-false", "text": "False" }`
+          : `    { "id": "choice-a", "text": "Short distinct choice text" },\n    { "id": "choice-b", "text": "Short distinct choice text" },\n    { "id": "choice-c", "text": "Short distinct choice text" }`;
 
   const lines = [
     `Return ONLY a raw, valid JSON object matching QuizV2 schema (no markdown fences, no thought or commentary).`,
@@ -54,7 +62,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `  "choices": [`,
     `${choicesJson}`,
     `  ],`,
-    `  "correct_choice_id": "${isTrueFalse ? "choice-true" : "choice-a"}" (must exactly match one of the choice ids),`,
+    `  "correct_choice_id": "${isYesNo ? "choice-yes" : isTrueFalse ? "choice-true" : "choice-a"}" (must exactly match one of the choice ids),`,
     `  "explanation": "Strictly 1 punchy, child-friendly fun fact under 10 words and under 70 characters",`,
     `  "fun_fact": "Same concise fun fact or interesting trivia nugget",`,
     `  "source_ids": ["C01"] (Claim ID matching question number),`,
@@ -82,6 +90,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `   c. SCENE PURITY & ZERO STYLE POLLUTION: Focus purely on scene content and target subject/emblem. NEVER copy/paste generic camera buzzwords (such as 'wildlife and nature photography style') or UI elements (cards, text, buttons, countdown timers).`,
     `7. VISUAL PROMPT LANGUAGE: The "visual_opportunity" field MUST ALWAYS be written 100% in English, even when "${targetLanguage}" is requested for the question and choices, because AI image generation models require English prompts.`,
     `8. ABSOLUTE LANGUAGE INTEGRITY: Write every question, choice text, explanation, and fun_fact 100% in "${targetLanguage}". Never mix any other language into the content.`,
+    `9. STRICT JSON ESCAPING & QUOTATION: Inside all JSON string values (question, choices, explanation, fun_fact, visual_opportunity), NEVER use unescaped double quotes (\"). Always use single quotes (') for all titles, names, spoken dialogue, quotes, and nicknames (e.g. 'Pac-Man', 'The King', never "Pac-Man"). Every property name must be enclosed in double quotes followed strictly by a colon ':' without trailing commas.`,
   ];
 
   return lines.join("\n");

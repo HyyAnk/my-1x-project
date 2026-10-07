@@ -55,6 +55,15 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     preview: "split-versus",
     icon: "split",
   },
+  verdict_yes_no: {
+    id: "verdict_yes_no",
+    labelKey: "stageStudio.layoutVerdictYesNo",
+    descriptionKey: "stageStudio.layoutVerdictYesNoDesc",
+    sandboxLabelKey: "stageStudio.layoutVerdictYesNo",
+    sandboxDescriptionKey: "stageStudio.layoutVerdictYesNoDesc",
+    preview: "verdict",
+    icon: "split",
+  },
   verdict_true_false: {
     id: "verdict_true_false",
     labelKey: "stageStudio.layoutVerdictTrueFalse",

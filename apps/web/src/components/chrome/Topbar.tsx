@@ -1,5 +1,5 @@
 import { MoonStars, Sun } from "@phosphor-icons/react";
-import type { Channel } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, type Channel } from "@studio/shared";
 import type { GitInfo, Theme } from "../types";
 import { useTranslation } from "../../i18n";
 import { ChannelSelector } from "./topbar/ChannelSelector";
@@ -40,7 +40,7 @@ export function Topbar({
   models,
   loadingModels = false,
   modelsError = null,
-  currentImageModel = "gpt-image-2",
+  currentImageModel = DEFAULT_GPTI2_MODEL,
   hasImageApiKey = false,
   theme,
   onEngineToggle,

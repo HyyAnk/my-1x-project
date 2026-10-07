@@ -133,6 +133,15 @@ export function compileQuizAssetPrompt(
         : "Use facial features only when naturally present in the subject; living creatures, dinosaurs, and animals must have complete clear eyes with pupils, while inanimate objects have no cartoon faces.",
   ] : [];
 
+  const isBridgeItem = request.purpose === "bridge_topic_item";
+  const bridgeContract = isBridgeItem
+    ? [
+        request.transparent_background
+          ? "Bridge showcase sticker contract: Render as a vibrant die-cut sticker illustration with a distinct, clean, well-defined silhouette boundary, isolated in the dead center on a pure solid white studio backdrop with zero background elements, zero floor shadows, and zero gradients, specially primed for clean background matting."
+          : "Bridge showcase card vignette contract: Render as an evocative, high-production card illustration with rich atmospheric background, cinematic depth, and a compelling centered focal point.",
+      ]
+    : [];
+
   const framing = framingRules(request.aspect_ratio, request.purpose, { layoutId });
   const negativeGuidance = isGraphicIdentity
     ? "No watermark, collage, split screen, physical product mockups, human hands, or 3D background scenes; render the official emblem or symbol mark accurately centered on a clean solid white backdrop; do not add unrelated secondary logos or decorative frames."
@@ -146,6 +155,7 @@ export function compileQuizAssetPrompt(
     ...graphicContract,
     ...soloHeroContract,
     ...groupContract,
+    ...bridgeContract,
     rules,
     framing,
     backgroundGuidance,
@@ -154,9 +164,11 @@ export function compileQuizAssetPrompt(
   ].join("\n");
 
   const prompt = rawPrompt.replace(/\s{2,}/g, " ").trim();
-  const cacheVersion = isGraphicIdentity
-    ? `${contract.id}-v7-graphic-emblem`
-    : `${contract.id}-v6-clean-framing`;
+  const cacheVersion = isBridgeItem
+    ? `${contract.id}-v1-bridge-showcase`
+    : isGraphicIdentity
+      ? `${contract.id}-v7-graphic-emblem`
+      : `${contract.id}-v6-clean-framing`;
 
   return {
     prompt,

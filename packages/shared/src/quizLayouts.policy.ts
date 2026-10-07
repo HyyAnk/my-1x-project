@@ -259,7 +259,10 @@ export function preferredAutoLayout(
     return "mystery_reveal";
   }
 
-  if (questionFormat === "true_false" || archetypeStr === "true_false") {
+  if (questionFormat === "yes_no" || archetypeStr === "yes_no" || archetypeStr === "verdict_yes_no") {
+    return "verdict_yes_no";
+  }
+  if (questionFormat === "true_false" || archetypeStr === "true_false" || archetypeStr === "verdict_true_false") {
     return "verdict_true_false";
   }
   if (questionFormat === "odd_one_out") {

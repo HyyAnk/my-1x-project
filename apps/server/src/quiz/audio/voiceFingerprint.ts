@@ -20,6 +20,7 @@ export function voicePerformanceConfig(config: AppConfig["audio_generation"], ro
     explanation: { exaggeration: 0.58, cfg_weight: 0.52 },
     fun_fact: { exaggeration: 0.62, cfg_weight: 0.5 },
     midpoint: { exaggeration: 0.7, cfg_weight: 0.45 },
+    pre_outro: { exaggeration: 0.82, cfg_weight: 0.36 },
     outro: { exaggeration: 0.88, cfg_weight: 0.32 },
   };
   return { ...config, ...settings[role] };

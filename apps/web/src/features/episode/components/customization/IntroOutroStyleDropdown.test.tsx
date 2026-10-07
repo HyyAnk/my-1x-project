@@ -110,4 +110,36 @@ describe("IntroOutroStyleDropdown", () => {
     expect(screen.queryByText("No ready pairs in Cyber Neon Pulse")).toBeNull();
     expect((screen.getByRole("radio", { name: "Built-in Style · Cyber Neon Pulse" }) as HTMLInputElement).checked).toBe(true);
   });
+
+  it("displays category name, duration, and fallback to uncategorized channel default", async () => {
+    const channelWithDefault = {
+      ...channel,
+      default_intro_outro_style_id: "pair-active",
+    };
+    const richStyles: IntroOutroStyle[] = [
+      {
+        style_id: "pair-active",
+        name: "Neon Pulse",
+        status: "active",
+        style_preset_id: null,
+        intro: { duration_seconds: 5, filename: "intro.mp4", width: 1920, height: 1080, fps: 30, has_audio: true },
+        outro: { duration_seconds: 7, filename: "outro.mp4", width: 1920, height: 1080, fps: 30, has_audio: true },
+      } as IntroOutroStyle,
+    ];
+    vi.mocked(api.listIntroOutroStyles).mockResolvedValue({ styles: richStyles });
+
+    render(
+      <IntroOutroStyleDropdown
+        channel={channelWithDefault}
+        episode={episode}
+        isOpen={true}
+        onToggle={vi.fn()}
+        onSaveIntroOutroSelection={vi.fn()}
+      />,
+    );
+
+    expect(await screen.findByText("Fallback to channel default (Neon Pulse)")).toBeDefined();
+    expect(screen.getByText("Uncategorized · 5s / 7s")).toBeDefined();
+    expect(screen.getByText("Default")).toBeDefined();
+  });
 });

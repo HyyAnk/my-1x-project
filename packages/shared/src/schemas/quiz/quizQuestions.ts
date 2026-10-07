@@ -6,13 +6,14 @@ import {
   QUIZ_MAX_QUESTION_COUNT,
   QUIZ_STANDARD_CHOICES_PER_QUESTION,
   QUIZ_TRUE_FALSE_CHOICES_PER_QUESTION,
+  QUIZ_YES_NO_CHOICES_PER_QUESTION,
 } from "../common.js";
 
 import { QuizAnswerModeSchema, type QuizAnswerMode } from "../../quizAnswerMode.js";
 
 export function quizChoiceCountForFormat(format: QuizQuestionFormat, answerMode: QuizAnswerMode = "choice_selection"): number {
   if (answerMode === "single_reveal") return 1;
-  return format === "true_false" ? QUIZ_TRUE_FALSE_CHOICES_PER_QUESTION : QUIZ_STANDARD_CHOICES_PER_QUESTION;
+  return format === "yes_no" || format === "true_false" ? QUIZ_YES_NO_CHOICES_PER_QUESTION : QUIZ_STANDARD_CHOICES_PER_QUESTION;
 }
 
 export const QuizChoiceSchema = z.object({
@@ -35,6 +36,7 @@ export const QuizQuestionSchema = z
     id: z.string().min(1).max(80),
     number: z.number().int().positive(),
     format: QuizQuestionFormatSchema,
+    layout_id: z.string().optional(),
     gameplay_id: QuizGameplayIdSchema.optional(),
     difficulty: z.number().int().min(1).max(5),
     question: z.string().trim().min(1).max(320),
@@ -67,7 +69,7 @@ export const QuizQuestionSchema = z
       });
 
     if (question.answer_mode === "single_reveal") {
-      if (question.format === "true_false" || question.format === "odd_one_out") {
+      if (question.format === "yes_no" || question.format === "true_false" || question.format === "odd_one_out") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["format"],
@@ -98,8 +100,8 @@ export const QuizQuestionSchema = z
         code: z.ZodIssueCode.custom,
         path: ["choices"],
         message:
-          question.format === "true_false"
-            ? "True or false questions require exactly two choices"
+          question.format === "yes_no" || question.format === "true_false"
+            ? "Yes/No questions require exactly two choices"
             : "Quiz questions require exactly three choices: A, B, and C",
       });
     }

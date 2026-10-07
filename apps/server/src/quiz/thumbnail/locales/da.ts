@@ -7,6 +7,7 @@ export const daLocale: ThumbnailLocalization = {
     mystery_silhouette: "HVEM ER DETTE?",
     odd_one_out: "FIND DEN DER SKILLER SIG UD!",
     difficulty_tier: "KAN DU KLARE NIVEAU 4?",
+    yes_no: "JA ELLER NEJ?",
     true_false: "SANDT ELLER FALSKT?",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const daLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "KUN 1% VED DET! 🔥",
     odd_one_out: () => "10 SEKUNDER! ⏱️",
     difficulty_tier: () => "KUN FOR IQ 140+ 🔥",
+    yes_no: () => "JA ELLER NEJ? ⚡",
     true_false: () => "SANDT ELLER FALSKT? ⚡",
   },
 };

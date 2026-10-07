@@ -2,7 +2,9 @@ import type { MascotProfile, ThumbnailAspectRatio } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../assets/promptCompiler.js";
 import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { resolveTopicEnvironmentSubject } from "./thumbnailEnvironmentResolver.js";
+import { sanitizeCompiledPrompt } from "./thumbnailPromptSanitizer.js";
 import type { CompiledThumbnailPrompts, MascotVisualAnchor, QuizThumbnailPlan } from "./thumbnailTypes.js";
+import { compileEditorialPrompt } from "./editorial/editorialPrompt.js";
 
 /**
  * Resolves the mascot description for the thumbnail prompt.
@@ -26,10 +28,16 @@ export function resolveMascotDescription(
   const poseText = plan.mascotPersona.poseDescription
     ? `Pose & Action: ${plan.mascotPersona.poseDescription}.`
     : "Pose & Action: dynamic, natural posture engaging with the quiz challenge.";
+  let rawProp = plan.mascotPersona.prop;
+  if (
+    (plan.layout === "true_false" || plan.layout === "yes_no") &&
+    rawProp &&
+    /\b(paddle|true|false|yes|no|checkmark|cross|✅|❌)\b/i.test(rawProp)
+  ) {
+    rawProp = "hand resting thoughtfully under chin in skeptical contemplation";
+  }
   const propText =
-    plan.mascotPersona.prop && !plan.mascotPersona.prop.toLowerCase().includes("none") && plan.mascotPersona.prop.trim().length > 0
-      ? `Thematic Prop: interacting with ${plan.mascotPersona.prop}.`
-      : "";
+    rawProp && !rawProp.toLowerCase().includes("none") && rawProp.trim().length > 0 ? `Thematic Prop: interacting with ${rawProp}.` : "";
 
   const hasAnchorOrProfile = Boolean(visualAnchor || mascotProfile);
 
@@ -69,10 +77,19 @@ function resolveLayoutPrompt(plan: QuizThumbnailPlan, isLandscape: boolean, masc
         ? `Layout: 4 clean vertical progression columns (Level 1 Easy to Level 4 Impossible). Beside Level 4, ${mascotDescription} with a mind-blown expression. Minimalist, sleek, and uncluttered without distracting boxes.`
         : `Layout: 4 clean stacked horizontal tier cards (Level 1 to Level 4) arranged in vertical succession. Placed cleanly in the lower safe area above the 440px bottom buffer, ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices.`;
 
-    case "true_false":
+    case "yes_no": {
+      const heroSubject = plan.subjectAnchors[0]?.visualPrompt || "a prominent topic-themed 3D icon";
       return isLandscape
-        ? `Layout: Upper center showcases clean 3D artwork of ${plan.subjectAnchors[0]?.visualPrompt || "a trivia paradox visual"}. Below are two clean modern tactile buttons: green 'TRUE' and red 'FALSE'. Beside them, ${mascotDescription}. Clean spacious composition.`
-        : `Layout: Upper safe zone shows clean 3D visual of ${plan.subjectAnchors[0]?.visualPrompt || "a trivia paradox visual"}. Middle displays tactile 'TRUE' and 'FALSE' buttons cleanly stacked with ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices, maintaining the 440px bottom buffer.`;
+        ? `Layout: Center focal point showcases a prominent, oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating with crisp rim lighting as the primary visual subject. Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'YES' and red 'NO'. Beside the buttons, ${mascotDescription}. STRICT: The ONLY place displaying 'YES' and 'NO' in the entire image must be the two tactile buttons at the base; mascot must NOT hold Yes/No paddles or checkmark/cross signs, and zero duplicate Yes/No words elsewhere.`
+        : `Layout: Center safe zone showcases an oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating prominently with crisp rim lighting. Cleanly stacked beneath it are two tactile modern 3D arcade buttons: green 'YES' and red 'NO', accompanied cleanly by ${mascotDescription}. STRICT: The ONLY place displaying 'YES' and 'NO' must be the two tactile buttons; mascot must NOT hold Yes/No paddles or checkmarks, maintaining the 440px bottom buffer.`;
+    }
+
+    case "true_false": {
+      const heroSubject = plan.subjectAnchors[0]?.visualPrompt || "a prominent topic-themed 3D icon";
+      return isLandscape
+        ? `Layout: Center focal point showcases a prominent, oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating with crisp rim lighting as the primary visual subject. Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'TRUE' and red 'FALSE'. Beside the buttons, ${mascotDescription}. STRICT: The ONLY place displaying 'TRUE' and 'FALSE' in the entire image must be the two tactile buttons at the base; mascot must NOT hold True/False paddles or checkmark/cross signs, and zero duplicate True/False words elsewhere.`
+        : `Layout: Center safe zone showcases an oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating prominently with crisp rim lighting. Cleanly stacked beneath it are two tactile modern 3D arcade buttons: green 'TRUE' and red 'FALSE', accompanied cleanly by ${mascotDescription}. STRICT: The ONLY place displaying 'TRUE' and 'FALSE' must be the two tactile buttons; mascot must NOT hold True/False paddles or checkmarks, maintaining the 440px bottom buffer.`;
+    }
 
     case "mega_grid":
     default: {
@@ -94,6 +111,7 @@ export function compileThumbnailPrompt(
   mascotProfile?: MascotProfile | null,
   visualAnchor?: MascotVisualAnchor | null,
 ): string {
+  if (plan.editorial) return compileEditorialPrompt(plan, aspectRatio, resolveMascotDescription(plan, mascotProfile, visualAnchor));
   const isLandscape = aspectRatio === "16:9";
   const styleContract = QUIZ_STYLE_CONTRACTS[plan.visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
 
@@ -102,33 +120,38 @@ export function compileThumbnailPrompt(
     ? "Composition: 16:9 widescreen modern YouTube thumbnail format. Clean minimalist composition with generous negative space and clear visual focus. STRICT CLUTTER RESTRICTIONS: Full-bleed borderless art (STRICT NO thick outer border or framing stroke around the image perimeter). NO heavy metallic frames, NO lightning bolts, NO explosive fireworks/sparks, NO checkmark stickers (NO ✅/❌), NO casino/arcade neon overload. Keep the bottom-right corner clean with zero text (YouTube timestamp safe zone)."
     : "Composition: 9:16 vertical portrait modern YouTube Shorts cover format. Clean minimalist stacked composition. STRICT CLUTTER RESTRICTIONS: Full-bleed borderless art (STRICT NO thick outer border). NO heavy metallic frames, NO lightning bolts, NO checkmark stickers (NO ✅/❌). STRICT SAFE ZONE: Enforce 440px bottom buffer / clear bottom 25% safe zone area free of text, crucial visual focal points, or mascot details to avoid vertical TikTok/Shorts UI overlays (captions, sounds, creator handle). Center all crucial subjects, text hooks, and mascot within the middle 60% vertical safe zone. Compose subjects cleanly with clear vertical stacking and zero cluttered 3-card or 3-subject matrices.";
 
-  // 2. Mascot Definition (Clean, Expressive, Uncluttered)
+  // 2. Visual Hierarchy Contract (50/30/20 Rule)
+  const visualHierarchyContract =
+    "Visual Hierarchy Contract (50/30/20 Balance): Primary 50% visual weight allocated to dominant hero 3D subject(s) with deep specular highlights and crisp rim lighting; secondary 30% visual weight to expressive mascot persona positioned dynamically without occluding the hero subject; supporting 20% visual weight to minimal gameplay controls (e.g. tactile arcade buttons, VS emblem, single ?, or tier progression badges) and top hook typography.";
+
+  // 3. Mascot Definition (Clean, Expressive, Uncluttered)
   const mascotDescription = resolveMascotDescription(plan, mascotProfile, visualAnchor);
   const hookBannerText = sanitizeThumbnailHook(plan.hookText);
 
-  // 3. Clean Modern Typography & Capsule Badge
+  // 4. Clean Modern Typography & Capsule Badge
   const typographySection = `Typography & Text Hierarchy:
 - Top Banner: Clean, bold modern 3D sans-serif typography in matte white and soft warm gold reading '${hookBannerText}' with a crisp, subtle drop shadow for maximum legibility.
 - Curiosity Badge: A sleek, compact matte rounded pill badge reading '${plan.badgeText}', positioned cleanly near the mascot.
 - STRICT NO QUESTION TEXT & NO NUMBER LABELS: DO NOT write any question sentences, body text, paragraphs, or numerical option labels (STRICT NO 1, 2, 3, 4 numbers, NO Option A/B text). Objects MUST be clean standalone 3D models floating with natural contact shadows, with ZERO white box cards, ZERO frames, and ZERO checkmarks (NO ✅/❌).`;
 
-  // 4. Environment & Lighting Setup (Minimalist, Vibrant & Family-Friendly)
+  // 5. Environment & Lighting Setup (Minimalist, Vibrant & Family-Friendly)
   const environmentDescription =
     plan.environmentAtmosphere ||
-    `Clean minimalist vibrant Pixar 3D studio background tailored to ${resolveTopicEnvironmentSubject(plan.topicTitle)} with heavy soft bokeh blur, smooth warm gradient, generous negative space, and zero busy background clutter`;
+    `Clean minimalist curved 3D Pixar studio cyclorama backdrop tailored to ${resolveTopicEnvironmentSubject(plan.topicTitle)} in cheerful warm pastel gradient, with a soft center spotlight halo, generous negative space, and zero background clutter`;
 
   const lightingDescription =
     plan.lightingPalette ||
     "Soft warm cinematic studio lighting, bright luminous rim lighting on foreground subjects, soft contact shadows, zero visual noise";
 
-  // 5. Layout Specific Composition (Clean & Minimalist)
+  // 6. Layout Specific Composition (Clean & Minimalist)
   const layoutSection = resolveLayoutPrompt(plan, isLandscape, mascotDescription);
 
-  // 6. Aesthetic Quality & Cinematic Lighting
+  // 7. Aesthetic Quality & Cinematic Lighting
   const aestheticSection = `Style: ${styleContract.name} (${styleContract.renderingMedium}). Quality: Pixar / Disney feature animation benchmark quality, smooth subsurface scattering on character skin/scales, clean matte materials on props. Lighting: ${lightingDescription}. Environment: ${environmentDescription}. Color palette: Rich, saturated, warm, inviting, and cheerful for family/kids audience. Clean spacious negative space, zero background clutter, zero numerical labels on objects. Ultra-clean, modern, non-cluttered YouTube thumbnail masterpiece.`;
 
-  const rawPrompt = [framingSection, typographySection, layoutSection, aestheticSection].join(" \n\n");
-  return rawPrompt.replace(/\s{2,}/g, " ").trim();
+  const rawPrompt = [framingSection, visualHierarchyContract, typographySection, layoutSection, aestheticSection].join(" \n\n");
+  const normalized = rawPrompt.replace(/\s{2,}/g, " ").trim();
+  return sanitizeCompiledPrompt(normalized, plan.layout, aspectRatio);
 }
 
 /**

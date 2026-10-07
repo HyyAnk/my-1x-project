@@ -1,4 +1,4 @@
-import { nowIso, type Task } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, nowIso, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import { CodexImageProvider } from "../providers/codexImage.js";
 import { ShopAiKeyImageProvider } from "../providers/shopAiKeyImage.js";
@@ -37,7 +37,7 @@ function tryCreateExplicitProvider(
     return new ShopAiKeyImageProvider(runtime.repository, imageTarget, {
       apiKey: api_key || process.env.SHOPAIKEY_API_KEY,
       baseUrl: base_url || "https://direct.shopaikey.com/v1",
-      model: model || "gpt-image-2",
+      model: model || DEFAULT_GPTI2_MODEL,
       quality,
     });
   }
@@ -46,7 +46,7 @@ function tryCreateExplicitProvider(
     return new ShopAiKeyImageProvider(runtime.repository, imageTarget, {
       apiKey: api_key,
       baseUrl: base_url || "https://api.openai.com/v1",
-      model: model || "gpt-image-2",
+      model: model || DEFAULT_GPTI2_MODEL,
       quality,
     });
   }
@@ -219,7 +219,7 @@ export async function executeBundleImageTask(this: TaskManagerRuntime, task: Tas
 }
 
 export function runGpti2BundleImageTask(this: TaskManagerRuntime, task: Task): Promise<void> {
-  const imageModel = this.imageConfig.model || "gpt-image-2";
+  const imageModel = this.imageConfig.model || DEFAULT_GPTI2_MODEL;
   return executeBundleImageTask.call(this, task, {
     step: "run_gpti2_image",
     progressMessage: `Generating continuity image (${imageModel})`,

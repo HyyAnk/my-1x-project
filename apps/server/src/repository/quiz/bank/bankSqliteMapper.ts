@@ -6,6 +6,7 @@ import type {
   QuizAgeBand,
   BankQuestionStatus,
 } from "@studio/shared";
+import { normalizeVerdictQuestion } from "./bankQuestionNormalizer.js";
 
 export interface BankQuestionRow {
   id: string;
@@ -32,31 +33,31 @@ export interface BankQuestionRow {
 }
 
 export function bankQuestionToRow(question: BankQuestion): BankQuestionRow {
-  const normalizedArchetype = question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id;
+  const normalized = normalizeVerdictQuestion(question);
   const now = new Date().toISOString();
 
   return {
-    id: question.id,
-    entity_id: question.entity_id ?? null,
-    archetype_id: normalizedArchetype,
-    domain_id: question.domain_id,
-    subtopic_id: question.subtopic_id,
-    language: question.language ?? null,
-    question: question.question,
-    format: question.format ?? "multiple_choice",
-    choices: JSON.stringify(question.choices),
-    correct_choice_id: question.correct_choice_id,
-    explanation: question.explanation,
-    fun_fact: question.fun_fact !== undefined ? question.fun_fact : null,
-    visual_spec: question.visual_spec ? JSON.stringify(question.visual_spec) : null,
-    age_band: question.age_band ?? "family",
-    difficulty: question.difficulty ?? 2,
-    thinking_seconds: question.thinking_seconds !== undefined ? question.thinking_seconds : null,
-    tags: JSON.stringify(question.tags ?? []),
-    status: question.status ?? "approved",
-    created_at: question.created_at || now,
-    updated_at: question.updated_at || now,
-    translations: question.translations ? JSON.stringify(question.translations) : null,
+    id: normalized.id,
+    entity_id: normalized.entity_id ?? null,
+    archetype_id: normalized.archetype_id,
+    domain_id: normalized.domain_id,
+    subtopic_id: normalized.subtopic_id,
+    language: normalized.language ?? null,
+    question: normalized.question,
+    format: normalized.format ?? "multiple_choice",
+    choices: JSON.stringify(normalized.choices),
+    correct_choice_id: normalized.correct_choice_id,
+    explanation: normalized.explanation,
+    fun_fact: normalized.fun_fact !== undefined ? normalized.fun_fact : null,
+    visual_spec: normalized.visual_spec ? JSON.stringify(normalized.visual_spec) : null,
+    age_band: normalized.age_band ?? "family",
+    difficulty: normalized.difficulty ?? 2,
+    thinking_seconds: normalized.thinking_seconds !== undefined ? normalized.thinking_seconds : null,
+    tags: JSON.stringify(normalized.tags ?? []),
+    status: normalized.status ?? "approved",
+    created_at: normalized.created_at || now,
+    updated_at: normalized.updated_at || now,
+    translations: normalized.translations ? JSON.stringify(normalized.translations) : null,
   };
 }
 
@@ -106,5 +107,5 @@ export function rowToBankQuestion(row: BankQuestionRow): BankQuestion {
   }
   if (parsedTranslations !== undefined) question.translations = parsedTranslations;
 
-  return question;
+  return normalizeVerdictQuestion(question);
 }

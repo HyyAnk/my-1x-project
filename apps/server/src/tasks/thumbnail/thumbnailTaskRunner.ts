@@ -27,6 +27,7 @@ export async function runThumbnailTask(runtime: TaskManagerRuntime, task: Task):
       episodeId: task.episode_id,
       activeEngine: runtime.activeEngine,
       antigravityClient: runtime.antigravity,
+      codexClient: runtime.codex,
       imageConfig: runtime.imageConfig,
       imageFallbackConfig: runtime.imageFallbackConfig,
       signal,

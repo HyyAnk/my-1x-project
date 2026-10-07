@@ -68,9 +68,23 @@ export async function generateImgStudioImageBytes(
     },
   );
 
+  // Pick strictly the first image if multiple images are returned (e.g. Krea 2 Turbo generates 4 images)
   const dataItem = Array.isArray(response.data) ? response.data[0] : response.data;
-  const b64Json = dataItem?.b64_json || response.b64_json;
-  const imageUrl = dataItem?.url || response.url;
+  let b64Json = dataItem?.b64_json || response.b64_json;
+  let imageUrl = dataItem?.url || response.url;
+  if (Array.isArray(b64Json)) {
+    b64Json = b64Json[0];
+  }
+  if (Array.isArray(imageUrl)) {
+    imageUrl = imageUrl[0];
+  }
+  if (typeof imageUrl === "string") {
+    if (imageUrl.includes(",") && !imageUrl.startsWith("data:")) {
+      imageUrl = imageUrl.split(",")[0]?.trim();
+    } else if (imageUrl.includes("\n")) {
+      imageUrl = imageUrl.split("\n")[0]?.trim();
+    }
+  }
   const priceVnd = options.priceVnd ?? response.cost_vnd ?? dataItem?.price_vnd ?? response.price_vnd ?? 150;
 
   if (b64Json) {

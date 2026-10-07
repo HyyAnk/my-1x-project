@@ -61,10 +61,6 @@ export async function executeHyperframesRender(options: {
       renderRoot,
       outputPath,
       workers: optimalWorkers,
-      // Large quiz compositions can deadlock HyperFrames' experimental parallel
-      // drawElement capture before the first frame. Use the stable screenshot path.
-      forceScreenshot: true,
-      useDrawElement: false,
     });
     let latestPercent = 65;
     let latestFrames = 0;

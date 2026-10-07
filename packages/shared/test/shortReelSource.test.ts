@@ -131,6 +131,27 @@ describe("Short-Reel Source Snapshot Boundary (Task A1)", () => {
     assert.equal(tfSnapshot.archetype_id, "verdict_true_false");
     assert.equal(tfSnapshot.choices.length, 2);
 
+    const ynQuestion = BankQuestionSchema.parse({
+      id: "q-yn-001",
+      archetype_id: "verdict_yes_no",
+      domain_id: "science",
+      subtopic_id: "physics",
+      language: "English",
+      question: "Can sound travel through space? Yes or No?",
+      format: "yes_no",
+      choices: [
+        { id: "A", text: "Yes", is_correct: false },
+        { id: "B", text: "No", is_correct: true },
+      ],
+      correct_choice_id: "B",
+      explanation: "Sound needs a medium like air or water to travel.",
+      status: "approved",
+    });
+
+    const ynSnapshot = createEnglishSourceSnapshot(ynQuestion, "source");
+    assert.equal(ynSnapshot.archetype_id, "verdict_yes_no");
+    assert.equal(ynSnapshot.choices.length, 2);
+
     const speedBlitzQuestion = BankQuestionSchema.parse({
       ...validEnglishVersus,
       id: "q-speed",
@@ -143,7 +164,7 @@ describe("Short-Reel Source Snapshot Boundary (Task A1)", () => {
     });
     assert.throws(
       () => createEnglishSourceSnapshot(speedBlitzQuestion, "source"),
-      /archetype must be 'versus_faceoff', 'deep_trivia', or 'verdict_true_false'/i,
+      /archetype must be 'versus_faceoff', 'deep_trivia', 'verdict_yes_no', or 'verdict_true_false'/i,
     );
   });
 

@@ -123,6 +123,7 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
       episodeId: input.episodeId,
       activeEngine: input.activeEngine,
       antigravityClient: input.antigravityClient,
+      codexClient: input.codexClient,
       customHookText: input.customHookText,
       layoutOverride: input.layoutOverride,
       badgeOverride: input.badgeOverride,

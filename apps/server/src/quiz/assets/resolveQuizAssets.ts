@@ -33,6 +33,7 @@ export type ResolveQuizAssetsInput = {
     provider?: "gpti2" | "shopaikey" | "custom" | "imgstudio";
     base_url?: string;
     quality?: string;
+    max_concurrent_tasks?: number;
   };
   imageFallbackConfig?: {
     enabled?: boolean;

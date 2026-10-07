@@ -18,7 +18,7 @@ describe("ImageProviderSettingsCard", () => {
     setImageEnabled: vi.fn(),
     imageBaseUrl: "",
     setImageBaseUrl: vi.fn(),
-    imageModel: "gpt-image-2",
+    imageModel: "gpt-image-2.5-flare",
     setImageModel: vi.fn(),
     maxConcurrentImageTasks: 3,
     setMaxConcurrentImageTasks: vi.fn(),

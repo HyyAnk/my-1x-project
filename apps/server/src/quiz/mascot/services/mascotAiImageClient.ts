@@ -1,8 +1,8 @@
-import type { AppConfig } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, type AppConfig } from "@studio/shared";
 import { generateGpti2ImageBytes } from "../../../providers/gpti2Image.js";
 import { generateShopAiKeyImageBytes } from "../../../providers/shopAiKeyImage.js";
 import { resolveImgStudioResolution } from "../../../providers/imgstudio/dimensions.js";
-import { generateImgStudioImageBytes } from "../../../providers/imgstudio/generator.js";
+import { generateImgStudioWithIdempotencyRecovery } from "../../../providers/imgstudio/recovery.js";
 import {
   describeImgStudioModel,
   resolveImgStudioFallbackModels,
@@ -62,7 +62,7 @@ export async function generateMascotAiImageBytes(
     return await generateShopAiKeyImageBytes(prompt, options.cancellationSignal, {
       apiKey,
       baseUrl,
-      model: imageConfig.model || "gpt-image-2",
+      model: imageConfig.model || DEFAULT_GPTI2_MODEL,
       size: options.size || (options.aspectRatio === "1:1" ? "1024x1024" : "1536x1024"),
       quality: imageConfig.quality || "low",
     });
@@ -73,7 +73,7 @@ export async function generateMascotAiImageBytes(
     apiKey,
     aspect_ratio: options.aspectRatio || "1:1",
     size: options.size || (options.aspectRatio === "1:1" ? "1024x1024" : "1280x720"),
-    model: imageConfig.model || "gpt-image-2",
+    model: imageConfig.model || DEFAULT_GPTI2_MODEL,
     referenceImageBase64: options.referenceImageBase64,
     referenceStrength: 0.75,
     background: options.background || "transparent",
@@ -198,17 +198,26 @@ async function tryFallbackGeneration(
   });
 
   try {
-    const fallbackResult = await generateImgStudioImageBytes(prompt, {
-      apiKey: fallbackApiKey,
-      baseUrl: fallbackBaseUrl,
-      model: fallbackModel,
-      resolution: fallbackResolution,
-      quality: fallbackQuality,
-      aspect_ratio: options.aspectRatio ?? "1:1",
-      referenceImage: options.referenceImageBase64,
-      idempotencyKey,
-      cancellationSignal: options.cancellationSignal,
-    });
+    const fallbackResult = await generateImgStudioWithIdempotencyRecovery(
+      prompt,
+      {
+        apiKey: fallbackApiKey,
+        baseUrl: fallbackBaseUrl,
+        model: fallbackModel,
+        resolution: fallbackResolution,
+        quality: fallbackQuality,
+        aspect_ratio: options.aspectRatio ?? "1:1",
+        referenceImage: options.referenceImageBase64,
+        idempotencyKey,
+        cancellationSignal: options.cancellationSignal,
+      },
+      (freshKey, reason) => {
+        logger?.warn(
+          `ImgStudio fallback idempotency task failed (${reason}) for ${actionLabel}. Retrying automatically with fresh key ${freshKey}.`,
+          logContext,
+        );
+      },
+    );
     options.cancellationSignal?.throwIfAborted();
     logger?.info(`Successfully recovered ${actionLabel} via ${tierLabel}`, {
       ...logContext,

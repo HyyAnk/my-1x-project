@@ -1,12 +1,28 @@
 import type { BankGameplayArchetypeId } from "@studio/shared";
 
 export interface ArchetypePromptGuideline {
-  format: "multiple_choice" | "true_false" | "odd_one_out" | "open_guess" | "slider" | "ordering" | "image_guess";
+  format: "multiple_choice" | "true_false" | "yes_no" | "odd_one_out" | "open_guess" | "slider" | "ordering" | "image_guess";
   choiceCount: number;
   visualIntent: "none" | "question_illustration" | "choice_illustration";
   defaultThinkingSeconds: number;
   instructions: string[];
 }
+
+export const ZERO_STEM_LEAK_MANDATE = `=== ZERO ANSWER-IN-STEM MANDATE (CRITICAL QUALITY & EPONYMOUS RULE) ===
+1. STRICT SPOILER PROHIBITION: The correct answer (or its core name) must NEVER appear inside the question prompt text.
+2. EPONYMOUS FRANCHISE TITLES: When a franchise/work title is identical or nearly identical to the central character (e.g. Pinocchio, Cinderella, Naruto, Harry Potter, Spider-Man, Tarzan, Mulan, Aladdin):
+   - FORBIDDEN TAUTOLOGY: NEVER ask for the titular character's identity while anchoring the franchise name in the stem (e.g. NEVER ask 'In Pinocchio, who is this puppet boy? -> Pinocchio' or 'In Cinderella, who lost a glass slipper? -> Cinderella').
+   - REQUIRED RESOLUTION 1 (Trivia / Multiple-Choice Archetypes): Keep the franchise anchor ('In Pinocchio...', 'In Cinderella...'), but ask about supporting characters, iconic artifacts, plot events, or lore facts instead (e.g. 'In Pinocchio, which woodcarver created the wooden puppet? -> Geppetto' or 'In Cinderella, what item did Cinderella leave behind at midnight? -> Glass slipper').
+   - REQUIRED RESOLUTION 2 (Character Reveal / Mystery Archetypes): If the gameplay archetype explicitly requires guessing the main protagonist, anchor by Studio, Genre, or Lore Universe instead of the work title (e.g. 'In classic Disney animation, which wooden puppet dreams of becoming a real boy? -> Pinocchio').`;
+
+export const ZERO_STEM_LEAK_MANDATE_LINES: string[] = [
+  "=== ZERO ANSWER-IN-STEM MANDATE (CRITICAL QUALITY & EPONYMOUS RULE) ===",
+  "1. STRICT SPOILER PROHIBITION: The correct answer (or its core name) must NEVER appear inside the question prompt text.",
+  "2. EPONYMOUS FRANCHISE TITLES: When a franchise/work title matches the central character (e.g. Pinocchio, Cinderella, Naruto, Spider-Man):",
+  "   - NEVER ask for the protagonist's identity if the title is in the stem (e.g. NEVER 'In Pinocchio, who is this puppet? -> Pinocchio').",
+  "   - Resolution for Trivia: Ask about supporting characters, iconic items, or lore (e.g. 'In Pinocchio, which woodcarver created the puppet? -> Geppetto').",
+  "   - Resolution for Character Reveal: Anchor by Studio/Genre instead (e.g. 'In classic Disney animation, which puppet boy dreams of becoming real? -> Pinocchio').",
+];
 
 export const FRANCHISE_ANCHOR_MANDATE = `=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===
 When generating questions about anime, manga, gaming, comics, movies, or fictional characters:
@@ -14,7 +30,11 @@ When generating questions about anime, manga, gaming, comics, movies, or fiction
 2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Jujutsu Kaisen...', 'In Dragon Ball Z...', 'In Demon Slayer...', 'In Naruto...').
 3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals (e.g. NEVER write 'Across the Spider-Verse', 'The Fellowship of the Ring', 'Kimetsu no Yaiba', or 'Episode V - The Empire Strikes Back'). Keep the franchise prefix ultra-concise to preserve question character budget for 9:16 mobile screens.
 4. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.
-5. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage or text clipping on mobile screens.`;
+5. ZERO STEM-ANSWER LEAKAGE (EPONYMOUS FRANCHISE RULE): When a work/franchise title matches the main character (e.g. Pinocchio, Cinderella, Naruto, Harry Potter, Spider-Man):
+   - STRICTLY FORBIDDEN: NEVER ask for the protagonist's identity if the title is anchored in the stem (e.g. NEVER 'In Pinocchio, who is this puppet boy? -> Pinocchio' or 'In Cinderella, who lost a glass slipper? -> Cinderella').
+   - RESOLUTION A (Trivia/Knowledge): Keep the anchor ('In Pinocchio...'), but ask about supporting characters, iconic items, or plot events (e.g. 'In Pinocchio, which woodcarver created the wooden puppet? -> Geppetto').
+   - RESOLUTION B (Mystery/Guessing): If guessing the protagonist is mandatory, anchor by Studio/Genre/Era (e.g. 'In classic Disney animation, which wooden puppet dreams of becoming real? -> Pinocchio').
+6. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage, text clipping, and spoiler leaks.`;
 
 export const FRANCHISE_ANCHOR_MANDATE_LINES: string[] = [
   "=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===",
@@ -23,7 +43,11 @@ export const FRANCHISE_ANCHOR_MANDATE_LINES: string[] = [
   "2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Jujutsu Kaisen...', 'In Dragon Ball Z...', 'In Demon Slayer...', 'In Naruto...').",
   "3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals (e.g. NEVER write 'Across the Spider-Verse', 'The Fellowship of the Ring', 'Kimetsu no Yaiba', or 'Episode V - The Empire Strikes Back'). Keep the franchise prefix ultra-concise to preserve question character budget for 9:16 mobile screens.",
   "4. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.",
-  "5. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage or text clipping on mobile screens.",
+  "5. ZERO STEM-ANSWER LEAKAGE (EPONYMOUS TITLES): When franchise title matches character name (e.g. Pinocchio, Cinderella, Naruto, Spider-Man):",
+  "   - NEVER ask for protagonist name when title is in stem (e.g. NEVER 'In Pinocchio, who is this puppet? -> Pinocchio').",
+  "   - For Trivia: Ask about supporting characters, iconic items, or lore (e.g. 'In Pinocchio, which woodcarver created the puppet? -> Geppetto').",
+  "   - For Character Reveal: Anchor by Studio/Genre instead (e.g. 'In classic Disney animation, which wooden puppet dreams of becoming real? -> Pinocchio').",
+  "6. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage, text clipping, and spoiler leaks.",
 ];
 
 export const VISUAL_ANCHOR_MANDATE = `=== VISUAL SPEC & CONTINUITY ANCHOR MANDATE (CRITICAL FOR ACCURATE ILLUSTRATIONS) ===
@@ -67,6 +91,21 @@ export const GRAPHIC_IDENTITY_MANDATE_LINES: string[] = [
 export const ARCHETYPE_GUIDELINES: Record<Exclude<BankGameplayArchetypeId, "clue_deduction">, ArchetypePromptGuideline> & {
   [archetype: string]: ArchetypePromptGuideline | undefined;
 } = {
+  verdict_yes_no: {
+    format: "yes_no",
+    choiceCount: 2,
+    visualIntent: "question_illustration",
+    defaultThinkingSeconds: 5,
+    instructions: [
+      "Yes or No format. Must be a punchy, single-clause statement or question strictly 60 to 80 characters (never exceed 80 chars).",
+      "Format: Direct question or assertion ending in 'Yes or No?' (e.g. 'Can penguins fly? Yes or No?').",
+      "Do NOT cram numbers, secondary clauses, or explanations into the question text.",
+      "Exactly 2 choices: 'Yes' and 'No'.",
+      "Truth Balance: Maintain a strict ~50/50 balance between Yes and No as the correct choice across the generated questions to keep viewer suspense.",
+      "Provide a clear explanation of why it is Yes or No along with a scientific/real-world fun fact.",
+      "Visual prompt describes a realistic, cinematic background scene illustrating the statement.",
+    ],
+  },
   verdict_true_false: {
     format: "true_false",
     choiceCount: 2,

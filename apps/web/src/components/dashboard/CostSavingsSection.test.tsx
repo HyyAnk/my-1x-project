@@ -29,8 +29,8 @@ describe("CostSavingsSection i18n & unit localization", () => {
       total_images_generated: 42,
       estimated_cost_vnd: 21000,
       estimated_cost_usd: 0.84,
-      by_provider: { "GPT-Image-2": 42 },
-      by_model: { "gpt-image-2": 42 },
+      by_provider: { "GPT-Image-2.5-Flare": 42 },
+      by_model: { "gpt-image-2.5-flare": 42 },
     },
     recent_events: [],
   };
@@ -79,8 +79,8 @@ describe("CostSavingsSection i18n & unit localization", () => {
         total_images_generated: 1,
         estimated_cost_vnd: 500,
         estimated_cost_usd: 0.02,
-        by_provider: { "GPT-Image-2": 1 },
-        by_model: { "gpt-image-2": 1 },
+        by_provider: { "GPT-Image-2.5-Flare": 1 },
+        by_model: { "gpt-image-2.5-flare": 1 },
       },
     };
 
@@ -142,7 +142,7 @@ describe("CostSavingsSection i18n & unit localization", () => {
           imgstudio: 5,
         },
         by_model: {
-          "gpt-image-2": 10,
+          "gpt-image-2.5-flare": 10,
           "2d059365-a09a-4fd5-aa9e-b5335d09bbe9": 5,
         },
       },

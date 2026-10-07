@@ -68,7 +68,7 @@ describe("Question Bank Batch Generator Prompt & Parser", () => {
     expect(prompt).toContain("ENT-ANI-002");
     expect(prompt).toContain("African Elephant");
     expect(prompt).toContain("verdict_fact_myth");
-    expect(prompt).toContain("SPECIALIZED TRUE / FALSE ARCHETYPE DIRECTIVE");
+    expect(prompt).toContain("SPECIALIZED YES / NO ARCHETYPE DIRECTIVE");
     expect(prompt).toContain("REVERSE MATRIX GENERATION CONTRACT");
   });
 
@@ -120,7 +120,10 @@ describe("Question Bank Batch Generator Prompt & Parser", () => {
     expect(parsed.length).toBe(2);
     expect(parsed[0].entity_id).toBe("ENT-ANI-001");
     expect(parsed[0].domain_id).toBe("nature_animals");
-    expect(parsed[0].archetype_id).toBe("verdict_fact_myth");
+    expect(parsed[0].archetype_id).toBe("verdict_yes_no");
+    expect(parsed[0].format).toBe("yes_no");
+    expect(parsed[0].choices[0].text).toBe("Yes");
+    expect(parsed[0].choices[1].text).toBe("No");
     expect(parsed[0].language).toBe("en");
 
     expect(parsed[1].entity_id).toBe("ENT-ANI-002");
@@ -538,7 +541,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
 
     const mockLlmClient: LLMClient = {
       connect: () => Promise.resolve(),
-      generateContent: () => {
+      generateContent: (request?: unknown) => {
         callCounter++;
         // Chunk 2 will fail on all 3 retry attempts (calls 2, 3, 4)
         if (callCounter >= 2 && callCounter <= 4) {
@@ -546,19 +549,23 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
         }
 
         const qText = callCounter === 1 ? distinctTexts[0] : distinctTexts[1];
+        const isMystery = JSON.stringify(request ?? "").includes("mystery_reveal");
+        const choices = isMystery
+          ? [{ id: "A", text: "Alpha Option", is_correct: true }]
+          : [
+              { id: "A", text: "Alpha Option", is_correct: true },
+              { id: "B", text: "Beta Option", is_correct: false },
+              { id: "C", text: "Gamma Option", is_correct: false },
+              { id: "D", text: "Delta Option", is_correct: false },
+            ];
 
         return Promise.resolve({
           text: JSON.stringify([
             {
               entity_id: `ENT-TEST-${callCounter}`,
               question: qText,
-              format: "multiple_choice",
-              choices: [
-                { id: "A", text: "Alpha Option", is_correct: true },
-                { id: "B", text: "Beta Option", is_correct: false },
-                { id: "C", text: "Gamma Option", is_correct: false },
-                { id: "D", text: "Delta Option", is_correct: false },
-              ],
+              format: isMystery ? "image_guess" : "multiple_choice",
+              choices,
               correct_choice_id: "A",
               explanation: "Clear and distinctive explanation text.",
               visual_spec: { intent: "none" },

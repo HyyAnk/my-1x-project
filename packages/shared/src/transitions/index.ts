@@ -9,3 +9,6 @@ export * from "./transitionRegistry.js";
 export * from "./styles.js";
 export * from "./primitives/brushMarkup.js";
 export * from "./primitives/escapeTransitionMarkup.js";
+export * from "./definitions/morphWipe.js";
+export * from "./definitions/energySlash.js";
+export * from "./definitions/motionTransitions.js";

@@ -7,6 +7,7 @@ export const svLocale: ThumbnailLocalization = {
     mystery_silhouette: "VEM ÄR DET HÄR?",
     odd_one_out: "HITTA DEN SOM SKILJER SIG!",
     difficulty_tier: "KLARAR DU NIVÅ 4?",
+    yes_no: "JA ELLER NEJ?",
     true_false: "SANT ELLER FALSKT?",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const svLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "BARA 1% VET! 🔥",
     odd_one_out: () => "10 SEKUNDER! ⏱️",
     difficulty_tier: () => "ENDAST FÖR IQ 140+ 🔥",
+    yes_no: () => "JA ELLER NEJ? ⚡",
     true_false: () => "SANT ELLER FALSKT? ⚡",
   },
 };

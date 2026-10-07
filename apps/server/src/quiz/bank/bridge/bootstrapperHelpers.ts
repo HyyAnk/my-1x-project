@@ -63,6 +63,8 @@ export interface BuildEpisodeRecordParams {
   title: string;
   premise: string;
   hook: string;
+  domainId?: string;
+  subtopicId?: string;
   targetDurationMinutes: number;
   targetWordCount: number;
   questionCount: number;
@@ -85,7 +87,13 @@ export function buildEpisodeRecord(params: BuildEpisodeRecordParams): Episode {
     episode_id: params.episodeId,
     channel_id: params.channelId,
     slug: params.episodeSlug,
-    topic: { title: params.title, premise: params.premise, hook: params.hook },
+    topic: {
+      title: params.title,
+      premise: params.premise,
+      hook: params.hook,
+      domain_id: params.domainId,
+      subtopic_id: params.subtopicId,
+    },
     stage: "SELECTED",
     script_path: `channels/${params.channelSlug}/episodes/${params.episodeSlug}/script.md`,
     research_path: `channels/${params.channelSlug}/episodes/${params.episodeSlug}/research.md`,

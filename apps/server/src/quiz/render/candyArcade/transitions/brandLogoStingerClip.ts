@@ -57,7 +57,7 @@ export function brandLogoStingerClip(input: BrandLogoStingerClipInput): string {
     `data-track-index="1" ` +
     `data-aspect-ratio="${aspectRatio}" ` +
     `data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow ` +
-    `style="--clip-start:${start.toFixed(3)}s;--trans-dur:${duration.toFixed(3)}s;--trans-from:${fromColor};--trans-to:${toColor};--trans-accent:${accentColor};">` +
+    `style="--clip-start:0s;--trans-dur:${duration.toFixed(3)}s;--trans-from:${fromColor};--trans-to:${toColor};--trans-accent:${accentColor};">` +
       `<div class="brand-stinger-backdrop" aria-hidden="true">` +
         `<div class="brand-stinger-slash slash-primary"></div>` +
         `<div class="brand-stinger-slash slash-secondary"></div>` +

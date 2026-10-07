@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import sharp from "sharp";
 import {
   IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
   IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
   type Channel,
   type Episode,
@@ -303,8 +304,108 @@ describe("thumbnail specific provider fallback cascade", () => {
 
     expect(modelsRequested).toEqual([
       IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
+      IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
       IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
     ]);
     expect(result.variantFilename).toContain("thumb_16_9");
   });
+
+  it("cascades to Tier 3 (Krea 2 Turbo) if GPTi2, Qwen Image 3.0 Pro, and Gemini 3.1 Flash all fail", async () => {
+    const modelsRequested: string[] = [];
+
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      const urlStr = String(url);
+      const bodyStr = init?.body ? String(init.body) : "";
+
+      // GPTi2 fails
+      if (urlStr.includes("gpti2.store") || urlStr.includes("direct.shopaikey.com")) {
+        return {
+          ok: false,
+          status: 500,
+          text: async () => JSON.stringify({ error: { message: "GPTi2 error" } }),
+        } as unknown as Response;
+      }
+
+      // ImgStudio Fallback
+      if (urlStr.includes("api/v1/images/generate")) {
+        const parsed = JSON.parse(bodyStr) as { provider_id: string };
+        modelsRequested.push(parsed.provider_id);
+
+        if (parsed.provider_id === IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID) {
+          return {
+            ok: false,
+            status: 409,
+            text: async () => JSON.stringify({ error: { message: "Qwen task failed" } }),
+          } as unknown as Response;
+        }
+
+        if (parsed.provider_id === IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID) {
+          return {
+            ok: false,
+            status: 409,
+            text: async () => JSON.stringify({ error: { message: "Gemini task failed" } }),
+          } as unknown as Response;
+        }
+
+        if (parsed.provider_id === IMGSTUDIO_KREA_2_TURBO_MODEL_ID) {
+          return {
+            ok: true,
+            status: 200,
+            text: async () =>
+              JSON.stringify({
+                data: [{ url: "https://imgstudio.site/cdn/krea-thumb.jpg" }],
+                usage: { price_vnd: 250 },
+              }),
+          } as unknown as Response;
+        }
+      }
+
+      if (urlStr.includes("krea-thumb.jpg")) {
+        return {
+          ok: true,
+          status: 200,
+          headers: { get: () => "image/jpeg" },
+          arrayBuffer: async () => mockJpegBytes.buffer,
+        } as unknown as Response;
+      }
+
+      return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
+    });
+
+    const result = await generateThumbnailVariant({
+      repository,
+      channel,
+      episode,
+      ratio: "16:9",
+      prompt: "Thumbnail prompt for 3-tier cascade test",
+      plan: dummyPlan,
+      options: {
+        channelId: channel.channel_id,
+        episodeId: episode.episode_id,
+        imageConfig: {
+          provider: "imgstudio",
+          api_key: "img_test_key",
+          gpti2_api_key: "sk_gpti2_key",
+        },
+        imageFallbackConfig: {
+          enabled: true,
+          provider: "imgstudio",
+          api_key: "img_test_key",
+          gpti2_api_key: "sk_gpti2_key",
+        },
+      },
+      logger,
+      nowTimestamp: Date.now(),
+    });
+
+    expect(modelsRequested).toEqual([
+      IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
+      IMGSTUDIO_QWEN_IMAGE_3_PRO_MODEL_ID,
+      IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+      IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
+      IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
+    ]);
+    expect(result.variantFilename).toContain("thumb_16_9");
+  });
 });
+

@@ -4,3 +4,4 @@ export * from "./quiz/quizAssets.js";
 export * from "./quiz/quizVoiceAndQa.js";
 export * from "./quiz/quizTimings.js";
 export * from "./quiz/bridgeScenes.js";
+export * from "./quiz/quizQuestionImages.js";

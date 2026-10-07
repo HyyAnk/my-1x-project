@@ -10,10 +10,12 @@ import { resolveMascotThemedPersona } from "./thumbnailPersonaResolver.js";
 import { resolveSubjectAnchors } from "./thumbnailSubjectAnchorResolver.js";
 import { resolveFallbackEnvironment } from "./thumbnailEnvironmentResolver.js";
 import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
+import { resolveUniversalTopicHook } from "./thumbnailTopicHookExtractor.js";
 
 export { resolveMascotThemedPersona } from "./thumbnailPersonaResolver.js";
 export { resolveSubjectAnchors } from "./thumbnailSubjectAnchorResolver.js";
 export { resolveFallbackEnvironment } from "./thumbnailEnvironmentResolver.js";
+export { resolveUniversalTopicHook } from "./thumbnailTopicHookExtractor.js";
 
 interface LayoutMatchRule {
   readonly layout: ThumbnailLayoutType;
@@ -63,6 +65,17 @@ const LAYOUT_MATCH_RULES: readonly LayoutMatchRule[] = [
     topicSubstrings: ["iq test", "level 1", "難易度", "iqテスト", "\u7b2c1\u5173", "\u96be\u5ea6", "\u667a\u5546\u6d4b\u8bd5"],
   },
   {
+    layout: "yes_no",
+    formatExact: ["yes_no", "verdict_yes_no"],
+    formatSubstrings: ["yes_no"],
+    topicSubstrings: [
+      "yes or no",
+      "yes/no",
+      "yes no",
+      "yes or no?",
+    ],
+  },
+  {
     layout: "true_false",
     formatSubstrings: ["true_false"],
     topicSubstrings: [
@@ -84,21 +97,23 @@ export function determineThumbnailLayout(
   layoutOverride?: ThumbnailLayoutType,
   aspectRatio?: ThumbnailAspectRatio,
 ): ThumbnailLayoutType {
+  const normalizedFormat = (formatLower || "").toLowerCase();
+  const normalizedTopic = (topicLower || "").toLowerCase();
   let layout: ThumbnailLayoutType | undefined;
 
   if (layoutOverride && THUMBNAIL_LAYOUT_CATALOG[layoutOverride]) {
     layout = layoutOverride;
   } else {
     for (const rule of LAYOUT_MATCH_RULES) {
-      if (rule.formatExact?.some((f) => formatLower === f)) {
+      if (rule.formatExact?.some((f) => normalizedFormat === f)) {
         layout = rule.layout;
         break;
       }
-      if (rule.formatSubstrings?.some((f) => formatLower.includes(f))) {
+      if (rule.formatSubstrings?.some((f) => normalizedFormat.includes(f))) {
         layout = rule.layout;
         break;
       }
-      if (rule.topicSubstrings?.some((t) => topicLower.includes(t))) {
+      if (rule.topicSubstrings?.some((t) => normalizedTopic.includes(t))) {
         layout = rule.layout;
         break;
       }
@@ -144,9 +159,14 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
   const language = resolveThumbnailLanguage(input);
   const localized = getThumbnailLocalizedTexts(layout, count, language);
 
-  const topicSpecificHook = resolveTopicSpecificHook(topicLower, language);
-  const rawHookCandidate = input.customHookText || topicSpecificHook || localized.hookText;
-  const hookText = sanitizeThumbnailHook(rawHookCandidate, localized.hookText);
+  const hookText = resolveUniversalTopicHook({
+    topicTitle: input.topicTitle,
+    topicSummary: input.topicSummary,
+    layout,
+    language,
+    customHookText: input.customHookText,
+    defaultFallback: localized.hookText,
+  });
   const badgeText = getCuriosityBadgeText(input.badgeOverride, count, language, localized.badgeText, input.rng);
 
   // 3. Resolve Contextual Mascot Persona based on Topic & Layout

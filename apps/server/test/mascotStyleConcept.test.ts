@@ -12,7 +12,7 @@ import { hasMeaningfulPngTransparency } from "../src/utils/imageMatting.js";
 const testImageConfig: AppConfig["image_generation"] = {
   enabled: false,
   provider: "shopaikey",
-  model: "gpt-image-2",
+  model: "gpt-image-2.5-flare",
   api_key: "",
 };
 

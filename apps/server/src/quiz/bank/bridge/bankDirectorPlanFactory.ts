@@ -24,6 +24,8 @@ export function mapToDirectorArchetype(archetypeId?: string, fallback: DirectorA
     case "versus_faceoff":
     case "visual_identification":
       return "visual_multiple_choice";
+    case "verdict_yes_no":
+      return "yes_no";
     case "verdict_true_false":
     case "verdict_fact_myth":
       return "true_false";
@@ -50,6 +52,8 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
     switch (topic.archetype) {
       case "mystery_reveal":
         return "mystery_reveal";
+      case "verdict_yes_no":
+        return "verdict_yes_no";
       case "verdict_true_false":
       case "verdict_fact_myth":
         return "verdict_true_false";
@@ -64,6 +68,9 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
       case "deep_trivia":
         return "media_left_choices_right";
     }
+  }
+  if (topic.quiz_format === "yes_no") {
+    return "verdict_yes_no";
   }
   if (topic.quiz_format === "true_false") {
     return "verdict_true_false";

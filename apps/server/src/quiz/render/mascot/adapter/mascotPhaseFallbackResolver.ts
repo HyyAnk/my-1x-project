@@ -277,7 +277,12 @@ export function adaptMascotForPhase(
   const celebrateVariants = filterPreferredVariants(style.states?.celebrate, mediaMode);
   const thinkingVariants = filterPreferredVariants(style.states?.thinking, mediaMode);
 
-  if (phase === "question" && mediaMode === "static" && celebrateVariants.length === 0 && thinkingVariants.length === 0) {
+  const hasDedicated =
+    hasDedicatedAction(mascot, "thinking") ||
+    hasDedicatedAction(mascot, "celebrate") ||
+    hasDedicatedAction(mascot, "idle");
+
+  if (phase === "question" && mediaMode === "static" && !hasDedicated && celebrateVariants.length === 0 && thinkingVariants.length === 0) {
     return null;
   }
 

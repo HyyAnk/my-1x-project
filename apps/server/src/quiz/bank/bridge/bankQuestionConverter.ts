@@ -11,6 +11,7 @@ import {
 import type { RepositoryService } from "../../../repository.js";
 import type { LLMClient } from "../../../utils/promptSanitizer.js";
 import { transcreateBankQuestion } from "../transcreation/transcreationEngine.js";
+import { detectStemAnswerLeak } from "../autoQa/stemLeakDetector.js";
 
 export interface ConvertBankQuestionOptions {
   language?: string;
@@ -101,14 +102,28 @@ export function convertBankQuestionToQuizQuestionLossless(
   const localizedExplanation = translation?.explanation || bankQuestion.explanation || "Detailed explanation for the correct answer.";
   const localizedFunFact = translation?.fun_fact !== undefined ? translation.fun_fact : bankQuestion.fun_fact || "";
 
+  const leakIssue = detectStemAnswerLeak(bankQuestion);
+  if (leakIssue) {
+    console.warn(
+      `[QuestionBankBridge] Sanity Warning: Question "${bankQuestion.id}" contains stem-answer leak: ${leakIssue.message}`,
+    );
+  }
+
   const isMystery = bankQuestion.archetype_id === "mystery_reveal" || quizChoices.length === 1;
   const answerMode = isMystery ? "single_reveal" : "choice_selection";
+  const isVerdict =
+    bankQuestion.archetype_id === "verdict_yes_no" ||
+    bankQuestion.archetype_id === "verdict_true_false" ||
+    bankQuestion.archetype_id === "verdict_fact_myth" ||
+    bankQuestion.format === "yes_no" ||
+    bankQuestion.format === "true_false";
+
   const resolvedFormat = isMystery
     ? "image_guess"
     : bankQuestion.archetype_id === "versus_faceoff"
       ? "multiple_choice"
-      : quizChoices.length === 2
-        ? "true_false"
+      : isVerdict || quizChoices.length === 2
+        ? "yes_no"
         : bankQuestion.format || "multiple_choice";
 
   const candidateQuestion = {
@@ -141,15 +156,22 @@ function buildConvertedChoices(
   isMystery: boolean,
   requiredCount: number,
 ): { mapped: Array<{ id: string; text: string }>; correctIndex: number } {
+  const isVerdict =
+    bankQuestion.format === "yes_no" ||
+    bankQuestion.format === "true_false" ||
+    bankQuestion.archetype_id === "verdict_yes_no" ||
+    bankQuestion.archetype_id === "verdict_true_false" ||
+    bankQuestion.archetype_id === "verdict_fact_myth";
+
   const sourceChoices =
     bankQuestion.choices.length > 0
       ? bankQuestion.choices
       : isMystery
         ? [{ id: "a", text: "Option A", is_correct: true }]
-        : bankQuestion.format === "true_false"
+        : isVerdict
           ? [
-              { id: "true", text: "True", is_correct: true },
-              { id: "false", text: "False", is_correct: false },
+              { id: "yes", text: "Yes", is_correct: true },
+              { id: "no", text: "No", is_correct: false },
             ]
           : [
               { id: "a", text: "Option A", is_correct: true },
@@ -197,13 +219,19 @@ function buildConvertedChoices(
  */
 export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
   const isMystery = bankQuestion.archetype_id === "mystery_reveal";
+  const isVerdict =
+    bankQuestion.archetype_id === "verdict_yes_no" ||
+    bankQuestion.archetype_id === "verdict_true_false" ||
+    bankQuestion.archetype_id === "verdict_fact_myth" ||
+    bankQuestion.format === "yes_no" ||
+    bankQuestion.format === "true_false";
   const requiredCount = bankRequiredChoiceCountForArchetype(bankQuestion.archetype_id);
   const { mapped, correctIndex } = buildConvertedChoices(bankQuestion, options, isMystery, requiredCount);
   const mappedCorrectIndex = Math.min(Math.max(correctIndex, 0), requiredCount - 1);
   return QuizQuestionSchema.parse({
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
-    format: isMystery ? "image_guess" : bankQuestion.format || "multiple_choice",
+    format: isMystery ? "image_guess" : isVerdict ? "yes_no" : bankQuestion.format || "multiple_choice",
     gameplay_id: bankQuestion.archetype_id,
     answer_mode: isMystery ? "single_reveal" : "choice_selection",
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),

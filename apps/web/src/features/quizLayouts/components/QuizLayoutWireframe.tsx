@@ -17,7 +17,8 @@ export function QuizLayoutWireframe({ preview, layoutId, aspectRatio, showMascot
     preview === "split-versus" ||
     preview === "verdict" ||
     layoutId === "split_versus_two" ||
-    layoutId === "verdict_true_false";
+    layoutId === "verdict_true_false" ||
+    layoutId === "verdict_yes_no";
 
   return (
     <div className={rootClassName} data-layout-id={layoutId} data-aspect-ratio={aspectRatio} aria-hidden="true">

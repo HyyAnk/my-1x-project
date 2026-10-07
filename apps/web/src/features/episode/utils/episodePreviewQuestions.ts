@@ -64,7 +64,7 @@ export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePrev
   const isMystery = (episode.quiz_config as { gameplay_archetype?: string } | undefined)?.gameplay_archetype === "mystery_reveal";
   const quizFormat = normalizeQuizQuestionFormat(episode.quiz_config?.quiz_format);
   const archetype = isMystery ? "mystery_reveal" : inferQuestionArchetype(quizFormat);
-  const choiceCount = isMystery ? 1 : quizFormat === "true_false" ? 2 : 3;
+  const choiceCount = isMystery ? 1 : quizFormat === "true_false" || quizFormat === "yes_no" ? 2 : 3;
   const layoutId = resolvePreviewLayout(isMystery ? "mystery_reveal" : "auto", archetype, quizFormat, choiceCount);
   const totalQuestions = episode.quiz_config?.question_count ?? 8;
 
@@ -81,6 +81,9 @@ export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePrev
   } else if (quizFormat === "odd_one_out") {
     text = topicTitle ? `Find the odd one out: ${topicTitle}` : "Find the odd one out among the choices";
     choices = ["Option A", "Option B", "Option C"];
+  } else if (quizFormat === "yes_no") {
+    text = topicTitle || "Is this statement correct?";
+    choices = ["Yes", "No"];
   } else if (quizFormat === "true_false") {
     text = topicTitle || "Is this statement true or false?";
     choices = ["True", "False"];
@@ -96,7 +99,7 @@ export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePrev
     number: 1,
     text,
     choices,
-    correctChoiceIndex: isMystery ? 0 : quizFormat === "true_false" ? 0 : 1,
+    correctChoiceIndex: isMystery ? 0 : quizFormat === "true_false" || quizFormat === "yes_no" ? 0 : 1,
     factText: topicHook || topicPremise || "Previewing visual style before generating script.",
     totalQuestions,
     layoutId,
@@ -121,6 +124,7 @@ function resolvePreviewLayout(
 export function normalizeQuizQuestionFormat(format?: string): QuizQuestionFormat {
   if (format === "odd_one_out") return "odd_one_out";
   if (format === "image_guess") return "image_guess";
+  if (format === "yes_no") return "yes_no";
   if (format === "true_false") return "true_false";
   return "multiple_choice";
 }
@@ -128,6 +132,7 @@ export function normalizeQuizQuestionFormat(format?: string): QuizQuestionFormat
 export function inferQuestionArchetype(format: QuizQuestionFormat): DirectorArchetype {
   if (format === "odd_one_out") return "visual_multiple_choice";
   if (format === "image_guess") return "illustrated_multiple_choice";
+  if (format === "yes_no") return "yes_no";
   if (format === "true_false") return "true_false";
   return "text_multiple_choice";
 }

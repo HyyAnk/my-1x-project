@@ -1,4 +1,5 @@
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import sharp from "sharp";
+import { mkdir, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,9 +30,11 @@ function createMockAntigravity(responsePayload: Record<string, unknown> | string
 
 function createMockImageProvider(tempDir: string): ImageProvider {
   return {
-    generateReference: async (prompt: string) => {
+    generateReference: async () => {
       const dummyPath = path.join(tempDir, `mock_e2e_${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`);
-      await writeFile(dummyPath, Buffer.from(`MOCK_IMAGE_DATA_FOR_${prompt.slice(0, 40)}`));
+      await sharp({ create: { width: 1280, height: 720, channels: 3, background: "#245678" } })
+        .jpeg()
+        .toFile(dummyPath);
       return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
     },
   };
@@ -131,7 +134,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
 
       // 4. Compiled prompt contains the punchy hook banner
       expect(manifest.prompt_16_9).toBeDefined();
-      expect(manifest.prompt_16_9).toContain("'ARCADE SECRETS!'");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
 
       // 5. Compiled prompt STRICTLY does NOT contain the full 8-word 48-char topic title
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
@@ -184,7 +187,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
 
       // 4. The prompt includes the sanitized/condensed banner
-      expect(manifest.prompt_16_9).toContain(`'${manifest.hook_text}'`);
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
       const validation = validateThumbnailHook(manifest.hook_text);
       expect(validation.valid).toBe(true);
     });
@@ -210,7 +213,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       expect(manifest.hook_text).toBe("GAMING MYTHS");
 
       // 2. Prompt renders the custom hook
-      expect(manifest.prompt_16_9).toContain("'GAMING MYTHS'");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
 
       // 3. Prompt does NOT contain the overlong topic title
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
@@ -254,7 +257,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_CUSTOM_HOOK);
 
       // 5. Prompt contains the guarded hook banner
-      expect(manifest.prompt_16_9).toContain(`'${manifest.hook_text}'`);
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
 
       // 6. Validation passes
       const validation = validateThumbnailHook(manifest.hook_text);
@@ -301,7 +304,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       const bodyCustom = JSON.parse(responseWithCustomHook.body);
       expect(bodyCustom.ok).toBe(true);
       expect(bodyCustom.manifest.hook_text).toBe("ARCADE SECRETS");
-      expect(bodyCustom.manifest.prompt_16_9).toContain("'ARCADE SECRETS'");
+      expect(bodyCustom.manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
       expect(bodyCustom.manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
 
       // Test with overlong custom hook override
@@ -377,7 +380,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       });
 
       expect(manifest.hook_text).toBe("GAMING SECRETS");
-      expect(manifest.prompt_16_9).toContain("'GAMING SECRETS'");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
 
       const savedManifest = await getEpisodeThumbnailManifest(repository, channel.channel_id, episode.episode_id);

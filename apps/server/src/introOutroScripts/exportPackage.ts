@@ -11,17 +11,17 @@ export async function exportScriptPackage(scripts: IntroOutroScriptRepository, r
     })),
   );
   const prompt = compileProductionPrompt(revision);
+  const partDelimiter = "================================================================================\nPART 2:";
   const isTwoPartOutro =
     revision.clip_kind === "outro" &&
-    prompt.includes("PART 1: THE RUN-UP & KINEMATIC TRANSITION") &&
-    prompt.includes("PART 2: MOMENTUM RECOVERY, CTA & FAREWELL");
+    prompt.includes("PART 1:") &&
+    prompt.includes(partDelimiter);
 
   const promptFiles: Array<{ filename: string; data: Buffer }> = [
     { filename: "prompt.txt", data: Buffer.from(prompt) },
   ];
 
   if (isTwoPartOutro) {
-    const partDelimiter = "================================================================================\nPART 2:";
     const part2Index = prompt.indexOf(partDelimiter);
     if (part2Index !== -1) {
       const part1Text = prompt.slice(0, part2Index).trim();

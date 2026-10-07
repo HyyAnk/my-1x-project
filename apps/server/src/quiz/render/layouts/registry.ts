@@ -4,6 +4,7 @@ import { fullStackListLayout } from "./fullStackList.js";
 import { mediaLeftChoicesRightLayout } from "./mediaLeftChoicesRight.js";
 import { splitVersusTwoLayout } from "./splitVersusTwo.js";
 import type { QuizLayoutRenderDefinition, QuizLayoutSlots } from "./types.js";
+import { verdictYesNoLayout } from "./verdictYesNo.js";
 import { verdictTrueFalseLayout } from "./verdictTrueFalse.js";
 import { visualChoicesThreeLayout } from "./visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "./visualChoicesThreePure.js";
@@ -15,6 +16,7 @@ export const QUIZ_LAYOUT_RENDERERS = {
   visual_choices_three: visualChoicesThreeLayout,
   visual_choices_three_pure: visualChoicesThreePureLayout,
   split_versus_two: splitVersusTwoLayout,
+  verdict_yes_no: verdictYesNoLayout,
   verdict_true_false: verdictTrueFalseLayout,
   full_stack_list: fullStackListLayout,
   mystery_reveal: mysteryRevealLayout,

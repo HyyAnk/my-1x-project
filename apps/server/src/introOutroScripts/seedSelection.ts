@@ -13,11 +13,31 @@ import { isSeedEligible } from "./seedCatalog.js";
 import { hasBlockingIssues, validateSeedSelection } from "./validation.js";
 import { compatibleSeeds } from "./seedProductionPolicy.js";
 
-function dimensionsForClip(clipKind: IntroOutroClipKind, catalog: readonly CreativeSeed[]): readonly CreativeSeedDimension[] {
+const LEGACY_OUTRO_ENTRANCE_MAP: Record<string, string> = {
+  E08: "J01",
+  E09: "J03",
+  E10: "J02",
+  E11: "J04",
+  E12: "J05",
+  E13: "J06",
+  E14: "J07",
+  E15: "J08",
+  E16: "J09",
+  E17: "J10",
+};
+
+function dimensionsForClip(
+  clipKind: IntroOutroClipKind,
+  catalog: readonly CreativeSeed[],
+  durationSeconds?: number,
+): readonly CreativeSeedDimension[] {
   if (clipKind === "intro") return INTRO_SEED_DIMENSIONS;
+  if (durationSeconds !== undefined && durationSeconds < 12) {
+    return OUTRO_SEED_DIMENSIONS;
+  }
   const hasTransition = catalog.some((s) => s.dimension === "outro_kinematic_transition" && s.status === "active");
   return hasTransition
-    ? (["outro_recognition", "outro_kinematic_transition", "outro_invitation", "outro_farewell"] as const)
+    ? (["outro_entrance", "outro_recognition", "outro_kinematic_transition", "outro_invitation", "outro_farewell"] as const)
     : OUTRO_SEED_DIMENSIONS;
 }
 
@@ -44,14 +64,15 @@ export function resolveSeedSelection(params: {
   lockedDimensions?: readonly CreativeSeedDimension[];
   durationSeconds?: number;
 }): { selection: IntroOutroSeedSelection; seeds: CreativeSeed[] } {
-  const dimensions = dimensionsForClip(params.clipKind, params.catalog);
+  const normalizedSeedIds = params.selectedSeedIds?.map((id) => LEGACY_OUTRO_ENTRANCE_MAP[id] ?? id);
+  const dimensions = dimensionsForClip(params.clipKind, params.catalog, params.durationSeconds);
   const active = latestCatalog(params.catalog).filter((seed) => seed.clip_kind === params.clipKind && seed.status === "active");
-  const requested = new Map(active.filter((seed) => params.selectedSeedIds?.includes(seed.id)).map((seed) => [seed.dimension, seed]));
+  const requested = new Map(active.filter((seed) => normalizedSeedIds?.includes(seed.id)).map((seed) => [seed.dimension, seed]));
   if (params.lockedDimensions?.some((dimension) => !requested.has(dimension)))
     throw new IntroOutroScriptError("Each locked dimension needs an explicit active seed", "SEED_COMBINATION_INVALID");
   if (
-    (params.selectedSeedIds ?? []).some((id) => !active.some((seed) => seed.id === id)) ||
-    requested.size !== (params.selectedSeedIds?.length ?? 0)
+    (normalizedSeedIds ?? []).some((id) => !active.some((seed) => seed.id === id)) ||
+    requested.size !== (normalizedSeedIds?.length ?? 0)
   ) {
     throw new IntroOutroScriptError("Select one active seed per dimension", "SEED_COMBINATION_INVALID");
   }

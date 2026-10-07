@@ -36,6 +36,7 @@ describe("Phase 04: Choice Primitives and Answer Surfaces", () => {
       full_stack_list: "detached_badge",
       visual_choices_three_pure: "media_bottom_badge",
       split_versus_two: "text_only",
+      verdict_yes_no: "text_only",
       verdict_true_false: "text_only",
       mystery_reveal: "single_reveal",
     };

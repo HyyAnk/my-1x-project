@@ -57,6 +57,11 @@ export async function generateImgStudioAsset(
       referenceImageBase64: input.referenceImageBase64,
     },
     input.cancellationSignal,
+    (freshKey, reason) => {
+      input.logger.warn(
+        `ImgStudio idempotency task failed (${reason}) for asset ${request.asset_id}. Retrying automatically with fresh key ${freshKey}.`,
+      );
+    },
   );
 
   return {

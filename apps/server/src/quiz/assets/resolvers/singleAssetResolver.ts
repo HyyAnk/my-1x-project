@@ -136,7 +136,9 @@ export async function resolveSingleAsset(params: SingleAssetResolveParams): Prom
   const configuredProvider = input.imageConfig?.provider ?? "gpti2";
   const providerName = resolveQuizImageProviderName({ imageConfig: input.imageConfig, activeEngine });
   const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
-  const bundleNumber = request.question_id ? Number(/^question-(\d+)$/i.exec(request.question_id)?.[1] ?? 0) : 0;
+  const bundleNumber =
+    (request.question_id ? Number(/^(?:question|q)[-_]?(\d+)$/i.exec(request.question_id)?.[1] ?? 0) : 0) ||
+    Number(/^(?:question|q)[-_]?(\d+)/i.exec(request.asset_id)?.[1] ?? 0);
 
   const reusable = await findReusableAsset({ input, request, fingerprint, bundleNumber, byFingerprint });
   if (reusable) {

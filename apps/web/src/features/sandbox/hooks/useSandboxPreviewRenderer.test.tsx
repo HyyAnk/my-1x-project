@@ -278,6 +278,13 @@ describe("useSandboxPreviewRenderer", () => {
       ),
     );
 
+    rerender({ layoutId: "verdict_yes_no", choices: ["Yes", "No"] });
+    await vi.waitFor(() =>
+      expect(previewSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({ layout_id: "verdict_yes_no", question_format: "yes_no" }),
+      ),
+    );
+
     rerender({ layoutId: "verdict_true_false", choices: ["True", "False"] });
     await vi.waitFor(() =>
       expect(previewSpy).toHaveBeenLastCalledWith(

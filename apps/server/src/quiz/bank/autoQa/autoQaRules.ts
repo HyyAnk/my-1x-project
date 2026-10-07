@@ -2,6 +2,9 @@ import type { BankQuestion } from "@studio/shared";
 import { calculateQuestionSimilarity, normalizeQuestionText } from "../../qa/questionHistory.js";
 import { DEFAULT_SIMILARITY_THRESHOLD, type AutoQaIssue, type AutoQaResult } from "./autoQa.types.js";
 import { QuestionBankAutoQaIndex } from "./autoQaIndex.js";
+import { detectStemAnswerLeak } from "./stemLeakDetector.js";
+
+export { detectStemAnswerLeak } from "./stemLeakDetector.js";
 
 export const MAX_QUESTION_LENGTH = 110;
 export const MIN_QUESTION_LENGTH = 8;
@@ -84,6 +87,11 @@ export function checkQualityAndSchemaIssues(question: BankQuestion): AutoQaIssue
         message: `Choice "${question.correct_choice_id}" marked correct but is_correct = false.`,
       });
     }
+  }
+
+  const stemLeakIssue = detectStemAnswerLeak(question);
+  if (stemLeakIssue) {
+    issues.push(stemLeakIssue);
   }
 
   return issues;

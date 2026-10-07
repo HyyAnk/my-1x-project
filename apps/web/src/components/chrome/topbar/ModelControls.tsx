@@ -1,4 +1,5 @@
 import { CaretDown, Image, WarningCircle } from "@phosphor-icons/react";
+import { DEFAULT_GPTI2_MODEL, resolveGpti2Model } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 
 export type ImageModelControlProps = {
@@ -23,6 +24,9 @@ export function ImageModelControl({ hasImageApiKey, currentImageModel, onImageMo
       </button>
     );
   }
+
+  const normalizedModel = resolveGpti2Model(currentImageModel);
+
   return (
     <label className="model-select image-model-select" title="Image Generation Model (gpti2.store)">
       <Image size={13} style={{ marginRight: 2 }} />
@@ -30,11 +34,14 @@ export function ImageModelControl({ hasImageApiKey, currentImageModel, onImageMo
       <CaretDown size={13} />
       <select
         aria-label="Image generation model"
-        value={currentImageModel || "gpt-image-2"}
+        value={normalizedModel}
         onChange={(event) => void onImageModelChange(event.target.value)}
       >
-        <option value="gpt-image-2">gpt-image-2 (50 VND)</option>
+        <option value="gpt-image-2.5-flare">gpt-image-2.5-flare (50 VND)</option>
         <option value="nano-banana-2">nano-banana-2 (100 VND - 2K)</option>
+        {normalizedModel !== "gpt-image-2.5-flare" && normalizedModel !== "nano-banana-2" ? (
+          <option value={normalizedModel}>{normalizedModel}</option>
+        ) : null}
       </select>
     </label>
   );

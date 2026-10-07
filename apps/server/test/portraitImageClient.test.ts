@@ -27,7 +27,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
     const mockedGenerate = vi.mocked(generateGpti2ImageBytes);
     mockedGenerate.mockResolvedValueOnce({
       bytes: generatedBytes,
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       price_vnd: 50,
     });
 
@@ -35,7 +35,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
       enabled: true,
       provider: "gpti2",
       api_key: "test-key-do-not-log",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       images_per_bundle: 1,
       max_concurrent_tasks: 3,
@@ -64,7 +64,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
     );
     expect(result.bytes).toEqual(generatedBytes);
     expect(result.provider).toBe("gpti2");
-    expect(result.model).toBe("gpt-image-2");
+    expect(result.model).toBe("gpt-image-2.5-flare");
     expect(result.costVnd).toBe(50);
   });
 
@@ -74,7 +74,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
       enabled: true,
       provider: "shopaikey",
       api_key: "shop-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       images_per_bundle: 1,
       max_concurrent_tasks: 3,
@@ -107,14 +107,14 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
     const mockedGenerate = vi.mocked(generateGpti2ImageBytes);
     mockedGenerate.mockResolvedValue({
       bytes: dummyImage,
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
     });
 
     const client = createPortraitImageClient({
       enabled: true,
       provider: "gpti2",
       api_key: "test-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       images_per_bundle: 1,
       max_concurrent_tasks: 3,
@@ -164,7 +164,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
       enabled: true,
       provider: "gpti2",
       api_key: "test-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       images_per_bundle: 1,
       max_concurrent_tasks: 3,
@@ -197,7 +197,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
       enabled: true,
       provider: "gpti2",
       api_key: "test-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       images_per_bundle: 1,
       max_concurrent_tasks: 3,
@@ -216,7 +216,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
       enabled: true,
       provider: "gpti2",
       api_key: "   ",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       images_per_bundle: 1,
       max_concurrent_tasks: 3,
@@ -332,13 +332,13 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
     const mockedGenerate = vi.mocked(generateGpti2ImageBytes);
     mockedGenerate.mockResolvedValueOnce({
       bytes: generatedBytes,
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
     });
 
     const client = createPortraitImageClient({
       provider: "gpti2",
       api_key: "valid-key",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
     });
 
     const result = await client.generate({
@@ -433,7 +433,7 @@ describe("PortraitImageClient & Gpti2PortraitAdapter (Phase 02 / I01-I03, I06, I
         {
           provider: "gpti2",
           api_key: "primary-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
         },
         {
           enabled: true,

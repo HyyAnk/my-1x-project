@@ -10,6 +10,9 @@ import { resolveQuizAssets } from "../src/quiz/assets/resolveQuizAssets.js";
 import type { QuizAssetPlan } from "@studio/shared";
 import {
   IMGSTUDIO_DEFAULT_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID,
   IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
   IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
 } from "@studio/shared";
@@ -124,7 +127,7 @@ describe("image provider fallback engine", () => {
     expect(result.entry.path).toBeDefined();
   });
 
-  it("fails over to ImgStudio Level 2 (Gemini-3.1-Flash-Image) when primary fails and GPTi2 is unconfigured", async () => {
+  it("fails over to ImgStudio Level 1 (Qwen Image 3.0 Pro) when primary fails", async () => {
     let requestedModel = "";
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
       const urlStr = String(url);
@@ -176,12 +179,85 @@ describe("image provider fallback engine", () => {
 
     expect(result).toBeDefined();
     expect(result.entry.source).toBe("fallback");
-    expect(result.entry.fallback_tier).toBe(2);
-    expect(requestedModel).toBe(IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID);
+    expect(result.entry.fallback_tier).toBe(1);
+    expect(requestedModel).toBe(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID);
     expect(result.entry.path).toBeDefined();
   });
 
-  it("fails over to ImgStudio Level 3 (Krea 2 Turbo) when Level 2 (Gemini) fails", async () => {
+  it("fails over to ImgStudio Level 2 (Gemini-3.1-Flash-Image) when Level 1 (Qwen) fails", async () => {
+    const modelsCalled: string[] = [];
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      const urlStr = String(url);
+      const bodyStr = init?.body ? String(init.body) : "";
+
+      if (urlStr.includes("api/v1/images/generate")) {
+        const parsed = JSON.parse(bodyStr) as { provider_id: string };
+        modelsCalled.push(parsed.provider_id);
+
+        if (parsed.provider_id === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID) {
+          return {
+            ok: false,
+            status: 409,
+            text: async () => JSON.stringify({ error: { message: "Qwen failed" } }),
+          } as unknown as Response;
+        }
+
+        if (parsed.provider_id === IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID) {
+          return {
+            ok: true,
+            status: 200,
+            text: async () =>
+              JSON.stringify({
+                object: "image.generation",
+                data: [{ url: "https://imgstudio.site/cdn/gemini-image.png" }],
+                usage: { price_vnd: 120 },
+              }),
+          } as unknown as Response;
+        }
+      }
+      if (urlStr.includes("gemini-image.png")) {
+        return {
+          ok: true,
+          status: 200,
+          headers: { get: () => "image/png" },
+          arrayBuffer: async () => mockImageBytes.buffer,
+        } as unknown as Response;
+      }
+      return { ok: false, status: 404, text: async () => "Not Found" } as unknown as Response;
+    });
+
+    const result = await generateAssetWithProvider({
+      repository,
+      channelId,
+      episodeId,
+      request: dummyRequest,
+      fingerprint: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      compiledPrompt: "A cute space cat on Mars",
+      configuredProvider: "invalid_unconfigured_primary",
+      activeEngine: "codex",
+      logger,
+      imageFallbackConfig: {
+        enabled: true,
+        provider: "imgstudio",
+        api_key: "sk-imgstudio-test-key",
+        resolution: "2K",
+        quality: "standard",
+      },
+    });
+
+    expect(result).toBeDefined();
+    expect(result.entry.source).toBe("fallback");
+    expect(result.entry.fallback_tier).toBe(2);
+    // Level 1 (Qwen) retries once upon 409 idempotency recovery before cascading to Level 2 (Gemini)
+    expect(modelsCalled).toEqual([
+      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+    ]);
+    expect(result.entry.path).toBeDefined();
+  });
+
+  it("fails over to ImgStudio Level 3 (Krea 2 Turbo) when Level 1 (Qwen) and Level 2 (Gemini) fail", async () => {
     const modelsCalled: string[] = [];
     const idempotencyKeys: string[] = [];
 
@@ -194,7 +270,15 @@ describe("image provider fallback engine", () => {
         modelsCalled.push(parsedBody.provider_id);
         idempotencyKeys.push(new Headers(init?.headers).get("Idempotency-Key") || "");
 
-        if (parsedBody.provider_id === IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID) {
+        if (parsedBody.provider_id === IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID) {
+          return {
+            ok: false,
+            status: 409,
+            text: async () => JSON.stringify({ error: { message: "Qwen task failed" } }),
+          } as unknown as Response;
+        }
+
+        if (parsedBody.provider_id === IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID) {
           return {
             ok: false,
             status: 409,
@@ -202,7 +286,7 @@ describe("image provider fallback engine", () => {
           } as unknown as Response;
         }
 
-        if (parsedBody.provider_id === IMGSTUDIO_KREA_2_TURBO_MODEL_ID) {
+        if (parsedBody.provider_id === IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID) {
           return {
             ok: true,
             status: 200,
@@ -251,10 +335,21 @@ describe("image provider fallback engine", () => {
     expect(result).toBeDefined();
     expect(result.entry.source).toBe("fallback");
     expect(result.entry.fallback_tier).toBe(3);
-    expect(modelsCalled).toEqual([IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID, IMGSTUDIO_KREA_2_TURBO_MODEL_ID]);
+    // Level 1 and Level 2 each retry once upon 409 idempotency recovery before cascading to Level 3 (Krea 2 Turbo)
+    expect(modelsCalled).toEqual([
+      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+      IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID,
+    ]);
     expect(idempotencyKeys[0]).toBeTruthy();
     expect(idempotencyKeys[1]).toBeTruthy();
+    expect(idempotencyKeys[2]).toBeTruthy();
+    expect(idempotencyKeys[3]).toBeTruthy();
+    expect(idempotencyKeys[4]).toBeTruthy();
     expect(idempotencyKeys[0]).not.toBe(idempotencyKeys[1]);
+    expect(idempotencyKeys[2]).not.toBe(idempotencyKeys[3]);
     expect(result.entry.path).toBeDefined();
   });
 
@@ -448,9 +543,9 @@ describe("image provider fallback engine", () => {
 
     expect(resolution.assets).toHaveLength(2);
     expect(resolution.assets[0].source).toBe("fallback");
-    expect(resolution.assets[0].fallback_tier).toBe(2);
+    expect(resolution.assets[0].fallback_tier).toBe(1);
     expect(resolution.assets[1].source).toBe("fallback");
-    expect(resolution.assets[1].fallback_tier).toBe(2);
+    expect(resolution.assets[1].fallback_tier).toBe(1);
     expect(issues.filter((i) => i.severity === "blocker")).toHaveLength(0);
   });
 
@@ -559,7 +654,7 @@ describe("image provider fallback engine", () => {
 
     expect(moonAsset?.source).toBe("provider");
     expect(sunAsset?.source).toBe("fallback");
-    expect(sunAsset?.fallback_tier).toBe(2);
+    expect(sunAsset?.fallback_tier).toBe(1);
     expect(issues.filter((i) => i.severity === "blocker")).toHaveLength(0);
   });
 });

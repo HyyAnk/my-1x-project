@@ -92,7 +92,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
       // 4:3 request
       await generateGpti2ImageBytes("Prompt for 4:3 hero", {
         apiKey: "fake-key",
-        model: "gpt-image-2",
+        model: "gpt-image-2.5-flare",
         aspect_ratio: "4:3",
       });
       expect(capturedBody.size).toBe("1024x768");
@@ -100,7 +100,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
       // 16:9 request
       await generateGpti2ImageBytes("Prompt for 16:9 hero", {
         apiKey: "fake-key",
-        model: "gpt-image-2",
+        model: "gpt-image-2.5-flare",
         aspect_ratio: "16:9",
       });
       expect(capturedBody.size).toBe("1280x720");
@@ -166,7 +166,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
       await expect(
         generateGpti2ImageBytes("Prompt", {
           apiKey: "fake-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
           aspect_ratio: "16:9",
           size: "1024x1024", // 1:1 conflict with 16:9!
         }),
@@ -240,7 +240,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
         imageConfig: {
           provider: "gpti2",
           api_key: "fake-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
         },
         maxRounds: 1,
       });
@@ -314,7 +314,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
         imageConfig: {
           provider: "gpti2",
           api_key: "fake-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
         },
         maxRounds: 1,
       });
@@ -376,7 +376,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
         imageConfig: {
           provider: "gpti2",
           api_key: "fake-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
         },
       });
 
@@ -392,7 +392,7 @@ describe("Quiz Image Sizing Provider Contract Suite", () => {
         imageConfig: {
           provider: "gpti2",
           api_key: "fake-key",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
         },
       });
 

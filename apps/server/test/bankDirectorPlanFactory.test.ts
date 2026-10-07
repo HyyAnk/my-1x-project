@@ -28,6 +28,7 @@ describe("bankDirectorPlanFactory portrait retirement", () => {
   });
 
   it.each([
+    ["verdict_yes_no", "verdict_yes_no"],
     ["verdict_true_false", "verdict_true_false"],
     ["versus_faceoff", "split_versus_two"],
     ["visual_spotting", "visual_choices_three_pure"],
@@ -38,9 +39,15 @@ describe("bankDirectorPlanFactory portrait retirement", () => {
     expect(resolveTargetLayoutForTopic(topic(archetype), "16:9")).toBe(layout);
   });
 
+  it("resolves verdict_yes_no from quiz_format yes_no", () => {
+    const yesNoTopic = { ...topic("unspecified"), archetype: undefined, quiz_format: "yes_no" } as TopicCandidate;
+    expect(resolveTargetLayoutForTopic(yesNoTopic, "16:9")).toBe("verdict_yes_no");
+  });
+
   it("keeps director archetype mapping independent of retired layouts", () => {
     expect(mapToDirectorArchetype("mystery_reveal")).toBe("mystery_reveal");
     expect(mapToDirectorArchetype("versus_faceoff")).toBe("visual_multiple_choice");
+    expect(mapToDirectorArchetype("verdict_yes_no")).toBe("yes_no");
     expect(mapToDirectorArchetype("verdict_true_false")).toBe("true_false");
     expect(mapToDirectorArchetype("speed_blitz")).toBe("speed_round");
   });

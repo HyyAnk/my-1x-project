@@ -43,14 +43,17 @@ async function createThumbnailPlan(params: {
   localization: Awaited<ReturnType<typeof loadProductLocalizationArtifact>>;
   targetLanguage?: string;
   options: GenerateEpisodeThumbnailOptions;
+  logger?: StudioLogger;
 }): Promise<QuizThumbnailPlan> {
-  const { episode, channel, questions, mascotProfile, localization, targetLanguage, options } = params;
+  const { episode, channel, questions, mascotProfile, localization, targetLanguage, options, logger } = params;
   const isApplied = localization?.status === "applied";
   const localizedHook = isApplied ? localization.thumbnail_text : undefined;
   const manualHook = options.customHookText?.trim();
   const effectiveCustomHook = manualHook || (isValidShortHookText(localizedHook) ? localizedHook?.trim() : undefined);
 
   return planThumbnailWithAI({
+    editorial: !options.layoutOverride,
+    signal: options.signal,
     topicTitle: episode.topic?.title || "Quiz Episode",
     topicSummary: (isApplied ? localization.video_description : undefined) || episode.topic?.premise || episode.topic?.hook || "",
     questionCount: episode.quiz_config?.question_count || (questions.length > 0 ? questions.length : 10),
@@ -63,7 +66,13 @@ async function createThumbnailPlan(params: {
     customHookText: effectiveCustomHook,
     badgeOverride: options.badgeOverride || "auto",
     mascotProfile,
-    llmClient: options.antigravityClient ?? null,
+    llmClient:
+      options.activeEngine === "antigravity" && options.antigravityClient
+        ? options.antigravityClient
+        : options.codexClient || options.antigravityClient || null,
+    logger,
+    channelId: channel.channel_id,
+    episodeId: episode.episode_id,
   });
 }
 
@@ -132,7 +141,7 @@ async function generateThumbnail(repository: RepositoryService, options: Generat
   const visualAnchor = await loadChannelMascotVisualAnchor(repository, channelId, episodeId, channel.mascot_id, logger);
   const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
   const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
-  const plan = await createThumbnailPlan({ episode, channel, questions, mascotProfile, localization, targetLanguage, options });
+  const plan = await createThumbnailPlan({ episode, channel, questions, mascotProfile, localization, targetLanguage, options, logger });
   options.signal?.throwIfAborted();
 
   const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);

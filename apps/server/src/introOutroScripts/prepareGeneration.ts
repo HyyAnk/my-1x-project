@@ -24,6 +24,7 @@ export async function prepareGenerationClips(
       clipKind: clip.clipKind,
       durationSeconds: clip.durationSeconds,
       logoMode: clip.logoMode,
+      transitionStyle: clip.transitionStyle,
       seedSelection: resolved.selection,
       seeds: resolved.seeds,
     };

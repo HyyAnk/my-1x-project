@@ -79,6 +79,19 @@ describe("useQuestionBankForm hook", () => {
     expect(state.archetypeId).toBe("verdict_true_false");
   });
 
+  it("initializes Yes/No choices for verdict_yes_no archetype when no choices provided", () => {
+    const state = resolveInitialFormState({
+      ...mockInitialQuestion,
+      archetype_id: "verdict_yes_no",
+      choices: [],
+    });
+    expect(state.archetypeId).toBe("verdict_yes_no");
+    expect(state.choices).toEqual([
+      { id: "A", text: "Yes", is_correct: true },
+      { id: "B", text: "No", is_correct: false },
+    ]);
+  });
+
   const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvider>{children}</LanguageProvider>;
 
   it("manages choice mutators: add, update, set correct, remove", () => {

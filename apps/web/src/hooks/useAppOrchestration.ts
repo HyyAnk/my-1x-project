@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { AppConfig, Channel, StorageInfo, Task } from "@studio/shared";
+import { resolveGpti2Model, type AppConfig, type Channel, type StorageInfo, type Task } from "@studio/shared";
 import { api } from "../api";
 import { useChannels } from "./useChannels";
 import { useTasks } from "./useTasks";
@@ -90,7 +90,7 @@ export function useAppOrchestration() {
     await Promise.all([refreshChannels(), refreshTasks()]);
     setAppConfig(configResponse);
     if (configResponse.image_generation?.model) {
-      setCurrentImageModel(configResponse.image_generation.model);
+      setCurrentImageModel(resolveGpti2Model(configResponse.image_generation.model));
     }
     setStorage(storageResponse);
     setLoading(false);

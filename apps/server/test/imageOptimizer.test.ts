@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
@@ -175,5 +175,96 @@ describe("imageOptimizer", () => {
     expect(res3_4.optimized).toBe(true);
     expect(res3_4.targetWidth).toBe(768);
     expect(res3_4.targetHeight).toBe(1024);
+  });
+
+  it("converts high-resolution PNG to WebP and achieves significant file size reduction", async () => {
+    const sourcePath = path.join(tempDir, "high-res-source.png");
+    const targetPath = path.join(tempDir, "optimized-output.webp");
+
+    // Generate a 1600x1200 PNG without aggressive compression to simulate raw high-res assets
+    await sharp({
+      create: {
+        width: 1600,
+        height: 1200,
+        channels: 4,
+        background: { r: 120, g: 180, b: 240, alpha: 1 },
+      },
+    })
+      .png({ compressionLevel: 0 })
+      .toFile(sourcePath);
+
+    const result = await optimizeRenderImage({
+      sourcePath,
+      targetPath,
+      maxWidth: 1080,
+      maxHeight: 810,
+      format: "webp",
+      quality: 85,
+    });
+
+    expect(result.optimized).toBe(true);
+    expect(result.targetWidth).toBe(1080);
+    expect(result.targetHeight).toBe(810);
+
+    const targetBuffer = await readFile(targetPath);
+    const metadata = await sharp(targetBuffer).metadata();
+    expect(metadata.format).toBe("webp");
+    expect(metadata.width).toBe(1080);
+    expect(metadata.height).toBe(810);
+
+    const pngStat = await stat(sourcePath);
+    const webpStat = await stat(targetPath);
+    expect(webpStat.size).toBeLessThan(pngStat.size);
+  });
+
+  it("converts small PNG fitting inside bounds to WebP without raw copy bypass", async () => {
+    const sourcePath = path.join(tempDir, "small-source.png");
+    const targetPath = path.join(tempDir, "small-output.webp");
+
+    await sharp({
+      create: { width: 400, height: 300, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
+    })
+      .png()
+      .toFile(sourcePath);
+
+    const result = await optimizeRenderImage({
+      sourcePath,
+      targetPath,
+      maxWidth: 800,
+      maxHeight: 600,
+      format: "webp",
+      quality: 85,
+    });
+
+    expect(result.optimized).toBe(true);
+    expect(result.targetWidth).toBe(400);
+    expect(result.targetHeight).toBe(300);
+
+    const targetBuffer = await readFile(targetPath);
+    const metadata = await sharp(targetBuffer).metadata();
+    expect(metadata.format).toBe("webp");
+  });
+
+  it("automatically infers WebP format when targetPath ends with .webp without explicit format option", async () => {
+    const sourcePath = path.join(tempDir, "inferred-source.png");
+    const targetPath = path.join(tempDir, "inferred-output.webp");
+
+    await sharp({
+      create: { width: 1000, height: 800, channels: 4, background: { r: 80, g: 180, b: 80, alpha: 1 } },
+    })
+      .png()
+      .toFile(sourcePath);
+
+    const result = await optimizeRenderImage({
+      sourcePath,
+      targetPath,
+      maxWidth: 800,
+      maxHeight: 640,
+    });
+
+    expect(result.optimized).toBe(true);
+    const targetBuffer = await readFile(targetPath);
+    const metadata = await sharp(targetBuffer).metadata();
+    expect(metadata.format).toBe("webp");
   });
 });

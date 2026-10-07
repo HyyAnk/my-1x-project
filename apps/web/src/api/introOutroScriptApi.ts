@@ -8,6 +8,7 @@ import type {
   IntroOutroScriptJob,
   IntroOutroScriptProject,
   IntroOutroScriptRevision,
+  IntroOutroTransitionStyle,
   IntroOutroValidationIssue,
   MascotStyleIdentityProfile,
 } from "@studio/shared";
@@ -24,6 +25,7 @@ export type GenerateScriptClipInput = {
   selected_seed_ids?: string[];
   locked_dimensions?: CreativeSeed["dimension"][];
   logo_mode?: "post_overlay" | "supplied_reference" | "none";
+  transition_style?: IntroOutroTransitionStyle;
 };
 
 export const introOutroScriptApi = {

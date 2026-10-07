@@ -1,4 +1,4 @@
-import type { AppConfig, Channel, StorageInfo, Task, UsageLedger } from "@studio/shared";
+import { DEFAULT_GPTI2_MODEL, type AppConfig, type Channel, type StorageInfo, type Task, type UsageLedger } from "@studio/shared";
 import type { GitInfo, Page } from "../types";
 import { useTranslation } from "../../i18n";
 import { Metric } from "./Metric";
@@ -37,7 +37,7 @@ export function DashboardView({
   appConfig: _appConfig,
   activeEngine: _activeEngine = "codex",
   currentModel: _currentModel = "",
-  currentImageModel: _currentImageModel = "gpt-image-2",
+  currentImageModel: _currentImageModel = DEFAULT_GPTI2_MODEL,
   imageBalance = null,
   voiceMetrics = null,
   usageLedger = null,

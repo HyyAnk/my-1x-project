@@ -7,6 +7,7 @@ export const frLocale: ThumbnailLocalization = {
     mystery_silhouette: "QUI EST-CE ?",
     odd_one_out: "TROUVE L'INTRUS !",
     difficulty_tier: "RÉUSSIRAS-TU LE NIVEAU 4 ?",
+    yes_no: "OUI OU NON ?",
     true_false: "VRAI OU FAUX ?",
   },
   badgeTemplate: {
@@ -15,6 +16,7 @@ export const frLocale: ThumbnailLocalization = {
     mystery_silhouette: () => "SEULEMENT 1% SAIT ! 🔥",
     odd_one_out: () => "10 SECONDES ! ⏱️",
     difficulty_tier: () => "SEULEMENT IQ 140+ 🔥",
+    yes_no: () => "OUI OU NON ? ⚡",
     true_false: () => "VRAI OU FAUX ? ⚡",
   },
 };

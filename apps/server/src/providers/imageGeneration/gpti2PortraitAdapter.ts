@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { generateGpti2ImageBytes } from "../gpti2Image.js";
+import { DEFAULT_MODEL } from "../gpti2Dimensions.js";
 import { GenerationError } from "../../shortReel/generationErrors.js";
 import type { GeneratedImageBytes, PortraitImageClient, PortraitImageRequest } from "./imageGeneration.types.js";
 
@@ -28,7 +29,7 @@ export class Gpti2PortraitAdapter implements PortraitImageClient {
       );
     }
 
-    const model = (this.options.model || "gpt-image-2").trim();
+    const model = (this.options.model || DEFAULT_MODEL).trim();
     const promptHash = createHash("sha256").update(request.prompt).digest("hex").slice(0, 16);
     const refHash = createHash("sha256").update(request.reference.bytes).digest("hex").slice(0, 16);
     const seed = `${request.operationId}:${request.dependencyFingerprint}:${model}:${request.aspectRatio}:${refHash}:${promptHash}`;

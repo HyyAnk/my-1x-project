@@ -10,6 +10,7 @@ export const QuizTimelineEventTypeSchema = z.enum([
   "background.motion",
   "bridge.topic.enter",
   "bridge.cta.enter",
+  "pre_outro.enter",
   "question.enter",
   "choices.enter",
   "countdown.start",

@@ -25,4 +25,6 @@ export interface IEpisodeRepository {
   confirmTopic(channelId: string, topicId: string, questionCount?: number, visualStyle?: QuizImageStyle | "mixed"): Promise<Episode>;
   updateEpisodeSettings(channelId: string, episodeId: string, settings: EpisodeSettingsInput, wordsPerSecond: number): Promise<Episode>;
   markTopicSelected(channelId: string, topicId: string, questionCount: number): Promise<void>;
+  deleteTopicCandidate(channelId: string, topicId: string): Promise<boolean>;
+  clearTopicHistory(channelId: string, options?: { unselectedOnly?: boolean }): Promise<{ deleted_count: number }>;
 }

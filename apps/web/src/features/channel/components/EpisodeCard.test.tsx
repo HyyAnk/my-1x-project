@@ -32,12 +32,33 @@ describe("EpisodeCard", () => {
 
     expect(screen.getByRole("img", { name: "Thumbnail for Ocean Giants" }).getAttribute("src")).toContain("/thumbnail/file/16_9");
     expect(screen.getByText("Ocean Giants")).toBeTruthy();
+    expect(screen.getByText("🏛️ Nature & Animals")).toBeTruthy();
     expect(screen.getByText("Visual choices")).toBeTruthy();
     expect(screen.getByText("Video ready")).toBeTruthy();
     expect(screen.getByText("8 Q · 03:42")).toBeTruthy();
     expect(screen.getByText("Sep 3")).toBeTruthy();
     expect(screen.queryByText("Premise that should stay hidden")).toBeNull();
     expect(screen.queryByText("Open Studio")).toBeNull();
+  });
+
+  it("renders explicit domain badge when episode topic has domain_id", () => {
+    render(
+      <EpisodeCard
+        episode={createEpisode({
+          topic: {
+            title: "Anime Legends",
+            premise: "Premise",
+            hook: "Hook",
+            domain_id: "anime_manga",
+          },
+        })}
+        tasks={[]}
+        onOpen={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("🏛️ Anime & Manga Universe")).toBeTruthy();
   });
 
   it("uses a black thumbnail placeholder before the video is ready", () => {

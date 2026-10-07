@@ -14,7 +14,7 @@ describe("Stage 8: Channel Configuration & Dynamic Customization Layer", () => {
       expect(config.enableTopicScene).toBe(true);
       expect(config.enableCtaScene).toBe(true);
       expect(config.timing.topicPauseSeconds).toBe(0.5);
-      expect(config.timing.ctaPauseSeconds).toBe(2.0);
+      expect(config.timing.ctaPauseSeconds).toBe(0.5);
       expect(config.timing.transitionType).toBe("brand_logo_stinger");
     });
 
@@ -66,6 +66,16 @@ describe("Stage 8: Channel Configuration & Dynamic Customization Layer", () => {
   });
 
   describe("resolveBridgeChannelDisplayName", () => {
+    it("prioritizes episode-level brand override when explicitly provided", () => {
+      const name = resolveBridgeChannelDisplayName(
+        { slug: "feli", display_name: "Felix" } as Channel,
+        { enabled: true, enableTopicScene: true, enableCtaScene: true, timing: { topicPauseSeconds: 2, ctaPauseSeconds: 2, transitionType: "cut" }, channelDisplayName: "Felix The Cat" },
+        "Feli Custom Override",
+      );
+
+      expect(name).toBe("Feli Custom Override");
+    });
+
     it("prioritizes bridgeConfig.channelDisplayName when explicitly set", () => {
       const name = resolveBridgeChannelDisplayName(
         { slug: "feli", display_name: "Feli" } as Channel,
@@ -75,9 +85,10 @@ describe("Stage 8: Channel Configuration & Dynamic Customization Layer", () => {
       expect(name).toBe("Felix The Cat");
     });
 
-    it("maps feli slug or Feli display_name to Felix", () => {
-      expect(resolveBridgeChannelDisplayName({ slug: "feli", display_name: "Feli" } as Channel)).toBe("Felix");
-      expect(resolveBridgeChannelDisplayName({ slug: "feli" } as Channel)).toBe("Felix");
+    it("respects channel display_name accurately including Feli and Felix", () => {
+      expect(resolveBridgeChannelDisplayName({ slug: "feli", display_name: "Feli" } as Channel)).toBe("Feli");
+      expect(resolveBridgeChannelDisplayName({ slug: "feli", display_name: "Felix" } as Channel)).toBe("Felix");
+      expect(resolveBridgeChannelDisplayName({ slug: "feli" } as Channel)).toBe("Feli");
     });
 
     it("preserves standard display names for other channels", () => {

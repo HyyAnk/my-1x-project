@@ -412,16 +412,52 @@
   line-height: 1;
 }
 
-.style-option-label {
+.style-option-text {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.style-option-label {
   font-size: 12.5px;
   font-weight: 500;
   color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .style-option-row.is-checked .style-option-label {
   font-weight: 700;
   color: var(--accent);
+}
+
+.style-option-subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.style-option-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.style-option-row.is-checked .style-option-badge {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--soft-accent);
 }
 
 .style-option-message {
@@ -695,3 +731,54 @@ button.episode-style-preview-status.is-error {
   gap: 10px;
   flex-wrap: wrap;
 }
+
+/* ==========================================================================
+   Fast Render Mode Toggle Button
+   ========================================================================== */
+.fast-render-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 12px;
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.fast-render-toggle-btn:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.fast-render-toggle-btn.is-active {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+
+.fast-render-toggle-btn.is-active:hover:not(:disabled) {
+  border-color: rgba(245, 158, 11, 0.7);
+  background: rgba(245, 158, 11, 0.18);
+  color: #b45309;
+}
+
+.fast-render-toggle-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.fast-render-toggle-btn.compact {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+

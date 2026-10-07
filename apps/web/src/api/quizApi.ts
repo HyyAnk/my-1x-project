@@ -7,6 +7,10 @@ import type {
   QuizV2,
   SandboxPreviewRequest,
   SandboxPreviewResponse,
+  QuestionImagesOverviewResponse,
+  ResetQuestionImageResponse,
+  Task,
+  UploadQuestionImageResponse,
   VideoDescription,
   VideoDescriptionInput,
   VoicePlan,
@@ -89,4 +93,35 @@ export const quizApi = {
       `/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/description`,
       { method: "PUT", body: JSON.stringify(input) },
     ),
+  getQuestionImages: (channelId: string, episodeId: string) =>
+    request<QuestionImagesOverviewResponse>(
+      `/api/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}/question-images`,
+    ),
+  uploadQuestionImage: (channelId: string, episodeId: string, questionNumber: number, data: string, filename?: string, slotId?: string) => {
+    const query = slotId ? `?slotId=${encodeURIComponent(slotId)}` : "";
+    return request<UploadQuestionImageResponse>(
+      `/api/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}/questions/${questionNumber}/image/upload${query}`,
+      { method: "POST", body: JSON.stringify({ data, filename, slot_id: slotId }) },
+    );
+  },
+  deleteCustomQuestionImage: (channelId: string, episodeId: string, questionNumber: number, slotId?: string) => {
+    const query = slotId ? `?slotId=${encodeURIComponent(slotId)}` : "";
+    return request<ResetQuestionImageResponse>(
+      `/api/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}/questions/${questionNumber}/image/custom${query}`,
+      { method: "DELETE" },
+    );
+  },
+  generateQuestionImage: (channelId: string, episodeId: string, questionNumber: number, promptOverride?: string) =>
+    request<{ task: Task }>(
+      `/api/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}/questions/${questionNumber}/image/generate`,
+      { method: "POST", body: JSON.stringify({ prompt_override: promptOverride }) },
+    ),
+  getQuestionImageUrl: (channelId: string, episodeId: string, questionNumber: number, version?: string | number, slotId?: string) => {
+    const base = `/api/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}/questions/${questionNumber}/image`;
+    const params = new URLSearchParams();
+    if (version !== undefined) params.set("v", String(version));
+    if (slotId) params.set("slotId", slotId);
+    const query = params.toString();
+    return query ? `${base}?${query}` : base;
+  },
 };

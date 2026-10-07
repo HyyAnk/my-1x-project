@@ -144,7 +144,7 @@ describe("settings routes integration", () => {
       const imagePostRes = await app.server.inject({
         method: "POST",
         url: "/api/image/settings",
-        payload: { provider: "gpti2", model: "gpt-image-2" },
+        payload: { provider: "gpti2", model: "gpt-image-2.5-flare" },
       });
       expect(imagePostRes.statusCode).toBe(200);
 

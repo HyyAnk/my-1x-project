@@ -12,16 +12,19 @@ import {
 } from "../src/index.js";
 
 describe("Bridge Scenes & Pacing Schemas (Stage 1)", () => {
-  it("validates VoiceSegmentRoleSchema contains intro_topic and intro_cta", () => {
+  it("validates VoiceSegmentRoleSchema contains intro_topic, intro_cta, and pre_outro", () => {
     assert.equal(VoiceSegmentRoleSchema.parse("intro_topic"), "intro_topic");
     assert.equal(VoiceSegmentRoleSchema.parse("intro_cta"), "intro_cta");
+    assert.equal(VoiceSegmentRoleSchema.parse("pre_outro"), "pre_outro");
     assert.equal(DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE.intro_topic, 1.12);
     assert.equal(DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE.intro_cta, 1.12);
+    assert.equal(DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE.pre_outro, 1.12);
   });
 
-  it("validates QuizTimelineEventTypeSchema contains bridge event types", () => {
+  it("validates QuizTimelineEventTypeSchema contains bridge and pre_outro event types", () => {
     assert.equal(QuizTimelineEventTypeSchema.parse("bridge.topic.enter"), "bridge.topic.enter");
     assert.equal(QuizTimelineEventTypeSchema.parse("bridge.cta.enter"), "bridge.cta.enter");
+    assert.equal(QuizTimelineEventTypeSchema.parse("pre_outro.enter"), "pre_outro.enter");
   });
 
   it("validates BridgeSceneTimingConfigSchema default values", () => {

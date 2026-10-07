@@ -80,6 +80,7 @@ export function registerWorkflowRoutes(server: FastifyInstance, deps: IntroOutro
       selectedSeedIds: clip.selected_seed_ids,
       lockedDimensions: clip.locked_dimensions,
       logoMode: clip.logo_mode,
+      transitionStyle: clip.transition_style,
     }));
     const job = await deps.jobs.startScriptGeneration({
       channelId,

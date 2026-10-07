@@ -60,6 +60,7 @@ export interface BatchGenerationResult {
   savedQuestions: BankQuestion[];
   rejectedQuestions: BatchAutoQaReport["rejectedQuestions"];
   matrixCoverage?: MatrixCoverageStats;
+  remediatedLeakCount?: number;
   failedChunks?: FailedBatchChunk[];
   failedChunksCount?: number;
   errorSummary?: string;
@@ -81,6 +82,7 @@ export interface ScheduledBatchExecutionOutput {
   allRejected: BatchAutoQaReport["rejectedQuestions"];
   totalApproved: number;
   totalRejected: number;
+  remediatedLeakCount?: number;
   combinedSummary: BatchAutoQaReport["summary"];
   failedChunks: FailedBatchChunk[];
 }

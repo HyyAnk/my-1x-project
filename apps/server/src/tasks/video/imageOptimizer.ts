@@ -24,6 +24,7 @@ export interface OptimizeRenderImageOptions {
   maxWidth?: number;
   maxHeight?: number;
   quality?: number;
+  format?: "webp" | "jpeg" | "png" | "avif" | "original";
   purpose?: QuizAssetPurpose | "choice_thumbnail" | "hero";
   layout?: QuizPreviewLayoutId;
   sourceFingerprint?: string;
@@ -48,6 +49,10 @@ export function getOptimalAssetDimensions(
   purpose?: OptimizeRenderImageOptions["purpose"],
   layout?: QuizPreviewLayoutId,
 ): QuizLayoutAssetMetrics {
+  if (purpose === "bridge_topic_item") {
+    return { maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" };
+  }
+
   const isChoice = purpose === "choice_thumbnail" || purpose === "answer_option";
 
   if (layout && layout !== "baseline" && isResolvedQuizLayoutId(layout)) {
@@ -107,12 +112,42 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
     }
   }
 
+  const sourceExt = path.extname(sourcePath).toLowerCase();
+  const targetExt = path.extname(targetPath).toLowerCase();
+  const isRasterImage = [".png", ".jpg", ".jpeg", ".webp", ".avif", ".tiff"].includes(sourceExt);
+
+  const resolvedFormat: "webp" | "jpeg" | "png" | "avif" | "original" =
+    options.format ??
+    (targetExt === ".webp"
+      ? "webp"
+      : targetExt === ".jpg" || targetExt === ".jpeg"
+        ? "jpeg"
+        : targetExt === ".avif"
+          ? "avif"
+          : targetExt === ".png"
+            ? "png"
+            : "original");
+
+  const effectiveTargetFormat =
+    resolvedFormat === "original"
+      ? (sourceExt === ".png" ? "png" : sourceExt === ".webp" ? "webp" : sourceExt === ".avif" ? "avif" : "jpeg")
+      : resolvedFormat;
+
+  const isFormatConversion =
+    isRasterImage &&
+    ((effectiveTargetFormat === "webp" && sourceExt !== ".webp") ||
+      (effectiveTargetFormat === "jpeg" && sourceExt !== ".jpg" && sourceExt !== ".jpeg") ||
+      (effectiveTargetFormat === "png" && sourceExt !== ".png") ||
+      (effectiveTargetFormat === "avif" && sourceExt !== ".avif") ||
+      (targetExt !== "" && targetExt !== sourceExt));
+
   const identity = createRenderImageIdentity({
     sourceFingerprint,
     targetBounds: { width: maxWidth, height: maxHeight },
     fit,
     quality,
-    optimizerVersion: 1,
+    format: effectiveTargetFormat,
+    optimizerVersion: 2,
   });
 
   const sidecarPath = `${targetPath}.identity.json`;
@@ -140,9 +175,6 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
     // Target or sidecar doesn't exist yet, proceed with optimization
   }
 
-  const ext = path.extname(sourcePath).toLowerCase();
-  const isRasterImage = [".png", ".jpg", ".jpeg", ".webp", ".avif", ".tiff"].includes(ext);
-
   const writeSidecar = async (targetWidth?: number, targetHeight?: number) => {
     try {
       await writeFile(
@@ -156,6 +188,7 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
           maxHeight,
           fit,
           quality,
+          format: effectiveTargetFormat,
           optimizedAt: new Date().toISOString(),
         }),
         "utf-8",
@@ -177,8 +210,10 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
     const width = metadata.width ?? 0;
     const height = metadata.height ?? 0;
 
-    // If the image is already smaller than or equal to max bounds, copy directly
-    if (width > 0 && height > 0 && width <= maxWidth && height <= maxHeight) {
+    const needsResize = width > maxWidth || height > maxHeight;
+
+    // If the image is already smaller than or equal to max bounds and no format conversion is requested, copy directly
+    if (width > 0 && height > 0 && !needsResize && !isFormatConversion) {
       await copyFile(sourcePath, targetPath);
       await writeSidecar(width, height);
       return {
@@ -192,18 +227,21 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
       };
     }
 
-    let pipeline = instance.resize({
-      width: maxWidth,
-      height: maxHeight,
-      fit: "inside",
-      withoutEnlargement: true,
-    });
+    let pipeline = instance;
+    if (needsResize) {
+      pipeline = pipeline.resize({
+        width: maxWidth,
+        height: maxHeight,
+        fit,
+        withoutEnlargement: true,
+      });
+    }
 
-    if (ext === ".png") {
-      pipeline = pipeline.png({ compressionLevel: 7, adaptiveFiltering: true });
-    } else if (ext === ".webp") {
+    if (effectiveTargetFormat === "webp") {
       pipeline = pipeline.webp({ quality, effort: 4 });
-    } else if (ext === ".avif") {
+    } else if (effectiveTargetFormat === "png") {
+      pipeline = pipeline.png({ compressionLevel: 7, adaptiveFiltering: true });
+    } else if (effectiveTargetFormat === "avif") {
       pipeline = pipeline.avif({ quality, effort: 3 });
     } else {
       pipeline = pipeline.jpeg({ quality, mozjpeg: true });

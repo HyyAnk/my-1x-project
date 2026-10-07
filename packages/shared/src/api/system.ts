@@ -39,6 +39,7 @@ export const ImageFallbackSettingsInputSchema = z.object({
   provider: z.literal("imgstudio").optional(),
   base_url: z.string().trim().max(2000).optional(),
   model: z.string().trim().max(160).transform(resolveImgStudioFallbackLevel2Model).optional(),
+  level1_model: z.string().trim().max(160).optional(),
   level2_model: z.string().trim().max(160).optional(),
   level3_model: z.string().trim().max(160).optional(),
   gpti2_api_key: z.string().max(4000).optional(),

@@ -268,7 +268,7 @@ describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
     it("defines soft rounded puffy pill card with candy pastel inner glow", () => {
       expect(css).toContain(".ac-pastel-marshmallow");
       expect(css).toContain(".marshmallow-inner-glow");
-      expect(css).toContain(".marshmallow-sprinkle");
+      expect(css).not.toContain(".marshmallow-sprinkle");
       expect(css).toContain("border-radius: 9999px");
       expect(css).toContain("var(--bg-primary");
       expect(css).toContain("var(--bg-secondary");
@@ -307,14 +307,14 @@ describe("Answer Card Skin Enhancements & Celebration Glow (Phase 2)", () => {
       expect(css).toContain(".visual-answer-card.answer-correct .ac-pastel-marshmallow");
     });
 
-    it("renders markup decorations including inner glow, sprinkles and badge swirl", () => {
+    it("renders markup decorations including inner glow and badge swirl without sprinkles", () => {
       const decorations = pastelMarshmallowVariant.renderDecorations?.({
         order: 0,
         presentation: "text",
         state: "pending",
       });
       expect(decorations?.beforeLabelHtml).toContain("marshmallow-inner-glow");
-      expect(decorations?.beforeLabelHtml).toContain("marshmallow-sprinkle");
+      expect(decorations?.beforeLabelHtml).not.toContain("marshmallow-sprinkle");
       expect(decorations?.labelSuffixHtml).toContain("marshmallow-badge-swirl");
     });
 

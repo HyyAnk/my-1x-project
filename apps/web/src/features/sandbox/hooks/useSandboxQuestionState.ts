@@ -26,6 +26,14 @@ const SAMPLE_QUESTIONS_EN = [
     fact_text: "The Great Pyramid of Giza was the tallest man-made structure for more than 3,800 years!",
   },
   {
+    type: "yes_no" as const,
+    text: "Can emperor penguins survive in temperatures below -40°C?",
+    choices: ["Yes", "No"],
+    correct: 0,
+    fact_title: "DID YOU KNOW?",
+    fact_text: "Emperor penguins have high-density feathers and huddle together to survive harsh Antarctic winters!",
+  },
+  {
     type: "true_false" as const,
     text: "Is the Great Wall of China visible from the Moon with the naked eye?",
     choices: ["True", "False"],

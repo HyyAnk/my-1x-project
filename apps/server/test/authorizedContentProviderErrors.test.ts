@@ -263,7 +263,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
           configuredProvider: "gpti2",
           activeEngine: "antigravity",
           antigravityClient: fakeAntigravity as never,
-          imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+          imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
           logger,
         });
 
@@ -285,7 +285,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
 
       const generate = vi.spyOn(Gpti2QuizImageProvider.prototype, "generateAsset").mockResolvedValue({
         path: "generated/simba.png",
-        model: "gpt-image-2",
+        model: "gpt-image-2.5-flare",
         price_vnd: 50,
       });
       const recordImageUsage = vi.spyOn(repository, "recordImageUsage");
@@ -306,7 +306,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
         compiledPrompt: originalPrompt,
         configuredProvider: "gpti2",
         activeEngine: "codex",
-        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
         logger,
       });
 
@@ -351,7 +351,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
           compiledPrompt: originalPrompt,
           configuredProvider: "gpti2",
           activeEngine: "codex",
-          imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+          imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
           logger,
         }),
       ).rejects.toBe(rejection);
@@ -365,7 +365,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
       const originalPrompt = "Simba standing on a bright rock";
 
       const transientError = new Error("Connection timeout");
-      const successResult = { path: "generated/simba_retry.png", model: "gpt-image-2", price_vnd: 50 };
+      const successResult = { path: "generated/simba_retry.png", model: "gpt-image-2.5-flare", price_vnd: 50 };
 
       const generate = vi
         .spyOn(Gpti2QuizImageProvider.prototype, "generateAsset")
@@ -390,7 +390,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
         compiledPrompt: originalPrompt,
         configuredProvider: "gpti2",
         activeEngine: "codex",
-        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
         logger,
       });
 
@@ -528,7 +528,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
 
       vi.spyOn(Gpti2QuizImageProvider.prototype, "generateAsset").mockImplementation(async (opts) => {
         if (opts.assetId === "hero_q1") {
-          return { path: "/assets/hero_q1.png", model: "gpt-image-2", price_vnd: 50 };
+          return { path: "/assets/hero_q1.png", model: "gpt-image-2.5-flare", price_vnd: 50 };
         }
         throw new RepositoryError("Prompt rejected by content filter", "IMAGE_CONTENT_FILTER_REJECTED");
       });
@@ -538,7 +538,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
         channelId: channel.channel_id,
         episodeId: episode.episode_id,
         plan,
-        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+        imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
         logger,
       });
 
@@ -578,7 +578,7 @@ describe("P3: Provider Errors Without Identity Rewrite", () => {
           compiledPrompt: originalPrompt,
           configuredProvider: "gpti2",
           activeEngine: "codex",
-          imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2" },
+          imageConfig: { provider: "gpti2", api_key: "sk-test", model: "gpt-image-2.5-flare" },
           logger,
         }),
       ).rejects.toThrow("500 Internal Server Error: Database cluster unresponsive");

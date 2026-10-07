@@ -80,6 +80,22 @@ export function productionMascotCss(): string {
 .candy-mascot-container.mascot-v2-container .mascot-v2-enter.enter-none {
   animation: none;
 }
+.candy-mascot-container.mascot-v2-container.mascot-stage .mascot-v2-state[data-mascot-media-mode="static"] .mascot-v2-enter,
+.candy-mascot-container.mascot-v2-container:not(.mascot-intro):not(.mascot-outro) .mascot-v2-state[data-mascot-media-mode="static"] .mascot-v2-enter {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+.candy-mascot-container.mascot-v2-container .mascot-v2-state[data-mascot-media-mode="static"] .mascot-v2-motion {
+  animation: none !important;
+  transform: none !important;
+}
+.candy-mascot-container.mascot-v2-container .mascot-v2-state[data-mascot-media-mode="static"] .mascot-fx-bloom {
+  display: none !important;
+}
+.candy-mascot-container.mascot-v2-container .mascot-v2-state[data-mascot-media-mode="static"] {
+  animation: mascot-v2-static-state-window var(--mascot-state-span, .04s) step-end var(--mascot-state-delay, 0s) 1 forwards;
+}
 .candy-mascot-container.mascot-v2-container .mascot-reveal-fx {
   position: absolute;
   inset: 0;
@@ -322,6 +338,10 @@ export function productionMascotCss(): string {
 }
 @keyframes mascot-v2-state-window {
   0%, 99.9% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes mascot-v2-static-state-window {
+  0% { opacity: 1; }
   100% { opacity: 0; }
 }
 @keyframes mascot-v2-motion {

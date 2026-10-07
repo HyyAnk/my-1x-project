@@ -62,6 +62,7 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         provider: runtime.imageConfig.provider,
         base_url: runtime.imageConfig.base_url,
         quality: runtime.imageConfig.quality,
+        max_concurrent_tasks: runtime.imageConfig.max_concurrent_tasks,
       },
       imageFallbackConfig: runtime.imageFallbackConfig,
       cancellationSignal: signal,
@@ -82,13 +83,16 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
       const requirement = assetPlan.assets.find((r) => r.asset_id === asset.asset_id);
       try {
         const sourcePath = await runtime.repository.resolveQuizAssetPath(channelId, episodeId, asset.path);
-        const extension = path.extname(sourcePath) || ".png";
-        const renderFilename = `${asset.asset_id}${extension}`;
+        const sourceExtension = path.extname(sourcePath).toLowerCase() || ".png";
+        const isRaster = [".png", ".jpg", ".jpeg", ".webp", ".avif", ".tiff"].includes(sourceExtension);
+        const renderFilename = isRaster ? `${asset.asset_id}.webp` : `${asset.asset_id}${sourceExtension}`;
         const targetPath = path.join(renderAssetDirectory, renderFilename);
         const layout = resolveAssetLayout(options.quiz, options.director, requirement?.question_id, options.aspectRatio);
         const optResult = await optimizeRenderImage({
           sourcePath,
           targetPath,
+          format: isRaster ? "webp" : "original",
+          quality: 85,
           purpose: requirement?.purpose,
           layout,
           maxWidth: requirement?.sizing?.recommended_width,

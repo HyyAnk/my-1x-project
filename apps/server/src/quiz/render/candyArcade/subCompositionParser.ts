@@ -25,6 +25,21 @@ export function rootRelativeSubCompositionAssets(html: string): string {
     .replace(/url\((['"]?)\/(mascot-assets\/)/g, "url($1$2");
 }
 
+export function sanitizeSubCompositionRootStyle(openingTag: string): string {
+  if (/\sstyle="([^"]*)"/.test(openingTag)) {
+    return openingTag.replace(/\sstyle="([^"]*)"/, (_, styleContent: string) => {
+      if (/--clip-start:\s*[^;]+;?/.test(styleContent)) {
+        const sanitized = styleContent.replace(/--clip-start:\s*[^;]+;?/, "--clip-start: 0s;");
+        return ` style="${sanitized}"`;
+      }
+      const trimmed = styleContent.trim();
+      const separator = trimmed.length > 0 && !trimmed.endsWith(";") ? ";" : "";
+      return ` style="--clip-start: 0s; ${trimmed}${separator}"`;
+    });
+  }
+  return openingTag.replace(/>$/, ' style="--clip-start: 0s;">');
+}
+
 export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRatio = "16:9"): SubComposition {
   const openingTag = clip.match(/^<section\b[^>]*>/)?.[0];
   if (!openingTag) throw new Error("Candy Arcade clip must start with a section element");
@@ -35,7 +50,8 @@ export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRa
   const revealAt = openingTag.match(/\sdata-reveal-at="([^"]+)"/)?.[1];
   const transitionInstance = openingTag.match(/\sdata-transition-instance="([^"]+)"/)?.[1];
   const className = openingTag.match(/\sclass="([^"]+)"/)?.[1];
-  const sceneRoot = openingTag
+  const sanitizedTag = sanitizeSubCompositionRootStyle(openingTag);
+  const sceneRoot = sanitizedTag
     .replace(/\sdata-start="[^"]*"/g, "")
     .replace(/\sdata-duration="[^"]*"/g, "")
     .replace(/\sdata-track-index="[^"]*"/g, "")

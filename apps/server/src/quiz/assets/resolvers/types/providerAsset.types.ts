@@ -24,6 +24,7 @@ export interface ProviderAssetImageFallbackConfig {
   quality?: "standard" | "high";
   gpti2_api_key?: string;
   gpti2_model?: string;
+  level1_model?: string;
   level2_model?: string;
   level3_model?: string;
 }

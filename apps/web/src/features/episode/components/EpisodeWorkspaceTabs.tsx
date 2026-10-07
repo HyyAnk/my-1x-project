@@ -5,8 +5,10 @@ import { parseContinuityBundles } from "../../../lib/continuity";
 import { artifactConfig } from "../types";
 import type { useEpisodePipeline } from "../hooks/useEpisodePipeline";
 import { QuestionRemixPanel } from "../../../components/QuestionRemixPanel";
+import type { Notice } from "../../../components/types";
 import { ArtifactPanel } from "./ArtifactPanel";
 import { BundleImagesPanel } from "./BundleImagesPanel";
+import { QuestionImagesPanel } from "./questionImages";
 import { ShotPlanSection } from "../ShotPlanSection";
 import { EpisodeWorkspaceTabBar } from "./EpisodeWorkspaceTabBar";
 
@@ -25,6 +27,7 @@ export type EpisodeWorkspaceTabsProps = {
   imageGenerationEnabled: boolean;
   imagesPerBundle: number;
   stage3Footer?: React.ReactNode;
+  onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
 export function EpisodeWorkspaceTabs({
@@ -42,6 +45,7 @@ export function EpisodeWorkspaceTabs({
   imageGenerationEnabled,
   imagesPerBundle,
   stage3Footer,
+  onNotice,
 }: EpisodeWorkspaceTabsProps) {
   return (
     <>
@@ -53,6 +57,17 @@ export function EpisodeWorkspaceTabs({
         bundleImages={bundleImages}
         sceneCount={scenes.length}
       />
+
+      {/* Stage: Question Images */}
+      {pipeline.workflowTab === "question_images" ? (
+        <QuestionImagesPanel
+          channelId={channel.channel_id}
+          episodeId={episodeId}
+          hasQuiz={Boolean(episode.quiz_config?.question_count ?? (pipeline.historyCheck ? true : false))}
+          onNotice={onNotice}
+          onUpdated={pipeline.load}
+        />
+      ) : null}
 
       {/* Stage 1: Script */}
       {pipeline.workflowTab === "script" && !simplifyMode ? (

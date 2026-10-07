@@ -40,7 +40,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
       enabled: false,
       provider: "gpti2",
       api_key: "",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       quality: "low",
       max_concurrent_tasks: 1,
       images_per_bundle: 1,
@@ -118,7 +118,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
     const primaryConfig: AppConfig["image_generation"] = {
       enabled: true,
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       api_key: "sk-fake-primary-key",
       quality: "low",
       max_concurrent_tasks: 3,
@@ -198,7 +198,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
       {
         enabled: true,
         provider: "gpti2",
-        model: "gpt-image-2",
+        model: "gpt-image-2.5-flare",
         api_key: "sk-fake",
         quality: "low",
         max_concurrent_tasks: 1,
@@ -235,7 +235,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
         image_generation: {
           enabled: true,
           provider: "gpti2",
-          model: "gpt-image-2",
+          model: "gpt-image-2.5-flare",
           api_key: "sk-primary",
         },
         image_fallback: {
@@ -343,7 +343,7 @@ describe("Mascot Fallback Generation Pipeline", () => {
     const primaryConfig: AppConfig["image_generation"] = {
       enabled: true,
       provider: "gpti2",
-      model: "gpt-image-2",
+      model: "gpt-image-2.5-flare",
       api_key: "sk-fake-primary-key",
       quality: "low",
       max_concurrent_tasks: 3,

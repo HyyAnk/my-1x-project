@@ -30,6 +30,16 @@ describe("Durable uploaded pair selection", () => {
     expect(await pinIntroOutroSelection(repository, channel, episode("empty"))).toEqual(first);
   });
 
+  it("falls back to uncategorized channel default pair when category has no matching candidates", async () => {
+    const { repository, channel, episode, addPair } = fixture;
+    await addPair("legacy-uncategorized", null);
+    channel.default_intro_outro_style_id = "legacy-uncategorized";
+    const value = episode("empty-with-legacy-default");
+    value.quiz_config.style_preset_id = "preset_treasure_quest";
+    const snapshot = await pinIntroOutroSelection(repository, channel, value);
+    expect(snapshot.pair_id).toBe("legacy-uncategorized");
+  });
+
   it("draws independently, allows repeats, and uses measured media duration", async () => {
     const { repository, channel, episode } = fixture;
     const random = vi.mocked(randomInt);

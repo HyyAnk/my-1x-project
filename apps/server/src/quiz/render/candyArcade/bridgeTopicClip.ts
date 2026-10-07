@@ -1,13 +1,15 @@
 import type {
+  BridgeShowcaseItem,
   ChannelMascotConfig,
   MascotProfile,
   MascotRenderAspectRatio,
   MascotStateMediaMode,
 } from "@studio/shared";
-import { esc } from "./candyArcadeSvg.js";
-import { source } from "./candyArcadeAudio.js";
+import { esc, renderBridgeStickerFilterSvg } from "./candyArcadeSvg.js";
+import { assetFor, source } from "./candyArcadeAudio.js";
 import { renderProductionMascotHtmlLayer, type ProductionMascotTimelineEvent } from "../productionMascotRenderer.js";
 import { renderBridgeTopicBackdrop } from "./bridgeTopicBackdrop.js";
+import { normalizeMascotTimelineEventsToZeroBased } from "./candyArcadeTiming.js";
 
 export interface BridgeTopicClipInput {
   start: number;
@@ -27,6 +29,8 @@ export interface BridgeTopicClipInput {
   hasCustomLogo?: boolean;
   logoUrl?: string;
   fallbackInitial?: string;
+  showcaseItems?: readonly BridgeShowcaseItem[];
+  assets?: Record<string, string>;
 }
 
 export function cleanTopicForDisplay(rawTopic?: string): string {
@@ -47,6 +51,40 @@ export function cleanTopicForDisplay(rawTopic?: string): string {
   return topic.replace(/[!?,;.:：]+$/, "").trim();
 }
 
+function renderShowcaseItemsHtml(
+  items: readonly BridgeShowcaseItem[],
+  assets?: Record<string, string>,
+): string {
+  if (!items || items.length === 0) return "";
+
+  const itemsHtml = items.slice(0, 4).map((item, index) => {
+    const itemIndex = index + 1;
+    const isPhoto = item.presentation === "photo_card";
+    const modeClass = isPhoto ? "is-photo-card" : "is-sticker";
+
+    const rawSrc = item.asset_path
+      ? source(item.asset_path)
+      : (assets ? assetFor(assets, item.asset_id, `asset-${item.asset_id}`) : null)
+      ?? "";
+
+    const rotationStyle = typeof item.rotation_deg === "number" && item.rotation_deg !== 0
+      ? `style="transform: rotate(${item.rotation_deg}deg);"`
+      : "";
+
+    const imgTag = rawSrc
+      ? `<img src="${esc(rawSrc)}" alt="${esc(item.subject)}" loading="eager" />`
+      : `<span class="bridge-item-placeholder" aria-label="${esc(item.subject)}">${esc(item.subject)}</span>`;
+
+    const captionHtml = item.caption
+      ? `<span class="bridge-item-caption">${esc(item.caption)}</span>`
+      : "";
+
+    return `<div class="bridge-showcase-item item-${itemIndex} ${modeClass}" ${rotationStyle} data-asset-id="${esc(item.asset_id)}">${imgTag}${captionHtml}</div>`;
+  }).join("");
+
+  return `<div class="bridge-showcase-row" data-count="${Math.min(items.length, 4)}">${itemsHtml}</div>`;
+}
+
 export function bridgeTopicClip(input: BridgeTopicClipInput): string {
   const duration = Math.max(0.04, input.duration);
   const badgeText = input.badgeText?.trim();
@@ -58,9 +96,9 @@ export function bridgeTopicClip(input: BridgeTopicClipInput): string {
   const mascotHtml = input.mascot
     ? renderProductionMascotHtmlLayer(input.mascot, input.mascotConfig, {
         phase: "intro",
-        clipStartSeconds: input.start,
+        clipStartSeconds: 0,
         clipDurationSeconds: duration,
-        timelineEvents: input.mascotEvents,
+        timelineEvents: normalizeMascotTimelineEventsToZeroBased(input.mascotEvents, input.start),
         aspectRatio: input.aspectRatio ?? "16:9",
         sourceMapper: source,
         mediaMode: input.mediaMode,
@@ -84,9 +122,21 @@ export function bridgeTopicClip(input: BridgeTopicClipInput): string {
     fallbackInitial: input.fallbackInitial,
   });
 
-  return `<section id="candy-bridge-topic-${Math.round(input.start * 1000)}" class="clip candy-scene bridge-topic-scene" data-start="${input.start.toFixed(3)}" data-duration="${duration.toFixed(3)}" data-track-index="0" style="--clip-start:${input.start.toFixed(3)}s;">` +
+  const hasShowcase = Boolean(input.showcaseItems && input.showcaseItems.length > 0);
+  const showcaseHtml = hasShowcase ? renderShowcaseItemsHtml(input.showcaseItems!, input.assets) : "";
+  const sceneClass = hasShowcase
+    ? "clip candy-scene bridge-topic-scene has-showcase"
+    : "clip candy-scene bridge-topic-scene";
+  const cardClass = hasShowcase
+    ? "bridge-topic-card has-showcase"
+    : "bridge-topic-card";
+
+  const filterSvgHtml = `<svg class="bridge-svg-filters" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true">${renderBridgeStickerFilterSvg()}</svg>`;
+
+  return `<section id="candy-bridge-topic-${Math.round(input.start * 1000)}" class="${sceneClass}" data-start="${input.start.toFixed(3)}" data-duration="${duration.toFixed(3)}" data-track-index="0" style="--clip-start:0s;">` +
+    filterSvgHtml +
     backdropHtml +
-    `<div class="bridge-topic-card">` +
+    `<div class="${cardClass}">` +
       `<span class="bridge-decor-star bridge-star-tl" data-layout-ignore aria-hidden="true">★</span>` +
       `<span class="bridge-decor-star bridge-star-br" data-layout-ignore aria-hidden="true">★</span>` +
       `<span class="bridge-decor-star bridge-star-tr" data-layout-ignore aria-hidden="true">✦</span>` +
@@ -96,6 +146,7 @@ export function bridgeTopicClip(input: BridgeTopicClipInput): string {
       `<h1 class="bridge-topic-title">${esc(displayTopic)}</h1>` +
       promptHtml +
     `</div>` +
+    showcaseHtml +
     (mascotHtml || fallbackMascot) +
   `</section>`;
 }

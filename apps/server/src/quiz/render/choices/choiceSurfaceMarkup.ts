@@ -23,6 +23,7 @@ export function resolveChoiceDecorationVariant(
     case "visual_choices_three_pure":
       return "media_bottom_badge";
     case "split_versus_two":
+    case "verdict_yes_no":
     case "verdict_true_false":
       return "text_only";
     case "mystery_reveal":

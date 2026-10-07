@@ -1,0 +1,16 @@
+.thumbnail-controls-deck .hook-text-input,
+.thumbnail-controls-deck .thumbnail-reset-defaults-btn,
+.thumbnail-controls-deck .thumbnail-generate-btn {
+  min-height: 44px;
+}
+
+.thumbnail-controls-deck select.hook-text-input {
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumbnail-controls-deck .thumbnail-spinner {
+    animation: none;
+  }
+}

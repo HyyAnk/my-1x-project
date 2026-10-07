@@ -1,11 +1,12 @@
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { BridgeSceneConfig, IntroOutroSnapshot } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { buildRetimedNarrationFilter, uploadedMediaTiming } from "../../quiz/introOutro/renderTiming.js";
+import { buildFfmpegFilterComplexArgs } from "../../utils/ffmpegFilterScript.js";
 import type { RequiredQuizRenderArtifacts } from "./quizRenderArtifacts.types.js";
 
 const execFileAsync = promisify(execFile);
@@ -54,14 +55,16 @@ export async function prepareIntroOutroTiming(
   }
   if (!cached) {
     const filter = buildRetimedNarrationFilter(artifacts.timeline, next.timeline);
+    const filterScriptPath = path.join(renderRoot, "retimed-narration-filter.txt");
+    await writeFile(filterScriptPath, filter, "utf8");
+    const filterArgs = await buildFfmpegFilterComplexArgs(filterScriptPath);
     await execFileAsync(
       "ffmpeg",
       [
         "-y",
         "-i",
         narration.absolutePath,
-        "-filter_complex",
-        filter,
+        ...filterArgs,
         "-map",
         "[out]",
         "-ar",

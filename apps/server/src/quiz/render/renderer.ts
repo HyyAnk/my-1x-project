@@ -9,6 +9,7 @@ import type {
   IntroOutroTransitionType,
   ResolvedTransitionInstance,
   MascotStateMediaMode,
+  MotionTemplateOptions,
 } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
@@ -46,6 +47,11 @@ export type QuizRenderInput = {
   mascotMediaMode?: MascotStateMediaMode;
   brandIdentity?: ResolvedChannelBrandIdentity;
   topic?: string;
+  introMotionTemplateId?: string;
+  introMotionTemplateOptions?: MotionTemplateOptions;
+  outroMotionTemplateId?: string;
+  outroMotionTemplateOptions?: MotionTemplateOptions;
+  channelName?: string;
 };
 
 export type PreparedQuizRender = {

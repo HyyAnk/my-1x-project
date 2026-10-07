@@ -28,18 +28,18 @@ describe("ImageProviderFallbackCard", () => {
     onVerifyFallbackConnection: vi.fn(),
   };
 
-  it("shows Gemini at fallback level 1 and Qwen at fallback level 2", () => {
+  it("shows Qwen at fallback level 1 and Gemini at fallback level 2", () => {
     render(<ImageProviderFallbackCard {...defaultProps} />);
 
     expect(screen.getByText("Image Provider Fallback")).toBeDefined();
     expect(screen.getByText("Active (Auto-failover on primary failure)")).toBeDefined();
     expect(IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID).not.toBe(IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID);
-    expect(screen.getByText("Gemini-3.1-Flash-Image")).toBeDefined();
     expect(screen.getByText("Qwen Image 3.0 Pro")).toBeDefined();
-    expect(screen.getByDisplayValue("Qwen Image 3.0 Pro (Default · Max 2K)")).toBeDefined();
+    expect(screen.getByText("Gemini-3.1-Flash-Image")).toBeDefined();
+    expect(screen.getByDisplayValue("Gemini-3.1-Flash-Image (Default · Max 2K)")).toBeDefined();
     const level2Select = screen.getByRole("combobox", { name: "Level 2 Model" });
     expect(level2Select).toBeDefined();
-    expect(within(level2Select).queryByRole("option", { name: /Gemini-3\.1-Flash-Image/ })).toBeNull();
+    expect(within(level2Select).queryByRole("option", { name: /Qwen Image 3\.0 Pro/ })).toBeNull();
   });
 
   it("triggers setFallbackEnabled when toggle is clicked", () => {

@@ -9,6 +9,8 @@ export const CreativeSeedDimensionSchema = z.enum([
   "intro_brand_interaction",
   "intro_performance_tone",
   "intro_verbal_hook",
+  "intro_environment",
+  "outro_entrance",
   "outro_recognition",
   "outro_invitation",
   "outro_farewell",
@@ -55,9 +57,11 @@ export const INTRO_SEED_DIMENSIONS = [
   "intro_brand_interaction",
   "intro_performance_tone",
   "intro_verbal_hook",
+  "intro_environment",
 ] as const satisfies readonly CreativeSeedDimension[];
 
 export const OUTRO_SEED_DIMENSIONS = [
+  "outro_entrance",
   "outro_recognition",
   "outro_invitation",
   "outro_farewell",
