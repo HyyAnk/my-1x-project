@@ -865,38 +865,6 @@ export function candyArcadeBridgeTopicStylesCss(): string {
     right: 50%;
     transform: translateX(50%);
   }
-  .bridge-topic-scene.has-showcase {
-    padding-top: 36px;
-    padding-bottom: 210px;
-  }
-  .bridge-topic-card.has-showcase {
-    padding: 10px 16px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-  }
-  .bridge-topic-scene.has-showcase .bridge-topic-title {
-    font-family: "SVN-Hello Headline", "Fredoka", "Baloo 2", "Nunito", sans-serif;
-    font-size: clamp(52px, 14vw, 80px);
-    letter-spacing: -0.5px;
-    -webkit-text-stroke: 3px #0F172A;
-    text-shadow:
-      0 3px 0 #0F172A,
-      0 6px 0 #0F172A,
-      0 10px 0 #0F172A,
-      0 16px 28px rgba(0, 0, 0, 0.6);
-  }
-  .bridge-showcase-row {
-    bottom: 24px;
-    gap: 16px;
-    padding: 0 12px;
-  }
-  .bridge-showcase-item {
-    width: 150px;
-    height: 150px;
-    border-width: 4px;
-    border-radius: 16px;
-  }
 }
 
 /* =========================================================================
@@ -908,8 +876,8 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding-top: 44px;
-  padding-bottom: 310px;
+  padding-top: 40px;
+  padding-bottom: 560px;
 }
 
 .bridge-topic-card.has-showcase {
@@ -922,7 +890,7 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   text-align: center;
   max-width: 1400px;
   width: min(96vw, 1400px);
-  padding: 20px 32px;
+  padding: 10px 24px;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -935,7 +903,7 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 }
 
 .bridge-topic-scene.has-showcase .bridge-count-pill {
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   transform: rotate(-1deg);
   border: 4px solid #FFFFFF;
   box-shadow: 0 8px 0 #92400E, 0 16px 24px rgba(0, 0, 0, 0.35);
@@ -943,26 +911,26 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 
 .bridge-topic-scene.has-showcase .bridge-topic-title {
   margin: 0;
-  max-width: 1360px;
-  width: min(96vw, 1360px);
-  color: #FFDE59;
-  font-family: "SVN-Hello Headline", "Fredoka", "Baloo 2", "Nunito", sans-serif;
-  font-size: clamp(72px, 9.5vw, 122px);
-  font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -1px;
+  max-width: 1400px;
+  width: min(96vw, 1400px);
+  color: #FFEAA7;
+  font-family: "Fredoka", "Baloo 2", "Nunito", sans-serif;
+  font-size: clamp(68px, 9vw, 115px);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  -webkit-text-stroke: 4px #0F172A;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 4px #1E1B4B;
   text-shadow:
-    0 4px 0 #0F172A,
-    0 8px 0 #0F172A,
-    0 12px 0 #0F172A,
-    0 16px 0 #0F172A,
-    0 26px 40px rgba(0, 0, 0, 0.65);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    0 4px 0 #F59E0B,
+    0 8px 0 #D97706,
+    0 12px 0 #92400E,
+    0 16px 0 #1E1B4B,
+    0 24px 38px rgba(15, 23, 42, 0.55);
+  padding: 6px 24px 32px;
+  box-sizing: border-box;
+  overflow: visible;
   word-break: break-word;
   animation: bridge-title-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.12s) both;
 }
@@ -977,35 +945,35 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 
 .bridge-showcase-row {
   position: absolute;
-  bottom: 40px;
+  bottom: 140px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 36px;
+  gap: 32px;
   z-index: 20;
   pointer-events: none;
 }
 
-/* All showcase items: unified framed photo card block */
+/* All showcase items: unified framed photo card block (large format) */
 .bridge-showcase-item {
   position: relative;
-  width: 240px;
-  height: 240px;
+  width: 380px;
+  height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
   will-change: transform, opacity;
   transform-origin: center bottom;
   background: #FFFFFF;
-  border: 6px solid #FFFFFF;
-  border-radius: 22px;
+  border: 8px solid #FFFFFF;
+  border-radius: 28px;
   box-shadow:
-    0 8px 0 rgba(255, 255, 255, 0.4),
-    0 20px 0 rgba(0, 0, 0, 0.12),
-    0 28px 50px rgba(15, 12, 41, 0.55);
-  overflow: hidden;
+    0 10px 0 rgba(255, 255, 255, 0.55),
+    0 22px 0 rgba(0, 0, 0, 0.12),
+    0 32px 55px rgba(15, 12, 41, 0.5);
+  overflow: visible;
   box-sizing: border-box;
 }
 
@@ -1013,10 +981,9 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 20px;
   display: block;
 }
-
-
 
 .bridge-item-placeholder {
   display: flex;
@@ -1024,31 +991,33 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   justify-content: center;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.15);
   border: 3px dashed rgba(255, 255, 255, 0.4);
   color: #FFFFFF;
-  font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif;
-  font-size: 15px;
+  font-family: "Fredoka", "Baloo 2", "Nunito", sans-serif;
+  font-size: 18px;
   font-weight: 800;
   text-align: center;
-  padding: 8px;
+  padding: 12px;
   box-sizing: border-box;
 }
 
 .bridge-item-caption {
   position: absolute;
-  bottom: -24px;
+  bottom: -18px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(15, 23, 42, 0.9);
+  border: 2px solid #FFFFFF;
   border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 12px;
+  padding: 4px 16px;
+  font-family: "Fredoka", "Baloo 2", "Nunito", sans-serif;
+  font-size: 15px;
   font-weight: 800;
   color: #FFFFFF;
   white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
 }
 
 /* Pop-in Entrance & Float Keyframes */
@@ -1089,7 +1058,42 @@ export function candyArcadeBridgeTopicStylesCss(): string {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-8px);
+    transform: translateY(-10px);
+  }
+}
+
+/* Portrait / Mobile Responsive Overrides for Showcase */
+@media (max-aspect-ratio: 1/1) {
+  .bridge-topic-scene.has-showcase {
+    padding-top: 36px;
+    padding-bottom: 240px;
+  }
+  .bridge-topic-card.has-showcase {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .bridge-topic-scene.has-showcase .bridge-topic-title {
+    font-family: "Fredoka", "Baloo 2", "Nunito", sans-serif;
+    font-size: clamp(48px, 12vw, 72px);
+    letter-spacing: 0px;
+    -webkit-text-stroke: 3px #1E1B4B;
+    padding: 4px 12px 24px;
+  }
+  .bridge-showcase-row {
+    bottom: 140px;
+    gap: 14px;
+    padding: 0 12px;
+  }
+  .bridge-showcase-item {
+    width: 210px;
+    height: 210px;
+    border-width: 5px;
+    border-radius: 20px;
+  }
+  .bridge-showcase-item img {
+    border-radius: 15px;
   }
 }
 `;
