@@ -91,6 +91,31 @@ describe("Durable uploaded pair selection", () => {
     expect((await readFile(path.join(renderRoot, "intro.mp4"))).length).toBeGreaterThan(0);
   });
 
+  it("toggles intro and outro independently without re-rolling the pinned pair", async () => {
+    const { repository, channel, episode } = fixture;
+    const value = episode("bookend-toggles");
+    const pinned = await pinIntroOutroSelection(repository, channel, value);
+    vi.mocked(randomInt).mockClear();
+    value.quiz_config.intro_enabled = false;
+    const introOff = await resolveEpisodeIntroOutro(repository, channel, value);
+    expect(introOff.snapshot).toMatchObject({ pair_id: pinned.pair_id, intro_duration_seconds: 0 });
+    expect(introOff.snapshot.outro_duration_seconds).toBeCloseTo(0.6, 2);
+    expect(randomInt).not.toHaveBeenCalled();
+
+    const renderRoot = path.join(fixture.root, "render-bookend-toggles");
+    await mkdir(renderRoot);
+    const introOffMedia = await resolveAndCopyIntroOutro(repository, channel, value, renderRoot, "toggle-job");
+    expect(introOffMedia.introVideoPath).toBeUndefined();
+    expect(introOffMedia.outroVideoPath).toBeDefined();
+
+    value.quiz_config.intro_enabled = true;
+    value.quiz_config.outro_enabled = false;
+    const outroOffMedia = await resolveAndCopyIntroOutro(repository, channel, value, renderRoot, "toggle-job");
+    expect(outroOffMedia.introVideoPath).toBeDefined();
+    expect(outroOffMedia.outroVideoPath).toBeUndefined();
+    expect(outroOffMedia.selectionFingerprint).not.toBe(introOffMedia.selectionFingerprint);
+  });
+
   it("rejects changed or missing pinned media instead of selecting another pair", async () => {
     const { repository, channel, episode, addPair } = fixture;
     await addPair("changed");

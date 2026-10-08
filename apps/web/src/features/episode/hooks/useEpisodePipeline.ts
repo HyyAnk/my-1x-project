@@ -152,6 +152,9 @@ export function useEpisodePipeline({
     saveDuration: styles.saveDuration,
     fastRenderMode: episode?.quiz_config?.fast_render_mode ?? true,
     saveFastRenderMode: styles.saveFastRenderMode,
+    introEnabled: episode?.quiz_config?.intro_enabled ?? true,
+    outroEnabled: episode?.quiz_config?.outro_enabled ?? true,
+    saveBookendEnabled: styles.saveBookendEnabled,
 
     // From useEpisodeRemix
     historyCheck: remix.historyCheck,

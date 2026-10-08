@@ -4,6 +4,7 @@ import { RepositoryError } from "../../repository.js";
 import { probeAndValidate1080pVideo } from "../../utils/videoMediaProbe.js";
 import { pairFingerprint, readyPair, type ReadyPair, type PairRepository } from "./pairMedia.js";
 import { readIntroOutroSnapshot, writeIntroOutroSnapshot } from "../../repository/introOutroSnapshotStore.js";
+import { applyBookendEnablement, resolveBookendEnablement } from "./bookendEnablement.js";
 
 export function introOutroSelectionKey(episode: Episode): string {
   return JSON.stringify([episode.quiz_config.intro_outro_selection, resolveBuiltInPresetCategoryId(episode.quiz_config)]);
@@ -74,7 +75,8 @@ export async function pinIntroOutroSelection(
 }
 
 export async function resolveEpisodeIntroOutro(repository: PairRepository, channel: Channel, episode: Episode) {
-  const snapshot = await pinIntroOutroSelection(repository, channel, episode);
+  const pinned = await pinIntroOutroSelection(repository, channel, episode);
+  const snapshot = applyBookendEnablement(pinned, resolveBookendEnablement(episode.quiz_config));
   if (!snapshot.pair_id) return { snapshot, pair: null };
   const style = await repository.getChannelIntroOutroStyle(channel.channel_id, snapshot.pair_id);
   const pair = style ? await readyPair(repository, channel.channel_id, style) : null;

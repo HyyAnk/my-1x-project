@@ -50,7 +50,9 @@ function hasRenderStyleSettingsChanged(next: Episode["quiz_config"], prev: Episo
     nextMascotStyle !== previousMascotStyle ||
     next.mascot_style_id !== prev.mascot_style_id ||
     nextIntroOutro !== previousIntroOutro ||
-    next.intro_outro_style_id !== prev.intro_outro_style_id
+    next.intro_outro_style_id !== prev.intro_outro_style_id ||
+    next.intro_enabled !== prev.intro_enabled ||
+    next.outro_enabled !== prev.outro_enabled
   );
 }
 
@@ -81,6 +83,8 @@ function computeUpdatedQuizConfig(
     ...(input.mascot_style_id === undefined ? {} : { mascot_style_id: input.mascot_style_id }),
     ...(input.intro_outro_selection === undefined ? {} : { intro_outro_selection: input.intro_outro_selection }),
     ...(input.intro_outro_style_id === undefined ? {} : { intro_outro_style_id: input.intro_outro_style_id }),
+    ...(input.intro_enabled === undefined ? {} : { intro_enabled: input.intro_enabled }),
+    ...(input.outro_enabled === undefined ? {} : { outro_enabled: input.outro_enabled }),
     ...(input.fast_render_mode === undefined ? {} : { fast_render_mode: input.fast_render_mode }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,

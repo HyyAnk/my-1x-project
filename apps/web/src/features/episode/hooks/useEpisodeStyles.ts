@@ -159,6 +159,13 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     );
   };
 
+  const saveBookendEnabled = async (placement: "intro" | "outro", enabled: boolean) => {
+    if (!episode) return;
+    const label = placement === "intro" ? "Intro" : "Outro";
+    const patch = placement === "intro" ? { intro_enabled: enabled } : { outro_enabled: enabled };
+    await saveQuizStyles(`${placement}-enabled`, patch, `${label} ${enabled ? "enabled" : "disabled"}`);
+  };
+
   const saveMascotStyleSelection = async (selection: MascotStyleSelection) => {
     if (!episode) return;
     await saveQuizStyles("mascot-style", { mascot_style_selection: selection, mascot_style_id: null }, "Mascot style selection updated");
@@ -204,6 +211,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     saveThumbnailRatio,
     saveMascotStyleSelection,
     saveIntroOutroSelection,
+    saveBookendEnabled,
     applyStylePreset,
     saveDuration,
     saveFastRenderMode,

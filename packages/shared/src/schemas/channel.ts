@@ -180,6 +180,8 @@ export const QuizConfigSchema = z.object({
   intro_outro_snapshot: IntroOutroSnapshotSchema.optional(),
   /** @deprecated Use intro_outro_selection. Retained while legacy episodes migrate. */
   intro_outro_style_id: z.string().nullable().optional(),
+  intro_enabled: z.boolean().default(true),
+  outro_enabled: z.boolean().default(true),
   fast_render_mode: z.boolean().default(true),
 });
 

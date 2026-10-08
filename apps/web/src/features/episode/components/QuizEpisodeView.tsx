@@ -97,6 +97,11 @@ export function QuizEpisodeView({
         onOpenVideoFolder={pipeline.openVideoFolder}
         fastRenderMode={fastRenderMode}
         onToggleFastRender={onToggleFastRender}
+        bookends={{
+          introEnabled: pipeline.introEnabled,
+          outroEnabled: pipeline.outroEnabled,
+          onToggle: (placement, enabled) => void pipeline.saveBookendEnabled(placement, enabled),
+        }}
       />
 
       <ThumbnailPreviewCard

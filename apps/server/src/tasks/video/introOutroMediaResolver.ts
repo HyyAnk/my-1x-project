@@ -2,7 +2,8 @@ import { createHash } from "node:crypto";
 import { stat } from "node:fs/promises";
 import type { Channel, Episode, IntroOutroTransitionType, MotionTemplateOptions } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
-import { selectIntroOutroPair, type IntroOutroSelectionSource } from "./introOutroSelectionService.js";
+import { selectIntroOutroPair, type IntroOutroSelectionSource, type ResolvedIntroOutroPair } from "./introOutroSelectionService.js";
+import { resolveBookendEnablement } from "../../quiz/introOutro/bookendEnablement.js";
 import { pairFingerprint } from "../../quiz/introOutro/pairMedia.js";
 import { RepositoryError } from "../../repository/errors.js";
 import { prepareBookendMedia } from "./bookendMediaPreparation.js";
@@ -53,6 +54,26 @@ export async function resolveAndCopyIntroOutro(
   taskId = `${episode.episode_id}:legacy`,
 ): Promise<IntroOutroMediaResolution> {
   const selection = await selectIntroOutroPair(repository, channel, episode, taskId);
+  const enablement = resolveBookendEnablement(episode.quiz_config);
+  if (!enablement.intro && !enablement.outro) {
+    return { selectionSource: "none", stylePresetId: selection.stylePresetId, unavailableReason: "Intro and outro disabled" };
+  }
+  const resolution = await resolveSelectedMedia(selection, episode, renderRoot);
+  return {
+    ...resolution,
+    ...(enablement.intro ? {} : { introVideoPath: undefined, introHasAudio: undefined, introMotionTemplateId: undefined, introMotionTemplateOptions: undefined }),
+    ...(enablement.outro ? {} : { outroVideoPath: undefined, outroHasAudio: undefined, outroMotionTemplateId: undefined, outroMotionTemplateOptions: undefined }),
+    ...(resolution.selectionFingerprint
+      ? { selectionFingerprint: `${resolution.selectionFingerprint}:${Number(enablement.intro)}${Number(enablement.outro)}` }
+      : {}),
+  };
+}
+
+async function resolveSelectedMedia(
+  selection: ResolvedIntroOutroPair,
+  episode: Episode,
+  renderRoot: string,
+): Promise<IntroOutroMediaResolution> {
   if (selection.source === "motion_template") {
     const motionSelection = episode.quiz_config.intro_outro_selection;
     const isMotion = motionSelection.mode === "motion_template";

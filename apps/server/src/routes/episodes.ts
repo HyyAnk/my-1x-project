@@ -47,6 +47,8 @@ export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCa
       const changesMediaSelection =
         input.intro_outro_selection !== undefined ||
         input.intro_outro_style_id !== undefined ||
+        input.intro_enabled !== undefined ||
+        input.outro_enabled !== undefined ||
         input.visual_style !== undefined ||
         input.resolved_visual_style !== undefined ||
         input.style_preset_id !== undefined;

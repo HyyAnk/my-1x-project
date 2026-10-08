@@ -726,6 +726,13 @@ button.episode-style-preview-status.is-error {
     monospace;
 }
 
+.quiz-video-panel-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .video-result-actions {
   display: flex;
   gap: 10px;

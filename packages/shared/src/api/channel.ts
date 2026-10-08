@@ -155,6 +155,8 @@ export const EpisodeSettingsInputSchema = z.object({
   mascot_style_id: z.string().nullable().optional(),
   intro_outro_selection: IntroOutroSelectionSchema.optional(),
   intro_outro_style_id: z.string().nullable().optional(),
+  intro_enabled: z.boolean().optional(),
+  outro_enabled: z.boolean().optional(),
   fast_render_mode: z.boolean().optional(),
 });
 

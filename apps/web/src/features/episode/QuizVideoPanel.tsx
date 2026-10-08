@@ -4,6 +4,7 @@ import { api } from "../../api";
 import { isTaskActive, latestTask } from "../../lib/utils";
 import { TaskProgressPanel } from "../../components/TaskProgressPanel";
 import { formatDuration } from "./types";
+import { BookendToggleButtons, type BookendToggleButtonsProps } from "./components/BookendToggleButtons";
 
 type QuizVideoPanelProps = {
   channel: Channel;
@@ -15,6 +16,7 @@ type QuizVideoPanelProps = {
   onOpenVideoFolder: () => void;
   fastRenderMode?: boolean;
   onToggleFastRender?: () => void;
+  bookends?: Pick<BookendToggleButtonsProps, "introEnabled" | "outroEnabled" | "onToggle">;
 };
 
 export function QuizVideoPanel({
@@ -27,8 +29,10 @@ export function QuizVideoPanel({
   onOpenVideoFolder,
   fastRenderMode = true,
   onToggleFastRender,
+  bookends,
 }: QuizVideoPanelProps) {
   const videoTask = latestTask(episodeTasks, ["GENERATE_VIDEO"]);
+  const renderActive = Boolean(videoTask && isTaskActive(videoTask));
   const showProgress =
     videoTask &&
     (isTaskActive(videoTask) || videoTask.status === "FAILED" || (!episode.video_asset_path && videoTask.status !== "COMPLETED"));
@@ -39,24 +43,35 @@ export function QuizVideoPanel({
         <div>
           <h2>Quiz Video</h2>
         </div>
-        {onToggleFastRender && (
-          <button
-            type="button"
-            className={`fast-render-toggle-btn compact ${fastRenderMode ? "is-active" : ""}`}
-            onClick={onToggleFastRender}
-            disabled={Boolean(videoTask && isTaskActive(videoTask)) || busy === "fast-render-mode"}
-            title={
-              fastRenderMode
-                ? "Fast Render enabled: Bypasses layout & media preflight checks for maximum speed"
-                : "Standard mode: Runs layout & media preflight checks before rendering"
-            }
-            aria-pressed={fastRenderMode}
-            aria-label="Toggle Fast Render Mode"
-          >
-            <Lightning size={13} weight={fastRenderMode ? "fill" : "regular"} />
-            <span>Fast Render: {fastRenderMode ? "ON" : "OFF"}</span>
-          </button>
-        )}
+        <div className="quiz-video-panel-actions">
+          {bookends ? (
+            <BookendToggleButtons
+              introEnabled={bookends.introEnabled}
+              outroEnabled={bookends.outroEnabled}
+              busy={busy}
+              disabled={renderActive}
+              onToggle={bookends.onToggle}
+            />
+          ) : null}
+          {onToggleFastRender && (
+            <button
+              type="button"
+              className={`fast-render-toggle-btn compact ${fastRenderMode ? "is-active" : ""}`}
+              onClick={onToggleFastRender}
+              disabled={renderActive || busy === "fast-render-mode"}
+              title={
+                fastRenderMode
+                  ? "Fast Render enabled: Bypasses layout & media preflight checks for maximum speed"
+                  : "Standard mode: Runs layout & media preflight checks before rendering"
+              }
+              aria-pressed={fastRenderMode}
+              aria-label="Toggle Fast Render Mode"
+            >
+              <Lightning size={13} weight={fastRenderMode ? "fill" : "regular"} />
+              <span>Fast Render: {fastRenderMode ? "ON" : "OFF"}</span>
+            </button>
+          )}
+        </div>
       </div>
       {showProgress ? (
         <TaskProgressPanel
