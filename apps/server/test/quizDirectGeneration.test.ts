@@ -201,4 +201,148 @@ describe("directQuizHandler", () => {
 
     await expect(handleDirectQuizOutput(runtime, active, invalidOutput)).rejects.toThrow();
   });
+
+  it("recovers gracefully when LLM choices use label/option or miss text property", async () => {
+    let savedQuiz: unknown = null;
+    const mockRepository = {
+      getEpisode: vi.fn().mockResolvedValue(mockEpisode),
+      getChannel: vi.fn().mockResolvedValue(mockChannel),
+      writeQuiz: vi.fn().mockImplementation((channelId, episodeId, quiz) => {
+        savedQuiz = quiz;
+        return `channels/${channelId}/episodes/${episodeId}/quiz.json`;
+      }),
+      readQuestionHistory: vi.fn().mockResolvedValue([]),
+      writeHistoryCheck: vi.fn().mockResolvedValue(""),
+      invalidateQuizArtifacts: vi.fn().mockResolvedValue([]),
+      updateEpisodeStage: vi.fn().mockResolvedValue(undefined),
+      saveEpisodeFile: vi.fn().mockResolvedValue({ path: "path", modified_at: "now" }),
+      saveScenes: vi.fn().mockResolvedValue(undefined),
+    };
+
+    const runtime = {
+      repository: mockRepository,
+    } as unknown as TaskManagerRuntime;
+
+    const active = {
+      task: {
+        task_id: "task-3",
+        task_type: "GENERATE_QUIZ",
+        channel_id: "channel-1",
+        episode_id: "ep-101",
+      },
+    } as ActiveRun;
+
+    // Simulate LLM returning question 2 where choices[0] uses label instead of text
+    const llmOutput = JSON.stringify({
+      schema_version: 2,
+      episode_id: "ep-101",
+      age_band: "7-9",
+      language: "vi",
+      questions: [
+        {
+          id: "question-01",
+          number: 1,
+          format: "multiple_choice",
+          difficulty: 1,
+          question: "Question 1?",
+          choices: [
+            { id: "choice-a", text: "Alpha" },
+            { id: "choice-b", text: "Beta" },
+            { id: "choice-c", text: "Gamma" },
+          ],
+          correct_choice_id: "choice-a",
+          explanation: "Explanation 1",
+          source_ids: ["C01"],
+          visual_opportunity: "Visual 1",
+        },
+        {
+          id: "question-02",
+          number: 2,
+          format: "multiple_choice",
+          difficulty: 2,
+          question: "Question 2?",
+          choices: [
+            { id: "choice-a", label: "Recovered Text A" }, // text is missing!
+            { id: "choice-b", option: "Recovered Text B" }, // text is missing!
+            { id: "choice-c", value: "Recovered Text C" },  // text is missing!
+          ],
+          correct_choice_id: "choice-b",
+          explanation: "Explanation 2",
+          source_ids: ["C02"],
+          visual_opportunity: "Visual 2",
+        },
+      ],
+    });
+
+    const result = await handleDirectQuizOutput(runtime, active, llmOutput);
+    expect(result).toEqual(["channels/channel-1/episodes/ep-101/quiz.json"]);
+    expect(savedQuiz).toBeDefined();
+    const questions = (savedQuiz as { questions: Array<{ choices: Array<{ text: string }> }> }).questions;
+    expect(questions[1].choices[0].text).toBe("Recovered Text A");
+    expect(questions[1].choices[1].text).toBe("Recovered Text B");
+    expect(questions[1].choices[2].text).toBe("Recovered Text C");
+  });
+
+  it("recovers boolean choice texts when LLM omits text for true_false questions", async () => {
+    let savedQuiz: unknown = null;
+    const mockRepository = {
+      getEpisode: vi.fn().mockResolvedValue(mockEpisode),
+      getChannel: vi.fn().mockResolvedValue(mockChannel),
+      writeQuiz: vi.fn().mockImplementation((channelId, episodeId, quiz) => {
+        savedQuiz = quiz;
+        return `channels/${channelId}/episodes/${episodeId}/quiz.json`;
+      }),
+      readQuestionHistory: vi.fn().mockResolvedValue([]),
+      writeHistoryCheck: vi.fn().mockResolvedValue(""),
+      invalidateQuizArtifacts: vi.fn().mockResolvedValue([]),
+      updateEpisodeStage: vi.fn().mockResolvedValue(undefined),
+      saveEpisodeFile: vi.fn().mockResolvedValue({ path: "path", modified_at: "now" }),
+      saveScenes: vi.fn().mockResolvedValue(undefined),
+    };
+
+    const runtime = {
+      repository: mockRepository,
+    } as unknown as TaskManagerRuntime;
+
+    const active = {
+      task: {
+        task_id: "task-4",
+        task_type: "GENERATE_QUIZ",
+        channel_id: "channel-1",
+        episode_id: "ep-101",
+      },
+    } as ActiveRun;
+
+    const llmOutput = JSON.stringify({
+      schema_version: 2,
+      episode_id: "ep-101",
+      age_band: "7-9",
+      language: "en",
+      questions: [
+        {
+          id: "question-01",
+          number: 1,
+          format: "true_false",
+          difficulty: 1,
+          question: "Can penguins fly?",
+          choices: [
+            { id: "choice-true" }, // text omitted!
+            { id: "choice-false" }, // text omitted!
+          ],
+          correct_choice_id: "choice-false",
+          explanation: "Penguins cannot fly in the air.",
+          source_ids: ["C01"],
+          visual_opportunity: "Cute penguin swimming",
+        },
+      ],
+    });
+
+    const result = await handleDirectQuizOutput(runtime, active, llmOutput);
+    expect(result).toEqual(["channels/channel-1/episodes/ep-101/quiz.json"]);
+    expect(savedQuiz).toBeDefined();
+    const questions = (savedQuiz as { questions: Array<{ choices: Array<{ text: string }> }> }).questions;
+    expect(questions[0].choices[0].text).toBe("True");
+    expect(questions[0].choices[1].text).toBe("False");
+  });
 });
+

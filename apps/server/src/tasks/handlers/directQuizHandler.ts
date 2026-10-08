@@ -5,19 +5,20 @@ import { checkQuestionsAgainstHistory } from "../../quiz/qa/questionHistory.js";
 import { invalidateQuizArtifacts } from "../../quiz/pipeline/invalidation.js";
 import { synthesizeAllLegacyArtifacts } from "../../quiz/domain/quizArtifactSynthesizer.js";
 
+import { normalizeQuizCandidate } from "../../quiz/domain/quizCandidateNormalizer.js";
+
 export async function handleDirectQuizOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[]> {
   const task = active.task;
   const raw = parseJson(output, "QuizV2");
   const episode = await runtime.repository.getEpisode(task.channel_id, task.episode_id!);
+  const channel = await runtime.repository.getChannel(task.channel_id);
 
-  const candidate = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
-  if (!candidate.schema_version) candidate.schema_version = 2;
-  if (!candidate.episode_id) candidate.episode_id = episode.episode_id;
-  if (!candidate.age_band) candidate.age_band = episode.quiz_config.age_band;
-  if (!candidate.language) {
-    const channel = await runtime.repository.getChannel(task.channel_id);
-    candidate.language = channel.language;
-  }
+  const rawCandidate = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
+  const candidate = normalizeQuizCandidate(rawCandidate, {
+    episodeId: episode.episode_id,
+    ageBand: episode.quiz_config.age_band,
+    language: channel.language,
+  });
 
   // Validate strictly against QuizV2Schema
   const quiz = validateQuizV2(candidate);
