@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { BankSubtopicBatchSchema, type BankSubtopicBatch } from "@studio/shared";
@@ -67,17 +66,6 @@ export async function writeSubtopicBatchUnlocked(this: RepositoryRuntime, batch:
   await assertSafeBankFilesystemPath(runtimeBankRoot, batchPath);
   await mkdir(path.dirname(batchPath), { recursive: true });
   await this.writeJsonAtomic(batchPath, normalizedBatch);
-
-  if (normalizedBatch.archetype_id === "verdict_true_false") {
-    const legacyPath = getQuestionBankWritePath.call(
-      this,
-      "verdict_fact_myth",
-      normalizedBatch.domain_id,
-      `${normalizedBatch.subtopic_id}.json`,
-    );
-    await assertSafeBankFilesystemPath(runtimeBankRoot, legacyPath);
-    if (existsSync(legacyPath)) await this.writeJsonAtomic(legacyPath, normalizedBatch);
-  }
 
   await withBankSqliteDb(runtimeBankRoot, async (db) => {
     db.exec("BEGIN;");

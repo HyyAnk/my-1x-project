@@ -36,7 +36,7 @@ describe("ScriptSeedSelector component", () => {
     const onSelectSeed = vi.fn();
     render(
       <ScriptSeedSelector
-        archetype="verdict_true_false"
+        archetype="verdict_yes_no"
         selectedSeedId="tf_mythbusters_lab"
         onSelectSeed={onSelectSeed}
       />,

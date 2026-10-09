@@ -67,19 +67,15 @@ export function useSandboxPreviewRenderer({
         const questionFormat =
           design.layoutId === "verdict_yes_no"
             ? "yes_no"
-            : design.layoutId === "verdict_true_false"
-              ? "true_false"
-              : design.layoutId === "visual_choices_three_pure"
-                ? "odd_one_out"
-                : design.layoutId === "mystery_reveal"
-                  ? "image_guess"
-                  : design.layoutId === "split_versus_two"
-                    ? "multiple_choice"
-                    : isYnChoices
-                      ? "yes_no"
-                      : question.choices.length === 2
-                        ? "true_false"
-                        : "multiple_choice";
+            : design.layoutId === "visual_choices_three_pure"
+              ? "odd_one_out"
+              : design.layoutId === "mystery_reveal"
+                ? "image_guess"
+                : design.layoutId === "split_versus_two"
+                  ? "multiple_choice"
+                  : isYnChoices || question.choices.length === 2
+                    ? "yes_no"
+                    : "multiple_choice";
 
         const isMystery = design.layoutId === "mystery_reveal";
         const normalizedChoices = isMystery

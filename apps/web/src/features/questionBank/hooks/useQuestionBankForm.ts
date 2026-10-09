@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { BankChoice, BankGameplayArchetypeId, BankQuestion, BankTaxonomy, QuizAgeBand, QuizQuestionFormat } from "@studio/shared";
+import { normalizeLegacyVerdictIdentifier, type BankChoice, type BankGameplayArchetypeId, type BankQuestion, type BankTaxonomy, type QuizAgeBand, type QuizQuestionFormat } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import { appendNextChoice, buildBankQuestion, removeChoiceItem } from "../utils/questionBankFormBuilder";
 import { validateQuestionForm } from "../utils/questionBankFormValidation";
@@ -28,8 +28,7 @@ export interface QuestionBankFormState {
 }
 
 function normalizeArchetype(raw?: string): BankGameplayArchetypeId {
-  if (raw === "verdict_fact_myth") return "verdict_true_false";
-  return (raw as BankGameplayArchetypeId) || "speed_blitz";
+  return (normalizeLegacyVerdictIdentifier(raw) as BankGameplayArchetypeId | undefined) || "speed_blitz";
 }
 
 function resolveInitialChoices(initial?: BankChoice[], arch?: BankGameplayArchetypeId): BankChoice[] {
@@ -41,12 +40,6 @@ function resolveInitialChoices(initial?: BankChoice[], arch?: BankGameplayArchet
     return [
       { id: "A", text: "Yes", is_correct: true },
       { id: "B", text: "No", is_correct: false },
-    ];
-  }
-  if (arch === "verdict_true_false") {
-    return [
-      { id: "A", text: "True", is_correct: true },
-      { id: "B", text: "False", is_correct: false },
     ];
   }
   return [
@@ -105,12 +98,6 @@ export function useQuestionBankForm({ initialQuestion, taxonomy, onSave, onClose
       setChoices([
         { id: "A", text: "Yes", is_correct: isYes },
         { id: "B", text: "No", is_correct: !isYes },
-      ]);
-    } else if (newArch === "verdict_true_false") {
-      const isTrue = choices[0]?.text?.toLowerCase() === "true" ? choices[0]?.is_correct ?? true : true;
-      setChoices([
-        { id: "A", text: "True", is_correct: isTrue },
-        { id: "B", text: "False", is_correct: !isTrue },
       ]);
     } else if (choices.length < 2) {
       setChoices([

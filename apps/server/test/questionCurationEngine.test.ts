@@ -109,8 +109,12 @@ describe("questionCurationEngine", () => {
     });
 
     it("falls back to quiz_format when both archetype and layout are absent", () => {
-      const topicTrueFalse = makeTopic({ archetype: undefined, suggested_layout: undefined, quiz_format: "true_false" });
-      expect(resolveTargetArchetype(topicTrueFalse)).toBe("verdict_true_false");
+      const topicYesNo = makeTopic({ archetype: undefined, suggested_layout: undefined, quiz_format: "yes_no" });
+      expect(resolveTargetArchetype(topicYesNo)).toBe("verdict_yes_no");
+
+      // A retired true_false format resolves to the Yes/No archetype.
+      const topicTrueFalse = makeTopic({ archetype: undefined, suggested_layout: undefined, quiz_format: "true_false" as never });
+      expect(resolveTargetArchetype(topicTrueFalse)).toBe("verdict_yes_no");
 
       const topicOdd = makeTopic({ archetype: undefined, suggested_layout: undefined, quiz_format: "odd_one_out" });
       expect(resolveTargetArchetype(topicOdd)).toBe("visual_spotting");

@@ -8,7 +8,6 @@ export const jaLocale: ThumbnailLocalization = {
     odd_one_out: "間違い探し！",
     difficulty_tier: "レベル4解ける？",
     yes_no: "YESかNOか！？",
-    true_false: "ウソ？ホント？",
   },
   badgeTemplate: {
     mega_grid: (count) => `全${count > 0 ? count : 100}問`,
@@ -17,6 +16,5 @@ export const jaLocale: ThumbnailLocalization = {
     odd_one_out: () => "10秒で見つけて！⏱️",
     difficulty_tier: () => "IQ140以上のみ🔥",
     yes_no: () => "YESかNOか！？✅",
-    true_false: () => "○か✕か！？✅",
   },
 };

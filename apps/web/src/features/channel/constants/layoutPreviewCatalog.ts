@@ -17,8 +17,6 @@ export const ARCHETYPE_LAYOUT_MAP: Record<string, string> = {
   visual_identification: "visual_choices_three",
   speed_blitz: "full_stack_list",
   verdict_yes_no: "verdict_yes_no",
-  verdict_true_false: "verdict_true_false",
-  verdict_fact_myth: "verdict_true_false",
   deep_trivia: "media_left_choices_right",
 };
 
@@ -78,17 +76,6 @@ export const LAYOUT_CATALOG: Record<string, LayoutMeta> = {
     desc: "1 prominent illustration on the left paired with 2 large verdict buttons: YES (Emerald) and NO (Crimson) on the right.",
     assets: "1 main hero subject illustration",
   },
-  verdict_true_false: {
-    id: "verdict_true_false",
-    name: "True or False",
-    badge: "⚖️ True or False",
-    tagClass: "tag-tf",
-    btnClass: "is-true-false",
-    icon: "⚖️",
-    format: "True / False",
-    desc: "1 prominent illustration on the left paired with 2 large verdict buttons: TRUE (Green) and FALSE (Red) on the right.",
-    assets: "1 main hero subject illustration",
-  },
   full_stack_list: {
     id: "full_stack_list",
     name: "Speed Blitz (4-Option Stack)",
@@ -134,7 +121,6 @@ export function resolveLayoutMeta(
   if (!resolvedId) {
     if (quizFormat === "odd_one_out") resolvedId = "visual_choices_three";
     else if (quizFormat === "yes_no") resolvedId = "verdict_yes_no";
-    else if (quizFormat === "true_false") resolvedId = "verdict_true_false";
     else resolvedId = "media_left_choices_right";
   }
 

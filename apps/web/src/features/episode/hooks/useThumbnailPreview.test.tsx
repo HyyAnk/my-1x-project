@@ -104,7 +104,8 @@ describe("useThumbnailPreview hook", () => {
     });
 
     expect(result.current.manifest).toEqual(sampleManifest);
-    expect(result.current.customHook).toBe("Top 10 Ancient Wonders");
+    // The previous AI headline must not become a manual headline for the next generation.
+    expect(result.current.customHook).toBe("");
     expect(result.current.historyList).toHaveLength(2);
     expect(result.current.hasImage).toBe(true);
     expect(result.current.hasAnyThumbnail).toBe(true);
@@ -234,6 +235,7 @@ describe("useThumbnailPreview hook", () => {
       "ep-202",
       expect.objectContaining({
         aspect_ratio: "16:9",
+        custom_hook_text: undefined,
       }),
     );
     expect(onUpdated).toHaveBeenCalled();

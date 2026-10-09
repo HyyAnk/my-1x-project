@@ -1,4 +1,4 @@
-import { QuizLayoutIdSchema } from "./enums.js";
+import { QuizLayoutIdValuesSchema, acceptLegacyVerdictAliases } from "./enums.js";
 import type {
   QuizLayoutAssetAspectRatio,
   QuizLayoutAssetMetrics,
@@ -8,12 +8,14 @@ import type {
 import { z } from "zod";
 import { getQuizImageSlotGeometry, recommendImageSizing, type ImageSlotPurpose } from "./quizImageSizing/index.js";
 
-export const ResolvedQuizLayoutIdSchema = QuizLayoutIdSchema.exclude(["auto"]);
+export const ResolvedQuizLayoutIdValuesSchema = QuizLayoutIdValuesSchema.exclude(["auto"]);
+export const RESOLVED_QUIZ_LAYOUT_IDS = ResolvedQuizLayoutIdValuesSchema.options;
+export const ResolvedQuizLayoutIdSchema = acceptLegacyVerdictAliases(ResolvedQuizLayoutIdValuesSchema);
 export type { ResolvedQuizLayoutId };
 
 export { QUIZ_LANDSCAPE_LAYOUT_IDS, type QuizLandscapeLayoutId } from "./quizLayoutGeometry/index.js";
 
-export const QuizPreviewLayoutIdSchema = z.union([ResolvedQuizLayoutIdSchema, z.literal("baseline")]);
+export const QuizPreviewLayoutIdSchema = acceptLegacyVerdictAliases(z.union([ResolvedQuizLayoutIdValuesSchema, z.literal("baseline")]));
 export type QuizPreviewLayoutId = z.infer<typeof QuizPreviewLayoutIdSchema>;
 
 const supportedLandscapeAspectRatios = ["16:9"] as const;
@@ -28,8 +30,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     id: "media_left_choices_right",
     supportedPresentations: ["text"],
     supportedChoiceCounts: [2, 3],
-    supportedFormats: ["multiple_choice", "image_guess", "true_false", "odd_one_out"],
-    recommendedFormats: ["multiple_choice", "image_guess", "true_false"],
+    supportedFormats: ["multiple_choice", "image_guess", "yes_no", "odd_one_out"],
+    recommendedFormats: ["multiple_choice", "image_guess", "yes_no"],
     media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
@@ -67,7 +69,7 @@ export const QUIZ_LAYOUT_CATALOG = {
     id: "split_versus_two",
     supportedPresentations: ["visual", "text"],
     supportedChoiceCounts: [2],
-    supportedFormats: ["multiple_choice", "image_guess", "yes_no", "true_false"],
+    supportedFormats: ["multiple_choice", "image_guess", "yes_no"],
     recommendedFormats: ["multiple_choice"],
     media: { supported: ["choice", "question"], required: [] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
@@ -83,21 +85,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     id: "verdict_yes_no",
     supportedPresentations: ["text"],
     supportedChoiceCounts: [2],
-    supportedFormats: ["yes_no", "true_false"],
-    recommendedFormats: ["yes_no", "true_false"],
-    media: { supported: ["question"], required: ["question"] },
-    supportedAspectRatios: supportedLandscapeAspectRatios,
-    metrics: {
-      render: { width: 820, height: 565, itemCount: 1 },
-      assets: { question: { maxWidth: 1216, maxHeight: 912, aspectRatio: "4:3" } },
-    },
-  },
-  verdict_true_false: {
-    id: "verdict_true_false",
-    supportedPresentations: ["text"],
-    supportedChoiceCounts: [2],
-    supportedFormats: ["yes_no", "true_false"],
-    recommendedFormats: ["yes_no", "true_false"],
+    supportedFormats: ["yes_no"],
+    recommendedFormats: ["yes_no"],
     media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
@@ -109,8 +98,8 @@ export const QUIZ_LAYOUT_CATALOG = {
     id: "full_stack_list",
     supportedPresentations: ["text"],
     supportedChoiceCounts: [2, 3],
-    supportedFormats: ["multiple_choice", "yes_no", "true_false"],
-    recommendedFormats: ["multiple_choice", "yes_no", "true_false"],
+    supportedFormats: ["multiple_choice", "yes_no"],
+    recommendedFormats: ["multiple_choice", "yes_no"],
     media: { supported: [], required: [] },
     supportedAspectRatios: supportedLandscapeAspectRatios,
     metrics: {
@@ -139,7 +128,7 @@ export const QUIZ_PREVIEW_BASELINE_CAPABILITY = {
   id: "baseline",
   supportedPresentations: ["text"],
   supportedChoiceCounts: [2, 3],
-  supportedFormats: ["multiple_choice", "image_guess", "yes_no", "true_false", "odd_one_out"],
+  supportedFormats: ["multiple_choice", "image_guess", "yes_no", "odd_one_out"],
   recommendedFormats: [],
   media: { supported: ["question"], required: ["question"] },
   supportedAspectRatios: ["16:9"] as const,

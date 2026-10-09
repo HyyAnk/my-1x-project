@@ -37,7 +37,6 @@ describe("Phase 04: Choice Primitives and Answer Surfaces", () => {
       visual_choices_three_pure: "media_bottom_badge",
       split_versus_two: "text_only",
       verdict_yes_no: "text_only",
-      verdict_true_false: "text_only",
       mystery_reveal: "single_reveal",
     };
 
@@ -105,19 +104,19 @@ describe("Phase 04: Choice Primitives and Answer Surfaces", () => {
       expect(html).not.toContain("B:");
     });
 
-    it("omits .choice-label and data-choice-label entirely for Verdict True/False", () => {
+    it("omits .choice-label and data-choice-label entirely for Verdict Yes/No", () => {
       const html = renderChoiceGroup(
         createChoiceInput({
-          layoutId: "verdict_true_false",
-          items: [choice("c-1", 0, "True"), choice("c-2", 1, "False")],
+          layoutId: "verdict_yes_no",
+          items: [choice("c-1", 0, "Yes"), choice("c-2", 1, "No")],
           correctChoiceId: "c-1",
         }),
       );
       expect(html).not.toContain("choice-label");
       expect(html).not.toContain("data-choice-label");
       expect(html).toContain("choice-text-only");
-      expect(html).toContain('aria-label="True"');
-      expect(html).toContain('aria-label="False"');
+      expect(html).toContain('aria-label="Yes"');
+      expect(html).toContain('aria-label="No"');
       expect(html).not.toContain("A:");
       expect(html).not.toContain("B:");
     });

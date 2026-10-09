@@ -101,7 +101,7 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain(".layout-visual_choices_three .visual-answer-grid");
     expect(html).toContain('<strong class="keyword-highlight">ocean</strong>');
     const keywordChecks = [
-      ["Which planet is often called the Red Planet?", "A bright red planet", "planet"],
+      ["Which planet is often called the Red Planet?", "A bright red planet", "Red Planet"],
       ["What is a baby frog called?", "A frog tadpole in a pond", "frog"],
       ["Which sense helps you notice the smell of popcorn?", "A popcorn bowl with smell waves", "smell"],
       ["Which shape has three sides?", "A triangle shape", "shape"],
@@ -166,7 +166,8 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).not.toContain("answer-count-4");
     expect(html).toContain('.ac-glossy-arcade::before { content: "";');
     expect(html).toContain("border: 2px solid rgba(255, 255, 255, 0.76)");
-    expect(html).not.toContain("border: 3px dashed");
+    // Answer capsules no longer draw a dashed inner ring; unrelated bridge placeholders may still use dashes.
+    expect(html).not.toMatch(/(?:\.answer-card|\.ac-glossy-arcade)[^{}]*\{[^}]*border: 3px dashed/);
     expect(html).toMatch(/\.answer-card > b[^}]*width: 156px/);
     expect(html).toMatch(/\.answer-card > b[^}]*font-size: 80px/);
     expect(html).toMatch(/\.answer-card > b[^}]*margin-left: -86px/);

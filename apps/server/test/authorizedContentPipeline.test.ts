@@ -97,7 +97,8 @@ describe("Authorized Content End-to-End Pipeline Integration (P6)", () => {
     // Verify persisted record in repository
     const saved = await app.repository.getQuestionBankQuestion(candidate.id);
     expect(saved).toBeDefined();
-    expect(saved?.question).toContain("Pikachu");
+    // The fixture keeps the named subject out of the stem (answer-leak rule), so it lives in the correct choice.
+    expect(saved?.question).toBe(candidate.question);
     expect(saved?.choices.find((choice) => choice.id === saved.correct_choice_id)?.text).toBe("Pikachu");
 
     // Clean up question from bank

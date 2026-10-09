@@ -3,6 +3,7 @@ import {
   hashBankQuestionSource,
   sourceSha256Hex,
   type BankQuestionWithCooldown,
+  type QuizConfigFormat,
   type TopicSourceExclusionReasonCode,
   type TopicInventoryScanStatus,
 } from "@studio/shared";
@@ -28,7 +29,7 @@ export interface BankInventoryReader {
 export interface BankInventoryScanOptions {
   channelId: string;
   targetLanguage: string;
-  episodeExpectedFormat?: "knowledge" | "image_guess" | "multiple_choice" | "true_false" | "odd_one_out";
+  episodeExpectedFormat?: QuizConfigFormat;
   pageSize?: number;
   maxPages?: number;
 }
@@ -83,8 +84,7 @@ function createResult(
     if (
       question.archetype_id === "deep_trivia" ||
       question.archetype_id === "versus_faceoff" ||
-      question.archetype_id === "verdict_yes_no" ||
-      question.archetype_id === "verdict_true_false"
+      question.archetype_id === "verdict_yes_no"
     ) {
       const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
       if (shortReel.eligible) {
@@ -186,8 +186,7 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         if (
           question.archetype_id === "deep_trivia" ||
           question.archetype_id === "versus_faceoff" ||
-          question.archetype_id === "verdict_yes_no" ||
-          question.archetype_id === "verdict_true_false"
+          question.archetype_id === "verdict_yes_no"
         ) {
           const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
           if (!shortReel.eligible) increment(exclusions, shortReel.reason);
@@ -247,8 +246,7 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         if (
           question.archetype_id === "deep_trivia" ||
           question.archetype_id === "versus_faceoff" ||
-          question.archetype_id === "verdict_yes_no" ||
-          question.archetype_id === "verdict_true_false"
+          question.archetype_id === "verdict_yes_no"
         ) {
           const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
           if (!shortReel.eligible) increment(exclusions, shortReel.reason);

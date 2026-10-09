@@ -370,7 +370,8 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       expect(result.episode).toBeDefined();
       expect(result.quiz.language).toBe("es");
       expect(result.quiz.questions[0].question).toBe("¿Cuál es la velocidad de la luz en el vacío?");
-      expect(result.quiz.questions[0].choices[0].text).toBe("300.000 km/s");
+      const correctChoice = result.quiz.questions[0].choices.find((c) => c.id === result.quiz.questions[0].correct_choice_id);
+      expect(correctChoice?.text).toBe("300.000 km/s");
       // Visual prompt strictly preserved in English
       expect(result.quiz.questions[0].visual_opportunity).toBe("A beam of glowing photon light accelerating across the cosmos, neon rays");
       // Canonical English topic metadata strictly preserved on episode record

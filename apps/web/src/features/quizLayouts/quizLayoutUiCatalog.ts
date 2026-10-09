@@ -64,15 +64,6 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     preview: "verdict",
     icon: "split",
   },
-  verdict_true_false: {
-    id: "verdict_true_false",
-    labelKey: "stageStudio.layoutVerdictTrueFalse",
-    descriptionKey: "stageStudio.layoutVerdictTrueFalseDesc",
-    sandboxLabelKey: "stageStudio.layoutVerdictTrueFalse",
-    sandboxDescriptionKey: "stageStudio.layoutVerdictTrueFalseDesc",
-    preview: "verdict",
-    icon: "split",
-  },
   full_stack_list: {
     id: "full_stack_list",
     labelKey: "stageStudio.layoutFullStack",

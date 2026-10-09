@@ -13,60 +13,60 @@ const sampleQuiz: QuizV2 = {
   schema_version: 2,
   episode_id: "ep-201",
   age_band: "7-9",
-  language: "vi",
+  language: "en",
   questions: [
     {
       id: "question-01",
       number: 1,
-      format: "text_multiple_choice",
+      format: "multiple_choice",
       difficulty: 1,
-      question: "Cá heo thở bằng gì?",
+      question: "How do dolphins breathe?",
       choices: [
-        { id: "choice-a", text: "Phổi" },
-        { id: "choice-b", text: "Mang" },
-        { id: "choice-c", text: "Da" },
+        { id: "choice-a", text: "Lungs" },
+        { id: "choice-b", text: "Gills" },
+        { id: "choice-c", text: "Skin" },
       ],
       correct_choice_id: "choice-a",
-      explanation: "Cá heo thở bằng phổi như con người.",
-      fun_fact: "Cá heo phải ngoi lên mặt nước để thở.",
+      explanation: "Dolphins breathe with lungs, just like people.",
+      fun_fact: "Dolphins must swim to the surface to breathe.",
       source_ids: ["C01"],
-      visual_opportunity: "Chú cá heo xanh vui nhộn nhảy vọt lên khỏi mặt nước biển.",
+      visual_opportunity: "A playful blue dolphin leaping out of the sea.",
       validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
     },
     {
       id: "question-02",
       number: 2,
-      format: "text_multiple_choice",
+      format: "multiple_choice",
       difficulty: 2,
-      question: "Bạch tuộc có mấy quả tim?",
+      question: "How many hearts does an octopus have?",
       choices: [
-        { id: "choice-a", text: "1 quả" },
-        { id: "choice-b", text: "3 quả" },
-        { id: "choice-c", text: "2 quả" },
+        { id: "choice-a", text: "1 heart" },
+        { id: "choice-b", text: "3 hearts" },
+        { id: "choice-c", text: "2 hearts" },
       ],
       correct_choice_id: "choice-b",
-      explanation: "Bạch tuộc sở hữu tới 3 quả tim.",
-      fun_fact: "Hai quả tim bơm máu qua mang, một quả đi khắp cơ thể.",
+      explanation: "An octopus has three hearts.",
+      fun_fact: "Two hearts pump blood through the gills and one pumps it around the body.",
       source_ids: ["C02"],
-      visual_opportunity: "Bạch tuộc màu cam tinh nghịch đang chơi trốn tìm trong rạn san hô.",
+      visual_opportunity: "A cheeky orange octopus playing hide and seek in a coral reef.",
       validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
     },
     {
       id: "question-03",
       number: 3,
-      format: "text_multiple_choice",
+      format: "multiple_choice",
       difficulty: 3,
-      question: "Loài động vật nào lớn nhất đại dương?",
+      question: "Which animal is the largest in the ocean?",
       choices: [
-        { id: "choice-a", text: "Cá mập trắng" },
-        { id: "choice-b", text: "Cá voi xanh" },
-        { id: "choice-c", text: "Mực khổng lồ" },
+        { id: "choice-a", text: "Great White Shark" },
+        { id: "choice-b", text: "Blue Whale" },
+        { id: "choice-c", text: "Giant Squid" },
       ],
       correct_choice_id: "choice-b",
-      explanation: "Cá voi xanh là sinh vật lớn nhất từng sống trên Trái Đất.",
-      fun_fact: "Tim cá voi xanh có thể to bằng một chiếc xe hơi.",
+      explanation: "The blue whale is the largest animal that has ever lived on Earth.",
+      fun_fact: "A blue whale heart can be as big as a small car.",
       source_ids: ["C03"],
-      visual_opportunity: "Cá voi xanh khổng lồ bơi hiền hòa giữa lòng đại dương bao la.",
+      visual_opportunity: "A gentle giant blue whale gliding through the open ocean.",
       validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
     },
   ],
@@ -74,13 +74,13 @@ const sampleQuiz: QuizV2 = {
 
 describe("quizArtifactSynthesizer", () => {
   it("synthesizes script.md that strictly satisfies validateQuizScript", () => {
-    const script = synthesizeScriptMarkdown(sampleQuiz, "Động vật biển kỳ thú");
+    const script = synthesizeScriptMarkdown(sampleQuiz, "Amazing Sea Animals");
 
-    expect(script).toContain("# Động vật biển kỳ thú");
+    expect(script).toContain("# Amazing Sea Animals");
     expect(script).toContain("<!-- HUMOR_POLICY: v1 -->");
-    expect(script).toContain("## Question 1 — Cá heo thở bằng gì?");
+    expect(script).toContain("## Question 1 — How do dolphins breathe?");
     expect(script).toContain("Take a guess and think carefully!");
-    expect(script).toContain("The canonical correct answer is: Phổi.");
+    expect(script).toContain("The canonical correct answer is: Lungs.");
 
     // Must pass the repository's strict quality gate
     expect(() => validateQuizScript(script, 3)).not.toThrow();
@@ -92,7 +92,7 @@ describe("quizArtifactSynthesizer", () => {
     expect(visualBible).toContain("# Episode Visual Bible");
     expect(visualBible).toContain("## Safe motion");
     expect(visualBible).toContain("## Continuity bundle CB-01 — Question 1");
-    expect(visualBible).toContain("Anchor-frame prompt: Chú cá heo xanh vui nhộn");
+    expect(visualBible).toContain("Anchor-frame prompt: A playful blue dolphin");
 
     // Must pass the repository's strict quality gate
     expect(() => validateQuizVisualBible(visualBible, [1, 2, 3])).not.toThrow();
@@ -104,8 +104,8 @@ describe("quizArtifactSynthesizer", () => {
     expect(scenes).toHaveLength(3);
     expect(scenes[0].scene_id).toBe("scene-1");
     expect(scenes[0].quiz?.question_number).toBe(1);
-    expect(scenes[0].quiz?.choices).toEqual(["Phổi", "Mang", "Da"]);
-    expect(scenes[0].quiz?.answer).toBe("Phổi");
+    expect(scenes[0].quiz?.choices).toEqual(["Lungs", "Gills", "Skin"]);
+    expect(scenes[0].quiz?.answer).toBe("Lungs");
 
     // Reconstruct QuizV2 from scenes and verify equivalence
     const reconstructed = deriveQuizV2FromScenes({
@@ -117,9 +117,9 @@ describe("quizArtifactSynthesizer", () => {
     });
 
     expect(reconstructed.questions).toHaveLength(3);
-    expect(reconstructed.questions[0].question).toBe("Cá heo thở bằng gì?");
-    expect(reconstructed.questions[1].question).toBe("Bạch tuộc có mấy quả tim?");
-    expect(reconstructed.questions[2].question).toBe("Loài động vật nào lớn nhất đại dương?");
+    expect(reconstructed.questions[0].question).toBe("How do dolphins breathe?");
+    expect(reconstructed.questions[1].question).toBe("How many hearts does an octopus have?");
+    expect(reconstructed.questions[2].question).toBe("Which animal is the largest in the ocean?");
   });
 
   it("synthesizes all artifacts together in one call", () => {

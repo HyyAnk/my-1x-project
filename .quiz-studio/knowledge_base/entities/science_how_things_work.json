@@ -1,0 +1,1804 @@
+[
+  {
+    "id": "ENT-SCI-001",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Gravity",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Gravitational Force",
+      "Gravitation"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright red apple falling from a leafy tree toward a smiling child on green grass, with a soft glowing arrow pointing down to the ground, sunny sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Invisible pull that makes dropped things fall to the ground",
+      "Keeps our feet on the floor and the Moon circling Earth",
+      "Much weaker on the Moon, so astronauts can bounce high",
+      "Isaac Newton described it after wondering about falling apples"
+    ],
+    "distractor_pool": [
+      "Magnetism",
+      "Friction",
+      "Buoyancy",
+      "Air Resistance",
+      "Static Electricity"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Without air, a feather and a hammer fall at the same speed.",
+        "verdict": "fact",
+        "explanation": "Air slows the feather down. With no air in the way, gravity pulls both objects down equally fast.",
+        "fun_fact": "Astronaut David Scott dropped a hammer and a feather on the Moon, and both landed together."
+      },
+      {
+        "claim": "There is no gravity at all in space.",
+        "verdict": "myth",
+        "explanation": "Gravity reaches far into space. Astronauts float because they and their spacecraft are falling around Earth together.",
+        "fun_fact": "You would weigh about one sixth as much on the Moon as you do on Earth."
+      }
+    ],
+    "versus_candidates": [
+      "Magnetism",
+      "Friction",
+      "Buoyancy"
+    ]
+  },
+  {
+    "id": "ENT-SCI-002",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Magnetism",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Magnetic Force"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shiny red and silver bar magnet pulling paper clips and metal washers across a wooden table, with playful curved lines showing an invisible pull, bright classroom light, 9:16 vertical shot.",
+    "core_traits": [
+      "Invisible force that pulls on some metals",
+      "Lets notes and pictures stick to the fridge door",
+      "Every magnet has a north pole and a south pole",
+      "Opposite poles attract while matching poles push apart"
+    ],
+    "distractor_pool": [
+      "Gravity",
+      "Static Electricity",
+      "Friction",
+      "Buoyancy",
+      "Air Pressure"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Magnets stick to every kind of metal.",
+        "verdict": "myth",
+        "explanation": "Magnets pull strongly on iron, nickel and cobalt, but not on aluminum cans, copper or gold.",
+        "fun_fact": "Earth itself acts like a giant magnet, which is why a compass needle points north."
+      },
+      {
+        "claim": "Cutting a bar magnet in half makes two smaller magnets.",
+        "verdict": "fact",
+        "explanation": "Each piece gets its own north and south pole, so you can never get just one pole alone.",
+        "fun_fact": "The northern lights glow when particles from the Sun are steered by Earth's magnetic field."
+      }
+    ],
+    "versus_candidates": [
+      "Gravity",
+      "Static Electricity",
+      "Friction"
+    ]
+  },
+  {
+    "id": "ENT-SCI-003",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Friction",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful child sliding fast on smooth ice next to a child moving slowly across a fluffy rug, with tiny sparkles where shoes touch the floor, bright playful colors, 9:16 vertical shot.",
+    "core_traits": [
+      "Force that slows things down when surfaces rub together",
+      "Rubbing your hands quickly makes them feel toasty",
+      "Much smaller on smooth ice than on rough carpet",
+      "Shoe treads and bicycle brakes depend on it"
+    ],
+    "distractor_pool": [
+      "Gravity",
+      "Air Resistance",
+      "Magnetism",
+      "Buoyancy",
+      "Inertia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rubbing your hands together quickly makes them feel hotter.",
+        "verdict": "fact",
+        "explanation": "Friction turns the energy of motion into heat, which is why rubbing palms helps on a cold day.",
+        "fun_fact": "Long ago, people made campfires by spinning a wooden stick fast against another piece of wood."
+      },
+      {
+        "claim": "Friction is always bad, and we would be better off without it.",
+        "verdict": "myth",
+        "explanation": "Without friction we could not walk, hold a pencil or stop a bike, because everything would slide.",
+        "fun_fact": "Skaters glide easily because ice has a thin, slippery layer on its surface."
+      }
+    ],
+    "versus_candidates": [
+      "Gravity",
+      "Air Resistance",
+      "Magnetism"
+    ]
+  },
+  {
+    "id": "ENT-SCI-004",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Static Electricity",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Static",
+      "Static Charge"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A giggling child holding a bright blue balloon above their head while their hair stands straight up toward it, tiny playful sparkles in the air, cozy living room, 9:16 vertical shot.",
+    "core_traits": [
+      "Makes your hair stand up after rubbing a balloon on it",
+      "Can make a balloon cling to a wall",
+      "Sometimes gives a tiny zap when you touch a doorknob",
+      "Electric charge that builds up on a surface instead of flowing"
+    ],
+    "distractor_pool": [
+      "Magnetism",
+      "Electric Circuit",
+      "Friction",
+      "Gravity",
+      "Sound Waves"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rubbing a balloon on your hair can make it stick to a wall.",
+        "verdict": "fact",
+        "explanation": "Rubbing moves tiny charged particles called electrons onto the balloon, and that charge clings to the wall.",
+        "fun_fact": "Static zaps happen more often in dry winter air than on humid summer days."
+      },
+      {
+        "claim": "Static electricity and lightning are completely different things.",
+        "verdict": "myth",
+        "explanation": "Lightning is a giant spark of static electricity jumping between clouds or from clouds to the ground.",
+        "fun_fact": "Ancient Greeks noticed that rubbed amber could pick up feathers and bits of straw."
+      }
+    ],
+    "versus_candidates": [
+      "Magnetism",
+      "Electric Circuit",
+      "Friction"
+    ]
+  },
+  {
+    "id": "ENT-SCI-005",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Mirror Reflection",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Light Reflection",
+      "Reflection"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smiling child making a funny face at a round mirror, with a bright beam of flashlight light bouncing off the mirror in a zigzag, colorful bedroom, 9:16 vertical shot.",
+    "core_traits": [
+      "Lets you see your own face in the bathroom",
+      "Happens when light bounces off a smooth, shiny surface",
+      "Makes writing look back-to-front",
+      "Light bounces off at the same angle it arrives"
+    ],
+    "distractor_pool": [
+      "Light Refraction",
+      "Shadow",
+      "Echo",
+      "Rainbow",
+      "Static Electricity"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some ambulances have their name written backwards on the front on purpose.",
+        "verdict": "fact",
+        "explanation": "Drivers ahead can read the word correctly in their rear-view mirrors, because mirrors flip writing.",
+        "fun_fact": "Astronauts left mirrors on the Moon so scientists can bounce laser beams off them from Earth."
+      },
+      {
+        "claim": "Mirrors make their own light.",
+        "verdict": "myth",
+        "explanation": "Mirrors only bounce back light that hits them. In a totally dark room, a mirror shows nothing.",
+        "fun_fact": "A periscope uses two mirrors so people can see over walls or out of submarines."
+      }
+    ],
+    "versus_candidates": [
+      "Light Refraction",
+      "Shadow",
+      "Echo"
+    ]
+  },
+  {
+    "id": "ENT-SCI-006",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Echo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sound Reflection"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A happy child cupping their hands and calling out across a sunny canyon, with soft curved sound ripples bouncing off the orange rock walls and returning, 9:16 vertical shot.",
+    "core_traits": [
+      "Sound that comes back to you after you shout",
+      "Easy to hear in big empty halls, caves and canyons",
+      "Happens when sound waves bounce off a hard surface",
+      "Bats and dolphins use it to find food"
+    ],
+    "distractor_pool": [
+      "Sound Waves",
+      "Mirror Reflection",
+      "Thunder",
+      "Vibration",
+      "Static Electricity"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bats can find insects in the dark by listening to echoes.",
+        "verdict": "fact",
+        "explanation": "Bats make high squeaks and listen for echoes bouncing back, an ability called echolocation.",
+        "fun_fact": "Most bat squeaks are too high-pitched for human ears to hear."
+      },
+      {
+        "claim": "A duck's quack is the only sound that does not echo.",
+        "verdict": "myth",
+        "explanation": "Scientists tested this and found that duck quacks do echo. The echo is just hard to notice.",
+        "fun_fact": "Sound travels about 343 meters every second through air at room temperature."
+      }
+    ],
+    "versus_candidates": [
+      "Sound Waves",
+      "Mirror Reflection",
+      "Thunder"
+    ]
+  },
+  {
+    "id": "ENT-SCI-007",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Sound Waves",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sound",
+      "Acoustic Waves"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A child gently tapping a shiny drum while colorful rippling rings spread through the air toward a friend's ear, bright cartoon music room, 9:16 vertical shot.",
+    "core_traits": [
+      "Made when something vibrates back and forth",
+      "Our ears catch them and our brain hears them",
+      "Can travel through air, water and even solid walls",
+      "Cannot travel through the empty vacuum of space"
+    ],
+    "distractor_pool": [
+      "Light Waves",
+      "Radio Waves",
+      "Echo",
+      "Magnetism",
+      "Static Electricity"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Sound cannot travel through empty outer space.",
+        "verdict": "fact",
+        "explanation": "Sound needs something to vibrate, like air or water. Space is almost empty, so it stays silent.",
+        "fun_fact": "Sound travels about four times faster in water than it does in air."
+      },
+      {
+        "claim": "Light and sound travel at the same speed.",
+        "verdict": "myth",
+        "explanation": "Light is far faster, which is why you see lightning before you hear the thunder.",
+        "fun_fact": "Whales can send their low songs across huge stretches of ocean."
+      }
+    ],
+    "versus_candidates": [
+      "Light Waves",
+      "Echo",
+      "Radio Waves"
+    ]
+  },
+  {
+    "id": "ENT-SCI-008",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Evaporation",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Vaporization"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A shrinking rain puddle on a sunny sidewalk with soft wisps of vapor rising toward a bright yellow sun, a smiling child in rain boots watching, 9:16 vertical shot.",
+    "core_traits": [
+      "Why puddles disappear on a sunny day",
+      "Turns liquid water into an invisible gas",
+      "Happens faster when it is hot and breezy",
+      "The step in the water cycle that lifts water into the air"
+    ],
+    "distractor_pool": [
+      "Condensation",
+      "Melting",
+      "Freezing",
+      "Sublimation",
+      "Precipitation"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Wet clothes dry faster on a sunny, breezy day.",
+        "verdict": "fact",
+        "explanation": "Heat gives water energy to escape as vapor, and wind carries the moist air away.",
+        "fun_fact": "Sweating cools you down because evaporating sweat carries heat away from your skin."
+      },
+      {
+        "claim": "Water has to boil before it can evaporate.",
+        "verdict": "myth",
+        "explanation": "Water evaporates at any temperature. Even a cool puddle slowly vanishes into the air.",
+        "fun_fact": "Sea salt is made by letting seawater evaporate in shallow ponds until only salt remains."
+      }
+    ],
+    "versus_candidates": [
+      "Condensation",
+      "Melting and Freezing",
+      "Water Cycle"
+    ]
+  },
+  {
+    "id": "ENT-SCI-009",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Condensation",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A tall glass of icy lemonade on a sunny picnic table, covered in sparkling water droplets on the outside, a curious child touching the glass, 9:16 vertical shot.",
+    "core_traits": [
+      "Water drops that appear on the outside of a cold glass",
+      "Fogs up the bathroom mirror after a hot shower",
+      "Happens when water vapor cools and turns back into liquid",
+      "How clouds form high in the sky"
+    ],
+    "distractor_pool": [
+      "Evaporation",
+      "Melting",
+      "Freezing",
+      "Sublimation",
+      "Precipitation"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Drops on the outside of a cold glass come from the air.",
+        "verdict": "fact",
+        "explanation": "Invisible water vapor in the air cools when it touches the glass and turns into liquid drops.",
+        "fun_fact": "Clouds are made of countless tiny water droplets formed by condensation."
+      },
+      {
+        "claim": "A cold glass is leaking when it gets wet on the outside.",
+        "verdict": "myth",
+        "explanation": "The glass is not leaking. The drops form from water vapor in the surrounding air.",
+        "fun_fact": "You can see your breath on cold days because the vapor in it condenses into tiny droplets."
+      }
+    ],
+    "versus_candidates": [
+      "Evaporation",
+      "Melting and Freezing",
+      "Water Cycle"
+    ]
+  },
+  {
+    "id": "ENT-SCI-010",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Melting and Freezing",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Melting Point",
+      "Freezing Point"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Split scene of a dripping strawberry ice pop on a sunny beach beside sparkling ice cubes forming in a blue tray on a snowy windowsill, bright cheerful colors, 9:16 vertical shot.",
+    "core_traits": [
+      "Makes ice cream drip on hot days and puddles turn icy in winter",
+      "Change of state between a solid and a liquid",
+      "Chocolate, candle wax and butter go through it too",
+      "Happens to pure water at 0 degrees Celsius"
+    ],
+    "distractor_pool": [
+      "Evaporation",
+      "Condensation",
+      "Boiling",
+      "Sublimation",
+      "Dissolving"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Water takes up more space when it freezes into ice.",
+        "verdict": "fact",
+        "explanation": "Water expands by about one tenth when it freezes, which is why ice floats.",
+        "fun_fact": "Because ice floats, lakes freeze from the top, so fish stay safe in the water below."
+      },
+      {
+        "claim": "Sprinkling salt on icy roads works by heating the ice up.",
+        "verdict": "myth",
+        "explanation": "Salt does not heat ice. It lowers the freezing point of water, so the ice melts even when cold.",
+        "fun_fact": "Chocolate melts in your mouth because it melts at just below body temperature."
+      }
+    ],
+    "versus_candidates": [
+      "Evaporation",
+      "Condensation",
+      "Water Cycle"
+    ]
+  },
+  {
+    "id": "ENT-SCI-011",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Buoyancy",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Upthrust",
+      "Buoyant Force"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A colorful beach ball and a toy wooden boat bobbing on clear blue pool water while a small pebble rests on the bottom, soft upward arrows under the floating toys, 9:16 vertical shot.",
+    "core_traits": [
+      "The upward push that helps things float",
+      "Why a beach ball bobs on top of a swimming pool",
+      "Lets giant steel ships float on the ocean",
+      "Archimedes figured it out while climbing into a bath"
+    ],
+    "distractor_pool": [
+      "Gravity",
+      "Density",
+      "Friction",
+      "Air Pressure",
+      "Magnetism"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Huge steel ships can float even though a steel block sinks.",
+        "verdict": "fact",
+        "explanation": "A ship's hollow shape pushes aside lots of water, and that water pushes the ship back up.",
+        "fun_fact": "Legend says Archimedes shouted \"Eureka!\" after noticing the bath water rise when he climbed in."
+      },
+      {
+        "claim": "Heavy things always sink and light things always float.",
+        "verdict": "myth",
+        "explanation": "Floating depends on shape and density, not weight alone. A giant log floats while a tiny pebble sinks.",
+        "fun_fact": "Salty seawater pushes up harder than fresh water, so swimming in the sea feels floatier."
+      }
+    ],
+    "versus_candidates": [
+      "Gravity",
+      "Density",
+      "Friction"
+    ]
+  },
+  {
+    "id": "ENT-SCI-012",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Photosynthesis",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A bright green sprouting plant in a sunny flowerpot with golden sunbeams shining onto its leaves and tiny sparkling bubbles of air floating up, cheerful garden background, 9:16 vertical shot.",
+    "core_traits": [
+      "How green plants make their own food",
+      "Needs sunlight, water and air",
+      "Happens mostly in leaves, using green chlorophyll",
+      "Takes in carbon dioxide and gives off oxygen"
+    ],
+    "distractor_pool": [
+      "Pollination",
+      "Germination",
+      "Respiration",
+      "Evaporation",
+      "Decomposition"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Plants give off oxygen that people and animals breathe.",
+        "verdict": "fact",
+        "explanation": "During photosynthesis, plants use carbon dioxide from the air and release oxygen.",
+        "fun_fact": "Tiny ocean plants and algae make a huge share of the oxygen on Earth."
+      },
+      {
+        "claim": "Plants get their food by eating soil through their roots.",
+        "verdict": "myth",
+        "explanation": "Roots take up water and minerals, but plants build their own food from air, water and sunlight.",
+        "fun_fact": "Leaves look green because chlorophyll reflects green light and soaks up red and blue light."
+      }
+    ],
+    "versus_candidates": [
+      "Pollination",
+      "Germination",
+      "Water Cycle"
+    ]
+  },
+  {
+    "id": "ENT-SCI-013",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Water Cycle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Hydrologic Cycle",
+      "Hydrological Cycle"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A colorful cartoon landscape with a blue ocean, a smiling sun, fluffy clouds and gentle rain falling on green mountains, with soft circular arrows linking them, 9:16 vertical shot.",
+    "core_traits": [
+      "Endless journey of water around our planet",
+      "Water rises from oceans, forms clouds and falls as rain",
+      "Includes evaporation, condensation and precipitation",
+      "Powered mostly by heat from the Sun"
+    ],
+    "distractor_pool": [
+      "Rock Cycle",
+      "Food Chain",
+      "Carbon Cycle",
+      "Photosynthesis",
+      "Life Cycle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The water on Earth today has been recycled for billions of years.",
+        "verdict": "fact",
+        "explanation": "Earth keeps reusing the same water over and over, so the water you drink is very old.",
+        "fun_fact": "Most of Earth's water is salty ocean water, and only a small part is fresh."
+      },
+      {
+        "claim": "Rain is brand-new water made inside clouds.",
+        "verdict": "myth",
+        "explanation": "Clouds only gather water that evaporated from oceans, lakes and plants. No new water is made.",
+        "fun_fact": "Plants add water vapor to the air through tiny holes in their leaves."
+      }
+    ],
+    "versus_candidates": [
+      "Rock Cycle",
+      "Food Chain",
+      "Photosynthesis"
+    ]
+  },
+  {
+    "id": "ENT-SCI-014",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "everyday_science",
+    "name": "Electric Circuit",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Circuit",
+      "Simple Circuit"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A neat science-kit setup on a desk with a battery, colorful red and black wires and a small glowing bulb in a closed loop, a child's hand pressing a little switch, 9:16 vertical shot.",
+    "core_traits": [
+      "A loop that lets electricity flow",
+      "Lights up a bulb when wires join it to a battery",
+      "A switch opens or closes it",
+      "Only works when the path is complete with no gaps"
+    ],
+    "distractor_pool": [
+      "Static Electricity",
+      "Magnetism",
+      "Electromagnet",
+      "Friction",
+      "Sound Waves"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A bulb only lights up when its circuit makes a complete loop.",
+        "verdict": "fact",
+        "explanation": "Electricity must flow out and back to its source. A gap anywhere in the loop stops the flow.",
+        "fun_fact": "Copper is used in most wires because it carries electricity very well."
+      },
+      {
+        "claim": "Flipping a switch on adds new electricity to the wires.",
+        "verdict": "myth",
+        "explanation": "A switch just closes a gap in the circuit, letting electricity flow through the completed path.",
+        "fun_fact": "A lemon with a copper coin and a zinc nail stuck in it can make a tiny electric current."
+      }
+    ],
+    "versus_candidates": [
+      "Static Electricity",
+      "Magnetism",
+      "Lightning"
+    ]
+  },
+  {
+    "id": "ENT-SCI-015",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Lever",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A child easily lifting a big friendly cartoon boulder using a long wooden plank balanced on a small triangle-shaped rock, sunny park background, 9:16 vertical shot.",
+    "core_traits": [
+      "Stiff bar that tips on a turning point to lift things",
+      "Seesaws, bottle openers and crowbars use it",
+      "Its turning point is called the fulcrum",
+      "A longer arm lets you lift heavy loads with less push"
+    ],
+    "distractor_pool": [
+      "Pulley",
+      "Wheel and Axle",
+      "Inclined Plane",
+      "Wedge",
+      "Screw (Simple Machine)"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A longer lever makes lifting a heavy load easier.",
+        "verdict": "fact",
+        "explanation": "Pushing far from the fulcrum gives more turning power, so less effort lifts the same load.",
+        "fun_fact": "Archimedes said that with a long enough lever and a place to stand, he could move the world."
+      },
+      {
+        "claim": "Levers create extra energy out of nothing.",
+        "verdict": "myth",
+        "explanation": "Levers trade distance for force. You push less hard, but you must push farther.",
+        "fun_fact": "Your forearm works like a lever, with your elbow acting as the fulcrum."
+      }
+    ],
+    "versus_candidates": [
+      "Pulley",
+      "Wheel and Axle",
+      "Inclined Plane"
+    ]
+  },
+  {
+    "id": "ENT-SCI-016",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Pulley",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Block and Tackle"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling child pulling a rope that runs over a shiny wheel at the top of a tree house, lifting a basket of toys upward, bright leafy backyard, 9:16 vertical shot.",
+    "core_traits": [
+      "Wheel with a rope running around it",
+      "Used to raise flags to the top of a flagpole",
+      "Pulling down on the rope lifts a load up",
+      "Cranes and elevators use several of them working together"
+    ],
+    "distractor_pool": [
+      "Lever",
+      "Wheel and Axle",
+      "Gears",
+      "Inclined Plane",
+      "Wedge"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Using several pulleys together makes heavy loads easier to lift.",
+        "verdict": "fact",
+        "explanation": "More rope sections share the weight, so you pull with less force but over a longer length.",
+        "fun_fact": "Elevators hang from strong steel cables that run over large pulley wheels."
+      },
+      {
+        "claim": "A single fixed pulley cuts the effort needed to lift something in half.",
+        "verdict": "myth",
+        "explanation": "One fixed pulley mainly changes direction, letting you pull down to lift up. The effort stays about the same.",
+        "fun_fact": "Archimedes is said to have moved a whole ship using a system of pulleys."
+      }
+    ],
+    "versus_candidates": [
+      "Lever",
+      "Wheel and Axle",
+      "Gears"
+    ]
+  },
+  {
+    "id": "ENT-SCI-017",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Wheel and Axle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A bright red toy wagon with big round wheels joined by a silver rod, rolling along a sunny garden path with a teddy bear riding inside, 9:16 vertical shot.",
+    "core_traits": [
+      "Round wheel fixed to a rod through its center",
+      "Found on bikes, wagons and cars",
+      "Doorknobs and steering wheels use it too",
+      "Turning the big part a little turns the thin rod with more force"
+    ],
+    "distractor_pool": [
+      "Lever",
+      "Pulley",
+      "Gears",
+      "Screw (Simple Machine)",
+      "Inclined Plane"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A doorknob is a kind of wheel and axle.",
+        "verdict": "fact",
+        "explanation": "Turning the wide knob spins the thin rod inside, making it easier to move the latch.",
+        "fun_fact": "Some of the oldest known wheels were used by potters to shape clay, not to move carts."
+      },
+      {
+        "claim": "A wheel and axle only helps things roll along the ground.",
+        "verdict": "myth",
+        "explanation": "It also multiplies turning force, as in doorknobs, faucet handles and screwdrivers.",
+        "fun_fact": "Wheeled rolling suitcases only became popular around the 1970s, long after cars were invented."
+      }
+    ],
+    "versus_candidates": [
+      "Lever",
+      "Pulley",
+      "Gears"
+    ]
+  },
+  {
+    "id": "ENT-SCI-018",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Inclined Plane",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Ramp",
+      "Slope"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A child pushing a box of colorful blocks up a gentle wooden ramp onto a low stage, with a steep staircase beside it for comparison, bright playroom, 9:16 vertical shot.",
+    "core_traits": [
+      "Flat surface set at a slant",
+      "Wheelchair ramps and playground slides are examples",
+      "Lets you raise a load by pushing it along a longer path",
+      "A gentler slope needs less push but a longer trip"
+    ],
+    "distractor_pool": [
+      "Lever",
+      "Wedge",
+      "Pulley",
+      "Screw (Simple Machine)",
+      "Wheel and Axle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A gentle ramp needs less push than a steep one to raise a load.",
+        "verdict": "fact",
+        "explanation": "A gentle slope spreads the work over a longer path, so each push can be smaller.",
+        "fun_fact": "Mountain roads zigzag back and forth so cars can climb on gentler slopes."
+      },
+      {
+        "claim": "Using a ramp means you do much less total work.",
+        "verdict": "myth",
+        "explanation": "You push with less force, but over a longer distance, so the total work stays about the same.",
+        "fun_fact": "A screw is really an inclined plane wrapped around a pole."
+      }
+    ],
+    "versus_candidates": [
+      "Lever",
+      "Wedge",
+      "Pulley"
+    ]
+  },
+  {
+    "id": "ENT-SCI-019",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Wedge",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A bright yellow triangle-shaped rubber doorstop holding open a blue door, with sunlight streaming into a cheerful hallway, 9:16 vertical shot.",
+    "core_traits": [
+      "Thick at one end and thin at the other",
+      "Doorstops, knives and chisels use this shape",
+      "Splits things apart or holds things in place",
+      "Like two inclined planes put back to back"
+    ],
+    "distractor_pool": [
+      "Inclined Plane",
+      "Lever",
+      "Screw (Simple Machine)",
+      "Pulley",
+      "Wheel and Axle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Your front teeth work like wedges when you bite into an apple.",
+        "verdict": "fact",
+        "explanation": "Their thin, sharp edges push the food apart, just like a wedge splitting wood.",
+        "fun_fact": "A zipper uses tiny wedges inside its slider to open and close the teeth."
+      },
+      {
+        "claim": "A blunt wedge splits wood just as easily as a sharp one.",
+        "verdict": "myth",
+        "explanation": "A thin, sharp wedge focuses the push on a small area, so it cuts or splits much more easily.",
+        "fun_fact": "A ship's pointed front acts like a wedge, pushing water aside as it moves."
+      }
+    ],
+    "versus_candidates": [
+      "Inclined Plane",
+      "Lever",
+      "Screw (Simple Machine)"
+    ]
+  },
+  {
+    "id": "ENT-SCI-020",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Screw (Simple Machine)",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Helical Screw"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A giant friendly cartoon spiral with a glowing ridge winding around a silver pole, next to a jar with a twist-on lid, soft pastel science-lab background, 9:16 vertical shot.",
+    "core_traits": [
+      "Spiral ridge wrapped around a rod",
+      "Moves forward a little each time it turns",
+      "Jar lids and light bulbs use its threads to twist on",
+      "Really an inclined plane wrapped around a pole"
+    ],
+    "distractor_pool": [
+      "Wedge",
+      "Inclined Plane",
+      "Lever",
+      "Wheel and Axle",
+      "Pulley"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A jar lid uses screw threads to close tightly.",
+        "verdict": "fact",
+        "explanation": "The spiral ridges turn a twisting motion into a strong push, pulling the lid down snugly.",
+        "fun_fact": "The Archimedes screw, a turning spiral inside a tube, has lifted water for over 2,000 years."
+      },
+      {
+        "claim": "A screw is a totally different machine from a ramp.",
+        "verdict": "myth",
+        "explanation": "A screw is an inclined plane wrapped in a spiral. Following its thread is like walking up a winding ramp.",
+        "fun_fact": "Spiral slides at playgrounds follow the same twisting idea as a screw thread."
+      }
+    ],
+    "versus_candidates": [
+      "Wedge",
+      "Inclined Plane",
+      "Lever"
+    ]
+  },
+  {
+    "id": "ENT-SCI-021",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Gears",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Cogs",
+      "Gear Wheels",
+      "Cogwheels"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A colorful set of big and small toothed wheels locked together and turning, in bright red, blue and yellow, with a happy child cranking a handle, 9:16 vertical shot.",
+    "core_traits": [
+      "Wheels with teeth around the edge",
+      "Their teeth lock together to pass along turning motion",
+      "Found inside clocks and bicycles",
+      "A big one turning a small one makes the small one spin faster"
+    ],
+    "distractor_pool": [
+      "Pulley",
+      "Wheel and Axle",
+      "Lever",
+      "Screw (Simple Machine)",
+      "Coil Spring"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Two gears that touch each other turn in opposite directions.",
+        "verdict": "fact",
+        "explanation": "When one gear turns clockwise, its teeth push the next gear the other way.",
+        "fun_fact": "Bicycle gears help riders pedal up hills more easily by changing how far each pedal turn goes."
+      },
+      {
+        "claim": "Gears were only invented in modern times.",
+        "verdict": "myth",
+        "explanation": "Gears are ancient. The Antikythera mechanism from ancient Greece used dozens of bronze gears.",
+        "fun_fact": "In a clock, gears make the minute hand turn twelve times for each hour-hand turn."
+      }
+    ],
+    "versus_candidates": [
+      "Pulley",
+      "Wheel and Axle",
+      "Lever"
+    ]
+  },
+  {
+    "id": "ENT-SCI-022",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "simple_machines",
+    "name": "Coil Spring",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Spring",
+      "Helical Spring"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A shiny silver metal coil bouncing a small toy up into the air above a bright trampoline, with playful motion lines, sunny backyard, 9:16 vertical shot.",
+    "core_traits": [
+      "Bendy coil of metal wire",
+      "Squishes down and bounces back",
+      "Found in trampolines, pogo sticks and clicky pens",
+      "Stores energy when stretched or squeezed"
+    ],
+    "distractor_pool": [
+      "Gears",
+      "Pulley",
+      "Lever",
+      "Rubber Band",
+      "Wedge"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A squeezed spring stores energy and releases it when let go.",
+        "verdict": "fact",
+        "explanation": "Pressing a spring stores energy in the bent metal, which pushes back when you let go.",
+        "fun_fact": "A Slinky toy is a long, loose spring that can walk down stairs."
+      },
+      {
+        "claim": "A spring can be stretched any amount and always bounce back.",
+        "verdict": "myth",
+        "explanation": "Stretched too far, a spring bends out of shape and stays stretched instead of springing back.",
+        "fun_fact": "Many mechanical watches and wind-up toys are powered by a tightly wound spring."
+      }
+    ],
+    "versus_candidates": [
+      "Gears",
+      "Rubber Band",
+      "Pulley"
+    ]
+  },
+  {
+    "id": "ENT-SCI-023",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Primary Colors",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Primary Colours"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Three big splashes of red, yellow and blue paint on a white art table, with a smiling child mixing them with a brush into orange, green and purple, 9:16 vertical shot.",
+    "core_traits": [
+      "Group of three main colors",
+      "Red, yellow and blue in a classic art class",
+      "Mixed together to make many other colors",
+      "Screens use red, green and blue light versions instead"
+    ],
+    "distractor_pool": [
+      "Secondary Colors",
+      "Complementary Colors",
+      "Neutral Colors",
+      "Pastel Colors",
+      "Neon Colors"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "TV and phone screens make every color from red, green and blue light.",
+        "verdict": "fact",
+        "explanation": "Tiny red, green and blue dots glow at different brightness to create all the colors you see.",
+        "fun_fact": "Shining red, green and blue light together makes white light."
+      },
+      {
+        "claim": "Mixing all your paint colors together makes white.",
+        "verdict": "myth",
+        "explanation": "Mixing many paints gives a muddy brown or near-black. Only mixing colored light can make white.",
+        "fun_fact": "Color printers mix cyan, magenta and yellow ink, plus black, to print colorful pictures."
+      }
+    ],
+    "versus_candidates": [
+      "Secondary Colors",
+      "Complementary Colors",
+      "Neutral Colors"
+    ]
+  },
+  {
+    "id": "ENT-SCI-024",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Solids",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Solid State"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A neat display of a wooden block, a shiny ice cube, a smooth gray rock and a toy brick on a bright table, with a magnifying glass nearby, 9:16 vertical shot.",
+    "core_traits": [
+      "Keeps its own shape without a container",
+      "Ice, wood and rocks are examples",
+      "Its tiny particles are packed tightly and only wiggle in place",
+      "One of the three common states of matter"
+    ],
+    "distractor_pool": [
+      "Liquids",
+      "Gases",
+      "Plasma",
+      "Gel",
+      "Foam"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ice is the solid form of water.",
+        "verdict": "fact",
+        "explanation": "When water cools to 0 degrees Celsius, its particles lock into place and form solid ice.",
+        "fun_fact": "Diamond is the hardest natural material, made of carbon atoms locked tightly together."
+      },
+      {
+        "claim": "The particles inside a solid do not move at all.",
+        "verdict": "myth",
+        "explanation": "Particles in a solid still jiggle in place. They just cannot slide past each other.",
+        "fun_fact": "Glass feels very solid, but it is made by melting sand at extremely high temperatures."
+      }
+    ],
+    "versus_candidates": [
+      "Liquids",
+      "Gases",
+      "Plasma"
+    ]
+  },
+  {
+    "id": "ENT-SCI-025",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Liquids",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Liquid State"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Bright orange juice being poured from a glass jug into a round bowl and a tall cup, taking each container's shape, sunny kitchen counter, 9:16 vertical shot.",
+    "core_traits": [
+      "Flows and can be poured",
+      "Water, milk and honey are examples",
+      "Takes the shape of whatever container holds it",
+      "Its amount stays the same even when its shape changes"
+    ],
+    "distractor_pool": [
+      "Solids",
+      "Gases",
+      "Plasma",
+      "Gel",
+      "Foam"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A liquid takes the shape of its container.",
+        "verdict": "fact",
+        "explanation": "Its particles are close together but can slide past each other, so it flows to fill any shape.",
+        "fun_fact": "Honey and water are both liquids, but thick honey flows much more slowly."
+      },
+      {
+        "claim": "Liquids can easily be squeezed into a much smaller space.",
+        "verdict": "myth",
+        "explanation": "Liquids hardly squeeze at all, which is why hydraulic machines use liquid to lift heavy loads.",
+        "fun_fact": "Water is the only common substance found naturally on Earth as a solid, liquid and gas."
+      }
+    ],
+    "versus_candidates": [
+      "Solids",
+      "Gases",
+      "Plasma"
+    ]
+  },
+  {
+    "id": "ENT-SCI-026",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Gases",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Gaseous State"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bunch of colorful helium balloons floating up into a bright blue sky above a happy child at a park, with soft swirls of air drawn around them, 9:16 vertical shot.",
+    "core_traits": [
+      "Usually invisible and spreads out everywhere",
+      "Fills up balloons and bubbles",
+      "Its particles zoom around far apart from each other",
+      "Has no fixed shape and fills any container completely"
+    ],
+    "distractor_pool": [
+      "Solids",
+      "Liquids",
+      "Plasma",
+      "Foam",
+      "Gel"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The air around us is a mixture of gases.",
+        "verdict": "fact",
+        "explanation": "Air is mostly nitrogen and oxygen, with small amounts of other gases like carbon dioxide.",
+        "fun_fact": "Helium is lighter than air, which is why helium balloons float upward."
+      },
+      {
+        "claim": "Gases weigh nothing at all.",
+        "verdict": "myth",
+        "explanation": "Gases do have weight. A balloon full of air is slightly heavier than an empty one.",
+        "fun_fact": "You can smell cookies baking from another room because gas particles spread through the air."
+      }
+    ],
+    "versus_candidates": [
+      "Solids",
+      "Liquids",
+      "Plasma"
+    ]
+  },
+  {
+    "id": "ENT-SCI-027",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Atoms",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Atom"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A glowing cartoon model with a bright round center and tiny colorful dots zooming around it in looping orbits, floating against a deep purple starry background, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny building blocks of everything around us",
+      "Far too small to see, even with a school microscope",
+      "Has a center called the nucleus with electrons around it",
+      "Each element on the periodic table is one kind of it"
+    ],
+    "distractor_pool": [
+      "Molecules",
+      "Cells",
+      "Electrons",
+      "Protons",
+      "Quarks"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Atoms are mostly empty space.",
+        "verdict": "fact",
+        "explanation": "Almost all of an atom's mass sits in its tiny center, with lots of empty space around it.",
+        "fun_fact": "The word atom comes from a Greek word meaning \"cannot be cut\"."
+      },
+      {
+        "claim": "Atoms are the smallest things that exist.",
+        "verdict": "myth",
+        "explanation": "Atoms are made of even smaller particles called protons, neutrons and electrons.",
+        "fun_fact": "A single human hair is roughly a million carbon atoms wide."
+      }
+    ],
+    "versus_candidates": [
+      "Molecules",
+      "Cells",
+      "Electrons"
+    ]
+  },
+  {
+    "id": "ENT-SCI-028",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Crystals",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Crystal"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A sparkling cluster of clear and purple crystals with flat shiny faces glowing on a dark velvet cloth, with a magnifying glass beside them, 9:16 vertical shot.",
+    "core_traits": [
+      "Sparkly solids with flat faces and sharp, neat edges",
+      "Salt, sugar and snowflakes are examples",
+      "Their atoms line up in a neat repeating pattern",
+      "Can grow slowly from a liquid as it cools or dries"
+    ],
+    "distractor_pool": [
+      "Fossils",
+      "Pebbles",
+      "Pearls",
+      "Seashells",
+      "Glass Marbles"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Every snowflake is made of ice crystals.",
+        "verdict": "fact",
+        "explanation": "Snowflakes form when water vapor freezes into ice crystals, usually with six sides.",
+        "fun_fact": "With an adult's help, you can grow sugar crystals at home on a string."
+      },
+      {
+        "claim": "Ordinary window glass is a kind of crystal.",
+        "verdict": "myth",
+        "explanation": "Ordinary glass is not a crystal. Its atoms are jumbled instead of lining up in a repeating pattern.",
+        "fun_fact": "Table salt crystals are shaped like tiny cubes."
+      }
+    ],
+    "versus_candidates": [
+      "Fossils",
+      "Pearls",
+      "Seashells"
+    ]
+  },
+  {
+    "id": "ENT-SCI-029",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Density",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A tall clear glass with colorful stacked layers of golden honey, blue water and yellow oil, a small toy duck floating on top, bright kitchen science table, 9:16 vertical shot.",
+    "core_traits": [
+      "Explains why oil floats on top of water",
+      "Tells how much stuff is packed into a space",
+      "A brick has more of it than a sponge of the same size",
+      "Worked out by dividing mass by volume"
+    ],
+    "distractor_pool": [
+      "Buoyancy",
+      "Weight",
+      "Volume",
+      "Mass",
+      "Temperature"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Oil floats on water because oil is less dense.",
+        "verdict": "fact",
+        "explanation": "Oil packs less mass into the same space than water, so it rises and floats on top.",
+        "fun_fact": "You can stack honey, water and oil in a glass to make colorful liquid layers."
+      },
+      {
+        "claim": "A heavy object is always denser than a light one.",
+        "verdict": "myth",
+        "explanation": "Density is about how tightly packed something is. A big beach ball is less dense than a tiny marble.",
+        "fun_fact": "Ice is less dense than liquid water, which is why ice cubes float."
+      }
+    ],
+    "versus_candidates": [
+      "Buoyancy",
+      "Weight",
+      "Volume"
+    ]
+  },
+  {
+    "id": "ENT-SCI-030",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "colors_and_matter",
+    "name": "Surface Tension",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A tiny water strider bug skating on a calm green pond, its long thin legs making gentle dimples in the shiny water surface, a silver paper clip floating nearby, soft morning light, 9:16 vertical shot.",
+    "core_traits": [
+      "Makes the top of water act like a thin, stretchy skin",
+      "Lets water strider bugs skate across ponds",
+      "Why a glass can be filled slightly above its rim without spilling",
+      "Water molecules at the surface pull tightly on each other"
+    ],
+    "distractor_pool": [
+      "Buoyancy",
+      "Density",
+      "Friction",
+      "Capillary Action",
+      "Evaporation"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Water strider bugs can walk on water thanks to surface tension.",
+        "verdict": "fact",
+        "explanation": "Water's surface acts like a thin stretchy skin, and the bugs' light, water-repelling legs press without breaking through.",
+        "fun_fact": "A carefully placed paper clip can float on water even though steel is denser than water."
+      },
+      {
+        "claim": "Adding soap makes water's surface tension stronger.",
+        "verdict": "myth",
+        "explanation": "Soap actually weakens surface tension, which helps water spread out and soak into dirt on dishes and clothes.",
+        "fun_fact": "Real raindrops are not teardrop-shaped; surface tension pulls small ones into round balls."
+      }
+    ],
+    "versus_candidates": [
+      "Buoyancy",
+      "Density",
+      "Capillary Action"
+    ]
+  },
+  {
+    "id": "ENT-SCI-031",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Isaac Newton",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sir Isaac Newton",
+      "Newton"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A friendly cartoon scientist with long curly hair and an old-fashioned coat sitting under an apple tree, looking up curiously at a red apple, sunny English countryside, 9:16 vertical shot.",
+    "core_traits": [
+      "English scientist famous for a story about a falling apple",
+      "Described the force of gravity",
+      "Wrote three famous laws of motion",
+      "Used a glass prism to show white light holds all the rainbow colors"
+    ],
+    "distractor_pool": [
+      "Galileo Galilei",
+      "Albert Einstein",
+      "Johannes Kepler",
+      "Michael Faraday",
+      "Robert Hooke"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Newton showed that white light contains all the colors of the rainbow.",
+        "verdict": "fact",
+        "explanation": "He passed sunlight through a glass prism and saw it spread into a band of colors.",
+        "fun_fact": "Newton also built one of the first working reflecting telescopes, using a curved mirror."
+      },
+      {
+        "claim": "An apple fell on Newton's head and gave him the idea of gravity.",
+        "verdict": "myth",
+        "explanation": "Newton said watching an apple fall made him wonder about gravity, but nothing says it hit his head.",
+        "fun_fact": "An apple tree linked to Newton's story still grows at his childhood home in England."
+      }
+    ],
+    "versus_candidates": [
+      "Albert Einstein",
+      "Galileo Galilei",
+      "Thomas Edison"
+    ]
+  },
+  {
+    "id": "ENT-SCI-032",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Marie Curie",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Madame Curie",
+      "Maria Sklodowska"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A friendly cartoon woman scientist with neatly tied-up hair and a long dark dress, smiling beside glass beakers and a softly glowing jar in an old science lab, 9:16 vertical shot.",
+    "core_traits": [
+      "Scientist born in Poland who did her famous work in France",
+      "First woman to win a Nobel Prize",
+      "Discovered two new elements, polonium and radium",
+      "Only person to win Nobel Prizes in two different sciences"
+    ],
+    "distractor_pool": [
+      "Ada Lovelace",
+      "Rosalind Franklin",
+      "Jane Goodall",
+      "Dorothy Hodgkin",
+      "Lise Meitner"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Marie Curie won two Nobel Prizes.",
+        "verdict": "fact",
+        "explanation": "She won the Nobel Prize in Physics in 1903 and the Nobel Prize in Chemistry in 1911.",
+        "fun_fact": "She named the element polonium after Poland, the country where she was born."
+      },
+      {
+        "claim": "Marie Curie won her first Nobel Prize all by herself.",
+        "verdict": "myth",
+        "explanation": "She shared the 1903 physics prize with fellow scientists Pierre Curie and Henri Becquerel.",
+        "fun_fact": "Her daughter Irene Joliot-Curie also went on to win a Nobel Prize in Chemistry."
+      }
+    ],
+    "versus_candidates": [
+      "Albert Einstein",
+      "Isaac Newton",
+      "Ada Lovelace"
+    ]
+  },
+  {
+    "id": "ENT-SCI-033",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Thomas Edison",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Thomas Alva Edison",
+      "The Wizard of Menlo Park"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A friendly cartoon inventor in a vest and bow tie holding up a glowing light bulb in a busy workshop full of wires and gadgets, cozy golden light, 9:16 vertical shot.",
+    "core_traits": [
+      "Famous American inventor linked to the light bulb",
+      "Invented the phonograph, which could record and play back sound",
+      "Made a long-lasting electric bulb that homes could use",
+      "Held more than 1,000 United States patents"
+    ],
+    "distractor_pool": [
+      "Alexander Graham Bell",
+      "Nikola Tesla",
+      "Henry Ford",
+      "The Wright Brothers",
+      "Benjamin Franklin"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Edison invented a machine that could record and play back sound.",
+        "verdict": "fact",
+        "explanation": "His phonograph from 1877 recorded sound on a cylinder, and he tested it by reciting \"Mary Had a Little Lamb\".",
+        "fun_fact": "He was nicknamed the Wizard of Menlo Park after the New Jersey town where his lab stood."
+      },
+      {
+        "claim": "Edison was the very first person to make an electric light bulb.",
+        "verdict": "myth",
+        "explanation": "Others made earlier bulbs. Edison's team made a practical, long-lasting bulb that homes could use.",
+        "fun_fact": "Edison's team tested thousands of materials before finding a filament that glowed for many hours."
+      }
+    ],
+    "versus_candidates": [
+      "Alexander Graham Bell",
+      "Nikola Tesla",
+      "Henry Ford"
+    ]
+  },
+  {
+    "id": "ENT-SCI-034",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Albert Einstein",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Einstein"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A friendly cartoon scientist with fluffy white hair and a big mustache smiling in front of a chalkboard covered in swirly doodles of stars and clocks, 9:16 vertical shot.",
+    "core_traits": [
+      "Scientist famous for wild, fluffy white hair",
+      "Came up with the theory of relativity",
+      "Wrote the famous equation E = mc squared",
+      "Won the 1921 Nobel Prize in Physics for explaining the photoelectric effect"
+    ],
+    "distractor_pool": [
+      "Isaac Newton",
+      "Stephen Hawking",
+      "Niels Bohr",
+      "Galileo Galilei",
+      "Max Planck"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Einstein's ideas showed that time can pass at different speeds.",
+        "verdict": "fact",
+        "explanation": "Relativity shows time runs slightly slower for things moving very fast or near strong gravity.",
+        "fun_fact": "Einstein loved playing the violin and often played music while thinking."
+      },
+      {
+        "claim": "Einstein failed math at school.",
+        "verdict": "myth",
+        "explanation": "He was excellent at math and had taught himself calculus by about age 15.",
+        "fun_fact": "His ideas help GPS satellites keep accurate time, so maps show the right location."
+      }
+    ],
+    "versus_candidates": [
+      "Isaac Newton",
+      "Galileo Galilei",
+      "Marie Curie"
+    ]
+  },
+  {
+    "id": "ENT-SCI-035",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Leonardo da Vinci",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Leonardo",
+      "Da Vinci"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A friendly cartoon artist-inventor with a long gray beard and a soft cap sketching a flying machine in a notebook, surrounded by paintbrushes and wooden models, 9:16 vertical shot.",
+    "core_traits": [
+      "Italian artist and inventor from the Renaissance",
+      "Painted the Mona Lisa",
+      "Filled notebooks with designs for flying machines",
+      "Often wrote his notes in backwards mirror writing"
+    ],
+    "distractor_pool": [
+      "Michelangelo",
+      "Galileo Galilei",
+      "Raphael",
+      "Isaac Newton",
+      "Vincent van Gogh"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Leonardo da Vinci wrote many notes backwards in mirror writing.",
+        "verdict": "fact",
+        "explanation": "He was left-handed and often wrote from right to left, so his notes read correctly in a mirror.",
+        "fun_fact": "He sketched ideas resembling a helicopter and a parachute hundreds of years before they were built."
+      },
+      {
+        "claim": "Leonardo da Vinci built a working airplane and flew it.",
+        "verdict": "myth",
+        "explanation": "He designed flying machines on paper, but there is no record that he ever built one that flew.",
+        "fun_fact": "The Mona Lisa hangs in the Louvre Museum in Paris, France."
+      }
+    ],
+    "versus_candidates": [
+      "Michelangelo",
+      "Isaac Newton",
+      "Galileo Galilei"
+    ]
+  },
+  {
+    "id": "ENT-SCI-036",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "The Wright Brothers",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Wright Brothers",
+      "Orville and Wilbur Wright"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Two friendly cartoon brothers in caps cheering as a wooden two-winged airplane lifts off over sandy dunes by the sea, bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Two American brothers who loved building things",
+      "Ran a bicycle shop in Dayton, Ohio",
+      "Made the first powered airplane flight in 1903",
+      "Flew near Kitty Hawk, North Carolina"
+    ],
+    "distractor_pool": [
+      "Thomas Edison",
+      "Alexander Graham Bell",
+      "Henry Ford",
+      "Charles Lindbergh",
+      "Amelia Earhart"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The first Wright airplane flight lasted only about 12 seconds.",
+        "verdict": "fact",
+        "explanation": "On December 17, 1903, Orville flew about 120 feet in 12 seconds.",
+        "fun_fact": "Later that same day, Wilbur flew 852 feet in 59 seconds."
+      },
+      {
+        "claim": "The Wright brothers invented the first flying machine of any kind.",
+        "verdict": "myth",
+        "explanation": "Hot-air balloons and gliders flew earlier. The brothers made the first controlled, powered airplane flight.",
+        "fun_fact": "A tiny piece of their 1903 Flyer traveled to Mars on NASA's Ingenuity helicopter."
+      }
+    ],
+    "versus_candidates": [
+      "Thomas Edison",
+      "Alexander Graham Bell",
+      "Amelia Earhart"
+    ]
+  },
+  {
+    "id": "ENT-SCI-037",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Galileo Galilei",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Galileo"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A friendly cartoon astronomer with a short beard peering through a long brass telescope at a bright Jupiter and its four little moons in a starry night sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Italian astronomer who explored the night sky with a telescope",
+      "Discovered four large moons circling Jupiter",
+      "Saw mountains and craters on the Moon",
+      "Tested how objects fall and how pendulums swing"
+    ],
+    "distractor_pool": [
+      "Isaac Newton",
+      "Nicolaus Copernicus",
+      "Johannes Kepler",
+      "Leonardo da Vinci",
+      "Tycho Brahe"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Galileo discovered four moons of Jupiter.",
+        "verdict": "fact",
+        "explanation": "In 1610 he spotted Io, Europa, Ganymede and Callisto, now called the Galilean moons.",
+        "fun_fact": "A NASA spacecraft that explored Jupiter was named Galileo in his honor."
+      },
+      {
+        "claim": "Galileo invented the very first telescope.",
+        "verdict": "myth",
+        "explanation": "Telescopes were first made in the Netherlands. Galileo built better ones and pointed them at the sky.",
+        "fun_fact": "He noticed that a swinging pendulum keeps nearly steady timing, an idea later used in clocks."
+      }
+    ],
+    "versus_candidates": [
+      "Isaac Newton",
+      "Nicolaus Copernicus",
+      "Johannes Kepler"
+    ]
+  },
+  {
+    "id": "ENT-SCI-038",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Alexander Graham Bell",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Graham Bell"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A friendly cartoon inventor with a big bushy beard speaking into an early wooden telephone, with gentle sound ripples traveling along a wire, cozy old workshop, 9:16 vertical shot.",
+    "core_traits": [
+      "Inventor linked to the telephone",
+      "Born in Scotland, later lived in Canada and the United States",
+      "Received a famous telephone patent in 1876",
+      "Spent years teaching deaf students to communicate"
+    ],
+    "distractor_pool": [
+      "Thomas Edison",
+      "Samuel Morse",
+      "Guglielmo Marconi",
+      "Nikola Tesla",
+      "The Wright Brothers"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bell's first telephone words were spoken to his assistant, Thomas Watson.",
+        "verdict": "fact",
+        "explanation": "In 1876 Bell said \"Mr. Watson, come here, I want to see you\" over his new telephone.",
+        "fun_fact": "Bell suggested answering the phone with \"Ahoy!\" instead of \"Hello\"."
+      },
+      {
+        "claim": "Alexander Graham Bell invented the cell phone.",
+        "verdict": "myth",
+        "explanation": "Bell worked on the wired telephone in the 1870s. Handheld cell phones came about a hundred years later.",
+        "fun_fact": "He also helped build record-setting hydrofoil boats that skimmed above the water."
+      }
+    ],
+    "versus_candidates": [
+      "Thomas Edison",
+      "Samuel Morse",
+      "Guglielmo Marconi"
+    ]
+  },
+  {
+    "id": "ENT-SCI-039",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Ada Lovelace",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Augusta Ada King",
+      "Countess of Lovelace"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A friendly cartoon woman in an elegant 1800s dress writing notes beside a giant brass machine full of gears and number wheels, soft candle-yellow light, 9:16 vertical shot.",
+    "core_traits": [
+      "English mathematician from the 1800s",
+      "Daughter of the poet Lord Byron",
+      "Worked with Charles Babbage on his Analytical Engine",
+      "Often called the first computer programmer"
+    ],
+    "distractor_pool": [
+      "Marie Curie",
+      "Grace Hopper",
+      "Alan Turing",
+      "Charles Babbage",
+      "Katherine Johnson"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ada Lovelace wrote what is often called the first computer program.",
+        "verdict": "fact",
+        "explanation": "In 1843 she published steps for Babbage's Analytical Engine to calculate special numbers called Bernoulli numbers.",
+        "fun_fact": "A computer programming language called Ada is named after her."
+      },
+      {
+        "claim": "Ada Lovelace programmed a modern electronic computer.",
+        "verdict": "myth",
+        "explanation": "Electronic computers did not exist yet. She wrote for a mechanical machine that was never fully built.",
+        "fun_fact": "Ada Lovelace Day celebrates women in science, technology and math every October."
+      }
+    ],
+    "versus_candidates": [
+      "Grace Hopper",
+      "Alan Turing",
+      "Marie Curie"
+    ]
+  },
+  {
+    "id": "ENT-SCI-040",
+    "domain_id": "science_how_things_work",
+    "subtopic_id": "kid_friendly_scientists",
+    "name": "Jane Goodall",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Dr. Jane Goodall"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A friendly cartoon woman scientist with a blond ponytail and khaki shirt sitting quietly in a green forest, smiling at a curious young chimpanzee holding a twig, 9:16 vertical shot.",
+    "core_traits": [
+      "British scientist famous for her work with animals",
+      "Spent decades watching wild chimpanzees",
+      "Did her research at Gombe in Tanzania",
+      "Discovered that chimpanzees make and use tools"
+    ],
+    "distractor_pool": [
+      "Dian Fossey",
+      "Charles Darwin",
+      "David Attenborough",
+      "Birute Galdikas",
+      "Rachel Carson"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Jane Goodall discovered that chimpanzees use tools.",
+        "verdict": "fact",
+        "explanation": "She watched chimps strip leaves off twigs and poke them into termite mounds to fish out termites.",
+        "fun_fact": "She gave the chimpanzees names, like David Greybeard, instead of numbers."
+      },
+      {
+        "claim": "Chimpanzees eat only fruit and plants.",
+        "verdict": "myth",
+        "explanation": "Goodall saw that chimpanzees also eat insects and sometimes meat, along with lots of fruit.",
+        "fun_fact": "As a child, she loved a toy chimpanzee named Jubilee."
+      }
+    ],
+    "versus_candidates": [
+      "Charles Darwin",
+      "Dian Fossey",
+      "David Attenborough"
+    ]
+  }
+]

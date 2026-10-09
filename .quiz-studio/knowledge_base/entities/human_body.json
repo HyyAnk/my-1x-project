@@ -5,6 +5,7 @@
     "subtopic_id": "organs",
     "name": "Heart",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cor",
       "Human Heart"
@@ -50,6 +51,7 @@
     "subtopic_id": "nervous_system",
     "name": "Brain",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Encephalon",
       "Human Brain"
@@ -95,6 +97,7 @@
     "subtopic_id": "organs",
     "name": "Lungs",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pulmones",
       "Respiratory System"
@@ -140,6 +143,7 @@
     "subtopic_id": "organs",
     "name": "Liver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hepar"
     ],
@@ -181,9 +185,10 @@
   {
     "id": "ENT-BOD-005",
     "domain_id": "human_body",
-    "subtopic_id": "integumentary",
+    "subtopic_id": "organs",
     "name": "Skin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cutis",
       "Epidermis and Dermis"
@@ -207,7 +212,7 @@
       {
         "claim": "Much of the common dust settled in household rooms consists of shed human skin cells.",
         "verdict": "fact",
-        "explanation": "Humans shed roughly 30,000 to 40,000 dead skin cells every single minute, totaling about 4 kg of skin per year.",
+        "explanation": "Humans shed roughly 30,000 to 40,000 old skin cells every minute, adding up to about 4 kg of skin per year.",
         "fun_fact": "Your entire outer skin layer replaces itself completely roughly every 28 to 30 days."
       },
       {
@@ -229,6 +234,7 @@
     "subtopic_id": "organs",
     "name": "Kidneys",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Renal Organs",
       "Human Kidneys"
@@ -274,6 +280,7 @@
     "subtopic_id": "organs",
     "name": "Stomach",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gastric Organ",
       "Venter"
@@ -319,6 +326,7 @@
     "subtopic_id": "organs",
     "name": "Small Intestine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Small Bowel",
       "Intestinum Tenue"
@@ -364,6 +372,7 @@
     "subtopic_id": "organs",
     "name": "Large Intestine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Colon",
       "Large Bowel"
@@ -394,7 +403,7 @@
         "claim": "Routine colon cleansing and enemas are needed to detoxify impacted fecal sludge.",
         "verdict": "myth",
         "explanation": "There is no medical evidence of toxic sludge accumulation; the large intestine sheds its lining naturally and cleanses itself.",
-        "fun_fact": "Feces consists of roughly 75 percent water, with the remainder being dead bacteria, fiber, and mucus."
+        "fun_fact": "Poop is about 75 percent water; the rest is mostly bacteria, fiber, and mucus."
       }
     ],
     "versus_candidates": [
@@ -409,6 +418,7 @@
     "subtopic_id": "organs",
     "name": "Pancreas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pancreatic Gland"
     ],
@@ -453,6 +463,7 @@
     "subtopic_id": "organs",
     "name": "Urinary Bladder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bladder",
       "Vesica Urinaria"
@@ -498,6 +509,7 @@
     "subtopic_id": "organs",
     "name": "Thyroid Gland",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thyroid",
       "Glandula Thyroidea"
@@ -543,6 +555,7 @@
     "subtopic_id": "organs",
     "name": "Appendix",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vermiform Appendix"
     ],
@@ -587,6 +600,7 @@
     "subtopic_id": "organs",
     "name": "Esophagus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gullet",
       "Food Pipe"
@@ -632,6 +646,7 @@
     "subtopic_id": "organs",
     "name": "Trachea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Windpipe"
     ],
@@ -655,7 +670,7 @@
         "claim": "Microscopic waving cilia in the trachea push trapped dust and debris upward out of the lungs.",
         "verdict": "fact",
         "explanation": "The mucociliary escalator uses millions of coordinated beating hairs to propel trapped particles up toward the throat for swallowing.",
-        "fun_fact": "Cigarette smoke temporarily paralyzes airway cilia, causing smokers to cough to clear accumulated mucus."
+        "fun_fact": "Each tiny cilium can beat about 10 to 20 times every second."
       },
       {
         "claim": "The trachea completely encircles its airway with closed solid bone circles.",
@@ -676,6 +691,7 @@
     "subtopic_id": "organs",
     "name": "Diaphragm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thoracic Diaphragm"
     ],
@@ -720,6 +736,7 @@
     "subtopic_id": "organs",
     "name": "Pharynx",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Throat"
     ],
@@ -764,6 +781,7 @@
     "subtopic_id": "organs",
     "name": "Larynx",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Voice Box"
     ],
@@ -808,6 +826,7 @@
     "subtopic_id": "organs",
     "name": "Salivary Glands",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Parotid, Submandibular, and Sublingual Glands"
     ],
@@ -852,6 +871,7 @@
     "subtopic_id": "organs",
     "name": "Tongue",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lingua",
       "Glossa"
@@ -897,6 +917,7 @@
     "subtopic_id": "organs",
     "name": "Teeth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dentes",
       "Dentition"
@@ -942,6 +963,7 @@
     "subtopic_id": "organs",
     "name": "Colon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Main Part of Large Intestine"
     ],
@@ -986,6 +1008,7 @@
     "subtopic_id": "organs",
     "name": "Bronchi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bronchial Tubes",
       "Primary Bronchi"
@@ -1031,6 +1054,7 @@
     "subtopic_id": "organs",
     "name": "Vocal Cords",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vocal Folds",
       "Plicae Vocales"
@@ -1076,6 +1100,7 @@
     "subtopic_id": "organs",
     "name": "Tonsils",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Palatine Tonsils",
       "Waldeyer's Ring"
@@ -1099,7 +1124,7 @@
       {
         "claim": "Small foul-smelling white chunks called tonsil stones can form in the crypts of tonsils.",
         "verdict": "fact",
-        "explanation": "Tonsilloliths form when trapped food debris, dead white blood cells, and oral bacteria calcify inside tonsillar crevices.",
+        "explanation": "Tonsil stones form when trapped bits of food, used-up white blood cells, and mouth bacteria harden inside tonsil pockets.",
         "fun_fact": "Children's tonsils are proportionally much larger than adults' because immune exposure is highest in early childhood."
       },
       {
@@ -1121,6 +1146,7 @@
     "subtopic_id": "organs",
     "name": "Hypothalamus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Homeostatic Center"
     ],
@@ -1165,6 +1191,7 @@
     "subtopic_id": "senses",
     "name": "Cornea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clear Eye Window"
     ],
@@ -1209,6 +1236,7 @@
     "subtopic_id": "senses",
     "name": "Retina",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sensory Retina"
     ],
@@ -1253,6 +1281,7 @@
     "subtopic_id": "senses",
     "name": "Pupil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pupilla"
     ],
@@ -1297,6 +1326,7 @@
     "subtopic_id": "senses",
     "name": "Iris",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Colored Part of the Eye"
     ],
@@ -1341,6 +1371,7 @@
     "subtopic_id": "senses",
     "name": "Lens of the Eye",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crystalline Lens"
     ],
@@ -1385,6 +1416,7 @@
     "subtopic_id": "senses",
     "name": "Cochlea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Auditory Snail",
       "Auditory Inner Ear"
@@ -1408,7 +1440,7 @@
       {
         "claim": "Damaged auditory hair cells inside the human cochlea can never naturally regenerate once lost.",
         "verdict": "fact",
-        "explanation": "Unlike birds and fish, mammals cannot regenerate dead cochlear hair cells, which is why loud noise exposure causes permanent hearing loss.",
+        "explanation": "Unlike birds and fish, mammals cannot regrow lost cochlear hair cells, which is why very loud noise can cause permanent hearing loss.",
         "fun_fact": "The cochlea is tonotopically organized: high frequencies are sensed at the base, and low rumbles at the apical tip."
       },
       {
@@ -1430,6 +1462,7 @@
     "subtopic_id": "senses",
     "name": "Eardrum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tympanic Membrane"
     ],
@@ -1474,6 +1507,7 @@
     "subtopic_id": "senses",
     "name": "Taste Buds",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gustatory Calyculi",
       "Gustatory Cells"
@@ -1519,6 +1553,7 @@
     "subtopic_id": "senses",
     "name": "Optic Nerve",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cranial Nerve II"
     ],
@@ -1541,7 +1576,7 @@
       {
         "claim": "Glaucoma causes blindness by damaging the fibers of the optic nerve through elevated eye pressure.",
         "verdict": "fact",
-        "explanation": "High intraocular pressure pinches and gradually kills optic nerve axons, leading to progressive, irreversible peripheral vision loss.",
+        "explanation": "High pressure inside the eye slowly damages optic nerve fibers, leading to gradual side-vision loss that cannot be reversed.",
         "fun_fact": "Because the optic nerve is wrapped in meninges, intracranial brain pressure can be spotted as optic disc swelling (papilledema)."
       },
       {
@@ -1563,6 +1598,7 @@
     "subtopic_id": "nervous_system",
     "name": "Spinal Cord",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medulla Spinalis",
       "Spinal Column Nerve"
@@ -1608,6 +1644,7 @@
     "subtopic_id": "nervous_system",
     "name": "Neurons",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nerve Cells",
       "Neurocytes"
@@ -1653,6 +1690,7 @@
     "subtopic_id": "nervous_system",
     "name": "Cerebellum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Little Brain"
     ],
@@ -1679,10 +1717,10 @@
         "fun_fact": "When you learn to ride a bicycle or play piano without thinking, the cerebellum stores those automated motor programs."
       },
       {
-        "claim": "Alcohol directly impairs cerebellar function, causing the unsteady gait and slurred speech of drunkenness.",
+        "claim": "The cerebellum holds more than half of all the brain's nerve cells.",
         "verdict": "fact",
-        "explanation": "Purkinje cells in the cerebellum are exquisitely sensitive to ethanol, impairing rapid motor error correction and coordination.",
-        "fun_fact": "Police field sobriety tests (walking a straight line, touching your nose) directly evaluate cerebellar function."
+        "explanation": "Although it is only about 10 percent of the brain's size, the cerebellum packs in around 80 percent of its neurons.",
+        "fun_fact": "Cerebellum means 'little brain' in Latin."
       }
     ],
     "versus_candidates": [
@@ -1697,6 +1735,7 @@
     "subtopic_id": "nervous_system",
     "name": "Brainstem",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Truncus Encephali"
     ],
@@ -1717,9 +1756,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A person can be declared clinically brain dead even if their heart continues beating with mechanical ventilation.",
+        "claim": "The brainstem controls breathing and heartbeat without you having to think about it.",
         "verdict": "fact",
-        "explanation": "Brainstem death means irreversible loss of all brainstem reflexes and spontaneous respiration; without a machine, heartbeat stops quickly.",
+        "explanation": "It connects the brain to the spinal cord and runs automatic jobs like breathing, heart rate, and swallowing.",
         "fun_fact": "The reticular activating system (RAS) in the brainstem regulates whether you are awake and conscious or asleep."
       },
       {
@@ -1741,6 +1780,7 @@
     "subtopic_id": "nervous_system",
     "name": "Cerebrum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Telencephalon",
       "Cerebral Hemispheres"
@@ -1786,6 +1826,7 @@
     "subtopic_id": "nervous_system",
     "name": "Frontal Lobe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Prefrontal Cortex Region"
     ],
@@ -1830,6 +1871,7 @@
     "subtopic_id": "nervous_system",
     "name": "Peripheral Nerves",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "PNS Nerves",
       "Systemic Nerve Fibers"
@@ -1875,6 +1917,7 @@
     "subtopic_id": "nervous_system",
     "name": "Sensory Neurons",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Afferent Neurons"
     ],
@@ -1919,6 +1962,7 @@
     "subtopic_id": "nervous_system",
     "name": "Motor Neurons",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Efferent Neurons",
       "Motoneurons"
@@ -1964,9 +2008,10 @@
     "subtopic_id": "circulatory",
     "name": "Blood",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Human Blood",
-      "Sanguis"
+      "Sanguis",
+      "Human Blood"
     ],
     "difficulty": 1,
     "visual_anchor": "Cinematic vertical 9:16 microscopic stream of rich crimson blood surging through a transparent vessel carrying glowing cellular elements.",
@@ -2009,6 +2054,7 @@
     "subtopic_id": "circulatory",
     "name": "Red Blood Cells",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Erythrocytes",
       "RBCs"
@@ -2054,6 +2100,7 @@
     "subtopic_id": "circulatory",
     "name": "White Blood Cells",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leukocytes",
       "WBCs"
@@ -2075,9 +2122,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Pus forming at an infected wound site consists primarily of dead white blood cells.",
+        "claim": "Pus at an infected cut is made mostly of used-up white blood cells.",
         "verdict": "fact",
-        "explanation": "Neutrophils rush to the infection, engulf bacteria, and die in huge numbers, creating the thick yellowish fluid called pus.",
+        "explanation": "Neutrophils rush to the infection, swallow up bacteria, and wear out in huge numbers, forming thick yellowish pus.",
         "fun_fact": "Neutrophils make up about 60 to 70 percent of all circulating white blood cells."
       },
       {
@@ -2099,6 +2146,7 @@
     "subtopic_id": "circulatory",
     "name": "Platelets",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thrombocytes"
     ],
@@ -2143,6 +2191,7 @@
     "subtopic_id": "circulatory",
     "name": "Blood Plasma",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Plasma"
     ],
@@ -2187,6 +2236,7 @@
     "subtopic_id": "circulatory",
     "name": "Hemoglobin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Haemoglobin",
       "Hb"
@@ -2232,6 +2282,7 @@
     "subtopic_id": "circulatory",
     "name": "Arteries",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arterial Vessels"
     ],
@@ -2261,7 +2312,7 @@
         "claim": "Arteries have their own tiny network of blood vessels supplying their outer muscular walls.",
         "verdict": "fact",
         "explanation": "Large arteries are so thick that oxygen cannot diffuse through their walls; they are fed by micro-vessels called the vasa vasorum.",
-        "fun_fact": "Ancient Greek anatomists found arteries empty after death and mistakenly believed they transported air, hence 'arteria' (air conveyor)."
+        "fun_fact": "Ancient Greek thinkers mistakenly believed arteries carried air, which is where the name 'arteria' comes from."
       }
     ],
     "versus_candidates": [
@@ -2276,6 +2327,7 @@
     "subtopic_id": "circulatory",
     "name": "Veins",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Venous Vessels"
     ],
@@ -2320,6 +2372,7 @@
     "subtopic_id": "circulatory",
     "name": "Capillaries",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Microvessels",
       "Capillary Bed"
@@ -2365,6 +2418,7 @@
     "subtopic_id": "circulatory",
     "name": "Aorta",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Main Artery of the Body"
     ],
@@ -2409,6 +2463,7 @@
     "subtopic_id": "circulatory",
     "name": "Vena Cava",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Superior and Inferior Vena Cava"
     ],
@@ -2453,6 +2508,7 @@
     "subtopic_id": "circulatory",
     "name": "Blood Vessels",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vasculature",
       "Cardiovascular Vessels"
@@ -2498,6 +2554,7 @@
     "subtopic_id": "circulatory",
     "name": "Lymph Nodes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lymph Glands",
       "Nodi Lymphoidei"
@@ -2543,6 +2600,7 @@
     "subtopic_id": "circulatory",
     "name": "Lymphatic System",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lymphoid System"
     ],
@@ -2587,6 +2645,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Bone Marrow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medulla Ossea",
       "Myeloid Tissue"
@@ -2632,6 +2691,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Human Skeleton",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skeletal System",
       "Human Bony Framework"
@@ -2659,7 +2719,7 @@
         "fun_fact": "More than half of all the 206 bones in the adult human skeleton are located in the hands and feet alone (106 bones)."
       },
       {
-        "claim": "Bones are dry, dead structural calcified rods that never change once you reach adulthood.",
+        "claim": "Bones are dry, lifeless rods that never change once you are grown up.",
         "verdict": "myth",
         "explanation": "Bone is living dynamic tissue; osteoclasts and osteoblasts continuously remodel the skeleton, completely replacing it every 10 years.",
         "fun_fact": "Ounce for ounce, human cortical bone has greater tensile strength and compressive strength than reinforced concrete."
@@ -2677,6 +2737,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Skull",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cranium and Facial Bones"
     ],
@@ -2721,6 +2782,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Spine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vertebral Column",
       "Backbone"
@@ -2766,6 +2828,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Rib Cage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thoracic Cage",
       "Costae"
@@ -2811,6 +2874,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Pelvis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pelvic Girdle",
       "Bony Pelvis"
@@ -2856,6 +2920,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Femur",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thigh Bone"
     ],
@@ -2900,6 +2965,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Humerus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Upper Arm Bone"
     ],
@@ -2944,6 +3010,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Tibia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shin Bone",
       "Shinbone"
@@ -2989,6 +3056,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Fibula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Calf Bone"
     ],
@@ -3033,6 +3101,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Radius",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Radial Forearm Bone"
     ],
@@ -3077,6 +3146,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Ulna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Elbow Forearm Bone"
     ],
@@ -3121,6 +3191,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Clavicle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Collarbone"
     ],
@@ -3165,6 +3236,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Scapula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shoulder Blade"
     ],
@@ -3209,6 +3281,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Sternum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Breastbone"
     ],
@@ -3253,6 +3326,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Patella",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kneecap"
     ],
@@ -3297,6 +3371,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Joints",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Articulations",
       "Arthroses"
@@ -3342,6 +3417,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Cartilage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chondral Tissue",
       "Cartilaginous Tissue"
@@ -3387,6 +3463,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Ligaments",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Articular Ligaments"
     ],
@@ -3431,6 +3508,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Tendons",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sinews"
     ],
@@ -3475,6 +3553,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Skeletal Muscles",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Voluntary Muscles",
       "Striated Muscles"
@@ -3520,6 +3599,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Smooth Muscle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Involuntary Muscle",
       "Non-Striated Muscle"
@@ -3565,6 +3645,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Cardiac Muscle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Myocardium",
       "Heart Muscle"
@@ -3594,7 +3675,7 @@
       {
         "claim": "Cardiac muscle easily regenerates new healthy muscle cells after an ischemic heart attack.",
         "verdict": "myth",
-        "explanation": "Adult cardiomyocytes have very limited regenerative ability; dead heart muscle is permanently replaced by stiff fibrous scar tissue.",
+        "explanation": "Adult heart muscle cells have very limited ability to regrow; damaged areas are replaced by stiff scar tissue.",
         "fun_fact": "Intercalated discs allow electrical ions to flow instantly between cells, making the heart contract as a single functional syncytium."
       }
     ],
@@ -3610,6 +3691,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Biceps",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Biceps Brachii",
       "Biceps Muscle"
@@ -3655,6 +3737,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Triceps",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Triceps Brachii"
     ],
@@ -3699,6 +3782,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Quadriceps",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Quadriceps Femoris",
       "Quads"
@@ -3744,6 +3828,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Hamstrings",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Posterior Thigh Muscles"
     ],
@@ -3767,7 +3852,7 @@
         "claim": "Hamstring strains are among the most common and recurrent injuries in sprinting sports.",
         "verdict": "fact",
         "explanation": "During terminal swing phase in sprinting, the hamstrings undergo rapid eccentric elongation under heavy load, making them prone to tears.",
-        "fun_fact": "The term 'hamstring' comes from butchers hanging slaughtered pig carcasses (hams) by the strong tendons behind the knee."
+        "fun_fact": "The word 'hamstring' comes from 'ham', an old word for the back of the knee."
       },
       {
         "claim": "Hamstring muscles only cross and act upon a single joint (the knee).",
@@ -3788,6 +3873,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Abdominal Muscles",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Abs",
       "Core Muscles",
@@ -3834,6 +3920,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Gluteus Maximus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Main Buttock Muscle"
     ],
@@ -3878,6 +3965,7 @@
     "subtopic_id": "skeletal_muscular",
     "name": "Achilles Tendon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Calcaneal Tendon"
     ],
@@ -3922,6 +4010,7 @@
     "subtopic_id": "organs",
     "name": "Epidermis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Outer Skin Layer"
     ],
@@ -3930,8 +4019,8 @@
     "core_traits": [
       "Outermost epithelial layer of the skin providing an impermeable physical and biological barrier",
       "Avascular layer composed primarily of keratinocytes, with melanocytes, Langerhans, and Merkel cells",
-      "Divided into five distinct cellular strata, topped by the dead cornified stratum corneum",
-      "Continually renews itself from the basal layer, shedding roughly 40,000 dead cells every minute"
+      "Divided into five distinct cellular strata, topped by the tough, flat stratum corneum",
+      "Continually renews itself from the basal layer, shedding roughly 40,000 old cells every minute"
     ],
     "distractor_pool": [
       "Dermis",
@@ -3942,9 +4031,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The outermost layer of your skin that touches the world is composed entirely of dead cells.",
+        "claim": "The outermost layer of your skin is made of flat cells that are no longer alive.",
         "verdict": "fact",
-        "explanation": "The stratum corneum is composed of dead, flattened keratinocytes packed with tough waterproof keratin protein.",
+        "explanation": "The stratum corneum is made of flattened, non-living keratinocytes packed with tough, waterproof keratin protein.",
         "fun_fact": "Your entire epidermis replaces itself completely every 4 to 6 weeks."
       },
       {
@@ -3966,6 +4055,7 @@
     "subtopic_id": "organs",
     "name": "Hair Follicles",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hair Roots",
       "Folliculi Pilorum"
@@ -3993,9 +4083,9 @@
         "fun_fact": "Hair follicle matrix cells are among the fastest dividing cells in the body, which is why chemotherapy causes hair loss."
       },
       {
-        "claim": "Hair follicle cells are completely dead once the hair shaft emerges above the skin surface.",
+        "claim": "The part of a hair you can see above your skin is not alive.",
         "verdict": "fact",
-        "explanation": "The hair shaft is dead polymerized keratin; only the root bulb inside the follicle beneath the scalp is alive.",
+        "explanation": "The hair shaft is made of hardened keratin; only the root inside the follicle under the skin is alive.",
         "fun_fact": "Humans have roughly 5 million hair follicles across the body, approximately the same density as chimpanzees."
       }
     ],
@@ -4011,6 +4101,7 @@
     "subtopic_id": "organs",
     "name": "Sweat Glands",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sudoriferous Glands"
     ],
@@ -4055,6 +4146,7 @@
     "subtopic_id": "organs",
     "name": "Fingernails",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nails",
       "Ungues"
@@ -4076,9 +4168,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Human fingernails continue growing for several days after a person dies.",
-        "verdict": "myth",
-        "explanation": "Nails do not grow after death; postmortem dehydration shrinks surrounding skin and cuticles, creating the optical illusion of longer nails.",
+        "claim": "Fingernails are made of the same protein as your hair.",
+        "verdict": "fact",
+        "explanation": "Both nails and hair are made of keratin, a tough protein that also forms animal claws, hooves, and horns.",
         "fun_fact": "Fingernails grow roughly 3 to 4 times faster than toenails, averaging about 3 millimeters per month."
       },
       {
@@ -4100,6 +4192,7 @@
     "subtopic_id": "organs",
     "name": "Tooth Enamel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dental Enamel",
       "Substantia Adamantina"
@@ -4145,6 +4238,7 @@
     "subtopic_id": "senses",
     "name": "Sense of Sight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vision",
       "Visual Perception"
@@ -4190,6 +4284,7 @@
     "subtopic_id": "senses",
     "name": "Sense of Hearing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Audition",
       "Auditory Perception"
@@ -4213,14 +4308,14 @@
       {
         "claim": "The ability to hear high-pitched acoustic frequencies naturally diminishes as humans age (presbycusis).",
         "verdict": "fact",
-        "explanation": "Cochlear hair cells at the basal entrance that register high pitches sustain the most wear over a lifetime and die off first.",
+        "explanation": "Cochlear hair cells near the entrance that sense high pitches get the most wear over a lifetime and wear out first.",
         "fun_fact": "Teenagers can hear the 17.4 kHz 'Mosquito ringtone', whereas most adults over age 25 cannot detect it."
       },
       {
         "claim": "When you sleep peacefully, your ears shut down completely and stop transducing sound waves.",
         "verdict": "myth",
         "explanation": "Ears transduce sound 24/7; during sleep, the thalamus acts as a sensory gatekeeper, filtering out non-threatening background sounds.",
-        "fun_fact": "Hearing is considered by hospice physicians to be the very last sensory perception lost before death."
+        "fun_fact": "Your brain can still notice important sounds while you sleep, like your own name or an alarm."
       }
     ],
     "versus_candidates": [
@@ -4235,6 +4330,7 @@
     "subtopic_id": "senses",
     "name": "Sense of Smell",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Olfaction",
       "Olfactory Sense"
@@ -4280,6 +4376,7 @@
     "subtopic_id": "senses",
     "name": "Sense of Taste",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gustation",
       "Gustatory Sense"
@@ -4325,6 +4422,7 @@
     "subtopic_id": "senses",
     "name": "Sense of Touch",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Somatosensation",
       "Tactile Perception"
@@ -4370,6 +4468,7 @@
     "subtopic_id": "senses",
     "name": "Sense of Balance",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Equilibrioception",
       "Vestibular Sense"
@@ -4415,6 +4514,7 @@
     "subtopic_id": "senses",
     "name": "Pain Perception",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nociception",
       "Algia"
@@ -4460,6 +4560,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Heartbeat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cardiac Cycle",
       "Pulse Rate"
@@ -4505,6 +4606,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Pulse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arterial Pulse",
       "Peripheral Pulse"
@@ -4550,9 +4652,10 @@
     "subtopic_id": "biological_phenomena",
     "name": "Blood Pressure",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Arterial Blood Pressure",
-      "BP"
+      "BP",
+      "Arterial Blood Pressure"
     ],
     "difficulty": 1,
     "visual_anchor": "Vertical 9:16 medical visual of a sphygmomanometer mercury column displaying 120 over 80 mmHg beside pulsating arterial walls.",
@@ -4571,9 +4674,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "High blood pressure (hypertension) is famously called the 'silent killer' because it usually produces zero symptoms.",
+        "claim": "High blood pressure often has no symptoms, so doctors check it regularly.",
         "verdict": "fact",
-        "explanation": "Millions live with dangerously elevated blood pressure without headaches or dizziness until it triggers a sudden heart attack or stroke.",
+        "explanation": "Many people feel completely fine even when their blood pressure is too high, which is why regular checkups are important.",
         "fun_fact": "Giraffes have blood pressure roughly double that of humans (around 280/180 mmHg) to pump blood 8 feet straight up to their brains."
       },
       {
@@ -4595,6 +4698,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Breathing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Respiration",
       "Ventilation"
@@ -4640,6 +4744,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Digestion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gastrointestinal Digestion",
       "Digestive Process"
@@ -4685,6 +4790,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Reflexes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Reflex Arc",
       "Spinal Reflexes"
@@ -4692,7 +4798,7 @@
     "difficulty": 1,
     "visual_anchor": "Vertical 9:16 diagram of the patellar tendon tap: sensory signal shooting into spinal cord and immediately kicking the lower leg forward.",
     "core_traits": [
-      "Involuntary, instantaneous motor responses to sensory stimuli executed without conscious brain deliberation",
+      "Involuntary, instant muscle responses to sensory stimuli that happen without conscious thought",
       "Routed through a neural pathway known as a reflex arc: sensor, sensory neuron, spinal interneuron, motor neuron, muscle",
       "Protects the body from injury through rapid actions like the withdrawal reflex from hot objects",
       "Common clinical examples include the patellar knee-jerk reflex, pupillary light reflex, and corneal blink reflex"
@@ -4730,6 +4836,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Yawning",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oscitation",
       "Pandiculation"
@@ -4775,6 +4882,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Hiccups",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Singultus"
     ],
@@ -4819,6 +4927,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Sneezing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sternutation"
     ],
@@ -4863,6 +4972,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Coughing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tussis",
       "Cough Reflex"
@@ -4908,6 +5018,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Blinking",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nictitation",
       "Eyelid Blink"
@@ -4953,6 +5064,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Crying and Tears",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lacrimation",
       "Tears"
@@ -4998,6 +5110,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Sweating",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Perspiration",
       "Diaphoresis"
@@ -5021,8 +5134,8 @@
       {
         "claim": "Humans are the most efficient evaporative sweat-cooling mammals on the entire planet.",
         "verdict": "fact",
-        "explanation": "Our naked skin packed with millions of eccrine sweat glands allowed ancestral humans to run prey to heat exhaustion (persistence hunting).",
-        "fun_fact": "Anhydrotic people born without functioning sweat glands must avoid all intense exercise, as they can quickly die of heatstroke."
+        "explanation": "Our mostly hairless skin, packed with millions of sweat glands, let early humans keep cool while running long distances.",
+        "fun_fact": "People born without working sweat glands must be careful during exercise, because they can overheat quickly."
       },
       {
         "claim": "Sweating heavily burns significant body fat and leads to permanent weight loss.",
@@ -5043,6 +5156,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Shivering",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Involuntary Tremor",
       "Thermoregulatory Shivering"
@@ -5088,6 +5202,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Goosebumps",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cutis Anserina",
       "Horripilation",
@@ -5134,6 +5249,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Sleep",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Somnus",
       "Sleep State"
@@ -5179,6 +5295,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "REM Sleep",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rapid Eye Movement Sleep",
       "Paradoxical Sleep"
@@ -5209,7 +5326,7 @@
         "claim": "Sleepwalking occurs exclusively during the peak height of REM sleep dreaming.",
         "verdict": "myth",
         "explanation": "Because REM features complete muscular paralysis, sleepwalking occurs during deep slow-wave Non-REM (N3) sleep when muscles can move.",
-        "fun_fact": "REM sleep behavior disorder (RBD) occurs when the brainstem fails to paralyze muscles, causing sleepers to violently act out nightmares."
+        "fun_fact": "Most of your vivid, story-like dreams happen during REM sleep."
       }
     ],
     "versus_candidates": [
@@ -5224,6 +5341,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Dreaming",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oneiric Experience",
       "Dreams"
@@ -5269,12 +5387,13 @@
     "subtopic_id": "biological_phenomena",
     "name": "Immune Response",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Immune Defense",
       "Immunity"
     ],
     "difficulty": 1,
-    "visual_anchor": "Microscopic vertical 9:16 cinematic war zone of antibodies tagging spiked viruses while phagocytes engulf pathogens in glowing lymphatic lymph.",
+    "visual_anchor": "Microscopic vertical 9:16 cinematic scene of antibodies tagging spiked viruses while phagocytes engulf germs in glowing lymph fluid.",
     "core_traits": [
       "Coordinated systemic defense mechanism protecting the human host from pathogens, toxins, and tumor cells",
       "Composed of innate immunity (immediate, non-specific: barriers, phagocytes) and adaptive immunity (delayed, antigen-specific: B and T cells)",
@@ -5292,7 +5411,7 @@
       {
         "claim": "Vaccines work by training the adaptive immune response using harmless antigens to build memory cells.",
         "verdict": "fact",
-        "explanation": "Vaccines expose the immune system to dead pathogens or antigens, producing memory B and T cells that neutralize future infections instantly.",
+        "explanation": "Vaccines show the immune system weakened or inactivated germs or harmless antigens, building memory B and T cells that fight future infections fast.",
         "fun_fact": "Smallpox is the only infectious human disease to be completely eradicated from the face of the Earth through global vaccination."
       },
       {
@@ -5314,6 +5433,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Wound Healing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tissue Repair",
       "Cicatrization"
@@ -5359,6 +5479,7 @@
     "subtopic_id": "biological_phenomena",
     "name": "Fingerprints",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dermatoglyphs",
       "Friction Ridges"

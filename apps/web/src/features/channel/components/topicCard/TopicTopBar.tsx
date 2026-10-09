@@ -30,9 +30,7 @@ export function TopicTopBar({ topic, availability, canConfirm, sourceCapacity }:
                 ? "Versus Face-off"
                 : topic.archetype === "verdict_yes_no"
                   ? "Yes or No"
-                  : topic.archetype === "verdict_true_false"
-                    ? "True or False"
-                    : "Deep Trivia"}
+                  : "Deep Trivia"}
             </span>
           )}
         </div>

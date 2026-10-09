@@ -9,7 +9,7 @@ export function imageSlotStyles(): string {
   const vcp = CANONICAL_IMAGE_SLOT_DEFINITIONS.visual_choices_three_pure;
   const sv = CANONICAL_IMAGE_SLOT_DEFINITIONS.split_versus_two;
   const ml = CANONICAL_IMAGE_SLOT_DEFINITIONS.media_left_choices_right;
-  const vtf = CANONICAL_IMAGE_SLOT_DEFINITIONS.verdict_true_false;
+  const vyn = CANONICAL_IMAGE_SLOT_DEFINITIONS.verdict_yes_no;
   const mr = CANONICAL_IMAGE_SLOT_DEFINITIONS.mystery_reveal;
 
   return `
@@ -50,19 +50,11 @@ export function imageSlotStyles(): string {
 }
 
 .layout-verdict_yes_no {
-  --slot-hero-width: ${vtf.cardBorderBox.width}px;
-  --slot-hero-height: ${vtf.cardBorderBox.height}px;
-  --slot-hero-border-width: ${vtf.borderEachSide}px;
-  --slot-hero-viewport-width: ${vtf.viewport.width}px;
-  --slot-hero-viewport-height: ${vtf.viewport.height}px;
-}
-
-.layout-verdict_true_false {
-  --slot-hero-width: ${vtf.cardBorderBox.width}px;
-  --slot-hero-height: ${vtf.cardBorderBox.height}px;
-  --slot-hero-border-width: ${vtf.borderEachSide}px;
-  --slot-hero-viewport-width: ${vtf.viewport.width}px;
-  --slot-hero-viewport-height: ${vtf.viewport.height}px;
+  --slot-hero-width: ${vyn.cardBorderBox.width}px;
+  --slot-hero-height: ${vyn.cardBorderBox.height}px;
+  --slot-hero-border-width: ${vyn.borderEachSide}px;
+  --slot-hero-viewport-width: ${vyn.viewport.width}px;
+  --slot-hero-viewport-height: ${vyn.viewport.height}px;
 }
 
 .layout-mystery_reveal {

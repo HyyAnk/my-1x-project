@@ -30,15 +30,15 @@ describe("Short-Reel Script Seeds Contract and Catalog", () => {
   it("provides exactly 4 curated seeds for each archetype", () => {
     const vfSeeds = getScriptSeedsForArchetype("versus_faceoff");
     const dtSeeds = getScriptSeedsForArchetype("deep_trivia");
-    const tfSeeds = getScriptSeedsForArchetype("verdict_true_false");
+    const ynSeeds = getScriptSeedsForArchetype("verdict_yes_no");
 
     assert.equal(vfSeeds.length, 4);
     assert.equal(dtSeeds.length, 4);
-    assert.equal(tfSeeds.length, 4);
+    assert.equal(ynSeeds.length, 4);
 
     assert.ok(vfSeeds.every((s) => s.archetype === "versus_faceoff"));
     assert.ok(dtSeeds.every((s) => s.archetype === "deep_trivia"));
-    assert.ok(tfSeeds.every((s) => s.archetype === "verdict_true_false"));
+    assert.ok(ynSeeds.every((s) => s.archetype === "verdict_yes_no"));
   });
 
   it("resolves seeds by id correctly", () => {
@@ -53,7 +53,7 @@ describe("Short-Reel Script Seeds Contract and Catalog", () => {
   it("resolves default seed per archetype", () => {
     assert.equal(resolveDefaultSeedForArchetype("versus_faceoff").id, "vf_arena_clash");
     assert.equal(resolveDefaultSeedForArchetype("deep_trivia").id, "dt_mystery_investigation");
-    assert.equal(resolveDefaultSeedForArchetype("verdict_true_false").id, "tf_mythbusters_lab");
+    assert.equal(resolveDefaultSeedForArchetype("verdict_yes_no").id, "tf_mythbusters_lab");
   });
 
   it("resolves script seed by explicit matching ID", () => {

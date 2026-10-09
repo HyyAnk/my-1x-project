@@ -4,17 +4,19 @@ export interface FormatDescriptionInput {
   title: string;
   description?: VideoDescription | null;
   fallbackText?: string | null;
+  /** Pre-processed body (e.g. with refreshed chapters) that overrides the stored text. */
+  bodyText?: string | null;
 }
 
 export function formatExportDescriptionText(input: FormatDescriptionInput): string {
-  const { title, description, fallbackText } = input;
+  const { title, description, fallbackText, bodyText } = input;
   const sections: string[] = [];
 
   // Title section
   sections.push(`[TITLE]\n${title.trim()}`);
 
   // Description body section
-  const mainText = (description?.full_description_text ?? fallbackText ?? "").trim();
+  const mainText = (bodyText || description?.full_description_text || fallbackText || "").trim();
   if (mainText) {
     sections.push(`[DESCRIPTION]\n${mainText}`);
   }

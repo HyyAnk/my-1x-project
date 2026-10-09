@@ -1,4 +1,4 @@
-import type { BankQuestionWithCooldown } from "@studio/shared";
+import type { BankQuestionWithCooldown, ReelArchetype } from "@studio/shared";
 import type { TopicSourceExclusionReasonCode } from "@studio/shared";
 import { evaluateShortReelQuestionEligibility, type EvaluatedBankQuestionCandidate } from "../quiz/bank/bankEligibility.js";
 
@@ -11,10 +11,7 @@ export type QuestionEligibilityResult =
   { eligible: true; candidate: EvaluatedQuestionCandidate } | { eligible: false; reason: QuestionExclusionReason; detail: string };
 
 /** Backward-compatible Short-Reel policy entry point backed by shared eligibility. */
-export function evaluateQuestionEligibility(
-  question: BankQuestionWithCooldown,
-  targetArchetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false",
-): QuestionEligibilityResult {
+export function evaluateQuestionEligibility(question: BankQuestionWithCooldown, targetArchetype: ReelArchetype): QuestionEligibilityResult {
   const result = evaluateShortReelQuestionEligibility(question, { targetArchetype });
   if (!result.eligible && !question.language?.trim() && (!question.translations || Object.keys(question.translations).length === 0)) {
     return {

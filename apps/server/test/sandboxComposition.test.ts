@@ -202,6 +202,7 @@ describe("buildSandboxComposition Preview Engine", () => {
         {
           mascot_id: "mascot_test_123",
           mascot_enabled: true,
+          mascot_media_mode: "animation",
           mascot_action: "thinking",
           mascot_position: "bottom_left",
           mascot_scale: 1.25,
@@ -225,11 +226,12 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain("mascot-v2-preview");
     });
 
-    it("falls back to master_image_url when selected action does not have a dedicated sprite", () => {
+    it("falls back to master_image_url in animation mode when selected action does not have a dedicated sprite", () => {
       const res = buildSandboxComposition(
         {
           mascot_id: "mascot_test_123",
           mascot_enabled: true,
+          mascot_media_mode: "animation",
           mascot_action: "point",
           mascot_position: "bottom_right",
         },
@@ -240,6 +242,21 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain("anchor-bottom_right");
       expect(res.html).toContain("state-point");
       expect(res.html).toContain("/api/mascots/mascot_test_123/assets/concept.png");
+    });
+
+    it("omits the mascot in default static mode when no still variant exists", () => {
+      const res = buildSandboxComposition(
+        {
+          mascot_id: "mascot_test_123",
+          mascot_enabled: true,
+          mascot_action: "point",
+          mascot_position: "bottom_right",
+        },
+        { ...mockMascotProfile, actions: {} },
+      );
+
+      expect(res.html).not.toContain('<div class="candy-mascot-container');
+      expect(res.html).not.toContain("/api/mascots/mascot_test_123/assets/concept.png");
     });
 
     it("does not render mascot when mascotProfile is missing or unassigned", () => {
@@ -344,11 +361,11 @@ describe("buildSandboxComposition Preview Engine", () => {
     const layoutConfigs: Array<{
       layoutId: QuizPreviewLayoutId;
       choices: string[];
-      question_format?: "multiple_choice" | "true_false" | "odd_one_out";
+      question_format?: "multiple_choice" | "yes_no" | "odd_one_out";
     }> = [
       { layoutId: "media_left_choices_right", choices: ["A", "B", "C"] },
-      { layoutId: "media_left_choices_right", choices: ["A", "B"], question_format: "true_false" },
-      { layoutId: "verdict_true_false", choices: ["True", "False"], question_format: "true_false" },
+      { layoutId: "media_left_choices_right", choices: ["A", "B"], question_format: "yes_no" },
+      { layoutId: "verdict_yes_no", choices: ["Yes", "No"], question_format: "yes_no" },
       { layoutId: "split_versus_two", choices: ["Alpha", "Beta"], question_format: "multiple_choice" },
       { layoutId: "visual_choices_three", choices: ["A", "B", "C"] },
       { layoutId: "visual_choices_three_pure", choices: ["A", "B", "C"], question_format: "odd_one_out" },
@@ -387,11 +404,11 @@ describe("buildSandboxComposition Preview Engine", () => {
 
     it("includes font readiness contract across all layouts including pure visual", () => {
       for (const layout of QUIZ_LAYOUTS) {
-        const is2Choice = layout.id === "verdict_true_false" || layout.id === "split_versus_two";
+        const is2Choice = layout.id === "verdict_yes_no" || layout.id === "split_versus_two";
         const choices =
           layout.id === "mystery_reveal" ? ["Option A"] : is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
         const questionFormat =
-          layout.id === "verdict_true_false" ? "true_false" : layout.id === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
+          layout.id === "verdict_yes_no" ? "yes_no" : layout.id === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
         const aspectRatio = layout.supportedAspectRatios[0];
 
         const res = buildSandboxComposition({
@@ -683,38 +700,41 @@ describe("buildSandboxComposition Preview Engine", () => {
       updated_at: new Date().toISOString(),
     };
 
-    it("deterministically rotates variants when shifting question_number from 1 to 2 in visual sandbox", () => {
-      // Question 1 (index 0 -> sandbox_q_0) selects Slot 1 (image)
-      const q1Res = buildSandboxComposition(
-        {
-          mode: "rehearsal",
-          aspect_ratio: "16:9",
-          mascot_id: "mascot_sync_preview",
-          mascot_enabled: true,
-          question_number: 1,
-          total_questions: 5,
-        },
-        multiVariantMascot,
-      );
+    it("selects only still variants in static mode and the animated variant in animation mode", () => {
+      const stillThinkingPattern = /\/api\/mascots\/mascot_sync_preview\/styles\/core\/thinking\/[12]\/render\.png/;
+      for (const questionNumber of [1, 2]) {
+        const staticRes = buildSandboxComposition(
+          {
+            mode: "rehearsal",
+            aspect_ratio: "16:9",
+            mascot_id: "mascot_sync_preview",
+            mascot_enabled: true,
+            question_number: questionNumber,
+            total_questions: 5,
+          },
+          multiVariantMascot,
+        );
 
-      expect(q1Res.html).toContain("/api/mascots/mascot_sync_preview/styles/core/thinking/1/render.png");
-      expect(q1Res.html).not.toContain("video_transparent.webm");
+        expect(staticRes.html).toMatch(stillThinkingPattern);
+        expect(staticRes.html).not.toContain("video_transparent.webm");
+        expect(staticRes.html).not.toContain("<video");
 
-      // Question 2 (index 1 -> sandbox_q_1) selects Slot 2 (video)
-      const q2Res = buildSandboxComposition(
-        {
-          mode: "rehearsal",
-          aspect_ratio: "16:9",
-          mascot_id: "mascot_sync_preview",
-          mascot_enabled: true,
-          question_number: 2,
-          total_questions: 5,
-        },
-        multiVariantMascot,
-      );
+        const animationRes = buildSandboxComposition(
+          {
+            mode: "rehearsal",
+            aspect_ratio: "16:9",
+            mascot_id: "mascot_sync_preview",
+            mascot_enabled: true,
+            mascot_media_mode: "animation",
+            question_number: questionNumber,
+            total_questions: 5,
+          },
+          multiVariantMascot,
+        );
 
-      expect(q2Res.html).toContain("video_transparent.webm");
-      expect(q2Res.html).toContain("<video");
+        expect(animationRes.html).toContain("video_transparent.webm");
+        expect(animationRes.html).toContain("<video");
+      }
     });
 
     it("renders native transparent WebM video element for Slot 2 thinking state in sandbox preview", () => {
@@ -724,6 +744,7 @@ describe("buildSandboxComposition Preview Engine", () => {
           aspect_ratio: "16:9",
           mascot_id: "mascot_sync_preview",
           mascot_enabled: true,
+          mascot_media_mode: "animation",
           question_number: 2,
         },
         multiVariantMascot,
@@ -752,10 +773,12 @@ describe("buildSandboxComposition Preview Engine", () => {
         multiVariantMascot,
       );
 
-      // Verify no mascot container element rendered in DOM
+      // Verify no mascot container element rendered in DOM. Shared stylesheets
+      // legitimately define unrelated placeholder classes, so only markup is scanned.
+      const markup = res.html.replace(/<style[\s\S]*?<\/style>/g, "");
       expect(res.html).not.toContain('<div class="candy-mascot-container');
       expect(res.html).not.toContain("fixture");
-      expect(res.html).not.toContain("placeholder");
+      expect(markup).not.toContain("placeholder");
     });
 
     it("propagates explicit episode_id and question_id for 100% parity with candyArcadeComposition", () => {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { BankQuestionSchema, type BankQuestion } from "../schemas/questionBank.js";
+import { acceptLegacyVerdictAliases } from "../enums/quiz/legacyVerdictAliases.js";
 import { canonicalJsonStringify, sha256Hex } from "../utils/contentHash.js";
 
 export { canonicalJsonStringify, sha256Hex };
@@ -10,7 +11,8 @@ export function isEnglishLanguage(lang?: string | null): boolean {
   return trimmed === "english" || trimmed === "en" || trimmed.startsWith("en-") || trimmed.startsWith("en_");
 }
 
-export const ReelArchetypeSchema = z.enum(["versus_faceoff", "deep_trivia", "verdict_yes_no", "verdict_true_false"]);
+export const REEL_ARCHETYPES = ["versus_faceoff", "deep_trivia", "verdict_yes_no"] as const;
+export const ReelArchetypeSchema = acceptLegacyVerdictAliases(z.enum(REEL_ARCHETYPES));
 export type ReelArchetype = z.infer<typeof ReelArchetypeSchema>;
 
 export const ShortReelSourceProvenanceSchema = z.enum(["source", "verified_translation"]);
@@ -48,6 +50,36 @@ export function computeSourceContentHash(
   return sha256Hex(serialized);
 }
 
+/**
+ * Snapshots written before the True/False retirement hashed the original ids, which parsing now rewrites
+ * to Yes/No. Recomputing with each retired id combination keeps those snapshots verifiable.
+ */
+function matchesRetiredVerdictSourceHash(
+  contentHash: string,
+  originalQuestion: BankQuestion,
+  projection: Parameters<typeof computeSourceContentHash>[1],
+): boolean {
+  if (originalQuestion.archetype_id !== "verdict_yes_no") return false;
+  for (const archetype of ["verdict_true_false", "verdict_fact_myth", "verdict_yes_no"]) {
+    for (const format of ["true_false", "yes_no"]) {
+      for (const projectionArchetype of ["verdict_true_false", projection.archetype_id]) {
+        const legacyQuestion = { ...originalQuestion, archetype_id: archetype, format } as unknown as BankQuestion;
+        if (computeSourceContentHash(legacyQuestion, { ...projection, archetype_id: projectionArchetype }) === contentHash) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function sourceContentHashMatches(
+  contentHash: string,
+  originalQuestion: BankQuestion,
+  projection: Parameters<typeof computeSourceContentHash>[1],
+): boolean {
+  if (computeSourceContentHash(originalQuestion, projection) === contentHash) return true;
+  return matchesRetiredVerdictSourceHash(contentHash, originalQuestion, projection);
+}
+
 export const CompleteShortReelSourceSnapshotSchema = z
   .object({
     fidelity: z.literal("complete").default("complete"),
@@ -83,7 +115,7 @@ export const CompleteShortReelSourceSnapshotSchema = z
       });
     }
 
-    if ((source.archetype_id === "verdict_yes_no" || source.archetype_id === "verdict_true_false") && source.choices.length !== 2) {
+    if (source.archetype_id === "verdict_yes_no" && source.choices.length !== 2) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `${source.archetype_id} requires exactly 2 choices (found ${source.choices.length})`,
@@ -228,7 +260,7 @@ export const CompleteShortReelSourceSnapshotSchema = z
     }
 
     // Strict content hash derivation check
-    const expectedHash = computeSourceContentHash(source.original_question, {
+    const projection = {
       question_id: source.question_id,
       archetype_id: source.archetype_id,
       question_text: source.question_text,
@@ -239,9 +271,8 @@ export const CompleteShortReelSourceSnapshotSchema = z
       source_language: source.source_language,
       translation_provenance: source.translation_provenance,
       original_updated_at: source.original_updated_at,
-    });
-
-    if (source.content_hash !== expectedHash) {
+    };
+    if (!sourceContentHashMatches(source.content_hash, source.original_question, projection)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `content_hash does not match canonical source content hash`,
@@ -285,7 +316,7 @@ export const IncompleteLegacyShortReelSourceSnapshotSchema = z
       });
     }
 
-    if ((source.archetype_id === "verdict_yes_no" || source.archetype_id === "verdict_true_false") && source.choices.length !== 2) {
+    if (source.archetype_id === "verdict_yes_no" && source.choices.length !== 2) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `${source.archetype_id} requires exactly 2 choices (found ${source.choices.length})`,

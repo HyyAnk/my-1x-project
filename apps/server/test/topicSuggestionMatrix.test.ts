@@ -98,7 +98,7 @@ describe("topicSuggestionMatrix", () => {
       expect([
         "deep_trivia",
         "mystery_reveal",
-        "verdict_true_false",
+        "verdict_yes_no",
         "visual_spotting",
         "visual_identification",
         "speed_blitz",
@@ -110,7 +110,7 @@ describe("topicSuggestionMatrix", () => {
     const shortReelArchetypes = plan.slots.slice(4, 8).map((s) => s.archetype);
     expect(new Set(shortReelArchetypes).size).toBe(3);
     for (const a of shortReelArchetypes) {
-      expect(["versus_faceoff", "deep_trivia", "verdict_true_false"]).toContain(a);
+      expect(["versus_faceoff", "deep_trivia", "verdict_yes_no"]).toContain(a);
     }
 
     // Episode slots must have 4 distinct domains
@@ -140,11 +140,11 @@ describe("topicSuggestionMatrix", () => {
     expect(archetypes).toEqual([
       "deep_trivia",
       "mystery_reveal",
-      "verdict_true_false",
+      "verdict_yes_no",
       "visual_identification",
       "versus_faceoff",
       "deep_trivia",
-      "verdict_true_false",
+      "verdict_yes_no",
       "versus_faceoff",
     ]);
   });
@@ -240,11 +240,11 @@ describe("topicSuggestionMatrix", () => {
     expect(blueprintGuidance).toContain("domain_id:");
     expect(blueprintGuidance).toContain("Slot 1 (Episode - Deep Trivia");
     expect(blueprintGuidance).toContain("Slot 2 (Episode - Silhouette / Mystery Reveal");
-    expect(blueprintGuidance).toContain("Slot 3 (Episode - True or False");
+    expect(blueprintGuidance).toContain("Slot 3 (Episode - Yes or No");
     expect(blueprintGuidance).toContain("Slot 4 (Episode - Visual Identification");
     expect(blueprintGuidance).toContain("Slot 5 (Short-Reel - Versus Face-off");
     expect(blueprintGuidance).toContain("Slot 6 (Short-Reel - Deep Trivia");
-    expect(blueprintGuidance).toContain("Slot 7 (Short-Reel - True or False");
+    expect(blueprintGuidance).toContain("Slot 7 (Short-Reel - Yes or No");
     expect(blueprintGuidance).toContain("Slot 8 (Short-Reel - Versus Clash");
 
     // Verify output contract
@@ -299,9 +299,9 @@ describe("topicSuggestionMatrix", () => {
           why_it_fits: "Fast paced",
           hook: "Is Mars really red due to rust?",
           estimated_potential: "High",
-          quiz_format: "true_false",
-          archetype: "verdict_true_false",
-          suggested_layout: "verdict_true_false",
+          quiz_format: "yes_no",
+          archetype: "verdict_yes_no",
+          suggested_layout: "verdict_yes_no",
           domain_id: assignedPlan.slots[2].domainId,
           subtopic_id: "solar_system",
         },
@@ -355,9 +355,9 @@ describe("topicSuggestionMatrix", () => {
           why_it_fits: "Common misconception",
           hook: "Is this classic storm belief true or false?",
           estimated_potential: "Viral",
-          quiz_format: "true_false",
-          archetype: "verdict_true_false",
-          suggested_layout: "verdict_true_false",
+          quiz_format: "yes_no",
+          archetype: "verdict_yes_no",
+          suggested_layout: "verdict_yes_no",
           domain_id: assignedPlan.slots[6].domainId,
           subtopic_id: "solar_system",
         },
@@ -392,8 +392,8 @@ describe("topicSuggestionMatrix", () => {
     expect(parsed[1].suggested_layout).toBe("mystery_reveal");
 
     expect(parsed[2].domain_id).toBe(assignedPlan.slots[2].domainId);
-    expect(parsed[2].archetype).toBe("verdict_true_false");
-    expect(parsed[2].suggested_layout).toBe("verdict_true_false");
+    expect(parsed[2].archetype).toBe("verdict_yes_no");
+    expect(parsed[2].suggested_layout).toBe("verdict_yes_no");
 
     expect(parsed[3].content_kind).toBe("episode");
     expect(parsed[3].domain_id).toBe(assignedPlan.slots[3].domainId);
@@ -414,7 +414,7 @@ describe("topicSuggestionMatrix", () => {
 
     expect(parsed[6].content_kind).toBe("short_reel");
     expect(parsed[6].domain_id).toBe(assignedPlan.slots[6].domainId);
-    expect(parsed[6].archetype).toBe("verdict_true_false");
+    expect(parsed[6].archetype).toBe("verdict_yes_no");
     expect(parsed[6].question_count).toBe(1);
     expect(parsed[6].aspect_ratio).toBe("9:16");
 
@@ -454,12 +454,12 @@ describe("topicSuggestionMatrix", () => {
     expect(blueprintGuidance).toContain("Slot 1 (Episode - Deep Trivia");
     expect(blueprintGuidance).toContain('suggested_layout: "media_left_choices_right"');
     expect(blueprintGuidance).toContain("Slot 2 (Episode - Silhouette / Mystery Reveal");
-    expect(blueprintGuidance).toContain("Slot 3 (Episode - True or False");
-    expect(blueprintGuidance).toContain('suggested_layout: "verdict_true_false"');
+    expect(blueprintGuidance).toContain("Slot 3 (Episode - Yes or No");
+    expect(blueprintGuidance).toContain('suggested_layout: "verdict_yes_no"');
     expect(blueprintGuidance).toContain("Slot 4 (Episode - Visual Identification");
     expect(blueprintGuidance).toContain("Slot 5 (Short-Reel - Versus Face-off");
     expect(blueprintGuidance).toContain("Slot 6 (Short-Reel - Deep Trivia");
-    expect(blueprintGuidance).toContain("Slot 7 (Short-Reel - True or False");
+    expect(blueprintGuidance).toContain("Slot 7 (Short-Reel - Yes or No");
     expect(blueprintGuidance).toContain("Slot 8 (Short-Reel - Versus Clash");
 
     expect(blueprintGuidance).not.toContain("portrait_");

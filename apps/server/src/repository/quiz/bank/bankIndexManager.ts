@@ -27,9 +27,6 @@ export async function deriveQuestionBankIndexInMemory(this: RepositoryRuntime): 
     const qCount = batch.questions.length;
     current_total += qCount;
     by_archetype[batch.archetype_id] = (by_archetype[batch.archetype_id] || 0) + qCount;
-    if (batch.archetype_id === "verdict_true_false") {
-      by_archetype.verdict_fact_myth = (by_archetype.verdict_fact_myth || 0) + qCount;
-    }
     by_domain[batch.domain_id] = (by_domain[batch.domain_id] || 0) + qCount;
   }
 

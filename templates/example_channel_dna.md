@@ -20,7 +20,7 @@ Rotate formats across a five-topic suggestion run:
 - Knowledge quiz: one question, three answer choices, one explainable answer.
 - Image guess: show a friendly visual clue before revealing the subject.
 - Multiple choice: A/B/C with a spoken pause and a visual countdown.
-- True or false: one simple claim, then a playful correction.
+- Yes or no: one natural, kid-friendly question ("Can penguins fly?"), then a playful explanation.
 - Odd one out: three items (A, B, C), one does not belong, followed by the rule.
 
 ## Question design

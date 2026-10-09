@@ -99,7 +99,7 @@ describe("Quiz V2 pacing", () => {
       "then explain why it fits.",
     ]);
     expect(voice.segments.find((segment) => segment.role === "reveal")?.text).toBe("That's right! It's Tiger!");
-    expect(voicePerformanceConfig(DEFAULT_CONFIG.audio_generation, "reveal").exaggeration).toBe(0.86);
+    expect(voicePerformanceConfig(DEFAULT_CONFIG.audio_generation, "reveal").exaggeration).toBe(0.88);
   });
 
   it("never slows a voice segment below the audible correction floor", () => {

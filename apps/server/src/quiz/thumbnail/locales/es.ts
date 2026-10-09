@@ -8,7 +8,6 @@ export const esLocale: ThumbnailLocalization = {
     odd_one_out: "¡ENCUENTRA EL DISTINTO!",
     difficulty_tier: "¿PUEDES SUPERAR EL NIVEL 4?",
     yes_no: "¿SÍ O NO?",
-    true_false: "¿VERDADERO O FALSO?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} PREGUNTAS`,
@@ -17,6 +16,5 @@ export const esLocale: ThumbnailLocalization = {
     odd_one_out: () => "¡10 SEGUNDOS! ⏱️",
     difficulty_tier: () => "SOLO IQ 140+ 🔥",
     yes_no: () => "¿SÍ O NO? ⚡",
-    true_false: () => "¿VERDADERO O FALSO? ⚡",
   },
 };

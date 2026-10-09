@@ -1,3 +1,6 @@
+import { getDescriptionSectionLocale } from "./descriptionSectionLocales.js";
+import type { ScoreUnitForms } from "./description.types.js";
+
 export interface CalculatedScoringTiers {
   questionCount: number;
   tier1: { min: number; max: number };
@@ -6,11 +9,11 @@ export interface CalculatedScoringTiers {
 }
 
 /**
- * Calculates dynamic scoring tiers based on total question count N.
- * Divides questions into 3 proportional segments:
- * - Tier 1 (Beginner): 1 .. floor(N / 3)
+ * Calculates dynamic scoring tiers that cover every possible score 0..N:
+ * - Tier 1 (Beginner): 0 .. floor(N / 3)
  * - Tier 2 (Intermediate): floor(N / 3) + 1 .. floor(2N / 3)
  * - Tier 3 (Expert): floor(2N / 3) + 1 .. N
+ * A single-question quiz only has two outcomes, so the middle tier mirrors the top tier.
  */
 export function calculateScoringTiers(questionCount: number): CalculatedScoringTiers {
   const count = Math.max(1, Math.floor(questionCount));
@@ -19,40 +22,33 @@ export function calculateScoringTiers(questionCount: number): CalculatedScoringT
     return {
       questionCount: 1,
       tier1: { min: 0, max: 0 },
-      tier2: { min: 0, max: 0 },
+      tier2: { min: 1, max: 1 },
       tier3: { min: 1, max: 1 },
     };
   }
 
-  if (count === 2) {
-    return {
-      questionCount: 2,
-      tier1: { min: 1, max: 1 },
-      tier2: { min: 1, max: 1 },
-      tier3: { min: 2, max: 2 },
-    };
-  }
-
-  const t1Max = Math.max(1, Math.floor(count / 3));
-  const t2Min = t1Max + 1;
-  const t2Max = Math.max(t2Min, Math.floor((2 * count) / 3));
-  const t3Min = Math.min(count, t2Max + 1);
+  const t1Max = Math.floor(count / 3);
+  const t2Max = Math.max(t1Max + 1, Math.floor((2 * count) / 3));
 
   return {
     questionCount: count,
-    tier1: { min: 1, max: t1Max },
-    tier2: { min: t2Min, max: t2Max },
-    tier3: { min: t3Min, max: count },
+    tier1: { min: 0, max: t1Max },
+    tier2: { min: t1Max + 1, max: t2Max },
+    tier3: { min: t2Max + 1, max: count },
   };
 }
 
+function pickUnit(min: number, max: number, unit: ScoreUnitForms): string {
+  const isSingleValue = min === max;
+  const isSingular = isSingleValue && (min === 1 || (min === 0 && unit.zeroIsSingular === true));
+  return isSingular ? unit.one : unit.other;
+}
+
 /**
- * Formats scoring tier string ranges (e.g. "1–3 pts", "4–7 pts", "8–10 pts").
+ * Formats a localized scoring range (e.g. "0–3 points", "1 point", "4–7点").
  */
-export function formatScoringRange(min: number, max: number, _language = "English"): string {
-  const unit = "pts";
-  if (min === max) {
-    return `${min} ${unit}`;
-  }
-  return `${min}–${max} ${unit}`;
+export function formatScoringRange(min: number, max: number, language = "English"): string {
+  const unit = getDescriptionSectionLocale(language).scoreUnit;
+  const value = min === max ? `${min}` : `${min}–${max}`;
+  return `${value}${unit.spacer}${pickUnit(min, max, unit)}`;
 }

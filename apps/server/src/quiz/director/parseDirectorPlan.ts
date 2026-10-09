@@ -27,13 +27,11 @@ export function createDefaultDirectorPlan(quiz: QuizV2, _aspectRatioOrTheme?: st
         ? "visual_multiple_choice"
         : question.format === "yes_no"
           ? "yes_no"
-          : question.format === "true_false"
-            ? "true_false"
-            : question.format === "image_guess"
-              ? "mystery_reveal"
-              : index % 3 === 1
-                ? "illustrated_multiple_choice"
-                : "text_multiple_choice";
+          : question.format === "image_guess"
+            ? "mystery_reveal"
+            : index % 3 === 1
+              ? "illustrated_multiple_choice"
+              : "text_multiple_choice";
     const isFinal = index === quiz.questions.length - 1;
     const isMidpoint = index === Math.floor(quiz.questions.length / 2);
     const beatIntents: DirectorPlan["beats"][number]["beat_intents"] = [

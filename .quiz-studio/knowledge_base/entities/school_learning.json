@@ -5,6 +5,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Graphite Pencil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lead Pencil",
       "Wooden Pencil",
@@ -52,6 +53,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Ballpoint Pen",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Biro",
       "Ballpen",
@@ -98,6 +100,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Fountain Pen",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nib Pen",
       "Cartridge Pen",
@@ -144,6 +147,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Pencil Eraser",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rubber",
       "Gum Eraser",
@@ -191,6 +195,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Wooden Ruler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Straightedge",
       "Measuring Stick",
@@ -238,6 +243,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Drawing Compass",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Geometry Compass",
       "Pair of Compasses",
@@ -285,6 +291,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Blackboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chalkboard",
       "Slate Board",
@@ -331,6 +338,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Whiteboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dry-Erase Board",
       "Marker Board",
@@ -378,6 +386,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Dry Erase Marker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Whiteboard Marker",
       "Dry-Wipe Pen",
@@ -424,6 +433,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "School Backpack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bookbag",
       "Schoolbag",
@@ -471,6 +481,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Globe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Classroom Desk Globe",
       "Terrestrial Globe",
@@ -518,6 +529,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Notebook",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lined Notebook",
       "Exercise Book",
@@ -566,6 +578,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Stapler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Desktop Stapler",
       "Paper Stapler",
@@ -613,6 +626,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Paperclip",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steel Paperclip",
       "Wire Clip",
@@ -640,7 +654,7 @@
         "claim": "Norwegian inventor Johan Vaaler invented the modern double-oval Gem paperclip.",
         "verdict": "myth",
         "explanation": "Vaaler patented a rectangular wire clip, but the iconic looped Gem paperclip was developed anonymously by the Gem Manufacturing Company in Britain.",
-        "fun_fact": "During World War II, Norwegians wore paperclips on their lapels as a secret symbol of solidarity and resistance against Nazi occupation."
+        "fun_fact": "A giant paperclip statue, about 7 meters tall, stands in Sandvika, Norway, honoring Johan Vaaler."
       },
       {
         "claim": "Paperclips rely entirely on the elastic modulus of bent spring steel.",
@@ -661,6 +675,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Pocket Calculator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Electronic Calculator",
       "Arithmetic Calculator",
@@ -708,6 +723,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Highlighter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fluorescent Highlighter",
       "Text Marker",
@@ -756,6 +772,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Pencil Sharpener",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Manual Pencil Sharpener",
       "Pencil Sharpener",
@@ -804,6 +821,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Glue Stick",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solid Glue Stick",
       "Paste Stick",
@@ -852,6 +870,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Safety Scissors",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "School Safety Scissors",
       "Blunt-Tip Scissors",
@@ -900,6 +919,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Sticky Notes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Self-Adhesive Sticky Notes",
       "Post-it Note",
@@ -948,6 +968,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Index Cards",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paper Index Cards",
       "Flashcards",
@@ -996,6 +1017,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Binder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Three-Ring Binder",
       "Ring Binder",
@@ -1044,6 +1066,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Correction Tape",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Correction Tape Dispenser",
       "Tipp-Ex Tape",
@@ -1092,6 +1115,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Pencil Case",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zippered Pencil Case",
       "Pencil Pouch",
@@ -1140,6 +1164,7 @@
     "subtopic_id": "stationery_supplies",
     "name": "Protractor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Plastic Protractor",
       "Angle Ruler",
@@ -1188,6 +1213,7 @@
     "subtopic_id": "school_science",
     "name": "Microscope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Compound Optical Microscope",
       "Light Microscope",
@@ -1236,6 +1262,7 @@
     "subtopic_id": "school_science",
     "name": "Test Tube",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glass Test Tube",
       "Culture Tube",
@@ -1284,6 +1311,7 @@
     "subtopic_id": "school_science",
     "name": "Horseshoe Magnet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "U-Magnet",
       "Permanent Magnet",
@@ -1331,6 +1359,7 @@
     "subtopic_id": "school_science",
     "name": "Optical Glass Prism",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Triangular Glass Prism",
       "Refracting Prism",
@@ -1378,6 +1407,7 @@
     "subtopic_id": "school_science",
     "name": "Beaker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Borosilicate Chemistry Beaker",
       "Griffin Beaker",
@@ -1426,6 +1456,7 @@
     "subtopic_id": "school_science",
     "name": "Erlenmeyer Flask",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Conical Flask",
       "Titration Flask",
@@ -1473,6 +1504,7 @@
     "subtopic_id": "school_science",
     "name": "Graduated Cylinder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Measuring Cylinder",
       "Volume Cylinder",
@@ -1520,6 +1552,7 @@
     "subtopic_id": "school_science",
     "name": "Sand Hourglass",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sandglass",
       "Sand Timer",
@@ -1567,6 +1600,7 @@
     "subtopic_id": "school_science",
     "name": "Bunsen Burner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Laboratory Bunsen Burner",
       "Gas Burner",
@@ -1615,6 +1649,7 @@
     "subtopic_id": "school_science",
     "name": "Anatomical Skeleton Model",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Plastic Skeleton",
       "Classroom Skeleton",
@@ -1662,6 +1697,7 @@
     "subtopic_id": "school_science",
     "name": "Solar System Desk Mobile",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Orrery",
       "Planetary Model",
@@ -1709,6 +1745,7 @@
     "subtopic_id": "school_science",
     "name": "Anatomical Human Eye Model",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eyeball Model",
       "Vision Model",
@@ -1756,6 +1793,7 @@
     "subtopic_id": "school_science",
     "name": "Balance Scale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mechanical Balance Scale",
       "Two-Pan Balance",
@@ -1804,6 +1842,7 @@
     "subtopic_id": "school_science",
     "name": "Petri Dish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glass Petri Dish",
       "Culture Dish",
@@ -1847,64 +1886,18 @@
     ]
   },
   {
-    "id": "ENT-SCH-040",
-    "domain_id": "school_learning",
-    "subtopic_id": "school_science",
-    "name": "Tuning Fork",
-    "language": "en",
-    "aliases": [
-      "Acoustic Resonator",
-      "Pitch Fork",
-      "Sound Wave Resonator",
-      "Acoustic Tuning Fork"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A polished steel two-pronged tuning fork vibrating rapidly, sending circular water ripples splashing from a beaker, 9:16 vertical view.",
-    "core_traits": [
-      "Two-pronged metal fork forged from steel or aluminum with a handle stem",
-      "Emits a pure sinusoidal acoustic tone when struck against a rubber mallet or pad",
-      "Vibrates at a specific fixed pitch frequency stamped on the base, such as A440 or C512",
-      "Classic physics classroom apparatus for teaching resonance, sound frequency, and Doppler effects"
-    ],
-    "distractor_pool": [
-      "Tuning Whistle",
-      "Metronome",
-      "Spring Dynamometer Scale",
-      "Horseshoe Magnet",
-      "Acoustic Stethoscope"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Striking a tuning fork harder increases the musical pitch frequency it produces.",
-        "verdict": "myth",
-        "explanation": "Striking harder increases the amplitude (loudness/volume), but the fundamental pitch frequency remains constant as determined by prong length and stiffness.",
-        "fun_fact": "The tuning fork was invented in 1711 by British royal trumpeter and lutenist John Shore."
-      },
-      {
-        "claim": "Pressing the base of a vibrating tuning fork against a wooden tabletop amplifies its sound dramatically.",
-        "verdict": "fact",
-        "explanation": "The stem transmits vibrations into the large wooden surface, forcing the table to resonate as a soundboard and move vastly more air molecules.",
-        "fun_fact": "Medical tuning forks are used by doctors in the Rinne and Weber tests to diagnose conductive hearing loss."
-      }
-    ],
-    "versus_candidates": [
-      "Acoustic Stethoscope",
-      "Horseshoe Magnet",
-      "Optical Glass Prism"
-    ]
-  },
-  {
     "id": "ENT-SCH-041",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
     "name": "Iron Filings",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Iron Filings Kit",
       "Magnetic Field Filings",
       "Iron Powder",
-      "Magnetism Demonstrator",
-      "Iron Shavings"
+      "Iron Shavings",
+      "Magnetism Demonstrator"
     ],
     "difficulty": 1,
     "visual_anchor": "Dark metallic iron filings aligning into curved 3D magnetic field arches on paper above a concealed permanent magnet, 9:16 vertical macro view.",
@@ -1947,6 +1940,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Cube",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Geometric Cube",
       "Regular Hexahedron",
@@ -1995,6 +1989,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Sphere",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solid Sphere",
       "Round Ball",
@@ -2028,7 +2023,7 @@
         "claim": "The volume of a sphere is exactly two-thirds the volume of its circumscribed cylinder.",
         "verdict": "fact",
         "explanation": "Archimedes proved that a sphere has 2/3 the volume and 2/3 the surface area of a cylinder enclosing it, considering this his greatest discovery.",
-        "fun_fact": "Archimedes requested that a sphere carved inside a cylinder be engraved upon his tombstone."
+        "fun_fact": "Archimedes worked this out over 2,200 years ago, long before modern calculus was invented."
       }
     ],
     "versus_candidates": [
@@ -2043,6 +2038,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Cylinder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Circular Cylinder",
       "Right Cylinder",
@@ -2091,6 +2087,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Conical Cone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Circular Cone",
       "Right Cone",
@@ -2138,6 +2135,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Pyramid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Square Pyramid",
       "Regular Pyramid",
@@ -2186,6 +2184,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Triangular Prism",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Three-Sided Prism",
       "Wedge Polyhedron",
@@ -2233,6 +2232,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Hexagon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Regular Hexagon",
       "Six-Sided Polygon",
@@ -2281,6 +2281,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Crescent",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crescent Moon Shape",
       "Lune",
@@ -2329,6 +2330,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Star",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Five-Pointed Star",
       "Pentagram",
@@ -2377,6 +2379,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Heart",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heart Shape",
       "Cardioid",
@@ -2425,6 +2428,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Diamond",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diamond Shape",
       "Rhombus",
@@ -2471,8 +2475,9 @@
     "id": "ENT-SCH-053",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Triangle",
+    "name": "Triangle (Shape)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Equilateral Triangle",
       "Regular Triangle",
@@ -2521,6 +2526,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Octagon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Regular Octagon",
       "Eight-Sided Polygon",
@@ -2569,6 +2575,7 @@
     "subtopic_id": "shapes_geometry",
     "name": "Donut Shape",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Geometric Torus",
       "Donut Solid",
@@ -2617,6 +2624,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Bandage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Adhesive Bandage",
       "Plaster",
@@ -2666,6 +2674,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Thermometer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mercury Clinical Thermometer",
       "Fever Thermometer",
@@ -2714,6 +2723,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Medical Syringe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hypodermic Syringe",
       "Injection Syringe",
@@ -2761,6 +2771,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Eye Drops",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sterile Saline Eye Drops",
       "Artificial Tears",
@@ -2809,6 +2820,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Face Mask",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Surgical Face Mask",
       "Medical Mask",
@@ -2857,6 +2869,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Crutches",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wooden Underarm Crutches",
       "Axillary Crutches",
@@ -2905,6 +2918,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Cotton Swab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sterile Cotton Swab",
       "Q-tip",
@@ -2953,6 +2967,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Cold Pack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Instant Chemical Cold Pack",
       "Cold Ice Pack",
@@ -3001,6 +3016,7 @@
     "subtopic_id": "school_first_aid",
     "name": "First Aid Kit",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "School First Aid Kit Box",
       "First Aid Cabinet",
@@ -3049,6 +3065,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Stethoscope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Acoustic Stethoscope",
       "Binaural Stethoscope",
@@ -3097,6 +3114,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Elastic Bandage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Elastic Compression Bandage",
       "Ace Bandage",
@@ -3145,6 +3163,7 @@
     "subtopic_id": "school_first_aid",
     "name": "Antiseptic Wipes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Antiseptic Wound Wipes",
       "Alcohol Prep Pad",

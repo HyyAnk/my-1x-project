@@ -3,7 +3,7 @@ import { mediaLeftChoicesRightLayout } from "../src/quiz/render/layouts/mediaLef
 import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "../src/quiz/render/layouts/visualChoicesThreePure.js";
 import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.js";
-import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
+import { verdictYesNoLayout } from "../src/quiz/render/layouts/verdictYesNo.js";
 import { candyArcadeKeyframesCss } from "../src/quiz/render/candyArcade/styles/candyArcadeKeyframes.js";
 
 describe("Image Box Floating Motion Animation Across Layouts", () => {
@@ -71,10 +71,10 @@ describe("Image Box Floating Motion Animation Across Layouts", () => {
     });
   });
 
-  describe("Layout 4: Verdict True/False (verdict_true_false)", () => {
+  describe("Layout 4: Verdict Yes/No (verdict_yes_no)", () => {
     it("applies visual-card-float floating motion with gentle tilt sway to the hero image box", () => {
-      const css = verdictTrueFalseLayout.css("16:9");
-      expect(css).toContain(".layout-verdict_true_false.quiz-question-clip .hero-image");
+      const css = verdictYesNoLayout.css("16:9");
+      expect(css).toContain(".layout-verdict_yes_no.quiz-question-clip .hero-image");
       expect(css).toContain("visual-card-float 3.8s ease-in-out");
       expect(css).toContain("rotate(-0.8deg)");
       expect(css).toContain("@keyframes visual-card-float");

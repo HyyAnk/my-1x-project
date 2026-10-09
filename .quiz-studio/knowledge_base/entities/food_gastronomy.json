@@ -5,6 +5,7 @@
     "subtopic_id": "global_classics",
     "name": "Pizza",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Neapolitan Pizza",
       "Pizza Margherita"
@@ -50,6 +51,7 @@
     "subtopic_id": "global_classics",
     "name": "Sushi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nigiri",
       "Maki",
@@ -96,6 +98,7 @@
     "subtopic_id": "global_classics",
     "name": "Pho",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vietnamese Beef Noodle Soup",
       "Pho Bo"
@@ -141,6 +144,7 @@
     "subtopic_id": "global_classics",
     "name": "Chocolate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Xocolatl",
       "Theobroma cacao"
@@ -186,6 +190,7 @@
     "subtopic_id": "global_classics",
     "name": "Coffee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coffea",
       "Espresso",
@@ -196,15 +201,15 @@
     "core_traits": [
       "Brewed beverage made from roasted seeds of Coffea plant berries",
       "Two dominant global commercial species: Arabica (smooth) and Robusta (bold, caffeine-rich)",
-      "Contains caffeine, the most widely consumed psychoactive substance in the world",
+      "Contains caffeine, a natural substance that helps grown-ups feel more awake",
       "Discovered in ancient Ethiopian highlands according to Kaldi the goatherd legend"
     ],
     "distractor_pool": [
       "Tea",
       "Matcha",
       "Hot Chocolate",
-      "Wine",
-      "Beer"
+      "Lemonade",
+      "Orange Juice"
     ],
     "facts_and_myths": [
       {
@@ -223,7 +228,7 @@
     "versus_candidates": [
       "Tea",
       "Chocolate",
-      "Energy Drink"
+      "Hot Chocolate"
     ]
   },
   {
@@ -232,6 +237,7 @@
     "subtopic_id": "global_classics",
     "name": "Hamburger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Burger",
       "Beef Burger"
@@ -277,6 +283,7 @@
     "subtopic_id": "global_classics",
     "name": "Cheeseburger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bacon Cheeseburger",
       "Cheese Burger"
@@ -321,6 +328,7 @@
     "subtopic_id": "global_classics",
     "name": "Hot Dog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Frankfurter",
       "Wiener",
@@ -366,6 +374,7 @@
     "subtopic_id": "global_classics",
     "name": "French Fries",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chips",
       "Frites",
@@ -411,6 +420,7 @@
     "subtopic_id": "global_classics",
     "name": "Fried Chicken",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Southern Fried Chicken",
       "Crispy Chicken"
@@ -455,6 +465,7 @@
     "subtopic_id": "global_classics",
     "name": "Steak",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beefsteak",
       "Ribeye",
@@ -501,6 +512,7 @@
     "subtopic_id": "global_classics",
     "name": "Barbecue Ribs",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "BBQ Ribs",
       "Baby Back Ribs",
@@ -528,7 +540,7 @@
         "fun_fact": "The reddish ring just under the surface of smoked meat is the 'smoke ring' caused by nitric oxide."
       },
       {
-        "claim": "Barbecue sauce should be applied to ribs at the very start of a six-hour smoking session.",
+        "claim": "Barbecue sauce should be brushed onto ribs at the very start of a six-hour cook.",
         "verdict": "myth",
         "explanation": "Sugar in barbecue sauce burns and turns bitter above 265 degrees F (130 degrees C); glaze is best applied during the final 30 minutes.",
         "fun_fact": "Baby back ribs are cut from where the rib meets the spine, while spare ribs come from the belly area."
@@ -546,6 +558,7 @@
     "subtopic_id": "global_classics",
     "name": "Bacon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Streaky Bacon",
       "Rashers"
@@ -569,7 +582,7 @@
         "claim": "Bacon is one of the oldest processed meats in human history, dating back over 3,000 years.",
         "verdict": "fact",
         "explanation": "Historical records show ancient Chinese civilizations salted and cured pork bellies as early as 1500 BCE.",
-        "fun_fact": "During World War II, households were urged to save excess bacon grease to manufacture military explosives."
+        "fun_fact": "The word 'bacon' comes from an old Germanic word meaning 'back', where the meat was once cut."
       },
       {
         "claim": "Turkey bacon is naturally completely free of fat and sodium.",
@@ -590,6 +603,7 @@
     "subtopic_id": "global_classics",
     "name": "Lasagna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lasagne",
       "Baked Lasagna"
@@ -634,6 +648,7 @@
     "subtopic_id": "global_classics",
     "name": "Spaghetti Bolognese",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spag Bol",
       "Pasta Bolognese"
@@ -643,7 +658,7 @@
     "core_traits": [
       "Long slender cylindrical pasta strands served with a slow-cooked meat sauce",
       "Worldwide favorite that evolved from Italy's Bolognese meat ragu tradition",
-      "Sauce simmered for hours with beef, pork, onions, carrots, celery, and wine",
+      "Sauce simmered for hours with beef, pork, onions, carrots, celery, and tomatoes",
       "Finished with a generous dusting of Parmigiano-Reggiano cheese"
     ],
     "distractor_pool": [
@@ -678,6 +693,7 @@
     "subtopic_id": "global_classics",
     "name": "Carbonara",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spaghetti Carbonara",
       "Pasta Carbonara"
@@ -704,9 +720,9 @@
         "fun_fact": "Guanciale is cured pork jowl, distinct from pancetta (belly) or bacon."
       },
       {
-        "claim": "Carbonara became widely prominent in Rome around the liberation of Italy in World War II.",
+        "claim": "Carbonara is a fairly young pasta dish, first written about around 1950.",
         "verdict": "fact",
-        "explanation": "Many culinary historians trace its modern boom to Allied soldiers trading bacon and powdered eggs with Roman tavern keepers.",
+        "explanation": "Food historians found the earliest written mentions of carbonara around 1950, making it much younger than many classic Italian pastas.",
         "fun_fact": "National Carbonara Day is celebrated globally on April 6th."
       }
     ],
@@ -722,6 +738,7 @@
     "subtopic_id": "global_classics",
     "name": "Ravioli",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stuffed Pasta",
       "Meat Ravioli"
@@ -748,9 +765,9 @@
         "fun_fact": "Mention of ravioli appears in Italian merchant letters as early as the 14th century."
       },
       {
-        "claim": "Canned ravioli helped feed millions of Allied troops during World War II.",
+        "claim": "Chef Boyardee, famous for canned ravioli, was a real Italian-born chef.",
         "verdict": "fact",
-        "explanation": "Chef Hector Boiardi (Chef Boyardee) supplied millions of canned military rations to troops, receiving a Gold Star honor from the US government.",
+        "explanation": "Hector Boiardi was born in Italy, ran a popular restaurant in Cleveland, Ohio, and began selling his pasta in cans in the late 1920s.",
         "fun_fact": "Ravioli derives from the Italian word 'riavvolgere', meaning 'to wrap'."
       }
     ],
@@ -766,6 +783,7 @@
     "subtopic_id": "global_classics",
     "name": "Risotto",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Risotto alla Milanese",
       "Mushroom Risotto"
@@ -810,6 +828,7 @@
     "subtopic_id": "global_classics",
     "name": "Paella",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paella Valenciana",
       "Seafood Paella"
@@ -854,6 +873,7 @@
     "subtopic_id": "global_classics",
     "name": "Beef Wellington",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wellington",
       "Filet de Boeuf en Croute"
@@ -864,7 +884,7 @@
       "Showstopping British banquet dish of beef tenderloin wrapped in pastry",
       "Layered with savory mushroom duxelles paste, prosciutto, and crepe or puff pastry",
       "Baked until pastry is crisp and golden while beef remains medium-rare",
-      "Named in honor of Arthur Wellesley, the 1st Duke of Wellington and victor at Waterloo"
+      "Named in honor of Arthur Wellesley, the 1st Duke of Wellington, a famous British hero"
     ],
     "distractor_pool": [
       "Shepherd's Pie",
@@ -874,7 +894,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The Duke of Wellington invented Beef Wellington personally during the Napoleonic Wars.",
+        "claim": "The Duke of Wellington personally invented Beef Wellington in his own kitchen.",
         "verdict": "myth",
         "explanation": "There is no proof the Duke cooked; culinary historians suggest English patriotic chefs named the dish after him or noted its resemblance to shiny riding boots.",
         "fun_fact": "Wrapping meat in an ultra-thin savory crepe before puff pastry prevents soggy bottoms from mushroom juices."
@@ -898,6 +918,7 @@
     "subtopic_id": "global_classics",
     "name": "Shepherd's Pie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cottage Pie"
     ],
@@ -941,15 +962,16 @@
     "subtopic_id": "global_classics",
     "name": "Fish and Chips",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "British Fish and Chips",
       "Chippy"
     ],
     "difficulty": 1,
-    "visual_anchor": "Crispy golden beer-battered cod fillet served over thick-cut chips on greaseproof faux newspaper with tart mushy peas and tartar sauce.",
+    "visual_anchor": "Crispy golden battered cod fillet served over thick-cut chips on greaseproof faux newspaper with tart mushy peas and tartar sauce.",
     "core_traits": [
       "Quintessential British seaside meal pairing deep-fried battered white fish with thick chips",
-      "Commonly uses cod, haddock, or pollock coated in aerated beer batter",
+      "Commonly uses cod, haddock, or pollock coated in light, crispy batter",
       "Served from takeaway shops known affectionately as 'chippies'",
       "Accompanied by malt vinegar, tartar sauce, mushy green peas, and lemon wedges"
     ],
@@ -961,9 +983,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Fish and chips was one of the very few foods never rationed in the UK during World War II.",
+        "claim": "The first fish and chip shops opened in England in the 1860s.",
         "verdict": "fact",
-        "explanation": "Winston Churchill viewed hot fish and chips as essential for citizen morale, ensuring supply chains kept chippies open.",
+        "explanation": "Shops in London and in Lancashire both claim to be the very first, opening around 1860 and 1863.",
         "fun_fact": "Fried fish was originally brought to England by 16th-century Sephardic Jewish immigrants from Portugal and Spain."
       },
       {
@@ -985,6 +1007,7 @@
     "subtopic_id": "global_classics",
     "name": "Wiener Schnitzel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Viennese Schnitzel",
       "Schnitzel"
@@ -1029,6 +1052,7 @@
     "subtopic_id": "global_classics",
     "name": "Goulash",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gulyas",
       "Hungarian Goulash"
@@ -1073,6 +1097,7 @@
     "subtopic_id": "global_classics",
     "name": "Borscht",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Borsch",
       "Beet Soup"
@@ -1117,6 +1142,7 @@
     "subtopic_id": "global_classics",
     "name": "Pierogi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Varenyky",
       "Polish Dumplings"
@@ -1161,6 +1187,7 @@
     "subtopic_id": "global_classics",
     "name": "Peking Duck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beijing Roast Duck",
       "Crispy Duck"
@@ -1205,6 +1232,7 @@
     "subtopic_id": "global_classics",
     "name": "Sweet and Sour Pork",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gu Lao Rou",
       "Cantonese Sweet and Sour"
@@ -1249,6 +1277,7 @@
     "subtopic_id": "global_classics",
     "name": "Kung Pao Chicken",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gong Bao Ji Ding"
     ],
@@ -1292,6 +1321,7 @@
     "subtopic_id": "global_classics",
     "name": "Fried Rice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yangzhou Fried Rice",
       "Egg Fried Rice"
@@ -1336,6 +1366,7 @@
     "subtopic_id": "global_classics",
     "name": "Dim Sum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yum Cha",
       "Cantonese Dim Sum"
@@ -1380,6 +1411,7 @@
     "subtopic_id": "global_classics",
     "name": "Spring Rolls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Egg Rolls",
       "Chun Juan"
@@ -1424,6 +1456,7 @@
     "subtopic_id": "global_classics",
     "name": "Dumplings",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jiaozi",
       "Potstickers",
@@ -1469,6 +1502,7 @@
     "subtopic_id": "global_classics",
     "name": "Ramen",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Ramen",
       "Tonkotsu Ramen"
@@ -1513,6 +1547,7 @@
     "subtopic_id": "global_classics",
     "name": "Udon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sanuki Udon",
       "Udon Noodles"
@@ -1557,6 +1592,7 @@
     "subtopic_id": "global_classics",
     "name": "Soba",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Buckwheat Noodles",
       "Zaru Soba"
@@ -1601,6 +1637,7 @@
     "subtopic_id": "global_classics",
     "name": "Tempura",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ebi Tempura",
       "Japanese Tempura"
@@ -1645,6 +1682,7 @@
     "subtopic_id": "global_classics",
     "name": "Yakitori",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Skewers",
       "Grilled Chicken Skewers"
@@ -1689,6 +1727,7 @@
     "subtopic_id": "global_classics",
     "name": "Miso Soup",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Misoshiru",
       "Japanese Miso Soup"
@@ -1711,8 +1750,8 @@
       {
         "claim": "Boiling miso soup vigorously after adding the miso paste enhances its probiotic benefits.",
         "verdict": "myth",
-        "explanation": "Boiling kills beneficial live probiotic cultures and destroys the delicate aromatic esters of fermented miso; paste must be stirred in off the boil.",
-        "fun_fact": "In Japan, miso soup is drunk directly from the bowl with two hands rather than using a spoon."
+        "explanation": "Boiling harms the helpful live cultures and spoils the delicate aroma of fermented miso; the paste is stirred in off the boil.",
+        "fun_fact": "In Japan, people sip miso soup straight from the bowl with two hands instead of using a spoon."
       },
       {
         "claim": "Dashi, the foundation of miso soup, is rich in natural glutamate that triggered the scientific discovery of umami.",
@@ -1733,6 +1772,7 @@
     "subtopic_id": "global_classics",
     "name": "Bento",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bento Box",
       "Ekiben"
@@ -1777,6 +1817,7 @@
     "subtopic_id": "global_classics",
     "name": "Sashimi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Raw Fish",
       "Japanese Sashimi"
@@ -1785,7 +1826,7 @@
     "visual_anchor": "Masterfully sliced thick ruby-red bluefin tuna and coral-orange salmon fillets resting on a bed of crushed ice and shaved daikon with shiso leaves.",
     "core_traits": [
       "Pure Japanese culinary art of slicing ultra-fresh raw seafood without rice",
-      "Highlights raw ocean delicacies like bluefin tuna (maguro), salmon (sake), and sea bream",
+      "Highlights raw ocean delicacies like bluefin tuna (maguro), salmon, and sea bream",
       "Master chefs employ specialized razor-sharp yanagiba knives with single bevels",
       "Served with shiso perilla leaves, grated wasabi, and premium soy sauce"
     ],
@@ -1803,9 +1844,9 @@
         "fun_fact": "The word 'sashimi' translates literally to 'pierced body', referencing an old tradition of identifying fish by tail fins."
       },
       {
-        "claim": "Fugu sashimi prepared from deadly pufferfish can only be served by chefs with special government licenses.",
+        "claim": "Fugu sashimi made from pufferfish can only be served by chefs with special licenses.",
         "verdict": "fact",
-        "explanation": "Pufferfish organs contain lethal tetrodotoxin; chefs undergo years of rigorous apprenticeship and state exams before being certified.",
+        "explanation": "Parts of a pufferfish hold a very strong poison, so chefs train for years and pass exams before serving it.",
         "fun_fact": "Daikon radish shreds served with sashimi contain enzymes that aid raw seafood digestion."
       }
     ],
@@ -1821,6 +1862,7 @@
     "subtopic_id": "global_classics",
     "name": "Bibimbap",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dolsot Bibimbap",
       "Korean Mixed Rice"
@@ -1865,6 +1907,7 @@
     "subtopic_id": "global_classics",
     "name": "Bulgogi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Korean BBQ Beef",
       "Fire Meat"
@@ -1891,7 +1934,7 @@
         "fun_fact": "The literal Korean translation of 'Bulgogi' is 'fire meat'."
       },
       {
-        "claim": "Bulgogi is a modern 20th-century invention born after the Korean War.",
+        "claim": "Bulgogi is a modern dish invented in the 20th century.",
         "verdict": "myth",
         "explanation": "Bulgogi traces its roots back over 1,500 years to the Goguryeo era, where marinated skewered meat was known as 'maekjeok'.",
         "fun_fact": "Eating grilled bulgogi wrapped in lettuce or perilla leaves with garlic and paste is called 'ssam'."
@@ -1909,6 +1952,7 @@
     "subtopic_id": "global_classics",
     "name": "Pad Thai",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phad Thai",
       "Thai Fried Noodles"
@@ -1953,6 +1997,7 @@
     "subtopic_id": "global_classics",
     "name": "Tom Yum Goong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tom Yum",
       "Thai Spicy Shrimp Soup"
@@ -1997,6 +2042,7 @@
     "subtopic_id": "global_classics",
     "name": "Green Curry",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gaeng Keow Wan",
       "Thai Green Curry"
@@ -2041,6 +2087,7 @@
     "subtopic_id": "global_classics",
     "name": "Chicken Tikka Masala",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "CTM"
     ],
@@ -2084,6 +2131,7 @@
     "subtopic_id": "global_classics",
     "name": "Butter Chicken",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Murgh Makhani"
     ],
@@ -2127,6 +2175,7 @@
     "subtopic_id": "global_classics",
     "name": "Biryani",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hyderabadi Biryani",
       "Dum Biryani"
@@ -2171,6 +2220,7 @@
     "subtopic_id": "global_classics",
     "name": "Tandoori Chicken",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tandoori Murgh"
     ],
@@ -2214,6 +2264,7 @@
     "subtopic_id": "global_classics",
     "name": "Moussaka",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Greek Moussaka"
     ],
@@ -2222,7 +2273,7 @@
     "core_traits": [
       "Beloved baked casserole cornerstone of Greek and Eastern Mediterranean cuisine",
       "Layered with fried eggplant slices, potatoes, and spiced ground lamb or beef",
-      "Meat filling perfumed with fragrant cinnamon, allspice, red wine, and garlic",
+      "Meat filling perfumed with fragrant cinnamon, allspice, tomato, and garlic",
       "Crowned with a thick layer of golden-brown baked bechamel custard"
     ],
     "distractor_pool": [
@@ -2257,6 +2308,7 @@
     "subtopic_id": "global_classics",
     "name": "Gyros",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Greek Gyros",
       "Gyro Wrap"
@@ -2301,6 +2353,7 @@
     "subtopic_id": "global_classics",
     "name": "Souvlaki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kalamaki",
       "Greek Meat Skewers"
@@ -2345,6 +2398,7 @@
     "subtopic_id": "global_classics",
     "name": "Greek Salad",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Horiatiki",
       "Village Salad"
@@ -2374,7 +2428,7 @@
         "claim": "Dipping crusty bread into the leftover tomato juices, olive oil, and feta crumbs at the bottom is a beloved Greek ritual.",
         "verdict": "fact",
         "explanation": "Known as 'papara', soaking up the savory emulsion of oil and tomato juices with fresh bread is considered the highlight of the meal.",
-        "fun_fact": "Kalamata olives are naturally bitter and must be cured in brine or red wine vinegar before eating."
+        "fun_fact": "Kalamata olives are naturally bitter and must be cured in salty brine before eating."
       }
     ],
     "versus_candidates": [
@@ -2389,6 +2443,7 @@
     "subtopic_id": "global_classics",
     "name": "Ratatouille",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ratatouille Nicoise"
     ],
@@ -2432,15 +2487,16 @@
     "subtopic_id": "global_classics",
     "name": "Beef Bourguignon",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Boeuf Bourguignon",
       "Beef Burgundy"
     ],
     "difficulty": 2,
-    "visual_anchor": "Enamelled cast-iron Dutch oven filled with velvety Burgundy red wine stew, tender braised beef chunks, pearl onions, and browned button mushrooms.",
+    "visual_anchor": "Enamelled cast-iron Dutch oven filled with a glossy dark brown stew of tender braised beef chunks, pearl onions, carrots, and browned button mushrooms.",
     "core_traits": [
-      "Quintessential French beef stew originating from the historic Burgundy wine region",
-      "Beef chuck slow-braised for hours in full-bodied red Burgundy wine and beef stock",
+      "Classic French beef stew from the Burgundy region of eastern France",
+      "Beef chunks slow-braised for hours in a rich, dark, savory sauce with beef stock",
       "Enriched with salt pork lardons, caramelized pearl onions, carrots, and sauteed mushrooms",
       "Popularized in the United States by culinary icon Julia Child"
     ],
@@ -2448,24 +2504,24 @@
       "Goulash",
       "Beef Wellington",
       "Pot Roast",
-      "Coq au Vin"
+      "Beef Stroganoff"
     ],
     "facts_and_myths": [
       {
         "claim": "Traditional beef bourguignon was historically a royal court luxury served to French monarchs.",
         "verdict": "myth",
-        "explanation": "It originated as an economical peasant stew using tough cuts of beef tenderized by marinating in acidic local red wine.",
+        "explanation": "It began as a thrifty farmhouse stew, where hours of slow cooking turned tough, cheap cuts of beef soft and tender.",
         "fun_fact": "Julia Child declared it 'certainly one of the most delicious beef dishes concocted by man'."
       },
       {
         "claim": "Browning the beef pieces thoroughly in hot fat before braising creates deeper flavor.",
         "verdict": "fact",
-        "explanation": "The Maillard reaction during searing forms rich caramelized savory compounds that dissolve into the wine sauce.",
-        "fun_fact": "Burgundy Pinot Noir is the classic regional wine choice for authentic preparation."
+        "explanation": "The Maillard reaction during searing forms rich browned flavors that melt into the stew's sauce.",
+        "fun_fact": "Beef bourguignon was the very first dish Julia Child cooked on her TV show 'The French Chef' in 1963."
       }
     ],
     "versus_candidates": [
-      "Coq au Vin",
+      "Beef Stroganoff",
       "Pot Roast",
       "Goulash"
     ]
@@ -2476,6 +2532,7 @@
     "subtopic_id": "global_classics",
     "name": "Coq au Vin",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Rooster in Wine",
       "French Wine Chicken"
@@ -2520,6 +2577,7 @@
     "subtopic_id": "global_classics",
     "name": "French Onion Soup",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Soupe a l'Oignon",
       "Gratinee des Halles"
@@ -2528,7 +2586,7 @@
     "visual_anchor": "Deep ceramic crock of dark amber onion broth topped with a crusty toasted baguette slice blanketed under bubbling broiled Gruyere cheese.",
     "core_traits": [
       "World-renowned French bistro soup featuring deeply caramelized sliced yellow onions",
-      "Simmered in rich beef broth flavored with dry white wine, thyme, and sherry",
+      "Simmered in rich beef broth flavored with thyme and bay leaf",
       "Ladle into oven-safe bowls and topped with a toasted bread crouton",
       "Crowned with shredded Gruyere or Comte cheese and broiled until blistered and melted"
     ],
@@ -2543,7 +2601,7 @@
         "claim": "Proper caramelization of onions for French onion soup takes at least 45 minutes of slow stirring.",
         "verdict": "fact",
         "explanation": "Natural sugars in sliced onions require low gentle heat to break down and transform into rich, mahogany-brown sweetness.",
-        "fun_fact": "King Louis XV is mythically credited with inventing the soup late at night using champagne, butter, and onions."
+        "fun_fact": "A legend says King Louis XV made the first bowl late one night when only onions and butter were left."
       },
       {
         "claim": "French onion soup was originally created for elite aristocratic banquets in Versailles.",
@@ -2564,6 +2622,7 @@
     "subtopic_id": "global_classics",
     "name": "Clam Chowder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "New England Clam Chowder",
       "Boston Clam Chowder"
@@ -2608,6 +2667,7 @@
     "subtopic_id": "global_classics",
     "name": "Lobster Roll",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Maine Lobster Roll",
       "Connecticut Lobster Roll"
@@ -2652,6 +2712,7 @@
     "subtopic_id": "global_classics",
     "name": "Macaroni and Cheese",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mac and Cheese",
       "Macaroni Cheese"
@@ -2696,6 +2757,7 @@
     "subtopic_id": "global_classics",
     "name": "Meatloaf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Baked Meatloaf",
       "Glazed Meatloaf"
@@ -2740,6 +2802,7 @@
     "subtopic_id": "global_classics",
     "name": "Chili Con Carne",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chili",
       "Texas Chili"
@@ -2784,6 +2847,7 @@
     "subtopic_id": "global_classics",
     "name": "Buffalo Wings",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hot Wings",
       "Buffalo Chicken Wings"
@@ -2810,7 +2874,7 @@
         "fun_fact": "Americans eat over 1.4 billion chicken wings during Super Bowl weekend alone."
       },
       {
-        "claim": "Traditional authentic Buffalo wings are fried completely naked without any flour breading or batter.",
+        "claim": "Traditional Buffalo wings are fried plain, without any flour breading or batter.",
         "verdict": "fact",
         "explanation": "Original Buffalo wings are deep-fried directly in hot oil until skin is crispy, then tossed immediately in hot sauce and butter.",
         "fun_fact": "In Buffalo, locals simply call them 'wings' and almost universally prefer blue cheese over ranch dressing."
@@ -2828,6 +2892,7 @@
     "subtopic_id": "global_classics",
     "name": "Pot Roast",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yankee Pot Roast",
       "Braised Beef Roast"
@@ -2872,6 +2937,7 @@
     "subtopic_id": "global_classics",
     "name": "Chicken Pot Pie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pot Pie"
     ],
@@ -2915,6 +2981,7 @@
     "subtopic_id": "global_classics",
     "name": "Fajitas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sizzling Fajitas",
       "Steak Fajitas"
@@ -2959,6 +3026,7 @@
     "subtopic_id": "global_classics",
     "name": "Enchiladas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Enchiladas Rojas",
       "Enchiladas Verdes"
@@ -3003,6 +3071,7 @@
     "subtopic_id": "global_classics",
     "name": "Ceviche",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cebiche",
       "Seviche",
@@ -3024,9 +3093,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The leftover zesty, citrus-seafood curing marinade is drunk as an invigorating beverage called 'Tiger's Milk'.",
+        "claim": "The tangy lime marinade left over from ceviche has a fun nickname: 'Tiger's Milk'.",
         "verdict": "fact",
-        "explanation": "Known as 'Leche de Tigre', this spicy, sour marinade is served in shot glasses as an energy-giving tonic and celebrated hangover cure.",
+        "explanation": "Called 'Leche de Tigre' in Spanish, this spicy, sour marinade is often served in small glasses as a zesty extra.",
         "fun_fact": "Peru declared National Ceviche Day on June 28th and recognizes it as Cultural Heritage."
       },
       {
@@ -3048,6 +3117,7 @@
     "subtopic_id": "global_classics",
     "name": "Feijoada",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brazilian Feijoada",
       "Feijoada Completa"
@@ -3074,9 +3144,9 @@
         "fun_fact": "Feijoada is traditionally eaten during long celebratory Saturday family gatherings accompanied by samba music."
       },
       {
-        "claim": "Feijoada was originally invented by plantation slaves surviving on scraps discarded by Portuguese masters.",
+        "claim": "Feijoada is a quick dish that is ready in just a few minutes.",
         "verdict": "myth",
-        "explanation": "Modern culinary historians found that pork offal was prized by European masters; feijoada evolved from ancient Portuguese and Mediterranean bean stew traditions.",
+        "explanation": "Feijoada simmers slowly for hours so the black beans turn creamy and soak up the smoky flavors of the meats.",
         "fun_fact": "Farofa, toasted cassava flour seasoned with butter and bacon, provides indispensable nutty crunch."
       }
     ],
@@ -3092,6 +3162,7 @@
     "subtopic_id": "global_classics",
     "name": "Rendang",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beef Rendang",
       "Rendang Daging"
@@ -3136,6 +3207,7 @@
     "subtopic_id": "global_classics",
     "name": "Nasi Goreng",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Indonesian Fried Rice"
     ],
@@ -3179,6 +3251,7 @@
     "subtopic_id": "global_classics",
     "name": "Satay",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sate",
       "Chicken Satay",
@@ -3188,7 +3261,7 @@
     "visual_anchor": "Bamboo skewers of charred turmeric-marinated chicken sizzling over charcoal, served with thick spiced peanut dipping sauce, cucumber cubes, and rice cakes.",
     "core_traits": [
       "Beloved Southeast Asian street food originating on the Indonesian island of Java",
-      "Seasoned skewered meat grilled over smoking charcoal and coconut husk embers",
+      "Seasoned skewered meat grilled over glowing charcoal and coconut husk embers",
       "Marinated with lemongrass, turmeric, coriander, shallots, and sweet soy sauce",
       "Dipped into velvety, spicy-sweet roasted peanut sauce and served with compressed rice cakes (ketupat)"
     ],
@@ -3224,6 +3297,7 @@
     "subtopic_id": "global_classics",
     "name": "Laksa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Curry Laksa",
       "Asam Laksa"
@@ -3268,6 +3342,7 @@
     "subtopic_id": "global_classics",
     "name": "Hainanese Chicken Rice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chicken Rice",
       "Singapore Chicken Rice"
@@ -3312,6 +3387,7 @@
     "subtopic_id": "global_classics",
     "name": "Beef Stroganoff",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beef Stroganov"
     ],
@@ -3355,6 +3431,7 @@
     "subtopic_id": "global_classics",
     "name": "Chicken Kiev",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chicken Kyiv",
       "Cotelette de Volaille"
@@ -3399,6 +3476,7 @@
     "subtopic_id": "global_classics",
     "name": "Cabbage Rolls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Golabki",
       "Stuffed Cabbage",
@@ -3444,6 +3522,7 @@
     "subtopic_id": "global_classics",
     "name": "Fondue",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cheese Fondue",
       "Swiss Fondue"
@@ -3452,7 +3531,7 @@
     "visual_anchor": "Ceramic caquelon pot bubbling over an open flame burner with molten Gruyere and Emmental cheese, surrounded by crusty bread cubes on long fondue forks.",
     "core_traits": [
       "Communal Swiss national dish of melted cheese served in a shared ceramic pot (caquelon)",
-      "Prepared by melting shredded alpine cheeses (Gruyere and Emmental) with dry white wine and kirsch cherry brandy",
+      "Prepared by slowly melting shredded alpine cheeses like Gruyere and Emmental into a smooth sauce",
       "Stabilized with garlic and a touch of cornstarch to maintain a smooth glossy emulsion",
       "Diners spear crusty bread cubes on long slender forks and swirl them through the bubbling cheese"
     ],
@@ -3466,7 +3545,7 @@
       {
         "claim": "Swiss fondue tradition dictates that anyone who drops their bread into the pot must pay a fun forfeit penalty.",
         "verdict": "fact",
-        "explanation": "Swiss custom penalizes dropping bread: historically buying a round of wine, singing a song, or kissing the person on their left.",
+        "explanation": "By Swiss custom, whoever drops bread in the pot gets a playful forfeit, such as singing a song for the table.",
         "fun_fact": "The crunchy caramelized cheese crust remaining at the bottom of the pot is prized and called 'la religieuse' (the nun)."
       },
       {
@@ -3488,6 +3567,7 @@
     "subtopic_id": "global_classics",
     "name": "Raclette",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Swiss Raclette"
     ],
@@ -3531,6 +3611,7 @@
     "subtopic_id": "street_food",
     "name": "Taco",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Street Taco",
       "Tacos al Pastor"
@@ -3575,6 +3656,7 @@
     "subtopic_id": "street_food",
     "name": "Burrito",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mission Burrito",
       "Breakfast Burrito"
@@ -3619,6 +3701,7 @@
     "subtopic_id": "street_food",
     "name": "Quesadilla",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cheese Quesadilla"
     ],
@@ -3662,6 +3745,7 @@
     "subtopic_id": "street_food",
     "name": "Nachos",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Loaded Nachos",
       "Stadium Nachos"
@@ -3706,6 +3790,7 @@
     "subtopic_id": "street_food",
     "name": "Guacamole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Guac",
       "Avocado Dip"
@@ -3750,6 +3835,7 @@
     "subtopic_id": "street_food",
     "name": "Salsa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pico de Gallo",
       "Salsa Roja",
@@ -3795,6 +3881,7 @@
     "subtopic_id": "street_food",
     "name": "Shawarma",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chicken Shawarma",
       "Beef Shawarma"
@@ -3839,6 +3926,7 @@
     "subtopic_id": "street_food",
     "name": "Kebab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shish Kebab",
       "Doner Kebab",
@@ -3884,6 +3972,7 @@
     "subtopic_id": "street_food",
     "name": "Falafel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ta'ameya",
       "Chickpea Fritters"
@@ -3928,6 +4017,7 @@
     "subtopic_id": "street_food",
     "name": "Hummus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hummus bi Tahini"
     ],
@@ -3971,6 +4061,7 @@
     "subtopic_id": "street_food",
     "name": "Pita Bread",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pitta",
       "Pocket Bread",
@@ -4016,6 +4107,7 @@
     "subtopic_id": "street_food",
     "name": "Banh Mi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vietnamese Baguette",
       "Saigon Sandwich"
@@ -4060,6 +4152,7 @@
     "subtopic_id": "street_food",
     "name": "Korean Fried Chicken",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "KFC",
       "Chimaek",
@@ -4071,7 +4164,7 @@
       "Celebrated Korean street food famous for an ultra-thin, crackling, glass-like crunchy crust",
       "Double-fried in oil to render out all skin fat before being tossed in sticky glazes",
       "Coated in sweet and spicy red chili glaze (yangnyeom) or sweet savory soy-garlic glaze",
-      "Central to 'Chimaek' culture: the pairing of fried chicken with cold draft beer"
+      "Hugely popular takeout meal in South Korea, often shared while watching sports"
     ],
     "distractor_pool": [
       "Fried Chicken",
@@ -4089,7 +4182,7 @@
       {
         "claim": "Korean fried chicken originated as an ancient royal Joseon Dynasty court banqueting dish.",
         "verdict": "myth",
-        "explanation": "It evolved in the late 20th century influenced by American military bases and gained national ubiquity during the 1997 financial crisis.",
+        "explanation": "It developed in the late 20th century, inspired by American-style fried chicken, and boomed in popularity in the late 1990s.",
         "fun_fact": "South Korea has more fried chicken restaurants than McDonald's outlets worldwide."
       }
     ],
@@ -4105,6 +4198,7 @@
     "subtopic_id": "street_food",
     "name": "Tteokbokki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spicy Rice Cakes",
       "Topokki"
@@ -4149,6 +4243,7 @@
     "subtopic_id": "street_food",
     "name": "Takoyaki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Octopus Balls",
       "Japanese Octopus Puffs"
@@ -4193,6 +4288,7 @@
     "subtopic_id": "street_food",
     "name": "Okonomiyaki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Savory Pancake",
       "Osaka Pancake"
@@ -4237,6 +4333,7 @@
     "subtopic_id": "street_food",
     "name": "Baozi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steamed Buns",
       "Bao",
@@ -4282,6 +4379,7 @@
     "subtopic_id": "street_food",
     "name": "Samosa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Punjabi Samosa",
       "Sambusa"
@@ -4326,6 +4424,7 @@
     "subtopic_id": "street_food",
     "name": "Naan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Garlic Naan",
       "Butter Naan",
@@ -4371,6 +4470,7 @@
     "subtopic_id": "street_food",
     "name": "Roti Canai",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Roti Paratha",
       "Malaysian Flatbread"
@@ -4415,6 +4515,7 @@
     "subtopic_id": "street_food",
     "name": "Poutine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Quebec Poutine",
       "Canadian Poutine"
@@ -4459,6 +4560,7 @@
     "subtopic_id": "street_food",
     "name": "Corn Dog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Corndog",
       "Pronto Pup"
@@ -4503,15 +4605,16 @@
     "subtopic_id": "street_food",
     "name": "Onion Rings",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fried Onion Rings",
       "Crispy Onion Rings"
     ],
     "difficulty": 1,
-    "visual_anchor": "Stack of giant golden-brown fried onion rings showing airy, bubbled beer batter crust, served with a ramekin of zesty horseradish dipping sauce.",
+    "visual_anchor": "Stack of giant golden-brown fried onion rings showing an airy, bubbled crispy batter crust, served with a ramekin of zesty horseradish dipping sauce.",
     "core_traits": [
       "Popular appetizer and side dish made from cross-sectional slices of whole onions",
-      "Onion rings dipped in seasoned flour, beer batter, or breadcrumbs and deep-fried",
+      "Onion rings dipped in seasoned flour, light batter, or breadcrumbs and deep-fried",
       "Cooks until the batter is crunchy while the onion inside steams to sweet tenderness",
       "Standard companion to hamburgers, barbecued ribs, and steaks in American diners"
     ],
@@ -4547,6 +4650,7 @@
     "subtopic_id": "street_food",
     "name": "Mozzarella Sticks",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cheese Sticks",
       "Fried Mozzarella"
@@ -4591,18 +4695,19 @@
     "subtopic_id": "street_food",
     "name": "Pretzel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Soft Pretzel",
       "Brezel",
       "Bavarian Pretzel"
     ],
     "difficulty": 1,
-    "visual_anchor": "Lustrous mahogany-brown twisted Bavarian soft pretzel with cracked surface and coarse white salt crystals, served with sweet mustard and German beer.",
+    "visual_anchor": "Lustrous mahogany-brown twisted Bavarian soft pretzel with cracked surface and coarse white salt crystals, served with sweet mustard.",
     "core_traits": [
       "Traditional baked pastry distinguished by its symmetrical looped knot shape",
       "Dipped in food-grade lye (sodium hydroxide) solution before baking to create deep mahogany color and glossy crust",
       "Pillowy and chewy interior with coarse sea salt crystals sprinkled on top",
-      "Cornerstone of Bavarian beer halls and American shopping mall street kiosks"
+      "Cornerstone of Bavarian bakeries, German festivals, and American shopping mall kiosks"
     ],
     "distractor_pool": [
       "Bagel",
@@ -4636,6 +4741,7 @@
     "subtopic_id": "street_food",
     "name": "Bratwurst",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brat",
       "German Bratwurst"
@@ -4646,7 +4752,7 @@
       "Traditional German sausage typically made from finely minced pork and veal",
       "Seasoned with marjoram, caraway seeds, nutmeg, and ginger",
       "Pan-fried or grilled over glowing coals until browned and crisp-skinned",
-      "Staple of German beer gardens, street kiosks (Imbiss), and American tailgates"
+      "Staple of German street kiosks (Imbiss), summer barbecues, and American tailgates"
     ],
     "distractor_pool": [
       "Hot Dog",
@@ -4680,13 +4786,14 @@
     "subtopic_id": "street_food",
     "name": "Currywurst",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Berlin Currywurst"
     ],
     "difficulty": 1,
     "visual_anchor": "Sliced grilled pork sausage drenched in warm spiced curried ketchup sauce and heavily dusted with aromatic yellow curry powder on a paper tray with fries.",
     "core_traits": [
-      "Quintessential post-war Berlin street food fast food dish",
+      "Quintessential Berlin street food snack loved across Germany",
       "Steamed and fried pork sausage sliced into bite-sized bite coins",
       "Smothered in a warm sauce of spiced tomato ketchup and Worcestershire sauce",
       "Generously dusted with aromatic Indian curry powder and served with french fries or bread rolls"
@@ -4699,9 +4806,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Currywurst was invented in post-WWII Berlin by a woman trading with British soldiers.",
+        "claim": "Currywurst was invented in Berlin in 1949 by a snack-stand owner named Herta Heuwer.",
         "verdict": "fact",
-        "explanation": "Herta Heuwer obtained ketchup and curry powder from British soldiers in 1949, mixing them with grilled sausage at her street stand.",
+        "explanation": "Herta Heuwer mixed ketchup, curry powder, and spices into a warm sauce and poured it over grilled sausage at her street stand.",
         "fun_fact": "Germans consume an estimated 800 million currywursts every year."
       },
       {
@@ -4723,6 +4830,7 @@
     "subtopic_id": "street_food",
     "name": "Arepa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Venezuelan Arepa",
       "Colombian Arepa"
@@ -4767,6 +4875,7 @@
     "subtopic_id": "street_food",
     "name": "Empanada",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Argentine Empanada",
       "Meat Turnover"
@@ -4811,6 +4920,7 @@
     "subtopic_id": "street_food",
     "name": "Tamale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tamal",
       "Mexican Tamales"
@@ -4855,6 +4965,7 @@
     "subtopic_id": "street_food",
     "name": "Pupusa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salvadoran Pupusa",
       "Pupusa de Queso"
@@ -4899,6 +5010,7 @@
     "subtopic_id": "street_food",
     "name": "Churros",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spanish Churros",
       "Churros con Chocolate"
@@ -4943,6 +5055,7 @@
     "subtopic_id": "street_food",
     "name": "Crepe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "French Crepe",
       "Galette"
@@ -4987,6 +5100,7 @@
     "subtopic_id": "street_food",
     "name": "Panini",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panino",
       "Italian Pressed Sandwich"
@@ -5031,6 +5145,7 @@
     "subtopic_id": "street_food",
     "name": "Calzone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Folded Pizza",
       "Italian Turnover"
@@ -5075,6 +5190,7 @@
     "subtopic_id": "street_food",
     "name": "Bruschetta",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bruschetta al Pomodoro"
     ],
@@ -5118,6 +5234,7 @@
     "subtopic_id": "street_food",
     "name": "Arancini",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sicilian Rice Balls",
       "Arancine"
@@ -5162,17 +5279,18 @@
     "subtopic_id": "street_food",
     "name": "Tapas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spanish Tapas",
       "Pinchos"
     ],
     "difficulty": 1,
-    "visual_anchor": "Bustling tavern bar counter filled with small earthenware dishes of garlic shrimp (gambas al ajillo), patatas bravas with spicy red sauce, and Spanish tortilla squares.",
+    "visual_anchor": "Bustling restaurant counter filled with small earthenware dishes of garlic shrimp (gambas al ajillo), patatas bravas with spicy red sauce, and Spanish tortilla squares.",
     "core_traits": [
       "Quintessential Spanish culinary culture of varied small savory appetizer dishes",
-      "Served in bars and taverns across Spain to accompany beer, vermouth, or wine",
+      "Served in cafes and family restaurants across Spain as small bites to share",
       "Staples include patatas bravas, gambas al ajillo, jamon iberico, and tortilla espanola",
-      "Eaten while bar-hopping on foot with friends, a social ritual called 'tapear'"
+      "Eaten while strolling from place to place with friends, a social ritual called 'tapear'"
     ],
     "distractor_pool": [
       "Dim Sum",
@@ -5182,15 +5300,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The word 'tapa' translates to 'lid' or 'cover', originally used to cover drink glasses.",
+        "claim": "The word 'tapa' means 'lid' or 'cover' in Spanish.",
         "verdict": "fact",
-        "explanation": "Tavern keepers placed a slice of bread or ham over sherry glasses as a lid ('tapa') to keep out dust and flies, eventually adding toppings.",
-        "fun_fact": "In parts of Granada and Leon, bars still serve a complimentary free tapa with every drink ordered."
+        "explanation": "A popular story says innkeepers placed a slice of bread or ham over glasses as a lid to keep out dust and flies.",
+        "fun_fact": "Spanish tortilla, a thick potato and egg omelette, is one of the most popular tapas."
       },
       {
         "claim": "Tapas are intended to be eaten seated at a formal banquet table with full silverware.",
         "verdict": "myth",
-        "explanation": "Tapas culture is famously casual and lively; diners stand around crowded bar counters, using toothpicks, fingers, and small napkins dropped on the floor.",
+        "explanation": "Tapas culture is famously casual and lively; diners often stand around crowded counters, using toothpicks, fingers, and small napkins.",
         "fun_fact": "In the Basque country of northern Spain, tapas spiked onto bread with wooden toothpicks are called 'pintxos'."
       }
     ],
@@ -5206,6 +5324,7 @@
     "subtopic_id": "street_food",
     "name": "Croquette",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Croquetas",
       "Potato Croquette",
@@ -5251,6 +5370,7 @@
     "subtopic_id": "street_food",
     "name": "Pasty",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cornish Pasty",
       "Meat Pasty"
@@ -5295,6 +5415,7 @@
     "subtopic_id": "street_food",
     "name": "Scotch Egg",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Picnic Egg"
     ],
@@ -5338,6 +5459,7 @@
     "subtopic_id": "street_food",
     "name": "Sausage Roll",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "British Sausage Roll"
     ],
@@ -5381,6 +5503,7 @@
     "subtopic_id": "street_food",
     "name": "BLT Sandwich",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "BLT",
       "Bacon Lettuce Tomato"
@@ -5407,9 +5530,9 @@
         "fun_fact": "The acronym 'BLT' became standard shorthand in diners when fast-talking short-order cooks shouted orders."
       },
       {
-        "claim": "The BLT sandwich was created during the American Civil War.",
+        "claim": "The BLT sandwich was invented thousands of years ago in ancient Rome.",
         "verdict": "myth",
-        "explanation": "The sandwich emerged after World War II with the rapid expansion of national supermarkets stocking fresh produce and sliced bacon year-round.",
+        "explanation": "The BLT became popular in the mid-1900s, when supermarkets began selling fresh lettuce, tomatoes, and sliced bacon all year round.",
         "fun_fact": "Adding sliced fresh avocado transforms the sandwich into a 'BLAT'."
       }
     ],
@@ -5425,6 +5548,7 @@
     "subtopic_id": "street_food",
     "name": "Club Sandwich",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clubhouse Sandwich",
       "Double Decker Sandwich"
@@ -5434,8 +5558,8 @@
     "core_traits": [
       "Famous double-decker sandwich constructed with three slices of toasted bread",
       "Layered with sliced roasted turkey or chicken breast, crispy bacon, lettuce, tomato, and mayonnaise",
-      "Secured with frilled wooden cocktail toothpicks and cut into four neat triangular quarters",
-      "Created in late 19th-century private American gentlemen's gambling and sporting clubs"
+      "Secured with frilled wooden toothpicks and cut into four neat triangular quarters",
+      "Created in late 19th-century American social clubs in New York"
     ],
     "distractor_pool": [
       "BLT Sandwich",
@@ -5447,7 +5571,7 @@
       {
         "claim": "The Saratoga Club House in Saratoga Springs, New York, is widely credited with originating the club sandwich.",
         "verdict": "fact",
-        "explanation": "Late 19th-century menus show the sandwich originated in exclusive upstate New York gambling clubhouses.",
+        "explanation": "Late 19th-century menus link the sandwich to a fancy clubhouse in the resort town of Saratoga Springs, New York.",
         "fun_fact": "King Edward VIII of the United Kingdom was famously fond of clubhouse sandwiches."
       },
       {
@@ -5469,6 +5593,7 @@
     "subtopic_id": "street_food",
     "name": "Reuben Sandwich",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Classic Reuben"
     ],
@@ -5490,7 +5615,7 @@
       {
         "claim": "The Reuben sandwich won the National Sandwich Idea Contest in 1956, propelling it onto restaurant menus nationwide.",
         "verdict": "fact",
-        "explanation": "Omaha hotel chef Bernard Schimmel entered his father's poker-game sandwich invention, winning the prestigious national contest.",
+        "explanation": "Omaha hotel chef Bernard Schimmel entered a sandwich first made at his family's Blackstone Hotel and won the national contest.",
         "fun_fact": "Reuben's Delicatessen in New York City also claims its founder Arnold Reuben created it in 1914."
       },
       {
@@ -5512,6 +5637,7 @@
     "subtopic_id": "street_food",
     "name": "Grilled Cheese",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Toasted Cheese Sandwich",
       "Cheese Toastie"
@@ -5556,6 +5682,7 @@
     "subtopic_id": "street_food",
     "name": "Sloppy Joe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sloppy Joes",
       "Manwich"
@@ -5600,6 +5727,7 @@
     "subtopic_id": "street_food",
     "name": "Pulled Pork Sandwich",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Carolina Pulled Pork",
       "BBQ Pulled Pork"
@@ -5644,6 +5772,7 @@
     "subtopic_id": "street_food",
     "name": "Chicken Nugget",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chicken Tenders",
       "Chicken Bites"
@@ -5688,6 +5817,7 @@
     "subtopic_id": "street_food",
     "name": "Shawarma Wrap",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Doner Wrap",
       "Durum Shawarma"
@@ -5732,6 +5862,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Tiramisu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Italian Tiramisu"
     ],
@@ -5775,6 +5906,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Gelato",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Italian Gelato",
       "Italian Ice Cream"
@@ -5819,6 +5951,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Cannoli",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sicilian Cannoli",
       "Cannolo"
@@ -5842,7 +5975,7 @@
         "claim": "Cannoli shells should only be filled with ricotta cream minutes before eating to preserve crunchiness.",
         "verdict": "fact",
         "explanation": "Moisture in the ricotta filling quickly soaks into the crispy shell; sitting for hours in display cases turns the shells soggy.",
-        "fun_fact": "The classic quote from 'The Godfather' film famously immortalized the pastry: 'Leave the gun. Take the cannoli.'"
+        "fun_fact": "In Sicily, cannoli were traditionally made as a special treat for the Carnevale festival."
       },
       {
         "claim": "Cannoli were invented in Little Italy, New York, by Italian-American bakers.",
@@ -5863,6 +5996,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Croissant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "French Croissant",
       "Butter Croissant"
@@ -5907,6 +6041,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Baguette",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "French Bread",
       "French Baguette"
@@ -5951,6 +6086,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Bagel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "New York Bagel",
       "Everything Bagel"
@@ -5995,6 +6131,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Donut",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Doughnut",
       "Glazed Donut"
@@ -6018,7 +6155,7 @@
         "claim": "The center hole in donuts was invented by a New England sailor so dough would fry evenly without a raw center.",
         "verdict": "fact",
         "explanation": "Captain Hanson Gregory in 1847 punched a hole in the center of fried dough cakes using a tin pepper can to eliminate soggy, raw centers.",
-        "fun_fact": "During World War I, female Salvation Army volunteers served donuts to frontline troops, nicknamed 'Donut Dollies'."
+        "fun_fact": "A plaque in Rockport, Maine, honors Captain Hanson Gregory as the inventor of the donut hole."
       },
       {
         "claim": "Donuts were originally called 'dough-rings' when introduced to America.",
@@ -6039,6 +6176,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Pancake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Flapjack",
       "Hotcake",
@@ -6084,6 +6222,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Waffle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Belgian Waffle",
       "Liege Waffle"
@@ -6128,6 +6267,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Apple Pie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "American Apple Pie"
     ],
@@ -6171,6 +6311,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Cheesecake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "New York Cheesecake",
       "Basque Cheesecake"
@@ -6215,6 +6356,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Brownie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chocolate Brownie",
       "Fudge Brownie"
@@ -6259,6 +6401,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Chocolate Chip Cookie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Choc Chip Cookie",
       "Toll House Cookie"
@@ -6303,6 +6446,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Cupcake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fairy Cake"
     ],
@@ -6346,6 +6490,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Muffin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Blueberry Muffin",
       "American Muffin"
@@ -6390,6 +6535,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Ice Cream",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hard Ice Cream",
       "Scoop Ice Cream"
@@ -6434,6 +6580,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Popsicle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ice Pop",
       "Ice Lolly",
@@ -6479,6 +6626,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Cotton Candy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Candy Floss",
       "Fairy Floss"
@@ -6523,6 +6671,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Popcorn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Popped Corn",
       "Cinema Popcorn"
@@ -6567,6 +6716,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Marshmallow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Marshmallows"
     ],
@@ -6610,6 +6760,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Gummy Bear",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gummi Bear",
       "Gummibar"
@@ -6654,16 +6805,17 @@
     "subtopic_id": "desserts_pastries",
     "name": "Apple Strudel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apfelstrudel",
       "Viennese Strudel"
     ],
     "difficulty": 2,
-    "visual_anchor": "Flaky golden baked strudel roll dusted in powdered sugar, sliced open to show concentric layers of paper-thin pastry wrapping spiced apples, rum raisins, and toasted breadcrumbs.",
+    "visual_anchor": "Flaky golden baked strudel roll dusted in powdered sugar, sliced open to show concentric layers of paper-thin pastry wrapping spiced apples, plump raisins, and toasted breadcrumbs.",
     "core_traits": [
       "Traditional Viennese pastry roll considered the national dessert of Austria",
       "Paper-thin, elastic unleavened dough hand-stretched until transparent enough to read through",
-      "Filled with tart sliced apples, cinnamon, sugar, rum-soaked raisins, and buttery toasted breadcrumbs",
+      "Filled with tart sliced apples, cinnamon, sugar, plump raisins, and buttery toasted breadcrumbs",
       "Baked until crisp and golden, served warm with vanilla sauce or whipped cream"
     ],
     "distractor_pool": [
@@ -6676,14 +6828,14 @@
       {
         "claim": "Viennese pastry tradition mandates strudel dough must be stretched thin enough to read a newspaper through it.",
         "verdict": "fact",
-        "explanation": "Master bakers stretch the high-gluten dough across cloth-covered tables until it is translucent enough to read a love letter underneath without tearing.",
+        "explanation": "Master bakers stretch the stretchy dough across cloth-covered tables until it is thin enough to read a newspaper underneath without tearing.",
         "fun_fact": "The oldest known strudel recipe dates back to a handwritten manuscript from 1696 housed in the Vienna City Library."
       },
       {
         "claim": "The word 'strudel' translates literally to 'apple pie' in German.",
         "verdict": "myth",
         "explanation": "Strudel means 'whirlpool' or 'eddy', referencing the spiral concentric vortex formed by rolling the pastry.",
-        "fun_fact": "Strudel pastry technique was heavily influenced by Ottoman Turkish baklava dough during the Siege of Vienna."
+        "fun_fact": "Strudel's paper-thin pastry is thought to be related to the thin layered dough of Turkish baklava."
       }
     ],
     "versus_candidates": [
@@ -6698,6 +6850,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Baklava",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Turkish Baklava",
       "Greek Baklava"
@@ -6742,6 +6895,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Pavlova",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pav"
     ],
@@ -6785,6 +6939,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Scone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "English Scone",
       "Cream Tea Scone"
@@ -6829,6 +6984,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Creme Brulee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Burnt Cream",
       "Trinity Cream"
@@ -6873,6 +7029,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Macaron",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "French Macaron",
       "Parisian Macaron"
@@ -6917,6 +7074,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Eclair",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chocolate Eclair",
       "French Eclair"
@@ -6961,6 +7119,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Profiterole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cream Puff",
       "Choux a la Creme"
@@ -7005,6 +7164,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Madeleine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "French Madeleine",
       "Petite Madeleine"
@@ -7049,6 +7209,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Souffle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chocolate Souffle",
       "Cheese Souffle"
@@ -7093,6 +7254,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Panna Cotta",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cooked Cream"
     ],
@@ -7136,6 +7298,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Chocolate Lava Cake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Molten Chocolate Cake",
       "Moelleux au Chocolat"
@@ -7180,6 +7343,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Carrot Cake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spiced Carrot Cake"
     ],
@@ -7223,6 +7387,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Red Velvet Cake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Red Velvet",
       "Waldorf Red Cake"
@@ -7267,6 +7432,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Black Forest Cake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Schwarzwaelder Kirschtorte",
       "Black Forest Gateau"
@@ -7311,6 +7477,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Lemon Meringue Pie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lemon Meringue"
     ],
@@ -7354,6 +7521,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Key Lime Pie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Florida Key Lime Pie"
     ],
@@ -7397,6 +7565,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Pecan Pie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Southern Pecan Pie"
     ],
@@ -7406,7 +7575,7 @@
       "Quintessential Southern American holiday dessert pie prominent at Thanksgiving and Christmas",
       "Pie crust filled with sweet custard of eggs, butter, brown sugar, and dark or light corn syrup",
       "Topped densely with native North American pecan nut halves that float to the surface during baking",
-      "Infused with pure vanilla extract and a splash of Kentucky bourbon"
+      "Flavored with pure vanilla extract and a pinch of salt"
     ],
     "distractor_pool": [
       "Apple Pie",
@@ -7425,7 +7594,7 @@
         "claim": "Pecans are placed at the bottom of the pie pan before pouring custard over them so they stay submerged.",
         "verdict": "myth",
         "explanation": "Pecans are lighter and less dense than the sugary egg custard; they naturally float to the top during baking to form a crunchy toasted canopy.",
-        "fun_fact": "Adding a splash of bourbon whiskey balances the rich sugar sweetness with oak and vanilla notes."
+        "fun_fact": "Texas named the pecan its official state tree in 1919."
       }
     ],
     "versus_candidates": [
@@ -7440,6 +7609,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Cinnamon Roll",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cinnamon Bun",
       "Kanelbulle",
@@ -7485,6 +7655,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Danish Pastry",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Danish",
       "Wienerbrod"
@@ -7529,6 +7700,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Brioche",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brioche Bread",
       "French Brioche"
@@ -7573,6 +7745,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Fudge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chocolate Fudge",
       "Hot Fudge"
@@ -7617,6 +7790,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Caramel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salted Caramel",
       "Caramel Candy"
@@ -7661,6 +7835,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Toffee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "English Toffee",
       "Buttercrunch"
@@ -7705,6 +7880,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Nougat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Torrone",
       "Turron",
@@ -7750,6 +7926,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Turkish Delight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lokum",
       "Rahat Lokum"
@@ -7773,7 +7950,7 @@
         "claim": "Confectioner Haci Bekir invented modern cornstarch-thickened Turkish Delight in Istanbul in 1777.",
         "verdict": "fact",
         "explanation": "Haci Bekir moved to Istanbul and utilized newly imported refined sugar and cornstarch, delighting the Sultan who appointed him chief confectioner.",
-        "fun_fact": "In C.S. Lewis's 'The Lion, the Witch and the Wardrobe', Edmund Pevensie is magically seduced by the White Witch with enchanted Turkish Delight."
+        "fun_fact": "In C.S. Lewis's 'The Lion, the Witch and the Wardrobe', the White Witch tempts Edmund with enchanted Turkish Delight."
       },
       {
         "claim": "Turkish Delight is set with animal gelatin like modern gummy bears.",
@@ -7794,6 +7971,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Mango Sticky Rice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Khao Niew Mamuang"
     ],
@@ -7837,6 +8015,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Mochi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Mochi",
       "Daifuku"
@@ -7881,6 +8060,7 @@
     "subtopic_id": "desserts_pastries",
     "name": "Dorayaki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Red Bean Pancake"
     ],
@@ -7888,7 +8068,7 @@
     "visual_anchor": "Pair of golden-brown, disc-shaped honey castella sponge pancakes pressed together, sandwiching a generous layer of sweet red azuki bean paste.",
     "core_traits": [
       "Popular Japanese confectionery confection (wagashi) shaped like two rounded discs",
-      "Made of two small castella sponge cake pancakes sweetened with honey and mirin",
+      "Made of two small castella sponge cake pancakes sweetened with honey",
       "Sandwiches a filling of sweet azuki red bean paste (anko)",
       "Famous globally as the favorite food of beloved anime robotic cat Doraemon"
     ],
@@ -7908,7 +8088,7 @@
       {
         "claim": "Dorayaki pancakes are made from the exact same batter as American breakfast buttermilk pancakes.",
         "verdict": "myth",
-        "explanation": "Dorayaki batter is a Japanese castella sponge cake batter containing honey and mirin sweet rice wine, yielding a fine, velvety, cake-like crumb.",
+        "explanation": "Dorayaki batter is like Japanese castella sponge cake, sweetened with honey, giving it a soft, fine, cake-like crumb.",
         "fun_fact": "Modern variations include fillings of matcha cream, custard, and chocolate Nutella."
       }
     ],
@@ -7924,6 +8104,7 @@
     "subtopic_id": "beverages",
     "name": "Green Tea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sencha",
       "Camellia sinensis"
@@ -7968,6 +8149,7 @@
     "subtopic_id": "beverages",
     "name": "Black Tea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "English Breakfast",
       "Red Tea"
@@ -7976,7 +8158,7 @@
     "visual_anchor": "Steaming porcelain teacup of deep amber-red brewed black tea with a silver teaspoon, beside a small pitcher of cold whole milk and raw sugar cubes.",
     "core_traits": [
       "Fully oxidized tea made from the leaves of the Camellia sinensis plant",
-      "Leaves are withered, rolled, fully oxidized, and dried, creating a deep amber liquor",
+      "Leaves are withered, rolled, fully oxidized, and dried, creating a deep amber brew",
       "Known in East Asia as 'red tea' (hong cha) due to the glowing color of the liquid",
       "World's most consumed tea type, famous as English Breakfast, Assam, and Darjeeling"
     ],
@@ -7997,7 +8179,7 @@
         "claim": "Adding cold milk to hot black tea completely destroys all of its caffeine content.",
         "verdict": "myth",
         "explanation": "Milk proteins (casein) bind to tannins, softening astringency, but have zero effect on caffeine levels.",
-        "fun_fact": "Darjeeling tea grown in the Himalayan foothills of India is often dubbed the 'Champagne of Teas'."
+        "fun_fact": "Darjeeling tea grows high in the misty Himalayan foothills of northern India."
       }
     ],
     "versus_candidates": [
@@ -8012,6 +8194,7 @@
     "subtopic_id": "beverages",
     "name": "Earl Grey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Earl Grey Tea"
     ],
@@ -8031,9 +8214,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Earl Grey tea was named after a British Prime Minister who abolished slavery throughout the British Empire.",
+        "claim": "Earl Grey tea is named after a British Prime Minister from the 1830s.",
         "verdict": "fact",
-        "explanation": "Charles Grey, 2nd Earl Grey, served as Prime Minister from 1830 to 1834, passing the landmark Slavery Abolition Act 1833.",
+        "explanation": "Charles Grey, the 2nd Earl Grey, was Prime Minister from 1830 to 1834, and the tea blend was named in his honor.",
         "fun_fact": "A popular tea latte made with Earl Grey, steamed milk, and vanilla syrup is called a 'London Fog'."
       },
       {
@@ -8055,6 +8238,7 @@
     "subtopic_id": "beverages",
     "name": "Matcha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Matcha Green Tea",
       "Ceremonial Matcha"
@@ -8081,7 +8265,7 @@
         "fun_fact": "L-theanine amino acid in matcha promotes calm, focused alertness without coffee jitters ('zen state')."
       },
       {
-        "claim": "Matcha powder should be stirred vigorously using a metal cocktail spoon.",
+        "claim": "Matcha powder should be stirred quickly using a metal kitchen spoon.",
         "verdict": "myth",
         "explanation": "Matcha requires a carved bamboo whisk (chasen) with 80 to 100 curved tines whisked in a 'W' motion to create velvety microfoam.",
         "fun_fact": "Buddhist monks originally drank matcha to stay awake and meditative during marathon meditation sessions."
@@ -8099,6 +8283,7 @@
     "subtopic_id": "beverages",
     "name": "Chai",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Masala Chai",
       "Spiced Tea"
@@ -8143,6 +8328,7 @@
     "subtopic_id": "beverages",
     "name": "Espresso",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caffe Espresso",
       "Single Shot"
@@ -8166,7 +8352,7 @@
         "claim": "A 1-ounce shot of espresso has more total caffeine than an entire 12-ounce mug of drip coffee.",
         "verdict": "myth",
         "explanation": "While espresso has higher caffeine concentration per ounce, a 1-ounce shot contains roughly 63mg caffeine compared to 120-180mg in an 8-12 oz drip coffee mug.",
-        "fun_fact": "In Italy, the price of an espresso drunk standing at the bar is traditionally regulated by local cultural norms."
+        "fun_fact": "In Italy, many people enjoy their espresso standing at the cafe counter, finishing it in a few sips."
       },
       {
         "claim": "Espresso machines were invented in Italy to speed up worker coffee breaks during industrialization.",
@@ -8187,6 +8373,7 @@
     "subtopic_id": "beverages",
     "name": "Cappuccino",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Traditional Cappuccino"
     ],
@@ -8230,6 +8417,7 @@
     "subtopic_id": "beverages",
     "name": "Latte",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caffe Latte",
       "Cafe au Lait"
@@ -8274,6 +8462,7 @@
     "subtopic_id": "beverages",
     "name": "Americano",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caffe Americano",
       "Long Black"
@@ -8284,7 +8473,7 @@
       "Coffee drink prepared by diluting shots of rich espresso with hot water",
       "Yields a strength similar to traditional drip coffee but retains unique espresso characteristics",
       "In Australia and New Zealand, pouring espresso over hot water is called a 'Long Black'",
-      "Legend holds it originated during World War II when American GIs diluted strong Italian espresso"
+      "Legend holds it was named after Americans in Italy who watered down strong espresso"
     ],
     "distractor_pool": [
       "Espresso",
@@ -8294,9 +8483,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "American soldiers in Italy during WWII diluted strong local espresso with hot water to mimic American drip coffee.",
+        "claim": "The name 'Americano' is Italian for 'American'.",
         "verdict": "fact",
-        "explanation": "American GIs found concentrated Italian espresso shots too bitter and strong, asking baristas to water it down into an 'Americano'.",
+        "explanation": "Legend says Americans in Italy found espresso too strong and asked for hot water to make it more like home-style drip coffee.",
         "fun_fact": "In a Long Black, hot water goes into the cup first followed by espresso to preserve the crema layer."
       },
       {
@@ -8318,6 +8507,7 @@
     "subtopic_id": "beverages",
     "name": "Mocha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caffe Mocha",
       "Mocaccino"
@@ -8362,6 +8552,7 @@
     "subtopic_id": "beverages",
     "name": "Hot Chocolate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hot Cocoa",
       "Drinking Chocolate"
@@ -8391,7 +8582,7 @@
         "claim": "Spanish 'chocolate a la taza' is so thick and dense that churros stand upright in the cup without sinking.",
         "verdict": "fact",
         "explanation": "Spanish hot chocolate is thickened with cornstarch and melted dark chocolate until it reaches the consistency of rich pudding.",
-        "fun_fact": "During the American Revolutionary War, soldiers were provided rations of chocolate for energy."
+        "fun_fact": "Legend says the Aztec ruler Moctezuma enjoyed many golden cups of frothy chocolate drink every day."
       }
     ],
     "versus_candidates": [
@@ -8406,6 +8597,7 @@
     "subtopic_id": "beverages",
     "name": "Lemonade",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fresh Lemonade",
       "Pink Lemonade"
@@ -8450,6 +8642,7 @@
     "subtopic_id": "beverages",
     "name": "Orange Juice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "OJ",
       "Fresh Squeezed Orange Juice"
@@ -8494,6 +8687,7 @@
     "subtopic_id": "beverages",
     "name": "Apple Cider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sweet Cider",
       "Mulled Cider"
@@ -8504,7 +8698,7 @@
       "Unfiltered, raw, unsweetened beverage pressed from fresh whole autumn apples",
       "Cloudy amber-brown appearance containing natural apple suspended solids and pectin",
       "North American autumn tradition served warm and mulled with cinnamon, cloves, and allspice",
-      "Distinguished from clear filtered apple juice and alcoholic hard cider"
+      "Distinguished from clear filtered apple juice by its cloudy, unfiltered look"
     ],
     "distractor_pool": [
       "Apple Juice",
@@ -8514,22 +8708,22 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "In the United Kingdom and Europe, ordering 'cider' will always get you an alcoholic fermented beverage.",
+        "claim": "Apple cider is made by grinding apples into a mash and pressing out the juice.",
         "verdict": "fact",
-        "explanation": "Outside North America, 'cider' exclusively means alcoholic fermented apple wine ('hard cider'); non-alcoholic cider is termed cloudy apple juice.",
-        "fun_fact": "John Chapman ('Johnny Appleseed') planted apple orchards specifically for making cider, not eating apples."
+        "explanation": "Whole apples are chopped into a pulp called pomace, then squeezed in a press to release sweet, cloudy juice.",
+        "fun_fact": "John Chapman, known as 'Johnny Appleseed', planted apple tree nurseries across the American frontier."
       },
       {
         "claim": "Apple cider and commercial clear apple juice are identical liquids with different labels.",
         "verdict": "myth",
         "explanation": "Cider is raw, unfiltered, and unpasteurized with natural sediments; apple juice is filtered, clarified, and pasteurized to remove all pulp.",
-        "fun_fact": "Hot mulled cider is historically linked to the ancient Anglo-Saxon pagan orchard blessing ritual called 'Wassailing'."
+        "fun_fact": "Cider makers often blend several apple varieties to balance sweet and tart flavors."
       }
     ],
     "versus_candidates": [
       "Orange Juice",
       "Lemonade",
-      "Beer"
+      "Apple Juice"
     ]
   },
   {
@@ -8538,6 +8732,7 @@
     "subtopic_id": "beverages",
     "name": "Milkshake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shake",
       "Frappe"
@@ -8564,10 +8759,10 @@
         "fun_fact": "In Rhode Island and parts of Massachusetts, a milkshake made with ice cream is called a 'cabinet' or 'frappe'."
       },
       {
-        "claim": "When the word 'milkshake' was first printed in 1885, it referred to an alcoholic whiskey eggnog.",
+        "claim": "The modern ice cream milkshake was invented at a Walgreens store in 1922.",
         "verdict": "fact",
-        "explanation": "Original 1880s milkshakes were sturdy tonic drinks containing whiskey, eggs, and cream served to convalescent patients.",
-        "fun_fact": "Walgreens employee Ivar 'Pop' Coulson added scoops of vanilla ice cream to malted milk in 1922, inventing the modern milkshake."
+        "explanation": "Walgreens employee Ivar 'Pop' Coulson blended vanilla ice cream into malted milk, creating a thick, frosty new treat.",
+        "fun_fact": "Milkshakes made with malted milk powder are often called 'malts' or 'malteds'."
       }
     ],
     "versus_candidates": [
@@ -8582,6 +8777,7 @@
     "subtopic_id": "beverages",
     "name": "Smoothie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fruit Smoothie",
       "Green Smoothie"
@@ -8626,6 +8822,7 @@
     "subtopic_id": "beverages",
     "name": "Coconut Water",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Green Coconut Water",
       "Agua de Coco"
@@ -8670,6 +8867,7 @@
     "subtopic_id": "beverages",
     "name": "Cola",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coke",
       "Cola Soda"
@@ -8678,7 +8876,7 @@
     "visual_anchor": "Curved soda fountain glass overflowing with effervescent dark brown cola fizzing over clear ice cubes, garnished with a fresh lemon wedge.",
     "core_traits": [
       "Carbonated soft drink flavored with vanilla, cinnamon, citrus oils, and caramel coloring",
-      "Originally sweetened and formulated with extracts of kola nuts and coca leaves",
+      "Originally flavored with extracts of kola nuts, which gave the drink its name",
       "Invented in 1886 by pharmacist John Stith Pemberton in Atlanta, Georgia",
       "The most consumed and recognized commercial carbonated beverage category on Earth"
     ],
@@ -8690,9 +8888,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Early original 19th-century Coca-Cola recipes contained active cocaine extracts from coca leaves.",
-        "verdict": "fact",
-        "explanation": "Until 1903, the formula included small amounts of coca leaf extract; modern formulas use decocainized spent coca leaf flavoring.",
+        "claim": "Coca-Cola's inventor also came up with its name and famous curly logo.",
+        "verdict": "myth",
+        "explanation": "Inventor John Pemberton's bookkeeper, Frank Robinson, suggested the name Coca-Cola and wrote it in the flowing script still used today.",
         "fun_fact": "The classic contoured Coca-Cola glass bottle was modeled after the shape of a cocoa pod in 1915."
       },
       {
@@ -8714,6 +8912,7 @@
     "subtopic_id": "beverages",
     "name": "Ginger Ale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dry Ginger Ale"
     ],
@@ -8739,16 +8938,16 @@
         "fun_fact": "Airlines serve massive quantities of ginger ale because cabin pressure changes make passengers crave sweet, soothing fizz."
       },
       {
-        "claim": "Ginger ale and ginger beer are identical products with the exact same carbonation and spice level.",
+        "claim": "Ginger ale and ginger beer are exactly the same drink.",
         "verdict": "myth",
-        "explanation": "Ginger ale is a mild, sweet carbonated soda; ginger beer is traditionally fermented, cloudy, and significantly spicier and more pungent.",
-        "fun_fact": "During American Prohibition, dry ginger ale became the premier mixer to mask the harsh taste of illegal bootleg liquor."
+        "explanation": "Ginger ale is a mild, sweet soda; ginger beer is cloudier and much spicier, with a stronger ginger kick.",
+        "fun_fact": "Fresh ginger 'root' is actually an underground stem called a rhizome."
       }
     ],
     "versus_candidates": [
       "Cola",
       "Root Beer",
-      "Beer"
+      "Lemonade"
     ]
   },
   {
@@ -8757,6 +8956,7 @@
     "subtopic_id": "beverages",
     "name": "Root Beer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Root Beer Float",
       "Sarsaparilla"
@@ -8766,13 +8966,13 @@
     "core_traits": [
       "Traditional sweet North American carbonated soft drink flavored with aromatic root barks",
       "Historically flavored using the root bark of the sassafras tree (Sassafras albidum) or sarsaparilla",
-      "Distinguished by a thick, creamy, long-lasting frothy head resembling draught beer",
+      "Distinguished by a thick, creamy, long-lasting frothy foam on top",
       "Flavored with wintergreen, vanilla, anise, molasses, licorice root, and nutmeg"
     ],
     "distractor_pool": [
       "Cola",
       "Ginger Ale",
-      "Beer",
+      "Cream Soda",
       "Dr Pepper"
     ],
     "facts_and_myths": [
@@ -8783,16 +8983,16 @@
         "fun_fact": "Charles Elmer Hires introduced commercial Hires Root Beer at the 1876 Philadelphia Centennial Exhibition."
       },
       {
-        "claim": "Root beer contains as much alcohol as standard draft beer.",
-        "verdict": "myth",
-        "explanation": "Commercial root beer is completely non-alcoholic soft soda, named 'beer' by 19th-century makers to appeal to Pennsylvania coal miners.",
+        "claim": "Root beer got its name because it was first flavored with plant roots and bark.",
+        "verdict": "fact",
+        "explanation": "Early makers flavored it with sassafras root bark and sarsaparilla root, giving it a sweet, earthy taste.",
         "fun_fact": "Pouring root beer over vanilla ice cream creates the beloved 'Black Cow' or Root Beer Float."
       }
     ],
     "versus_candidates": [
       "Cola",
       "Ginger Ale",
-      "Beer"
+      "Lemonade"
     ]
   },
   {
@@ -8801,6 +9001,7 @@
     "subtopic_id": "beverages",
     "name": "Iced Tea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sweet Tea",
       "Southern Sweet Tea"
@@ -8845,6 +9046,7 @@
     "subtopic_id": "beverages",
     "name": "Bubble Tea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Boba",
       "Boba Milk Tea",
@@ -8874,7 +9076,7 @@
       {
         "claim": "The 'bubbles' in bubble tea originally referred to the black tapioca pearls.",
         "verdict": "myth",
-        "explanation": "The term originally referred to the thick layer of frothy micro-bubbles formed at the top when tea and milk were vigorously shaken in a cocktail shaker.",
+        "explanation": "The name first described the frothy bubbles that form on top when tea and milk are shaken hard in a shaker cup.",
         "fun_fact": "April 30th is celebrated internationally as National Bubble Tea Day."
       }
     ],
@@ -8890,6 +9092,7 @@
     "subtopic_id": "beverages",
     "name": "Kombucha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fermented Tea",
       "Mushroom Tea"
@@ -8905,7 +9108,7 @@
     "distractor_pool": [
       "Apple Cider",
       "Green Tea",
-      "Beer",
+      "Lemonade",
       "Ginger Ale"
     ],
     "facts_and_myths": [
@@ -8916,10 +9119,10 @@
         "fun_fact": "Kombucha originated in ancient northeast China (Manchuria) around 220 BCE during the Qin Dynasty as an elixir of longevity."
       },
       {
-        "claim": "Kombucha naturally contains trace amounts of alcohol produced during yeast fermentation.",
+        "claim": "Kombucha is naturally fizzy because its living culture makes tiny gas bubbles.",
         "verdict": "fact",
-        "explanation": "Yeasts ferment sugar into alcohol, which bacteria then convert into acetic acid; commercial kombucha is kept under 0.5% ABV to remain non-alcoholic.",
-        "fun_fact": "A secondary fermentation in sealed bottles traps carbon dioxide, creating natural champagne-like fizz."
+        "explanation": "While fermenting the sweet tea, the bacteria and yeast release carbon dioxide gas, which gives kombucha its natural fizz.",
+        "fun_fact": "The rubbery SCOBY disc grows a brand-new layer with every batch of kombucha."
       }
     ],
     "versus_candidates": [
@@ -8934,6 +9137,7 @@
     "subtopic_id": "beverages",
     "name": "Beer",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Lager",
       "Ale",
@@ -8979,6 +9183,7 @@
     "subtopic_id": "beverages",
     "name": "Wine",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Red Wine",
       "White Wine",
@@ -9024,6 +9229,7 @@
     "subtopic_id": "beverages",
     "name": "Champagne",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "French Champagne",
       "Bubbly"
@@ -9068,6 +9274,7 @@
     "subtopic_id": "beverages",
     "name": "Cider",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Hard Cider",
       "Apple Wine"
@@ -9112,6 +9319,7 @@
     "subtopic_id": "beverages",
     "name": "Sake",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Nihonshu",
       "Japanese Rice Wine"
@@ -9156,6 +9364,7 @@
     "subtopic_id": "beverages",
     "name": "Sangria",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Spanish Sangria",
       "Sangria Roja"
@@ -9200,6 +9409,7 @@
     "subtopic_id": "beverages",
     "name": "Mojito",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Cuban Mojito"
     ],
@@ -9243,6 +9453,7 @@
     "subtopic_id": "beverages",
     "name": "Margarita",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Classic Margarita"
     ],
@@ -9286,6 +9497,7 @@
     "subtopic_id": "beverages",
     "name": "Pina Colada",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Puerto Rican Pina Colada"
     ],
@@ -9329,6 +9541,7 @@
     "subtopic_id": "beverages",
     "name": "Cosmopolitan",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Cosmo"
     ],
@@ -9372,6 +9585,7 @@
     "subtopic_id": "beverages",
     "name": "Bloody Mary",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Red Snapper"
     ],
@@ -9415,6 +9629,7 @@
     "subtopic_id": "beverages",
     "name": "Tomato Juice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Canned Tomato Juice"
     ],
@@ -9427,7 +9642,7 @@
       "Renowned as one of the most popular in-flight drinks ordered on passenger airplanes"
     ],
     "distractor_pool": [
-      "Bloody Mary",
+      "Carrot Juice",
       "Orange Juice",
       "Cranberry Juice",
       "Apple Cider"
@@ -9447,7 +9662,7 @@
       }
     ],
     "versus_candidates": [
-      "Bloody Mary",
+      "Carrot Juice",
       "Orange Juice",
       "Cranberry Juice"
     ]
@@ -9458,6 +9673,7 @@
     "subtopic_id": "beverages",
     "name": "Cranberry Juice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cranberry Juice Cocktail"
     ],
@@ -9467,7 +9683,7 @@
       "Tart, astringent red juice extracted from cranberries (Vaccinium macrocarpon)",
       "Native North American wetland fruit harvested from flooded commercial bogs",
       "Naturally intensely tart and acidic, typically sweetened with sugar or blended with apple juice",
-      "Vital ingredient in celebrated cocktails like the Cosmopolitan, Sea Breeze, and Cape Codder"
+      "Popular in fruit punches and mixed juice blends like cranberry-apple"
     ],
     "distractor_pool": [
       "Tomato Juice",
@@ -9501,6 +9717,7 @@
     "subtopic_id": "beverages",
     "name": "Mineral Water",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Natural Mineral Water",
       "Spring Water"
@@ -9545,6 +9762,7 @@
     "subtopic_id": "beverages",
     "name": "Sparkling Water",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Club Soda",
       "Seltzer",
@@ -9556,7 +9774,7 @@
       "Water infused with dissolved carbon dioxide gas under pressure, creating pleasant effervescence",
       "Seltzer contains pure carbonated plain water without any added mineral salts",
       "Club soda includes added potassium or sodium salts for a subtle savory mineral taste",
-      "Invented in 1767 by English polymath Joseph Priestley who suspended water over beer vats"
+      "Invented in 1767 by English scientist Joseph Priestley, who dissolved carbon dioxide gas into water"
     ],
     "distractor_pool": [
       "Mineral Water",
@@ -9566,9 +9784,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "English scientist Joseph Priestley invented carbonated water by suspending water over fermenting beer vats.",
+        "claim": "English scientist Joseph Priestley invented man-made sparkling water in 1767.",
         "verdict": "fact",
-        "explanation": "In 1767, Priestley discovered that carbon dioxide gas rising from brewery vats dissolved into water, inventing sparkling soda water.",
+        "explanation": "Priestley found a way to dissolve carbon dioxide gas into water, creating the first fizzy soda water.",
         "fun_fact": "German entrepreneur Johann Jacob Schweppe simplified commercial manufacture in 1783, founding the Schweppes brand."
       },
       {
@@ -9590,6 +9808,7 @@
     "subtopic_id": "beverages",
     "name": "Tonic Water",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Indian Tonic Water"
     ],
@@ -9633,6 +9852,7 @@
     "subtopic_id": "beverages",
     "name": "Eggnog",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Egg Nog",
       "Holiday Nog"
@@ -9677,6 +9897,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Olive Oil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Extra Virgin Olive Oil",
       "EVOO"
@@ -9721,6 +9942,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Balsamic Vinegar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aceto Balsamico di Modena",
       "Traditional Balsamic"
@@ -9736,7 +9958,7 @@
     "distractor_pool": [
       "Olive Oil",
       "Soy Sauce",
-      "Red Wine Vinegar",
+      "Apple Cider Vinegar",
       "Mustard"
     ],
     "facts_and_myths": [
@@ -9749,7 +9971,7 @@
       {
         "claim": "Cheap grocery store balsamic vinegar was aged for decades in wooden casks in Italy.",
         "verdict": "myth",
-        "explanation": "Mass commercial balsamic (IGP) is common wine vinegar blended with caramel coloring, concentrated grape juice, and thickeners with minimal aging.",
+        "explanation": "Mass-market balsamic is regular vinegar blended with concentrated grape juice, caramel coloring, and thickeners, with very little aging.",
         "fun_fact": "Drizzling aged balsamic over sweet fresh strawberries or vanilla gelato is a classical Italian delicacy."
       }
     ],
@@ -9765,6 +9987,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Mustard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dijon Mustard",
       "Yellow Mustard",
@@ -9774,7 +9997,7 @@
     "visual_anchor": "Glass jar of grainy golden Dijon mustard with whole brown and yellow mustard seeds, beside a ceramic pot of bright yellow ballpark mustard with a wooden spoon.",
     "core_traits": [
       "Pungent condiment made from the seeds of the mustard plant (Sinapis alba or Brassica juncea)",
-      "Seeds cracked and mixed with water, vinegar, wine, or verjuice to activate pungent allyl isothiocyanate",
+      "Seeds cracked and mixed with water, vinegar, or verjuice (sour grape juice) to release their spicy heat",
       "Dijon mustard from France is smooth and sharp, historically blended with acidic unfermented grape juice",
       "American yellow mustard is colored vividly with ground turmeric and seasoned with vinegar"
     ],
@@ -9810,6 +10033,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Mayonnaise",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mayo"
     ],
@@ -9853,6 +10077,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Ketchup",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tomato Ketchup",
       "Catsup"
@@ -9897,6 +10122,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Cheddar Cheese",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cheddar",
       "Sharp Cheddar"
@@ -9941,6 +10167,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Mozzarella",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fresh Mozzarella",
       "Mozzarella di Bufala"
@@ -9985,6 +10212,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Parmesan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Parmigiano-Reggiano",
       "Parm"
@@ -10029,6 +10257,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Brie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brie de Meaux",
       "French Brie"
@@ -10073,12 +10302,13 @@
     "subtopic_id": "staples_ingredients",
     "name": "Gouda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dutch Gouda",
       "Aged Gouda"
     ],
     "difficulty": 1,
-    "visual_anchor": "Round wax-coated yellow wheel of Dutch Gouda, cut to show deep butterscotch-orange aged interior studded with crunchy white crystals beside dark beer.",
+    "visual_anchor": "Round wax-coated yellow wheel of Dutch Gouda, cut to show deep butterscotch-orange aged interior studded with crunchy white crystals beside crisp apple slices.",
     "core_traits": [
       "Famous sweet, creamy semi-hard cow's milk cheese hailing from the Netherlands",
       "Named after the Dutch city of Gouda where cheese was historically weighed and traded",
@@ -10117,6 +10347,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Feta",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Greek Feta",
       "Sheep's Milk Feta"
@@ -10161,6 +10392,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Blue Cheese",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bleu Cheese",
       "Roquefort",
@@ -10206,6 +10438,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Swiss Cheese",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Emmental",
       "Emmentaler"
@@ -10250,6 +10483,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Peanut Butter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "PB",
       "Smooth Peanut Butter",
@@ -10295,6 +10529,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Jam",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Strawberry Jam",
       "Fruit Preserves",
@@ -10340,6 +10575,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Honey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Raw Honey",
       "Pure Honey"
@@ -10384,6 +10620,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Maple Syrup",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pure Maple Syrup",
       "Canadian Maple Syrup"
@@ -10428,6 +10665,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Butter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salted Butter",
       "Unsalted Butter"
@@ -10472,6 +10710,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Garlic",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Allium sativum",
       "Garlic Bulb",
@@ -10499,9 +10738,9 @@
         "fun_fact": "Gilroy, California, bills itself as the 'Garlic Capital of the World', hosting an annual summer garlic festival."
       },
       {
-        "claim": "Garlic was fed to ancient Egyptian slaves building the Pyramids to keep them strong and healthy.",
+        "claim": "Ancient Egyptian pyramid builders were given garlic, onions, and radishes to eat.",
         "verdict": "fact",
-        "explanation": "Herodotus wrote that inscriptions on the Great Pyramid recorded spending on garlic, radishes, and onions for the workforce.",
+        "explanation": "The Greek historian Herodotus wrote that an inscription on the Great Pyramid listed spending on garlic, radishes, and onions for the workers.",
         "fun_fact": "Roasting whole garlic heads mellows the sharp pungency into sweet, nutty, spreadable garlic butter."
       }
     ],
@@ -10517,6 +10756,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Soy Sauce",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shoyu",
       "Soya Sauce"
@@ -10540,10 +10780,10 @@
         "claim": "Traditional artisan soy sauce takes months to years to ferment in giant cedar wooden vats.",
         "verdict": "fact",
         "explanation": "Artisanal 'honjozo' brewing ferments soybean and wheat mash (moromi) slowly in cedar barrels (kioke) through seasonal temperature cycles.",
-        "fun_fact": "Kikkoman is one of the oldest continuous corporations in the world, founded in Japan in 1917 from breweries dating to 1603."
+        "fun_fact": "Kikkoman traces its soy sauce-making roots in Noda, Japan, all the way back to the 1600s."
       },
       {
-        "claim": "Chemical hydrolyzed vegetable protein soy sauce is fermented naturally like fine wine.",
+        "claim": "Cheap chemically made soy sauce is fermented slowly for months like traditional soy sauce.",
         "verdict": "myth",
         "explanation": "Cheap commercial non-brewed soy sauce is made in days using hydrochloric acid to chemically hydrolyze defatted soy meal, colored with caramel dye.",
         "fun_fact": "Wheat-free soy sauce brewed purely from soybeans is called 'tamari'."
@@ -10561,6 +10801,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Wasabi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Horseradish",
       "Wasabia japonica"
@@ -10605,6 +10846,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Ginger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ginger Root",
       "Zingiber officinale"
@@ -10649,6 +10891,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Saffron",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Red Gold",
       "Crocus sativus"
@@ -10693,6 +10936,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Vanilla",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vanilla Bean",
       "Vanilla Planifolia"
@@ -10737,6 +10981,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Cinnamon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ceylon Cinnamon",
       "Cassia Cinnamon"
@@ -10781,6 +11026,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Black Pepper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Piper nigrum",
       "Peppercorn",
@@ -10826,6 +11072,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Sea Salt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fleur de Sel",
       "Maldon Salt",
@@ -10871,6 +11118,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Basil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sweet Basil",
       "Ocimum basilicum"
@@ -10915,6 +11163,7 @@
     "subtopic_id": "staples_ingredients",
     "name": "Oregano",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wild Marjoram",
       "Origanum vulgare"
@@ -10938,7 +11187,7 @@
         "claim": "The name 'oregano' translates from ancient Greek as 'joy of the mountain'.",
         "verdict": "fact",
         "explanation": "It combines 'oros' (mountain) and 'ganos' (joy or brightness), describing the fragrant wild purple flowering hillsides of Greece.",
-        "fun_fact": "American soldiers returning from southern Italy after World War II introduced oregano to the US, causing a 5,000% explosion in oregano sales."
+        "fun_fact": "Oregano became a must-have American spice in the mid-1900s as pizza grew popular."
       },
       {
         "claim": "Mexican oregano and Mediterranean oregano come from the exact same botanical species.",
@@ -10959,11 +11208,12 @@
     "subtopic_id": "staples_ingredients",
     "name": "Rosemary",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salvia rosmarinus"
     ],
     "difficulty": 1,
-    "visual_anchor": "Woody sprigs of dark green needle-like fresh rosemary basted in melted butter over a smoking ribeye steak in a cast-iron skillet with whole garlic.",
+    "visual_anchor": "Woody sprigs of dark green needle-like fresh rosemary basted in melted butter over a sizzling ribeye steak in a cast-iron skillet with whole garlic.",
     "core_traits": [
       "Hardy, fragrant evergreen perennial shrub with needle-like leaves native to the Mediterranean basin",
       "Intensely aromatic with resinous pine, wood, camphor, and citrus notes",

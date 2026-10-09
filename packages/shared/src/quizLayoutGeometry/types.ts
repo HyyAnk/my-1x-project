@@ -6,7 +6,6 @@ export const QUIZ_LANDSCAPE_LAYOUT_IDS = [
   "visual_choices_three_pure",
   "split_versus_two",
   "verdict_yes_no",
-  "verdict_true_false",
   "full_stack_list",
   "mystery_reveal",
 ] as const;

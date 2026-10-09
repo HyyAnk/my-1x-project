@@ -1,5 +1,5 @@
 import type { BankGameplayArchetypeId, BankQuestion, MatrixComboCandidate } from "@studio/shared";
-import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../../knowledgeBaseLoader.js";
+import { loadAllKnowledgeEntities, resolveCanonicalEntityId, type KnowledgeEntity } from "../../knowledgeBaseLoader.js";
 import { ALL_MATRIX_ARCHETYPES, buildMatrixCoverageMap } from "../matrixCoverageCalculator.js";
 import { calculateTotals } from "../matrixTotalsCalculator.js";
 import type { DomainArchEvaluation, SelectAutoCandidatesOptions } from "../types/matrixPlanner.types.js";
@@ -196,7 +196,8 @@ function pickSelectedEntities(
 export function selectAutoCandidates(questions: BankQuestion[], options: SelectAutoCandidatesOptions): MatrixComboCandidate[] {
   const targetCount = Math.max(1, options.count);
   const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
-  const coverageMap = options.coverageMap || buildMatrixCoverageMap(questions);
+  const coverageMap =
+    options.coverageMap || buildMatrixCoverageMap(questions, (id) => resolveCanonicalEntityId(id, { baseDir: options.baseDir }));
 
   const excludedSet = options.excludeEntityIds
     ? options.excludeEntityIds instanceof Set

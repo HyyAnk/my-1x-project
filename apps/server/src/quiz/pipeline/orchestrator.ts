@@ -72,10 +72,11 @@ export type QuizArtifacts = {
 export async function generateEpisodeDescription(
   input: QuizOrchestratorInput & { toneHint?: string; force?: boolean; timeoutMs?: number },
 ): Promise<{ description: VideoDescription; artifact_path: string }> {
-  const [episode, channel, quiz] = await Promise.all([
+  const [episode, channel, quiz, timeline] = await Promise.all([
     input.repository.getEpisode(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
     input.repository.readQuiz(input.channelId, input.episodeId),
+    input.repository.readQuizTimeline(input.channelId, input.episodeId).catch(() => null),
   ]);
 
   if (!quiz || quiz.questions.length === 0) {
@@ -97,6 +98,7 @@ export async function generateEpisodeDescription(
     channel,
     episode,
     quiz,
+    timeline,
     toneHint: input.toneHint,
     timeoutMs,
     targetLanguage,

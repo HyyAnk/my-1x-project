@@ -8,7 +8,6 @@ export const enLocale: ThumbnailLocalization = {
     odd_one_out: "FIND THE ODD ONE!",
     difficulty_tier: "CAN YOU SOLVE LEVEL 4?",
     yes_no: "YES OR NO?",
-    true_false: "TRUE OR FALSE?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} QUESTIONS`,
@@ -17,6 +16,5 @@ export const enLocale: ThumbnailLocalization = {
     odd_one_out: () => "10 SECONDS! ⏱️",
     difficulty_tier: () => "IQ 140+ ONLY 🔥",
     yes_no: () => "YES OR NO? ⚡",
-    true_false: () => "TRUE OR FALSE? ⚡",
   },
 };

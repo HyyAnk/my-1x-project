@@ -12,6 +12,9 @@ function buildSessionEnv(session: ActiveSessionInfo): NodeJS.ProcessEnv {
   if (session.address && session.csrfToken) {
     env.ANTIGRAVITY_LS_ADDRESS = session.address;
     env.ANTIGRAVITY_CSRF_TOKEN = session.csrfToken;
+  } else {
+    delete env.ANTIGRAVITY_LS_ADDRESS;
+    delete env.ANTIGRAVITY_CSRF_TOKEN;
   }
   if (session.projectId) {
     env.ANTIGRAVITY_PROJECT_ID = session.projectId;
@@ -53,7 +56,7 @@ export async function runAgentApiTurn(
     result = await execFileAsync(ctx.target.command, args, {
       cwd: ctx.rootDirectory,
       env: buildSessionEnv(ctx.session),
-      timeout: 180_000,
+      timeout: 600_000,
       windowsHide: true,
       maxBuffer: 10 * 1024 * 1024,
       shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
@@ -79,7 +82,7 @@ export async function runAgentApiTurn(
         result = await execFileAsync(ctx.target.command, args, {
           cwd: ctx.rootDirectory,
           env: buildSessionEnv(refreshedSession),
-          timeout: 180_000,
+          timeout: 600_000,
           windowsHide: true,
           maxBuffer: 10 * 1024 * 1024,
           shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
@@ -87,7 +90,34 @@ export async function runAgentApiTurn(
       } catch (retryErr: unknown) {
         const retryErrObj = retryErr as { message?: string; stdout?: string; stderr?: string };
         const retryDetails = retryErrObj.stderr?.trim() || retryErrObj.stdout?.trim() || retryErrObj.message || details;
-        throw new Error(`Antigravity AgentAPI execution failed: ${retryDetails}`, { cause: retryErr });
+
+        const isStillConnError = /(?:connectex|connection error|actively refused|unavailable|dial tcp|wsarecv)/i.test(retryDetails);
+        if (isStillConnError) {
+          try {
+            ctx.logger.warn(`Antigravity AgentAPI retry with explicit session failed (${retryDetails}). Attempting native auto-discovery fallback...`, {
+              step: "antigravity_agentapi_native_fallback",
+            });
+            const fallbackSession: ActiveSessionInfo = {
+              address: null,
+              csrfToken: null,
+              projectId: ctx.session?.projectId ?? null,
+            };
+            result = await execFileAsync(ctx.target.command, args, {
+              cwd: ctx.rootDirectory,
+              env: buildSessionEnv(fallbackSession),
+              timeout: 600_000,
+              windowsHide: true,
+              maxBuffer: 10 * 1024 * 1024,
+              shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
+            });
+          } catch (fallbackErr: unknown) {
+            const fallbackErrObj = fallbackErr as { message?: string; stdout?: string; stderr?: string };
+            const fallbackDetails = fallbackErrObj.stderr?.trim() || fallbackErrObj.stdout?.trim() || fallbackErrObj.message || retryDetails;
+            throw new Error(`Antigravity AgentAPI execution failed: ${fallbackDetails}`, { cause: fallbackErr });
+          }
+        } else {
+          throw new Error(`Antigravity AgentAPI execution failed: ${retryDetails}`, { cause: retryErr });
+        }
       }
     } else {
       throw new Error(`Antigravity AgentAPI execution failed: ${details}`, { cause: execErr });

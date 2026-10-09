@@ -101,23 +101,23 @@ describe("episode preview questions", () => {
     );
   });
 
-  it("builds a 2-choice topic template preview question for true_false format", () => {
-    const episodeTrueFalse = {
+  it("previews a retired true_false format as the Yes/No verdict layout", () => {
+    const legacyEpisode = {
       episode_id: "ep-tf-1",
-      topic: { title: "Is Pluto a planet?", premise: "Solar system facts", hook: "True or False?" },
+      topic: { title: "Is Pluto a planet?", premise: "Solar system facts", hook: "Yes or No?" },
       quiz_config: {
-        quiz_format: "true_false" as const,
+        quiz_format: "true_false",
         question_count: 5,
       },
     } as unknown as Episode;
 
-    const questions = buildEpisodePreviewQuestions(null, null, episodeTrueFalse);
+    const questions = buildEpisodePreviewQuestions(null, null, legacyEpisode);
     expect(questions).toHaveLength(1);
     expect(questions[0]).toEqual(
       expect.objectContaining({
-        layoutId: "verdict_true_false",
+        layoutId: "verdict_yes_no",
         layoutSource: "topic_template",
-        choices: ["True", "False"],
+        choices: ["Yes", "No"],
         correctChoiceIndex: 0,
       }),
     );

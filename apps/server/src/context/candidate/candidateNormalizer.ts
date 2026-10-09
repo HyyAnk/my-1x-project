@@ -4,6 +4,7 @@ import {
   TopicCandidateSchema,
   TopicRunCandidateSchema,
   type EpisodeTopicCandidate,
+  type ReelArchetype,
   type ShortReelTopicCandidate,
   type TopicCandidate,
   type TopicProvenanceOrigin,
@@ -18,6 +19,7 @@ import {
   validateShortReelCandidateSlot,
   type CandidateTextFields,
 } from "./candidateFieldValidator.js";
+import { resolveCombinedAgeBand } from "../../quiz/bank/audience/audienceBand.js";
 
 /**
  * Builds a validated ShortReel TopicCandidate from slot plan and validated fields.
@@ -48,7 +50,7 @@ export function buildShortReelSlotCandidate(
     origin,
     question_count: 1,
     aspect_ratio: "9:16",
-    archetype: slotPlan.archetype as "versus_faceoff" | "deep_trivia" | "verdict_true_false",
+    archetype: slotPlan.archetype as ReelArchetype,
     ...(themeHint ? { theme_hint: themeHint } : {}),
     ...(domainId ? { domain_id: domainId } : {}),
     ...(subtopicId ? { subtopic_id: subtopicId } : {}),
@@ -171,7 +173,8 @@ export function buildEpisodeRunCandidate(slot: AllocatedSlot, item: Record<strin
   const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
   const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
   const visualStyle = typeof item.visual_style === "string" ? (item.visual_style as EpisodeTopicCandidate["visual_style"]) : "mixed";
-  const ageBand = typeof item.age_band === "string" ? (item.age_band as EpisodeTopicCandidate["age_band"]) : "7-9";
+  // The audience follows the allocated questions: the youngest band every one of them suits.
+  const ageBand = resolveCombinedAgeBand(slot.allocatedQuestions.map((candidate) => candidate.question.age_band));
 
   const episodeCandidate: EpisodeTopicCandidate = {
     topic_id: topicId,

@@ -9,7 +9,8 @@ import {
   type VoicePlan,
 } from "@studio/shared";
 import { sanitizeTextForSpeech, splitSmartPunctuationPhrases, canSplitBetweenWords } from "../../utils/speechSanitizer.js";
-import { resolveQuizVoiceCopy, resolveKickoffClosing } from "./voiceCopy.js";
+import { resolveQuizVoiceCopy, resolveKickoffClosing, type QuizVoiceCopy } from "./voiceCopy.js";
+import { insertMidRollCtaSegment, MID_ROLL_CTA_SEGMENT_ROLE, resolveMidRollCtaAnchorIndex } from "../bridge/midRollCta.js";
 
 export {
   CHINESE_OUTRO_CLOSING_VARIANTS,
@@ -82,27 +83,11 @@ export function buildQuizVoicePlan(
       );
     }
 
-    if (options?.bridgeConfig?.enableCtaScene !== false) {
-      const channelName = options?.channelName?.trim() || "our channel";
-      let ctaText = copy.subscribeCta(channelName, options?.customCtaText);
-      if (
-        options?.customCtaText &&
-        !/(?:let's\s+(?:go|do this|dive in)|here we go|game on|ready\?|出发|马上开始)/i.test(ctaText)
-      ) {
-        const kickoff = resolveKickoffClosing(quiz.language, quiz.episode_id);
-        ctaText = `${ctaText.replace(/[!.,\s]+$/, "")}! ${kickoff}`;
-      }
-      segments.push(
-        withPhrases({
-          segment_id: "intro_cta",
-          role: "intro_cta",
-          question_id: null,
-          text: ctaText,
-          duration_seconds: null,
-        }),
-      );
-    }
   }
+  const midRollCtaSegment =
+    shouldIncludeBridge && options?.bridgeConfig?.enableCtaScene !== false
+      ? buildSubscribeCtaSegment(quiz, copy, options)
+      : undefined;
   quiz.questions.forEach((question, index) => {
     const beat = options?.director?.beats.find((item) => item.question_id === question.id);
     const policy =
@@ -156,6 +141,11 @@ export function buildQuizVoicePlan(
     );
   });
 
+  if (midRollCtaSegment) {
+    const anchorIndex = resolveMidRollCtaAnchorIndex(quiz.questions.length);
+    insertMidRollCtaSegment(segments, midRollCtaSegment, anchorIndex === null ? undefined : quiz.questions[anchorIndex]?.id);
+  }
+
   const shouldIncludePreOutro =
     !options?.skipPreOutro &&
     shouldIncludeBridge &&
@@ -180,6 +170,29 @@ export function buildQuizVoicePlan(
     segments.push(withPhrases({ segment_id: "outro", role: "outro", question_id: null, text: copy.outro, duration_seconds: null }));
   }
   return VoicePlanSchema.parse({ schema_version: 2, episode_id: quiz.episode_id, segments });
+}
+
+function buildSubscribeCtaSegment(
+  quiz: QuizV2,
+  copy: QuizVoiceCopy,
+  options: BuildQuizVoicePlanOptions | undefined,
+): VoicePlan["segments"][number] {
+  const channelName = options?.channelName?.trim() || "our channel";
+  let ctaText = copy.subscribeCta(channelName, options?.customCtaText);
+  if (
+    options?.customCtaText &&
+    !/(?:let's\s+(?:go|do this|dive in)|here we go|game on|ready\?|出发|马上开始)/i.test(ctaText)
+  ) {
+    const kickoff = resolveKickoffClosing(quiz.language, quiz.episode_id);
+    ctaText = `${ctaText.replace(/[!.,\s]+$/, "")}! ${kickoff}`;
+  }
+  return withPhrases({
+    segment_id: MID_ROLL_CTA_SEGMENT_ROLE,
+    role: MID_ROLL_CTA_SEGMENT_ROLE,
+    question_id: null,
+    text: ctaText,
+    duration_seconds: null,
+  });
 }
 
 function withPhrases(segment: Omit<VoicePlan["segments"][number], "phrases">): VoicePlan["segments"][number] {

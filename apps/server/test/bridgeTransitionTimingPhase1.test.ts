@@ -74,7 +74,7 @@ describe("Phase 1: Bridge Transition & Pacing Calibration", () => {
     const topicEnter = timeline.events.find((e) => e.type === "bridge.topic.enter");
     const ctaEnter = timeline.events.find((e) => e.type === "bridge.cta.enter");
     const stingerTransition = timeline.events.find(
-      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_cta",
+      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_question",
     );
 
     expect(topicEnter).toBeDefined();
@@ -109,11 +109,15 @@ describe("Phase 1: Bridge Transition & Pacing Calibration", () => {
     const expectedImpactOffset = Number((1.3 * 0.45).toFixed(3));
     expect(logoImpact!.at_seconds).toBe(Number((stingerTransition!.at_seconds + expectedImpactOffset).toFixed(3)));
 
-    // 6. Verify CTA Scene handoff
-    // CTA starts at the stinger transition midpoint (peak occlusion) = topicStart + 4.15s
-    expect(ctaEnter!.at_seconds).toBe(Number((topicStart + 4.15).toFixed(3)));
+    // 6. Verify the topic card hands over to Question 1 at the stinger midpoint (peak occlusion)
+    const questionEnters = timeline.events.filter((e) => e.type === "question.enter");
+    expect(questionEnters[0]!.at_seconds).toBe(Number((topicStart + 4.15).toFixed(3)));
 
-    // 7. Verify CTA voice starts at +0.4s to let stinger uncover the card
+    // 7. The CTA is a mid-roll interstitial between Question 1 and Question 2 for a two-question quiz
+    expect(ctaEnter!.at_seconds).toBeGreaterThan(questionEnters[0]!.at_seconds);
+    expect(ctaEnter!.at_seconds + ctaEnter!.duration_seconds).toBeLessThanOrEqual(questionEnters[1]!.at_seconds);
+
+    // 8. Verify CTA voice starts at +0.4s to let the previous question's wipe uncover the card
     const ctaNarration = timeline.events.find(
       (e) => e.type === "narration.segment" && e.segment_id === "intro_cta",
     );
@@ -168,7 +172,7 @@ describe("Phase 1: Bridge Transition & Pacing Calibration", () => {
 
     const topicEnter = timeline.events.find((e) => e.type === "bridge.topic.enter")!;
     const stingerTransition = timeline.events.find(
-      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_cta",
+      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_question",
     )!;
 
     // voice (2.0) + pause (0.8) + overlap (0.6) = 3.4s

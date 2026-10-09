@@ -49,12 +49,7 @@ export function sanitizeBankQuestionText(
     }
   }
 
-  const isVerdict =
-    archetypeId === "verdict_yes_no" ||
-    archetypeId === "verdict_true_false" ||
-    archetypeId === "verdict_fact_myth";
-
-  if (isVerdict) {
+  if (archetypeId === "verdict_yes_no") {
     const tfRegex = /\s*[:\-—–]?\s*(?:true\s+or\s+false|fact\s+or\s+myth)\s*\??$/i;
     if (tfRegex.test(cleaned)) {
       cleaned = cleaned.replace(tfRegex, " Yes or No?").trim();

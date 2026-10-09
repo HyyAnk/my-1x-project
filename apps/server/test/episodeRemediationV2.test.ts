@@ -4,8 +4,13 @@ import path from "node:path";
 import { QuizV2Schema, type QuizV2 } from "@studio/shared";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
 
+/** A live episode folder is only usable when it still holds the quiz artifacts this suite reads. */
+function isCompleteEpisodeDir(dir: string): boolean {
+  return existsSync(path.join(dir, "quiz", "quiz-v2.json")) && existsSync(path.join(dir, "quiz", "qa.json"));
+}
+
 function resolveActiveEpisodeDir(): string {
-  if (process.env.ACTIVE_EPISODE_DIR && existsSync(process.env.ACTIVE_EPISODE_DIR)) {
+  if (process.env.ACTIVE_EPISODE_DIR && isCompleteEpisodeDir(process.env.ACTIVE_EPISODE_DIR)) {
     return process.env.ACTIVE_EPISODE_DIR;
   }
   if (process.env.STUDIO_STORAGE_PATH) {
@@ -13,7 +18,7 @@ function resolveActiveEpisodeDir(): string {
       process.env.STUDIO_STORAGE_PATH,
       "channels/novy/episodes/arcade-game-secrets-true-or-false-gaming-showdown"
     );
-    if (existsSync(candidate)) return candidate;
+    if (isCompleteEpisodeDir(candidate)) return candidate;
   }
   const projectRoot = path.resolve(__dirname, "../../..");
   const storageConfig = path.join(projectRoot, ".quiz-studio", "storage.local.json");
@@ -25,7 +30,7 @@ function resolveActiveEpisodeDir(): string {
           parsed.storage_path,
           "channels/novy/episodes/arcade-game-secrets-true-or-false-gaming-showdown"
         );
-        if (existsSync(candidate)) return candidate;
+        if (isCompleteEpisodeDir(candidate)) return candidate;
       }
     } catch { }
   }

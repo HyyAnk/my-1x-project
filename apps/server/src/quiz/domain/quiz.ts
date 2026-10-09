@@ -138,11 +138,7 @@ export function deriveQuizV2FromScenes(input: {
             number +
             " must have exactly " +
             requiredChoiceCount +
-            (answerMode === "single_reveal"
-              ? " reveal answer"
-              : format === "true_false"
-                ? " choices: True and False"
-                : " choices: A, B, and C") +
+            (answerMode === "single_reveal" ? " reveal answer" : format === "yes_no" ? " choices: Yes and No" : " choices: A, B, and C") +
             "; received " +
             choicesText.length,
           "QUIZ_CHOICE_COUNT_INVALID",

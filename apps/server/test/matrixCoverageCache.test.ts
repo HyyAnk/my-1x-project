@@ -70,7 +70,6 @@ describe("Question Bank In-Memory Matrix Coverage & Stats Cache (Phase 4)", () =
 
       const allEntities = loadAllKnowledgeEntities();
       expect(coverage.total_combos).toBe(allEntities.length * ALL_MATRIX_ARCHETYPES.length);
-      expect(coverage.total_combos).toBe(19313);
       expect(coverage.covered_combos).toBe(0);
       expect(coverage.total_variants).toBe(0);
       expect(coverage.coverage_percent).toBe(0);
@@ -93,8 +92,10 @@ describe("Question Bank In-Memory Matrix Coverage & Stats Cache (Phase 4)", () =
       expect(stats.current_total).toBe(6);
       expect(stats.by_archetype.deep_trivia).toBe(3);
       expect(stats.by_archetype.speed_blitz).toBe(1);
-      expect(stats.by_archetype.verdict_true_false).toBe(2);
-      expect(stats.by_archetype.verdict_fact_myth).toBe(2);
+      // Retired True/False rows are counted under the canonical Yes/No archetype.
+      expect(stats.by_archetype.verdict_yes_no).toBe(2);
+      expect(stats.by_archetype.verdict_true_false).toBeUndefined();
+      expect(stats.by_archetype.verdict_fact_myth).toBeUndefined();
       expect(stats.by_domain.nature_animals).toBe(6);
 
       const coverage = cache.getMatrixCoverage();

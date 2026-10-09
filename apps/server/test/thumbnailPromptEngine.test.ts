@@ -72,15 +72,15 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(plan.mascotPersona.expression).toContain("dizzy");
   });
 
-  it("auto-resolves 'true_false' for myths and facts", () => {
+  it("auto-resolves retired true_false format and myth topics to yes_no", () => {
     const plan = resolveThumbnailLayout({
       topicTitle: "10 Biggest Scientific Myths: True or False?",
       questionFormat: "true_false",
       mascotProfile: sampleMascot,
     });
 
-    expect(plan.layout).toBe("true_false");
-    expect(plan.hookText).toBe("TRUE OR FALSE?");
+    expect(plan.layout).toBe("yes_no");
+    expect(plan.hookText).toBe("YES OR NO?");
   });
 
   it("defaults to 'mega_grid' for general knowledge quizzes", () => {
@@ -296,8 +296,9 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       language: "French",
       mascotProfile: sampleMascot,
     });
-    expect(frTf.hookText).toBe("VRAI OU FAUX ?");
-    expect(frTf.badgeText).toBe("VRAI OU FAUX ? ⚡");
+    expect(frTf.layout).toBe("yes_no");
+    expect(frTf.hookText).toBe("OUI OU NON ?");
+    expect(frTf.badgeText).toBe("OUI OU NON ? ⚡");
   });
 
   it("strictly generates authentic Nordic and Dutch thumbnail texts for all 10 core languages", () => {
@@ -651,8 +652,8 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
         mascotProfile: sampleMascot,
       });
 
-      // Should fall back cleanly to true_false archetype template "TRUE OR FALSE?"
-      expect(plan.hookText).toBe("TRUE OR FALSE?");
+      // A retired true_false layout answer falls back cleanly to the yes_no template "YES OR NO?"
+      expect(plan.hookText).toBe("YES OR NO?");
     });
 
     it("AI Planner replaces generic 'TRUE OR FALSE?' hook with topic-derived headline", async () => {
@@ -862,36 +863,36 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       expect(descWithoutProp).not.toMatch(/\s{2,}/);
     });
 
-    it("sanitizes true/false paddles from mascot prop in true_false layout", () => {
+    it("sanitizes yes/no paddles from mascot prop in yes_no layout", () => {
       const plan = resolveThumbnailLayout({
         topicTitle: "Arcade Myths",
-        questionFormat: "true_false",
+        questionFormat: "yes_no",
         mascotProfile: sampleMascot,
       });
 
-      plan.layout = "true_false";
-      plan.mascotPersona.prop = "Green 'TRUE' paddle in one hand, red 'FALSE' paddle in the other";
+      plan.layout = "yes_no";
+      plan.mascotPersona.prop = "Green 'YES' paddle in one hand, red 'NO' paddle in the other";
       const desc = resolveMascotDescription(plan, sampleMascot, null);
       expect(desc).not.toContain("paddle");
       expect(desc).toContain("hand resting thoughtfully under chin");
     });
 
-    it("compiles true_false prompt with prominent centerpiece hero artwork and strict deduplication", () => {
+    it("compiles yes_no prompt with prominent centerpiece hero artwork and strict deduplication", () => {
       const plan = resolveThumbnailLayout({
         topicTitle: "Arcade Game Secrets",
-        questionFormat: "true_false",
+        questionFormat: "yes_no",
         mascotProfile: sampleMascot,
       });
       plan.subjectAnchors = [{ label: "Statement Subject", visualPrompt: "Vibrant retro arcade cabinet with glowing joystick" }];
 
       const prompt169 = compileThumbnailPrompt(plan, "16:9", sampleMascot, null);
       expect(prompt169).toContain("Center focal point showcases a prominent, oversized, highly-detailed 3D hero artwork of Vibrant retro arcade cabinet with glowing joystick");
-      expect(prompt169).toContain("Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'TRUE' and red 'FALSE'");
-      expect(prompt169).toContain("STRICT: The ONLY place displaying 'TRUE' and 'FALSE' in the entire image must be the two tactile buttons at the base");
+      expect(prompt169).toContain("Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'YES' and red 'NO'");
+      expect(prompt169).toContain("STRICT: The ONLY place displaying 'YES' and 'NO' in the entire image must be the two tactile buttons at the base");
 
       const prompt916 = compileThumbnailPrompt(plan, "9:16", sampleMascot, null);
       expect(prompt916).toContain("Center safe zone showcases an oversized, highly-detailed 3D hero artwork of Vibrant retro arcade cabinet with glowing joystick");
-      expect(prompt916).toContain("STRICT: The ONLY place displaying 'TRUE' and 'FALSE' must be the two tactile buttons");
+      expect(prompt916).toContain("STRICT: The ONLY place displaying 'YES' and 'NO' must be the two tactile buttons");
     });
   });
 });

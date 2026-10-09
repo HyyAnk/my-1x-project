@@ -28,16 +28,6 @@ test("portrait quiz compatibility requests are explicitly rejected", () => {
 });
 
 test("landscape automatic layout resolution remains available", () => {
-  const result = resolveQuizLayout({
-    requestedLayout: "auto",
-    archetype: "true_false",
-    questionFormat: "true_false",
-    choiceCount: 2,
-    aspectRatio: "16:9",
-  });
-  assert.equal(result.ok, true);
-  if (result.ok) assert.equal(result.layoutId, "verdict_true_false");
-
   const yesNoResult = resolveQuizLayout({
     requestedLayout: "auto",
     archetype: "yes_no",

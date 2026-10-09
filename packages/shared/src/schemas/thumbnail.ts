@@ -1,15 +1,10 @@
 import { z } from "zod";
 import { IsoDate } from "./common.js";
+import { acceptLegacyVerdictAliases } from "../enums/quiz/legacyVerdictAliases.js";
 
-export const ThumbnailLayoutTypeSchema = z.enum([
-  "mega_grid",
-  "split_vs",
-  "mystery_silhouette",
-  "odd_one_out",
-  "difficulty_tier",
-  "yes_no",
-  "true_false",
-]);
+export const THUMBNAIL_LAYOUT_TYPES = ["mega_grid", "split_vs", "mystery_silhouette", "odd_one_out", "difficulty_tier", "yes_no"] as const;
+
+export const ThumbnailLayoutTypeSchema = acceptLegacyVerdictAliases(z.enum(THUMBNAIL_LAYOUT_TYPES));
 
 export type ThumbnailLayoutType = z.infer<typeof ThumbnailLayoutTypeSchema>;
 

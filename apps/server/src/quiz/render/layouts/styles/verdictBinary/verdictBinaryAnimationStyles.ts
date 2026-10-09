@@ -1,7 +1,7 @@
 /**
- * Kinetic staggered entrances, verdict reveal bloom, and settle contrast for Binary Verdict layouts (Yes/No and True/False).
+ * Kinetic staggered entrances, verdict reveal bloom, and settle contrast for Binary Verdict layouts (Yes/No).
  */
-export function verdictBinaryAnimationStyles(layoutClass = "layout-verdict_true_false"): string {
+export function verdictBinaryAnimationStyles(layoutClass = "layout-verdict_yes_no"): string {
   return `
 /* Hero Image Entrance & Floating Motion */
 .quiz-frame-unified.${layoutClass}.quiz-question-clip .hero-image,

@@ -76,6 +76,8 @@ export function useThumbnailPreview({
   const [activeRatio, setActiveRatio] = useState<ThumbnailAspectRatio>(initialRatio);
   const [selectedLayout, setSelectedLayout] = useState<ThumbnailLayoutType | "auto">("auto");
   const [selectedBadge, setSelectedBadge] = useState<CuriosityBadgeId>("auto");
+  // Only text the user types is sent as a manual headline. Prefilling the previous AI headline here
+  // would pin it on every regeneration; the current headline is shown as the input placeholder instead.
   const [customHook, setCustomHook] = useState<string>("");
   const [manifest, setManifest] = useState<ThumbnailManifest | null>(null);
   const [loading, setLoading] = useState(false);
@@ -106,9 +108,6 @@ export function useThumbnailPreview({
             }
             return res.manifest;
           });
-          if (res.manifest.hook_text) {
-            setCustomHook((prev) => (prev ? prev : (res.manifest?.hook_text ?? "")));
-          }
         }
       } catch {
         // Manifest not created yet

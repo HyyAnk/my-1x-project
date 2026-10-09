@@ -57,13 +57,16 @@ describe("Bank Taxonomy Synchronization & Integrity", () => {
       expect(formatTitleFromId("shonen_legends")).toBe("Shonen Legends");
     });
 
-    it("CANONICAL_DOMAIN_META contains canonical metadata for all 18 domains", () => {
+    it("CANONICAL_DOMAIN_META contains canonical metadata for all 24 domains", () => {
       const expectedDomains = [
         "anime_manga",
         "careers_occupations",
         "countries_nations",
         "daily_objects",
+        "dinosaurs_prehistoric",
+        "festivals_cultures",
         "food_gastronomy",
+        "fruits_vegetables_plants",
         "gaming_esports",
         "global_brands",
         "human_body",
@@ -71,11 +74,14 @@ describe("Bank Taxonomy Synchronization & Integrity", () => {
         "music_instruments_gear",
         "mythology_creatures",
         "nature_animals",
+        "pets_farm_animals",
         "places_facilities",
         "pop_culture_classics",
         "school_learning",
+        "science_how_things_work",
         "space_earth",
         "sports_games",
+        "toys_playground",
         "vehicles_technology",
       ];
 
@@ -90,9 +96,9 @@ describe("Bank Taxonomy Synchronization & Integrity", () => {
   });
 
   describe("syncTaxonomyFromKnowledgeBase", () => {
-    it("discovers all 18 domains from knowledge base entities", async () => {
+    it("discovers all 24 domains from knowledge base entities", async () => {
       const domains = await syncTaxonomyFromKnowledgeBase(repo);
-      expect(domains.length).toBe(18);
+      expect(domains.length).toBe(24);
 
       const domainIds = domains.map((d) => d.id).sort();
       expect(domainIds).toContain("anime_manga");
@@ -100,7 +106,7 @@ describe("Bank Taxonomy Synchronization & Integrity", () => {
       expect(domainIds).toContain("gaming_esports");
     });
 
-    it("correctly extracts anime_manga domain with its 5 canonical subtopics", async () => {
+    it("correctly extracts anime_manga domain with its kid-audience subtopics", async () => {
       const domains = await syncTaxonomyFromKnowledgeBase(repo);
       const anime = domains.find((d) => d.id === "anime_manga");
       expect(anime).toBeDefined();
@@ -109,24 +115,26 @@ describe("Bank Taxonomy Synchronization & Integrity", () => {
 
       const subtopicIds = anime?.subtopics.map((s) => s.id).sort();
       expect(subtopicIds).toEqual([
-        "detective_psychological",
+        "detective_mystery",
+        "doraemon_world",
         "ghibli_classics",
         "iconic_franchises",
-        "modern_phenomena",
+        "kids_anime_classics",
+        "pokemon_world",
         "shonen_legends",
       ]);
     });
   });
 
   describe("readQuestionBankTaxonomy", () => {
-    it("reads full taxonomy with 18 domains under read lock", async () => {
+    it("reads full taxonomy with 24 domains under read lock", async () => {
       const taxonomy = await readQuestionBankTaxonomy.call(repo);
       expect(taxonomy.schema_version).toBe(2);
-      expect(taxonomy.domains.length).toBe(18);
+      expect(taxonomy.domains.length).toBe(24);
 
       const anime = taxonomy.domains.find((d) => d.id === "anime_manga");
       expect(anime).toBeDefined();
-      expect(anime?.subtopics.length).toBe(5);
+      expect(anime?.subtopics.length).toBe(7);
     });
   });
 });

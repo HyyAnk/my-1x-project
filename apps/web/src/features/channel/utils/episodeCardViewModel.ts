@@ -64,7 +64,6 @@ function resolveLayoutLabel(format?: Episode["quiz_config"]["quiz_format"]): str
   if (format === "odd_one_out") return "Visual choices";
   if (format === "image_guess") return "Image + choices";
   if (format === "yes_no") return "Yes / no";
-  if (format === "true_false") return "True / false";
   return "Media + choices";
 }
 

@@ -51,7 +51,7 @@ describe("buildDirectQuizOutputContract", () => {
     expect(contract).toContain(
       "ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name",
     );
-    expect(contract).toContain("'In Jujutsu Kaisen...'");
+    expect(contract).toContain("'In Pokemon...'");
     expect(contract).toContain("'In Dragon Ball Z...'");
     expect(contract).toContain(
       "Franchise Anchoring: When generating questions about anime, manga, gaming, comics, movies, or fictional characters",

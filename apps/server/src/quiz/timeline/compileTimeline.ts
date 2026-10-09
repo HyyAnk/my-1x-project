@@ -12,6 +12,8 @@ import { timingPolicyForAgeBand, type QuizTimingPolicy } from "./timingPolicy.js
 import { TimelineContext, round } from "./compilers/timelineContext.js";
 import { compileIntroStage } from "./compilers/introCompiler.js";
 import { compileQuestionBlock } from "./compilers/questionCompiler.js";
+import { compileMidRollCtaStage } from "./compilers/midRollCtaCompiler.js";
+import { resolveMidRollCtaAnchorIndex } from "../bridge/midRollCta.js";
 import { compilePreOutroStage } from "./compilers/preOutroCompiler.js";
 import { compileOutroStage } from "./compilers/outroCompiler.js";
 
@@ -35,12 +37,13 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
   // 1. Intro Stage
   compileIntroStage(ctx, input.director, input.voicePlan, input.introDuration, {
     bridgeConfig: input.bridgeConfig,
-    channelName: input.channelName,
     topic: input.topic,
     questionCount: input.quiz.questions.length,
   });
 
-  // 2. Question Blocks
+  // 2. Question Blocks, with the subscribe CTA as a mid-roll interstitial after the anchor question
+  const questionCount = input.quiz.questions.length;
+  const ctaAnchorIndex = resolveMidRollCtaAnchorIndex(questionCount);
   for (const [questionIndex, question] of input.quiz.questions.entries()) {
     const beat = input.director.beats.find((item) => item.question_id === question.id);
     ctx.policy =
@@ -48,6 +51,14 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
         ? { ...gameplayTimingPolicy(resolveGameplayPolicy(beat), input.quiz.age_band, question.difficulty), ...input.timing }
         : policy;
     compileQuestionBlock(ctx, question, questionIndex, input.director, input.voicePlan);
+    if (questionIndex === ctaAnchorIndex) {
+      ctx.policy = policy;
+      compileMidRollCtaStage(ctx, input.voicePlan, {
+        bridgeConfig: input.bridgeConfig,
+        channelName: input.channelName,
+        hasNextQuestion: questionIndex < questionCount - 1,
+      });
+    }
   }
   ctx.policy = policy;
 

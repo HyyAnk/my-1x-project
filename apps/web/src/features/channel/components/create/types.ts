@@ -13,7 +13,6 @@ export interface CreateChannelFormData {
 
 export interface AudiencePreset {
   id: string;
-  labelVi: string;
   labelEn: string;
   value: string;
   icon: string;
@@ -21,7 +20,6 @@ export interface AudiencePreset {
 
 export interface MarketPreset {
   id: string;
-  labelVi: string;
   labelEn: string;
   value: string;
 }

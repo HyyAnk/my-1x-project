@@ -43,8 +43,8 @@ function createTestQuiz(layoutId: string, format: QuizQuestionFormat, choices: s
 
 describe("Quiz All 6 Layouts End-to-End Integration", () => {
   describe("1. Topic Suggestion & Archetype Blueprint Registry", () => {
-    it("exports 8 production gameplay archetypes with concrete format and layout mappings", () => {
-      expect(QUIZ_GAMEPLAY_ARCHETYPES).toHaveLength(8);
+    it("exports 7 production gameplay archetypes with concrete format and layout mappings", () => {
+      expect(QUIZ_GAMEPLAY_ARCHETYPES).toHaveLength(7);
 
       const archetypesById = new Map(QUIZ_GAMEPLAY_ARCHETYPES.map((a) => [a.id, a]));
 
@@ -63,10 +63,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         targetLayout: "verdict_yes_no",
       });
 
-      expect(archetypesById.get("verdict_true_false")).toMatchObject({
-        defaultFormat: "true_false",
-        targetLayout: "verdict_true_false",
-      });
+      expect(archetypesById.has("verdict_true_false" as never)).toBe(false);
 
       expect(archetypesById.get("versus_faceoff")).toMatchObject({
         defaultFormat: "multiple_choice",
@@ -93,8 +90,8 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
   describe("2. Topic Confirmation & Director Layout Auto-Resolution", () => {
     const testCases: Array<{
       name: string;
-      archetype: "text_multiple_choice" | "visual_multiple_choice" | "yes_no" | "true_false";
-      questionFormat: "multiple_choice" | "odd_one_out" | "yes_no" | "true_false";
+      archetype: "text_multiple_choice" | "visual_multiple_choice" | "yes_no";
+      questionFormat: "multiple_choice" | "odd_one_out" | "yes_no";
       choiceCount: number;
       expectedLayout: QuizPreviewLayoutId;
     }> = [
@@ -104,13 +101,6 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         questionFormat: "yes_no",
         choiceCount: 2,
         expectedLayout: "verdict_yes_no",
-      },
-      {
-        name: "True/False format routes to verdict_true_false",
-        archetype: "true_false",
-        questionFormat: "true_false",
-        choiceCount: 2,
-        expectedLayout: "verdict_true_false",
       },
       {
         name: "Odd One Out format routes to visual_choices_three_pure",
@@ -160,12 +150,12 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
           {
             id: "q-tf",
             number: 1,
-            format: "true_false",
+            format: "yes_no",
             difficulty: 1,
-            question: "Is Pluto a planet?",
+            question: "Is Pluto a planet? Yes or No?",
             choices: [
-              { id: "c-1", text: "True" },
-              { id: "c-2", text: "False" },
+              { id: "c-1", text: "Yes" },
+              { id: "c-2", text: "No" },
             ],
             correct_choice_id: "c-2",
             explanation: "Pluto is classified as a dwarf planet.",
@@ -235,7 +225,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       expect(director.beats).toHaveLength(4);
 
       // Verify each beat has smart archetype
-      expect(director.beats[0].archetype).toBe("true_false");
+      expect(director.beats[0].archetype).toBe("yes_no");
       expect(director.beats[1].archetype).toBe("visual_multiple_choice");
       expect(director.beats[2].archetype).toBe("text_multiple_choice");
       expect(director.beats[3].archetype).toBe("final_challenge");
@@ -277,8 +267,8 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       },
       {
         layoutId: "split_versus_two",
-        archetype: "true_false",
-        format: "true_false",
+        archetype: "yes_no",
+        format: "yes_no",
         choices: ["Cheetah", "Falcon"],
         assetIntents: ["question_illustration"],
         aspectRatios: ["16:9"],
@@ -288,14 +278,6 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         archetype: "yes_no",
         format: "yes_no",
         choices: ["Yes", "No"],
-        assetIntents: ["question_illustration"],
-        aspectRatios: ["16:9"],
-      },
-      {
-        layoutId: "verdict_true_false",
-        archetype: "true_false",
-        format: "true_false",
-        choices: ["True", "False"],
         assetIntents: ["question_illustration"],
         aspectRatios: ["16:9"],
       },
@@ -312,9 +294,9 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
     for (const scenario of layoutScenarios) {
       for (const ar of scenario.aspectRatios) {
         it(`renders production composition bundle for ${scenario.layoutId} in ${ar}`, () => {
-          // QuizV2Schema requires 2 choices for true_false / yes_no and exactly 3 choices for standard questions
+          // QuizV2Schema requires 2 choices for yes_no and exactly 3 choices for standard questions
           const effectiveChoices = scenario.choices.length > 3 ? scenario.choices.slice(0, 3) : scenario.choices;
-          const quizFormat = effectiveChoices.length === 2 ? (scenario.format === "yes_no" ? "yes_no" : "true_false") : scenario.format;
+          const quizFormat = effectiveChoices.length === 2 ? "yes_no" : scenario.format;
           const quiz = createTestQuiz(scenario.layoutId, quizFormat, effectiveChoices);
 
           const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
@@ -355,7 +337,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
     const sandboxCases: Array<{
       layoutId: QuizPreviewLayoutId;
       choices: string[];
-      question_format: "multiple_choice" | "odd_one_out" | "true_false";
+      question_format: "multiple_choice" | "odd_one_out" | "yes_no";
       aspect_ratio?: MascotRenderAspectRatio;
     }> = [
       {
@@ -379,9 +361,9 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         question_format: "multiple_choice",
       },
       {
-        layoutId: "verdict_true_false",
-        choices: ["True", "False"],
-        question_format: "true_false",
+        layoutId: "verdict_yes_no",
+        choices: ["Yes", "No"],
+        question_format: "yes_no",
       },
       {
         layoutId: "full_stack_list",
@@ -422,15 +404,14 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       });
     }
 
-    it("verifies QUIZ_LAYOUTS contains all 8 landscape production layouts", () => {
-      expect(QUIZ_LAYOUTS).toHaveLength(8);
+    it("verifies QUIZ_LAYOUTS contains all 7 landscape production layouts", () => {
+      expect(QUIZ_LAYOUTS).toHaveLength(7);
       expect(QUIZ_LAYOUTS.map((l) => l.id)).toEqual([
         "media_left_choices_right",
         "visual_choices_three",
         "visual_choices_three_pure",
         "split_versus_two",
         "verdict_yes_no",
-        "verdict_true_false",
         "full_stack_list",
         "mystery_reveal",
       ]);

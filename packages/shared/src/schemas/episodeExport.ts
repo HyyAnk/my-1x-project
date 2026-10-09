@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { VideoDescriptionChapterSchema } from "./videoDescription.js";
 
 export const EpisodeExportStatusSchema = z.enum(["ready", "published", "archived"]).default("ready");
 export type EpisodeExportStatus = z.infer<typeof EpisodeExportStatusSchema>;
@@ -19,6 +20,8 @@ export const EpisodeExportMetadataSchema = z.object({
   tags: z.array(z.string()).default([]),
   hashtags: z.array(z.string()).default([]),
   category: z.string().optional(),
+  chapters: z.array(VideoDescriptionChapterSchema).default([]),
+  made_for_kids: z.boolean().optional(),
   rendered_at: z.string(),
   exported_at: z.string(),
 });

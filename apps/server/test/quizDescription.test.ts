@@ -142,7 +142,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const t3 = calculateScoringTiers(3);
       expect(t3).toEqual({
         questionCount: 3,
-        tier1: { min: 1, max: 1 },
+        tier1: { min: 0, max: 1 },
         tier2: { min: 2, max: 2 },
         tier3: { min: 3, max: 3 },
       });
@@ -150,7 +150,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const t5 = calculateScoringTiers(5);
       expect(t5).toEqual({
         questionCount: 5,
-        tier1: { min: 1, max: 1 },
+        tier1: { min: 0, max: 1 },
         tier2: { min: 2, max: 3 },
         tier3: { min: 4, max: 5 },
       });
@@ -158,7 +158,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const t8 = calculateScoringTiers(8);
       expect(t8).toEqual({
         questionCount: 8,
-        tier1: { min: 1, max: 2 },
+        tier1: { min: 0, max: 2 },
         tier2: { min: 3, max: 5 },
         tier3: { min: 6, max: 8 },
       });
@@ -166,7 +166,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const t10 = calculateScoringTiers(10);
       expect(t10).toEqual({
         questionCount: 10,
-        tier1: { min: 1, max: 3 },
+        tier1: { min: 0, max: 3 },
         tier2: { min: 4, max: 6 },
         tier3: { min: 7, max: 10 },
       });
@@ -174,7 +174,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const t15 = calculateScoringTiers(15);
       expect(t15).toEqual({
         questionCount: 15,
-        tier1: { min: 1, max: 5 },
+        tier1: { min: 0, max: 5 },
         tier2: { min: 6, max: 10 },
         tier3: { min: 11, max: 15 },
       });
@@ -182,17 +182,19 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       const t30 = calculateScoringTiers(30);
       expect(t30).toEqual({
         questionCount: 30,
-        tier1: { min: 1, max: 10 },
+        tier1: { min: 0, max: 10 },
         tier2: { min: 11, max: 20 },
         tier3: { min: 21, max: 30 },
       });
     });
 
     it("formats scoring range strings properly", () => {
-      expect(formatScoringRange(1, 3)).toBe("1–3 pts");
-      expect(formatScoringRange(5, 5)).toBe("5 pts");
-      expect(formatScoringRange(1, 3, "English")).toBe("1–3 pts");
-      expect(formatScoringRange(5, 5, "English")).toBe("5 pts");
+      expect(formatScoringRange(1, 3)).toBe("1–3 points");
+      expect(formatScoringRange(5, 5)).toBe("5 points");
+      expect(formatScoringRange(1, 1, "English")).toBe("1 point");
+      expect(formatScoringRange(0, 0, "fr")).toBe("0 point");
+      expect(formatScoringRange(0, 2, "de")).toBe("0–2 Punkte");
+      expect(formatScoringRange(4, 7, "ja")).toBe("4–7点");
     });
   });
 
@@ -219,7 +221,10 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       expect(prompt).toContain("Q1: Kim tự tháp Giza nằm ở quốc gia nào?");
       expect(prompt).toContain("Ai Cập");
       expect(prompt).toContain("Góc nhìn hài hước khám phá");
-      expect(prompt).toContain("11 MANDATORY GENERATION RULES");
+      expect(prompt).toContain("12 MANDATORY GENERATION RULES");
+      expect(prompt).toContain("NO SPOILERS");
+      expect(prompt).not.toContain("Ans:");
+      expect(prompt).not.toContain("Exp:");
       expect(prompt).toContain('"topic_category":');
       expect(prompt).toContain('"primary_keyword":');
       expect(prompt).toContain('"semantic_paragraph":');
@@ -380,7 +385,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
                     question_count: 2,
                     hook_lines: "Đố vui kỳ quan thế giới - Bạn biết bao nhiêu điều bí ẩn?\nCùng thử thách kiến thức cổ đại ngay!",
                     semantic_paragraph:
-                      "Tìm hiểu những sự thật thú vị về Kim tự tháp Giza tại Ai Cập và Vườn treo Babylon tại Iraq qua các câu hỏi hấp dẫn.",
+                      "Tìm hiểu những sự thật thú vị về Kim tự tháp Giza và Vườn treo Babylon qua các câu hỏi hấp dẫn.",
                     scoring_cta: {
                       beginner: "1 câu: Tập sự",
                       intermediate: "1 câu: Hiểu biết",
@@ -471,7 +476,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       expect(fallback.semantic_paragraph).toContain("Can you spot the odd machine?");
       expect(fallback.semantic_paragraph).not.toContain("Hãy cùng khám phá");
       expect(fallback.scoring_cta.beginner).toContain("Beginner");
-      expect(fallback.scoring_cta.cta_text).toContain("How many did you get right? Comment below!");
+      // Age band 7-9 is Made for Kids, so the comment CTA is replaced with a play-along CTA.
+      expect(fallback.made_for_kids).toBe(true);
+      expect(fallback.scoring_cta.cta_text).toBe("Keep score, then challenge your family to beat it!");
       expect(fallback.full_description_text).toContain("🏆 SCORING TIERS:");
       expect(fallback.full_description_text).toContain("📂 Playlist Category: Super Inventions");
       expect(fallback.full_description_text).not.toMatch(/[\u00C0-\u024F\u1E00-\u1EFF]/); // No Vietnamese diacritics

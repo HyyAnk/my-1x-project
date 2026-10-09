@@ -3,6 +3,7 @@ import type { StudioApp } from "../../src/app.js";
 import type { IntroOutroScriptJob, IntroOutroScriptProject, MascotStyleIdentityProfile } from "@studio/shared";
 import type { FakeGeminiFlashClient } from "./introOutroScriptClient.js";
 import { createTestImageBuffer } from "../channelAssetsTestHelpers.js";
+import { SCRIPT_JOB_WAIT_OPTIONS } from "./scriptJobPolling.js";
 
 type Context = { app: StudioApp; client: FakeGeminiFlashClient };
 type Wait = (app: StudioApp, channelId: string, jobId: string) => Promise<IntroOutroScriptJob>;
@@ -140,7 +141,7 @@ export function registerAutomaticIdentityCases(getContext: () => Context, wait: 
     };
     try {
       const job = await start(app, channelId, `analysis-${operation}`);
-      await vi.waitFor(() => expect(entered).toHaveBeenCalledOnce());
+      await vi.waitFor(() => expect(entered).toHaveBeenCalledOnce(), SCRIPT_JOB_WAIT_OPTIONS);
       if (operation === "cancel")
         await app.server.inject({ method: "POST", url: `/api/channels/${channelId}/intro-outro-script-jobs/${job.job_id}/cancel` });
       else await app.repository.saveMascot({ ...mascot, styles: mascot.styles?.map((style) => ({ ...style, style_revision: 2 })) });

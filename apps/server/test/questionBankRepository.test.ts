@@ -5,6 +5,9 @@ import path from "node:path";
 import { RepositoryService } from "../src/repository/service.js";
 import { writeSubtopicBatch } from "../src/repository/quiz/bank/bankBatchStorage.js";
 import type { BankQuestion, BankSubtopicBatch } from "@studio/shared";
+import { readKidsAudienceExpectations } from "./fixtures/knowledgeBaseExpectations.js";
+
+const kb = readKidsAudienceExpectations();
 
 describe("QuestionBankRepository & Channel Cooldown Engine", () => {
   let tempDir: string;
@@ -42,15 +45,17 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     const recalculated = await repo.recalculateQuestionBankIndex();
     expect(recalculated.target_total).toBe(20000);
     expect(recalculated.current_total).toBeGreaterThanOrEqual(10);
-    expect(recalculated.by_archetype.verdict_fact_myth).toBeGreaterThanOrEqual(5);
+    // Legacy Fact/Myth fixtures are counted under the canonical Yes/No archetype.
+    expect(recalculated.by_archetype.verdict_yes_no).toBeGreaterThanOrEqual(5);
+    expect(recalculated.by_archetype.verdict_fact_myth).toBeUndefined();
     expect(recalculated.by_archetype.speed_blitz).toBeGreaterThanOrEqual(5);
   });
 
-  it("calculates 19,313 combo matrix coverage through repository", async () => {
+  it("calculates full entity x archetype matrix coverage through repository", async () => {
     const coverage = await repo.getQuestionBankMatrixCoverage();
-    expect(coverage.total_combos).toBe(19313);
+    expect(coverage.total_combos).toBe(kb.comboCount);
     expect(coverage.covered_combos).toBeGreaterThanOrEqual(0);
-    expect(Object.keys(coverage.by_domain).length).toBe(18);
+    expect(Object.keys(coverage.by_domain).length).toBe(kb.domainCount);
     expect(Object.keys(coverage.by_archetype).length).toBe(7);
   });
 
@@ -61,9 +66,9 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     expect(all.questions.length).toBeGreaterThanOrEqual(10);
 
     // 2. Filter by archetype
-    const vfm = await repo.queryQuestionBankQuestions({ archetypeId: "verdict_fact_myth" });
-    expect(vfm.total).toBeGreaterThanOrEqual(5);
-    expect(vfm.questions.every((q) => q.archetype_id === "verdict_fact_myth")).toBe(true);
+    const verdict = await repo.queryQuestionBankQuestions({ archetypeId: "verdict_yes_no" });
+    expect(verdict.total).toBeGreaterThanOrEqual(5);
+    expect(verdict.questions.every((q) => q.archetype_id === "verdict_yes_no" && q.format === "yes_no")).toBe(true);
 
     // 3. Search keyword
     const search = await repo.queryQuestionBankQuestions({ search: "octopus" });

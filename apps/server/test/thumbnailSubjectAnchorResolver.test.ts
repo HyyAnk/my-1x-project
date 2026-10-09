@@ -80,8 +80,8 @@ describe("Stage 2: Dynamic Subject Anchor Resolution & Visual Entity Intelligenc
       expect(combinedPrompts).not.toContain("Planet Saturn");
     });
 
-    it("resolves medical hero 3D case in true_false layout and eliminates zero-gravity goldfish", () => {
-      const anchors = resolveSubjectAnchors(clinicInput, "true_false");
+    it("resolves medical hero 3D case in yes_no layout and eliminates zero-gravity goldfish", () => {
+      const anchors = resolveSubjectAnchors(clinicInput, "yes_no");
 
       expect(anchors).toHaveLength(1);
       const prompt = anchors[0].visualPrompt;
@@ -131,7 +131,7 @@ describe("Stage 2: Dynamic Subject Anchor Resolution & Visual Entity Intelligenc
   });
 
   describe("Other Domain Themed Anchor Resolutions", () => {
-    it("resolves space anchors for astronomy topics in mega_grid and true_false", () => {
+    it("resolves space anchors for astronomy topics in mega_grid and yes_no", () => {
       const spaceInput = { topicTitle: "Solar System Planets and Deep Space Mysteries" };
       const gridAnchors = resolveSubjectAnchors(spaceInput, "mega_grid");
       const gridPrompts = gridAnchors.map((a) => a.visualPrompt).join(" ");
@@ -141,7 +141,7 @@ describe("Stage 2: Dynamic Subject Anchor Resolution & Visual Entity Intelligenc
       expect(gridPrompts).toContain("telescope");
       expect(gridPrompts).toContain("astronaut");
 
-      const tfAnchors = resolveSubjectAnchors(spaceInput, "true_false");
+      const tfAnchors = resolveSubjectAnchors(spaceInput, "yes_no");
       expect(tfAnchors[0].visualPrompt).toContain("Saturn");
     });
 

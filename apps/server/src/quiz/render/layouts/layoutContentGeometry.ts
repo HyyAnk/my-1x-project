@@ -45,11 +45,6 @@ export const LAYOUT_CONTENT_GEOMETRY: Readonly<Record<ResolvedQuizLayoutId, Layo
     answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.answerVariants),
   }),
 
-  verdict_true_false: Object.freeze({
-    hero: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.hero,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.verdict_true_false.answerVariants),
-  }),
-
   full_stack_list: Object.freeze({
     hero: null,
     answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.full_stack_list.answerVariants),

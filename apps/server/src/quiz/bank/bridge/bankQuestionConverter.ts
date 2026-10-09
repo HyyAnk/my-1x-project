@@ -111,12 +111,7 @@ export function convertBankQuestionToQuizQuestionLossless(
 
   const isMystery = bankQuestion.archetype_id === "mystery_reveal" || quizChoices.length === 1;
   const answerMode = isMystery ? "single_reveal" : "choice_selection";
-  const isVerdict =
-    bankQuestion.archetype_id === "verdict_yes_no" ||
-    bankQuestion.archetype_id === "verdict_true_false" ||
-    bankQuestion.archetype_id === "verdict_fact_myth" ||
-    bankQuestion.format === "yes_no" ||
-    bankQuestion.format === "true_false";
+  const isVerdict = bankQuestion.archetype_id === "verdict_yes_no" || bankQuestion.format === "yes_no";
 
   const resolvedFormat = isMystery
     ? "image_guess"
@@ -156,12 +151,7 @@ function buildConvertedChoices(
   isMystery: boolean,
   requiredCount: number,
 ): { mapped: Array<{ id: string; text: string }>; correctIndex: number } {
-  const isVerdict =
-    bankQuestion.format === "yes_no" ||
-    bankQuestion.format === "true_false" ||
-    bankQuestion.archetype_id === "verdict_yes_no" ||
-    bankQuestion.archetype_id === "verdict_true_false" ||
-    bankQuestion.archetype_id === "verdict_fact_myth";
+  const isVerdict = bankQuestion.format === "yes_no" || bankQuestion.archetype_id === "verdict_yes_no";
 
   const sourceChoices =
     bankQuestion.choices.length > 0
@@ -219,12 +209,7 @@ function buildConvertedChoices(
  */
 export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
   const isMystery = bankQuestion.archetype_id === "mystery_reveal";
-  const isVerdict =
-    bankQuestion.archetype_id === "verdict_yes_no" ||
-    bankQuestion.archetype_id === "verdict_true_false" ||
-    bankQuestion.archetype_id === "verdict_fact_myth" ||
-    bankQuestion.format === "yes_no" ||
-    bankQuestion.format === "true_false";
+  const isVerdict = bankQuestion.archetype_id === "verdict_yes_no" || bankQuestion.format === "yes_no";
   const requiredCount = bankRequiredChoiceCountForArchetype(bankQuestion.archetype_id);
   const { mapped, correctIndex } = buildConvertedChoices(bankQuestion, options, isMystery, requiredCount);
   const mappedCorrectIndex = Math.min(Math.max(correctIndex, 0), requiredCount - 1);

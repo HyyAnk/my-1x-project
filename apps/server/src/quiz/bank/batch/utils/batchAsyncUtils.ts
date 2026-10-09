@@ -24,6 +24,8 @@ export class AsyncMutex {
   }
 }
 
+export const DEFAULT_BATCH_PROMPT_TIMEOUT_MS = 600_000;
+
 /**
  * Single prompt execution with transient rate-limit retry and adaptive rate limiting.
  */
@@ -32,6 +34,8 @@ export async function executePromptWithRetry(
   prompt: string,
   signal?: AbortSignal,
   rateLimiter?: AdaptiveRateLimiter,
+  timeoutMs: number = DEFAULT_BATCH_PROMPT_TIMEOUT_MS,
+  modelOverride?: string,
 ): Promise<string> {
   if (rateLimiter) {
     await rateLimiter.acquire(1, signal);
@@ -41,7 +45,8 @@ export async function executePromptWithRetry(
       () =>
         executeSinglePromptText(llmClient, prompt, {
           signal,
-          timeoutMs: 180_000,
+          timeoutMs,
+          modelOverride,
         }),
       {
         attempts: 2,

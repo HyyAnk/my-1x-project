@@ -32,12 +32,6 @@ export const CANONICAL_IMAGE_SLOT_DEFINITIONS = Object.freeze({
     borderEachSide: QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.imageSlot!.borderEachSide,
     viewport: QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.imageSlot!.viewport,
   }),
-  verdict_true_false: Object.freeze({
-    cardBorderBox: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.cardBorderBox,
-    mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.mediaBorderBox,
-    borderEachSide: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.borderEachSide,
-    viewport: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.imageSlot!.viewport,
-  }),
   mystery_reveal: Object.freeze({
     cardBorderBox: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.cardBorderBox,
     mediaBorderBox: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.imageSlot!.mediaBorderBox,
@@ -79,17 +73,6 @@ export function getQuizImageSlotGeometry(input: GetQuizImageSlotGeometryInput): 
       }
       case "verdict_yes_no": {
         const vp = CANONICAL_IMAGE_SLOT_DEFINITIONS.verdict_yes_no.viewport;
-        const viewports = [vp];
-        return {
-          layoutId: input.layoutId,
-          purpose: input.purpose,
-          canvas,
-          viewports,
-          geometryKey: serializeGeometryKey(input.layoutId, input.purpose, canvas, viewports),
-        };
-      }
-      case "verdict_true_false": {
-        const vp = CANONICAL_IMAGE_SLOT_DEFINITIONS.verdict_true_false.viewport;
         const viewports = [vp];
         return {
           layoutId: input.layoutId,

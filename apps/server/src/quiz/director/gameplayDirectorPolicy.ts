@@ -9,9 +9,7 @@ export function applyGameplayDirectorPolicy(quiz: QuizV2, beat: DirectorBeat): D
     gameplay_id:
       beat.gameplay_id ??
       question.gameplay_id ??
-      ((question.format === "yes_no" || question.format === "true_false") && beat.layout_id !== "split_versus_two"
-        ? (question.format === "yes_no" ? "verdict_yes_no" : "verdict_true_false")
-        : undefined),
+      (question.format === "yes_no" && beat.layout_id !== "split_versus_two" ? "verdict_yes_no" : undefined),
   });
   if (question.choices.length !== policy.choiceCount) {
     throw new Error(`Gameplay ${policy.id} requires ${policy.choiceCount} choices for ${question.id}`);

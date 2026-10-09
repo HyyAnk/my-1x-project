@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = "SilentlyContinue"
 $worker = "stop-dashboard"
-$ports = if ($DashboardOnly) { @(4310, 2244) } else { @(4310, 2244, 2233, 8890) }
+$ports = if ($DashboardOnly) { @(4310, 7743) } else { @(4310, 7743, 2233, 8890) }
 $resolvedRoot = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd("\").ToLowerInvariant()
 $startedAt = Get-Date
 $stopped = 0

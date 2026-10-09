@@ -1,8 +1,10 @@
-import { BankQuestionSchema, type BankGameplayArchetypeId, type BankQuestion } from "@studio/shared";
+import { BankQuestionSchema, normalizeLegacyVerdictIdentifier, type BankGameplayArchetypeId, type BankQuestion } from "@studio/shared";
 import { ARCHETYPE_GUIDELINES } from "./archetypePromptGuidelines.js";
 import { sanitizeBankQuestionText } from "./bankQuestionSanitizer.js";
 import { normalizeGenerationLanguage } from "./bankLanguageValidator.js";
 import type { TargetEntityForGeneration } from "./reverseMatrixPromptBuilder.js";
+import { balanceGeneratedChoicePositions } from "../choiceOrder/index.js";
+import { estimateAudienceProfile } from "../audience/audienceProfile.js";
 
 export { sanitizeBankQuestionText } from "./bankQuestionSanitizer.js";
 export { normalizeGenerationLanguage, VIETNAMESE_LANGUAGE_CODES } from "./bankLanguageValidator.js";
@@ -33,6 +35,18 @@ interface BuildQuestionOptions {
 function makeUniqueBankId(archetypeId: string, domainId: string, subtopicId: string): string {
   const prefix = `${archetypeId.slice(0, 3)}-${domainId.slice(0, 3)}-${subtopicId.slice(0, 3)}`.toUpperCase();
   return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+/**
+ * The age band is always measured from the generated text. A difficulty the model was explicitly asked for
+ * (e.g. one slot of a retention arc) is kept; otherwise it is measured as well.
+ */
+function audienceMetadata(question: string, item: Record<string, unknown>): Pick<BankQuestion, "age_band" | "difficulty"> {
+  const explanation = typeof item.explanation === "string" ? item.explanation : "";
+  const profile = estimateAudienceProfile({ question, explanation });
+  const requested = item.difficulty;
+  const difficulty = typeof requested === "number" && Number.isInteger(requested) && requested >= 1 && requested <= 5 ? requested : profile.difficulty;
+  return { age_band: profile.age_band, difficulty };
 }
 
 function warnUnparseableOutput(context: string, rawOutput: string): void {
@@ -132,11 +146,9 @@ function buildAndValidateBankQuestion(opts: BuildQuestionOptions): BankQuestion 
       ? item.choices
       : normalizeChoices(item.choices, opts.expectedChoiceCount, item.correct_choice_id, opts.distractorPool);
 
-  const isVerdict =
-    opts.archetypeId === "verdict_yes_no" ||
-    opts.archetypeId === "verdict_true_false" ||
-    opts.archetypeId === "verdict_fact_myth";
+  const isVerdict = opts.archetypeId === "verdict_yes_no";
 
+  // Models occasionally answer a Yes/No prompt with True/False labels; the Yes/No buttons are canonical.
   if (isVerdict && Array.isArray(normalizedChoices)) {
     normalizedChoices = normalizedChoices.map((c) => {
       if (typeof c === "object" && c !== null && "text" in c) {
@@ -159,8 +171,7 @@ function buildAndValidateBankQuestion(opts: BuildQuestionOptions): BankQuestion 
     domain_id: opts.domainId,
     subtopic_id: opts.subtopicId,
     status: "approved",
-    difficulty: typeof item.difficulty === "number" ? item.difficulty : (opts.difficulty ?? 2),
-    age_band: typeof item.age_band === "string" ? item.age_band : (opts.ageBand ?? "family"),
+    ...audienceMetadata(sanitizedQuestion, item),
     created_at: opts.now,
     updated_at: opts.now,
     ...(opts.generationLanguage ? { language: opts.generationLanguage } : {}),
@@ -193,12 +204,13 @@ function parseGenerationOutputInternal(
 ): BankQuestion[] {
   const items = extractJsonArray(rawOutput, context);
   if (!items) return [];
+  const archetypeId = normalizeLegacyVerdictIdentifier(meta.archetypeId) as BankGameplayArchetypeId;
 
   const generationLanguage = normalizeGenerationLanguage(meta.language);
   const result: BankQuestion[] = [];
   const now = new Date().toISOString();
   const targetMap = targets ? new Map(targets.map((t) => [t.entity_id, t])) : null;
-  const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
+  const expectedCount = ARCHETYPE_GUIDELINES[archetypeId]?.choiceCount ?? 3;
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -215,7 +227,7 @@ function parseGenerationOutputInternal(
 
     const question = buildAndValidateBankQuestion({
       item,
-      archetypeId: meta.archetypeId,
+      archetypeId,
       domainId,
       subtopicId,
       entityId,
@@ -230,7 +242,7 @@ function parseGenerationOutputInternal(
     if (question) result.push(question);
   }
 
-  return result;
+  return balanceGeneratedChoicePositions(result);
 }
 
 export function parseBatchGenerationOutput(

@@ -114,7 +114,7 @@ describe("Phase 4: Brand Logo Stinger Composition Integration & Audio Harmonizat
     expect(bundle.html).toContain("correct_ding.wav");
 
     const stingerTransition = timeline.events.find(
-      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_cta",
+      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_question",
     );
     expect(stingerTransition).toBeDefined();
     const stingerTimeMs = Math.round(stingerTransition!.at_seconds * 1000);
@@ -200,7 +200,7 @@ describe("Phase 4: Brand Logo Stinger Composition Integration & Audio Harmonizat
     });
 
     const stingerTransitionEvent = timeline.events.find(
-      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_cta",
+      (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_question",
     );
     expect(stingerTransitionEvent).toBeDefined();
     const stingerStartTime = stingerTransitionEvent!.at_seconds;

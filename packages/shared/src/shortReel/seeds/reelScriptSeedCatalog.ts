@@ -4,21 +4,20 @@ import {
   ALL_REEL_SCRIPT_SEEDS,
   VERSUS_FACEOFF_SEEDS,
   DEEP_TRIVIA_SEEDS,
-  TRUE_FALSE_SEEDS,
+  YES_NO_SEEDS,
 } from "./reelScriptSeedDefinitions.js";
 
 export {
   ALL_REEL_SCRIPT_SEEDS,
   VERSUS_FACEOFF_SEEDS,
   DEEP_TRIVIA_SEEDS,
-  TRUE_FALSE_SEEDS,
+  YES_NO_SEEDS,
 };
 
 export const DEFAULT_SEED_BY_ARCHETYPE: Record<ReelArchetype, ReelScriptSeedId> = {
   versus_faceoff: "vf_arena_clash",
   deep_trivia: "dt_mystery_investigation",
   verdict_yes_no: "tf_mythbusters_lab",
-  verdict_true_false: "tf_mythbusters_lab",
 };
 
 export function getScriptSeedsForArchetype(archetype: ReelArchetype): readonly ReelScriptSeed[] {
@@ -28,8 +27,7 @@ export function getScriptSeedsForArchetype(archetype: ReelArchetype): readonly R
     case "deep_trivia":
       return DEEP_TRIVIA_SEEDS;
     case "verdict_yes_no":
-    case "verdict_true_false":
-      return TRUE_FALSE_SEEDS;
+      return YES_NO_SEEDS;
     default:
       return [];
   }

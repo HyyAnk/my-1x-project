@@ -5,6 +5,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Dragon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Western Dragon",
       "Eastern Dragon / Long"
@@ -50,6 +51,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Phoenix",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fenghuang",
       "Firebird"
@@ -95,6 +97,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Unicorn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Monoceros",
       "Horned Steed"
@@ -137,9 +140,10 @@
   {
     "id": "ENT-MYT-004",
     "domain_id": "mythology_creatures",
-    "subtopic_id": "greek_mythology",
+    "subtopic_id": "greek_roman",
     "name": "Medusa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gorgon Medusa"
     ],
@@ -149,7 +153,7 @@
       "One of the three Gorgon sisters in ancient Greek mythology",
       "Described as having living venomous snakes instead of human hair",
       "Anyone who gazed directly into her eyes was instantly turned into solid stone",
-      "Beheaded by the Greek hero Perseus using Athena's polished bronze shield as a mirror"
+      "Defeated by the hero Perseus, who used Athena's shiny bronze shield as a mirror"
     ],
     "distractor_pool": [
       "Sirens",
@@ -160,10 +164,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "In Greek myth, the winged horse Pegasus was born from Medusa's neck after she was slain.",
+        "claim": "In Greek myth, the winged horse Pegasus first appeared when Perseus defeated Medusa.",
         "verdict": "fact",
-        "explanation": "According to Hesiod's Theogony, Pegasus and the warrior Chrysaor sprang from Medusa's neck when Perseus beheaded her.",
-        "fun_fact": "Perseus used her severed head as a petrifying weapon before placing it on Athena's shield (Aegis)."
+        "explanation": "According to the ancient poet Hesiod, Pegasus sprang into the world at the moment Perseus defeated Medusa.",
+        "fun_fact": "Athena later placed Medusa's face on her famous shield, called the Aegis."
       },
       {
         "claim": "Medusa was born a hideous monstrous demon from the very beginning.",
@@ -184,17 +188,18 @@
     "subtopic_id": "norse_mythology",
     "name": "Thor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "God of Thunder",
       "Son of Odin"
     ],
     "difficulty": 1,
-    "visual_anchor": "Fierce red-bearded Norse god Thor raising his short-handled war hammer Mjolnir as blue lightning arcs across storm clouds.",
+    "visual_anchor": "Fierce red-bearded Norse god Thor raising his short-handled hammer Mjolnir as blue lightning arcs across storm clouds.",
     "core_traits": [
       "Hammer-wielding god associated with thunder, lightning, storms, strength, and protector of mankind",
       "Son of the Allfather Odin and member of the Aesir gods of Asgard",
-      "Wields the enchanted crushing war hammer Mjolnir, which returns to his hand when thrown",
-      "Fated to battle and kill the World Serpent Jormungandr during Ragnarok"
+      "Wields the enchanted hammer Mjolnir, which returns to his hand when thrown",
+      "Fated to battle the giant World Serpent Jormungandr during Ragnarok"
     ],
     "distractor_pool": [
       "Loki",
@@ -229,6 +234,7 @@
     "subtopic_id": "greek_roman",
     "name": "Zeus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jupiter",
       "King of Olympus",
@@ -275,6 +281,7 @@
     "subtopic_id": "greek_roman",
     "name": "Poseidon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Neptune",
       "Earth-Shaker",
@@ -300,7 +307,7 @@
         "claim": "In Greek myth, Poseidon created the first horse from sea foam or rock.",
         "verdict": "fact",
         "explanation": "According to Athenian legend, Poseidon struck the earth with his trident to create the first horse for humanity.",
-        "fun_fact": "Horses were frequently sacrificed to Poseidon by drowning them in sacred ocean waters."
+        "fun_fact": "Poseidon was also called 'Earth-Shaker' because people believed he caused earthquakes."
       },
       {
         "claim": "Poseidon won the patronage contest against Athena to name the city of Athens.",
@@ -321,15 +328,15 @@
     "subtopic_id": "greek_roman",
     "name": "Hades",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pluto",
-      "Lord of the Underworld",
       "Unseen One"
     ],
     "difficulty": 1,
     "visual_anchor": "Dark imposing monarch clad in obsidian armor seated upon an ebony throne surrounded by ghostly souls and the River Styx.",
     "core_traits": [
-      "Olympian ruler of the Underworld and guardian of departed souls",
+      "Greek god who ruled a shadowy kingdom deep beneath the earth",
       "Associated with subterranean mineral wealth, precious metals, and gems",
       "Owns the Helm of Darkness (Cap of Invisibility) which renders the wearer unseen",
       "Husband of Persephone and master of the three-headed hound Cerberus"
@@ -343,15 +350,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hades is the Greek mythological equivalent of the Christian Devil or Satan.",
+        "claim": "Hades was an evil, wicked villain in Greek myths.",
         "verdict": "myth",
-        "explanation": "Hades was not evil or malevolent; he was a stern, impartial custodian of the underworld maintaining cosmic balance.",
+        "explanation": "Hades was not evil; he was a stern but fair ruler who kept order in his underground kingdom.",
         "fun_fact": "The Greeks avoided speaking his name aloud out of fear, preferring euphemisms like Plouton (The Wealthy)."
       },
       {
-        "claim": "Persephone was required to stay in the Underworld for part of each year because she ate pomegranate seeds.",
+        "claim": "Persephone had to stay in Hades' kingdom part of each year because she ate pomegranate seeds.",
         "verdict": "fact",
-        "explanation": "Eating food in the Underworld bound souls to that realm; consuming pomegranate seeds meant Persephone had to return each winter.",
+        "explanation": "In the myth, eating food in Hades' kingdom meant you had to return, so she went back each winter.",
         "fun_fact": "Her mother Demeter's grief during those months was the mythological explanation for winter."
       }
     ],
@@ -367,18 +374,18 @@
     "subtopic_id": "greek_roman",
     "name": "Ares",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mars",
-      "God of War",
       "Shield-Piercer"
     ],
     "difficulty": 1,
-    "visual_anchor": "Muscular bronzed warrior god clad in blood-red armor and bronze helm, brandishing an iron spear across a smoke-filled battlefield.",
+    "visual_anchor": "Muscular bronzed god in shining red armor and a bronze helmet, holding an iron spear and shield on a windswept rocky hill.",
     "core_traits": [
-      "Olympian god of violent physical warfare, bloodlust, and slaughter",
-      "Accompanied into battle by his sons Phobos (Panic) and Deimos (Terror)",
-      "Often opposed by Athena, who represented strategic and disciplined warfare",
-      "Lover of Aphrodite, goddess of love and beauty"
+      "Hot-tempered Olympian god of fierce fighting spirit and courage",
+      "Accompanied by his sons Phobos (Panic) and Deimos (Terror)",
+      "Often opposed by wise Athena, who preferred clever planning over raw strength",
+      "His Roman version is Mars, who gave his name to the red planet"
     ],
     "distractor_pool": [
       "Athena",
@@ -391,14 +398,14 @@
       {
         "claim": "Ares was admired and beloved by most ancient Greek citizens and gods.",
         "verdict": "myth",
-        "explanation": "Greeks viewed Ares with distrust due to his chaotic cruelty; only Sparta offered him significant veneration.",
+        "explanation": "Greeks were wary of Ares because of his wild temper; only Sparta honored him much.",
         "fun_fact": "In contrast, the Romans held his equivalent Mars in high reverence as the noble protector of Rome."
       },
       {
-        "claim": "Hephaestus once caught Ares and Aphrodite together in an unbreakable golden net.",
+        "claim": "The planet Mars is named after the Roman version of Ares.",
         "verdict": "fact",
-        "explanation": "Hephaestus forged a net as fine as spider silk and trapped the lovers in bed to expose their affair to the other gods.",
-        "fun_fact": "The other gods merely laughed at the spectacle rather than condemning them."
+        "explanation": "The Romans called this god Mars, and the reddish planet was later named after him.",
+        "fun_fact": "The month of March also gets its name from the Roman god Mars."
       }
     ],
     "versus_candidates": [
@@ -413,6 +420,7 @@
     "subtopic_id": "greek_roman",
     "name": "Athena",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Minerva",
       "Pallas Athena",
@@ -421,7 +429,7 @@
     "difficulty": 1,
     "visual_anchor": "Noble, radiant warrior goddess holding a gilded spear and owl-embossed shield, wearing a crested Corinthian helmet.",
     "core_traits": [
-      "Virgin goddess of wisdom, tactical warfare, civilization, and handicrafts",
+      "Goddess of wisdom, clever strategy, crafts, and civilization",
       "Sprang fully grown and armored from the forehead of Zeus",
       "Sacred symbols include the owl of wisdom and the olive tree",
       "Patron deity and protector of the city-state of Athens"
@@ -459,6 +467,7 @@
     "subtopic_id": "greek_roman",
     "name": "Apollo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phoebus Apollo",
       "God of Music",
@@ -505,6 +514,7 @@
     "subtopic_id": "greek_roman",
     "name": "Artemis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diana",
       "Goddess of the Hunt",
@@ -551,6 +561,7 @@
     "subtopic_id": "greek_roman",
     "name": "Hermes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mercury",
       "Winged Messenger",
@@ -561,7 +572,7 @@
     "core_traits": [
       "Olympian messenger of the gods and deity of travel, commerce, and thieves",
       "Carries the Caduceus (kerykeion), a herald's staff entwined by two snakes",
-      "Acts as Psychopomp, guiding departed souls safely to the Underworld",
+      "Protector of travelers who could journey anywhere, even to the hidden kingdom of Hades",
       "Known for lightning speed, wit, clever pranks, and eloquence"
     ],
     "distractor_pool": [
@@ -597,6 +608,7 @@
     "subtopic_id": "greek_roman",
     "name": "Aphrodite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Venus",
       "Goddess of Love",
@@ -619,15 +631,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Aphrodite won the Golden Apple of Discord by promising Paris the love of Helen of Troy.",
+        "claim": "Aphrodite won a golden apple labeled 'To the Fairest' in a famous contest.",
         "verdict": "fact",
-        "explanation": "Paris of Troy judged Aphrodite the fairest goddess after she promised him Helen, which sparked the Trojan War.",
-        "fun_fact": "The golden apple bore the inscription 'To the Fairest' (Tei Kallistei)."
+        "explanation": "Prince Paris was asked to choose the fairest of three goddesses, and he picked Aphrodite over Hera and Athena.",
+        "fun_fact": "The phrase 'apple of discord' still means something that starts an argument."
       },
       {
         "claim": "Aphrodite was the daughter of Zeus and Hera in all classical traditions.",
         "verdict": "myth",
-        "explanation": "Hesiod's Theogony recounts she arose from sea foam after Cronus castrated Uranus and threw the remains into the sea.",
+        "explanation": "Hesiod's poem says she rose fully grown from the sea foam near the island of Cyprus.",
         "fun_fact": "Her name literally derives from 'aphros', the ancient Greek word for sea foam."
       }
     ],
@@ -643,6 +655,7 @@
     "subtopic_id": "greek_roman",
     "name": "Hephaestus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vulcan",
       "God of the Forge",
@@ -652,7 +665,7 @@
     "visual_anchor": "Powerful muscular smith hammering glowing molten steel on an enormous subterranean anvil beneath an erupting volcano.",
     "core_traits": [
       "Olympian god of blacksmiths, metalworking, volcanoes, metallurgy, and fire",
-      "Crafted legendary weapons and armor for gods including Achilles' shield and Zeus's thunderbolts",
+      "Crafted legendary treasures for the gods, including Achilles' shield and Zeus's thunderbolts",
       "Born lame or cast down from Mount Olympus by Hera due to his physical disability",
       "Maintained his sacred fiery forges inside Mount Etna with the help of Cyclopes"
     ],
@@ -673,7 +686,7 @@
       {
         "claim": "Hephaestus was banished permanently from Olympus and never allowed back.",
         "verdict": "myth",
-        "explanation": "Dionysus got him drunk and brought him back triumphantly to Olympus, where he took his place among the Twelve.",
+        "explanation": "Dionysus cheerfully led him back to Olympus on a donkey, where he took his place among the Twelve.",
         "fun_fact": "He crafted a trick golden throne that ensnared Hera until she recognized him."
       }
     ],
@@ -689,6 +702,7 @@
     "subtopic_id": "greek_roman",
     "name": "Dionysus",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Bacchus",
       "God of Wine",
@@ -735,6 +749,7 @@
     "subtopic_id": "greek_roman",
     "name": "Demeter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ceres",
       "Goddess of Harvest",
@@ -781,6 +796,7 @@
     "subtopic_id": "greek_roman",
     "name": "Hera",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Juno",
       "Queen of the Gods",
@@ -791,7 +807,7 @@
     "core_traits": [
       "Queen of the Twelve Olympian gods and supreme goddess of marriage, women, and family",
       "Sister and legitimate wife of Zeus",
-      "Known for fierce jealousy and vengeance against Zeus's lovers and demigod children",
+      "Known for her fierce temper and her long rivalry with the hero Hercules",
       "Sacred symbols include the peacock with eye-spotted feathers, cow, and pomegranate"
     ],
     "distractor_pool": [
@@ -805,13 +821,13 @@
       {
         "claim": "According to Greek myth, the Milky Way was created from drops of Hera's breast milk.",
         "verdict": "fact",
-        "explanation": "When Zeus placed infant Hercules at sleeping Hera's breast, she pulled away in surprise, spraying divine milk across the cosmos.",
+        "explanation": "When baby Hercules was fed by sleeping Hera, she woke in surprise and her milk sprayed across the sky.",
         "fun_fact": "The peacock's tail eyes were placed by Hera to honor her hundred-eyed watchman Argus."
       },
       {
-        "claim": "Hera supported Troy during the Trojan War against the Greeks.",
-        "verdict": "myth",
-        "explanation": "Hera relentlessly supported the Greeks because Trojan prince Paris insulted her by giving the golden apple to Aphrodite.",
+        "claim": "The month of June may be named after Hera's Roman version, Juno.",
+        "verdict": "fact",
+        "explanation": "Ancient Roman writers linked June to Juno, the Roman queen of the gods and protector of marriage.",
         "fun_fact": "In Roman culture, Juno was considered the chief protectress of the Roman state."
       }
     ],
@@ -827,6 +843,7 @@
     "subtopic_id": "greek_roman",
     "name": "Hercules",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heracles",
       "Son of Zeus",
@@ -838,7 +855,7 @@
       "Greatest of the Greek heroes and demigod son of Zeus and mortal Alcmene",
       "Celebrated for completing the Twelve Labors as penance for Hera's curse",
       "Possessed superhuman physical strength, endurance, and courage",
-      "Achieved apotheosis upon death, becoming an immortal Olympian god"
+      "After his earthly adventures, he was welcomed to Mount Olympus as an immortal god"
     ],
     "distractor_pool": [
       "Achilles",
@@ -849,15 +866,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hercules wore the pelt of the Nemean Lion because it was impervious to all weapons.",
+        "claim": "Hercules wore the Nemean Lion's golden fur because nothing could cut through it.",
         "verdict": "fact",
-        "explanation": "After strangling the invulnerable beast with his bare hands, Hercules skinned it using its own claws and wore the hide as armor.",
-        "fun_fact": "He also dipped his arrows in the venomous blood of the Hydra to make them instantly fatal."
+        "explanation": "After wrestling the tough beast, Hercules used its own sharp claws to cut the fur and wore it as armor.",
+        "fun_fact": "The Nemean Lion was placed in the night sky as the constellation Leo."
       },
       {
         "claim": "Hercules performed his twelve labors purely for personal fame and monetary riches.",
         "verdict": "myth",
-        "explanation": "He undertook the labors as spiritual penance under King Eurystheus after Hera drove him into a temporary madness.",
+        "explanation": "He performed the labors for King Eurystheus to make up for a terrible mistake caused by Hera's curse.",
         "fun_fact": "The Labors originally numbered ten, but Eurystheus added two because Hercules received help."
       }
     ],
@@ -873,6 +890,7 @@
     "subtopic_id": "greek_roman",
     "name": "Achilles",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Champion of the Myrmidons",
       "Swift-Footed Hero"
@@ -880,10 +898,10 @@
     "difficulty": 1,
     "visual_anchor": "Fierce Grecian warrior in ornate bronze armor charging forward with a celestial spear and ornate shield before the walls of Troy.",
     "core_traits": [
-      "Greatest Greek warrior hero of the Trojan War and leader of the Myrmidons",
+      "Greatest Greek hero in Homer's Iliad and leader of the Myrmidons",
       "Son of the sea nymph Thetis and mortal King Peleus",
       "Invulnerable over his entire body except for the heel where his mother held him",
-      "Slain by a poisoned arrow shot by Paris and guided by the god Apollo"
+      "Famous for his speed; Homer called him 'swift-footed Achilles'"
     ],
     "distractor_pool": [
       "Hercules",
@@ -900,10 +918,10 @@
         "fun_fact": "The Achilles tendon connecting the calf muscles to the heel bone is named after him."
       },
       {
-        "claim": "Homer's Iliad ends with the death of Achilles inside the Trojan Horse.",
+        "claim": "Homer's Iliad tells the story of the Trojan Horse.",
         "verdict": "myth",
-        "explanation": "The Iliad concludes with the funeral of Hector; Achilles' death occurs outside the poem in subsequent epic cycle legends.",
-        "fun_fact": "Achilles did not enter the Trojan Horse; he had already died before it was built."
+        "explanation": "The Iliad ends before the Trojan Horse; that clever trick is told in the Odyssey and later Roman poems.",
+        "fun_fact": "As a boy, Achilles was trained by the wise centaur Chiron."
       }
     ],
     "versus_candidates": [
@@ -918,6 +936,7 @@
     "subtopic_id": "greek_roman",
     "name": "Perseus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Slayer of Medusa",
       "Son of the Golden Rain"
@@ -925,8 +944,8 @@
     "difficulty": 1,
     "visual_anchor": "Daring young hero hovering on winged sandals, holding aloft the petrifying severed head of Medusa by her snaky locks.",
     "core_traits": [
-      "Demigod son of Zeus and Danae who conceived him in a shower of gold",
-      "Famed hero who decapitated the petrifying Gorgon Medusa",
+      "Demigod son of Zeus and Princess Danae",
+      "Famed hero who defeated the Gorgon Medusa, whose gaze turned people to stone",
       "Rescued princess Andromeda from the monstrous sea creature Cetus",
       "Equipped by gods with Hermes' winged sandals, Hades' helm of invisibility, and Athena's mirror shield"
     ],
@@ -963,6 +982,7 @@
     "subtopic_id": "greek_roman",
     "name": "Odysseus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ulysses",
       "King of Ithaca",
@@ -985,15 +1005,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Odysseus told the blinded Cyclops Polyphemus that his name was 'Nobody'.",
+        "claim": "Odysseus told the Cyclops Polyphemus that his name was 'Nobody'.",
         "verdict": "fact",
-        "explanation": "When Polyphemus screamed for help, he shouted 'Nobody is killing me!', causing his fellow Cyclopes to ignore his cries.",
+        "explanation": "When Polyphemus shouted for help, he cried 'Nobody is hurting me!', so the other Cyclopes ignored him.",
         "fun_fact": "His pride compelled him to reveal his real name as his ship escaped, provoking Poseidon's curse."
       },
       {
         "claim": "Odysseus took forty years to travel from Troy to Ithaca.",
         "verdict": "myth",
-        "explanation": "The voyage took ten years, following ten years of fighting in the Trojan War, making twenty years away from home total.",
+        "explanation": "The trip home took ten years, after ten years away at Troy, so he was gone twenty years.",
         "fun_fact": "His faithful dog Argos recognized him immediately upon his return despite a twenty-year absence."
       }
     ],
@@ -1009,6 +1029,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Minotaur",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Asterion",
       "Bull of Minos",
@@ -1055,6 +1076,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Centaur",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hippocentaur",
       "Half-Horse",
@@ -1065,7 +1087,7 @@
     "core_traits": [
       "Mythological creature with the upper body of a human and the lower body of a horse",
       "Inhabited the rugged mountains and forests of Thessaly in ancient Greece",
-      "Generally portrayed as wild, lustful, and savage drinkers of raw wine",
+      "Generally portrayed as wild, rowdy, and hot-tempered forest dwellers",
       "Contrasted by Chiron, the wise, immortal tutor of great heroes"
     ],
     "distractor_pool": [
@@ -1085,7 +1107,7 @@
       {
         "claim": "All centaurs in Greek mythology were peaceful, vegetarian philosophers.",
         "verdict": "myth",
-        "explanation": "Most centaurs were depicted as unruly barbarians prone to drunken brawls, such as the infamous Centauromachy battle.",
+        "explanation": "Most centaurs were shown as wild and rowdy, quite unlike the wise and gentle Chiron.",
         "fun_fact": "Ancient horse riders seen by cultures unfamiliar with riding may have inspired the initial myth."
       }
     ],
@@ -1101,6 +1123,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Cyclops",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Polyphemus",
       "One-Eyed Giant",
@@ -1111,8 +1134,8 @@
     "core_traits": [
       "Gigantic primordial humanoid possessing a single large circular eye in the forehead",
       "Elder Cyclopes forged Zeus's thunderbolts, Poseidon's trident, and Hades' helm",
-      "Pastoral Cyclopes like Polyphemus lived as lawless, uncivilized shepherd cannibals",
-      "Blinded by Odysseus with a red-hot wooden stake in Homer's Odyssey"
+      "Pastoral Cyclopes like Polyphemus lived as wild, lawless shepherds on a remote island",
+      "Outsmarted by Odysseus, who escaped his cave by clinging under the bellies of sheep"
     ],
     "distractor_pool": [
       "Minotaur",
@@ -1147,16 +1170,17 @@
     "subtopic_id": "mythical_beasts",
     "name": "Cerberus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hound of Hades",
       "Three-Headed Dog",
       "Fluffy"
     ],
     "difficulty": 1,
-    "visual_anchor": "Ferocious monstrous black hound with three snarling heads, glowing red eyes, and a serpent tail guarding the gates of the Underworld.",
+    "visual_anchor": "Big black three-headed hound with glowing red eyes and a snake-like tail guarding a shadowy stone gate in a misty cavern.",
     "core_traits": [
-      "Monstrous three-headed canine guardian stationed at the entrance of the Underworld",
-      "Permits departed souls to enter Hades but savagely prevents any from escaping",
+      "Giant three-headed dog who guarded the gates of Hades' kingdom",
+      "Let visitors in but never let anyone sneak back out",
       "Spawn of the primordial monsters Typhon and Echidna",
       "Captured barehanded by Hercules as his twelfth and final labor"
     ],
@@ -1171,8 +1195,8 @@
       {
         "claim": "Orpheus charmed Cerberus into falling asleep by playing beautiful music on his lyre.",
         "verdict": "fact",
-        "explanation": "When Orpheus entered the Underworld to rescue Eurydice, his mournful lyre playing lulled the beast to sleep.",
-        "fun_fact": "Aeneas later bypassed Cerberus by feeding him a drugged honey cake."
+        "explanation": "When Orpheus came to bring back Eurydice, his gentle lyre music lulled the giant dog to sleep.",
+        "fun_fact": "Aeneas later slipped past Cerberus by feeding him a honey cake that made him sleepy."
       },
       {
         "claim": "Cerberus had one hundred heads in all ancient Greek pottery and sculptures.",
@@ -1193,6 +1217,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Hydra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lernaean Hydra",
       "Many-Headed Serpent"
@@ -1214,16 +1239,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hercules defeated the Hydra by having his nephew burn the severed neck stumps with fire.",
+        "claim": "Hercules defeated the Hydra with help from his nephew Iolaus and fire.",
         "verdict": "fact",
-        "explanation": "Iolaus cauterized the bleeding neck stumps with burning torches to prevent new heads from regenerating.",
+        "explanation": "Iolaus used flaming torches to stop new heads from growing back after each of Hercules' strikes.",
         "fun_fact": "Hercules buried the final immortal head under an enormous rock by the road."
       },
       {
         "claim": "The Hydra was a peaceful lake creature with harmless venom.",
         "verdict": "myth",
-        "explanation": "Even the smell of the Hydra's breath or tracks was toxic enough to kill mortals instantly.",
-        "fun_fact": "Hercules coated his arrows with Hydra venom, which later caused his own painful mortal demise."
+        "explanation": "Even the Hydra's breath was said to be so poisonous that it was very dangerous to anyone nearby.",
+        "fun_fact": "The Hydra was placed in the sky as Hydra, the largest constellation."
       }
     ],
     "versus_candidates": [
@@ -1238,6 +1263,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Chimera",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chimaera",
       "Hybrid Beast of Lycia"
@@ -1259,9 +1285,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Bellerophon killed the Chimera by thrusting a lead-tipped spear down its fiery throat.",
+        "claim": "Bellerophon defeated the Chimera while riding the winged horse Pegasus.",
         "verdict": "fact",
-        "explanation": "The beast's fiery breath melted the lead block, suffocating and burning the monster from the inside.",
+        "explanation": "Flying high on Pegasus, Bellerophon stayed safely above the Chimera's fiery breath and won the battle.",
         "fun_fact": "In modern biology, a 'chimera' refers to an organism containing cells from two different genetic sources."
       },
       {
@@ -1283,6 +1309,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Griffin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gryphon",
       "Griffon",
@@ -1329,6 +1356,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Pegasus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Winged Stallion",
       "Divine Steed of Olympus"
@@ -1337,7 +1365,7 @@
     "visual_anchor": "Pure white divine stallion with enormous feathered wings soaring majestically through sunlit cumulus clouds above Greek temples.",
     "core_traits": [
       "Mythical winged divine stallion of ancient Greek legend",
-      "Sprang from the severed neck of the Gorgon Medusa when Perseus beheaded her",
+      "Sprang into the world when the hero Perseus defeated the Gorgon Medusa",
       "Tamed with a golden bridle by the hero Bellerophon to battle the Chimera",
       "Struck Mount Helicon with his hoof to unleash the sacred Hippocrene spring of poetic inspiration"
     ],
@@ -1374,6 +1402,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Sphinx",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Riddle-Weaver",
       "Guardian of Thebes"
@@ -1395,7 +1424,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The Greek Sphinx threw herself from a high cliff to her death when Oedipus solved her riddle.",
+        "claim": "The Greek Sphinx was defeated when Oedipus solved her famous riddle.",
         "verdict": "fact",
         "explanation": "Oedipus correctly answered 'Man' (who crawls as an infant, walks on two legs, and uses a cane in old age), destroying her curse.",
         "fun_fact": "The Great Sphinx of Giza in Egypt predates the Greek myth by over a thousand years."
@@ -1419,17 +1448,18 @@
     "subtopic_id": "mythical_beasts",
     "name": "Siren",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Enchantress of the Sea",
       "Lethal Songstress"
     ],
     "difficulty": 1,
-    "visual_anchor": "Seductive half-bird half-woman winged creatures perched on jagged ocean rocks strewn with shipwrecks, singing enchanting melodies.",
+    "visual_anchor": "Mysterious half-bird half-woman winged creatures perched on jagged ocean rocks beside old shipwrecks, singing enchanting melodies.",
     "core_traits": [
       "Mythical winged creatures whose hypnotic singing lured passing sailors to shipwreck on rocky reefs",
       "Originally depicted in Greek art as birds with human female heads rather than fish-tailed mermaids",
       "Odysseus safely heard their song by having himself tied securely to the ship's mast",
-      "His crew stopped their ears with beeswax to remain immune to the seductive melody"
+      "His crew blocked their ears with beeswax so they could not hear the magical melody"
     ],
     "distractor_pool": [
       "Mermaid",
@@ -1446,10 +1476,10 @@
         "fun_fact": "The Argonauts bypassed the Sirens because musician Orpheus played louder, more beautiful music on his lyre."
       },
       {
-        "claim": "Anyone who heard the Sirens' song died instantly from poison.",
+        "claim": "The Sirens' song was poisonous to anyone who heard it.",
         "verdict": "myth",
-        "explanation": "The music itself was not poisonous; sailors were driven mad with desire and steered their vessels into razor-sharp rocks.",
-        "fun_fact": "Sirens were fated to die if any mortal ever heard their song and successfully sailed past."
+        "explanation": "The music was not poisonous; it was so enchanting that sailors steered toward it and crashed on the rocks.",
+        "fun_fact": "Some myths say the Sirens were once companions of the goddess Persephone."
       }
     ],
     "versus_candidates": [
@@ -1464,6 +1494,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Harpy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Snatchers",
       "Hounds of Zeus",
@@ -1488,14 +1519,14 @@
       {
         "claim": "The name 'Harpy' derives from the Greek word meaning 'snatchers' or 'robbers'.",
         "verdict": "fact",
-        "explanation": "The Greek verb 'harpazein' means to snatch or seize, referring to their habit of stealing people and meals.",
+        "explanation": "The Greek verb 'harpazein' means to snatch or seize, matching their habit of grabbing food and belongings.",
         "fun_fact": "The modern South American Harpy Eagle was named after these mythological beasts."
       },
       {
         "claim": "Harpies were revered as peaceful nature spirits who blessed gardens with sweet honey.",
         "verdict": "myth",
-        "explanation": "Harpies were feared as foul tormentors who left a sickening stench over everything they touched.",
-        "fun_fact": "In Dante's Inferno, Harpies nest in the Suicide Forest, torturing the transformed thorn trees."
+        "explanation": "Harpies were feared as smelly pests who swooped down and spoiled everything they touched.",
+        "fun_fact": "Harpies appear in the Roman poem the Aeneid, where they swoop down and steal the heroes' meals."
       }
     ],
     "versus_candidates": [
@@ -1510,6 +1541,7 @@
     "subtopic_id": "greek_roman",
     "name": "Gorgon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stheno",
       "Euryale",
@@ -1534,13 +1566,13 @@
       {
         "claim": "Medusa was the only mortal member of the three Gorgon sisters.",
         "verdict": "fact",
-        "explanation": "Hesiod states that Stheno and Euryale were immortal and ageless, making Medusa the only one Perseus could slay.",
-        "fun_fact": "Ancient Greek soldiers painted the Gorgoneion (Gorgon's head) on their shields to terrify enemies."
+        "explanation": "Hesiod says Stheno and Euryale were immortal and ageless, while Medusa was not.",
+        "fun_fact": "Ancient Greeks painted the Gorgon's face on shields and buildings as a protective good-luck charm."
       },
       {
-        "claim": "All three Gorgons were easily decapitated by ordinary Greek soldiers.",
+        "claim": "All three Gorgons could be easily defeated by ordinary Greek soldiers.",
         "verdict": "myth",
-        "explanation": "Stheno and Euryale could not be killed; they chased Perseus across the sea after Medusa was slain.",
+        "explanation": "Stheno and Euryale were immortal; they chased Perseus across the sky after he defeated Medusa.",
         "fun_fact": "Heracles once received a lock of Medusa's hair from Athena to protect the city of Tegea."
       }
     ],
@@ -1556,6 +1588,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Satyr",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Faun",
       "Silenus",
@@ -1565,8 +1598,8 @@
     "visual_anchor": "Joyous rustic woodland creature with human torso, pointed ears, goat horns, and furry cloven-hoofed legs playing panpipes in a sunlit grove.",
     "core_traits": [
       "Rustic nature spirit possessing human upper body, goat horns, and cloven goat legs",
-      "Devoted companions of Dionysus, god of wine, parties, and theater",
-      "Famed for love of dancing, drinking wine, chasing nymphs, and playing the aulos flute",
+      "Playful companions of Dionysus, god of festivals, parties, and theater",
+      "Famed for their love of dancing, mischief, music, and playing the aulos flute",
       "Roman equivalent is the faun, associated with the god Faunus"
     ],
     "distractor_pool": [
@@ -1602,6 +1635,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Nymph",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dryad",
       "Naiad",
@@ -1613,7 +1647,7 @@
       "Divine female nature spirit animating springs, rivers, trees, and mountains",
       "Classified by natural habitat: Naiads (freshwater), Dryads (trees), Nereids (seas), Oreads (mountains)",
       "Portrayed as eternally youthful, beautiful, and playful maidens",
-      "Closely tied to the life of their natural host; if a sacred tree died, its Dryad perished"
+      "Closely tied to their natural home; a Dryad's life was linked to her tree"
     ],
     "distractor_pool": [
       "Siren",
@@ -1648,6 +1682,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Nemean Lion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Invulnerable Lion",
       "First Labor Beast"
@@ -1655,10 +1690,10 @@
     "difficulty": 2,
     "visual_anchor": "Gigantic golden lion with impenetrable metallic fur and razor claws stalking through a rocky mountain gorge in Nemea.",
     "core_traits": [
-      "Monstrous golden lion that terrorized the hills of Nemea in ancient Greece",
-      "Possessed impenetrable golden fur that could not be pierced by bronze, stone, or iron weapons",
+      "Monstrous golden lion that frightened everyone in the hills of Nemea in ancient Greece",
+      "Possessed golden fur so tough that no bronze, stone, or iron blade could pierce it",
       "First of the legendary Twelve Labors assigned to the hero Hercules",
-      "Strangled by Hercules with his bare hands after weapons failed against its hide"
+      "Defeated by Hercules in a bare-handed wrestling match"
     ],
     "distractor_pool": [
       "Sphinx",
@@ -1669,15 +1704,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hercules skinned the Nemean Lion using its own razor-sharp claws.",
+        "claim": "Hercules used the Nemean Lion's own sharp claws to cut its tough fur.",
         "verdict": "fact",
         "explanation": "Normal blades could not cut the pelt, so Athena advised Hercules to use the lion's own claws as shears.",
         "fun_fact": "Hercules wore the pelt as an impenetrable suit of armor with the jaws serving as a helmet."
       },
       {
-        "claim": "Hercules killed the Nemean Lion by shooting a poisoned arrow through its heart.",
+        "claim": "Hercules defeated the Nemean Lion by shooting an arrow through its heart.",
         "verdict": "myth",
-        "explanation": "Arrows simply bounced harmlessly off the beast's magical hide; Hercules was forced to wrestle and choke it to death.",
+        "explanation": "Arrows bounced harmlessly off the lion's magical fur, so Hercules had to wrestle it with his bare hands.",
         "fun_fact": "Zeus commemorated the beast as the constellation Leo in the night sky."
       }
     ],
@@ -1693,6 +1728,7 @@
     "subtopic_id": "greek_roman",
     "name": "Typhon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Father of All Monsters",
       "Typhoeus",
@@ -1739,6 +1775,7 @@
     "subtopic_id": "greek_roman",
     "name": "Echidna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mother of All Monsters",
       "Viper Maiden"
@@ -1784,12 +1821,13 @@
     "subtopic_id": "mythical_beasts",
     "name": "Scylla",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Six-Headed Sea Monster",
       "Terror of the Strait"
     ],
     "difficulty": 2,
-    "visual_anchor": "Horrifying marine beast with six snapping long-necked dog-like serpent heads darting from a jagged sea cliff to snatch sailors from a galley.",
+    "visual_anchor": "Fearsome sea monster with six long-necked dog-like heads reaching out from a jagged sea cliff toward a passing wooden ship.",
     "core_traits": [
       "Monstrous sea creature dwelling in a cliffside cavern along a narrow maritime strait",
       "Possessed six ferocious heads on long necks, each armed with three rows of sharp teeth",
@@ -1829,6 +1867,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Charybdis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Whirlpool Monster",
       "Maelstrom of the Deep"
@@ -1874,6 +1913,7 @@
     "subtopic_id": "greek_roman",
     "name": "Prometheus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Friend of Mankind",
       "The Fire-Bringer",
@@ -1896,13 +1936,13 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Prometheus's daily punishment was finally ended when Hercules shot the eagle and freed him.",
+        "claim": "The hero Hercules freed Prometheus from the chains Zeus had placed on him.",
         "verdict": "fact",
-        "explanation": "During his eleventh labor, Hercules passed Mount Caucasus, killed the tormenting eagle with an arrow, and released Prometheus.",
+        "explanation": "On his travels, Hercules passed Mount Caucasus, stopped the eagle with an arrow, and set Prometheus free.",
         "fun_fact": "Mary Shelley subtitled her famous novel Frankenstein 'The Modern Prometheus'."
       },
       {
-        "claim": "Prometheus stole fire from the Underworld with the help of Hades.",
+        "claim": "Prometheus stole fire from Hades' kingdom beneath the earth.",
         "verdict": "myth",
         "explanation": "He stole celestial fire directly from Mount Olympus from the hearth of the gods or the chariot of the sun.",
         "fun_fact": "His brother Epimetheus (Afterthought) foolishly accepted Pandora and her jar."
@@ -1920,6 +1960,7 @@
     "subtopic_id": "greek_roman",
     "name": "Atlas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Celestial Bearer",
       "Titan of Endurance"
@@ -1928,7 +1969,7 @@
     "visual_anchor": "Immense bronze-skinned Titan kneeling with straining muscles beneath the colossal glowing weight of the celestial sphere.",
     "core_traits": [
       "Titan condemned by Zeus to bear the celestial heavens upon his shoulders for eternity",
-      "Leader of the Titans during the ten-year Titanomachy war against the Olympian gods",
+      "Leader of the Titans in their great ten-year struggle against the Olympian gods",
       "Tricked by Hercules into retrieving the Golden Apples of the Hesperides",
       "Turned into the Atlas Mountains in North Africa by Perseus using Medusa's head"
     ],
@@ -1965,6 +2006,7 @@
     "subtopic_id": "greek_roman",
     "name": "Cronus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kronos",
       "Saturn",
@@ -1974,9 +2016,9 @@
     "visual_anchor": "Grim ancient Titan king wielding an adamantine sickle, surrounded by cosmic hourglass sand and shattered golden thrones.",
     "core_traits": [
       "Leader and youngest of the first generation of Titans in Greek mythology",
-      "Castrated and overthrew his father Uranus with an adamantine sickle forged by Gaia",
+      "Overthrew his father Uranus with a giant sickle made by Gaia",
       "Swallowed five of his newborn children to prevent a prophecy that his son would depose him",
-      "Overthrown by his youngest son Zeus in the epic ten-year war known as the Titanomachy"
+      "Overthrown by his youngest son Zeus after a great ten-year struggle called the Titanomachy"
     ],
     "distractor_pool": [
       "Zeus",
@@ -2011,6 +2053,7 @@
     "subtopic_id": "greek_roman",
     "name": "Pan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "God of the Wild",
       "Lord of the Shepherds"
@@ -2035,13 +2078,13 @@
         "claim": "The psychological word 'panic' originates from the Greek god Pan.",
         "verdict": "fact",
         "explanation": "Pan's angry shouts when disturbed from afternoon naps caused mortals and herds to flee in blind, irrational terror (panikon).",
-        "fun_fact": "A famous legend recorded by Plutarch claimed that sailors heard a voice shouting 'Great Pan is dead!' during Tiberius's reign."
+        "fun_fact": "Pan played the syrinx, a set of reed pipes we now call panpipes."
       },
       {
         "claim": "Pan was one of the Twelve Olympian gods who lived on Mount Olympus.",
         "verdict": "myth",
         "explanation": "Pan never resided on Olympus; he lived in the rugged rustic wilderness of Arcadia.",
-        "fun_fact": "Pan assisted the Greeks at the Battle of Marathon by instilling panic in Persian ranks."
+        "fun_fact": "Pan was usually shown with goat legs and horns, much like a satyr."
       }
     ],
     "versus_candidates": [
@@ -2056,6 +2099,7 @@
     "subtopic_id": "greek_roman",
     "name": "Chiron",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Wounded Healer",
       "Wisest Centaur"
@@ -2077,15 +2121,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Chiron traded his immortality to Tartarus to relieve his eternal agonizing wound and free Prometheus.",
+        "claim": "Chiron gave up his immortality to help set Prometheus free.",
         "verdict": "fact",
-        "explanation": "Wounded by Hydra venom, immortal Chiron could not die; he gave up his immortality to end the pain and release Prometheus.",
+        "explanation": "In the myth, kind Chiron chose to give away his immortality so that Prometheus could be released.",
         "fun_fact": "Zeus honored Chiron's nobility by placing him in the stars as the constellation Centaurus."
       },
       {
-        "claim": "Chiron participated with other centaurs in the violent Centauromachy brawl.",
+        "claim": "Chiron joined the other centaurs in their famous rowdy brawl.",
         "verdict": "myth",
-        "explanation": "Chiron had completely different parentage from common centaurs and abhorred their drunken violence.",
+        "explanation": "Chiron had different parents from common centaurs and disliked their wild, rowdy behavior.",
         "fun_fact": "His front legs were often depicted with human boots in archaic Greek art to highlight his civil nature."
       }
     ],
@@ -2101,6 +2145,7 @@
     "subtopic_id": "greek_roman",
     "name": "Bellerophon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bellerophontes",
       "Slayer of the Chimera"
@@ -2146,6 +2191,7 @@
     "subtopic_id": "greek_roman",
     "name": "Jason",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leader of the Argonauts",
       "Seeker of the Fleece"
@@ -2173,10 +2219,10 @@
         "fun_fact": "Hera favored Jason throughout his quest because of that act of kindness."
       },
       {
-        "claim": "Jason died a glorious hero's death in battle against the Trojans.",
+        "claim": "Jason sailed alone on his quest for the Golden Fleece.",
         "verdict": "myth",
-        "explanation": "Jason died as a lonely, broken old man when a rotting timber from his beloved ship Argo fell and crushed him.",
-        "fun_fact": "His abandonment of Medea led to tragic revenge chronicled in Euripides' play Medea."
+        "explanation": "Jason led the Argonauts, a crew of about fifty heroes including Hercules and Orpheus, aboard the ship Argo.",
+        "fun_fact": "The Argo had a magic talking beam made from a sacred oak tree at Dodona."
       }
     ],
     "versus_candidates": [
@@ -2191,6 +2237,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Golden Fleece",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fleece of Colchis",
       "Ram's Golden Hide"
@@ -2218,9 +2265,9 @@
         "fun_fact": "The fleeces were hung in trees to dry before beating out the collected gold flakes."
       },
       {
-        "claim": "Jason killed the guardian dragon in single combat with his bare hands.",
+        "claim": "Jason defeated the guardian dragon in a wrestling match with his bare hands.",
         "verdict": "myth",
-        "explanation": "Medea brewed a sleeping draught and chanted spells to lull the dragon to sleep, allowing Jason to take the fleece.",
+        "explanation": "Medea used a magic potion and spells to lull the dragon to sleep so Jason could take the fleece.",
         "fun_fact": "The Golden Fleece became an emblem of kingship and supreme authority throughout antiquity."
       }
     ],
@@ -2236,6 +2283,7 @@
     "subtopic_id": "greek_roman",
     "name": "Pandora",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "All-Gifted",
       "First Mortal Woman"
@@ -2281,6 +2329,7 @@
     "subtopic_id": "greek_roman",
     "name": "Daedalus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Cunning Craftsman",
       "Master Architect"
@@ -2326,6 +2375,7 @@
     "subtopic_id": "greek_roman",
     "name": "Icarus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Boy Who Flew",
       "Fallen Flier"
@@ -2347,15 +2397,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The body of water where Icarus plummeted was named the Icarian Sea in his memory.",
+        "claim": "The sea where Icarus fell was named the Icarian Sea after him.",
         "verdict": "fact",
         "explanation": "The Icarian Sea is the section of the Aegean Sea south of Chios and around the island of Icaria.",
-        "fun_fact": "Hercules buried Icarus's washed-up body on the island, and Daedalus named it Icaria in gratitude."
+        "fun_fact": "The nearby Greek island of Icaria is also said to be named after him."
       },
       {
         "claim": "Icarus was struck down by a lightning bolt fired by Zeus.",
         "verdict": "myth",
-        "explanation": "No gods attacked him; his death was caused entirely by physical thermal melting of the wax when he flew too high.",
+        "explanation": "No god attacked him; he flew too close to the sun, the wax on his wings melted, and he fell.",
         "fun_fact": "His story remains the ultimate classical cautionary tale against excessive pride and hubris."
       }
     ],
@@ -2371,16 +2421,17 @@
     "subtopic_id": "greek_roman",
     "name": "King Midas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Midas of Phrygia",
       "The Golden Touch King"
     ],
     "difficulty": 1,
-    "visual_anchor": "Dismayed crowned monarch in royal velvet staring in horror at a roasted feast and wine chalice turned to solid unyielding gold.",
+    "visual_anchor": "Dismayed crowned king in royal velvet staring in shock at a feast and goblet that have turned to solid shining gold.",
     "core_traits": [
-      "Wealthy king of Phrygia granted a wish by the wine god Dionysus",
+      "Wealthy king of Phrygia granted a wish by the god Dionysus",
       "Wished that everything he touched would be turned into pure solid gold",
-      "Discovered his gift was a curse when food, wine, and his own daughter turned to stone-cold metal",
+      "Discovered his gift was a curse when even his food and drink turned to solid gold",
       "Purged of the curse by washing his hands in the sacred waters of the River Pactolus"
     ],
     "distractor_pool": [
@@ -2416,6 +2467,7 @@
     "subtopic_id": "greek_roman",
     "name": "Oedipus",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "King of Thebes",
       "Solver of the Sphinx Riddle"
@@ -2461,6 +2513,7 @@
     "subtopic_id": "greek_roman",
     "name": "Orpheus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master Musician of Thrace",
       "Husband of Eurydice"
@@ -2470,7 +2523,7 @@
     "core_traits": [
       "Greatest mortal musician, singer, and poet of ancient Greek mythology",
       "Played the lyre with such enchanting beauty that even stones and rivers moved to hear him",
-      "Ventured down into the Underworld to rescue his beloved deceased wife Eurydice",
+      "Journeyed deep beneath the earth to Hades' kingdom to bring back his wife Eurydice",
       "Forbidden to look back until reaching the upper world, he glanced back too early and lost her forever"
     ],
     "distractor_pool": [
@@ -2482,13 +2535,13 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Orpheus charmed the Underworld ruler Hades and hound Cerberus into weeping with his music.",
+        "claim": "Orpheus's music was so beautiful that it moved even the stern god Hades.",
         "verdict": "fact",
         "explanation": "Hades and Persephone were so moved by Orpheus's heartbreaking song that they agreed to release Eurydice.",
-        "fun_fact": "His music also drowned out the lethal song of the Sirens during the Argonauts' voyage."
+        "fun_fact": "His music also drowned out the Sirens' enchanting song during the Argonauts' voyage."
       },
       {
-        "claim": "Orpheus and Eurydice lived happily together for fifty years after leaving the Underworld.",
+        "claim": "Orpheus and Eurydice lived happily for fifty years after escaping Hades' kingdom.",
         "verdict": "myth",
         "explanation": "Just as he stepped into the sunlight, anxiety overwhelmed Orpheus; he turned to look at her, and she vanished back into the shadows.",
         "fun_fact": "Orphism was a prominent mystical religious movement in ancient Greece named after him."
@@ -2506,6 +2559,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Odin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Allfather",
       "Lord of the Slain",
@@ -2515,8 +2569,8 @@
     "visual_anchor": "One-eyed bearded god wearing a wide-brimmed wanderer hat and dark cloak, holding the spear Gungnir flanked by two ravens and two wolves.",
     "core_traits": [
       "Supreme ruler of Asgard and Allfather of Norse mythology",
-      "Sacrificed his eye at Mimir's well to gain supreme cosmic wisdom",
-      "Hanged himself from Yggdrasil for nine nights to unlock the magic of the runes",
+      "Gave up one of his eyes at Mimir's well to gain great wisdom",
+      "Spent nine nights on the world tree Yggdrasil to discover the magic of the runes",
       "Accompanied by twin ravens Huginn (Thought) and Muninn (Memory) and twin wolves Geri and Freki"
     ],
     "distractor_pool": [
@@ -2536,8 +2590,8 @@
       {
         "claim": "Odin survived the cataclysmic battle of Ragnarok to rule the new world.",
         "verdict": "myth",
-        "explanation": "Odin is fated to be swallowed whole and killed by the gigantic wolf Fenrir during Ragnarok.",
-        "fun_fact": "His son Vidar avenges Odin by tearing Fenrir's jaws apart with a magical boot."
+        "explanation": "In the myths, Odin is fated to be defeated by the giant wolf Fenrir during Ragnarok.",
+        "fun_fact": "His son Vidar later defeats Fenrir with the help of a magical thick boot."
       }
     ],
     "versus_candidates": [
@@ -2552,6 +2606,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Loki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Trickster God",
       "Father of Monsters",
@@ -2561,9 +2616,9 @@
     "visual_anchor": "Cunning sly-smiling deity with fiery green eyes, surrounded by dancing magical flames and illusions of shifting shapes.",
     "core_traits": [
       "Shape-shifting trickster god of Norse mythology residing among the Aesir",
-      "Son of giants Farbauti and Laufey, and blood-brother to Odin",
+      "Son of giants Farbauti and Laufey, and sworn brother of Odin",
       "Fathered the monstrous wolf Fenrir, the Midgard Serpent Jormungandr, and Hel",
-      "Orchestrated the tragic murder of the beloved god Baldur using a mistletoe dart"
+      "Played famous pranks, like secretly cutting off the goddess Sif's golden hair"
     ],
     "distractor_pool": [
       "Thor",
@@ -2598,6 +2653,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Freya",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Freyja",
       "Lady of the Vanir",
@@ -2606,8 +2662,8 @@
     "difficulty": 1,
     "visual_anchor": "Radiant golden-haired Norse goddess wearing the sparkling necklace Brisingamen, riding a chariot pulled by two large blue-gray forest cats.",
     "core_traits": [
-      "Vanir goddess of love, beauty, fertility, sex, gold, war, and seidr magic",
-      "Receives half of all fallen brave warriors into her celestial heavenly field Folkvangr",
+      "Vanir goddess of love, beauty, gold, nature, and seidr magic",
+      "Rules over a heavenly meadow called Folkvangr",
       "Owns a chariot drawn by two powerful domestic cats and a magical falcon-feather cloak",
       "Possesses the glorious sparkling golden necklace Brisingamen forged by four dwarves"
     ],
@@ -2644,6 +2700,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Frigg",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Frigga",
       "Queen of Asgard",
@@ -2675,7 +2732,7 @@
         "claim": "Frigg successfully obtained an oath from every living thing not to harm Baldur.",
         "verdict": "myth",
         "explanation": "Frigg overlooked the humble mistletoe plant, deeming it too young and harmless to extract an oath.",
-        "fun_fact": "Loki discovered this omission and crafted a mistletoe spear that killed Baldur."
+        "fun_fact": "Frigg was the wife of Odin and the queen of Asgard."
       }
     ],
     "versus_candidates": [
@@ -2690,6 +2747,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Baldur",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Balder",
       "The Shining God",
@@ -2712,16 +2770,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Baldur's death is the catalyst that sets the apocalyptic events of Ragnarok into motion.",
+        "claim": "Baldur was so bright and kind that light seemed to shine from him.",
         "verdict": "fact",
-        "explanation": "His tragic death breaks the golden age of Asgard and directly triggers the three-year Fimbulwinter preceding Ragnarok.",
-        "fun_fact": "Baldur is prophesied to return from Hel to lead the reborn cosmos after Ragnarok."
+        "explanation": "The Prose Edda says Baldur was the fairest of the gods, so bright that light shone from him.",
+        "fun_fact": "Baldur is prophesied to return and help lead a bright new world after Ragnarok."
       },
       {
-        "claim": "Baldur was burned at sea on his legendary ship Ringhorni.",
+        "claim": "Baldur's ship Ringhorni was described as the greatest ship ever built.",
         "verdict": "fact",
-        "explanation": "His funeral pyre was built aboard Ringhorni, the greatest ship ever built, which required the giantess Hyrrokkin to launch.",
-        "fun_fact": "His heartbroken wife Nanna died of grief and was laid beside him on the pyre."
+        "explanation": "Ringhorni was so huge that the gods needed the giantess Hyrrokkin to push it into the sea.",
+        "fun_fact": "Baldur's home in Asgard was called Breidablik, meaning 'Broad-Shining'."
       }
     ],
     "versus_candidates": [
@@ -2736,6 +2794,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Heimdall",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Guardian of the Bifrost",
       "The White God",
@@ -2747,7 +2806,7 @@
       "Vigilant watchman of the Aesir stationed at the Himinbjorg fortress guarding the Bifrost",
       "Possesses supernatural eyesight seeing for a hundred leagues and hearing grass grow",
       "Keeps the resonant sounding horn Gjallarhorn to warn of the arrival of Ragnarok",
-      "Fated to engage in a fatal duel to the death with the trickster Loki at Ragnarok"
+      "Fated to face the trickster Loki in a final showdown at Ragnarok"
     ],
     "distractor_pool": [
       "Thor",
@@ -2782,18 +2841,19 @@
     "subtopic_id": "norse_mythology",
     "name": "Tyr",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tiw",
       "One-Handed God",
       "Lord of Justice"
     ],
     "difficulty": 1,
-    "visual_anchor": "Steely-eyed Norse war god in weathered chainmail gripping a broadsword with his left hand, holding up his right wrist wrapped in bandages.",
+    "visual_anchor": "Steely-eyed Norse god in weathered chainmail holding a round shield in his left hand, with his right wrist wrapped in bandages.",
     "core_traits": [
-      "Norse god of lawful war, heroic combat, oaths, treaties, and cosmic justice",
-      "Sacrificed his right hand in the mouth of the monstrous wolf Fenrir as an oath guarantee",
+      "Norse god of law, oaths, treaties, justice, and bravery",
+      "Bravely placed his right hand in the giant wolf Fenrir's mouth as a promise, and lost it",
       "Famed for supreme courage, honor, and unshakeable truthfulness",
-      "Fated to duel and slay the monstrous underworld hound Garm at Ragnarok, dying of his wounds"
+      "The day Tuesday is named after him, from Old English 'Tiwesdaeg'"
     ],
     "distractor_pool": [
       "Thor",
@@ -2828,17 +2888,18 @@
     "subtopic_id": "norse_mythology",
     "name": "Valkyrie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Choosers of the Slain",
       "Shield-Maidens of Odin"
     ],
     "difficulty": 1,
-    "visual_anchor": "Fierce winged shield-maiden clad in gleaming silver armor and winged helm riding a winged steed across a storm-swept battlefield.",
+    "visual_anchor": "Fierce winged shield-maiden in gleaming silver armor and a winged helm riding a winged horse across a stormy sky.",
     "core_traits": [
       "Host of female warrior spirits serving the Allfather Odin in Norse mythology",
-      "Hover over bloody battlefields to choose who lives, who dies, and who enters Valhalla",
-      "Escort worthy fallen warriors (Einherjar) to Asgard to prepare for Ragnarok",
-      "Serve mead and feast with the fallen warriors in the high hall of Valhalla"
+      "Ride through the skies choosing the bravest heroes to join Odin's great hall, Valhalla",
+      "Lead the chosen heroes (Einherjar) to Asgard to prepare for Ragnarok",
+      "Serve the heroes at grand feasts in the golden hall of Valhalla"
     ],
     "distractor_pool": [
       "Harpy",
@@ -2849,9 +2910,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The name 'Valkyrie' translates literally in Old Norse to 'Chooser of the Slain'.",
+        "claim": "Brynhild, a famous Valkyrie, was put into a magic sleep inside a ring of fire.",
         "verdict": "fact",
-        "explanation": "Old Norse 'valr' means the slain on the battlefield and 'kyrja' means chooser.",
+        "explanation": "In Norse legends, Odin put Brynhild to sleep behind a wall of flames until the hero Sigurd woke her.",
         "fun_fact": "The Northern Lights (Aurora Borealis) were believed in folklore to be reflections of Valkyrie armor."
       },
       {
@@ -2873,6 +2934,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Fenrir",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fenris Wolf",
       "Vanargand",
@@ -2919,6 +2981,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Jormungandr",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Midgard Serpent",
       "World Serpent",
@@ -2930,7 +2993,7 @@
       "Colossal sea serpent of Norse myth, son of Loki and the giantess Angrboda",
       "Cast into the ocean by Odin, growing so large that it encircles Midgard and grasps its own tail",
       "Mortal archenemy of the thunder god Thor",
-      "Fated to battle Thor at Ragnarok, where Thor kills the serpent but dies after walking nine paces"
+      "Fated to face Thor in a mighty final battle at Ragnarok"
     ],
     "distractor_pool": [
       "Leviathan",
@@ -2950,7 +3013,7 @@
         "claim": "Jormungandr was a peaceful freshwater snake that protected Norse sailors.",
         "verdict": "myth",
         "explanation": "Jormungandr is a venomous apocalyptic titan whose writhing causes earthquakes and tsunamis.",
-        "fun_fact": "Its venom was so lethal that Thor succumbed after taking just nine steps away from its corpse."
+        "fun_fact": "Jormungandr is also called the Midgard Serpent because it circles Midgard, the human world."
       }
     ],
     "versus_candidates": [
@@ -2965,6 +3028,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Hel",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Hela",
       "Queen of the Underworld",
@@ -3011,6 +3075,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Sleipnir",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eight-Legged Steed",
       "Odin's Horse"
@@ -3020,7 +3085,7 @@
     "core_traits": [
       "Mythical eight-legged gray stallion ridden by the Allfather Odin",
       "Offspring of the trickster Loki (as a mare) and the giant stallion Svadilfari",
-      "Able to gallop effortlessly through air, over stormy seas, and down into the Underworld",
+      "Able to gallop through the air, over stormy seas, and even into the shadowy land beneath the world",
       "Hailed as the best and fastest of all horses in Norse mythology"
     ],
     "distractor_pool": [
@@ -3032,15 +3097,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hermod rode Sleipnir to the underworld of Helheim to plead for Baldur's release.",
+        "claim": "The god Hermod rode Sleipnir on a long journey to ask for Baldur's return.",
         "verdict": "fact",
-        "explanation": "Hermod leapt over the massive gates of Helheim on Sleipnir, a feat impossible for any other steed.",
+        "explanation": "Sleipnir leapt clean over a giant gate that no other horse could ever have jumped.",
         "fun_fact": "Runes were said to be carved into Sleipnir's teeth."
       },
       {
         "claim": "Sleipnir was forged out of solid iron by the master dwarf blacksmiths.",
         "verdict": "myth",
-        "explanation": "Sleipnir was a living flesh-and-blood horse born naturally from Loki after his shapeshifting liaison.",
+        "explanation": "Sleipnir was a living horse, born to Loki after the trickster shapeshifted into a mare.",
         "fun_fact": "Archaeological 8th-century Gotland picture stones frequently depict Odin riding an eight-legged horse."
       }
     ],
@@ -3056,6 +3121,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Surtr",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Surt",
       "Lord of Muspelheim",
@@ -3102,6 +3168,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Ymir",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aurgelmir",
       "Primeval Giant",
@@ -3148,6 +3215,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Nidhogg",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Nidhoggr",
       "Malice Striker",
@@ -3194,6 +3262,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Ratatoskr",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Drill-Tooth",
       "Messenger Squirrel of Yggdrasil"
@@ -3221,10 +3290,10 @@
         "fun_fact": "Ratatoskr takes immense mischievous pleasure in keeping the dragon and eagle enraged at each other."
       },
       {
-        "claim": "Ratatoskr was a fire-breathing monster who devoured Viking warriors.",
+        "claim": "Ratatoskr was a giant fire-breathing monster.",
         "verdict": "myth",
-        "explanation": "Ratatoskr is an ordinary-looking red tree squirrel whose only weapon is sharp-tongued slander.",
-        "fun_fact": "He is depicted in modern video games like God of War Ragnarok and Smite."
+        "explanation": "Ratatoskr is an ordinary-looking red squirrel whose only trick is carrying cheeky messages.",
+        "fun_fact": "He scurries up and down Yggdrasil, the enormous world tree of Norse mythology."
       }
     ],
     "versus_candidates": [
@@ -3239,6 +3308,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Fafnir",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fafnir",
       "Curse-Hoarding Dragon",
@@ -3248,9 +3318,9 @@
     "visual_anchor": "Armored venom-spitting dragon coiled atop a glittering hoard of golden arm-rings and gems, hissing down into a concealed earthen trench.",
     "core_traits": [
       "Son of dwarf king Hreidmar transformed by greed into a monstrous dragon",
-      "Murdered his own father to claim the cursed gold of Andvari and the ring Andvaranaut",
-      "Wore the terrifying Aegis-helm (Helm of Awe) that struck horror into any who beheld it",
-      "Slain by hero Sigurd, who dug a pit beneath the dragon's path and thrust his sword Gram into its heart"
+      "Grew greedy for the cursed gold of Andvari and the magic ring Andvaranaut",
+      "Wore the Aegis-helm (Helm of Awe), which filled anyone who saw it with fear",
+      "Defeated by the hero Sigurd with the mighty sword Gram"
     ],
     "distractor_pool": [
       "Sigurd",
@@ -3261,10 +3331,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Sigurd gained the ability to understand the speech of birds after tasting Fafnir's roasted heart.",
+        "claim": "After defeating Fafnir, Sigurd magically gained the power to understand birds.",
         "verdict": "fact",
-        "explanation": "When testing if the dragon's heart was cooked, Sigurd burned his thumb, sucked the blood, and instantly understood the birds overhead.",
-        "fun_fact": "The birds warned him that his mentor Regin planned to betray and assassinate him."
+        "explanation": "In the Volsunga saga, a taste of the dragon's magic let Sigurd understand the birds chattering overhead.",
+        "fun_fact": "The birds warned him that his mentor Regin planned to trick him."
       },
       {
         "claim": "Fafnir was born as a winged dragon who flew over the mountains of Norway.",
@@ -3285,6 +3355,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Sigurd",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Siegfried",
       "Dragon-Slayer",
@@ -3307,15 +3378,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "In the Nibelungenlied, a linden leaf fell onto Sigurd's back while bathing in dragon blood, leaving a vulnerable spot.",
+        "claim": "In the Nibelungenlied, a linden leaf left one weak spot on the hero's back.",
         "verdict": "fact",
-        "explanation": "Much like Achilles' heel, the leaf blocked the dragon's blood, allowing the treacherous Hagen to spear him in that exact spot.",
+        "explanation": "Like Achilles' heel, the leaf left one small patch of his skin without the dragon's magical protection.",
         "fun_fact": "Richard Wagner centered his four-opera Ring Cycle (Der Ring des Nibelungen) around him."
       },
       {
-        "claim": "Sigurd was killed by the dragon Fafnir during their duel.",
+        "claim": "Sigurd was defeated by the dragon Fafnir during their duel.",
         "verdict": "myth",
-        "explanation": "Sigurd killed Fafnir without taking a scratch; his death came years later through political betrayal by his brothers-in-law.",
+        "explanation": "Sigurd won by cleverly hiding in a pit along the dragon's path, following advice from Odin.",
         "fun_fact": "He rode through a ring of enchanted fire to awaken the sleeping Valkyrie Brynhild."
       }
     ],
@@ -3331,6 +3402,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Beowulf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Geatish Hero",
       "Slayer of Grendel",
@@ -3353,15 +3425,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Beowulf refused to use any weapons or shield when fighting Grendel.",
+        "claim": "Beowulf chose to face Grendel without a sword or shield.",
         "verdict": "fact",
-        "explanation": "Because Grendel fought without weapons, Beowulf deemed it dishonorable to use a blade, relying solely on his bare hands.",
+        "explanation": "Because Grendel used no sword, Beowulf thought it fair to use only his bare hands.",
         "fun_fact": "Swords were useless anyway, as Grendel had cast a spell bewitching all mortal steel blades."
       },
       {
-        "claim": "Beowulf died in his youth immediately after defeating Grendel's mother.",
+        "claim": "Beowulf stayed young for his whole story and never became king.",
         "verdict": "myth",
-        "explanation": "Beowulf ruled the Geats peacefully as king for fifty years before dying in old age fighting a fire-breathing dragon.",
+        "explanation": "Beowulf ruled the Geats peacefully as king for fifty years, and in old age faced a fire-breathing dragon.",
         "fun_fact": "Only his faithful kinsman Wiglaf stayed by his side during his final dragon battle."
       }
     ],
@@ -3377,6 +3449,7 @@
     "subtopic_id": "norse_mythology",
     "name": "Grendel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shadow-Stalker",
       "Fiend of the Moors",
@@ -3385,10 +3458,10 @@
     "difficulty": 1,
     "visual_anchor": "Grotesque towering swamp monster with matted hair and savage claws emerging from misty fen waters under a pale moonlight.",
     "core_traits": [
-      "Monstrous humanoid brute terrorizing King Hrothgar's Danish mead hall Heorot",
-      "Descendant of the biblical fratricide Cain, cursed to dwell in dark swamps and fens",
-      "Raided Heorot nightly for twelve years, slaughtering and devouring sleeping warriors",
-      "Mortally wounded when Beowulf ripped off his arm and shoulder in hand-to-hand combat"
+      "Monstrous giant who troubled King Hrothgar's great Danish feasting hall Heorot",
+      "A lonely creature who lived in dark swamps and misty fens",
+      "Visited Heorot by night for twelve years, frightening King Hrothgar's people",
+      "Defeated by Beowulf in a mighty bare-handed wrestling match"
     ],
     "distractor_pool": [
       "Beowulf",
@@ -3399,10 +3472,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Grendel's skin was impervious to human iron swords and forged weapons.",
+        "claim": "Grendel's skin could not be cut by ordinary swords.",
         "verdict": "fact",
-        "explanation": "Grendel laid an enchantment upon every weapon so that no mortal sword could cut his flesh, forcing Beowulf to wrestle him.",
-        "fun_fact": "Hrothgar's warriors hung Grendel's severed arm and claw from the hall rafters as a trophy."
+        "explanation": "A magic spell protected Grendel from every ordinary sword, so Beowulf had to wrestle him.",
+        "fun_fact": "The poem Beowulf survives in a single manuscript about 1,000 years old."
       },
       {
         "claim": "Grendel was a dragon that breathed fire over the Danish villages.",
@@ -3423,6 +3496,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Ra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Re",
       "Sun God",
@@ -3433,7 +3507,7 @@
     "core_traits": [
       "Supreme sun god and king of the gods in ancient Egyptian religion",
       "Sails the solar barque Mandjet across the sky by day, bringing light and life to earth",
-      "Journeys through the twelve gates of the Underworld (Duat) each night in the barque Mesektet",
+      "Sails through the twelve hours of night in a hidden realm called the Duat",
       "Battles the primordial giant serpent of chaos Apep (Apophis) every night before sunrise"
     ],
     "distractor_pool": [
@@ -3451,9 +3525,9 @@
         "fun_fact": "Humanity was believed to have been born from the tears of joy shed by Ra's all-seeing Eye."
       },
       {
-        "claim": "Ra was completely extinguished and died permanently during every solar eclipse.",
+        "claim": "Egyptians believed Ra disappeared forever during every solar eclipse.",
         "verdict": "myth",
-        "explanation": "An eclipse was interpreted as Apep temporarily swallowing Ra's barque, which the gods quickly cut open to restore daylight.",
+        "explanation": "Some stories explained an eclipse as the serpent Apep briefly attacking Ra's sun boat before daylight returned.",
         "fun_fact": "Pharaohs claimed the title 'Son of Ra' starting from the Fourth Dynasty."
       }
     ],
@@ -3469,6 +3543,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Anubis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anpu",
       "Lord of the Sacred Land",
@@ -3480,7 +3555,7 @@
       "Jackal-headed ancient Egyptian god of mummification, embalming, tombs, and the afterlife",
       "Weighs the heart of the deceased against the Feather of Ma'at in the Hall of Two Truths",
       "Depicted with the head of a desert jackal colored pitch black, symbolizing rebirth and fertile Nile soil",
-      "Guards tombs from desecration and safely guides departed souls into the Underworld"
+      "Guards tombs and gently guides souls on their journey to the afterlife"
     ],
     "distractor_pool": [
       "Osiris",
@@ -3497,7 +3572,7 @@
         "fun_fact": "Egyptian jackals were actually golden-brown; genetic tests revealed they are actually African golden wolves."
       },
       {
-        "claim": "Anubis was the ruthless, evil villain of Egyptian mythology who tortured damned souls.",
+        "claim": "Anubis was the evil villain of Egyptian mythology.",
         "verdict": "myth",
         "explanation": "Anubis was a protective, benevolent guardian who ensured fair judgment and preserved mortal bodies for eternal life.",
         "fun_fact": "Embalming priests wore wooden jackal masks to embody Anubis during mummification rituals."
@@ -3515,18 +3590,18 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Osiris",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Lord of the Dead",
       "King of the Afterlife",
       "Wennefer"
     ],
     "difficulty": 1,
     "visual_anchor": "Mummified king with green skin holding the golden crook and flail, wearing the tall white Atef crown within the Hall of Judgment.",
     "core_traits": [
-      "Lord of the Underworld, supreme judge of the dead, and god of resurrection and fertility",
+      "Egyptian god of the afterlife, rebirth, and growing crops",
       "Portrayed with green skin symbolizing agricultural vegetation and rebirth",
-      "Murdered and dismembered into fourteen pieces by his jealous brother Set",
-      "Restored to life by his devoted wife Isis and made eternal ruler of the realm of the dead"
+      "Tricked into a beautiful wooden chest by his jealous brother Set",
+      "Brought back by the magic of his devoted wife Isis to rule the afterlife"
     ],
     "distractor_pool": [
       "Ra",
@@ -3539,7 +3614,7 @@
       {
         "claim": "Egyptian farmers associated the annual flooding of the Nile with the resurrection of Osiris.",
         "verdict": "fact",
-        "explanation": "Sprouting crops bursting through black soil symbolized Osiris rising from death to bestow nourishment upon Egypt.",
+        "explanation": "Crops sprouting through the black soil symbolized Osiris coming back to life to feed Egypt.",
         "fun_fact": "Miniature 'corn mummies' filled with barley and sand were buried to ensure good crop harvests."
       },
       {
@@ -3561,6 +3636,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Isis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aset",
       "Mother of Horus",
@@ -3607,6 +3683,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Horus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heru",
       "The Sky Falcon",
@@ -3616,9 +3693,9 @@
     "visual_anchor": "Regal falcon-headed god wearing the dual red-and-white Pschent crown of Upper and Lower Egypt, carrying a golden spear.",
     "core_traits": [
       "Falcon-headed god of the sky, divine kingship, and justice in ancient Egyptian religion",
-      "Son of Osiris and Isis who avenged his father's murder in epic contests against his uncle Set",
+      "Son of Osiris and Isis who won the throne in epic contests against his uncle Set",
       "Living Pharaoh was considered the earthly incarnation and physical embodiment of Horus",
-      "Lost his left eye in battle against Set, which was restored to become the sacred Eye of Horus (Wedjat)"
+      "Lost his left eye in a struggle with Set; it was healed to become the sacred Eye of Horus (Wedjat)"
     ],
     "distractor_pool": [
       "Ra",
@@ -3635,9 +3712,9 @@
         "fun_fact": "Sailors painted the Eye of Horus on the bows of ships to ensure safe navigation."
       },
       {
-        "claim": "Horus was born after his father Osiris had already departed to rule the underworld.",
+        "claim": "Horus was born after his father Osiris became king of the afterlife.",
         "verdict": "fact",
-        "explanation": "Isis used her supreme magic to posthumously conceive Horus after reviving Osiris's reconstructed body.",
+        "explanation": "Isis used her powerful magic to briefly revive Osiris, and later gave birth to their son Horus.",
         "fun_fact": "His legendary temple at Edfu is one of the best-preserved temples in Egypt."
       }
     ],
@@ -3653,6 +3730,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Set",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seth",
       "Lord of Chaos",
@@ -3661,9 +3739,9 @@
     "difficulty": 1,
     "visual_anchor": "Lean muscular deity with the head of an enigmatic composite Set beast with curved snout and squared ears, clutching a dark scepter amidst desert sandstorms.",
     "core_traits": [
-      "God of chaos, violence, deserts, storms, foreigners, and disorder in Egyptian myth",
+      "God of chaos, deserts, storms, and foreign lands in Egyptian myth",
       "Depicted with the head of the mysterious 'Set animal' with tall squared ears and downturned snout",
-      "Jealously assassinated his brother Osiris to usurp the throne of Egypt",
+      "Jealously tricked his brother Osiris to take the throne of Egypt",
       "Served an essential protective cosmic role defending Ra's solar boat from Apep every night"
     ],
     "distractor_pool": [
@@ -3675,7 +3753,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Despite murdering Osiris, Set was honored for nightly saving Ra from the giant serpent Apep.",
+        "claim": "Even though he was a troublemaker, Set helped protect Ra from the serpent Apep.",
         "verdict": "fact",
         "explanation": "Set stood at the prow of the sun barge with his copper spear, driving back the chaos serpent Apep when other gods were paralyzed.",
         "fun_fact": "Several Nineteenth Dynasty pharaohs took the royal name Seti (man of Set), including Seti I."
@@ -3699,6 +3777,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Bastet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bast",
       "Cat Goddess",
@@ -3724,7 +3803,7 @@
         "claim": "Thousands of mummified cats were buried in sacred catacombs at Bastet's temple in Bubastis.",
         "verdict": "fact",
         "explanation": "Excavations at Bubastis uncovered vast cemeteries containing over 300,000 carefully embalmed and wrapped cats as votive offerings.",
-        "fun_fact": "Killing a cat in ancient Egypt, even accidentally, was punishable by death."
+        "fun_fact": "Harming a cat in ancient Egypt was considered a very serious crime."
       },
       {
         "claim": "Bastet was considered an evil demon that brought bad luck and black magic into homes.",
@@ -3745,6 +3824,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Thoth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Djehuty",
       "God of Wisdom",
@@ -3754,7 +3834,7 @@
     "visual_anchor": "Scholarly deity with the slender curved head of an African sacred ibis, holding a reed scribe pen and papyrus scroll by moonlight.",
     "core_traits": [
       "Ibis-headed god of wisdom, writing, mathematics, astronomy, hieroglyphs, and magic",
-      "Invented writing and served as the divine scribe recording the judgment of souls in the underworld",
+      "Invented writing and served as the scribe of the gods, recording every important decision",
       "Represented by either the sacred curved-beaked ibis bird or the clever baboon",
       "Mediated disputes among gods and maintained the mathematical harmony of the universe"
     ],
@@ -3791,6 +3871,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Sobek",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Crocodile God",
       "Lord of the Semen",
@@ -3815,7 +3896,7 @@
       {
         "claim": "Temples dedicated to Sobek kept sacred living crocodiles adorned with gold earrings and crystal bracelets.",
         "verdict": "fact",
-        "explanation": "At Crocodilopolis, priests pampered a sacred crocodile named Petsuchos with roast meat and jewels, mummifying it upon death.",
+        "explanation": "At Crocodilopolis, priests pampered a sacred crocodile named Petsuchos with fine food and sparkling jewels.",
         "fun_fact": "The Crocodile Museum at Kom Ombo displays dozens of authentic crocodile mummies."
       },
       {
@@ -3837,17 +3918,17 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Sekhmet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Powerful One",
-      "Eye of Ra",
-      "Lady of Slaughter"
+      "Eye of Ra"
     ],
     "difficulty": 1,
-    "visual_anchor": "Fierce lioness-headed goddess crowned with a glowing solar disk and rearing uraeus, clad in blood-red robes holding a lotus scepter.",
+    "visual_anchor": "Fierce lioness-headed goddess crowned with a glowing solar disk and rearing uraeus, clad in bright red robes holding a lotus scepter.",
     "core_traits": [
-      "Lioness goddess of war, divine vengeance, fire, solar fury, and healing in ancient Egypt",
-      "Personification of the destructive burning 'Eye of Ra' sent to punish rebellious mankind",
-      "Her fiery breath was believed to create the hot desert winds and infectious plagues",
+      "Lioness goddess of fire, solar power, and healing in ancient Egypt",
+      "Fiery form of the 'Eye of Ra', sent by Ra when humans disobeyed him",
+      "Her fiery breath was believed to create the hot desert winds",
       "Dual nature: brought plagues when angry, but was also patron goddess of physicians and healing"
     ],
     "distractor_pool": [
@@ -3859,10 +3940,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Ra stopped Sekhmet's slaughter of humanity by tricking her into drinking beer dyed red with pomegranate juice.",
+        "claim": "Sekhmet's name means 'the Powerful One' in ancient Egyptian.",
         "verdict": "fact",
-        "explanation": "Ra flooded fields with 7,000 jars of red beer; Sekhmet mistook it for human blood, drank greedily, fell asleep, and spared humanity.",
-        "fun_fact": "When she awakened peaceful and pacified, she transformed into the gentle goddess Hathor."
+        "explanation": "Her name comes from the Egyptian word 'sekhem', meaning power or might.",
+        "fun_fact": "In one legend, Sekhmet calmed down and became the gentle goddess Hathor."
       },
       {
         "claim": "Sekhmet was depicted as a timid domestic kitten.",
@@ -3883,6 +3964,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Hathor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lady of the Sycamore",
       "Goddess of Joy",
@@ -3893,7 +3975,7 @@
     "core_traits": [
       "Beloved ancient Egyptian goddess of joy, music, dance, love, motherhood, and sky",
       "Depicted as a beautiful woman with cow horns and sun disk, or entirely as a sacred maternal cow",
-      "Welcomed departed souls into the afterlife with bread, beer, and cool water from the sacred sycamore",
+      "Welcomed travelers to the afterlife with bread and cool water from the sacred sycamore tree",
       "Celebrated in grand architectural splendor at the Temple of Dendera"
     ],
     "distractor_pool": [
@@ -3929,6 +4011,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Anput",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anupet",
       "Female Anubis",
@@ -3975,6 +4058,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Ammit",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Ammut",
       "Devourer of the Dead",
@@ -3983,10 +4067,10 @@
     "difficulty": 1,
     "visual_anchor": "Fearsome chimera beast with the front of a crocodile, torso of a lion, and hindquarters of a hippopotamus crouching eagerly beside golden scales.",
     "core_traits": [
-      "Fearsome funerary demoness in the ancient Egyptian Hall of Two Truths",
-      "Composite hybrid body combining the three man-eating predators of Egypt: crocodile head, lion body, hippo hindquarters",
+      "Fearsome mythical creature in the ancient Egyptian Hall of Two Truths",
+      "Hybrid body combining Egypt's three fiercest animals: crocodile head, lion body, hippo hindquarters",
       "Sat beside the Scales of Justice while Anubis weighed the deceased's heart against Ma'at's feather",
-      "Devoured hearts heavier than the feather of truth, condemning wicked souls to the 'second death' of eternal oblivion"
+      "Waited to gobble up any heart that was heavier than the feather of truth"
     ],
     "distractor_pool": [
       "Anubis",
@@ -3999,13 +4083,13 @@
       {
         "claim": "Ammit was never worshipped as a goddess in ancient Egyptian temples.",
         "verdict": "fact",
-        "explanation": "Ammit was a terrifying monster to be averted, not revered; no cult temples or regular sacrifices were made to her.",
+        "explanation": "Ammit was a scary creature people hoped to avoid, not honor; she had no temples of her own.",
         "fun_fact": "Egyptians placed scarab amulets over the heart to forbid it from testifying against them."
       },
       {
-        "claim": "If Ammit ate a person's soul, they were sent to burn in a fiery Christian hell.",
+        "claim": "Ammit was an Egyptian goddess of love and music.",
         "verdict": "myth",
-        "explanation": "Consumption by Ammit resulted in total non-existence (uncreation), which Egyptians feared far worse than physical torment.",
+        "explanation": "That was Hathor; Ammit was a fearsome creature who waited beside the scales of judgment.",
         "fun_fact": "Souls spared by Ammit entered the blissful reed paradise of Aaru."
       }
     ],
@@ -4021,6 +4105,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Apep",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apophis",
       "Serpent of Chaos",
@@ -4030,7 +4115,7 @@
     "visual_anchor": "Gigantic abyssal serpent with pitch-black scales and burning sulfurous eyes coiling through the murky subterranean waters of the Duat.",
     "core_traits": [
       "Gigantic primordial serpent of chaos, darkness, and non-being in Egyptian mythology",
-      "Archenemy of the sun god Ra, dwelling in the dark depths of the underworld Duat",
+      "Archenemy of the sun god Ra, lurking in the dark realm of the Duat",
       "Attempts every single night to swallow the sun barque and plunge the cosmos into eternal darkness",
       "Repelled each morning through the combined strength of Set, Bastet, and divine magic"
     ],
@@ -4045,11 +4130,11 @@
       {
         "claim": "Egyptian priests performed daily rituals chanting the 'Book of Overcoming Apep' to weaken the serpent.",
         "verdict": "fact",
-        "explanation": "Temple priests crafted wax figurines of Apep, stamped on them, stabbed them, and burned them in fires to magically assist Ra.",
+        "explanation": "Priests made little wax figures of Apep and melted them in fires to magically help Ra win.",
         "fun_fact": "Near-Earth asteroid 99942 Apophis was named after this chaos serpent."
       },
       {
-        "claim": "Apep was slain once and for all by Hercules in ancient times.",
+        "claim": "Apep was defeated once and for all by Hercules in ancient times.",
         "verdict": "myth",
         "explanation": "Apep can never be permanently destroyed; he must be fought and defeated anew every single night for eternity.",
         "fun_fact": "Apep had no eyes or ears, sensing the sun barque solely through vibrations."
@@ -4067,6 +4152,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Bennu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bennu Bird",
       "Heron of Creation",
@@ -4113,6 +4199,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Serket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Selket",
       "The Scorpion Goddess",
@@ -4159,6 +4246,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Khepri",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Khepera",
       "The Scarab God",
@@ -4170,7 +4258,7 @@
       "Scarab-headed ancient Egyptian god representing the morning sun, creation, and continuous rebirth",
       "Morning manifestation of the solar deity Ra rising above the eastern horizon",
       "Associated with the sacred dung beetle rolling balls of earth across the ground",
-      "Symbol of spontaneous generation and spiritual renewal after death"
+      "Symbol of new beginnings and the fresh start of every sunrise"
     ],
     "distractor_pool": [
       "Ra",
@@ -4187,7 +4275,7 @@
         "fun_fact": "His name Khepri comes from the verb 'kheper', meaning 'to emerge' or 'to come into being'."
       },
       {
-        "claim": "Khepri was the Egyptian god of underworld mummification and embalming.",
+        "claim": "Khepri was the Egyptian god of mummification and embalming.",
         "verdict": "myth",
         "explanation": "Khepri represented dawn, life, and sunrise; Anubis was the god of mummification.",
         "fun_fact": "Winged scarab amulets of Khepri were placed on the chests of mummies to ensure resurrection."
@@ -4205,6 +4293,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Ptah",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Creator of Memphis",
       "Patron of Craftsmen",
@@ -4233,7 +4322,7 @@
         "fun_fact": "The Shabaka Stone preserves the profound theological text known as the Memphite Theology."
       },
       {
-        "claim": "Ptah was a bloodthirsty warrior deity worshipped only on battlefields.",
+        "claim": "Ptah was a fierce storm god who disliked art and building.",
         "verdict": "myth",
         "explanation": "Ptah was a peaceful intellectual creator god celebrated for art, masonry, architecture, and craftsmanship.",
         "fun_fact": "The Greeks identified Ptah with their blacksmith god Hephaestus."
@@ -4251,6 +4340,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Khonsu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Khonshu",
       "The Moon Traveler",
@@ -4297,6 +4387,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Ankh",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Key of Life",
       "Breath of Life",
@@ -4325,9 +4416,9 @@
         "fun_fact": "Mirrors in ancient Egypt were frequently crafted in the shape of an Ankh, playing on words for mirror and life."
       },
       {
-        "claim": "The Ankh was an execution weapon used by Egyptian soldiers to defeat enemies.",
+        "claim": "The Ankh was a magic key used to open Egyptian pyramids.",
         "verdict": "myth",
-        "explanation": "The Ankh was never a weapon; it was an auspicious religious symbol of physical and spiritual vitality.",
+        "explanation": "The Ankh was never a real key; it was a sacred symbol of life, often called the 'key of life'.",
         "fun_fact": "Tutankhamun's name translates literally to 'Living Image of Amun' (ankh-tut-amun)."
       }
     ],
@@ -4343,6 +4434,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Scarab Amulet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heart Scarab",
       "Sacred Beetle Amulet"
@@ -4352,8 +4444,8 @@
     "core_traits": [
       "One of the most popular and sacred protective amulets in ancient Egyptian history",
       "Fashioned in the likeness of the dung beetle (Scarabaeus sacer) rolling the solar ball",
-      "Heart scarabs were placed over the mummified heart to prevent it from testifying against the deceased",
-      "Inscribed on the flat underside with Chapter 30B of the Egyptian Book of the Dead"
+      "Heart scarabs were placed over the hearts of mummies as special protective charms",
+      "Often inscribed on the flat underside with magical spells written in hieroglyphs"
     ],
     "distractor_pool": [
       "Ankh",
@@ -4388,6 +4480,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Ma'at",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Goddess of Truth",
       "Cosmic Order",
@@ -4434,6 +4527,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Taweret",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tauret",
       "The Great One",
@@ -4480,6 +4574,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Hapi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lord of the River",
       "God of the Nile Flood"
@@ -4525,15 +4620,15 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Neith",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nit",
-      "Mother of Ra",
-      "Mistress of the Bow"
+      "Mother of Ra"
     ],
     "difficulty": 2,
     "visual_anchor": "Ancient warrior goddess wearing the red Deshret crown of Lower Egypt, holding a bow and two crossed arrows with regal authority.",
     "core_traits": [
-      "One of Egypt's oldest primordial creator goddesses and deity of hunting, warfare, and weaving",
+      "One of Egypt's oldest creator goddesses and deity of hunting and weaving",
       "Depicted wearing the Red Crown of Lower Egypt and holding crossed arrows and a shield",
       "Worshipped at Sais in the western Nile Delta since predynastic times",
       "Considered an uncreated primeval mother who wove the cosmos on her divine loom"
@@ -4553,9 +4648,9 @@
         "fun_fact": "Her temple at Sais bore the inscription: 'I am all that has been, and is, and shall be, and my robe no mortal has yet unveiled'."
       },
       {
-        "claim": "Neith was exclusively a goddess of domestic cooking with no connection to weapons.",
+        "claim": "Neith was only a goddess of cooking, with no link to hunting.",
         "verdict": "myth",
-        "explanation": "Neith was foremost a warrior and huntress whose sacred emblem consisted of two crossed arrows on an animal shield.",
+        "explanation": "Neith was a mighty huntress whose sacred emblem showed two crossed arrows on a shield.",
         "fun_fact": "She was summoned as supreme arbiter in the dispute between Horus and Set."
       }
     ],
@@ -4571,6 +4666,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Bes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beset",
       "Protector of the Home",
@@ -4582,7 +4678,7 @@
       "Beloved ancient Egyptian household deity protecting mothers, infants, sleep, and families",
       "Depicted as a lion-featured dwarf sticking out his tongue, wearing a feathered crown and leopard skin",
       "Rarely shown in profile; unusually depicted full-face in Egyptian art to confront evil head-on",
-      "Danced, made funny faces, and played drums to scare away nightmares, scorpions, and demons"
+      "Danced, made funny faces, and played drums to scare away bad dreams, scorpions, and evil spirits"
     ],
     "distractor_pool": [
       "Taweret",
@@ -4617,6 +4713,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Wadjet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Green One",
       "Uraeus Cobra",
@@ -4663,6 +4760,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Nekhbet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The White One",
       "Vulture Goddess",
@@ -4709,6 +4807,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Imhotep",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great Architect",
       "God of Medicine",
@@ -4719,7 +4818,7 @@
     "core_traits": [
       "Historic genius polymath, royal architect to Pharaoh Djoser, and pioneer of stone architecture",
       "Designed the revolutionary Step Pyramid of Djoser at Saqqara, the world's first colossal stone building",
-      "Deified 2,000 years after his death as the god of medicine, healing, and architecture",
+      "Honored as a god of medicine, healing, and architecture long after his lifetime",
       "Equated by Hellenistic Greeks with Asclepius, the Greek god of medicine"
     ],
     "distractor_pool": [
@@ -4755,6 +4854,7 @@
     "subtopic_id": "egyptian_mythology",
     "name": "Cleopatra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cleopatra VII",
       "Queen of the Nile",
@@ -4765,8 +4865,8 @@
     "core_traits": [
       "Last active ruler of the Ptolemaic Kingdom of Egypt, legendary for intellect, charisma, and diplomacy",
       "Presented herself to subjects as the living terrestrial incarnation of the goddess Isis (Nea Isis)",
-      "Formed fateful romantic and political alliances with Julius Caesar and Mark Antony",
-      "Immortalized in legend for choosing death by venomous asp rather than submission to Octavian"
+      "Formed powerful political alliances with the Roman leaders Julius Caesar and Mark Antony",
+      "Spoke many languages and was the first ruler of her dynasty to learn Egyptian"
     ],
     "distractor_pool": [
       "Nefertiti",
@@ -4801,6 +4901,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Sun Wukong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Monkey King",
       "Great Sage Equal to Heaven",
@@ -4812,7 +4913,7 @@
       "Legendary mythical stone-born monkey hero of the Chinese classic Journey to the West",
       "Possesses superhuman strength, 72 earthly transformations, and leaps 108,000 li on a cloud",
       "Wields the As-You-Will Gold-Banded Cudgel (Ruyi Jingu Bang) weighing 13,500 pounds",
-      "Achieved multiple layers of immortality by erasing his name from the Book of Life and Death and eating immortal peaches"
+      "Became immortal several times over by eating Heaven's magic peaches and Laozi's golden pills"
     ],
     "distractor_pool": [
       "Nezha",
@@ -4847,6 +4948,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Jade Emperor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yu Huang",
       "Heavenly Grandfather",
@@ -4893,6 +4995,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Nezha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Third Lotus Prince",
       "Marshal of the Central Altar",
@@ -4915,13 +5018,13 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Nezha sliced his own flesh and carved his bones to return them to his parents after battling the Dragon King.",
+        "claim": "Nezha's teacher Taiyi Zhenren gave him a new body made from lotus flowers.",
         "verdict": "fact",
-        "explanation": "To save his family and town from the Dragon Kings' flooding wrath, Nezha committed filial suicide and returned his body to his parents.",
-        "fun_fact": "His mentor Taiyi Zhenren resurrected him with an immortal body made of lotus flowers."
+        "explanation": "After Nezha's big trouble with the Dragon King, his teacher rebuilt him a magical body from lotus flowers and leaves.",
+        "fun_fact": "Nezha is often shown riding on two Wind Fire Wheels that let him zoom through the sky."
       },
       {
-        "claim": "Nezha's signature weapon was a giant iron club forged by dwarves.",
+        "claim": "Nezha's most famous magic tool was a giant iron club made by dwarves.",
         "verdict": "myth",
         "explanation": "Nezha wields the Fire-Tipped Spear, the Universe Ring (Qiankun Quan), and the red Armillary Sash (Huntian Ling).",
         "fun_fact": "Nezha is widely worshipped as the patron god of truck, bus, and taxi drivers in Taiwan."
@@ -4939,6 +5042,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Erlang Shen",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yang Jian",
       "Three-Eyed God",
@@ -4970,7 +5074,7 @@
         "claim": "Erlang Shen's third eye was a physical wound inflicted by an arrow.",
         "verdict": "myth",
         "explanation": "His third eye is a divine organ of celestial perception capable of discerning truth from falsehood across all realms.",
-        "fun_fact": "His weapon is the unique Three-Pointed, Double-Edged Spear."
+        "fun_fact": "He is often shown with a loyal heavenly hound named Xiaotian."
       }
     ],
     "versus_candidates": [
@@ -4985,6 +5089,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Nine-Tailed Fox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kitsune",
       "Huli Jing",
@@ -5031,15 +5136,16 @@
     "subtopic_id": "mythical_beasts",
     "name": "Tanuki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bake-danuki",
       "Japanese Raccoon Dog"
     ],
     "difficulty": 1,
-    "visual_anchor": "Chubby jolly raccoon dog standing upright wearing a straw hat, carrying a ceramic sake flask and promissory note outside a traditional tavern.",
+    "visual_anchor": "Chubby jolly raccoon dog standing upright wearing a straw hat, holding a ceramic jug and a paper note outside a traditional Japanese shop.",
     "core_traits": [
       "Mischievous shape-shifting yokai based on the Japanese raccoon dog (Nyctereutes viverrinus)",
-      "Depicted with a prominent round belly, straw traveler hat, sake bottle, and empty promissory note",
+      "Depicted with a prominent round belly, straw traveler hat, a big jug, and an IOU note",
       "Master of illusions, turning leaves into fake gold coins and shapeshifting into teapots and humans",
       "Symbol of good fortune, conviviality, prosperity, and playful humor throughout Japan"
     ],
@@ -5076,6 +5182,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Tengu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heavenly Dog",
       "Crow Goblin",
@@ -5122,6 +5229,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Kappa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "River Child",
       "Kawataro",
@@ -5168,17 +5276,17 @@
     "subtopic_id": "mythical_beasts",
     "name": "Oni",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Japanese Ogre",
-      "Demon of Jigoku",
       "Horned Brute"
     ],
     "difficulty": 1,
     "visual_anchor": "Towering red-skinned ogre with two sharp horns, tusks protruding from its jaw, wearing a tiger-skin loincloth and brandishing an iron club.",
     "core_traits": [
-      "Monstrous horned ogre or demon of Japanese folklore and Buddhist hell (Jigoku)",
+      "Monstrous horned ogre of Japanese folklore and folktales",
       "Depicted with red, blue, or green skin, two horns, wild hair, and fangs",
-      "Wears a tiger-skin loincloth and wields a heavy studded iron war club (kanabo)",
+      "Wears a tiger-skin loincloth and carries a heavy studded iron club (kanabo)",
       "Ward of evil ceremonies at Setsubun, where people throw roasted soybeans shouting 'Demons out! Luck in!'"
     ],
     "distractor_pool": [
@@ -5198,7 +5306,7 @@
       {
         "claim": "Oni were depicted as miniature winged fairies that granted good dreams.",
         "verdict": "myth",
-        "explanation": "Oni were brutal giant human-eaters and tormentors of wicked souls in Buddhist underworld realms.",
+        "explanation": "Oni were big, scary ogres in Japanese folktales, like the ones the hero Momotaro sets out to defeat.",
         "fun_fact": "Traditional Japanese roofs feature oni-faced tiles (onigawara) to ward off evil spirits."
       }
     ],
@@ -5214,6 +5322,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Yuki-Onna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Snow Woman",
       "Frost Maiden",
@@ -5260,6 +5369,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Dragon King",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ao Guang",
       "Longwang",
@@ -5284,7 +5394,7 @@
       {
         "claim": "Sun Wukong visited the Dragon King Ao Guang to obtain his famous compliant golden staff.",
         "verdict": "fact",
-        "explanation": "Ao Guang tried to give Wukong heavy weapons, but Wukong chose the 13,500-pound pillar that held down the ocean palace.",
+        "explanation": "Ao Guang offered Wukong many heavy staffs, but Wukong chose the 13,500-pound pillar that steadied the ocean palace.",
         "fun_fact": "Wukong also demanded and received magical golden chainmail and cloud-walking shoes."
       },
       {
@@ -5306,6 +5416,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Garuda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King of Birds",
       "Mount of Vishnu",
@@ -5352,6 +5463,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Naga",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Serpent Deity",
       "Lord of the Waters",
@@ -5398,6 +5510,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Qilin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kirin",
       "Chinese Unicorn",
@@ -5429,7 +5542,7 @@
         "claim": "The Qilin was a vicious carnivore that hunted human travelers.",
         "verdict": "myth",
         "explanation": "The Qilin is the epitome of non-violence and mercy, refusing even to eat live plants or tread on insects.",
-        "fun_fact": "The famous Japanese Kirin Brewery displays a stylized Kirin on its beer labels."
+        "fun_fact": "In Japanese, the word 'kirin' means both the Qilin and the giraffe."
       }
     ],
     "versus_candidates": [
@@ -5444,6 +5557,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Jiangshi",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Hopping Vampire",
       "Chinese Zombie",
@@ -5490,18 +5604,18 @@
     "subtopic_id": "asian_mythology",
     "name": "Guan Yu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Guan Di",
-      "Lord Guan",
-      "God of War and Loyalty"
+      "Lord Guan"
     ],
     "difficulty": 1,
     "visual_anchor": "Imposing red-faced warrior general with a long sweeping black beard, green dragon robes, and the Green Dragon Crescent Blade halberd.",
     "core_traits": [
-      "Historic general of the Three Kingdoms period deified as the god of war, loyalty, justice, and righteousness",
+      "Historic general of the Three Kingdoms period, honored as a god of loyalty, justice, and righteousness",
       "Famed protagonist of Romance of the Three Kingdoms alongside his sworn brothers Liu Bei and Zhang Fei",
       "Wielded the legendary heavy Green Dragon Crescent Blade (Guandao) and rode the Red Hare steed",
-      "Worshipped by police officers, martial artists, businessmen, and triad members alike for loyalty and integrity"
+      "Honored by police officers, martial artists, and businesspeople alike for loyalty and honesty"
     ],
     "distractor_pool": [
       "Ares",
@@ -5515,12 +5629,12 @@
         "claim": "Shrines dedicated to Guan Yu are placed inside police stations and businesses throughout Hong Kong and Taiwan.",
         "verdict": "fact",
         "explanation": "Because he represents unshakeable loyalty, righteousness, and courage, both law enforcement and merchants revere him.",
-        "fun_fact": "Unlike Ares, Guan Yu is worshipped not for bloodlust, but for unwavering code of honor and moral discipline."
+        "fun_fact": "Guan Yu is famous in art for his bright red face and long, flowing beard."
       },
       {
         "claim": "Guan Yu was purely a fictional character invented in Ming Dynasty novels.",
         "verdict": "myth",
-        "explanation": "Guan Yu was a real historical military general who died in 220 AD, subsequently elevated by successive emperors.",
+        "explanation": "Guan Yu was a real historical general who lived until 220 AD and was later honored by many emperors.",
         "fun_fact": "He was posthumously granted the title 'Holy Emperor Lord Guan' (Guan Sheng Di Jun)."
       }
     ],
@@ -5536,6 +5650,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Chang'e",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Goddess of the Moon",
       "Moon Fairy",
@@ -5582,6 +5697,7 @@
     "subtopic_id": "asian_mythology",
     "name": "Jade Rabbit",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moon Rabbit",
       "Yutu",
@@ -5628,6 +5744,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "King Arthur",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Once and Future King",
       "Lord of Camelot",
@@ -5674,6 +5791,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Merlin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Merlinus Ambrosius",
       "The Arch-Mage",
@@ -5702,7 +5820,7 @@
         "fun_fact": "Stonehenge actually predates Arthurian legends by thousands of years."
       },
       {
-        "claim": "Merlin was killed in battle by King Arthur's sword Excalibur.",
+        "claim": "Merlin was defeated in battle by King Arthur's sword Excalibur.",
         "verdict": "myth",
         "explanation": "Merlin was enchanted and trapped inside a hawthorn tree or glass tower by his student Viviane (the Lady of the Lake).",
         "fun_fact": "He was said to age backward, remembering the future but forgetting the past."
@@ -5720,6 +5838,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Morgan le Fay",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Morgaine",
       "Fairy Enchantress",
@@ -5744,14 +5863,14 @@
       {
         "claim": "In the earliest 12th-century Arthurian texts, Morgan was depicted as a noble, benevolent fairy healer.",
         "verdict": "fact",
-        "explanation": "In Geoffrey of Monmouth's Vita Merlini, she is the wise ruler of Avalon who lovingly treats Arthur's mortal battle wounds.",
-        "fun_fact": "Later Christian romances recast her as an incestuous villain to contrast with chivalric ideals."
+        "explanation": "In Geoffrey of Monmouth's Vita Merlini, she is the wise ruler of Avalon who lovingly heals the wounded King Arthur.",
+        "fun_fact": "Later stories turned her into a tricky sorceress and rival of King Arthur."
       },
       {
         "claim": "The optical mirage phenomenon 'Fata Morgana' in the Strait of Messina is named after Morgan le Fay.",
         "verdict": "fact",
         "explanation": "Italian sailors believed the towering castles seen hovering over the water were fairy illusions conjured by Morgan (Fata Morgana).",
-        "fun_fact": "She attempted to steal Excalibur's protective scabbard to give to her lover Sir Accolon."
+        "fun_fact": "She once tried to steal the magical protective scabbard of Excalibur from King Arthur."
       }
     ],
     "versus_candidates": [
@@ -5766,18 +5885,18 @@
     "subtopic_id": "folklore_monsters",
     "name": "Lady of the Lake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Viviane",
-      "Nimue",
-      "Mistress of Avalon"
+      "Nimue"
     ],
     "difficulty": 1,
     "visual_anchor": "Ethereal mystical woman emerging gracefully from mist over a glass-calm lake, holding up the gleaming jeweled hilt of Excalibur.",
     "core_traits": [
       "Mystical water enchantress in Arthurian legend residing in an otherworldly realm beneath a magical lake",
       "Bestowed the divine sword Excalibur and its enchanted scabbard upon young King Arthur",
-      "Raised Sir Lancelot du Lac from childhood in her enchanted palace after his father's death",
-      "Reclaimed Excalibur when Sir Bedivere threw the blade back into the waters upon Arthur's demise"
+      "Raised Sir Lancelot du Lac from childhood in her enchanted palace",
+      "Reclaimed Excalibur when Sir Bedivere threw the blade back into the waters at the end of Arthur's story"
     ],
     "distractor_pool": [
       "Morgan le Fay",
@@ -5791,7 +5910,7 @@
         "claim": "When Bedivere threw Excalibur into the lake, a hand emerged from the water, caught the sword, brandished it three times, and vanished.",
         "verdict": "fact",
         "explanation": "Sir Thomas Malory's Le Morte d'Arthur dramatically recounts the Lady of the Lake's hand catching Excalibur before sinking below.",
-        "fun_fact": "Bedivere tried to hide the sword twice before finally obeying Arthur's dying command."
+        "fun_fact": "Bedivere tried to hide the sword twice before finally obeying Arthur's last command."
       },
       {
         "claim": "The Lady of the Lake was an evil swamp hag who drowned passing knights.",
@@ -5812,6 +5931,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Banshee",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Bean Sidhe",
       "Woman of the Fairy Mound",
@@ -5820,10 +5940,10 @@
     "difficulty": 1,
     "visual_anchor": "Spectral gaunt woman with wild silver hair and blood-red eyes clad in a tattered gray shroud, wailing mournfully beside a desolate Celtic bog.",
     "core_traits": [
-      "Female spirit in Irish folklore whose mournful shrieking or keening heralds an impending death in a family",
+      "Female spirit in Irish folklore whose eerie wailing warns families that sad news is coming",
       "Tied traditionally to the five major historic Irish Gaelic royal families (O'Neill, O'Brien, O'Connor, O'Grady, Kavanagh)",
       "Appears in three guises: a beautiful young maiden, a stately matron, or a ragged haggard crone",
-      "Often seen washing blood-stained clothes or funeral shrouds in a river (the Bean-Nighe)"
+      "Sometimes said to be seen washing clothes in a river (the Bean-Nighe)"
     ],
     "distractor_pool": [
       "Ghost",
@@ -5837,12 +5957,12 @@
         "claim": "The Irish term 'Bean Sidhe' translates literally to 'Woman of the Fairy Mound'.",
         "verdict": "fact",
         "explanation": "In Gaelic, 'bean' means woman and 'sidhe' refers to the ancient burial mounds where fairy folk dwell.",
-        "fun_fact": "Her wailing (keening) reflects the traditional Irish custom of women singing lamentations at wakes."
+        "fun_fact": "Her wailing is called 'keening', an old Irish style of sorrowful singing."
       },
       {
-        "claim": "A Banshee directly kills people by attacking them with razor-sharp claws.",
+        "claim": "A Banshee attacks people with razor-sharp claws.",
         "verdict": "myth",
-        "explanation": "The Banshee never causes death; she is merely a mournful prophet warning the family of approaching tragedy.",
+        "explanation": "The Banshee never harms anyone; she is a sorrowful spirit who only gives warnings.",
         "fun_fact": "Legend says that if you find her silver comb on the ground, you should never pick it up."
       }
     ],
@@ -5858,6 +5978,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Leprechaun",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Luchorpan",
       "Fairy Shoemaker",
@@ -5904,6 +6025,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Selkie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seal Folk",
       "Silkies",
@@ -5929,12 +6051,12 @@
         "claim": "A Selkie wife who finds her stolen skin will abandon her mortal family and return to the ocean forever.",
         "verdict": "fact",
         "explanation": "The traditional folk ballad recounts that even with loving human children, the call of the ocean is irresistible once her skin is found.",
-        "fun_fact": "Male Selkies were said to cause storms and seduce mortal women who cried seven tears into the sea."
+        "fun_fact": "Selkies were said to shed their seal skins to dance on the shore in human form."
       },
       {
         "claim": "Selkies were venomous predatory monsters that ate Scottish fishermen.",
         "verdict": "myth",
-        "explanation": "Selkies are gentle, romantic, and tragic beings who never harm mortals.",
+        "explanation": "Selkies are gentle, mysterious beings who never harm humans.",
         "fun_fact": "The animated film Song of the Sea beautifully depicts Selkie folklore."
       }
     ],
@@ -5950,10 +6072,10 @@
     "subtopic_id": "folklore_monsters",
     "name": "Kelpie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Water Horse",
-      "Each-Uisge",
-      "Loch Demon"
+      "Each-Uisge"
     ],
     "difficulty": 1,
     "visual_anchor": "Magnificent midnight-black stallion with waterweed tangled in its dripping wet mane, standing invitingly beside the misty shore of a Scottish loch.",
@@ -5996,18 +6118,19 @@
     "subtopic_id": "folklore_monsters",
     "name": "Cu Chulainn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hound of Ulster",
       "Setanta",
       "Irish Hercules"
     ],
     "difficulty": 1,
-    "visual_anchor": "Fierce young Celtic champion standing in a war chariot brandishing the barbed spear Gae Bulg, hair standing on end in a terrifying battle frenzy.",
+    "visual_anchor": "Fierce young Celtic champion standing in a wooden chariot holding the spear Gae Bulg, his hair standing on end with fiery energy.",
     "core_traits": [
       "Greatest demigod warrior hero of Irish Celtic mythology and protagonist of the Ulster Cycle",
-      "Originally named Setanta; earned his name by killing the vicious guard hound of Culann and taking its place",
-      "Wielded the deadly barbed spear Gae Bulg, which opened thirty barbs inside an enemy's flesh",
-      "Underwent the terrifying 'warp spasm' (riastrad) in combat, transforming into an unrecognizable grotesque berserker"
+      "Originally named Setanta; his new name means 'Hound of Culann' after he promised to guard Culann's home",
+      "Carried the legendary magical spear called the Gae Bulg",
+      "Could fly into a wild 'warp spasm' (riastrad) that transformed his whole appearance"
     ],
     "distractor_pool": [
       "Achilles",
@@ -6018,10 +6141,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Cu Chulainn tied himself upright to a standing pillar stone with his own belt so he could die on his feet facing enemies.",
+        "claim": "Cu Chulainn learned his skills from the warrior woman Scathach.",
         "verdict": "fact",
-        "explanation": "Mortally wounded at the Pillar Stone of Clochafarmore, he stood tall; enemies only approached after a raven landed on his shoulder.",
-        "fun_fact": "A famous bronze statue of his death stands in the General Post Office in Dublin."
+        "explanation": "Legends say Scathach trained young heroes at her fortress, traditionally placed on the Isle of Skye in Scotland.",
+        "fun_fact": "A famous bronze statue of Cu Chulainn stands in the General Post Office in Dublin."
       },
       {
         "claim": "Cu Chulainn was an English knight serving at King Arthur's Round Table.",
@@ -6042,6 +6165,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Gilgamesh",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King of Uruk",
       "Hero of the First Epic",
@@ -6089,6 +6213,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Enkidu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wild Man of the Steppe",
       "Brother of Gilgamesh"
@@ -6097,8 +6222,8 @@
     "visual_anchor": "Muscular primitive wild man with long tangled hair and horns, running alongside gazelles and lions across the ancient Sumerian steppe.",
     "core_traits": [
       "Wild man created from clay and saliva by the goddess Aruru to rival and humble King Gilgamesh",
-      "Lived naked among wild beasts, grazing on grass and drinking at watering holes",
-      "Civilized by the sacred temple priestess Shamhat over seven days and nights",
+      "Lived wild among the animals, eating grass and drinking at watering holes",
+      "Learned human ways after meeting the temple priestess Shamhat",
       "Wrestled Gilgamesh in Uruk; their drawn battle forged a legendary lifelong brotherhood"
     ],
     "distractor_pool": [
@@ -6116,10 +6241,10 @@
         "fun_fact": "He taught Gilgamesh humility and empathy."
       },
       {
-        "claim": "Enkidu survived Gilgamesh and ruled Uruk for two centuries.",
+        "claim": "Enkidu outlived Gilgamesh and ruled Uruk for two centuries.",
         "verdict": "myth",
-        "explanation": "The gods struck Enkidu down with a lingering illness as punishment for killing the Bull of Heaven; his death sent Gilgamesh into grief.",
-        "fun_fact": "Gilgamesh refused to bury Enkidu until a maggot fell from his nose."
+        "explanation": "Enkidu fell ill in the story, and losing his best friend sent Gilgamesh on a quest for everlasting life.",
+        "fun_fact": "The Epic of Gilgamesh is one of the oldest written stories in the world."
       }
     ],
     "versus_candidates": [
@@ -6134,6 +6259,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Baba Yaga",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Witch of the Birch Forest",
       "Bony Legs",
@@ -6180,6 +6306,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Koschei the Deathless",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kashchey",
       "The Immortal Sorcerer",
@@ -6188,10 +6315,10 @@
     "difficulty": 2,
     "visual_anchor": "Gaunt, skeletal sorcerer king wearing a spiked iron crown and flowing tattered cape, clutching a glowing crystal containing a hidden needle in an icy fortress.",
     "core_traits": [
-      "Archetypal villainous sorcerer of Slavic folklore who cannot be killed by conventional means",
+      "Villainous sorcerer of Slavic folklore who could not be defeated by ordinary means",
       "Hid his immortal soul outside his physical body inside a nesting puzzle of objects",
       "His soul is in a needle, inside an egg, inside a duck, inside a hare, inside an iron chest buried under a green oak on Buyan Island",
-      "Captures beautiful maidens and princesses, including the wives of heroes like Prince Ivan"
+      "Kidnaps princesses, but is finally outsmarted by heroes like Prince Ivan"
     ],
     "distractor_pool": [
       "Baba Yaga",
@@ -6226,6 +6353,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Kraken",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giant Cephalopod of the North",
       "Terror of the North Sea"
@@ -6271,6 +6399,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Leviathan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Primordial Sea Beast",
       "Monster of the Deep",
@@ -6317,6 +6446,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Loch Ness Monster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nessie",
       "Monster of Loch Ness",
@@ -6363,6 +6493,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Bigfoot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sasquatch",
       "Wild Man of the Woods",
@@ -6409,6 +6540,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Yeti",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Abominable Snowman",
       "Meh-Teh",
@@ -6455,6 +6587,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Werewolf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lycanthrope",
       "Wolfman",
@@ -6467,13 +6600,13 @@
       "Transformation is traditionally triggered by the appearance of the full moon or a curse",
       "Transmitted through a bite or scratch from an existing werewolf",
       "Possesses superhuman strength, speed, regenerative healing, and animal senses",
-      "Vulnerable primarily to weapons fashioned from pure solid silver"
+      "Weak against anything made of pure silver"
     ],
     "distractor_pool": [
       "Vampire",
-      "Wendigo",
+      "Kitsune",
       "Bigfoot",
-      "Zombie",
+      "Yeti",
       "Fenrir"
     ],
     "facts_and_myths": [
@@ -6492,7 +6625,7 @@
     ],
     "versus_candidates": [
       "Vampire",
-      "Wendigo",
+      "Kitsune",
       "Frankenstein Monster"
     ]
   },
@@ -6502,10 +6635,10 @@
     "subtopic_id": "folklore_monsters",
     "name": "Vampire",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Count Dracula",
-      "Nosferatu",
-      "Undead Blooddrinker"
+      "Nosferatu"
     ],
     "difficulty": 1,
     "visual_anchor": "Aristocratic pale nobleman clad in an ebony cape with high collar, showing razor fangs and hypnotic red eyes inside a Gothic castle.",
@@ -6517,7 +6650,7 @@
     ],
     "distractor_pool": [
       "Werewolf",
-      "Zombie",
+      "Gargoyle",
       "Mummy",
       "Ghost",
       "Jiangshi"
@@ -6548,6 +6681,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Frankenstein Monster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Frankenstein's Creature",
       "The Modern Prometheus",
@@ -6556,7 +6690,7 @@
     "difficulty": 1,
     "visual_anchor": "Colossal stitched-together humanoid with pale green skin, dark sunken eyes, and surgical scars, standing before electrical sparks in a gothic laboratory.",
     "core_traits": [
-      "Sentient humanoid creature constructed from dead body parts by scientist Victor Frankenstein",
+      "Giant creature built and brought to life by the scientist Victor Frankenstein",
       "Brought to life through galvanic electricity and scientific alchemy in Mary Shelley's 1818 masterpiece",
       "Possesses superhuman physical strength, endurance, and remarkable intellectual eloquence",
       "Abandoned by his creator, driven to vengeance after humanity rejects him for his terrifying appearance"
@@ -6565,7 +6699,7 @@
       "Vampire",
       "Werewolf",
       "Mummy",
-      "Zombie",
+      "Gargoyle",
       "Golem"
     ],
     "facts_and_myths": [
@@ -6594,21 +6728,22 @@
     "subtopic_id": "folklore_monsters",
     "name": "Mummy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Living Mummy",
       "Cursed Pharaoh",
       "Risen Embalmed"
     ],
     "difficulty": 1,
-    "visual_anchor": "Ancient embalmed corpse wrapped in weathered linen bandages stepping slowly out of an ornate gilded sarcophagus in a torchlit stone tomb.",
+    "visual_anchor": "Ancient mummy wrapped in weathered linen bandages stepping slowly out of an ornate golden sarcophagus in a torchlit stone tomb.",
     "core_traits": [
-      "Deceased body preserved through artificial chemical embalming, linen wrapping, and dry desert air",
-      "Popularized in gothic horror as a vengeful reanimated corpse stalking those who desecrate royal tombs",
+      "Ancient Egyptian body preserved through careful embalming, linen wrapping, and dry desert air",
+      "Popularized in spooky movies as a bandaged creature guarding royal tombs",
       "Associated with the supernatural 'Curse of the Pharaohs' afflicting excavators",
       "Shambles slowly with stiff linen-bound limbs, possessing supernatural strength and immunity to pain"
     ],
     "distractor_pool": [
-      "Zombie",
+      "Golem",
       "Vampire",
       "Frankenstein Monster",
       "Ghost",
@@ -6616,10 +6751,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The 'Curse of the Pharaohs' media craze exploded in 1923 after Lord Carnarvon died shortly after opening King Tutankhamun's tomb.",
+        "claim": "The 'Curse of the Pharaohs' legend became famous in 1923 after King Tut's tomb was opened.",
         "verdict": "fact",
-        "explanation": "Carnarvon died from an infected mosquito bite, which newspapers sensationalized as a deadly ancient curse.",
-        "fun_fact": "Archaeologist Howard Carter, who actually opened the tomb, lived to age 64 and died of natural causes."
+        "explanation": "When expedition sponsor Lord Carnarvon fell ill soon after, newspapers blamed an ancient curse.",
+        "fun_fact": "Howard Carter, who actually opened the tomb, lived for many more years, showing the curse was just a story."
       },
       {
         "claim": "Ancient Egyptian mummification removed the heart and threw it away.",
@@ -6630,7 +6765,7 @@
     ],
     "versus_candidates": [
       "Frankenstein Monster",
-      "Zombie",
+      "Golem",
       "Vampire"
     ]
   },
@@ -6640,6 +6775,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Golem",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Golem of Prague",
       "Animated Clay Giant"
@@ -6661,9 +6797,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The Golem is deactivated by erasing the first letter 'Aleph' from 'EMET' (Truth) on its forehead, leaving 'MET' (Dead).",
+        "claim": "A Golem is switched off by erasing one letter from the word 'EMET' on its forehead.",
         "verdict": "fact",
-        "explanation": "In Hebrew, removing the letter Aleph transforms 'emet' (life/truth) into 'met' (death), returning the Golem to lifeless dust.",
+        "explanation": "Removing the first letter changes 'emet' (truth) into 'met', and the Golem crumbles back into lifeless clay.",
         "fun_fact": "Legend says the clay remains of the Golem of Prague are still stored in the attic of the Old-New Synagogue in Prague."
       },
       {
@@ -6685,6 +6821,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Djinn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Genie",
       "Jinn",
@@ -6731,6 +6868,7 @@
     "subtopic_id": "mythical_beasts",
     "name": "Basilisk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King of Serpents",
       "Cockatrice",
@@ -6740,7 +6878,7 @@
     "visual_anchor": "Sinister crested serpentine beast with glowing yellow eyes slithering across scorched stone, leaving withered grass and cracked rocks in its wake.",
     "core_traits": [
       "Legendary reptile hailed in European bestiaries as the 'King of Serpents'",
-      "Possesses a gaze so lethal that looking directly into its eyes causes instantaneous death",
+      "Possesses a gaze said to be so powerful that meeting its eyes was extremely dangerous",
       "Breathes venomous fumes so toxic that it withers vegetation and shatters rocks",
       "Vulnerable only to its own reflection in a mirror, the scent of a weasel, or the crowing of a rooster"
     ],
@@ -6777,6 +6915,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Wendigo",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Windigo",
       "Spirit of Cannibalism",
@@ -6823,6 +6962,7 @@
     "subtopic_id": "folklore_monsters",
     "name": "Flying Dutchman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phantom Ship",
       "Ghost Ship of the Cape",
@@ -6848,7 +6988,7 @@
         "claim": "In 1881, the future King George V of Britain recorded sighting the phantom ship Flying Dutchman from HMS Bacchante.",
         "verdict": "fact",
         "explanation": "Prince George's personal log recorded thirteen officers and men witnessing a spectral red-glowing ship pass across their bow.",
-        "fun_fact": "The lookout who first reported the ship fell from the topmast to his death the following day."
+        "fun_fact": "In the legend, the ghostly ship is doomed to sail the seas forever, never reaching port."
       },
       {
         "claim": "Sightings of the Flying Dutchman are often scientific optical illusions known as superior mirages (Fata Morgana).",

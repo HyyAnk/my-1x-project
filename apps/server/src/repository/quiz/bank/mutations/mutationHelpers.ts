@@ -1,6 +1,6 @@
 import path from "node:path";
 import { QUESTION_BANK_DIR } from "../bankPathResolver.js";
-import type { BankQuestion, BankSubtopicBatch } from "@studio/shared";
+import { LEGACY_VERDICT_ARCHETYPE_IDS, isLegacyVerdictIdentifier, type BankQuestion, type BankSubtopicBatch } from "@studio/shared";
 import { normalizeVerdictQuestion } from "../bankQuestionNormalizer.js";
 
 /**
@@ -25,8 +25,8 @@ export function resolveBatchCandidatePaths(
   if (!isRedirectedRuntime) {
     candidatePaths.push(path.join(rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, archetypeId, domainId, `${subtopicId}.json`));
   }
-  if (archetypeId === "verdict_yes_no" || archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth") {
-    for (const legacyArch of ["verdict_yes_no", "verdict_true_false", "verdict_fact_myth"]) {
+  if (archetypeId === "verdict_yes_no" || isLegacyVerdictIdentifier(archetypeId)) {
+    for (const legacyArch of ["verdict_yes_no", ...LEGACY_VERDICT_ARCHETYPE_IDS]) {
       candidatePaths.push(path.join(runtimeBankRoot, legacyArch, domainId, `${subtopicId}.json`));
       if (!isRedirectedRuntime) {
         candidatePaths.push(path.join(rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, legacyArch, domainId, `${subtopicId}.json`));

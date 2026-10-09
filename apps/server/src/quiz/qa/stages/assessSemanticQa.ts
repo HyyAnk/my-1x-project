@@ -15,7 +15,7 @@ export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
         next_action:
           question.answer_mode === "single_reveal"
             ? "Regenerate as a single-reveal Mystery question."
-            : "Regenerate the question with only the canonical A–C answer layout (or exactly True/False).",
+            : "Regenerate the question with only the canonical A–C answer layout (or exactly Yes/No).",
         question_ids: [question.id],
         stage: "semantic",
       });

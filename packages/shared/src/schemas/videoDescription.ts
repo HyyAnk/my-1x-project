@@ -1,8 +1,17 @@
 import { z } from "zod";
 import { IsoDate, QUIZ_MAX_QUESTION_COUNT } from "./common.js";
 
-export const VIDEO_DESCRIPTION_MAX_CHARS = 900;
+/** YouTube rejects descriptions longer than 5000 characters. */
+export const VIDEO_DESCRIPTION_MAX_CHARS = 5000;
 export const VIDEO_DESCRIPTION_OPTIMAL_CHARS = 500;
+
+export const VideoDescriptionChapterSchema = z.object({
+  start_seconds: z.number().int().nonnegative(),
+  timestamp: z.string().trim().min(1),
+  title: z.string().trim().min(1),
+});
+
+export type VideoDescriptionChapter = z.infer<typeof VideoDescriptionChapterSchema>;
 
 export const VideoDescriptionScoringCtaSchema = z.object({
   beginner: z.string().trim().min(1),
@@ -23,6 +32,9 @@ export const VideoDescriptionSchema = z.object({
   scoring_cta: VideoDescriptionScoringCtaSchema,
   suggested_playlist_category: z.string().trim().min(1),
   hashtags: z.array(z.string().trim()).min(1).max(10).default([]),
+  chapters: z.array(VideoDescriptionChapterSchema).optional(),
+  /** Recommended YouTube "Made for Kids" setting derived from the episode age band. */
+  made_for_kids: z.boolean().optional(),
   full_description_text: z.string().trim().min(1),
   char_count: z.number().int().nonnegative().default(0),
   language: z.string().trim().default("English"),

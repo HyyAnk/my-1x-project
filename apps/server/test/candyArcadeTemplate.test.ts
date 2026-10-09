@@ -20,7 +20,14 @@ import {
   timelineProgress,
   visualAnswerState,
 } from "../src/quiz/visual/candyArcade.js";
-import { candyArcadeQuiz, choiceCardTag, compositionSources, dummyMascot, questionCompositionFiles } from "./candyArcadeTestUtils.js";
+import {
+  candyArcadeQuiz,
+  choiceCardTag,
+  compositionSources,
+  dummyMascot,
+  questionCompositionFiles,
+  stillImageMascot,
+} from "./candyArcadeTestUtils.js";
 
 describe("Candy Arcade visual template", () => {
   it("reserves AA-compliant colors for text on light cards and bright badges", () => {
@@ -582,7 +589,7 @@ describe("Candy Arcade visual template", () => {
         styleContext: { theme: "candy_arcade" },
         audioPath: "./narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
-        mascot: dummyMascot,
+        mascot: stillImageMascot,
         mascotConfig: { mascot_id: "mascot-1", enabled: true, position, scale: 1, show_in_question: true },
       });
     const leftBundle = renderAt("bottom_left");
@@ -683,7 +690,7 @@ describe("Candy Arcade visual template", () => {
       styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
-      mascot: { ...dummyMascot, master_image_url: "/assets/mascot.png" },
+      mascot: stillImageMascot,
       mascotConfig,
       aspectRatio: "16:9",
     });
@@ -844,10 +851,10 @@ describe("Candy Arcade visual template", () => {
       mascotStyleId: "cyber",
     });
 
-    // 1. Verify bundle.html contains safe preloads without leaking raw /api/ routes
+    // 1. Verify bundle.html contains safe image preloads without leaking raw /api/ routes.
+    // Videos are extracted and injected by HyperFrames, so they are intentionally not preloaded.
     expect(bundle.html).toContain('rel="preload"');
-    expect(bundle.html).toContain("./mascot-assets/mascot_anim_test_cyber_thinking_s1_video_transparent.webm");
-    expect(bundle.html).toContain('as="video" type="video/webm"');
+    expect(bundle.html).not.toContain('as="video"');
     expect(bundle.html).toContain("./mascot-assets/mascot_anim_test_cyber_thinking_s1_atlas.png");
     expect(bundle.html).toContain('as="image"');
     expect(bundle.html).not.toMatch(/<link rel="preload"[^>]*\/api\/mascots\//);

@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { QuizAssetAspectRatioSchema, QuizAssetPurposeSchema, QuizAssetStyleSchema, QuizLayoutIdSchema } from "../../enums.js";
+import {
+  QuizAssetAspectRatioSchema,
+  QuizAssetPurposeSchema,
+  QuizAssetStyleSchema,
+  QuizLayoutIdValuesSchema,
+  acceptLegacyVerdictAliases,
+} from "../../enums.js";
 
 export const PersistedImageSizingSchema = z.object({
   policy_version: z.literal(1),
-  layout_id: QuizLayoutIdSchema.exclude(["auto"]),
+  layout_id: acceptLegacyVerdictAliases(QuizLayoutIdValuesSchema.exclude(["auto"])),
   geometry_key: z.string().min(1),
   recommended_width: z.number().int().positive(),
   recommended_height: z.number().int().positive(),

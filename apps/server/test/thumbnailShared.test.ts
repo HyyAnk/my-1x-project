@@ -11,14 +11,7 @@ import {
 
 describe("Thumbnail Shared Schemas & Contracts (Step 1)", () => {
   it("validates all 6 ThumbnailLayoutTypes", () => {
-    const validLayouts: ThumbnailLayoutType[] = [
-      "mega_grid",
-      "split_vs",
-      "mystery_silhouette",
-      "odd_one_out",
-      "difficulty_tier",
-      "true_false",
-    ];
+    const validLayouts: ThumbnailLayoutType[] = ["mega_grid", "split_vs", "mystery_silhouette", "odd_one_out", "difficulty_tier", "yes_no"];
 
     for (const layout of validLayouts) {
       expect(ThumbnailLayoutTypeSchema.parse(layout)).toBe(layout);

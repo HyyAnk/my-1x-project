@@ -8,7 +8,6 @@ export const deLocale: ThumbnailLocalization = {
     odd_one_out: "FINDE DEN FEHLER!",
     difficulty_tier: "SCHAFFST DU LEVEL 4?",
     yes_no: "JA ODER NEIN?",
-    true_false: "WAHR ODER FALSCH?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} FRAGEN`,
@@ -17,6 +16,5 @@ export const deLocale: ThumbnailLocalization = {
     odd_one_out: () => "10 SEKUNDEN! ⏱️",
     difficulty_tier: () => "NUR FÜR IQ 140+ 🔥",
     yes_no: () => "JA ODER NEIN? ⚡",
-    true_false: () => "WAHR ODER FALSCH? ⚡",
   },
 };

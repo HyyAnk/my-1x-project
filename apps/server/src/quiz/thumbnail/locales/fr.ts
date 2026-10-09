@@ -8,7 +8,6 @@ export const frLocale: ThumbnailLocalization = {
     odd_one_out: "TROUVE L'INTRUS !",
     difficulty_tier: "RÉUSSIRAS-TU LE NIVEAU 4 ?",
     yes_no: "OUI OU NON ?",
-    true_false: "VRAI OU FAUX ?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} QUESTIONS`,
@@ -17,6 +16,5 @@ export const frLocale: ThumbnailLocalization = {
     odd_one_out: () => "10 SECONDES ! ⏱️",
     difficulty_tier: () => "SEULEMENT IQ 140+ 🔥",
     yes_no: () => "OUI OU NON ? ⚡",
-    true_false: () => "VRAI OU FAUX ? ⚡",
   },
 };

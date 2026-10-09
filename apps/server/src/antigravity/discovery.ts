@@ -146,10 +146,55 @@ export async function resolveAntigravityTarget(config: AppConfig, rootDirectory:
   );
 }
 
+export async function isPortResponsive(address: string, timeoutMs = 800): Promise<boolean> {
+  if (!address) return false;
+  try {
+    const url = address.startsWith("http://") || address.startsWith("https://") ? address : `http://${address}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) }).catch((err: unknown) => err);
+    if (res instanceof Error) {
+      const msg = res.message || "";
+      const cause = (res as { cause?: { code?: string } }).cause?.code || "";
+      if (cause === "ECONNREFUSED" || msg.includes("ECONNREFUSED") || msg.includes("connectex") || msg.includes("actively refused")) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+let activeDiscoveryPromise: Promise<ActiveSessionInfo> | null = null;
+
 export async function discoverActiveSession(logger: StudioLogger, forceRefresh = false): Promise<ActiveSessionInfo> {
+  if (activeDiscoveryPromise) {
+    return activeDiscoveryPromise;
+  }
+  const promise = performDiscovery(logger, forceRefresh);
+  activeDiscoveryPromise = promise;
+  try {
+    return await promise;
+  } finally {
+    if (activeDiscoveryPromise === promise) {
+      activeDiscoveryPromise = null;
+    }
+  }
+}
+
+async function performDiscovery(logger: StudioLogger, forceRefresh: boolean): Promise<ActiveSessionInfo> {
   let address = !forceRefresh ? process.env.ANTIGRAVITY_LS_ADDRESS?.trim() || null : null;
   let csrfToken = !forceRefresh ? process.env.ANTIGRAVITY_CSRF_TOKEN?.trim() || null : null;
   let projectId = process.env.ANTIGRAVITY_PROJECT_ID?.trim() || null;
+
+  if (address && !(await isPortResponsive(address))) {
+    logger.debug(`Cached Antigravity address ${address} is not responsive; forcing refresh`, {
+      step: "antigravity_discovery",
+    });
+    address = null;
+    csrfToken = null;
+    delete process.env.ANTIGRAVITY_LS_ADDRESS;
+    delete process.env.ANTIGRAVITY_CSRF_TOKEN;
+  }
 
   if (process.platform === "win32" && (forceRefresh || !address || !csrfToken)) {
     try {
@@ -160,23 +205,39 @@ export async function discoverActiveSession(logger: StudioLogger, forceRefresh =
         if (-not $proc) { exit 1 }
         $csrf = if ($proc.CommandLine -match '--csrf_token\\s+([a-zA-Z0-9\\-]+)') { $matches[1] } else { '' }
         $conns = Get-NetTCPConnection -OwningProcess $proc.ProcessId -State Listen -ErrorAction SilentlyContinue
-        $port = ''
+        $ports = @()
         foreach ($conn in $conns) {
           if ($conn.LocalAddress -in @('127.0.0.1', '0.0.0.0', '::1', '::')) {
-            $port = $conn.LocalPort
-            break
+            $ports += $conn.LocalPort
           }
         }
-        Write-Output "$port|$csrf"
+        $portsStr = ($ports | Select-Object -Unique) -join ','
+        Write-Output "$portsStr|$csrf"
       `;
       const { stdout } = await execFileAsync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", psScript], {
         windowsHide: true,
-        timeout: 4000,
+        timeout: 8000,
       });
 
       const line = stdout.trim();
-      const [port, discoveredCsrf] = line.split("|");
-      if (port) address = `127.0.0.1:${port}`;
+      const [portsRaw, discoveredCsrf] = line.split("|");
+      const candidatePorts = (portsRaw || "").split(",").map((p) => p.trim()).filter(Boolean);
+
+      let workingAddress: string | null = null;
+      for (const p of candidatePorts) {
+        const candidateAddr = `127.0.0.1:${p}`;
+        if (await isPortResponsive(candidateAddr)) {
+          workingAddress = candidateAddr;
+          break;
+        }
+      }
+
+      if (workingAddress) {
+        address = workingAddress;
+      } else if (candidatePorts.length > 0) {
+        address = `127.0.0.1:${candidatePorts[0]}`;
+      }
+
       if (discoveredCsrf) csrfToken = discoveredCsrf.trim();
     } catch (err) {
       logger.debug(`Language server session discovery failed: ${err instanceof Error ? err.message : "unknown"}`, {
@@ -202,9 +263,21 @@ export async function discoverActiveSession(logger: StudioLogger, forceRefresh =
     }
   }
 
-  if (address) process.env.ANTIGRAVITY_LS_ADDRESS = address;
-  if (csrfToken) process.env.ANTIGRAVITY_CSRF_TOKEN = csrfToken;
-  if (projectId) process.env.ANTIGRAVITY_PROJECT_ID = projectId;
+  if (address) {
+    process.env.ANTIGRAVITY_LS_ADDRESS = address;
+  } else {
+    delete process.env.ANTIGRAVITY_LS_ADDRESS;
+  }
+
+  if (csrfToken) {
+    process.env.ANTIGRAVITY_CSRF_TOKEN = csrfToken;
+  } else {
+    delete process.env.ANTIGRAVITY_CSRF_TOKEN;
+  }
+
+  if (projectId) {
+    process.env.ANTIGRAVITY_PROJECT_ID = projectId;
+  }
 
   return { address, csrfToken, projectId };
 }

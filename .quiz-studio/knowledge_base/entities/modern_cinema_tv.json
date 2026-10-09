@@ -5,6 +5,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Iron Man",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tony Stark",
       "Armored Avenger",
@@ -21,7 +22,7 @@
     "distractor_pool": [
       "Batman",
       "Captain America",
-      "War Machine",
+      "Spider-Man",
       "Doctor Doom",
       "Ant-Man"
     ],
@@ -51,6 +52,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Captain America",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steve Rogers",
       "The First Avenger",
@@ -59,13 +61,13 @@
     "difficulty": 1,
     "visual_anchor": "Cinematic vertical shot of Captain America standing tall in battle-damaged tactical blue armor, strapping his iconic circular vibranium shield to his forearm amidst smoky twilight rubble.",
     "core_traits": [
-      "Frail World War II recruit transformed into peak human physical condition by Dr. Abraham Erskine's Super Soldier Serum",
+      "Frail young army recruit transformed into peak human condition by Dr. Abraham Erskine's Super Soldier Serum",
       "Frozen in Arctic ice for nearly seven decades before awakening in the modern world to lead the Avengers",
       "Unwavering moral compass and tactical field commander who values freedom and individual human rights",
-      "Wields a circular vibranium shield that absorbs kinetic energy and ricochets off battlefield targets"
+      "Carries a circular vibranium shield that absorbs impacts and bounces back like a boomerang"
     ],
     "distractor_pool": [
-      "Winter Soldier",
+      "Thor",
       "Falcon",
       "Iron Man",
       "Superman",
@@ -87,7 +89,7 @@
     ],
     "versus_candidates": [
       "Iron Man",
-      "Winter Soldier",
+      "Thor",
       "Batman"
     ]
   },
@@ -97,6 +99,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Thor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thor Odinson",
       "God of Thunder",
@@ -108,7 +111,7 @@
       "Crown prince and deity of the cosmic realm Asgard, born the son of All-Father Odin and Frigga",
       "Banished to Earth without his godly powers until learning true humility and selflessness",
       "Founding member of the Avengers possessing superhuman durability, centuries of combat wisdom, and weather manipulation",
-      "Wields the enchanted hammer Mjolnir and the battle-axe Stormbreaker forged in the heart of a dying star"
+      "Wields the enchanted hammer Mjolnir and the mighty axe Stormbreaker, forged using a star's heat"
     ],
     "distractor_pool": [
       "Loki",
@@ -143,6 +146,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Hulk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bruce Banner",
       "The Green Goliath",
@@ -189,15 +193,15 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Black Widow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Natasha Romanoff",
-      "Natalia Romanova",
-      "The Red Room Assassin"
+      "Natalia Romanova"
     ],
     "difficulty": 1,
     "visual_anchor": "Vertical cinematic composition of Black Widow crouched in tactical black leather stealth gear, batons glowing with blue electroshock energy amidst steam and shadows in a derelict hangar.",
     "core_traits": [
-      "Elite covert operative and master assassin rigorously trained from childhood in the Soviet Red Room",
+      "Elite secret agent rigorously trained from childhood in the mysterious Red Room program",
       "Defected to S.H.I.E.L.D. after forming a life-changing partnership with Hawkeye to clear her conscience",
       "Core strategist and founding member of the Avengers capable of interrogating and manipulating targets with psychological cunning",
       "Fights using acrobatic martial arts, dual electroshock stun batons, and specialized wrist gauntlet Widow's Bite darts"
@@ -211,10 +215,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Natasha Romanoff sacrificed her life on the barren planet Vormir so the Avengers could acquire the Soul Stone.",
+        "claim": "Black Widow first appeared in Marvel comics back in 1964.",
         "verdict": "fact",
-        "explanation": "To fulfill the Soul Stone's requirement of a soul for a soul, Natasha outmaneuvered Hawkeye and leaped from the cliff to ensure humanity could be restored.",
-        "fun_fact": "Her sacrificial leap on Vormir mirrored the tragic choice that Thanos made earlier with Gamora in Infinity War."
+        "explanation": "She debuted in Tales of Suspense #52 as a spy facing Iron Man, and later joined the heroes.",
+        "fun_fact": "Scarlett Johansson first played Black Widow on screen in Iron Man 2 (2010)."
       },
       {
         "claim": "Black Widow was born with superhuman mutant genes that granted her natural immunity to toxins and super strength.",
@@ -225,7 +229,7 @@
     ],
     "versus_candidates": [
       "Catwoman",
-      "Winter Soldier",
+      "Hawkeye",
       "Yelena Belova"
     ]
   },
@@ -235,6 +239,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Hawkeye",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clint Barton",
       "Ronin",
@@ -245,22 +250,22 @@
     "core_traits": [
       "Master marksman and elite S.H.I.E.L.D. special agent renowned for flawless pinpoint accuracy",
       "Sought redemption after being mind-controlled by Loki during the catastrophic invasion of New York",
-      "Adopted the vengeful, blade-wielding vigilante mantle of Ronin following the loss of his family in the Decimation",
-      "Wields custom recurve and compound bows firing high-tech specialized trick arrows including explosive, grappling, and EMP warheads"
+      "Briefly took on the masked Ronin identity after his family vanished in the Blip",
+      "Uses custom recurve and compound bows that fire high-tech trick arrows, including grappling and EMP arrows"
     ],
     "distractor_pool": [
       "Green Arrow",
-      "Winter Soldier",
+      "Merida",
       "Falcon",
-      "Bullseye",
-      "Punisher"
+      "Legolas",
+      "Robin Hood"
     ],
     "facts_and_myths": [
       {
-        "claim": "Clint Barton operated under the lethal masked alter-ego Ronin in Japan following the tragic snap of Thanos.",
+        "claim": "Clint Barton mentors the young archer Kate Bishop in the Hawkeye series.",
         "verdict": "fact",
-        "explanation": "Devastated by his family's sudden disappearance, Clint traveled the globe executing cartel and yakuza syndicates using twin katanas until Natasha tracked him down.",
-        "fun_fact": "The sword combat scene in Avengers: Endgame featured actor Hiroyuki Sanada as the yakuza boss facing Barton."
+        "explanation": "In the 2021 Disney+ series Hawkeye, Clint teams up with superfan Kate Bishop, who is set up to carry on the Hawkeye name.",
+        "fun_fact": "Kate Bishop is played by Hailee Steinfeld, who also voices Gwen Stacy in the Spider-Verse films."
       },
       {
         "claim": "Hawkeye relies on cybernetic bionic eye implants to achieve his flawless archery accuracy in the Marvel films.",
@@ -271,8 +276,8 @@
     ],
     "versus_candidates": [
       "Green Arrow",
-      "Bullseye",
-      "Winter Soldier"
+      "Legolas",
+      "Merida"
     ]
   },
   {
@@ -281,6 +286,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Spider-Man",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Peter Parker",
       "Web-Slinger",
@@ -297,8 +303,8 @@
     "distractor_pool": [
       "Miles Morales",
       "Ant-Man",
-      "Deadpool",
-      "Venom",
+      "Ms. Marvel",
+      "Iron Man",
       "Nightwing"
     ],
     "facts_and_myths": [
@@ -316,8 +322,8 @@
       }
     ],
     "versus_candidates": [
-      "Deadpool",
-      "Venom",
+      "Iron Man",
+      "Ms. Marvel",
       "Batman"
     ]
   },
@@ -327,6 +333,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Doctor Strange",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stephen Strange",
       "Master of the Mystic Arts",
@@ -335,7 +342,7 @@
     "difficulty": 1,
     "visual_anchor": "Vertical mystical portrait of Doctor Strange levitating cross-legged in the Sanctum Sanctorum, red Cloak of Levitation floating while his hands weave intricate glowing orange Eldritch magic mandalas.",
     "core_traits": [
-      "Arrogant, world-renowned neurosurgeon whose glittering surgical career ended after a horrific sports car collision",
+      "Arrogant, world-famous surgeon whose career ended after a terrible car crash injured his hands",
       "Traveled to Kamar-Taj in Nepal seeking healing, where the Ancient One introduced him to the mystic arts",
       "Master of dimensional manipulation who guards the Earth realm against cosmic and extra-dimensional threats",
       "Wields the sentient Cloak of Levitation and previously safeguarded the time-manipulating Eye of Agamotto"
@@ -351,8 +358,8 @@
       {
         "claim": "Doctor Strange trapped the primordial entity Dormammu in an infinite time loop to save Earth in his debut film.",
         "verdict": "fact",
-        "explanation": "Strange used the Time Stone inside the Dark Dimension to create an inescapable temporal paradox, letting Dormammu kill him endlessly until the demon surrendered and withdrew.",
-        "fun_fact": "Benedict Cumberbatch performed both Doctor Strange and the facial motion capture for the cosmic demon Dormammu."
+        "explanation": "Strange used the Time Stone to trap Dormammu in a repeating time loop until the villain gave up and left Earth alone.",
+        "fun_fact": "Benedict Cumberbatch played Doctor Strange and also did the face motion capture for the cosmic villain Dormammu."
       },
       {
         "claim": "Stephen Strange has held the official title of Sorcerer Supreme uninterrupted throughout the entire Marvel Cinematic Universe.",
@@ -373,6 +380,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Black Panther",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "T'Challa",
       "King of Wakanda",
@@ -382,9 +390,9 @@
     "visual_anchor": "Vertical dynamic action frame of Black Panther leaping gracefully atop a sleek transport, vibranium claws extended, purple kinetic energy rippling across his woven nanotech habit against high-tech Wakandan cityscapes.",
     "core_traits": [
       "Monarch and sovereign protector of the technologically advanced, isolationist African kingdom of Wakanda",
-      "Ascended the Golden Throne following the tragic assassination of his father King T'Chaka in Vienna",
+      "Took the throne of Wakanda after his father, King T'Chaka, the previous Black Panther",
       "Empowered by the mystical Heart-Shaped Herb granting enhanced strength, speed, stamina, and feline agility",
-      "Clad in a bulletproof vibranium weave habit engineered by Princess Shuri that absorbs and discharges kinetic shockwaves"
+      "Wears a super-strong vibranium suit built by his sister Shuri that stores and releases energy"
     ],
     "distractor_pool": [
       "Killmonger",
@@ -419,17 +427,18 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Thanos",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Mad Titan",
       "Warlord of Titan",
       "The Inevitable"
     ],
     "difficulty": 1,
-    "visual_anchor": "Imposing vertical cinematic composition of the towering warlord Thanos standing in battle armor on a desolate alien battlefield, golden Infinity Gauntlet raised with all six colored stones blazing with raw cosmic power.",
+    "visual_anchor": "Imposing vertical cinematic shot of the giant purple villain Thanos in golden armor on a rocky alien landscape, golden Infinity Gauntlet raised with all six colored stones glowing with cosmic power.",
     "core_traits": [
       "Intergalactic warlord hailing from the devastated moon Titan whose apocalyptic climate collapse warped his philosophy",
-      "Obsessed with restoring cosmic equilibrium by eliminating exactly half of all living sentient beings across the universe",
-      "Commanded terrifying armies including the Black Order, Outriders, and Chitauri to conquer and cull alien worlds",
+      "Wants to make half of all life in the universe vanish with a snap of his fingers",
+      "Leads alien armies such as the Black Order, Outriders, and Chitauri to conquer other worlds",
       "Harnessed the golden Infinity Gauntlet capable of channeling the combined reality-warping power of all six Infinity Stones"
     ],
     "distractor_pool": [
@@ -441,16 +450,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "In original Marvel comic books, Thanos collected the Infinity Gems primarily to impress the physical embodiment of Mistress Death.",
+        "claim": "Thanos was created by comic book writer and artist Jim Starlin in 1973.",
         "verdict": "fact",
-        "explanation": "In Jim Starlin's 1991 Infinity Gauntlet miniseries, Thanos's cosmic massacre was a romantic gesture to woo Lady Death, whereas MCU films reimagined him as a philosophical utilitarian saving resources.",
-        "fun_fact": "Mistress Death remained largely indifferent to Thanos's romantic overtures in the comics, even turning her back on him."
+        "explanation": "Thanos first appeared in Iron Man #55 in 1973, created by Jim Starlin with writer Mike Friedrich.",
+        "fun_fact": "Josh Brolin played Thanos using motion capture, and computers turned him into a giant purple Titan."
       },
       {
-        "claim": "Thanos was completely defeated and killed during the climactic final battle of Avengers: Infinity War in Wakanda.",
+        "claim": "Thanos is completely defeated at the end of the 2018 Avengers movie.",
         "verdict": "myth",
-        "explanation": "Thanos survived Thor's chest strike with Stormbreaker, executed his universe-halving Snap, and escaped through a portal to retire as a peaceful farmer on Planet 0259-S.",
-        "fun_fact": "Infinity War marked one of the few blockbuster superhero movies where the antagonist achieved his full stated objective by the credits."
+        "explanation": "Thanos survives Thor's strike, snaps his fingers, and teleports away to rest on a quiet farm planet.",
+        "fun_fact": "That 2018 film is a rare superhero movie where the villain reaches his goal by the end credits."
       }
     ],
     "versus_candidates": [
@@ -465,6 +474,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Loki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "God of Mischief",
       "Loki Laufeyson",
@@ -474,9 +484,9 @@
     "visual_anchor": "Cinematic vertical 9:16 portrait of Loki wearing an ornate emerald green cape and horned golden helmet, holding the glowing blue Tesseract while green magical illusions shimmer around him in a dark cosmic hall.",
     "core_traits": [
       "Adopted prince of Asgard raised alongside the God of Thunder after being discovered on Jotunheim as an infant Frost Giant",
-      "Master of illusion magic, shapeshifting, and deception who repeatedly fakes his own death across cosmic conflicts",
+      "Master of illusion magic, shapeshifting, and trickery who often fools everyone into thinking he is gone",
       "Led a Chitauri alien army invasion through a portal over New York City wielding a mind-controlling Chitauri scepter",
-      "Eventually sacrifices himself to hold together the unraveling temporal branches of the multiverse as the God of Stories"
+      "Eventually chooses to hold together the branches of the multiverse as the God of Stories"
     ],
     "distractor_pool": [
       "Thor",
@@ -502,7 +512,7 @@
     "versus_candidates": [
       "Thor",
       "Doctor Strange",
-      "The Joker"
+      "Hela"
     ]
   },
   {
@@ -511,6 +521,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Wanda Maximoff",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scarlet Witch",
       "Wanda",
@@ -519,7 +530,7 @@
     "difficulty": 1,
     "visual_anchor": "Cinematic vertical 9:16 shot of Wanda Maximoff floating in mid-air in her crimson Scarlet Witch tiara and dark red mantle, glowing scarlet chaos magic radiating from her fingertips amidst floating runes.",
     "core_traits": [
-      "Native of the war-torn European nation of Sokovia who gained enhanced abilities alongside her twin brother Pietro",
+      "Native of the troubled European nation of Sokovia who gained powers alongside her twin brother Pietro",
       "Channels reality-warping chaos magic, telekinesis, and psionic energy capable of overpowering cosmic entities",
       "Traps an entire suburban New Jersey town in a surreal sitcom reality called the Hex to cope with severe grief",
       "Corrupted by the dark magical grimoire known as the Darkhold while hunting for her lost twin sons across the multiverse"
@@ -557,6 +568,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Star-Lord",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Peter Quill",
       "Peter Jason Quill",
@@ -565,15 +577,15 @@
     "difficulty": 2,
     "visual_anchor": "Cinematic vertical 9:16 action shot of Star-Lord hovering with dual element blasters in hand, wearing his signature crimson leather coat and glowing red-eyed metallic flight helmet inside a vibrant neon cosmic nebula.",
     "core_traits": [
-      "Abducted from Earth in 1988 as a young boy by the Ravagers following the tragic death of his mother from cancer",
+      "Taken from Earth in 1988 as a young boy by the space pirates known as the Ravagers",
       "Flamboyant outlaw and pilot of the starship Milano who navigates the cosmos accompanied by vintage 1970s pop cassette mixtapes",
-      "Charismatic leader of a ragtag crew of intergalactic outcasts that includes a talking raccoon, a living tree, and a green assassin",
+      "Charismatic leader of a ragtag space crew including a talking raccoon, a living tree, and a green warrior",
       "Discovers his estranged biological father is Ego the Living Planet, making him half-human and half-Celestial"
     ],
     "distractor_pool": [
       "Rocket Raccoon",
       "Han Solo",
-      "Deadpool",
+      "Captain Marvel",
       "Ant-Man",
       "Iron Man"
     ],
@@ -593,7 +605,7 @@
     ],
     "versus_candidates": [
       "Han Solo",
-      "Deadpool",
+      "Buzz Lightyear",
       "Rocket Raccoon"
     ]
   },
@@ -603,6 +615,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Wolverine",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Logan",
       "James Howlett",
@@ -649,6 +662,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Professor X",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Charles Xavier",
       "Professor Charles Xavier",
@@ -695,6 +709,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Magneto",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Erik Lehnsherr",
       "Max Eisenhardt",
@@ -703,14 +718,14 @@
     "difficulty": 1,
     "visual_anchor": "Cinematic vertical 9:16 shot of Magneto hovering above a destroyed suspension bridge, wearing a regal crimson tunic, flowing purple cape, and polished telepathy-blocking helmet while massive steel girders bend around him.",
     "core_traits": [
-      "Holocaust survivor whose traumatic childhood in concentration camps instilled a cynical view of humanity's capacity for hatred",
+      "Powerful mutant whose painful childhood made him deeply distrust ordinary humans",
       "Commands total mastery over magnetic fields, permitting him to manipulate metal, generate forcefields, and manipulate electromagnetic energy",
       "Leads the radical Brotherhood of Mutants fighting for mutant supremacy over ordinary humans by any means necessary",
       "Longtime friend and ideological rival of Charles Xavier who wears a custom helmet to shield his thoughts from telepathic intrusion"
     ],
     "distractor_pool": [
       "Professor X",
-      "Wolverine",
+      "Storm",
       "Doctor Doom",
       "Apocalypse",
       "Loki"
@@ -720,12 +735,12 @@
         "claim": "Stan Lee and Jack Kirby originally conceived Magneto's ideological conflict with Professor X as parallel to Malcolm X and Martin Luther King Jr.",
         "verdict": "fact",
         "explanation": "Stan Lee frequently affirmed that the moral clash between Xavier's integrationist pacifism and Magneto's militant self-defense mirrored prominent civil rights leadership philosophies of the 1960s.",
-        "fun_fact": "Writer Chris Claremont later deepened Magneto's character by establishing his tragic backstory as a survivor of the Auschwitz concentration camp."
+        "fun_fact": "Writer Chris Claremont later gave Magneto a deeper, more sympathetic backstory in the comics."
       },
       {
         "claim": "Magneto's telepathy-blocking helmet was originally gifted to him as a peace offering by Charles Xavier.",
         "verdict": "myth",
-        "explanation": "In X-Men: First Class, Erik took the helmet from former Nazi scientist Sebastian Shaw after executing him, repurposing Soviet and Nazi anti-telepathy engineering to protect himself from Xavier.",
+        "explanation": "In X-Men: First Class, Erik takes the helmet from the villain Sebastian Shaw and uses it to block Xavier's mind powers.",
         "fun_fact": "In the comics, Magneto initially resisted telepathy through pure willpower and training before comic writers later attributed the protection to his helmet."
       }
     ],
@@ -741,6 +756,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Deadpool",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Wade Wilson",
       "Merc with a Mouth",
@@ -787,6 +803,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Batman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bruce Wayne",
       "The Dark Knight",
@@ -795,17 +812,17 @@
     "difficulty": 1,
     "visual_anchor": "Cinematic vertical 9:16 moody shot of Batman perched stoically on a gothic stone gargoyle overlooking rain-drenched Gotham City, black scalloped cape billowing in the wind under a dramatic bat-signal spotlight in the clouds.",
     "core_traits": [
-      "Billionaire industrialist and philanthropist traumatized as a child by the murder of his parents in Crime Alley",
+      "Billionaire philanthropist inspired to fight crime after losing his parents as a young boy",
       "Possesses no superhuman powers, relying instead on peak physical conditioning, martial arts mastery, and detective genius",
       "Operates out of a subterranean batcave beneath Wayne Manor aided by his loyal butler Alfred Pennyworth and Commissioner Gordon",
-      "Strikes terror into the criminal underworld of Gotham City using advanced armor, batarangs, and the high-tech Batmobile"
+      "Protects Gotham City from villains using high-tech armor, batarangs, and the Batmobile"
     ],
     "distractor_pool": [
       "Superman",
-      "The Joker",
+      "The Penguin",
       "Iron Man",
       "Green Arrow",
-      "Daredevil"
+      "Robin"
     ],
     "facts_and_myths": [
       {
@@ -815,14 +832,14 @@
         "fun_fact": "Finger also named Bruce Wayne after Scottish king Robert the Bruce and American revolutionary Mad Anthony Wayne."
       },
       {
-        "claim": "Batman has maintained an unbroken strict moral code against killing since his very first comic book appearance in 1939.",
-        "verdict": "myth",
-        "explanation": "In his earliest Golden Age appearances in Detective Comics, Batman carried a firearm, threw criminals off rooftops, and snapped villains' necks before DC editors instituted his strict no-kill rule in 1940.",
-        "fun_fact": "In Detective Comics #27, Batman knocks a villain into a vat of acid and remarks that it was a fitting end for his kind."
+        "claim": "Batman first appeared in Detective Comics #27 in 1939.",
+        "verdict": "fact",
+        "explanation": "Created by Bob Kane and Bill Finger, Batman debuted in May 1939, about a year after Superman.",
+        "fun_fact": "Robin joined Batman as his young sidekick in 1940, just one year after Batman's debut."
       }
     ],
     "versus_candidates": [
-      "The Joker",
+      "Robin",
       "Superman",
       "Iron Man"
     ]
@@ -833,6 +850,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Superman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clark Kent",
       "Kal-El",
@@ -841,7 +859,7 @@
     "difficulty": 1,
     "visual_anchor": "Cinematic vertical 9:16 low-angle shot of Superman hovering majestically above Metropolis at sunrise, his vibrant red cape billowing in the wind as golden sunlight glints across the iconic S-shield emblem on his chest.",
     "core_traits": [
-      "Sent to Earth in a rocket as an infant from the dying extraterrestrial planet Krypton before being adopted by Kansas farmers",
+      "Sent to Earth as a baby from the faraway planet Krypton and raised by Kansas farmers",
       "Maintains a civilian secret identity as a mild-mannered investigative reporter for the Daily Planet alongside Lois Lane",
       "Derives superhuman strength, invulnerability, heat vision, freeze breath, and supersonic flight from Earth's yellow sun",
       "Premier protector of humanity and moral beacon of the Justice League whose critical biological vulnerability is radioactive Kryptonite"
@@ -879,6 +897,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Wonder Woman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diana Prince",
       "Princess Diana of Themyscira",
@@ -888,7 +907,7 @@
     "visual_anchor": "Cinematic vertical 9:16 heroic portrait of Wonder Woman standing atop an ancient temple staircase at dusk, deflective silver bracelets crossed defensively and golden glowing Lasso of Truth coiled securely at her hip.",
     "core_traits": [
       "Immortal warrior princess sculpted from clay and blessed by the Olympian gods on the secluded island of Themyscira",
-      "Leaves her hidden matriarchal homeland to champion truth, justice, and peace during the horrors of modern human warfare",
+      "Leaves her hidden island home to champion truth, justice, and peace in the world of humans",
       "Founding member of the Justice League gifted with godlike superhuman strength, enhanced agility, and divine combat training",
       "Wields indestructible silver Bracelets of Submission, a razor-sharp magical sword, and the truth-forcing golden Lasso of Hestia"
     ],
@@ -903,8 +922,8 @@
       {
         "claim": "Wonder Woman creator William Moulton Marston was also a pioneering psychologist who invented the systolic blood pressure lie detector test.",
         "verdict": "fact",
-        "explanation": "Marston's invention of an early polygraph component directly inspired Wonder Woman's signature weapon, the magical Lasso of Truth, which compels anyone bound by it to tell absolute truth.",
-        "fun_fact": "Marston's wife Elizabeth Holloway and life partner Olive Byrne were also central inspirations for Wonder Woman's personality and appearance."
+        "explanation": "Marston's work on an early lie detector inspired Wonder Woman's magical Lasso of Truth, which makes anyone tied by it tell the truth.",
+        "fun_fact": "Wonder Woman first appeared in All Star Comics #8 in late 1941."
       },
       {
         "claim": "Wonder Woman was born as an ordinary biological daughter of Queen Hippolyta and a mortal warrior king.",
@@ -925,6 +944,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "The Joker",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Clown Prince of Crime",
       "Jack White",
@@ -972,6 +992,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Harley Quinn",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Dr. Harleen Quinzel",
       "Maid of Mischief",
@@ -1018,6 +1039,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "The Flash",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Barry Allen",
       "Scarlet Speedster",
@@ -1040,10 +1062,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Barry Allen's tragic sacrifice in the 1985 Crisis on Infinite Earths comic storyline kept him deceased in mainstream continuity for over two decades.",
+        "claim": "The Flash first appeared in comic books way back in 1940.",
         "verdict": "fact",
-        "explanation": "Barry Allen sacrificed his life to destroy the Anti-Monitor's anti-matter cannon in 1985 and remained deceased until his full revival in Final Crisis in 2008.",
-        "fun_fact": "During his 23-year absence, his former sidekick Wally West took over the mantle of The Flash."
+        "explanation": "The first Flash, Jay Garrick, debuted in 1940; Barry Allen took over the name in 1956.",
+        "fun_fact": "Barry Allen's 1956 debut is often said to have started the comics' 'Silver Age'."
       },
       {
         "claim": "The Flash can only run fast on solid ground and cannot run on water or vertical walls.",
@@ -1064,6 +1086,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Aquaman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arthur Curry",
       "King of Atlantis",
@@ -1111,23 +1134,24 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Green Goblin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Norman Osborn",
       "The Goblin",
       "Iron Patriot"
     ],
     "difficulty": 1,
-    "visual_anchor": "Vertical 9:16 nighttime cinematic frame of the Green Goblin soaring on his sleek bat-shaped glider above Manhattan skyscrapers, clutching a glowing pumpkin bomb with burning orange light reflecting off his emerald scaly armored mask.",
+    "visual_anchor": "Vertical 9:16 nighttime cinematic frame of the Green Goblin soaring on his sleek bat-shaped glider above Manhattan skyscrapers, holding a glowing jack-o'-lantern gadget with orange light reflecting off his green armored mask.",
     "core_traits": [
       "Billionaire industrialist and ruthless head of Oscorp driven insane by an experimental physical enhancement formula",
       "Travels via a rocket-powered, highly agile bat-wing glider equipped with concealed blades and heat-seeking missiles",
-      "Weaponizes an arsenal of razor-sharp bats, lethal electrical shock gloves, and incendiary pumpkin bombs",
-      "Spider-Man's most personal and psychotic arch-foe responsible for the tragic death of Gwen Stacy"
+      "Throws glowing pumpkin-shaped gadgets and zaps foes with electric shock gloves",
+      "Spider-Man's most personal foe, secretly Norman Osborn, the father of Peter's best friend Harry"
     ],
     "distractor_pool": [
       "Doctor Octopus",
       "Hobgoblin",
-      "Venom",
+      "Mysterio",
       "Electro",
       "The Vulture"
     ],
@@ -1148,7 +1172,7 @@
     "versus_candidates": [
       "Spider-Man",
       "Doctor Octopus",
-      "The Joker"
+      "Lex Luthor"
     ]
   },
   {
@@ -1157,6 +1181,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Doctor Octopus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Otto Octavius",
       "Doc Ock",
@@ -1204,6 +1229,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Venom",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Eddie Brock",
       "Lethal Protector",
@@ -1250,6 +1276,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Ant-Man",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scott Lang",
       "Giant-Man",
@@ -1268,7 +1295,7 @@
       "Hawkeye",
       "Falcon",
       "Yellowjacket",
-      "War Machine"
+      "Black Panther"
     ],
     "facts_and_myths": [
       {
@@ -1296,6 +1323,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Captain Marvel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Carol Danvers",
       "Vers",
@@ -1328,7 +1356,7 @@
         "claim": "Carol Danvers was the very first Marvel Comics hero to ever hold the title of Captain Marvel.",
         "verdict": "myth",
         "explanation": "The title was originally held by the alien Kree warrior Mar-Vell in 1967; Carol Danvers originally operated as Ms. Marvel before officially assuming the Captain Marvel moniker in 2012.",
-        "fun_fact": "Her pet alien Flerken named Goose in the movie was named Chewie in the original comic books after Star Wars."
+        "fun_fact": "Her cat-like alien pet Goose is named Chewie in the comics, after the furry Chewbacca."
       }
     ],
     "versus_candidates": [
@@ -1343,6 +1371,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Winter Soldier",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Bucky Barnes",
       "James Buchanan Barnes",
@@ -1389,6 +1418,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Bane",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Man Who Broke the Bat",
       "Gotham's Reckoning",
@@ -1436,6 +1466,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "The Riddler",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Edward Nygma",
       "Edward Nashton",
@@ -1483,6 +1514,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Moon Knight",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Marc Spector",
       "Steven Grant",
@@ -1532,6 +1564,7 @@
     "subtopic_id": "superhero_pantheon",
     "name": "Daredevil",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Matt Murdock",
       "The Man Without Fear",
@@ -1580,13 +1613,14 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Darth Vader",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anakin Skywalker",
       "Lord Vader",
       "The Chosen One"
     ],
     "difficulty": 1,
-    "visual_anchor": "Towering 9:16 vertical portrait of Darth Vader standing inside the smoky Death Star corridor, glossy obsidian helmet gleaming under the menacing crimson glow of his ignited red lightsaber, black cape billowing in atmospheric shadows.",
+    "visual_anchor": "Towering 9:16 vertical portrait of Darth Vader standing inside a smoky Imperial starship corridor, glossy obsidian helmet gleaming under the crimson glow of his ignited red lightsaber, black cape billowing in atmospheric shadows.",
     "core_traits": [
       "Fallen Jedi Knight and Sith Lord serving the Galactic Empire under Emperor Palpatine",
       "Encased in a life-support suit of imposing black mechanical armor with a distinctive rhythmic breathing respirator",
@@ -1605,12 +1639,12 @@
         "claim": "The iconic mechanical breathing sound of Darth Vader was created using a scuba diving regulator.",
         "verdict": "fact",
         "explanation": "Sound designer Ben Burtt achieved Vader's rhythmic respiratory effect by inserting a miniature microphone into a scuba regulator and recording his own breathing.",
-        "fun_fact": "James Earl Jones was paid only seven thousand dollars for providing Darth Vader's legendary voice in the original 1977 Star Wars film."
+        "fun_fact": "James Earl Jones was paid only seven thousand dollars for voicing Darth Vader in the original 1977 film."
       },
       {
         "claim": "Darth Vader explicitly says the exact line 'Luke, I am your father' during the climax of The Empire Strikes Back.",
         "verdict": "myth",
-        "explanation": "The actual line spoken by Darth Vader is 'No, I am your father' in response to Luke asserting that Obi-Wan told him Vader killed his father.",
+        "explanation": "The real line is 'No, I am your father', said in reply to what Luke claims Obi-Wan told him.",
         "fun_fact": "David Prowse spoke fake lines during filming to prevent the secret twist from leaking to the crew."
       }
     ],
@@ -1626,6 +1660,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Luke Skywalker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Red Five",
       "The Last Jedi",
@@ -1635,7 +1670,7 @@
     "visual_anchor": "Cinematic 9:16 vertical composition of young Jedi Knight Luke Skywalker in black robes holding an ignited green lightsaber aloft against the twin binary suns of desert planet Tatooine with swirling sand particles.",
     "core_traits": [
       "Tatooine farm boy raised by his Uncle Owen and Aunt Beru before discovering his Jedi heritage",
-      "Heroic pilot of Red Five who fired the proton torpedoes destroying the first Death Star during the Battle of Yavin",
+      "Heroic X-wing pilot with the call sign Red Five who saves the Rebel base in the first film",
       "Trained in the ways of the Force by Jedi Masters Obi-Wan Kenobi and Grand Master Yoda on Dagobah",
       "Son of Anakin Skywalker who redeemed his father and helped topple the tyrannical Galactic Empire"
     ],
@@ -1648,16 +1683,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "George Lucas originally named the central protagonist Luke Starkiller in early drafts of the Star Wars script.",
+        "claim": "George Lucas gave Luke a different last name in early script drafts.",
         "verdict": "fact",
-        "explanation": "Lucas decided the surname Starkiller sounded too aggressive and violent for the idealistic young protagonist, changing it to Skywalker during pre-production.",
-        "fun_fact": "The name Starkiller was later reused as the callsign for Galen Marek in the Force Unleashed video game and Starkiller Base in The Force Awakens."
+        "explanation": "Lucas first tried a fiercer-sounding surname, then switched to the gentler Skywalker before filming began.",
+        "fun_fact": "Luke's desert home planet Tatooine was filmed in the deserts of Tunisia."
       },
       {
         "claim": "Luke Skywalker builds his iconic green lightsaber using a kyber crystal found on the ice planet Hoth.",
         "verdict": "myth",
         "explanation": "Luke constructed his green lightsaber in a cave on Tatooine using instructions and spare parts he found inside Obi-Wan Kenobi's abandoned desert hut.",
-        "fun_fact": "The blade was made green instead of blue because a blue blade was invisible against the bright blue desert sky of Tatooine during the Sarlacc pit battle."
+        "fun_fact": "The new blade was made green partly so it would stand out clearly against Tatooine's bright blue sky."
       }
     ],
     "versus_candidates": [
@@ -1672,17 +1707,18 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Princess Leia Organa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leia Skywalker Organa Solo",
       "General Organa",
       "Princess Leia"
     ],
     "difficulty": 1,
-    "visual_anchor": "Heroic 9:16 vertical portrait of Princess Leia Organa in sweeping white Alderaanian robes with her iconic coiled side buns hairstyle, holding a silver sporting blaster rifle ready inside a starship corridor.",
+    "visual_anchor": "Heroic 9:16 vertical portrait of Princess Leia Organa in sweeping white Alderaanian robes with her iconic coiled side buns hairstyle, standing ready inside a gleaming starship corridor.",
     "core_traits": [
       "Adopted princess of planet Alderaan and fearless political leader in the Alliance to Restore the Republic",
       "Hidden biological twin sister of Luke Skywalker and daughter of Padme Amidala and Anakin Skywalker",
-      "Smuggled the stolen Death Star technical schematics inside astromech droid R2-D2 before capture",
+      "Hid the Empire's secret space station plans inside the brave astromech droid R2-D2",
       "Later rose to the rank of General leading the military operations of the Resistance against the First Order"
     ],
     "distractor_pool": [
@@ -1718,13 +1754,14 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Han Solo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Captain Solo",
       "Scoundrel",
       "General Solo"
     ],
     "difficulty": 1,
-    "visual_anchor": "Dynamic 9:16 vertical portrait of charismatic smuggler Han Solo in his black vest and holster belt, smirking confidently while aiming his DL-44 heavy blaster pistol inside the Millennium Falcon cockpit.",
+    "visual_anchor": "Dynamic 9:16 vertical portrait of charismatic smuggler Han Solo in his black vest, smirking confidently in the Millennium Falcon cockpit with Chewbacca at his side.",
     "core_traits": [
       "Cynical Corellian smuggler and captain of the legendary light freighter Millennium Falcon alongside co-pilot Chewbacca",
       "Famously boasted that his modified ship made the perilous Kessel Run in less than twelve parsecs",
@@ -1743,13 +1780,13 @@
         "claim": "Harrison Ford improvised Han Solo's famous response 'I know' when Princess Leia tells him 'I love you' before he is frozen.",
         "verdict": "fact",
         "explanation": "The original script had Han replying 'I love you too', but director Irvin Kershner and Ford agreed that 'I know' fit the scoundrel's cocky demeanor far better.",
-        "fun_fact": "Harrison Ford was originally working as a carpenter on the set of American Graffiti and Star Wars before George Lucas chose him to read lines for other auditioning actors."
+        "fun_fact": "Harrison Ford worked as a carpenter before George Lucas asked him to read lines with auditioning actors."
       },
       {
-        "claim": "Greedo shot first at Han Solo in the original 1977 theatrical release of Star Wars.",
+        "claim": "Chewbacca's famous roar was made by recording just one real bear.",
         "verdict": "myth",
-        "explanation": "In the original 1977 theatrical cut, Han Solo calmly fires his blaster under the table without Greedo ever discharging a shot, establishing Han as a ruthless survivor.",
-        "fun_fact": "George Lucas digitally altered the cantina confrontation in the 1997 Special Edition so Greedo shoots first, sparking the famous fan debate 'Han Shot First'."
+        "explanation": "Sound designer Ben Burtt blended recordings of bears, a walrus, lions, a badger, and dogs to create Chewie's voice.",
+        "fun_fact": "The Millennium Falcon's round shape was inspired by a hamburger with an olive beside it."
       }
     ],
     "versus_candidates": [
@@ -1764,6 +1801,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Yoda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Grand Master Yoda",
       "Master Yoda",
@@ -1775,7 +1813,7 @@
       "Diminutive green alien who served as Grand Master of the Jedi Order for several centuries",
       "Lived to the age of nine hundred years, training generations of Jedi Knights including Count Dooku and Luke Skywalker",
       "Known for speaking English with an inverted object-subject-verb grammatical syntax ('Do or do not, there is no try')",
-      "Went into self-imposed exile on the remote swamp planet Dagobah following the tragic execution of Order 66"
+      "Went into hiding on the remote swamp planet Dagobah after the fall of the Jedi Order"
     ],
     "distractor_pool": [
       "Grogu",
@@ -1792,7 +1830,7 @@
         "fun_fact": "Yoda was brought to life by legendary puppeteer and voice actor Frank Oz in The Empire Strikes Back and Return of the Jedi."
       },
       {
-        "claim": "Yoda's native species name and homeworld origin are fully documented in official canonical Star Wars encyclopedias.",
+        "claim": "Yoda's species name and home planet are officially revealed in the movies.",
         "verdict": "myth",
         "explanation": "George Lucas intentionally maintained strict secrecy regarding Yoda's species and homeworld, forbidding any Expanded Universe author or filmmaker from naming or describing them.",
         "fun_fact": "In early drafts of The Empire Strikes Back, Yoda's original character name was Minch Yoda or Buffy."
@@ -1810,6 +1848,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Obi-Wan Kenobi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ben Kenobi",
       "Old Ben",
@@ -1818,7 +1857,7 @@
     "difficulty": 1,
     "visual_anchor": "Cinematic 9:16 vertical portrait of Jedi Master Obi-Wan Kenobi in tan tunic and brown hooded cloak, raising his brilliant blue lightsaber in a classic Soresu defensive guard amidst windblown sand dunes.",
     "core_traits": [
-      "Legendary Jedi Master of the High Council who served as a respected general during the Clone Wars",
+      "Legendary Jedi Master of the High Council and a wise, patient teacher of young Jedi",
       "Trained under Qui-Gon Jinn and became the first Jedi in a millennium to defeat a Sith Lord in combat by vanquishing Darth Maul",
       "Served as mentor and surrogate brother to Anakin Skywalker before their tragic duel on the volcanic world of Mustafar",
       "Adopted the hermit pseudonym Ben Kenobi on Tatooine to watch over and protect young Luke Skywalker"
@@ -1832,13 +1871,13 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Sir Alec Guinness was nominated for an Academy Award for Best Supporting Actor for playing Obi-Wan Kenobi in 1977.",
+        "claim": "Ewan McGregor played young Obi-Wan Kenobi in the prequel movies.",
         "verdict": "fact",
-        "explanation": "Guinness received an Oscar nomination for his portrayal of Obi-Wan Kenobi, making him the only actor nominated for an acting Academy Award in a Star Wars film.",
-        "fun_fact": "Guinness negotiated a contract granting him 2.25 percent of the film's gross royalties, which earned him a massive fortune."
+        "explanation": "Ewan McGregor played Obi-Wan in Episodes I to III and returned for the 2022 series Obi-Wan Kenobi.",
+        "fun_fact": "McGregor's uncle Denis Lawson played the X-wing pilot Wedge Antilles in the original films."
       },
       {
-        "claim": "Obi-Wan was slain by Darth Vader's lightsaber strike during their confrontation aboard the first Death Star.",
+        "claim": "Obi-Wan simply loses his lightsaber duel with Darth Vader in the first movie.",
         "verdict": "myth",
         "explanation": "Obi-Wan surrendered himself peacefully to the Force, vanishing entirely into thin air right as Vader's blade made contact with his empty robes.",
         "fun_fact": "His physical body disappeared because he had mastered the ancient technique taught by Qui-Gon to retain his consciousness as a Force ghost."
@@ -1856,6 +1895,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Chewbacca",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chewie",
       "The Wookiee",
@@ -1902,6 +1942,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Emperor Palpatine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Darth Sidious",
       "The Emperor",
@@ -1911,9 +1952,9 @@
     "difficulty": 1,
     "visual_anchor": "Menacing 9:16 vertical portrait of Emperor Palpatine cloaked in a ragged black Sith cowl, pale scarred face twisted in an evil grin while crackling blue Force lightning arcs from his bony fingertips.",
     "core_traits": [
-      "Devious Sith Lord who operated secretly under the name Darth Sidious to orchestrate the galactic Clone Wars",
-      "Manipulated his rise from Naboo Senator to Supreme Chancellor of the Republic before executing Order 66",
-      "Seduced Anakin Skywalker to the dark side of the Force to become his lethal apprentice Darth Vader",
+      "Sneaky Sith Lord who secretly used the name Darth Sidious to take control of the galaxy",
+      "Rose from Naboo Senator to Supreme Chancellor of the Republic, then declared himself Emperor",
+      "Tricked Anakin Skywalker into joining the dark side to become his apprentice Darth Vader",
       "Master of Sith sorcery and destructive Force lightning who ruled the galaxy from his imperial throne"
     ],
     "distractor_pool": [
@@ -1928,7 +1969,7 @@
         "claim": "Scottish actor Ian McDiarmid was only thirty-eight years old when he played the elderly Emperor in Return of the Jedi.",
         "verdict": "fact",
         "explanation": "Despite playing an ancient, decrepit ruler covered in prosthetic latex makeup in 1983, McDiarmid was young enough to reprise the younger politician Palpatine in the prequel trilogy sixteen years later.",
-        "fun_fact": "McDiarmid is the only actor to portray Palpatine across all three Star Wars trilogies."
+        "fun_fact": "McDiarmid is the only actor to play Palpatine in all three film trilogies."
       },
       {
         "claim": "Palpatine's famous quote 'I am the Senate' was improvised by Ian McDiarmid on set.",
@@ -1949,13 +1990,14 @@
     "subtopic_id": "scifi_space_opera",
     "name": "The Mandalorian",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Din Djarin",
       "Mando",
       "The Clan of Two"
     ],
     "difficulty": 2,
-    "visual_anchor": "Atmospheric 9:16 vertical portrait of Din Djarin, The Mandalorian, encased in gleaming reflective pure Beskar plate armor and T-visor helmet, rifle slung across his cape in an alien sunset alleyway.",
+    "visual_anchor": "Atmospheric 9:16 vertical portrait of Din Djarin, The Mandalorian, in gleaming reflective Beskar armor and T-visor helmet, his cape flowing in an alien sunset alleyway.",
     "core_traits": [
       "Hardened bounty hunter operating in the lawless outer reaches of the galaxy following the collapse of the Galactic Empire",
       "Adherent to the strict religious creed of the Children of the Watch who never removes his helmet in the presence of others",
@@ -1977,7 +2019,7 @@
         "fun_fact": "Brendan Wayne is the grandson of legendary Hollywood Western star John Wayne, fitting the show's space-western tone."
       },
       {
-        "claim": "All Mandalorians in Star Wars lore are religiously forbidden from ever removing their helmets.",
+        "claim": "All Mandalorians are forbidden from ever removing their helmets.",
         "verdict": "myth",
         "explanation": "Only the fundamentalist orthodox sect known as the Children of the Watch adhere to the helmet rule; mainstream Mandalorians like Bo-Katan remove their helmets freely.",
         "fun_fact": "Their strict creed's central motto is 'This is the Way'."
@@ -1995,6 +2037,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Paul Atreides",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Muad'Dib",
       "Kwisatz Haderach",
@@ -2042,6 +2085,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Chani",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Chani Kynes",
       "Sihaya",
@@ -2088,6 +2132,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Baron Vladimir Harkonnen",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Baron",
       "Vladimir Harkonnen",
@@ -2134,6 +2179,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Neo",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Thomas A. Anderson",
       "The One",
@@ -2180,6 +2226,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Morpheus",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Captain Morpheus",
       "The Dreamer"
@@ -2225,6 +2272,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Trinity",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Captain Trinity",
       "The Hacker"
@@ -2270,6 +2318,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Agent Smith",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Smith",
       "The Rogue Program",
@@ -2316,6 +2365,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "The Terminator",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "T-800",
       "Cyberdyne Systems Model 101",
@@ -2362,6 +2412,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Sarah Connor",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Mother of the Future",
       "The Mother of the Resistance"
@@ -2407,6 +2458,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Ellen Ripley",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Ripley",
       "Lieutenant First Class Ripley",
@@ -2453,6 +2505,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Xenomorph",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Alien",
       "Xenomorph XX121",
@@ -2499,6 +2552,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Predator",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Yautja",
       "The Hunter",
@@ -2545,13 +2599,14 @@
     "subtopic_id": "scifi_space_opera",
     "name": "James T. Kirk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Captain Kirk",
       "Jim Kirk",
       "James Tiberius Kirk"
     ],
     "difficulty": 1,
-    "visual_anchor": "Dramatic 9:16 vertical cinematic composition of Starfleet Captain James T. Kirk wearing his iconic gold command tunic on the bridge of the USS Enterprise NCC-1701, holding a silver phaser pistol amidst flashing red alert klaxon lights and floating starfield console displays.",
+    "visual_anchor": "Dramatic 9:16 vertical cinematic composition of Starfleet Captain James T. Kirk wearing his iconic gold command tunic beside the captain's chair on the bridge of the USS Enterprise NCC-1701, amid flashing red alert lights and glowing starfield console displays.",
     "core_traits": [
       "Legendary Starfleet officer who commanded the Constitution-class starship USS Enterprise during its historic five-year exploration mission.",
       "Famous for unconventional tactical thinking, including reprogramming the unwinnable Kobayashi Maru training simulation at Starfleet Academy.",
@@ -2582,7 +2637,7 @@
     "versus_candidates": [
       "Jean-Luc Picard",
       "Han Solo",
-      "Commander Shepard"
+      "Kathryn Janeway"
     ]
   },
   {
@@ -2591,6 +2646,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Spock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mr. Spock",
       "First Officer Spock",
@@ -2637,6 +2693,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Jean-Luc Picard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Captain Picard",
       "Locutus of Borg",
@@ -2683,6 +2740,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Cooper",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Joseph Cooper",
       "Coop"
@@ -2728,6 +2786,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Cobb",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Dominic Cobb",
       "Dom Cobb",
@@ -2774,6 +2833,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Rick Deckard",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Deckard",
       "Blade Runner Deckard"
@@ -2819,6 +2879,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Officer K",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Joe",
       "KD6-3.7",
@@ -2865,6 +2926,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Marty McFly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Martin Seamus McFly",
       "Calvin Klein",
@@ -2911,6 +2973,7 @@
     "subtopic_id": "scifi_space_opera",
     "name": "Doc Brown",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Doctor Emmett Brown",
       "Doc",
@@ -2926,9 +2989,9 @@
     ],
     "distractor_pool": [
       "Marty McFly",
-      "Rick Sanchez",
-      "Professor Farnsworth",
-      "Walter White",
+      "Professor Utonium",
+      "Flint Lockwood",
+      "Wallace",
       "Victor Frankenstein"
     ],
     "facts_and_myths": [
@@ -2946,8 +3009,8 @@
       }
     ],
     "versus_candidates": [
-      "Rick Sanchez",
-      "Professor Farnsworth",
+      "Flint Lockwood",
+      "Wallace",
       "Marty McFly"
     ]
   },
@@ -2957,6 +3020,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Frodo Baggins",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ring-bearer",
       "Mr. Underhill",
@@ -3004,6 +3068,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Gandalf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gandalf the Grey",
       "Gandalf the White",
@@ -3052,6 +3117,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Aragorn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Strider",
       "Aragorn II",
@@ -3060,12 +3126,12 @@
       "King of Gondor"
     ],
     "difficulty": 1,
-    "visual_anchor": "Majestic vertical 9:16 portrait of a battle-tested king with stubbled jaw and dark hair, wearing royal silver-trimmed Gondorian armor, raising the reforged blade Anduril before the monolithic Black Gate of Mordor.",
+    "visual_anchor": "Majestic vertical 9:16 portrait of a weathered king with stubbled jaw and dark hair, wearing royal silver-trimmed Gondorian armor, raising the reforged blade Anduril before the towering Black Gate of Mordor.",
     "core_traits": [
-      "A mysterious cloaked Dunedain ranger first encountered puffing a pipe in the shadowy corner of The Prancing Pony inn",
+      "A mysterious cloaked Dunedain ranger first met sitting in a shadowy corner of The Prancing Pony inn",
       "Direct rightful heir to the High Kingship of Arnor and Gondor, descended from Isildur",
       "Wielded the legendary blade Anduril, the Flame of the West, reforged from the sacred shards of Narsil",
-      "Communed with the ghostly Army of the Dead and led the final diversionary assault at the Black Gate"
+      "Calls on the ghostly Oathbreakers of the mountain, then leads the brave final march to the Black Gate"
     ],
     "distractor_pool": [
       "Boromir",
@@ -3076,9 +3142,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Aragorn was eighty-seven years old during the War of the Ring despite possessing youthful human vigor.",
+        "claim": "Aragorn was eighty-seven years old during the quest to destroy the One Ring.",
         "verdict": "fact",
-        "explanation": "As a royal descendant of the long-lived Dunedain of Numenor, Aragorn enjoyed thrice the lifespan of ordinary men and eventually died at the age of 210.",
+        "explanation": "As a descendant of the long-lived Dunedain, Aragorn lived about three times as long as ordinary men, until age 210.",
         "fun_fact": "Aragorn was raised in secret in Rivendell under the protective care of Elrond, who initially concealed his royal heritage under the name Estel."
       },
       {
@@ -3089,7 +3155,7 @@
       }
     ],
     "versus_candidates": [
-      "Jon Snow",
+      "Robin Hood",
       "Arthur Pendragon",
       "Boromir"
     ]
@@ -3100,6 +3166,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Legolas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Legolas Greenleaf",
       "Prince of the Woodland Realm",
@@ -3111,15 +3178,15 @@
     "core_traits": [
       "Elven prince hailing from the Woodland Realm of northern Mirkwood, gifted with peerless sight and acute hearing",
       "Demonstrated extraordinary agility by walking lightly atop deep snowdrifts without sinking and skateboarding down stone staircases on a shield",
-      "Master marksman who wielded twin long white knives and a deadly Mirkwood bow across countless battles",
-      "Maintained a fiercely competitive yet deeply loyal battlefield kill-count contest with his dwarf companion Gimli"
+      "Master archer who carries twin long white knives and a Mirkwood bow",
+      "Has a friendly scoring contest with his dwarf companion Gimli during their adventures"
     ],
     "distractor_pool": [
       "Thranduil",
       "Elrond",
       "Haldir",
       "Hawkeye",
-      "Katniss Everdeen"
+      "Robin Hood"
     ],
     "facts_and_myths": [
       {
@@ -3147,6 +3214,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Gimli",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gimli son of Gloin",
       "Lockbearer",
@@ -3185,7 +3253,7 @@
     "versus_candidates": [
       "Legolas",
       "Thorin Oakenshield",
-      "Wolverine"
+      "Grumpy"
     ]
   },
   {
@@ -3194,6 +3262,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Gollum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Smeagol",
       "Trahald",
@@ -3204,7 +3273,7 @@
     "visual_anchor": "Atmospheric vertical 9:16 close-up of an emaciated, pale creature with sparse strands of hair and bulbous luminescent blue eyes, crouching wetly on mossy cave rocks while caressing an invisible treasure with trembling claw-like fingers.",
     "core_traits": [
       "Formerly a river-folk Stoor hobbit named Smeagol who was twisted and deformed across five centuries of isolation",
-      "Tormented by a fractured, split personality torn between timid loyalty and murderous covetousness",
+      "Torn between a timid, friendly side called Smeagol and a greedy, grasping side called Gollum",
       "Notorious for referring to the One Ring obsessively as his beloved precious and making wet, guttural coughing noises",
       "Lost his cherished heirloom in a game of riddles in the dark beneath the Misty Mountains"
     ],
@@ -3226,7 +3295,7 @@
         "claim": "Gollum originally created the One Ring in the volcanic fires of Mordor before losing it to Bilbo Baggins.",
         "verdict": "myth",
         "explanation": "Gollum merely stumbled upon the Ring after his cousin Deagol discovered it in the river Gladden; Sauron forged the Ring millennia earlier.",
-        "fun_fact": "Smeagol murdered his cousin Deagol on his birthday to claim the Ring as his present."
+        "fun_fact": "Gollum's famous riddle game with Bilbo first appeared in Tolkien's 1937 book The Hobbit."
       }
     ],
     "versus_candidates": [
@@ -3241,6 +3310,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Sauron",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Dark Lord",
       "Lord of the Rings",
@@ -3261,19 +3331,19 @@
       "Morgoth",
       "Darth Vader",
       "Palpatine",
-      "The Night King"
+      "The White Witch"
     ],
     "facts_and_myths": [
       {
         "claim": "Sauron was originally a pupil of Aule the Smith, the divine Valar master of crafts and metallurgy.",
         "verdict": "fact",
-        "explanation": "Before being seduced by Morgoth's ambition, Sauron was named Mairon and possessed unrivaled talent in mechanical design, smithing, and material science.",
+        "explanation": "Before being tempted by Morgoth, Sauron was named Mairon and was a gifted craftsman and smith.",
         "fun_fact": "Saruman was also originally a Maia of Aule, explaining why both dark sorcerers shared a passion for machines, industry, and ring-craft."
       },
       {
-        "claim": "Sauron was permanently and completely killed when Isildur severed the One Ring from his hand at the Siege of Barad-dur.",
+        "claim": "Sauron was gone for good when Isildur cut the One Ring from his hand.",
         "verdict": "myth",
-        "explanation": "Severing the Ring only destroyed Sauron's physical incarnation; as an immortal Maia, his spirit survived and gradually regained strength in Dol Guldur until the Ring itself was melted.",
+        "explanation": "Losing the Ring only took away Sauron's body; his spirit slowly regained strength until the Ring was finally destroyed.",
         "fun_fact": "When the Ring was destroyed, Sauron's spirit was reduced to an impotent shadow that could never again assume form or menace the world."
       }
     ],
@@ -3289,6 +3359,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Samwise Gamgee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sam Gamgee",
       "Sam the Brave",
@@ -3314,13 +3385,13 @@
       {
         "claim": "J.R.R. Tolkien considered Samwise Gamgee to be the true chief hero of The Lord of the Rings.",
         "verdict": "fact",
-        "explanation": "In an explicit personal letter, Tolkien referred to Sam as the story's chief hero, embodying the resilient and selfless spirit of British common soldiers from World War I.",
+        "explanation": "In a letter, Tolkien called Sam the story's 'chief hero', admiring his humble, loyal, never-give-up spirit.",
         "fun_fact": "Samwise served seven consecutive seven-year terms as the Mayor of Michel Delving in the Shire."
       },
       {
         "claim": "Samwise never wore or held the One Ring at any point during the entire journey.",
         "verdict": "myth",
-        "explanation": "When Sam believed Frodo was dead after Shelob's sting, he took the Ring to continue the quest, temporarily becoming a Ring-bearer before willingly surrendering it back to Frodo.",
+        "explanation": "When Sam thought Frodo was lost after Shelob's sting, he carried the Ring onward, then gladly gave it back to Frodo.",
         "fun_fact": "Because he briefly bore the Ring, Sam was eventually permitted to sail into the West to the Undying Lands at the end of his life."
       }
     ],
@@ -3336,17 +3407,17 @@
     "subtopic_id": "fantasy_epics",
     "name": "Harry Potter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Boy Who Lived",
       "The Chosen One",
-      "Master of Death",
       "Seeker of Gryffindor"
     ],
     "difficulty": 1,
     "visual_anchor": "Dramatic vertical 9:16 frame of a messy black-haired teenage wizard with round wire glasses and a prominent lightning-bolt forehead scar, thrusting a holly wand forward as a vivid red beam of light pierces dark mist.",
     "core_traits": [
       "Orphaned wizard child raised by neglectful Muggle relatives in a cupboard under the stairs at 4 Privet Drive",
-      "Surviving victim of an unblockable killing curse that left a distinctive lightning bolt scar on his forehead",
+      "Known as 'The Boy Who Lived', with a lightning bolt scar from surviving Voldemort's curse as a baby",
       "Gifted youngest Gryffindor Quidditch Seeker in a century who rode a Nimbus Two Thousand and later a Firebolt",
       "Unwitting living Horcrux destined to confront the dark wizard Voldemort at Hogwarts"
     ],
@@ -3383,6 +3454,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Hermione Granger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brightest Witch of Her Age",
       "Minister for Magic",
@@ -3406,7 +3478,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hermione Granger returned to Hogwarts after the Second Wizarding War to formally complete her seventh year and sit her NEWT exams.",
+        "claim": "Hermione went back to Hogwarts to finish her final year after Voldemort's defeat.",
         "verdict": "fact",
         "explanation": "While Harry and Ron joined the Ministry of Magic directly as Aurors without returning to school, Hermione insisted on completing her formal education and graduated top of her class.",
         "fun_fact": "Hermione eventually rose through the Department of Magical Law Enforcement to become Minister for Magic."
@@ -3421,7 +3493,7 @@
     "versus_candidates": [
       "Annabeth Chase",
       "Luna Lovegood",
-      "Katniss Everdeen"
+      "Matilda Wormwood"
     ]
   },
   {
@@ -3430,6 +3502,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Ron Weasley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ronald Bilius Weasley",
       "King Weasley",
@@ -3453,16 +3526,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Ron Weasley's middle name is Bilius, named after an eccentric uncle who allegedly died after seeing a Grim.",
+        "claim": "Ron Weasley's middle name is Bilius.",
         "verdict": "fact",
-        "explanation": "According to Harry Potter lore, Ron was given the middle name Bilius after his Uncle Bilius, who passed away twenty-four hours after seeing a ghostly dog known as the Grim.",
-        "fun_fact": "Uncle Bilius was also famous among the family for pulling flowers out of his trousers at weddings."
+        "explanation": "Ron's full name is Ronald Bilius Weasley, and he is named after his uncle Bilius.",
+        "fun_fact": "Rupert Grint played Ron in all eight Harry Potter films."
       },
       {
-        "claim": "Ron Weasley was originally planned by author J.K. Rowling to be killed off halfway through the series.",
+        "claim": "Ron Weasley is an only child.",
         "verdict": "myth",
-        "explanation": "While Rowling admitted in a later interview that she contemplated killing Ron during a dark period in her personal life, she never formally outlined or drafted his death in the books.",
-        "fun_fact": "Rowling stated that she kept Ron alive because she had planned the Golden Trio's complete survival from the very beginning."
+        "explanation": "Ron is the sixth of seven Weasley children, with five older brothers and one younger sister, Ginny.",
+        "fun_fact": "Ron's pet rat Scabbers turns out to be a wizard in disguise."
       }
     ],
     "versus_candidates": [
@@ -3477,6 +3550,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Albus Dumbledore",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Albus Percival Wulfric Brian Dumbledore",
       "Headmaster Dumbledore",
@@ -3507,8 +3581,8 @@
       {
         "claim": "Dumbledore defeated Gellert Grindelwald by snapping the Elder Wand in half during their duel in 1945.",
         "verdict": "myth",
-        "explanation": "Dumbledore did not break the Elder Wand; he won its allegiance by defeating Grindelwald and kept the wand as his own personal focus for over fifty years until his death.",
-        "fun_fact": "In the books, Harry Potter uses the Elder Wand to repair his original holly wand before returning the Deathstick to Dumbledore's tomb."
+        "explanation": "Dumbledore did not break the Elder Wand; he won its loyalty by defeating Grindelwald and kept it for many years.",
+        "fun_fact": "In the books, Harry uses the Elder Wand to repair his broken holly wand, then gives it up."
       }
     ],
     "versus_candidates": [
@@ -3523,8 +3597,8 @@
     "subtopic_id": "fantasy_epics",
     "name": "Severus Snape",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "The Half-Blood Prince",
       "Professor Snape",
       "Head of Slytherin House"
     ],
@@ -3569,6 +3643,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Lord Voldemort",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tom Marvolo Riddle",
       "The Dark Lord",
@@ -3576,11 +3651,11 @@
       "You-Know-Who"
     ],
     "difficulty": 1,
-    "visual_anchor": "Terrifying 9:16 vertical video shot of Lord Voldemort with chalk-white snake-like face, slit nostrils, and blood-red eyes, wielding a pale yew wand that casts a searing bolt of emerald Avada Kedavra light across a crumbling graveyard.",
+    "visual_anchor": "Dramatic 9:16 vertical shot of Lord Voldemort with a pale snake-like face, slit nostrils, and red eyes, holding a pale yew wand crackling with a bolt of green light across a misty, crumbling stone courtyard.",
     "core_traits": [
       "Born Tom Marvolo Riddle, the most dangerous Dark Wizard in history and the last direct descendant of Salazar Slytherin",
       "Fractured his soul into seven Horcruxes in a desperate quest to conquer mortality and attain eternal life",
-      "Commands the Death Eaters and purist dark forces, speaking Parseltongue and bonding with his deadly serpent Nagini",
+      "Leads a gang of dark wizards and speaks Parseltongue to his giant pet serpent Nagini",
       "Marked Harry Potter as his equal in infancy, unwittingly forging a metaphysical soul link that caused his final downfall"
     ],
     "distractor_pool": [
@@ -3592,22 +3667,22 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The name Voldemort was derived by author J.K. Rowling from the French phrase meaning 'flight of death' or 'theft of death'.",
+        "claim": "J.K. Rowling built the name Voldemort from French words.",
         "verdict": "fact",
-        "explanation": "Rowling constructed the moniker using the French words 'vol' (flight or theft), 'de' (of), and 'mort' (death), reflecting his obsessive flight from mortality.",
+        "explanation": "Rowling made the name from French words, including 'vol', which can mean flight.",
         "fun_fact": "Rowling originally pronounced the final 't' as silent in French, though the film adaptations universally pronounced the hard 't'."
       },
       {
         "claim": "Voldemort was physically incapable of experiencing love because he was conceived under the effects of a love potion.",
         "verdict": "myth",
         "explanation": "Rowling clarified that Merope Gaunt using a love potion on Tom Riddle Sr. was symbolic of an unloving union, but Tom could have learned love had he been nurtured with genuine maternal affection rather than raised in a loveless orphanage.",
-        "fun_fact": "His boggart was his own corpse, reflecting his extreme pathological terror of dying."
+        "fun_fact": "Ralph Fiennes played Voldemort, and digital effects were used to make his nose disappear."
       }
     ],
     "versus_candidates": [
       "Sauron",
       "Albus Dumbledore",
-      "Night King"
+      "Darth Vader"
     ]
   },
   {
@@ -3616,6 +3691,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Sirius Black",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Padfoot",
       "Snuffles",
@@ -3646,60 +3722,14 @@
       {
         "claim": "Sirius Black was the Secret Keeper who betrayed Lily and James Potter to Lord Voldemort in Godric's Hollow.",
         "verdict": "myth",
-        "explanation": "Sirius secretly persuaded James and Lily to appoint Peter Pettigrew as Secret Keeper at the last moment as a bluff, unaware that Pettigrew was a Death Eater spy.",
-        "fun_fact": "Sirius tracked Pettigrew down to confront him, but Pettigrew blew up a street, killed twelve Muggles, severed his own finger, and framed Sirius."
+        "explanation": "Sirius persuaded James and Lily to choose Peter Pettigrew as Secret Keeper as a bluff, not knowing Pettigrew was a traitor.",
+        "fun_fact": "Sirius is Harry's godfather and secretly sends him a Firebolt broomstick as a gift."
       }
     ],
     "versus_candidates": [
       "Severus Snape",
       "Bellatrix Lestrange",
-      "Jon Snow"
-    ]
-  },
-  {
-    "id": "ENT-FLM-080",
-    "domain_id": "modern_cinema_tv",
-    "subtopic_id": "fantasy_epics",
-    "name": "Geralt of Rivia",
-    "language": "en",
-    "aliases": [
-      "The White Wolf",
-      "Gwynbleidd",
-      "The Butcher of Blaviken"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Dramatic 9:16 vertical full shot of Geralt of Rivia with long silver hair, amber cat eyes, and dark studded leather armor, drawing a glowing silver sword in a misty enchanted swamp.",
-    "core_traits": [
-      "Mutated monster hunter belonging to the School of the Wolf who survived the grueling Trial of the Grasses",
-      "Wields two distinct blades on his back: steel for mortal men and beasts, silver for supernatural monsters",
-      "Earned the grim moniker Butcher of Blaviken following a bloody marketplace altercation",
-      "Bound by destiny to protect Princess Cirilla of Cintra through the Law of Surprise"
-    ],
-    "distractor_pool": [
-      "Vesemir",
-      "Aragorn",
-      "Jon Snow",
-      "Legolas",
-      "Lambert"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Geralt was actually born in the realm of Rivia, which granted him his famous regional surname.",
-        "verdict": "myth",
-        "explanation": "Geralt adopted the name of Rivia on the advice of mentor Vesemir to sound more trustworthy to prospective clients, later earning an official knighthood by Queen Meve.",
-        "fun_fact": "He even practiced a Rivian accent to make his chosen alias more convincing."
-      },
-      {
-        "claim": "Geralt's iconic stark white hair is the result of undergoing additional experimental mutagenic trials beyond standard witchers.",
-        "verdict": "fact",
-        "explanation": "Because he displayed exceptional resistance during the primary Trial of the Grasses, he was subjected to further dangerous mutations that stripped all pigment from his hair.",
-        "fun_fact": "His Elder Speech alias Gwynbleidd literally translates to The White Wolf."
-      }
-    ],
-    "versus_candidates": [
-      "Aragorn",
-      "Jon Snow",
-      "Dumbledore"
+      "Remus Lupin"
     ]
   },
   {
@@ -3708,6 +3738,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Percy Jackson",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Perseus Jackson",
       "Son of Poseidon",
@@ -3733,19 +3764,19 @@
       {
         "claim": "Percy Jackson can control all liquids in existence because of his divine heritage as Poseidon's son.",
         "verdict": "myth",
-        "explanation": "His power is rooted specifically in water and water-rich environments; attempting to control unfamiliar poisons or alien liquids pushes his body and morality to dangerous extremes.",
+        "explanation": "His power works best with water and water-rich places; controlling other liquids is very hard and wears him out.",
         "fun_fact": "His nickname Seaweed Brain was affectionately coined by his close friend and eventual partner Annabeth Chase."
       },
       {
-        "claim": "Percy Jackson's ADHD and dyslexia are explained in lore as battlefield combat reflexes and ancient Greek reading wiring.",
+        "claim": "In the books, Percy's ADHD and dyslexia are linked to his demigod powers.",
         "verdict": "fact",
-        "explanation": "In Rick Riordan's mythology, a demigod's ADHD represents heightened situational combat awareness and their brain is hardwired for translating ancient Greek rather than modern English.",
+        "explanation": "Riordan writes that demigod brains are wired for ancient Greek, and their quick reflexes help them on quests.",
         "fun_fact": "Author Rick Riordan created the character of Percy Jackson as bedtime stories for his son Haley, who was diagnosed with ADHD and dyslexia."
       }
     ],
     "versus_candidates": [
       "Harry Potter",
-      "Katniss Everdeen",
+      "Hiccup",
       "Luke Skywalker"
     ]
   },
@@ -3755,6 +3786,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Katniss Everdeen",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Mockingjay",
       "The Girl on Fire",
@@ -3801,6 +3833,7 @@
     "subtopic_id": "fantasy_epics",
     "name": "Peeta Mellark",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Boy with the Bread",
       "Lover Boy"
@@ -3846,6 +3879,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Woody",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sheriff Woody",
       "Woody Pride"
@@ -3891,6 +3925,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Buzz Lightyear",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lightyear",
       "Space Ranger Buzz"
@@ -3936,6 +3971,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Lightning McQueen",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stickers",
       "Number 95",
@@ -3982,6 +4018,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Nemo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sharkbait",
       "Little Nemo"
@@ -4027,6 +4064,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Shrek",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sir Shrek",
       "The Ogre of the Swamp"
@@ -4051,7 +4089,7 @@
         "claim": "Mike Myers recorded all of Shrek's dialogue from day one in his now-famous Scottish accent.",
         "verdict": "myth",
         "explanation": "Myers initially recorded the entire film using his natural Canadian voice before deciding a Scottish working-class brogue suited Shrek better, forcing DreamWorks to re-animate scenes at an added cost of millions of dollars.",
-        "fun_fact": "Comedian Chris Farley originally recorded almost all of Shrek's dialogue before his tragic death in 1997."
+        "fun_fact": "Comedian Chris Farley was the first actor chosen to voice Shrek before Mike Myers took over."
       },
       {
         "claim": "Shrek won the first-ever Academy Award for Best Animated Feature in Oscar history.",
@@ -4072,6 +4110,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Donkey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Noble Steed"
     ],
@@ -4116,6 +4155,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Po",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Dragon Warrior",
       "Master Ping Xiao Po",
@@ -4162,6 +4202,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Toothless",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Night Fury",
       "The Alpha"
@@ -4169,7 +4210,7 @@
     "difficulty": 1,
     "visual_anchor": "Breathtaking vertical 9:16 frame of a sleek jet-black dragon with large expressive emerald eyes and retractable teeth, soaring gracefully above sea stacks and Viking longships through dramatic storm clouds.",
     "core_traits": [
-      "Extremely rare, stealthy strike-class dragon feared by Vikings as the elusive 'unholy offspring of lightning and death'.",
+      "Extremely rare, stealthy dragon so fast that the Vikings of Berk had never seen one clearly.",
       "Identified as a Night Fury with jet-black scales, echolocation abilities, and explosive plasma blast firepower.",
       "Loses his left tail fin during capture and relies on a prosthetic mechanical fin crafted and operated by a young Viking.",
       "Possesses retractable teeth and behaves with playful, loyal mannerisms reminiscent of domestic cats and dogs."
@@ -4207,6 +4248,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Hiccup",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hiccup Horrendous Haddock III",
       "Chief Hiccup"
@@ -4217,7 +4259,7 @@
       "Slender, inventive son of Chief Stoick the Vast who struggles to conform to the brutal warrior culture of Berk.",
       "Apprenticed to the village blacksmith Gobber, inventing contraptions and mechanical flight gear rather than swinging battle axes.",
       "Befriends an injured dragon instead of slaying it, pioneering peaceful human-dragon coexistence across the archipelago.",
-      "Loses his lower left leg during the climatic battle against the Red Death and receives a customized prosthetic peg."
+      "Loses his lower left leg in the first film's final showdown and receives a custom prosthetic."
     ],
     "distractor_pool": [
       "Toothless",
@@ -4252,6 +4294,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Elsa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Queen Elsa",
       "The Snow Queen",
@@ -4299,6 +4342,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Anna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Princess Anna",
       "Queen Anna",
@@ -4345,6 +4389,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Olaf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Olaf the Snowman"
     ],
@@ -4389,6 +4434,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Simba",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King Simba",
       "Prince Simba"
@@ -4434,6 +4480,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Mufasa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King Mufasa"
     ],
@@ -4441,9 +4488,9 @@
     "visual_anchor": "Majestic vertical 9:16 shot of King Mufasa with a lush amber mane gazing across the sunrise over the Pride Lands while sitting atop Pride Rock.",
     "core_traits": [
       "Wise and benevolent ruler who teaches his young heir about the delicate balance of the Great Circle of Life.",
-      "Rescues his cub from a terrifying hyena ambush in the forbidden elephant graveyard.",
-      "Perishes in a gorge after saving his son from a stampede when betrayed by his bitter brother.",
-      "Appears posthumously in the celestial night sky clouds to remind his wandering son of his royal identity."
+      "Rescues young Simba and Nala from sneaky hyenas in a forbidden shadowy land beyond the Pride Lands.",
+      "Teaches Simba that the great kings of the past watch over him from the stars.",
+      "Appears in the clouds of the night sky to remind Simba, 'Remember who you are.'"
     ],
     "distractor_pool": [
       "Simba",
@@ -4478,6 +4525,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Scar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Prince Scar",
       "Uncle Scar"
@@ -4487,8 +4535,8 @@
     "core_traits": [
       "Resentful and calculating royal feline with a thin frame, pitch-black mane, and a distinctive facial injury over his left eye.",
       "Forges a secret alliance with scavengers in the shadows to orchestrate a devastating wildebeest stampede.",
-      "Utters the chilling line Long Live the King before throwing his sibling down a steep cliff face.",
-      "Sings the villainous musical march Be Prepared while plotting a tyrannical military coup."
+      "Tricks his brother Mufasa and young Simba so he can grab the throne for himself.",
+      "Sings the villain song Be Prepared while plotting to become king of Pride Rock."
     ],
     "distractor_pool": [
       "Mufasa",
@@ -4505,10 +4553,10 @@
         "fun_fact": "Cummings also voiced the hyena Ed in the very same movie."
       },
       {
-        "claim": "Scar was permanently victorious and died peacefully of old age as ruler of Pride Rock.",
+        "claim": "Scar rules Pride Rock happily until the very end of The Lion King.",
         "verdict": "myth",
-        "explanation": "After blaming the hyenas during his defeat by Simba, the betrayed hyenas turn against Scar and devour him in a ring of fire.",
-        "fun_fact": "In Hercules, a dead lion skin resembling Scar appears as Hercules' pelt."
+        "explanation": "Simba returns, defeats Scar in a showdown on Pride Rock, and even the hyenas turn against their old leader.",
+        "fun_fact": "In the book series Six New Adventures, Scar's original name is revealed to be Taka."
       }
     ],
     "versus_candidates": [
@@ -4523,6 +4571,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Moana",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moana of Motunui",
       "Wayfinder Moana"
@@ -4568,6 +4617,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Maui",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Demigod Maui",
       "Maui of the Wind and Sea"
@@ -4613,6 +4663,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "WALL-E",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Waste Allocation Load Lifter: Earth-Class",
       "WALLE"
@@ -4630,13 +4681,13 @@
       "Baymax",
       "Iron Giant",
       "R2-D2",
-      "Bender"
+      "Rosie the Robot"
     ],
     "facts_and_myths": [
       {
         "claim": "Legendary sound designer Ben Burtt created over two thousand sound files to synthesize the voice and mechanical sounds of WALL-E.",
         "verdict": "fact",
-        "explanation": "Ben Burtt, famed for creating Star Wars sounds like R2-D2 and lightsabers, spent months recording real mechanical items to craft WALL-E's robotic audio identity.",
+        "explanation": "Ben Burtt, who created famous sounds like R2-D2's beeps and lightsaber hums, recorded real machines to build WALL-E's voice.",
         "fun_fact": "Burtt used the sound of a hand-cranked generator and an inertia starter from a 1930s biplane."
       },
       {
@@ -4658,6 +4709,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Remy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Little Chef",
       "Chef Remy"
@@ -4703,6 +4755,7 @@
     "subtopic_id": "modern_animation_studios",
     "name": "Gru",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Felonious Gru",
       "Agent Gru"
@@ -4748,6 +4801,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Saul Goodman",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Jimmy McGill",
       "James Morgan McGill",
@@ -4795,6 +4849,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Eleven",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "El",
       "Jane Hopper",
@@ -4842,6 +4897,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Jim Hopper",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Hop",
       "Chief Hopper",
@@ -4889,6 +4945,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Dustin Henderson",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Dusty",
       "Dusty-bun",
@@ -4936,6 +4993,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Sherlock Holmes",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Consulting Detective",
       "Sherlock",
@@ -4983,6 +5041,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "John Watson",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Dr. John Watson",
       "Dr. John Hamish Watson",
@@ -5029,6 +5088,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Jim Moriarty",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Moriarty",
       "Professor Moriarty",
@@ -5076,6 +5136,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Ted Lasso",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Coach Lasso",
       "The American Coach",
@@ -5122,6 +5183,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Michael Scott",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Michael Gary Scott",
       "World's Best Boss",
@@ -5169,6 +5231,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Dwight Schrute",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Dwight Kurt Schrute III",
       "Assistant to the Regional Manager",
@@ -5216,6 +5279,7 @@
     "subtopic_id": "cult_tv_series",
     "name": "Wednesday Addams",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Wednesday",
       "Wednesday Friday Addams",

@@ -79,6 +79,8 @@ export const TopicSourceExclusionReasonCodeSchema = z.enum([
   "MISSING_ENGLISH_SOURCE",
   "INCOMPATIBLE_FORMAT",
   "INCOMPATIBLE_CHOICES",
+  "ANSWER_LEAKED_IN_STEM",
+  "KID_UNSAFE_CONTENT",
 ]);
 export type TopicSourceExclusionReasonCode = z.infer<typeof TopicSourceExclusionReasonCodeSchema>;
 

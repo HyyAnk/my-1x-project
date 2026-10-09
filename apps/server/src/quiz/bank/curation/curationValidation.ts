@@ -1,21 +1,31 @@
-import type { BankGameplayArchetypeId, BankQuestionWithCooldown, TopicCandidate } from "@studio/shared";
+import {
+  normalizeLegacyVerdictIdentifier,
+  type BankGameplayArchetypeId,
+  type BankQuestionWithCooldown,
+  type TopicCandidate,
+} from "@studio/shared";
 
 export const LEGACY_PLACEHOLDER_EXPLANATION_SUFFIX = " is verified through scientific and historical evidence.";
 export const LEGACY_PLACEHOLDER_QUESTION_PATTERN = /: (key question #\d+|core fact|challenge fact|climax fact)\?$/;
 export const LEGACY_PLACEHOLDER_CHOICE_PATTERN = /^(.+ )?(Choice|Contender) [A-Z]$/;
 
 export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArchetypeId | undefined {
-  if (topic.archetype) {
-    return topic.archetype;
+  // Topic records built in memory may still carry retired True/False ids that were never schema-parsed.
+  const archetype = normalizeLegacyVerdictIdentifier<string | undefined>(topic.archetype) as BankGameplayArchetypeId | undefined;
+  const suggestedLayout = normalizeLegacyVerdictIdentifier<string | undefined>(
+    "suggested_layout" in topic ? topic.suggested_layout : undefined,
+  );
+  const quizFormat = normalizeLegacyVerdictIdentifier<string | undefined>("quiz_format" in topic ? topic.quiz_format : undefined);
+  if (archetype) {
+    return archetype;
   }
-  if (topic.suggested_layout) {
-    switch (topic.suggested_layout) {
+  if (suggestedLayout) {
+    switch (suggestedLayout) {
       case "media_left_choices_right":
         return "deep_trivia";
       case "visual_choices_three_pure":
         return "visual_spotting";
       case "verdict_yes_no":
-      case "verdict_true_false":
         return "verdict_yes_no";
       case "split_versus_two":
         return "versus_faceoff";
@@ -27,10 +37,10 @@ export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArche
         return "mystery_reveal";
     }
   }
-  if (topic.quiz_format === "yes_no" || topic.quiz_format === "true_false") {
+  if (quizFormat === "yes_no") {
     return "verdict_yes_no";
   }
-  if (topic.quiz_format === "odd_one_out") {
+  if (quizFormat === "odd_one_out") {
     return "visual_spotting";
   }
   return undefined;

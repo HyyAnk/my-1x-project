@@ -122,8 +122,20 @@ describe("Stage 3: Image Provider Reference-First Integration", () => {
       .png()
       .toBuffer();
 
+    // Provider output must match the declared 16:9 / 1280x720 metadata; the thumbnail compositor rejects undersized art.
+    const providerImageBytes = await sharp({
+      create: {
+        width: 1280,
+        height: 720,
+        channels: 4,
+        background: { r: 50, g: 150, b: 250, alpha: 1 },
+      },
+    })
+      .png()
+      .toBuffer();
+
     vi.mocked(generateImgStudioImageBytes).mockResolvedValue({
-      bytes: dummyImageBytes,
+      bytes: providerImageBytes,
       model: "test-imgstudio-model",
       aspect_ratio: "16:9",
       resolution: "1K",
@@ -132,7 +144,7 @@ describe("Stage 3: Image Provider Reference-First Integration", () => {
     });
 
     vi.mocked(generateGpti2ImageBytes).mockResolvedValue({
-      bytes: dummyImageBytes,
+      bytes: providerImageBytes,
       model: "gpt-image-2.5-flare",
       aspect_ratio: "16:9",
       size: "1280x720",

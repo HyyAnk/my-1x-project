@@ -4,6 +4,7 @@ import type {
   BuildReverseBatchPromptOptions,
 } from "./promptStrategy.types.js";
 import {
+  ANSWER_INTEGRITY_MANDATE_LINES,
   COMMON_BATCH_CONTENT_POLICY_LINES,
   COMMON_REVERSE_CONTENT_POLICY_LINES,
   FRANCHISE_ANCHOR_MANDATE_LINES,
@@ -16,10 +17,10 @@ const GOLDEN_DEEP_TRIVIA_PARADIGMS: string[] = [
   "=== GOLDEN DEEP TRIVIA PARADIGMS (PUNCHY & DIVERSE HOOKS) ===",
   "CRITICAL: Strictly 60 to 80 characters (never exceed 80 chars). NEVER repeat \"Which [noun] [verb]...\" monotonically. Rotate across these 5 ultra-concise styles:",
   '1. Feat / Signature Action: "In Dragon Ball Z, whose signature energy wave is the Kamehameha?" -> Choices: [A: Son Goku (Correct), B: Vegeta, C: Piccolo]',
-  '2. Iconic Relic / Hallmarks: "In One Piece, what straw accessory was given to Luffy by Shanks?" -> Choices: [A: Straw Hat (Correct), B: Red Cloak, C: Gold Compass]',
+  '2. Iconic Relic / Hallmarks: "In One Piece, what promise token did Shanks give Luffy?" -> Choices: [A: Straw Hat (Correct), B: Red Cloak, C: Gold Compass]',
   '3. Universal Mascot / Partner: "In Pokemon, which electric mouse is Ash Ketchum\'s loyal partner?" -> Choices: [A: Pikachu (Correct), B: Raichu, C: Eevee]',
   '4. Signature Jutsu / Technique: "In Naruto, which swirling blue sphere technique did Minato invent?" -> Choices: [A: Rasengan (Correct), B: Chidori, C: Amaterasu]',
-  '5. Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan mimic Kogoro\'s voice?" -> Choices: [A: Voice-Changing Bowtie (Correct), B: Power Shoes, C: Tracking Glasses]',
+  '5. Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan speak as Kogoro?" -> Choices: [A: Voice-Changing Bowtie (Correct), B: Power Shoes, C: Tracking Glasses]',
 ];
 
 const SPECIALIZED_DEEP_TRIVIA_DIRECTIVE: string[] = [
@@ -29,10 +30,10 @@ const SPECIALIZED_DEEP_TRIVIA_DIRECTIVE: string[] = [
   '2. ANTI-MONOTONY & NO FILLER NOUNS: STRICTLY FORBIDDEN to monotonically open questions with "Which [category noun] [verb]..." (e.g. "Which villain...", "Which sorcerer...", "Which animal..."). Drop redundant category labels because the choices already display the candidates!',
   "3. HOOK VARIETY ROTATION: Rotate continuously across these 5 punchy phrasing styles:",
   '   - Feat / Signature Action: "In Dragon Ball Z, whose signature energy wave is the Kamehameha?"',
-  '   - Iconic Relic / Hallmarks: "In One Piece, what straw accessory was given to Luffy by Shanks?"',
+  '   - Iconic Relic / Hallmarks: "In One Piece, what promise token did Shanks give Luffy?"',
   '   - Universal Mascot / Partner: "In Pokemon, which electric mouse is Ash Ketchum\'s loyal partner?"',
   '   - Signature Jutsu / Technique: "In Naruto, which swirling blue sphere technique did Minato invent?"',
-  '   - Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan mimic Kogoro\'s voice?"',
+  '   - Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan speak as Kogoro?"',
   "4. ANCHORING: Root each question deeply into the Target Entity's most surprising lore, verified science, or iconic breakthrough.",
   "5. FRANCHISE ANCHORING: If the target entity belongs to anime, manga, gaming, comics, movies, or fictional lore, ALWAYS explicitly include the parent franchise name using short umbrella titles (e.g. 'In Spider-Man', 'In Lord of the Rings'). NEVER include lengthy movie subtitles or arc tags.",
 ];
@@ -52,7 +53,7 @@ const MIND_BLOWING_EDUTAINMENT_MANDATE: string[] = [
   "4. STRICT MOBILE QUESTION BREVITY (STRICTLY 60–80 CHARACTERS):",
   "   - On 9:16 vertical Shorts/Reels, the question box fits at most 2 lines. Keep question strictly 60 to 80 characters (never exceed 80 chars).",
   "   - NEVER pack paragraph-length backstories into the question box. Keep the hook punchy and readable in under 2 seconds.",
-  "   - Reserve rich historical, scientific, or narrative context strictly for the 'explanation' and 'fun_fact' fields!",
+  "   - Move the background story into the 'explanation' and 'fun_fact' fields, told in short, simple kid-friendly sentences!",
 ];
 
 export const deepTriviaPromptStrategy: ArchetypePromptStrategy = {
@@ -82,6 +83,8 @@ export const deepTriviaPromptStrategy: ArchetypePromptStrategy = {
       ...GOLDEN_DEEP_TRIVIA_PARADIGMS,
       ``,
       ...MIND_BLOWING_EDUTAINMENT_MANDATE,
+      ``,
+      ...ANSWER_INTEGRITY_MANDATE_LINES,
       ``,
       ...FRANCHISE_ANCHOR_MANDATE_LINES,
       ``,
@@ -148,6 +151,8 @@ export const deepTriviaPromptStrategy: ArchetypePromptStrategy = {
       ...SPECIALIZED_DEEP_TRIVIA_DIRECTIVE,
       ``,
       ...MIND_BLOWING_EDUTAINMENT_MANDATE,
+      ``,
+      ...ANSWER_INTEGRITY_MANDATE_LINES,
       ``,
       ...FRANCHISE_ANCHOR_MANDATE_LINES,
       ``,

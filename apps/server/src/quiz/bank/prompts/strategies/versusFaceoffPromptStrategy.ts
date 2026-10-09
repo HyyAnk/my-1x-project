@@ -49,7 +49,7 @@ const SPECIALIZED_VERSUS_FACEOFF_DIRECTIVE: string[] = [
   "   - NEVER write a question whose wording automatically disqualifies Choice B by definition (e.g. NEVER ask 'Which red racer...' when Choice B is Tow Mater — Mater is neither red nor a racer!).",
   "   - NEVER disguise standard 1-entity trivia as a versus faceoff (e.g. NEVER ask 'Which wizard escaped Azkaban unaided?' with Snape as distractor — Snape was never an inmate in Azkaban!).",
   "   - Both contenders must be legitimate peers/rivals competing on a shared dimension (speed, strength, titles, chronological debut, or shared canon event).",
-  "3. PEER PAIRING: Set Choice A to the Target Entity name, and Choice B to a true peer/rival from Versus Rivals or Distractor Pool who genuinely competes in the same category.",
+  "3. PEER PAIRING: Set Choice A to the Target Entity name, and Choice B to a true peer/rival from Versus Rivals or Distractor Pool who genuinely competes in the same category. The system randomizes which side wins on screen, so never refer to 'Choice A' / 'Choice B' or 'left' / 'right' in the explanation or fun fact; always name the contenders.",
   "4. HIGH SYNTACTIC VARIETY & NATURAL HOST VOICE: Rotate across these comparative styles:",
   '   - Natural Franchise Hook: "In [Franchise], who [won more titles / achieved milestone]?" (e.g. "In Pixar\'s Cars, who won more Piston Cups?")',
   '   - Stat / Superlative Showdown: "[Entity A] vs [Entity B]: Who has higher [speed / stat]?"',

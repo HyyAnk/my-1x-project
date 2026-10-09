@@ -338,7 +338,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           { label: "Level 4", visualPrompt: "Futuristic holographic bio-scan surgical healing chamber 🔥" },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -387,7 +387,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           { label: "Level 4", visualPrompt: "Hyper-luminous cosmic quasar bursting through primordial space time 🔥" },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -418,7 +418,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -434,7 +434,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
       ];
 
     case "science":
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -482,7 +482,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           { label: "Level 4", visualPrompt: "Cosmic Yggdrasil world tree glowing with celestial auroras 🔥" },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -529,7 +529,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           { label: "Level 4", visualPrompt: "Mount Olympus summit bathed in divine golden celestial lightning 🔥" },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -575,7 +575,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           { label: "Level 4", visualPrompt: "Mythic crystalline dragon egg hatching celestial starlight 🔥" },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -591,7 +591,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
       ];
 
     case "history":
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -607,7 +607,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
       ];
 
     case "ocean":
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -623,7 +623,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
       ];
 
     case "food":
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -639,7 +639,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
       ];
 
     case "animals":
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -655,7 +655,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
       ];
 
     case "school":
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",
@@ -703,7 +703,7 @@ function resolveThemedFallbackAnchors(domain: SubjectDomainCategory, layout: Thu
           { label: "Level 4", visualPrompt: "Purple Impossible blazing cosmic supernova brain 🔥" },
         ];
       }
-      if (layout === "true_false" || layout === "yes_no") {
+      if (layout === "yes_no") {
         return [
           {
             label: "Statement Subject",

@@ -18,10 +18,7 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
   const handleLayoutChange = useCallback(
     (newLayoutId: QuizPreviewLayoutId) => {
       design.setLayoutId(newLayoutId);
-      const isBinaryChoices =
-        question.choices.length === 2 &&
-        ((question.choices[0] === "True" && question.choices[1] === "False") ||
-          (question.choices[0] === "Yes" && question.choices[1] === "No"));
+      const isBinaryChoices = question.choices.length === 2 && question.choices[0] === "Yes" && question.choices[1] === "No";
 
       if (newLayoutId === "mystery_reveal") {
         if (question.choices.length > 1) {
@@ -39,18 +36,11 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
           question.setChoices(["Yes", "No"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
-      } else if (newLayoutId === "verdict_true_false") {
-        const isTfChoices = question.choices.length === 2 && question.choices[0] === "True" && question.choices[1] === "False";
-        if (question.choices.length !== 2 || !isTfChoices) {
-          question.setChoices(["True", "False"]);
-          if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
-        }
       } else if (newLayoutId === "split_versus_two") {
         if (question.choices.length !== 2 || isBinaryChoices) {
           if (
             cachedDraftChoicesRef.current &&
             cachedDraftChoicesRef.current.choices.length === 2 &&
-            !cachedDraftChoicesRef.current.choices.includes("True") &&
             !cachedDraftChoicesRef.current.choices.includes("Yes")
           ) {
             question.setChoices([...cachedDraftChoicesRef.current.choices]);
@@ -92,18 +82,11 @@ export function useSandboxLayoutSync({ design, question, viewport, mascot: _masc
       let targetLayout: ResolvedQuizLayoutId = "media_left_choices_right";
       if (sample.type === "yes_no") {
         targetLayout = "verdict_yes_no";
-      } else if (sample.type === "true_false") {
-        targetLayout = "verdict_true_false";
       } else if (sample.type === "versus") {
         targetLayout = "split_versus_two";
       } else if (sample.type === "mystery_reveal") {
         targetLayout = "mystery_reveal";
-      } else if (
-        design.layoutId === "verdict_yes_no" ||
-        design.layoutId === "verdict_true_false" ||
-        design.layoutId === "split_versus_two" ||
-        design.layoutId === "mystery_reveal"
-      ) {
+      } else if (design.layoutId === "verdict_yes_no" || design.layoutId === "split_versus_two" || design.layoutId === "mystery_reveal") {
         targetLayout = "media_left_choices_right";
       } else if (design.layoutId !== "baseline") {
         targetLayout = design.layoutId;

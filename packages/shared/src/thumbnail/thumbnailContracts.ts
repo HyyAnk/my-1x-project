@@ -140,20 +140,6 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
     hookTextTemplate: "YES OR NO?",
     badgeTemplate: "CAN YOU PASS? 🎯",
   },
-  true_false: {
-    id: "true_false",
-    name: "True or False",
-    description: "Controversial claim with tactile 3D True and False arcade buttons.",
-    psychologicalTrigger: "Belief challenge and rapid intuition test.",
-    mascotPersona: {
-      role: "Truth Checker / Quizmaster",
-      defaultCostume: "Show host bowtie and glowing cybernetic earpiece",
-      defaultProp: "Hand resting thoughtfully under chin in skeptical contemplation",
-      defaultExpression: "Winking with raised eyebrow, challenging the viewer",
-    },
-    hookTextTemplate: "TRUE OR FALSE?",
-    badgeTemplate: "CAN YOU PASS? 🎯",
-  },
 };
 
 export type CuriosityBadgeId =

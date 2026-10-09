@@ -19,8 +19,6 @@ export interface QuestionBankTableProps {
 
 const ARCHETYPE_META: Record<string, { label: string; icon: string }> = {
   verdict_yes_no: { label: "Yes or No", icon: "✨" },
-  verdict_true_false: { label: "True or False", icon: "⚖️" },
-  verdict_fact_myth: { label: "True or False", icon: "⚖️" },
   speed_blitz: { label: "Speed Blitz", icon: "⚡" },
   deep_trivia: { label: "Deep Trivia", icon: "🧠" },
   versus_faceoff: { label: "1v1 Faceoff", icon: "⚔️" },

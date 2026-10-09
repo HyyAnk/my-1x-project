@@ -75,7 +75,7 @@ export const MACHINES_DOMAIN_SEED: EditorialDomainSeed = {
   id: "machines_tech",
   domainName: "Machines & Supercars",
   pattern: /\b(machine|machines|car|cars|supercar|supercars|hypercar|engine|turbo|turbocharger|robot|robots|bionic|hardware|mechanic|horsepower|invention|inventions|gizmo|gizmos|gadget|gadgets|device|devices|tech showdown|laser beam|sonar)\b/i,
-  preferredLayout: "true_false",
+  preferredLayout: "yes_no",
   preferredTemplate: "big_object",
   background: "bright",
   backgroundAtmosphere:
@@ -84,7 +84,7 @@ export const MACHINES_DOMAIN_SEED: EditorialDomainSeed = {
     {
       label: "Turbo Engine",
       keywords: ["turbo", "turbocharger", "engine", "exhaust", "titanium"],
-      hook: "TRUE OR FALSE?",
+      hook: "YES OR NO?",
       background: "bright",
       backgroundAtmosphere:
         "High-end automotive engineering studio with directional warm amber spotlighting, reflective gloss surface, and crisp specular highlights.",

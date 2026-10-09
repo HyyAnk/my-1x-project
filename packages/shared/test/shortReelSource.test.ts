@@ -127,8 +127,9 @@ describe("Short-Reel Source Snapshot Boundary (Task A1)", () => {
       status: "approved",
     });
 
+    // A retired True/False bank question is read as Yes/No.
     const tfSnapshot = createEnglishSourceSnapshot(tfQuestion, "source");
-    assert.equal(tfSnapshot.archetype_id, "verdict_true_false");
+    assert.equal(tfSnapshot.archetype_id, "verdict_yes_no");
     assert.equal(tfSnapshot.choices.length, 2);
 
     const ynQuestion = BankQuestionSchema.parse({
@@ -164,7 +165,7 @@ describe("Short-Reel Source Snapshot Boundary (Task A1)", () => {
     });
     assert.throws(
       () => createEnglishSourceSnapshot(speedBlitzQuestion, "source"),
-      /archetype must be 'versus_faceoff', 'deep_trivia', 'verdict_yes_no', or 'verdict_true_false'/i,
+      /archetype must be 'versus_faceoff', 'deep_trivia', or 'verdict_yes_no'/i,
     );
   });
 

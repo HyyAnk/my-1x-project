@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { energyWhipStingerClip } from "../src/quiz/render/candyArcade/transitions/energyWhipStingerClip.js";
 import { candyArcadeEnergyWhipStylesCss } from "../src/quiz/render/candyArcade/styles/candyArcadeEnergyWhipStyles.js";
 import { candyArcadeCss } from "../src/quiz/render/candyArcade/candyArcadeStyles.js";
-import { compileIntroStage } from "../src/quiz/timeline/compilers/introCompiler.js";
+import { compileMidRollCtaStage } from "../src/quiz/timeline/compilers/midRollCtaCompiler.js";
 import { TimelineContext } from "../src/quiz/timeline/compilers/timelineContext.js";
 import { timingPolicyForAgeBand } from "@studio/shared";
 
@@ -90,17 +90,16 @@ describe("Arcade Energy Whip Stinger Transition (Bridge CTA -> Question 1)", () 
         intro_cta: 3.0,
       });
 
-      const director = { archetype_family: "arcade_classic", beats: [] } as any;
       const voicePlan = {
         segments: [
           { segment_id: "intro_cta", role: "intro_cta", text: "Subscribe for more!" },
         ],
       } as any;
 
-      compileIntroStage(ctx, director, voicePlan, 0, {
+      compileMidRollCtaStage(ctx, voicePlan, {
         bridgeConfig: { enabled: true, enableCtaScene: true },
-        questionCount: 2,
         channelName: "Test Channel",
+        hasNextQuestion: true,
       });
 
       const transitionEvent = ctx.events.find(
@@ -108,7 +107,8 @@ describe("Arcade Energy Whip Stinger Transition (Bridge CTA -> Question 1)", () 
       );
 
       expect(transitionEvent).toBeDefined();
-      expect(transitionEvent?.at_seconds).toBe(3.5);
+      // voice lead-in (0.4) + voice (3.0) + post-voice pause (0.5)
+      expect(transitionEvent?.at_seconds).toBe(3.9);
       expect(transitionEvent?.duration_seconds).toBe(1.2);
       expect(transitionEvent?.payload?.transition_id).toBe("energy_whip");
 

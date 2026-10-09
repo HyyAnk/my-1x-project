@@ -567,8 +567,8 @@ describe("Stage 9: Comprehensive Regression Test Suite & Parity Harness (apps/se
       choices: string[];
     }> = [
       { id: "full_stack_list", format: "multiple_choice", choices: ["A", "B", "C"] },
-      { id: "split_versus_two", format: "true_false", choices: ["Left", "Right"] },
-      { id: "verdict_true_false", format: "true_false", choices: ["True", "False"] },
+      { id: "split_versus_two", format: "yes_no", choices: ["Left", "Right"] },
+      { id: "verdict_yes_no", format: "yes_no", choices: ["Yes", "No"] },
       { id: "visual_choices_three", format: "multiple_choice", choices: ["One", "Two", "Three"] },
       { id: "visual_choices_three_pure", format: "odd_one_out", choices: ["One", "Two", "Three"] },
       { id: "mystery_reveal", format: "image_guess", choices: ["Marie Curie"] },
@@ -733,14 +733,17 @@ describe("Stage 9: Comprehensive Regression Test Suite & Parity Harness (apps/se
         correct_choice_index: 0,
       });
 
-      // Synchronized timing custom properties in rehearsal
+      // Synchronized timing custom properties in rehearsal (driven by the production gameplay timeline)
+      const rehearsalTimeline = rehearsal.timeline!;
       expect(rehearsal.html).toContain("--clip-start: 0s;");
-      expect(rehearsal.html).toContain(`--choices-at: ${timeline.choicesStart.toFixed(3)}s;`);
-      expect(rehearsal.html).toContain(`--thinking-at: ${timeline.thinkingStart.toFixed(3)}s;`);
-      expect(rehearsal.html).toContain(`--reveal-at: ${timeline.revealStart.toFixed(3)}s;`);
-      expect(rehearsal.html).toContain(`--reward-at: ${rewardAtExpected.toFixed(3)}s;`);
-      expect(rehearsal.html).toContain("--timer-duration: 7.470s;");
-      expect(rehearsal.html).toContain("--query-hold-duration: 2.470s;");
+      expect(rehearsal.html).toContain(`--choices-at: ${rehearsalTimeline.choicesStart.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(`--thinking-at: ${rehearsalTimeline.thinkingStart.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(`--reveal-at: ${rehearsalTimeline.revealStart.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(`--reward-at: ${rehearsalTimeline.rewardStart!.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(`--timer-duration: ${rehearsalTimeline.revealStart.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(
+        `--query-hold-duration: ${(rehearsalTimeline.revealStart - rehearsalTimeline.countdownSeconds!).toFixed(3)}s;`,
+      );
 
       // Production clip uses identical timing keyframe hooks
       expect(prod.html).toContain("calc(var(--clip-start, 0s) + var(--choices-at, 0s)");

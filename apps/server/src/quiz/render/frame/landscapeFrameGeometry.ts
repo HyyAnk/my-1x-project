@@ -49,7 +49,6 @@ export const LAYOUT_ARENA_GEOMETRY: Readonly<Record<QuizLandscapeLayoutId, Frame
   visual_choices_three_pure: QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.arena,
   split_versus_two: QUIZ_LAYOUT_GEOMETRY.split_versus_two.arena,
   verdict_yes_no: QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.arena,
-  verdict_true_false: QUIZ_LAYOUT_GEOMETRY.verdict_true_false.arena,
   full_stack_list: QUIZ_LAYOUT_GEOMETRY.full_stack_list.arena,
   mystery_reveal: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.arena,
 });

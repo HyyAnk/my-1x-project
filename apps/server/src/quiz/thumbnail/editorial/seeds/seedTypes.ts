@@ -1,5 +1,5 @@
 import type { ThumbnailLayoutType } from "@studio/shared";
-import type { EditorialBackgroundPalette } from "../editorialTypes.js";
+import type { EditorialBackgroundPalette, EditorialThumbnailDesign } from "../editorialTypes.js";
 
 export interface EditorialMascotPose {
   prop: string;
@@ -36,7 +36,7 @@ export interface EditorialChallengeArchetype {
   template: "big_object" | "comparison" | "reaction";
   background: EditorialBackgroundPalette;
   backgroundAtmosphere: string;
-  candidateCount: number;
+  candidateCount: EditorialThumbnailDesign["candidateCount"];
   defaultHook: string;
   hookFormulas: string[];
   spatialComposition: string;

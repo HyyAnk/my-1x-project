@@ -1,4 +1,4 @@
-import type { DirectorArchetype, QuizQuestionFormat } from "./enums.js";
+import { isLegacyVerdictIdentifier, normalizeLegacyVerdictIdentifier, type DirectorArchetype, type QuizQuestionFormat } from "./enums.js";
 import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import type { MascotRenderAspectRatio } from "./mascot/renderTypes.js";
 import {
@@ -102,7 +102,17 @@ export function filterQuizLayoutsByAspectRatio(aspectRatio?: "16:9" | "9:16"): r
   return QUIZ_LANDSCAPE_LAYOUT_IDS;
 }
 
-export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutResolutionResult<ResolvedQuizLayoutId> {
+function normalizeLegacyResolutionInput(input: QuizLayoutResolutionInput): QuizLayoutResolutionInput {
+  return {
+    ...input,
+    requestedLayout: normalizeLegacyVerdictIdentifier(input.requestedLayout) as QuizLayoutResolutionInput["requestedLayout"],
+    questionFormat: normalizeLegacyVerdictIdentifier(input.questionFormat) as QuizQuestionFormat,
+    archetype: normalizeLegacyVerdictIdentifier(input.archetype),
+  };
+}
+
+export function resolveQuizLayout(rawInput: QuizLayoutResolutionInput): QuizLayoutResolutionResult<ResolvedQuizLayoutId> {
+  const input = normalizeLegacyResolutionInput(rawInput);
   const choicePresentation = input.choicePresentation ?? quizChoicePresentationFor(input.archetype, input.questionFormat);
   const aspectRatio = input.aspectRatio ?? "16:9";
   const media = input.media ?? quizMediaForPresentation(choicePresentation);
@@ -259,11 +269,13 @@ export function preferredAutoLayout(
     return "mystery_reveal";
   }
 
-  if (questionFormat === "yes_no" || archetypeStr === "yes_no" || archetypeStr === "verdict_yes_no") {
+  if (
+    questionFormat === "yes_no" ||
+    archetypeStr === "yes_no" ||
+    archetypeStr === "verdict_yes_no" ||
+    isLegacyVerdictIdentifier(archetypeStr)
+  ) {
     return "verdict_yes_no";
-  }
-  if (questionFormat === "true_false" || archetypeStr === "true_false" || archetypeStr === "verdict_true_false") {
-    return "verdict_true_false";
   }
   if (questionFormat === "odd_one_out") {
     return "visual_choices_three_pure";

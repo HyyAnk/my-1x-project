@@ -4,7 +4,7 @@ import type { ImageProviderId, QuizAssetPlan, QuizAssetResolution, QuizImageStyl
 import type { RepositoryService } from "../../repository.js";
 import { Gpti2QuizImageProvider } from "../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../providers/shopAiKeyImage.js";
-import { assetFingerprint } from "./assetFingerprint.js";
+import { assetFingerprintMatches } from "./assetFingerprint.js";
 import { compileQuizAssetPrompt } from "./promptCompiler.js";
 import {
   getRecommendationForAssetRequirement,
@@ -69,12 +69,11 @@ export async function isQuizAssetResolutionComplete(input: {
       request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
       visualStyle,
     );
-    const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
     const resolved = byId.get(request.asset_id);
     if (!resolved) return false;
     const isExplicit = resolved.source === "explicit_episode";
     if (
-      (!isExplicit && resolved.fingerprint !== fingerprint) ||
+      (!isExplicit && !assetFingerprintMatches(resolved.fingerprint, request, providerName, compiled.cacheVersion)) ||
       resolved.semantic_key !== request.semantic_key ||
       !(await isValidQuizAsset(
         input.repository,

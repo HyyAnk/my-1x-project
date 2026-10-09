@@ -36,13 +36,13 @@ describe("Stage 4: Prompt Compiler Hardening & Guardrails", () => {
       "mystery_silhouette",
       "odd_one_out",
       "difficulty_tier",
-      "true_false",
+      "yes_no",
     ];
 
     it.each(allLayouts)("injects 50/30/20 visual hierarchy contract for %s layout", (layout) => {
       const plan = resolveThumbnailLayout({
         topicTitle: "School Clinic Secrets: First Aid Heroes",
-        questionFormat: layout === "true_false" ? "true_false" : "standard",
+        questionFormat: layout === "yes_no" ? "yes_no" : "standard",
         layoutOverride: layout,
         mascotProfile: sampleMascot,
       });
@@ -93,13 +93,13 @@ describe("Stage 4: Prompt Compiler Hardening & Guardrails", () => {
       expect(cleaned).not.toContain("✗");
     });
 
-    it("sanitizes true_false prompts to prevent duplicate true/false paddles on mascot", () => {
+    it("sanitizes yes_no prompts to prevent duplicate yes/no paddles on mascot", () => {
       const dirtyPrompt =
-        "Center hero artwork. Two tactile arcade buttons: green 'TRUE' and red 'FALSE'. Mascot holding a paddle with true or false in hand. Keep the bottom-right corner clean with zero text (YouTube timestamp safe zone).";
-      const sanitized = sanitizeCompiledPrompt(dirtyPrompt, "true_false", "16:9");
-      expect(sanitized).not.toMatch(/paddle with true or false/i);
+        "Center hero artwork. Two tactile arcade buttons: green 'YES' and red 'NO'. Mascot holding a paddle with yes or no in hand. Keep the bottom-right corner clean with zero text (YouTube timestamp safe zone).";
+      const sanitized = sanitizeCompiledPrompt(dirtyPrompt, "yes_no", "16:9");
+      expect(sanitized).not.toMatch(/paddle with yes or no/i);
       expect(sanitized).toContain("hand resting thoughtfully under chin in skeptical contemplation");
-      expect(sanitized).toContain("Two tactile arcade buttons: green 'TRUE' and red 'FALSE'");
+      expect(sanitized).toContain("Two tactile arcade buttons: green 'YES' and red 'NO'");
     });
   });
 
@@ -160,7 +160,7 @@ describe("Stage 4: Prompt Compiler Hardening & Guardrails", () => {
       expect(plan.hookText).toBe("FIRST AID HEROES!");
     });
 
-    it("intercepts generic 'TRUE OR FALSE' hallucination for true_false layout", async () => {
+    it("intercepts generic 'TRUE OR FALSE' hallucination from a retired true_false layout answer", async () => {
       const mockLlm = createMockLlm({
         hook_text: "TRUE OR FALSE",
         badge_text: "IMPOSSIBLE 🎯",
@@ -169,12 +169,13 @@ describe("Stage 4: Prompt Compiler Hardening & Guardrails", () => {
 
       const plan = await planThumbnailWithAI({
         topicTitle: "Ocean Secrets: Deep Sea Mysteries",
-        questionFormat: "true_false",
+        questionFormat: "yes_no",
         language: "English",
         llmClient: mockLlm,
         mascotProfile: sampleMascot,
       });
 
+      expect(plan.layout).toBe("yes_no");
       expect(plan.hookText).not.toBe("TRUE OR FALSE");
       expect(plan.hookText).toBe("DEEP OCEAN MYSTERIES!");
     });

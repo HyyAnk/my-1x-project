@@ -95,21 +95,21 @@ describe("Quiz Timeline Bridge Scenes & Rhythm Engineering (Stage 4)", () => {
     assert.equal(topicEnter.payload.topic, "Global Fashion Mystery");
     assert.equal(topicEnter.payload.questionCount, 2);
 
-    const ctaEnter = timeline.events.find((e) => e.type === "bridge.cta.enter");
-    assert.ok(ctaEnter, "bridge.cta.enter event must exist");
-    // starts right after topic scene: 8.0 + 6.15 = 14.15s
-    assert.equal(ctaEnter.at_seconds, 14.15);
-    // duration = voice lead-in (0.4) + voice duration (2.8) + cta pause (0.5) + transition cut (0.55) = 4.25s
-    assert.equal(ctaEnter.duration_seconds, 4.25);
-    assert.equal(ctaEnter.payload.channelName, "Felix Quiz");
-
-    // 3. Question 1 must start AFTER the bridge scenes end: 14.15 + 4.25 = 18.40s
+    // 3. Question 1 enters right after the topic scene: 8.0 + 6.15 = 14.15s
     const q1Enter = timeline.events.find((e) => e.type === "question.enter" && e.question_id === "q1");
     assert.ok(q1Enter, "question.enter for q1 must exist");
-    assert.ok(
-      q1Enter.at_seconds >= 18.4,
-      `Question 1 entrance (${q1Enter.at_seconds}s) must be at or after bridge completion (18.40s)`,
-    );
+    assert.equal(q1Enter.at_seconds, 14.15);
+
+    // The CTA is a mid-roll interstitial between q1 and q2 (midpoint of a two-question quiz)
+    const ctaEnter = timeline.events.find((e) => e.type === "bridge.cta.enter");
+    assert.ok(ctaEnter, "bridge.cta.enter event must exist");
+    const q2Enter = timeline.events.find((e) => e.type === "question.enter" && e.question_id === "q2");
+    assert.ok(q2Enter, "question.enter for q2 must exist");
+    assert.ok(ctaEnter.at_seconds > q1Enter.at_seconds, "CTA must play after Question 1");
+    // duration = voice lead-in (0.4) + voice duration (2.8) + cta pause (0.5) + transition cut (0.55) = 4.25s
+    assert.equal(ctaEnter.duration_seconds, 4.25);
+    assert.equal(q2Enter.at_seconds, Number((ctaEnter.at_seconds + 4.25).toFixed(3)));
+    assert.equal(ctaEnter.payload.channelName, "Felix Quiz");
 
     // 4. Check mascot state events during bridge scenes
     const mascotEvents = timeline.events.filter((e) => e.type === "mascot.state");

@@ -224,8 +224,9 @@ describe("Stage 5: CandyArcade Bridge Scene 1 (Topic Teaser)", () => {
       expect(html).toContain('src="./assets/showcase/megalodon.png"');
       expect(html).toContain('src="./assets/showcase/spino.png"');
 
-      // Caption still works
-      expect(html).toContain('<span class="bridge-item-caption">Fossilized</span>');
+      // Internal asset-planning captions never reach the viewer
+      expect(html).not.toContain("bridge-item-caption");
+      expect(html).not.toContain("Fossilized");
     });
 
     it("renders placeholder when asset path cannot be resolved", () => {

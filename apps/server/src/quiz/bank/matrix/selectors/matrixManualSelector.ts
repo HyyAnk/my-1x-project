@@ -1,5 +1,5 @@
 import type { BankQuestion, MatrixComboCandidate } from "@studio/shared";
-import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../../knowledgeBaseLoader.js";
+import { loadAllKnowledgeEntities, resolveCanonicalEntityId, type KnowledgeEntity } from "../../knowledgeBaseLoader.js";
 import { ALL_MATRIX_ARCHETYPES, buildMatrixCoverageMap } from "../matrixCoverageCalculator.js";
 import type { SelectManualCandidatesOptions } from "../types/matrixPlanner.types.js";
 
@@ -41,7 +41,8 @@ function filterManualEntities(entities: KnowledgeEntity[], options: SelectManual
 export function selectManualCandidates(questions: BankQuestion[], options: SelectManualCandidatesOptions): MatrixComboCandidate[] {
   const targetCount = Math.max(1, options.count);
   const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
-  const coverageMap = options.coverageMap || buildMatrixCoverageMap(questions);
+  const coverageMap =
+    options.coverageMap || buildMatrixCoverageMap(questions, (id) => resolveCanonicalEntityId(id, { baseDir: options.baseDir }));
 
   const filtered = filterManualEntities(entities, options);
   const candidateArchetypes = options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;

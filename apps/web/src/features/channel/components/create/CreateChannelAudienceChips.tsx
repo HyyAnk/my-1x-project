@@ -4,28 +4,24 @@ import type { AudiencePreset } from "./types";
 const AUDIENCE_PRESETS: AudiencePreset[] = [
   {
     id: "kids",
-    labelVi: "Trẻ em & Gia đình",
     labelEn: "Kids & Family",
     value: "Children and families",
     icon: "👶",
   },
   {
     id: "genz",
-    labelVi: "Gen Z & Giới trẻ",
     labelEn: "Gen Z & Teens",
     value: "Gen Z and young adults",
     icon: "⚡",
   },
   {
     id: "trivia",
-    labelVi: "Đố vui & Tri thức",
     labelEn: "Trivia & Quiz",
     value: "Trivia and quiz enthusiasts",
     icon: "🧠",
   },
   {
     id: "general",
-    labelVi: "Đại chúng",
     labelEn: "General",
     value: "General audience of all ages",
     icon: "🌍",

@@ -5,13 +5,14 @@
     "subtopic_id": "shonen_legends",
     "name": "Son Goku",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kakarot",
       "Super Saiyan",
       "Saiyan from Earth"
     ],
     "difficulty": 1,
-    "visual_anchor": "Cinematic vertical 9:16 portrait of Son Goku in his torn orange martial arts gi, spiked golden Super Saiyan hair crackling with bio-electric blue lightning and brilliant golden aura on a rocky battlefield.",
+    "visual_anchor": "Cinematic vertical 9:16 portrait of Son Goku in his torn orange martial arts gi, spiked golden Super Saiyan hair crackling with bio-electric blue lightning and brilliant golden aura on a rocky mountain plateau.",
     "core_traits": [
       "Saiyan warrior sent from planet Vegeta to Earth as an infant, raised by Grandpa Gohan",
       "Endlessly cheerful martial artist dedicated to testing his limits against the strongest beings in the universe",
@@ -51,6 +52,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Vegeta",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Prince of all Saiyans",
       "Majin Vegeta",
@@ -62,7 +64,7 @@
       "Proud crown prince of the fallen Saiyan race who arrived on Earth as an antagonist seeking the Dragon Balls",
       "Grew from a ruthless conqueror into a devoted Earth protector, family man, and eternal rival to Goku",
       "Renowned for ferocious combat tenacity, tactical genius, and unwillingness to let anyone insult his Saiyan royal pride",
-      "Mastered devastating energy bombardments including Galick Gun, Big Bang Attack, and Final Flash"
+      "Famous for powerful energy attacks including the Big Bang Attack and Final Flash"
     ],
     "distractor_pool": [
       "Son Goku",
@@ -73,16 +75,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Vegeta was originally slated to be killed off permanently during the Saiyan Saga battle on Earth.",
+        "claim": "Vegeta was first planned as a short-lived villain who would not return.",
         "verdict": "fact",
-        "explanation": "Akira Toriyama intended for Vegeta to be a one-arc villain, but overwhelming positive fan reactions persuaded Toriyama and his editors to spare him and bring him back on Planet Namek.",
+        "explanation": "Akira Toriyama planned Vegeta for one story arc, but fans loved him so much that he stayed in the series.",
         "fun_fact": "Toriyama once admitted in an interview that he did not personally like Vegeta at first, yet found him extremely useful for driving dramatic tension."
       },
       {
-        "claim": "Vegeta has never achieved a solo victory against a major saga final villain in the Dragon Ball Z manga.",
+        "claim": "Vegeta's name was chosen at random and has no hidden meaning.",
         "verdict": "myth",
-        "explanation": "While Goku or Gohan defeated Frieza, Cell, and Kid Buu, Vegeta eliminated nearly all of Frieza's top command structure on Namek, including Cui, Dodoria, Zarbon, and Ginyu Force members.",
-        "fun_fact": "Vegeta holds the canon record for eliminating the most members of Frieza's elite army on Namek."
+        "explanation": "Toriyama named the Saiyans after vegetables; 'Vegeta' comes from 'vegetable', and Goku's Saiyan name Kakarot from 'carrot'.",
+        "fun_fact": "Raditz comes from 'radish', and Nappa from the Japanese word for leafy greens."
       }
     ],
     "versus_candidates": [
@@ -97,6 +99,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Monkey D. Luffy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Straw Hat Luffy",
       "Sun God Nika",
@@ -106,7 +109,7 @@
     "visual_anchor": "Heroic 9:16 vertical action shot of Monkey D. Luffy wearing his weathered straw hat and red open vest, arm stretched backward in a devastating rubber punch glowing with black Conqueror Haki lightning sparks over an ocean storm.",
     "core_traits": [
       "Captain and founder of the Straw Hat Pirates dreaming of discovering the ultimate treasure to become King of the Pirates",
-      "Gained a rubber body after inadvertently consuming the legendary Gum-Gum Devil Fruit as a young boy",
+      "Gained a stretchy rubber body after eating the magical Gum-Gum Fruit as a young boy",
       "Known for an insatiable appetite for meat, fierce loyalty to his crewmates, and fearless instinctual combat skills",
       "Ascends into Gear 5 awakening, channeling the mythical freedom-loving Sun God Nika with cartoonish reality-warping physics"
     ],
@@ -125,10 +128,10 @@
         "fun_fact": "The straw hat is considered Luffy's most treasured possession, and he almost never allows anyone else to touch it."
       },
       {
-        "claim": "Luffy's Devil Fruit was always intended to be a simple paramecia rubber fruit with no deeper mythical origin.",
+        "claim": "Luffy's magic fruit was always meant to be a simple rubber fruit with no mythical origin.",
         "verdict": "myth",
-        "explanation": "Author Eiichiro Oda planted hints about the Sun God Nika and drums of liberation throughout the Skypiea and Fish-Man Island arcs long before formally revealing the fruit as the Mythical Zoan Model: Nika.",
-        "fun_fact": "Luffy's signature attack Gum-Gum Pistol was inspired by Oda's desire to give the hero the goofiest, most elastic power possible."
+        "explanation": "Author Eiichiro Oda hid hints about the Sun God Nika for years before revealing the fruit's true mythical form.",
+        "fun_fact": "In Gear 5, Luffy's hair and clothes turn white and he bounces around like a cartoon hero."
       }
     ],
     "versus_candidates": [
@@ -143,9 +146,9 @@
     "subtopic_id": "shonen_legends",
     "name": "Roronoa Zoro",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pirate Hunter",
-      "King of Hell",
       "Master of Three-Sword Style"
     ],
     "difficulty": 2,
@@ -171,16 +174,16 @@
         "fun_fact": "Zoro's surname Roronoa is the Japanese phonetic rendition of the real-life 17th-century French pirate Francois l'Olonnais."
       },
       {
-        "claim": "Zoro permanently lost his left eye during a secret duel to the death against Dracule Mihawk over the timeskip.",
+        "claim": "Zoro lost his left eye in a secret duel with Dracule Mihawk during the timeskip.",
         "verdict": "myth",
-        "explanation": "The manga and anime have never revealed any duel or battle causing Zoro's scar; Oda has kept the exact origin of his closed eye an unconfirmed mystery, debunking popular fan rumors.",
+        "explanation": "The series has never shown how Zoro got his eye scar; Oda has kept its origin a mystery.",
         "fun_fact": "Eiichiro Oda decided Zoro would have an eye scar as far back as 1997 when conceptualizing the series' mid-point changes."
       }
     ],
     "versus_candidates": [
       "Vinsmoke Sanji",
       "Dracule Mihawk",
-      "Killer Bee"
+      "Trafalgar Law"
     ]
   },
   {
@@ -189,6 +192,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Naruto Uzumaki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seventh Hokage",
       "Hero of the Hidden Leaf",
@@ -235,6 +239,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Sasuke Uchiha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shadow Hokage",
       "Avenger of the Uchiha Clan",
@@ -243,8 +248,8 @@
     "difficulty": 2,
     "visual_anchor": "Intense 9:16 vertical depiction of Sasuke Uchiha with glowing crimson Mangekyo Sharingan in his right eye and purple Rinnegan in his left, channeling crackling blue Chidori lightning along his Kusanagi blade under dark stormy skies.",
     "core_traits": [
-      "Sole survivor of the tragic Uchiha clan massacre carried out by his older brother Itachi in the Hidden Leaf Village",
-      "Genin prodigy of Team 7 alongside Naruto Uzumaki and Sakura Haruno, driven by deep vengeance that led him into exile",
+      "Last member of the proud Uchiha clan of the Hidden Leaf Village, raised alone after a family tragedy",
+      "Genin prodigy of Team 7 alongside Naruto Uzumaki and Sakura Haruno, and Naruto's greatest rival and friend",
       "Awakened the supreme visual prowess of the Sharingan, Mangekyo Sharingan, and six-tomoe Rinnegan",
       "Specializes in lightning-nature Chidori techniques, black inextinguishable Amaterasu flames, and the colossal Susanoo avatar"
     ],
@@ -281,6 +286,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Kakashi Hatake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Copy Ninja",
       "Kakashi of the Sharingan",
@@ -290,9 +296,9 @@
     "visual_anchor": "Stylized 9:16 vertical visual of silver-haired Kakashi Hatake wearing his navy Leaf Village flak jacket and forehead protector tilted over one eye, reading his orange Make-Out Paradise book while blue Chidori sparks dance across his fingers.",
     "core_traits": [
       "Prodigious shinobi who graduated the Ninja Academy at age five and became an elite Anbu black ops captain in his youth",
-      "Beloved mentor and squad leader of Team 7 (Naruto, Sasuke, and Sakura), instilling the core lesson that those who abandon comrades are scum",
+      "Beloved mentor and squad leader of Team 7 (Naruto, Sasuke, and Sakura), teaching that true friends never abandon each other",
       "Famously known across nations as the Copy Ninja after copying over a thousand jutsu using a transplanted Sharingan eye",
-      "Creator of the high-concentration lightning assassination technique known as Chidori or Lightning Blade (Raikiri)"
+      "Creator of the lightning technique known as Chidori or Lightning Blade (Raikiri)"
     ],
     "distractor_pool": [
       "Jiraiya",
@@ -303,9 +309,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Kakashi's habit of consistently arriving late with ridiculous excuses was inherited directly from his fallen teammate Obito Uchiha.",
+        "claim": "Kakashi's habit of arriving late with silly excuses was inspired by his old teammate Obito.",
         "verdict": "fact",
-        "explanation": "As a boy Kakashi was strictly punctual, but after Obito sacrificed himself, Kakashi adopted Obito's chronic tardiness and habit of visiting the Memorial Stone every morning.",
+        "explanation": "Young Kakashi was always on time, but later he picked up his old friend Obito's habit of running late.",
         "fun_fact": "His famous excuse 'I got lost on the path of life' was a direct homage to Obito's lighthearted demeanor."
       },
       {
@@ -327,6 +333,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Saitama",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "One Punch Man",
       "Caped Baldy",
@@ -374,6 +381,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Pikachu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pokemon #025",
       "Mouse Pokemon"
@@ -419,6 +427,7 @@
     "subtopic_id": "shonen_legends",
     "name": "Ash Ketchum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Satoshi",
       "Pokemon Master"
@@ -464,6 +473,7 @@
     "subtopic_id": "modern_phenomena",
     "name": "Tanjiro Kamado",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Tanjiro",
       "Kamado Tanjiro",
@@ -511,6 +521,7 @@
     "subtopic_id": "modern_phenomena",
     "name": "Nezuko Kamado",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Nezuko",
       "Chosen Demon",
@@ -557,6 +568,7 @@
     "subtopic_id": "modern_phenomena",
     "name": "Satoru Gojo",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Gojo",
       "The Strongest Jujutsu Sorcerer",
@@ -603,6 +615,7 @@
     "subtopic_id": "modern_phenomena",
     "name": "Yuji Itadori",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Itadori",
       "Tiger of West Junior High",
@@ -649,6 +662,7 @@
     "subtopic_id": "modern_phenomena",
     "name": "Eren Yeager",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Eren Jaeger",
       "The Attack Titan",
@@ -696,6 +710,7 @@
     "subtopic_id": "modern_phenomena",
     "name": "Levi Ackerman",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Captain Levi",
       "Humanity's Strongest Soldier",
@@ -742,6 +757,7 @@
     "subtopic_id": "ghibli_classics",
     "name": "Totoro",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King Totoro",
       "Big Totoro",
@@ -764,9 +780,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Totoro is secretly the God of Death and the two young sisters died early in the movie.",
+        "claim": "Studio Ghibli confirmed a spooky internet theory that Totoro is secretly a scary spirit.",
         "verdict": "myth",
-        "explanation": "Studio Ghibli officially debunked this widespread internet theory, confirming that Totoro is a benevolent guardian spirit and both girls are alive and healthy.",
+        "explanation": "Studio Ghibli debunked the rumor, confirming Totoro is a kind forest spirit and the two sisters are safe and happy.",
         "fun_fact": "The rumor originated because the sisters supposedly lacked cast shadows in the final scenes, which animators explained was simply omitted to save production time."
       },
       {
@@ -788,6 +804,7 @@
     "subtopic_id": "ghibli_classics",
     "name": "Chihiro Ogino",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sen",
       "Chihiro"
@@ -818,7 +835,7 @@
         "claim": "Chihiro is the central protagonist of the first non-English animated film to win the Academy Award for Best Animated Feature.",
         "verdict": "fact",
         "explanation": "Spirited Away won Best Animated Feature at the 75th Academy Awards in 2003, setting a historic milestone for Japanese animation and foreign language cinema.",
-        "fun_fact": "Hayao Miyazaki declined to attend the Oscar ceremony in person due to his personal opposition to the Iraq War."
+        "fun_fact": "Spirited Away was Japan's highest-grossing film for about 19 years, until 2020."
       }
     ],
     "versus_candidates": [
@@ -833,6 +850,7 @@
     "subtopic_id": "ghibli_classics",
     "name": "No-Face",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kaonashi",
       "Faceless Spirit"
@@ -868,7 +886,7 @@
     ],
     "versus_candidates": [
       "Totoro",
-      "Ryuk",
+      "Catbus",
       "Calcifer"
     ]
   },
@@ -878,8 +896,8 @@
     "subtopic_id": "ghibli_classics",
     "name": "Calcifer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Fire Demon Calcifer",
       "Falling Star"
     ],
     "difficulty": 2,
@@ -899,9 +917,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Calcifer was originally a dying falling star before Howl caught him and forged their magical pact.",
+        "claim": "Calcifer was originally a falling star before Howl caught him and made a magical pact.",
         "verdict": "fact",
-        "explanation": "In the story's mythology, falling stars perish upon striking the ground; Howl rescued Calcifer from death by offering his own beating human heart.",
+        "explanation": "In the story, falling stars fade when they land; Howl saved Calcifer by sharing his own heart with him.",
         "fun_fact": "Even after Sophie breaks the binding pact at the story's end, Calcifer voluntarily chooses to return to Howl and Sophie because he likes their company."
       },
       {
@@ -923,6 +941,7 @@
     "subtopic_id": "ghibli_classics",
     "name": "Kiki",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Witch Kiki",
       "Kiki the Delivery Girl"
@@ -965,9 +984,10 @@
   {
     "id": "ENT-ANM-022",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "Light Yagami",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Kira",
       "Second L",
@@ -1011,9 +1031,10 @@
   {
     "id": "ENT-ANM-023",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "L Lawliet",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "L",
       "Ryuzaki",
@@ -1059,9 +1080,10 @@
   {
     "id": "ENT-ANM-024",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "Ryuk",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Shinigami Ryuk",
       "Death God Ryuk"
@@ -1104,9 +1126,10 @@
   {
     "id": "ENT-ANM-025",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "Conan Edogawa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shinichi Kudo",
       "Silver Bullet",
@@ -1136,10 +1159,10 @@
         "fun_fact": "Fans calculated that Kogoro Mouri was put to sleep over five hundred times across the long-running series."
       },
       {
-        "claim": "The prototype poison APTX 4869 was intended by the Black Organization to be an untraceable lethal toxin rather than a shrinking drug.",
+        "claim": "The mysterious pill APTX 4869 was never meant to make people shrink.",
         "verdict": "fact",
-        "explanation": "The drug was engineered to induce cellular apoptosis without leaving poison residue in autopsies; de-aging was a rare, unintended biological anomaly.",
-        "fun_fact": "The acronym APTX stands for Apoptoxin, highlighting its programmed cell death mechanism."
+        "explanation": "In the story, the Black Organization's secret pill accidentally turned teen detective Shinichi Kudo into a small child.",
+        "fun_fact": "Conan picked his fake name from authors Arthur Conan Doyle and Ranpo Edogawa."
       }
     ],
     "versus_candidates": [
@@ -1151,9 +1174,10 @@
   {
     "id": "ENT-ANM-026",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "Kaitou Kid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phantom Thief Kid",
       "Kaito Kuroba",
@@ -1163,8 +1187,8 @@
     "difficulty": 2,
     "visual_anchor": "An elegant gentleman phantom thief in an immaculate white tuxedo, flowing silk cape, monocle, and white top hat standing atop a moonlit skyscraper in vertical 9:16 view.",
     "core_traits": [
-      "High school magician who assumes a legendary phantom thief persona to investigate the mysterious death of his father",
-      "Renowned for sending poetic heist notices and performing spectacular theatrical escapes using hang gliders and smoke bombs",
+      "High school magician who becomes a legendary phantom thief, following in the footsteps of his magician father",
+      "Renowned for sending poetic heist notices and performing spectacular escapes using hang gliders, playing cards, and clouds of smoke",
       "Master of disguise who can mimic anyone's physical appearance and voice flawlessly without electronic modulation",
       "Targets rare gems under intense moonlight to discover and destroy the mythical immortality stone Pandora"
     ],
@@ -1198,9 +1222,10 @@
   {
     "id": "ENT-ANM-027",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "Anya Forger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Test Subject 007",
       "Starlight Anya",
@@ -1211,7 +1236,7 @@
     "core_traits": [
       "Escaped experimental lab subject originally known as Test Subject 007 who gained mind-reading telepathy",
       "Adopted by superspy Twilight, she is the only person in the household who knows everyone's secret identities",
-      "Obsessed with spy cartoon anime Spy Wars, chimera plush dolls, and snacking on roasted peanuts",
+      "Obsessed with her favorite spy cartoon, chimera plush dolls, and snacking on roasted peanuts",
       "Struggles with elementary school academics at elite Eden Academy while trying to earn Stella Stars"
     ],
     "distractor_pool": [
@@ -1244,9 +1269,10 @@
   {
     "id": "ENT-ANM-028",
     "domain_id": "anime_manga",
-    "subtopic_id": "detective_psychological",
+    "subtopic_id": "detective_mystery",
     "name": "Loid Forger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Twilight",
       "Agent Twilight",
@@ -1254,12 +1280,12 @@
       "Robert"
     ],
     "difficulty": 2,
-    "visual_anchor": "Stylized vertical 9:16 cinematic espionage frame of a handsome blonde secret agent in a sharp tailored three-piece sage-green suit and red tie, adjusting silencer on a Walther pistol in a shadowy retro European alleyway.",
+    "visual_anchor": "Stylized vertical 9:16 cinematic espionage frame of a handsome blonde secret agent in a sharp tailored three-piece sage-green suit and red tie, adjusting his cufflinks in a shadowy retro European alleyway.",
     "core_traits": [
       "Westalis master spy codenamed Twilight who possesses extraordinary combat, deduction, and disguise skills",
       "Adopts the fake identity of a mild-mannered psychiatrist at Berlint General Hospital for Operation Strix",
-      "Fabricated an undercover family by adopting telepathic orphan Anya and marrying undercover assassin Yor",
-      "Dedicated his life to creating a peaceful world where children never have to cry from the horrors of war"
+      "Built a pretend family by adopting telepathic orphan Anya and marrying city hall clerk Yor",
+      "Dedicated his life to creating a peaceful world where children never have to cry"
     ],
     "distractor_pool": [
       "Yor Forger",
@@ -1294,6 +1320,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Doraemon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Doraemon: Gadget Cat from the Future",
       "Doramon",
@@ -1340,13 +1367,14 @@
     "subtopic_id": "iconic_franchises",
     "name": "Pokemon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pocket Monsters",
       "PokeMon",
       "Pokemon the Series"
     ],
     "difficulty": 1,
-    "visual_anchor": "A dramatic vertical 9:16 cinematic scene depicting a glowing red-and-white Poke Ball releasing crackling blue electric energy onto a stadium battlefield, with Pikachu's silhouette charging a Thunderbolt amidst floating stadium lights and particle sparks.",
+    "visual_anchor": "A dramatic vertical 9:16 cinematic scene depicting a glowing red-and-white Poke Ball releasing crackling blue electric energy onto a stadium arena, with Pikachu's silhouette charging a Thunderbolt amidst floating stadium lights and particle sparks.",
     "core_traits": [
       "Created by Satoshi Tajiri and Ken Sugimori with Game Freak and Nintendo, debuting as video games in 1996 followed by the anime adaptation in April 1997 by OLM Inc.",
       "Follows the journey of Ash Ketchum (Satoshi) and his loyal electric-type partner Pikachu as they travel across diverse regions aiming to become a Pokemon Master.",
@@ -1386,25 +1414,26 @@
     "subtopic_id": "iconic_franchises",
     "name": "Detective Conan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Case Closed",
       "Meitantei Conan",
       "Meitantei Konan"
     ],
     "difficulty": 1,
-    "visual_anchor": "A shadowy noir-style vertical 9:16 composition showcasing a magnifying glass reflecting a crime scene blueprint, framed by a crimson bowtie voice transmitter, wristwatch stun gun, and the silhouette of a bespectacled boy under rain-slicked city lamplight.",
+    "visual_anchor": "A mysterious vertical 9:16 composition showcasing a magnifying glass reflecting a puzzle-filled case blueprint, framed by a crimson bowtie voice transmitter, a gadget wristwatch, and the silhouette of a bespectacled boy under rain-slicked city lamplight.",
     "core_traits": [
       "Created by Gosho Aoyama and serialized in Shogakukan's Weekly Shonen Sunday starting in January 1994, adapted into an anime by TMS Entertainment in 1996.",
-      "Chronicles high school prodigy detective Shinichi Kudo, who is transformed into child Conan Edogawa by the mysterious Black Organization's experimental drug APTX 4869.",
-      "Features Agatha-Christie-inspired locked-room deduction supported by Professor Agasa's high-tech inventions including the Voice-Changing Bowtie, Stun-Gun Wristwatch, and Turbo Engine Skateboard.",
+      "Chronicles high school prodigy detective Shinichi Kudo, who is transformed into child Conan Edogawa by the mysterious Black Organization's experimental pill APTX 4869.",
+      "Features Agatha-Christie-inspired locked-room deduction supported by Professor Agasa's high-tech inventions including the Voice-Changing Bowtie, Sleep-Dart Wristwatch, and Turbo Engine Skateboard.",
       "One of the longest-running anime and manga franchises with over 270 million copies sold and annual theatrical films routinely topping the Japanese box office."
     ],
     "distractor_pool": [
       "Kindaichi Case Files",
-      "Death Note",
-      "Monster",
+      "Sherlock Hound",
+      "Magic Kaito",
       "Lupin the Third",
-      "City Hunter"
+      "Detective Pikachu"
     ],
     "facts_and_myths": [
       {
@@ -1422,7 +1451,7 @@
     ],
     "versus_candidates": [
       "Kindaichi Case Files",
-      "Death Note",
+      "Sherlock Hound",
       "Lupin the Third"
     ]
   },
@@ -1432,6 +1461,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Crayon Shin-chan",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Shin-chan",
       "Kureyon Shinchan",
@@ -1478,6 +1508,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Yu-Gi-Oh!",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yu-Gi-Oh! Duel Monsters",
       "King of Games",
@@ -1524,6 +1555,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Sailor Moon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pretty Guardian Sailor Moon",
       "Bishoujo Senshi Sailor Moon",
@@ -1571,6 +1603,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Inuyasha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "InuYasha",
       "Inu Yasha",
@@ -1594,16 +1627,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Rumiko Takahashi chose feudal Japan as the setting because it allowed her to freely blend horror, mythology, and romance without modern constraints.",
+        "claim": "Rumiko Takahashi set Inuyasha in feudal Japan to blend adventure, folklore, and fantasy.",
         "verdict": "fact",
-        "explanation": "After writing comedies like Ranma 1/2 and Urusei Yatsura, Takahashi deliberately chose the Sengoku era to craft a darker, more dramatic fantasy narrative steeped in authentic Japanese folklore.",
+        "explanation": "After comedies like Ranma 1/2, Takahashi chose the Sengoku era to tell a fantasy adventure full of Japanese folklore.",
         "fun_fact": "Inuyasha's bright red Fire Rat Robe was historically described in the classical Japanese tale The Tale of the Bamboo Cutter."
       },
       {
         "claim": "The Tessaiga sword was originally forged from the fang of Inuyasha's human mother to protect him from demon corruption.",
         "verdict": "myth",
-        "explanation": "Tessaiga was forged by the swordsmith Totosai from the canine fang of Inuyasha's demonic father, Toga (the Great Dog General), specifically to protect humans and suppress Inuyasha's demon blood.",
-        "fun_fact": "Tessaiga's sister sword Tenseiga was also forged from the same father's fang but can only heal and resurrect the dead rather than cut."
+        "explanation": "Tessaiga was forged by swordsmith Totosai from the fang of Inuyasha's father, the Great Dog General, to help him protect humans.",
+        "fun_fact": "Tessaiga's sister sword Tenseiga, made from the same fang, can heal instead of cut."
       }
     ],
     "versus_candidates": [
@@ -1618,6 +1651,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Dragon Ball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DB",
       "DBZ",
@@ -1666,6 +1700,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "One Piece",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "OP",
       "Wan Pisu",
@@ -1676,7 +1711,7 @@
     "core_traits": [
       "Created by Eiichiro Oda and serialized in Shueisha's Weekly Shonen Jump since July 1997",
       "Follows rubber-bodied captain Monkey D. Luffy and the Straw Hat Pirates sailing the perilous Grand Line in search of the legendary treasure One Piece",
-      "Features an expansive world governed by supernatural Devil Fruits, three forms of Haki willpower, and ancient world-building lore",
+      "Features a huge world of magical power-granting fruits, three forms of Haki willpower, and ancient world-building lore",
       "The best-selling manga series in history with over 516 million copies in circulation worldwide, earning a Guinness World Record"
     ],
     "distractor_pool": [
@@ -1712,6 +1747,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Naruto",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Naruto Shippuden",
       "Naruto: Shippuden",
@@ -1758,6 +1794,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Bleach",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "BLEACH",
       "Buriichi",
@@ -1804,6 +1841,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Hunter x Hunter",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "HxH",
       "Hunter Hunter",
@@ -1850,6 +1888,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Slam Dunk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Suramu Danku",
       "Shohoku Basketball"
@@ -1895,6 +1934,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Captain Tsubasa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kyaputen Tsubasa",
       "Flash Kicker",
@@ -1912,7 +1952,7 @@
     "distractor_pool": [
       "Blue Lock",
       "Inazuma Eleven",
-      "Giant Killing",
+      "Whistle!",
       "Aoashi",
       "Days"
     ],
@@ -1942,6 +1982,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Demon Slayer: Kimetsu no Yaiba",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Kimetsu no Yaiba",
       "Demon Slayer",
@@ -1988,6 +2029,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Attack on Titan",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Shingeki no Kyojin",
       "AoT",
@@ -2035,6 +2077,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Jujutsu Kaisen",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "JJK",
       "Sorcery Fight",
@@ -2081,25 +2124,26 @@
     "subtopic_id": "iconic_franchises",
     "name": "Spy x Family",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spy Family",
       "SPY_FAMILY",
       "Supai Famiri"
     ],
     "difficulty": 1,
-    "visual_anchor": "Elegant retro 1960s-inspired vertical 9:16 key visual featuring the stylish Forger family sitting on mid-century modernist designer chairs: Twilight in a sharp teal suit holding a silenced pistol, Yor in a thorn princess black evening gown, and telepathic Anya clutching her stuffed Chimera doll with mischievous peanut-loving smirks.",
+    "visual_anchor": "Elegant retro 1960s-inspired vertical 9:16 key visual featuring the stylish Forger family sitting on mid-century modernist designer chairs: Twilight in a sharp teal suit holding a folded newspaper, Yor in an elegant black dress, and telepathic Anya clutching her stuffed Chimera doll with mischievous peanut-loving smirks.",
     "core_traits": [
       "Created by Tatsuya Endo and serialized biweekly on Shueisha's digital platform Shonen Jump+ since March 2019",
       "Chronicles elite Westalian master spy Twilight, who assembles a fake suburban family named the Forgers to infiltrate an elite Ostania academy for Operation Strix",
-      "Centers on dramatic irony where neither spouse knows the other is an elite assassin or spy, while their adopted daughter Anya secretly reads minds and family dog Bond sees the future",
-      "Achieved over 35 million copies in circulation, sparking massive global merchandising and widespread popularity for its wholesome blend of cold-war espionage and heartwarming domestic comedy"
+      "Centers on dramatic irony where neither parent knows the other's secret double life, while adopted daughter Anya secretly reads minds and family dog Bond sees the future",
+      "Achieved over 35 million copies in circulation, sparking massive global merchandising and widespread popularity for its wholesome blend of retro spy adventure and heartwarming family comedy"
     ],
     "distractor_pool": [
-      "Kaguya-sama: Love Is War",
-      "Assassination Classroom",
-      "The Way of the Househusband",
+      "Chibi Maruko-chan",
+      "Detective Conan",
+      "Doraemon",
       "Bocchi the Rock!",
-      "Buddy Daddies"
+      "Sazae-san"
     ],
     "facts_and_myths": [
       {
@@ -2116,9 +2160,9 @@
       }
     ],
     "versus_candidates": [
-      "Kaguya-sama: Love Is War",
-      "Assassination Classroom",
-      "Buddy Daddies"
+      "Chibi Maruko-chan",
+      "Detective Conan",
+      "Doraemon"
     ]
   },
   {
@@ -2127,6 +2171,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "One Punch Man",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "OPM",
       "Wanpanman",
@@ -2173,6 +2218,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Chainsaw Man",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "CSM",
       "Chensoman"
@@ -2218,6 +2264,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "My Hero Academia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Boku no Hero Academia",
       "MHA",
@@ -2234,16 +2281,16 @@
     ],
     "distractor_pool": [
       "Black Clover",
-      "Jujutsu Kaisen",
-      "Fire Force",
-      "Demon Slayer: Kimetsu no Yaiba",
-      "Soul Eater"
+      "Astro Boy",
+      "Tiger & Bunny",
+      "Dragon Ball Z",
+      "Mashle: Magic and Muscles"
     ],
     "facts_and_myths": [
       {
         "claim": "Kohei Horikoshi originally conceived Izuku Midoriya as a quirkless gadget-wielding hero who would never receive a supernatural power.",
         "verdict": "fact",
-        "explanation": "In Horikoshi's original 2008 one-shot manga titled My Hero, the protagonist Jack Midoriya was an ordinary salaryman who invented high-tech gadgets and weapons to fight monsters, but editors advised Horikoshi that giving the main character a true superpower would make the serialized story more compelling for Shonen Jump readers.",
+        "explanation": "In Horikoshi's 2008 one-shot 'My Hero', the hero Jack Midoriya used high-tech gadgets instead of superpowers to fight monsters.",
         "fun_fact": "Horikoshi is an avid fan of American superhero comic books, particularly Spider-Man, whose agility and web mechanics heavily inspired Deku's Blackwhip technique."
       },
       {
@@ -2255,7 +2302,7 @@
     ],
     "versus_candidates": [
       "Black Clover",
-      "Jujutsu Kaisen",
+      "Astro Boy",
       "Naruto"
     ]
   },
@@ -2265,6 +2312,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Death Note",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Desu Noto",
       "DN",
@@ -2311,6 +2359,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Haikyu!!",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Haikyuu!!",
       "High Kyu!!",
@@ -2358,6 +2407,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "Tokyo Ghoul",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Tokyo Guru",
       "TG",
@@ -2404,6 +2454,7 @@
     "subtopic_id": "iconic_franchises",
     "name": "JoJo's Bizarre Adventure",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "JJBA",
       "JoJo no Kimyou na Bouken",
@@ -2442,6 +2493,1320 @@
       "Hunter x Hunter",
       "Fist of the North Star",
       "Baki the Grappler"
+    ]
+  },
+  {
+    "id": "ENT-ANM-054",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Bulbasaur",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful Bulbasaur with blue-green skin and a big green plant bulb on its back, standing in a sunny meadow full of flowers, 9:16 vertical shot.",
+    "core_traits": [
+      "Small blue-green Pokemon that walks on four legs",
+      "Carries a big plant bulb on its back",
+      "Grass-type starter Pokemon in Pokemon Red and Blue",
+      "Number 001 in the National Pokedex and evolves into Ivysaur"
+    ],
+    "distractor_pool": [
+      "Chikorita",
+      "Treecko",
+      "Turtwig",
+      "Oddish",
+      "Bellsprout"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bulbasaur is the very first Pokemon in the National Pokedex.",
+        "verdict": "fact",
+        "explanation": "Bulbasaur holds number 001, so it appears first when you open the National Pokedex.",
+        "fun_fact": "Bulbasaur grows into Ivysaur and then into the big flowering Venusaur."
+      },
+      {
+        "claim": "The bulb on Bulbasaur's back is just a decoration.",
+        "verdict": "myth",
+        "explanation": "The Pokedex says a seed sits on its back from birth and grows larger as Bulbasaur grows.",
+        "fun_fact": "Bulbasaur naps in bright sunlight, and soaking up the sun's rays helps its seed grow."
+      }
+    ],
+    "versus_candidates": [
+      "Charmander",
+      "Squirtle",
+      "Chikorita"
+    ]
+  },
+  {
+    "id": "ENT-ANM-055",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Charmander",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A friendly orange Charmander with a bright flame burning on the tip of its tail, smiling on a warm rocky hillside at sunset, 9:16 vertical shot.",
+    "core_traits": [
+      "Small orange lizard-like Pokemon",
+      "Has a flame burning at the tip of its tail",
+      "Fire-type starter Pokemon in Pokemon Red and Blue",
+      "Evolves into Charmeleon and later Charizard"
+    ],
+    "distractor_pool": [
+      "Cyndaquil",
+      "Torchic",
+      "Chimchar",
+      "Tepig",
+      "Vulpix"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Charmander likes hot places.",
+        "verdict": "fact",
+        "explanation": "The Pokedex says Charmander prefers hot places, and steam rises from its tail when it rains.",
+        "fun_fact": "In the anime, Ash's Charmander grew all the way up into a mighty Charizard."
+      },
+      {
+        "claim": "Charmander is a Dragon-type Pokemon.",
+        "verdict": "myth",
+        "explanation": "Charmander is a pure Fire-type. Even its final form, Charizard, is Fire and Flying, not Dragon.",
+        "fun_fact": "Charmander is number 004 in the National Pokedex."
+      }
+    ],
+    "versus_candidates": [
+      "Squirtle",
+      "Bulbasaur",
+      "Cyndaquil"
+    ]
+  },
+  {
+    "id": "ENT-ANM-056",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Squirtle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A happy light-blue Squirtle with a round brown shell, splashing in a sparkling pond under a spray of water droplets, 9:16 vertical shot.",
+    "core_traits": [
+      "Small light-blue turtle Pokemon with a curly tail",
+      "Has a hard brown shell on its back",
+      "Water-type starter Pokemon in Pokemon Red and Blue",
+      "Evolves into Wartortle and later Blastoise"
+    ],
+    "distractor_pool": [
+      "Totodile",
+      "Mudkip",
+      "Piplup",
+      "Froakie",
+      "Oshawott"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Squirtle can pull its head into its shell to stay safe.",
+        "verdict": "fact",
+        "explanation": "Like a real turtle, Squirtle tucks its long neck into its shell for protection.",
+        "fun_fact": "In the anime, Ash's Squirtle once led the Squirtle Squad, a gang wearing cool sunglasses."
+      },
+      {
+        "claim": "Squirtle evolves straight into Blastoise.",
+        "verdict": "myth",
+        "explanation": "Squirtle first evolves into Wartortle, and Wartortle later evolves into Blastoise.",
+        "fun_fact": "Squirtle's name mixes the words 'squirt' and 'turtle.'"
+      }
+    ],
+    "versus_candidates": [
+      "Charmander",
+      "Bulbasaur",
+      "Totodile"
+    ]
+  },
+  {
+    "id": "ENT-ANM-057",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Eevee",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A fluffy brown Eevee with a cream-colored furry collar and big ears, sitting happily among colorful autumn leaves, 9:16 vertical shot.",
+    "core_traits": [
+      "Small fox-like Pokemon with brown fur",
+      "Has a fluffy cream collar and a bushy tail",
+      "Normal-type Pokemon famous for its many evolutions",
+      "Partner Pokemon in Pokemon: Let's Go, Eevee!"
+    ],
+    "distractor_pool": [
+      "Vulpix",
+      "Growlithe",
+      "Rockruff",
+      "Pachirisu",
+      "Buneary"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Eevee can evolve into eight different Pokemon.",
+        "verdict": "fact",
+        "explanation": "Eevee's evolutions are Vaporeon, Jolteon, Flareon, Espeon, Umbreon, Leafeon, Glaceon and Sylveon.",
+        "fun_fact": "Fans call Eevee's evolutions 'Eeveelutions.'"
+      },
+      {
+        "claim": "Every Eevee always evolves into the same Pokemon.",
+        "verdict": "myth",
+        "explanation": "What Eevee becomes depends on things like evolution stones, friendship, time of day, or where it levels up.",
+        "fun_fact": "In the anime, Ash's rival Gary had an Eevee that evolved into Umbreon."
+      }
+    ],
+    "versus_candidates": [
+      "Pikachu",
+      "Vulpix",
+      "Meowth"
+    ]
+  },
+  {
+    "id": "ENT-ANM-058",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Jigglypuff",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A round pink Jigglypuff with big blue eyes and a curl of fur on its head, singing into a microphone on a small sparkly stage, 9:16 vertical shot.",
+    "core_traits": [
+      "Round, pink, balloon-shaped Pokemon",
+      "Has big blue eyes and a curl of fur on its head",
+      "Sings a lullaby that makes listeners fall asleep",
+      "In the anime it doodles on faces when its audience dozes off"
+    ],
+    "distractor_pool": [
+      "Clefairy",
+      "Wigglytuff",
+      "Chansey",
+      "Togepi",
+      "Skitty"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Jigglypuff's song can make listeners fall asleep.",
+        "verdict": "fact",
+        "explanation": "Jigglypuff's famous move is Sing, a soothing lullaby that sends listeners off to dreamland.",
+        "fun_fact": "Jigglypuff has been a playable fighter in every Super Smash Bros. game."
+      },
+      {
+        "claim": "Jigglypuff is happy when everyone falls asleep during its song.",
+        "verdict": "myth",
+        "explanation": "In the anime, Jigglypuff gets upset when its audience dozes off and doodles on their faces with a marker.",
+        "fun_fact": "Jigglypuff evolves into Wigglytuff when it is exposed to a Moon Stone."
+      }
+    ],
+    "versus_candidates": [
+      "Clefairy",
+      "Pikachu",
+      "Togepi"
+    ]
+  },
+  {
+    "id": "ENT-ANM-059",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Snorlax",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A huge, sleepy dark-teal Snorlax with a big cream belly, napping peacefully across a sunny forest path, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge, round, very sleepy Pokemon",
+      "Has a dark teal body and a big cream-colored belly",
+      "Spends most of its day eating and sleeping",
+      "Blocks the road in Pokemon Red and Blue until woken with the Poke Flute"
+    ],
+    "distractor_pool": [
+      "Munchlax",
+      "Wailord",
+      "Slowpoke",
+      "Hippowdon",
+      "Lapras"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Snorlax eats about 400 kilograms of food every day.",
+        "verdict": "fact",
+        "explanation": "The Pokedex says Snorlax is not satisfied until it eats about 400 kilograms, or 880 pounds, of food daily.",
+        "fun_fact": "Snorlax weighs about 460 kilograms, the heaviest of the original 151 Pokemon."
+      },
+      {
+        "claim": "You can wake a sleeping Snorlax by pushing it out of the way.",
+        "verdict": "myth",
+        "explanation": "In Pokemon Red and Blue, players must play the Poke Flute to wake Snorlax so it moves.",
+        "fun_fact": "Snorlax has a baby form called Munchlax, which is always hungry too."
+      }
+    ],
+    "versus_candidates": [
+      "Slowpoke",
+      "Wailord",
+      "Jigglypuff"
+    ]
+  },
+  {
+    "id": "ENT-ANM-060",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Psyduck",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A yellow Psyduck holding its head with both hands and looking puzzled, standing beside a calm blue lake, 9:16 vertical shot.",
+    "core_traits": [
+      "Yellow duck-like Pokemon",
+      "Often holds its head because of headaches",
+      "Uses mysterious powers when its headache gets too strong",
+      "Evolves into Golduck"
+    ],
+    "distractor_pool": [
+      "Golduck",
+      "Farfetch'd",
+      "Ducklett",
+      "Slowpoke",
+      "Piplup"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Psyduck is a Psychic-type Pokemon.",
+        "verdict": "myth",
+        "explanation": "Despite its name and its strange powers, Psyduck is a Water-type Pokemon.",
+        "fun_fact": "In the anime, Misty's Psyduck often popped out of its Poke Ball by surprise."
+      },
+      {
+        "claim": "Psyduck's headaches can trigger mysterious psychic powers.",
+        "verdict": "fact",
+        "explanation": "The Pokedex says that when Psyduck's headache becomes intense, it starts using mysterious powers.",
+        "fun_fact": "Psyduck always looks puzzled because it can't remember using its powers."
+      }
+    ],
+    "versus_candidates": [
+      "Slowpoke",
+      "Golduck",
+      "Squirtle"
+    ]
+  },
+  {
+    "id": "ENT-ANM-061",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Togepi",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A tiny Togepi peeking out of a white eggshell decorated with red and blue triangles, sitting on soft grass among daisies, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny baby Pokemon with a little crown of spikes on its head",
+      "Its body stays inside a white eggshell with colorful triangles",
+      "Misty's Togepi hatched from an egg Ash found in the anime",
+      "Evolves into Togetic when it becomes very friendly with its trainer"
+    ],
+    "distractor_pool": [
+      "Pichu",
+      "Cleffa",
+      "Igglybuff",
+      "Happiny",
+      "Azurill"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Togepi is said to share good luck when treated kindly.",
+        "verdict": "fact",
+        "explanation": "The Pokedex says Togepi's shell is filled with joy, and it shares good luck with kind people.",
+        "fun_fact": "Togepi appeared in the anime before the Pokemon Gold and Silver games came out."
+      },
+      {
+        "claim": "Togepi has always been a Fairy-type Pokemon.",
+        "verdict": "myth",
+        "explanation": "Togepi started as a Normal-type and became Fairy-type when Pokemon X and Y added the Fairy type.",
+        "fun_fact": "Togepi's final evolution, Togekiss, evolves from Togetic using a Shiny Stone."
+      }
+    ],
+    "versus_candidates": [
+      "Pichu",
+      "Cleffa",
+      "Jigglypuff"
+    ]
+  },
+  {
+    "id": "ENT-ANM-062",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Meowth",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A cream-colored Meowth with a shiny gold coin on its forehead, standing on its hind legs and grinning playfully on a sunny city street, 9:16 vertical shot.",
+    "core_traits": [
+      "Cream-colored cat Pokemon",
+      "Has a shiny gold coin on its forehead",
+      "Team Rocket's Meowth walks on two legs and talks like a person",
+      "Evolves into Persian"
+    ],
+    "distractor_pool": [
+      "Persian",
+      "Skitty",
+      "Purrloin",
+      "Glameow",
+      "Litten"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Every Meowth can talk like a human.",
+        "verdict": "myth",
+        "explanation": "Only Team Rocket's Meowth in the anime taught itself human words. Other Meowth just say 'Meowth!'",
+        "fun_fact": "Team Rocket's Meowth also taught itself to walk on two legs like a person."
+      },
+      {
+        "claim": "Meowth loves shiny, round things like coins.",
+        "verdict": "fact",
+        "explanation": "The Pokedex says Meowth adores round objects and wanders at night looking for dropped coins.",
+        "fun_fact": "Meowth's move Pay Day scatters coins that trainers can collect afterward."
+      }
+    ],
+    "versus_candidates": [
+      "Pikachu",
+      "Persian",
+      "Eevee"
+    ]
+  },
+  {
+    "id": "ENT-ANM-063",
+    "domain_id": "anime_manga",
+    "subtopic_id": "pokemon_world",
+    "name": "Lucario",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A blue-and-black Lucario standing tall on a misty mountaintop at sunrise, a calm blue aura glowing softly around its paws, 9:16 vertical shot.",
+    "core_traits": [
+      "Blue and black jackal-like Pokemon that stands on two legs",
+      "Has spikes on the backs of its paws and on its chest",
+      "Can sense and control aura",
+      "Evolves from Riolu"
+    ],
+    "distractor_pool": [
+      "Riolu",
+      "Zoroark",
+      "Mewtwo",
+      "Greninja",
+      "Gallade"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Lucario can sense the aura of people and Pokemon.",
+        "verdict": "fact",
+        "explanation": "The Pokedex says Lucario catches the aura flowing from others to read their thoughts and movements.",
+        "fun_fact": "Lucario starred in the 2005 movie Lucario and the Mystery of Mew."
+      },
+      {
+        "claim": "Lucario evolves into Riolu.",
+        "verdict": "myth",
+        "explanation": "It is the other way around: Riolu evolves into Lucario when it is very friendly with its trainer during the day.",
+        "fun_fact": "Lucario has been a playable fighter in Super Smash Bros. since Brawl."
+      }
+    ],
+    "versus_candidates": [
+      "Greninja",
+      "Mewtwo",
+      "Charizard"
+    ]
+  },
+  {
+    "id": "ENT-ANM-064",
+    "domain_id": "anime_manga",
+    "subtopic_id": "doraemon_world",
+    "name": "Shizuka Minamoto",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Shizuka",
+      "Sue"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful cartoon schoolgirl with short dark pigtails and a pink dress, holding a violin in a sunny Japanese neighborhood park, 9:16 vertical shot.",
+    "core_traits": [
+      "Kind and cheerful girl in a famous robot-cat cartoon",
+      "Nobita's friend and classmate who studies hard",
+      "Takes violin lessons",
+      "Her favorite snack is roasted sweet potatoes"
+    ],
+    "distractor_pool": [
+      "Dorami",
+      "Jaiko Goda",
+      "Mei Kusakabe",
+      "Nene Sakurada",
+      "Chibi Maruko-chan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Shizuka takes violin lessons in Doraemon.",
+        "verdict": "fact",
+        "explanation": "Shizuka practices the violin, though her squeaky playing is a running joke in the series.",
+        "fun_fact": "In the 2014 English version of Doraemon, Shizuka is called Sue."
+      },
+      {
+        "claim": "Shizuka is Nobita's sister.",
+        "verdict": "myth",
+        "explanation": "Shizuka is Nobita's friend and classmate. Nobita is an only child who lives with his parents.",
+        "fun_fact": "Shizuka gets much better grades than Nobita and often studies with him."
+      }
+    ],
+    "versus_candidates": [
+      "Dorami",
+      "Mei Kusakabe",
+      "Chibi Maruko-chan"
+    ]
+  },
+  {
+    "id": "ENT-ANM-065",
+    "domain_id": "anime_manga",
+    "subtopic_id": "doraemon_world",
+    "name": "Gian",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Takeshi Goda",
+      "Jaian"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A big, sturdy cartoon boy in an orange shirt singing loudly into a microphone on a small backyard stage while his friends laugh and cover their ears, 9:16 vertical shot.",
+    "core_traits": [
+      "Big, strong kid in a famous robot-cat cartoon",
+      "Bossy leader of the neighborhood kids",
+      "Loves to sing, but his singing is famously off-key",
+      "Helps at his family's grocery store and has a little sister named Jaiko"
+    ],
+    "distractor_pool": [
+      "Suneo Honekawa",
+      "Nobita Nobi",
+      "Hidetoshi Dekisugi",
+      "Masao Sato",
+      "Kenichi Mitsuba"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Gian loves to sing, but his songs are famously off-key.",
+        "verdict": "fact",
+        "explanation": "Gian dreams of being a singer, and his loud concerts make his friends cover their ears.",
+        "fun_fact": "In the 2014 English version of Doraemon, Gian is called Big G."
+      },
+      {
+        "claim": "Gian is the smartest kid in Nobita's class.",
+        "verdict": "myth",
+        "explanation": "Gian is the strongest kid, not the smartest. The top student in the class is Dekisugi.",
+        "fun_fact": "Gian's real name is Takeshi Goda; 'Gian' is just his nickname."
+      }
+    ],
+    "versus_candidates": [
+      "Suneo Honekawa",
+      "Nobita Nobi",
+      "Hidetoshi Dekisugi"
+    ]
+  },
+  {
+    "id": "ENT-ANM-066",
+    "domain_id": "anime_manga",
+    "subtopic_id": "doraemon_world",
+    "name": "Suneo Honekawa",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Suneo",
+      "Sneech"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A short cartoon boy with spiky swept-back hair in a neat shirt, proudly showing off a shiny model airplane in a sunny park, 9:16 vertical shot.",
+    "core_traits": [
+      "Short kid with pointy, swept-back hair",
+      "Comes from a rich family and loves to show off",
+      "Often tags along with the big kid Gian",
+      "Loves building plastic model kits"
+    ],
+    "distractor_pool": [
+      "Gian",
+      "Nobita Nobi",
+      "Hidetoshi Dekisugi",
+      "Toru Kazama",
+      "Kenichi Mitsuba"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Suneo often shows off his new toys and games.",
+        "verdict": "fact",
+        "explanation": "Suneo's family is wealthy, and he loves bragging about his latest toys, games and trips.",
+        "fun_fact": "In the 2014 English version of Doraemon, Suneo is called Sneech."
+      },
+      {
+        "claim": "Suneo is the tallest kid in his friend group.",
+        "verdict": "myth",
+        "explanation": "Suneo is actually quite short, especially when he stands next to his big friend Gian.",
+        "fun_fact": "Suneo loves building detailed plastic models of planes and ships."
+      }
+    ],
+    "versus_candidates": [
+      "Gian",
+      "Nobita Nobi",
+      "Hidetoshi Dekisugi"
+    ]
+  },
+  {
+    "id": "ENT-ANM-067",
+    "domain_id": "anime_manga",
+    "subtopic_id": "doraemon_world",
+    "name": "Dorami",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A small yellow robot cat with round ears topped by a red bow, smiling and holding a golden melon bread bun in a bright futuristic room, 9:16 vertical shot.",
+    "core_traits": [
+      "Small yellow robot cat from the future",
+      "Has ears with a red ribbon bow",
+      "Little sister of a famous blue robot cat",
+      "Her favorite snack is melon bread"
+    ],
+    "distractor_pool": [
+      "Doraemon",
+      "Hello Kitty",
+      "Jibanyan",
+      "Luna the Cat",
+      "Chi"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dorami is Doraemon's older sister.",
+        "verdict": "myth",
+        "explanation": "Dorami is Doraemon's younger sister, though she is often more careful and reliable than him.",
+        "fun_fact": "Unlike her big brother, Dorami still has her ears."
+      },
+      {
+        "claim": "Dorami's favorite food is melon bread.",
+        "verdict": "fact",
+        "explanation": "While Doraemon loves dorayaki pancakes, Dorami's favorite treat is sweet melon bread.",
+        "fun_fact": "Dorami is yellow, the same color Doraemon was before he turned blue."
+      }
+    ],
+    "versus_candidates": [
+      "Doraemon",
+      "Hello Kitty",
+      "Jibanyan"
+    ]
+  },
+  {
+    "id": "ENT-ANM-068",
+    "domain_id": "anime_manga",
+    "subtopic_id": "doraemon_world",
+    "name": "Anywhere Door",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A bright pink door standing all by itself in a grassy field, half open to reveal a sunny tropical beach on the other side, 9:16 vertical shot.",
+    "core_traits": [
+      "Magical gadget from a robot cat's pocket",
+      "Looks like an ordinary pink door standing by itself",
+      "Open it and you step into the place you imagine",
+      "One of the most famous gadgets in Doraemon"
+    ],
+    "distractor_pool": [
+      "Bamboo-Copter",
+      "Time Machine",
+      "Small Light",
+      "Memory Bread",
+      "Time Kerchief"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Anywhere Door can take you to almost any place you imagine.",
+        "verdict": "fact",
+        "explanation": "You think of a place, open the door, and step right through to get there.",
+        "fun_fact": "Doraemon pulls the Anywhere Door out of his magical four-dimensional pocket."
+      },
+      {
+        "claim": "The Anywhere Door lets you travel back in time.",
+        "verdict": "myth",
+        "explanation": "It only moves you to other places. For time travel, Doraemon uses the Time Machine in Nobita's desk drawer.",
+        "fun_fact": "Fans in Japan often name the Anywhere Door as the Doraemon gadget they most want."
+      }
+    ],
+    "versus_candidates": [
+      "Bamboo-Copter",
+      "Time Machine",
+      "Small Light"
+    ]
+  },
+  {
+    "id": "ENT-ANM-069",
+    "domain_id": "anime_manga",
+    "subtopic_id": "doraemon_world",
+    "name": "Bamboo-Copter",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful cartoon boy flying over rooftops with a small yellow propeller gadget on top of his head, bright blue sky with fluffy clouds, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny gadget from a robot cat's pocket",
+      "Looks like a little propeller",
+      "Stick it on your head and you can fly",
+      "Doraemon and his friends often use it to fly off on adventures"
+    ],
+    "distractor_pool": [
+      "Anywhere Door",
+      "Time Machine",
+      "Small Light",
+      "Memory Bread",
+      "Time Kerchief"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "You wear the Bamboo-Copter on your head to fly.",
+        "verdict": "fact",
+        "explanation": "The small propeller spins on top of your head and lifts you up into the sky.",
+        "fun_fact": "The Bamboo-Copter is one of the gadgets Doraemon uses most often."
+      },
+      {
+        "claim": "The Bamboo-Copter can fly forever without a rest.",
+        "verdict": "myth",
+        "explanation": "In the stories, its battery runs low if it is used too long, so riders must land and let it rest.",
+        "fun_fact": "Doraemon carries spare Bamboo-Copters so all his friends can fly together."
+      }
+    ],
+    "versus_candidates": [
+      "Anywhere Door",
+      "Time Machine",
+      "Small Light"
+    ]
+  },
+  {
+    "id": "ENT-ANM-070",
+    "domain_id": "anime_manga",
+    "subtopic_id": "ghibli_classics",
+    "name": "Ponyo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Brunhilde"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful little red goldfish girl with a round human face, swimming among bubbles and glowing jellyfish in a sparkling blue sea, 9:16 vertical shot.",
+    "core_traits": [
+      "Little red fish with a human-like face",
+      "Becomes friends with a five-year-old boy named Sosuke",
+      "Wishes to become a human girl",
+      "Loves eating ham"
+    ],
+    "distractor_pool": [
+      "Arrietty",
+      "Mei Kusakabe",
+      "Kiki",
+      "Chihiro Ogino",
+      "Ariel"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ponyo loves eating ham.",
+        "verdict": "fact",
+        "explanation": "When Sosuke shares his ham sandwich, Ponyo discovers that ham is her favorite food.",
+        "fun_fact": "Ponyo's father named her Brunhilde, but she prefers the name Ponyo."
+      },
+      {
+        "claim": "The movie Ponyo was made by Disney.",
+        "verdict": "myth",
+        "explanation": "Ponyo was made by Studio Ghibli and directed by Hayao Miyazaki. Disney helped release the English version.",
+        "fun_fact": "The movie's full Japanese title means 'Ponyo on the Cliff by the Sea.'"
+      }
+    ],
+    "versus_candidates": [
+      "Arrietty",
+      "Kiki",
+      "Totoro"
+    ]
+  },
+  {
+    "id": "ENT-ANM-071",
+    "domain_id": "anime_manga",
+    "subtopic_id": "ghibli_classics",
+    "name": "Catbus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Cat Bus",
+      "Nekobus"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A giant fluffy orange-striped cat shaped like a bus, with a wide friendly smile and glowing headlight eyes, bounding through a starry countryside, 9:16 vertical shot.",
+    "core_traits": [
+      "Giant fluffy cat shaped like a bus",
+      "Has many legs and a big friendly grin",
+      "Appears in My Neighbor Totoro",
+      "Its glowing eyes work like headlights"
+    ],
+    "distractor_pool": [
+      "Totoro",
+      "Jiji",
+      "No-Face",
+      "Soot Sprites",
+      "Calcifer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Catbus has twelve legs.",
+        "verdict": "fact",
+        "explanation": "In My Neighbor Totoro, the Catbus races across fields and treetops on twelve furry legs.",
+        "fun_fact": "The Ghibli Museum in Japan has a soft Catbus that young kids can climb on."
+      },
+      {
+        "claim": "The Catbus is a normal bus with a cat driver.",
+        "verdict": "myth",
+        "explanation": "The Catbus is itself a giant cat. Passengers ride inside its soft, furry body.",
+        "fun_fact": "The sign on the Catbus's head changes to show where it is going."
+      }
+    ],
+    "versus_candidates": [
+      "Totoro",
+      "Calcifer",
+      "Jiji"
+    ]
+  },
+  {
+    "id": "ENT-ANM-072",
+    "domain_id": "anime_manga",
+    "subtopic_id": "ghibli_classics",
+    "name": "Soot Sprites",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Susuwatari"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "Dozens of tiny round fuzzy black soot sprites with big white eyes, each holding a colorful star-shaped candy in a cozy wooden room, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny, round, fuzzy black balls with big eyes",
+      "Live in dusty, empty old houses",
+      "Appear in My Neighbor Totoro",
+      "Carry lumps of coal in Spirited Away"
+    ],
+    "distractor_pool": [
+      "Kodama",
+      "Totoro",
+      "Catbus",
+      "No-Face",
+      "Calcifer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Soot sprites appear in two Studio Ghibli movies.",
+        "verdict": "fact",
+        "explanation": "They show up in My Neighbor Totoro and again in Spirited Away, working in Kamaji's boiler room.",
+        "fun_fact": "In Spirited Away, the soot sprites love munching tiny star-shaped candies."
+      },
+      {
+        "claim": "Soot sprites like to stay in houses full of happy people.",
+        "verdict": "myth",
+        "explanation": "In My Neighbor Totoro, the soot sprites quietly move out once kind, cheerful people move in.",
+        "fun_fact": "Their Japanese name, susuwatari, means something like 'drifting soot.'"
+      }
+    ],
+    "versus_candidates": [
+      "Totoro",
+      "Catbus",
+      "Calcifer"
+    ]
+  },
+  {
+    "id": "ENT-ANM-073",
+    "domain_id": "anime_manga",
+    "subtopic_id": "ghibli_classics",
+    "name": "Jiji",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A small black cat with big round eyes perched on the end of a flying broom above a seaside town with red rooftops, 9:16 vertical shot.",
+    "core_traits": [
+      "Small black cat with big round eyes",
+      "Best friend and travel buddy of a young witch",
+      "Can talk, but only his witch friend understands him",
+      "From Kiki's Delivery Service"
+    ],
+    "distractor_pool": [
+      "Luna the Cat",
+      "Catbus",
+      "Chi",
+      "Meowth",
+      "Salem Saberhagen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Everyone in town can understand Jiji when he talks.",
+        "verdict": "myth",
+        "explanation": "Only Kiki can understand Jiji. To everyone else, he sounds like an ordinary cat meowing.",
+        "fun_fact": "In the English dub, Jiji was voiced by comedian Phil Hartman."
+      },
+      {
+        "claim": "Jiji flies with Kiki on her broom.",
+        "verdict": "fact",
+        "explanation": "Jiji rides along on Kiki's broom as she flies around the town making deliveries.",
+        "fun_fact": "Jiji once pretends to be a stuffed toy cat to help Kiki finish a delivery."
+      }
+    ],
+    "versus_candidates": [
+      "Luna the Cat",
+      "Catbus",
+      "Meowth"
+    ]
+  },
+  {
+    "id": "ENT-ANM-074",
+    "domain_id": "anime_manga",
+    "subtopic_id": "ghibli_classics",
+    "name": "Arrietty",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A tiny girl in a red dress with a clothespin in her hair, carrying a sugar cube among giant green leaves in a sunny garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny girl only a few inches tall",
+      "Lives secretly under the floor of a house",
+      "Borrows small things humans won't miss",
+      "Star of a 2010 Studio Ghibli film"
+    ],
+    "distractor_pool": [
+      "Ponyo",
+      "Kiki",
+      "Chihiro Ogino",
+      "Mei Kusakabe",
+      "Thumbelina"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Arrietty's story is based on the book The Borrowers.",
+        "verdict": "fact",
+        "explanation": "The film adapts The Borrowers, a children's novel by English author Mary Norton.",
+        "fun_fact": "Arrietty clips her hair with a clothespin, which is huge for someone her size."
+      },
+      {
+        "claim": "Borrowers take big things like furniture from humans.",
+        "verdict": "myth",
+        "explanation": "Borrowers only take tiny things humans won't miss, like a sugar cube or a pin.",
+        "fun_fact": "In the United States, the film was released as The Secret World of Arrietty."
+      }
+    ],
+    "versus_candidates": [
+      "Ponyo",
+      "Kiki",
+      "Chihiro Ogino"
+    ]
+  },
+  {
+    "id": "ENT-ANM-075",
+    "domain_id": "anime_manga",
+    "subtopic_id": "ghibli_classics",
+    "name": "Baron Humbert von Gikkingen",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Baron"
+    ],
+    "difficulty": 4,
+    "visual_anchor": "An elegant cat gentleman in a smart suit, top hat and bow tie, holding a walking cane in a tiny cozy town square at golden sunset, 9:16 vertical shot.",
+    "core_traits": [
+      "Elegant cat gentleman in a top hat and suit",
+      "Started as a cat figurine in an antique shop",
+      "Appears in Whisper of the Heart",
+      "Runs the Cat Bureau in The Cat Returns"
+    ],
+    "distractor_pool": [
+      "Jiji",
+      "Catbus",
+      "Puss in Boots",
+      "Luna the Cat",
+      "Cheshire Cat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Baron appears in two Studio Ghibli movies.",
+        "verdict": "fact",
+        "explanation": "He first appears as a figurine in Whisper of the Heart, then comes to life in The Cat Returns.",
+        "fun_fact": "Whisper of the Heart came out in 1995, and The Cat Returns in 2002."
+      },
+      {
+        "claim": "The Baron is a real cat who lives in a pet shop.",
+        "verdict": "myth",
+        "explanation": "In Whisper of the Heart, the Baron is a cat figurine sitting in an antique shop.",
+        "fun_fact": "In The Cat Returns, the Baron helps a girl named Haru who can talk to cats."
+      }
+    ],
+    "versus_candidates": [
+      "Jiji",
+      "Catbus",
+      "Puss in Boots"
+    ]
+  },
+  {
+    "id": "ENT-ANM-076",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Hamtaro",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A cute orange-and-white hamster with big shiny eyes, nibbling a sunflower seed on a sunny windowsill, 9:16 vertical shot.",
+    "core_traits": [
+      "Small orange-and-white hamster",
+      "Loves sunflower seeds",
+      "Lives with a girl named Laura in the English version",
+      "Goes on adventures with his friends, the Ham-Hams"
+    ],
+    "distractor_pool": [
+      "Bijou",
+      "Oxnard",
+      "Boss",
+      "Pashmina",
+      "Howdy"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hamtaro's best friends are a group called the Ham-Hams.",
+        "verdict": "fact",
+        "explanation": "Hamtaro sneaks out to meet the Ham-Hams, who gather in their own secret clubhouse.",
+        "fun_fact": "The Ham-Hams greet each other with a cheerful 'Hamha!'"
+      },
+      {
+        "claim": "Hamtaro lives in the wild woods.",
+        "verdict": "myth",
+        "explanation": "Hamtaro is a pet hamster who lives with his owner and sneaks out for adventures while she is at school.",
+        "fun_fact": "The Hamtaro cartoon began as a Japanese picture book series about a little hamster."
+      }
+    ],
+    "versus_candidates": [
+      "Pikachu",
+      "Chi",
+      "Jibanyan"
+    ]
+  },
+  {
+    "id": "ENT-ANM-077",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Chi",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A tiny gray-and-white striped kitten with big curious eyes, sitting in a cozy apartment next to a ball of yarn, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny gray-and-white striped kitten",
+      "Got lost from her mother during a walk",
+      "Adopted by the Yamada family and their little boy Yohei",
+      "Star of the manga and anime Chi's Sweet Home"
+    ],
+    "distractor_pool": [
+      "Jiji",
+      "Luna the Cat",
+      "Hello Kitty",
+      "Meowth",
+      "Jibanyan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Chi was born in the Yamada family's home.",
+        "verdict": "myth",
+        "explanation": "Chi got lost from her mother and siblings, and young Yohei found her in a park.",
+        "fun_fact": "Each episode of the 2008 Chi's Sweet Home anime is only about three minutes long."
+      },
+      {
+        "claim": "The Yamadas first lived in an apartment where pets weren't allowed.",
+        "verdict": "fact",
+        "explanation": "The family tried to keep Chi a secret, and later moved to a home where pets are welcome.",
+        "fun_fact": "Chi's Sweet Home was created by manga artist Konami Kanata."
+      }
+    ],
+    "versus_candidates": [
+      "Jiji",
+      "Luna the Cat",
+      "Hello Kitty"
+    ]
+  },
+  {
+    "id": "ENT-ANM-078",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Agumon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A small, friendly orange dinosaur creature with big green eyes, standing proudly on a sunny grassy hill under a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Small orange dinosaur-like creature",
+      "Has big green eyes and three-clawed hands",
+      "Partner of Tai Kamiya in Digimon Adventure",
+      "Digivolves into Greymon"
+    ],
+    "distractor_pool": [
+      "Gabumon",
+      "Patamon",
+      "Tentomon",
+      "Palmon",
+      "Guilmon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Agumon Digivolves into Greymon.",
+        "verdict": "fact",
+        "explanation": "When Tai needs help, Agumon Digivolves into Greymon, a much bigger dinosaur Digimon.",
+        "fun_fact": "The name Digimon is short for 'Digital Monsters.'"
+      },
+      {
+        "claim": "Digimon is just another name for Pokemon.",
+        "verdict": "myth",
+        "explanation": "Digimon and Pokemon are separate franchises with different creatures, stories and creators.",
+        "fun_fact": "Digimon began in 1997 as a virtual pet toy, similar to a Tamagotchi."
+      }
+    ],
+    "versus_candidates": [
+      "Pikachu",
+      "Gabumon",
+      "Charmander"
+    ]
+  },
+  {
+    "id": "ENT-ANM-079",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Jibanyan",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A chubby red cartoon cat with two tails and a yellow bell on its belly band, happily holding a chocolate bar in a colorful park, 9:16 vertical shot.",
+    "core_traits": [
+      "Chubby red cat with two tails",
+      "Wears a belly band with a yellow bell",
+      "Loves chocolate bars called Chocobars",
+      "Famous yo-kai friend of Nate in Yo-kai Watch"
+    ],
+    "distractor_pool": [
+      "Whisper",
+      "Komasan",
+      "Meowth",
+      "Luna the Cat",
+      "Doraemon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Jibanyan has two tails.",
+        "verdict": "fact",
+        "explanation": "Jibanyan is a cat yo-kai, and his two tails are one of his best-known features.",
+        "fun_fact": "Jibanyan's special move is called Paws of Fury."
+      },
+      {
+        "claim": "Real cats can safely eat chocolate bars like Jibanyan.",
+        "verdict": "myth",
+        "explanation": "Chocolate is not safe for real cats or dogs. Only cartoon cats like Jibanyan can snack on it.",
+        "fun_fact": "Yo-kai Watch was created by Level-5, the game studio behind Professor Layton."
+      }
+    ],
+    "versus_candidates": [
+      "Meowth",
+      "Doraemon",
+      "Pikachu"
+    ]
+  },
+  {
+    "id": "ENT-ANM-080",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Chibi Maruko-chan",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Maruko",
+      "Maruko-chan"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A cheerful little cartoon girl with a short bob haircut and a red skirt, walking home from school past green tea fields with Mount Fuji in the distance, 9:16 vertical shot.",
+    "core_traits": [
+      "Cheerful, lazy-but-lovable third-grade girl",
+      "Has a short bob haircut and wears a red skirt",
+      "Lives with her parents, big sister and grandparents",
+      "Her story is set in Shizuoka, Japan, in the 1970s"
+    ],
+    "distractor_pool": [
+      "Crayon Shin-chan",
+      "Shizuka Minamoto",
+      "Mei Kusakabe",
+      "Sazae-san",
+      "Nene Sakurada"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Chibi Maruko-chan is based on its creator's own childhood.",
+        "verdict": "fact",
+        "explanation": "Manga artist Momoko Sakura based Maruko's funny school days on her own memories of growing up.",
+        "fun_fact": "Maruko's real name is Momoko Sakura, the same as her creator's pen name."
+      },
+      {
+        "claim": "Chibi Maruko-chan is set in modern-day Tokyo.",
+        "verdict": "myth",
+        "explanation": "The story takes place in Shimizu, a town in Shizuoka, Japan, during the 1970s.",
+        "fun_fact": "Maruko's grandpa Tomozo is her biggest fan and often spoils her."
+      }
+    ],
+    "versus_candidates": [
+      "Crayon Shin-chan",
+      "Shizuka Minamoto",
+      "Sazae-san"
+    ]
+  },
+  {
+    "id": "ENT-ANM-081",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Luna the Cat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A sleek black cat with a golden crescent moon mark on her forehead, sitting on a moonlit windowsill under twinkling stars, 9:16 vertical shot.",
+    "core_traits": [
+      "Sleek black cat who can talk",
+      "Has a golden crescent moon on her forehead",
+      "Guides Usagi Tsukino on her adventures",
+      "Gave a magical brooch to the girl who became Sailor Moon"
+    ],
+    "distractor_pool": [
+      "Artemis",
+      "Diana",
+      "Jiji",
+      "Meowth",
+      "Chi"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Luna has a crescent moon mark on her forehead.",
+        "verdict": "fact",
+        "explanation": "Luna's golden crescent moon shows that she comes from the ancient Moon Kingdom.",
+        "fun_fact": "Luna gives Usagi the magical brooch that lets her transform into Sailor Moon."
+      },
+      {
+        "claim": "Luna is a white cat.",
+        "verdict": "myth",
+        "explanation": "Luna is a black cat. Her white cat friend Artemis guides Sailor Venus.",
+        "fun_fact": "The name Luna means 'moon' in Latin."
+      }
+    ],
+    "versus_candidates": [
+      "Jiji",
+      "Artemis",
+      "Meowth"
+    ]
+  },
+  {
+    "id": "ENT-ANM-082",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Ninja Hattori",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Ninja Hattori-kun",
+      "Kanzo Hattori"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A cheerful young ninja boy in a blue ninja outfit leaping across tiled rooftops with a small light-brown puppy, bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Young ninja boy in a blue outfit",
+      "Lives with his friend Kenichi Mitsuba",
+      "Has a ninja puppy named Shishimaru",
+      "Created by Fujiko Fujio, the duo behind Doraemon"
+    ],
+    "distractor_pool": [
+      "Naruto Uzumaki",
+      "Doraemon",
+      "Kenichi Mitsuba",
+      "Perman",
+      "Kiteretsu"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ninja Hattori comes from the same manga duo as Doraemon.",
+        "verdict": "fact",
+        "explanation": "Both were published under the pen name Fujiko Fujio, a famous duo of manga artists.",
+        "fun_fact": "Hattori's puppy Shishimaru loves chikuwa, a tube-shaped Japanese fish cake."
+      },
+      {
+        "claim": "Ninja Hattori is a grown-up ninja.",
+        "verdict": "myth",
+        "explanation": "Hattori is a young ninja boy, about the same age as his best friend Kenichi.",
+        "fun_fact": "Ninja Hattori became hugely popular with kids in India."
+      }
+    ],
+    "versus_candidates": [
+      "Naruto Uzumaki",
+      "Doraemon",
+      "Crayon Shin-chan"
+    ]
+  },
+  {
+    "id": "ENT-ANM-083",
+    "domain_id": "anime_manga",
+    "subtopic_id": "kids_anime_classics",
+    "name": "Beyblade",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "Two colorful spinning-top toys whirling inside a bowl-shaped plastic stadium while smiling kids cheer in the background, 9:16 vertical shot.",
+    "core_traits": [
+      "Toy spinning tops built for friendly contests",
+      "Launched into a bowl-shaped stadium",
+      "The last top still spinning wins",
+      "The 2001 anime starred Tyson Granger and his Dragoon"
+    ],
+    "distractor_pool": [
+      "Bakugan",
+      "Yu-Gi-Oh!",
+      "Zoids",
+      "Tamagotchi",
+      "Duel Masters"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Players shout 'Let it rip!' when launching their Beyblades.",
+        "verdict": "fact",
+        "explanation": "'Let it rip!' became the famous launch call in the Beyblade anime and toy commercials.",
+        "fun_fact": "Beyblade was inspired by beigoma, traditional Japanese spinning tops."
+      },
+      {
+        "claim": "A Beyblade can keep spinning forever once it is launched.",
+        "verdict": "myth",
+        "explanation": "Friction with the stadium floor slowly steals its energy, so every Beyblade eventually wobbles and stops.",
+        "fun_fact": "Beyblades are made by the Japanese toy company Takara Tomy."
+      }
+    ],
+    "versus_candidates": [
+      "Bakugan",
+      "Yu-Gi-Oh!",
+      "Pokemon"
     ]
   }
 ]

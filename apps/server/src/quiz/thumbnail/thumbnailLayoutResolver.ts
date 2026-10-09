@@ -67,18 +67,12 @@ const LAYOUT_MATCH_RULES: readonly LayoutMatchRule[] = [
   {
     layout: "yes_no",
     formatExact: ["yes_no", "verdict_yes_no"],
-    formatSubstrings: ["yes_no"],
+    formatSubstrings: ["yes_no", "true_false"],
     topicSubstrings: [
       "yes or no",
       "yes/no",
       "yes no",
       "yes or no?",
-    ],
-  },
-  {
-    layout: "true_false",
-    formatSubstrings: ["true_false"],
-    topicSubstrings: [
       "true or false",
       "ウソ",
       "ホント",

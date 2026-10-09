@@ -32,14 +32,14 @@ describe("Verdict Prompt Strategy (Yes / No Architecture)", () => {
         difficulty: 2,
       });
 
-      expect(prompt).toContain('=== SPECIALIZED YES / NO ARCHETYPE DIRECTIVE ===');
-      expect(prompt).toContain('Standardized exclusively to "Yes" and "No" binary format');
-      expect(prompt).toContain('Formulate a punchy, natural direct question or assertion ending with "... Yes or No?"');
-      expect(prompt).toContain('Exactly 2 choices with text strictly "Yes" and "No"');
-      expect(prompt).toContain('Enforce a strict ~50/50 distribution across questions');
+      expect(prompt).toContain('=== SPECIALIZED YES / NO ARCHETYPE DIRECTIVE (KIDS & FAMILY) ===');
+      expect(prompt).toContain('Choices are always exactly "Yes" and "No" (never True / False, Fact / Myth)');
+      expect(prompt).toContain("NATURAL QUESTION: Write a real question a child would ask");
+      expect(prompt).toContain("NEVER A STATEMENT: Never write a declarative claim to be judged");
+      expect(prompt).toContain('Exactly half of the questions (rounded) must have "No" as the correct answer');
       expect(prompt).toContain('- Format: "yes_no"');
       expect(prompt).toContain('- Choice Count: 2 ("Yes" and "No")');
-      expect(prompt).toContain('"question": "Are blue whales bigger than any dinosaur? Yes or No?"');
+      expect(prompt).toContain('"question": "Can a goldfish remember things for months? Yes or No?"');
       expect(prompt).toContain('"text": "Yes"');
       expect(prompt).toContain('"text": "No"');
     });
@@ -70,10 +70,10 @@ describe("Verdict Prompt Strategy (Yes / No Architecture)", () => {
         difficulty: 2,
       });
 
-      expect(prompt).toContain('=== SPECIALIZED YES / NO ARCHETYPE DIRECTIVE ===');
+      expect(prompt).toContain('=== SPECIALIZED YES / NO ARCHETYPE DIRECTIVE (KIDS & FAMILY) ===');
       expect(prompt).toContain("Map [TRUE] claims from the target entity to 'Yes', and [FALSE] claims to 'No'");
       expect(prompt).toContain("CHOICES: Exactly 2 choices with text strictly 'Yes' and 'No'");
-      expect(prompt).toContain("Question statement ending with '... Yes or No?'");
+      expect(prompt).toContain("Natural question ending with '... Yes or No?'");
       expect(prompt).toContain('- Format: "yes_no"');
       expect(prompt).toContain('- Choice Count: 2 ("Yes" and "No")');
     });

@@ -7,11 +7,11 @@ const TRAILING_PUNCTUATION_REGEX = /[\s.,;:!?…。！？]+$/u;
  * Handles:
  * - Trimming leading and trailing whitespace
  * - Stripping trailing periods, commas, colons, exclamation marks, or extra question marks
- * - Ensuring both multiple_choice and true_false questions end in '?'
+ * - Ensuring both multiple_choice and yes_no questions end in '?'
  * - Preserving internal punctuation across multi-sentence prompts
  *
  * @param questionText - The raw question text from LLM generation, bank, or user input.
- * @param format - Optional quiz format ('multiple_choice', 'true_false', etc.).
+ * @param format - Optional quiz format ('multiple_choice', 'yes_no', etc.).
  * @returns Cleaned question text ending with '?'.
  */
 export function normalizeQuestionPunctuation(questionText: string, _format?: string): string {

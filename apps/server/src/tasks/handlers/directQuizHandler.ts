@@ -6,6 +6,7 @@ import { invalidateQuizArtifacts } from "../../quiz/pipeline/invalidation.js";
 import { synthesizeAllLegacyArtifacts } from "../../quiz/domain/quizArtifactSynthesizer.js";
 
 import { normalizeQuizCandidate } from "../../quiz/domain/quizCandidateNormalizer.js";
+import { applyStableChoiceOrder, spreadCorrectChoicePositions } from "../../quiz/bank/choiceOrder/index.js";
 
 export async function handleDirectQuizOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[]> {
   const task = active.task;
@@ -23,8 +24,13 @@ export async function handleDirectQuizOutput(runtime: TaskManagerRuntime, active
   // Validate strictly against QuizV2Schema
   const quiz = validateQuizV2(candidate);
 
-  // Rebalance choice positions to prevent consecutive identical positions
-  const balancedQuestions = balanceQuizChoicePositions(quiz.questions);
+  // Rebalance choice positions to prevent consecutive identical positions; 2-choice versus questions
+  // are not covered by the 3-choice rebalancer, so they get a stable shuffle plus run limiting.
+  const balancedQuestions = spreadCorrectChoicePositions(
+    balanceQuizChoicePositions(quiz.questions).map((question) =>
+      question.choices.length === 2 ? applyStableChoiceOrder(question) : question,
+    ),
+  );
   const balancedQuiz = { ...quiz, questions: balancedQuestions };
 
   // Write quiz.json

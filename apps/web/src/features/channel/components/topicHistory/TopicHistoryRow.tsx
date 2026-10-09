@@ -37,13 +37,7 @@ export function TopicHistoryRow({
       : `Select this topic (${topic.question_count} questions${availability ? `, ${availability.source_capacity} available` : ""})`;
 
   const shortReelArchetypeLabel =
-    topic.archetype === "versus_faceoff"
-      ? "Versus Face-off"
-      : topic.archetype === "verdict_yes_no"
-        ? "Yes or No"
-        : topic.archetype === "verdict_true_false"
-          ? "True or False"
-          : "Deep Trivia";
+    topic.archetype === "versus_faceoff" ? "Versus Face-off" : topic.archetype === "verdict_yes_no" ? "Yes or No" : "Deep Trivia";
 
   return (
     <div className="topic-history-row">

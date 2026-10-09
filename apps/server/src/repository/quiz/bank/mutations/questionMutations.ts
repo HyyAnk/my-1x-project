@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import { BankQuestionSchema, type BankQuestion, type BankSubtopicBatch } from "@studio/shared";
+import { BankQuestionSchema, LEGACY_VERDICT_ARCHETYPE_IDS, type BankQuestion, type BankSubtopicBatch } from "@studio/shared";
 import type { RepositoryRuntime } from "../../../runtime.js";
 import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "../bankPathResolver.js";
 import { listQuestionBankBatchesUnlocked, readSubtopicBatchUnlocked } from "../bankBatchStorage.js";
@@ -28,9 +28,10 @@ export async function saveQuestionBankQuestionUnlocked(this: RepositoryRuntime, 
     const existing = await readSubtopicBatchUnlocked.call(this, validated.archetype_id, validated.domain_id, validated.subtopic_id);
     const { batch, toSave } = prepareBatchForSave(existing, validated);
 
+    // Keeps a not-yet-migrated True/False batch file in sync so the retired copy never resurrects stale questions.
     const legacyPath =
-      validated.archetype_id === "verdict_yes_no" || validated.archetype_id === "verdict_true_false"
-        ? getQuestionBankWritePath.call(this, "verdict_true_false", validated.domain_id, `${validated.subtopic_id}.json`)
+      validated.archetype_id === "verdict_yes_no"
+        ? getQuestionBankWritePath.call(this, LEGACY_VERDICT_ARCHETYPE_IDS[0], validated.domain_id, `${validated.subtopic_id}.json`)
         : null;
     const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
     const containmentRoot = isInside(runtimeBankRoot, batchFilePath) ? this.roots.runtime : defaultProjectRuntime;

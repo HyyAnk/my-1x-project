@@ -149,7 +149,8 @@ describe("editorial seed catalog and domain diversity", () => {
       topicSummary: "How titanium turbochargers generate extreme speed",
       editorial: true,
     });
-    expect(plan.hookText).toBe("TRUE OR FALSE?");
+    // The seed's "YES OR NO?" promises a format this episode does not use, so a topic headline replaces it.
+    expect(plan.hookText).toBe("SUPERCARS SPEED QUIZ!");
     expect(plan.mascotPersona?.prop).toBe("none");
     expect(plan.mascotPersona?.poseDescription).toContain("proud expert stance");
   });
@@ -184,7 +185,8 @@ describe("editorial seed catalog and domain diversity", () => {
       topicSummary: "Journey through the pages of world-famous literature",
       editorial: true,
     });
-    expect(plan.hookText).toBe("CAN YOU GUESS WHO?");
+    // "CAN YOU GUESS WHO?" names no topic; the title-derived headline is the best grounded fallback.
+    expect(plan.hookText).toBe("CLASSIC STORYBOOK LEGENDS");
     expect(plan.mascotPersona?.prop).toBe("none");
     expect(plan.subjectAnchors[0].visualPrompt).toContain("storybook");
     expect(plan.mascotPersona?.poseDescription).toContain("storytelling");
@@ -196,7 +198,7 @@ describe("editorial seed catalog and domain diversity", () => {
       topicSummary: "Kids and parents dive into the school nurse's essential toolkit",
       editorial: true,
     });
-    expect(plan.hookText).toBe("TRUE OR FALSE?");
+    expect(plan.hookText).toBe("FIRST AID HEROES!");
     expect(plan.mascotPersona?.prop).toBe("none");
     expect(plan.subjectAnchors[0].visualPrompt).toContain("ice compress");
     expect(plan.mascotPersona?.poseDescription).toContain("helpful posture");

@@ -7,6 +7,7 @@ import {
   quizChoicePresentationFor,
   recommendImageSizing,
   resolveQuizLayoutAssetAspectRatio,
+  type QuizQuestionFormat,
   type SandboxPreviewInput,
 } from "@studio/shared";
 import { candyArcadePalettes } from "../../visual/candyArcade.js";
@@ -17,7 +18,7 @@ import type { QuizSceneRenderModel } from "./quizScene.types.js";
 
 export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied: boolean): QuizSceneRenderModel {
   const questionNumber = input.question_number;
-  const questionFormat = input.question_format ?? (input.choices.length === 2 ? "true_false" : "multiple_choice");
+  const questionFormat = input.question_format ?? (input.choices.length === 2 ? "yes_no" : "multiple_choice");
   const capability = getQuizPreviewLayoutCapability(input.layout_id);
   const presentation =
     input.question_format || input.archetype
@@ -116,9 +117,8 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
   });
 }
 
-function defaultArchetype(format: "multiple_choice" | "image_guess" | "yes_no" | "true_false" | "odd_one_out", presentation: "text" | "visual") {
+function defaultArchetype(format: QuizQuestionFormat, presentation: "text" | "visual") {
   if (format === "odd_one_out") return "visual_multiple_choice" as const;
   if (format === "yes_no") return "yes_no" as const;
-  if (format === "true_false") return "true_false" as const;
   return presentation === "visual" ? ("visual_multiple_choice" as const) : ("text_multiple_choice" as const);
 }

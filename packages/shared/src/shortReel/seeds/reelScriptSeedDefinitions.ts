@@ -126,10 +126,10 @@ export const DEEP_TRIVIA_SEEDS: readonly ReelScriptSeed[] = [
   },
 ];
 
-export const TRUE_FALSE_SEEDS: readonly ReelScriptSeed[] = [
+export const YES_NO_SEEDS: readonly ReelScriptSeed[] = [
   {
     id: "tf_mythbusters_lab",
-    archetype: "verdict_true_false",
+    archetype: "verdict_yes_no",
     name: "MythBusters Lab",
     tagline: "Scientific testing and the big stamp verdict",
     narrative_intent: "Treats a widespread viral claim as a scientific hypothesis and puts it through a rigorous laboratory trial.",
@@ -144,7 +144,7 @@ export const TRUE_FALSE_SEEDS: readonly ReelScriptSeed[] = [
   },
   {
     id: "tf_everyday_deception",
-    archetype: "verdict_true_false",
+    archetype: "verdict_yes_no",
     name: "Everyday Deception",
     tagline: "Exposing the lie you believed your entire life",
     narrative_intent: "Directly confronts everyday habits, health myths, or school misconceptions that almost everybody assumes are true.",
@@ -152,14 +152,14 @@ export const TRUE_FALSE_SEEDS: readonly ReelScriptSeed[] = [
     segment_beats: {
       segment_1: "Directly ask if the viewer has been believing a lifelong misconception. Display the question cue.",
       segment_2: "Expose where the misleading idea originally came from and why everyone fell for it.",
-      segment_3: "Deliver the definitive True/False verdict matching the answer cue, liberating the audience with the real truth.",
+      segment_3: "Deliver the definitive Yes/No verdict matching the answer cue, liberating the audience with the real truth.",
     },
     pacing_tone: "Conspiratorial yet informative, mind-opening, conversational empathy.",
     preferred_ending_motifs: ["HONEST_CONFESSION", "TWO_SIDED_DEBATE", "MASCOT_SIGNATURE_PAYOFF"],
   },
   {
     id: "tf_courtroom_verdict",
-    archetype: "verdict_true_false",
+    archetype: "verdict_yes_no",
     name: "Courtroom Verdict",
     tagline: "High-drama trial with gavel-slamming justice",
     narrative_intent: "Puts the controversial statement on trial before the jury of viewers, presenting Exhibit A and Exhibit B before slamming the gavel.",
@@ -174,7 +174,7 @@ export const TRUE_FALSE_SEEDS: readonly ReelScriptSeed[] = [
   },
   {
     id: "tf_extreme_fact_check",
-    archetype: "verdict_true_false",
+    archetype: "verdict_yes_no",
     name: "Extreme Fact-Check",
     tagline: "Rapid-fire extreme stress test of wild claims",
     narrative_intent: "Tackles an extreme or unbelievable claim and tests its validity against the harshest laws of nature or records.",
@@ -192,5 +192,5 @@ export const TRUE_FALSE_SEEDS: readonly ReelScriptSeed[] = [
 export const ALL_REEL_SCRIPT_SEEDS: readonly ReelScriptSeed[] = [
   ...VERSUS_FACEOFF_SEEDS,
   ...DEEP_TRIVIA_SEEDS,
-  ...TRUE_FALSE_SEEDS,
+  ...YES_NO_SEEDS,
 ];

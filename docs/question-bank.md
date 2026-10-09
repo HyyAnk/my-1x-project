@@ -33,7 +33,7 @@ Bank generation/seeding modules exist separately from source-backed allocation. 
 [ALL_MATRIX_ARCHETYPES](../apps/server/src/quiz/bank/matrix/matrixCoverageCalculator.ts) currently includes:
 
 ```text
-verdict_true_false  speed_blitz  deep_trivia  versus_faceoff
+verdict_yes_no  speed_blitz  deep_trivia  versus_faceoff
 visual_spotting  visual_identification  mystery_reveal
 ```
 

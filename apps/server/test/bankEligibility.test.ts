@@ -79,10 +79,10 @@ describe("bank eligibility policies", () => {
   it("rejects incompatible format and malformed choices without fabricating", () => {
     const incompatible = evaluateBankQuestionEligibility(
       question({
-        format: "true_false",
+        format: "yes_no",
         choices: [
-          { id: "a", text: "True" },
-          { id: "b", text: "False" },
+          { id: "a", text: "Yes" },
+          { id: "b", text: "No" },
         ],
       }),
       {
@@ -133,5 +133,26 @@ describe("bank eligibility policies", () => {
         { targetLanguage: "en" },
       ),
     ).toMatchObject({ eligible: false, reason: "INCOMPATIBLE_CHOICES" });
+  });
+
+  it("rejects content unsuitable for a kids and family audience", () => {
+    expect(
+      evaluateEpisodeQuestionEligibility(question({ question: "In Death Note, who writes names in the notebook?" }), {
+        targetLanguage: "en",
+      }),
+    ).toMatchObject({ eligible: false, reason: "KID_UNSAFE_CONTENT" });
+    expect(
+      evaluateShortReelQuestionEligibility(question({ fun_fact: "Casino owners love poker nights." }), { targetArchetype: "deep_trivia" }),
+    ).toMatchObject({ eligible: false, reason: "KID_UNSAFE_CONTENT" });
+  });
+
+  it("rejects questions about Knowledge Base subjects curated as teen or mature, even with harmless wording", () => {
+    // ENT-GAM-003 (Arthur Morgan) is rated mature; ENT-POP-176 is a merged duplicate of kid-rated Son Goku.
+    expect(evaluateEpisodeQuestionEligibility(question({ entity_id: "ENT-GAM-003" }), { targetLanguage: "en" })).toMatchObject({
+      eligible: false,
+      reason: "KID_UNSAFE_CONTENT",
+    });
+    expect(evaluateEpisodeQuestionEligibility(question({ entity_id: "ENT-ANI-001" }), { targetLanguage: "en" }).eligible).toBe(true);
+    expect(evaluateEpisodeQuestionEligibility(question({ entity_id: "ENT-POP-176" }), { targetLanguage: "en" }).eligible).toBe(true);
   });
 });

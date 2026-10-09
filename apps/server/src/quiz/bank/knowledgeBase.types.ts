@@ -9,6 +9,12 @@ export interface KnowledgeFactOrMyth {
 }
 
 /**
+ * Youngest audience a subject is suitable for. Only "kids" subjects reach the kids and family channel;
+ * "teen" covers PG-13 / T-rated franchises, "mature" covers alcohol, gambling, and R / M-rated content.
+ */
+export type KnowledgeAudienceRating = "kids" | "teen" | "mature";
+
+/**
  * Clean domain knowledge entity representing real-world subjects, pop-culture icons,
  * animals, places, or concepts with authentic identity and factual visual anchors.
  *
@@ -21,6 +27,8 @@ export interface KnowledgeEntity {
   subtopic_id: string;
   name: string;
   language: "en";
+  /** Defaults to "kids" when absent. */
+  audience_rating?: KnowledgeAudienceRating;
   aliases?: string[];
   difficulty?: number;
   visual_anchor: string;

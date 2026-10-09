@@ -41,6 +41,7 @@ export interface QuestionBankBatchGenPayload {
   difficulty?: number;
   age_band?: "kids" | "family" | "teen" | "mature";
   persist?: boolean;
+  timeout_ms?: number;
 }
 
 export interface QuestionBankBatchGenResponse {

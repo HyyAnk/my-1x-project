@@ -8,7 +8,6 @@ export const channelsEn = {
     formatKnowledge: "Knowledge",
     formatImageGuess: "Image guess",
     formatMultipleChoice: "Multiple choice",
-    formatTrueFalse: "True/False",
     formatOddOneOut: "Odd one out",
     newQuizChannel: "New Quiz Channel",
     noQuizChannelsTitle: "No Quiz channels",

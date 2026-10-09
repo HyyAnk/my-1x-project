@@ -174,11 +174,12 @@ describe("Phase 6 — Regression & Verification: Live Mascot Data & Edge Cases",
       expect(html).toContain("data-mascot-animation-video");
       expect(html).toContain("data-mascot-video-time");
 
-      // Verify frame at 3.0s resolves seekTimeSeconds and transparentVideoUrl
+      // Question, choices, and thinking phases all resolve to the same Slot 2 video and no idle
+      // action exists, so the video plays as one continuous segment from the clip start.
       const frame = resolveProductionMascotTimelineAtTime(timelineOpts, adapted!.render_bundle!, 3.0);
       expect(frame).not.toBeNull();
       expect(frame?.transparentVideoUrl).toContain(".webm");
-      expect(frame?.seekTimeSeconds).toBe(1.0);
+      expect(frame?.seekTimeSeconds).toBe(3.0);
     });
 
     it("renders Core Thinking Slots 1 and 3..10 as 3D static images with CSS motion", () => {

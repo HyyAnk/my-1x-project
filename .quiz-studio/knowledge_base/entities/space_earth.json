@@ -5,6 +5,7 @@
     "subtopic_id": "solar_system",
     "name": "Sun",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sol",
       "Yellow Dwarf Star"
@@ -50,6 +51,7 @@
     "subtopic_id": "solar_system",
     "name": "Moon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Luna",
       "Earth's Moon"
@@ -95,6 +97,7 @@
     "subtopic_id": "solar_system",
     "name": "Mars",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Red Planet"
     ],
@@ -139,6 +142,7 @@
     "subtopic_id": "solar_system",
     "name": "Saturn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ringed Planet"
     ],
@@ -183,6 +187,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mount Everest",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chomolungma",
       "Sagarmatha"
@@ -193,7 +198,7 @@
       "Highest mountain peak above sea level on Earth at 8,848.86 meters",
       "Located in the Mahalangur Himal sub-range of the Himalayas on the Nepal-China border",
       "First officially summitted by Sir Edmund Hillary and Tenzing Norgay in 1953",
-      "High altitude above 8,000 meters is known as the 'Death Zone'"
+      "Air above 8,000 meters is so thin that most climbers carry bottled oxygen"
     ],
     "distractor_pool": [
       "K2",
@@ -228,6 +233,7 @@
     "subtopic_id": "solar_system",
     "name": "Mercury",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Swift Planet",
       "Hermes"
@@ -273,6 +279,7 @@
     "subtopic_id": "solar_system",
     "name": "Venus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Morning Star",
       "The Evening Star",
@@ -319,6 +326,7 @@
     "subtopic_id": "solar_system",
     "name": "Earth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Blue Planet",
       "Terra",
@@ -365,6 +373,7 @@
     "subtopic_id": "solar_system",
     "name": "Jupiter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King of Planets",
       "Gas Giant Giant"
@@ -410,6 +419,7 @@
     "subtopic_id": "solar_system",
     "name": "Uranus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Ice Giant",
       "The Sideways Planet",
@@ -456,6 +466,7 @@
     "subtopic_id": "solar_system",
     "name": "Neptune",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Windy Planet",
       "The Blue Ice Giant"
@@ -501,6 +512,7 @@
     "subtopic_id": "solar_system",
     "name": "Pluto",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dwarf Planet Pluto",
       "Minor Planet 134340"
@@ -546,6 +558,7 @@
     "subtopic_id": "solar_system",
     "name": "Ganymede",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jupiter III",
       "Giant of Moons"
@@ -591,6 +604,7 @@
     "subtopic_id": "solar_system",
     "name": "Titan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Saturn VI",
       "Methane Moon"
@@ -636,9 +650,9 @@
     "subtopic_id": "solar_system",
     "name": "Callisto",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Jupiter IV",
-      "The Dead Moon"
+      "Jupiter IV"
     ],
     "difficulty": 2,
     "visual_anchor": "An ancient, dark, heavily cratered moon of Jupiter sparkling with billions of ice-rimmed impact craters.",
@@ -681,6 +695,7 @@
     "subtopic_id": "solar_system",
     "name": "Io",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jupiter I",
       "The Pizza Moon",
@@ -727,6 +742,7 @@
     "subtopic_id": "solar_system",
     "name": "Europa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jupiter II",
       "The Ice Ocean Moon"
@@ -772,6 +788,7 @@
     "subtopic_id": "solar_system",
     "name": "Enceladus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Saturn II",
       "The Geyser Moon"
@@ -817,6 +834,7 @@
     "subtopic_id": "solar_system",
     "name": "Triton",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Neptune I",
       "The Cantaloupe Moon"
@@ -862,6 +880,7 @@
     "subtopic_id": "solar_system",
     "name": "Phobos",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mars I",
       "The Fear Moon"
@@ -907,6 +926,7 @@
     "subtopic_id": "solar_system",
     "name": "Deimos",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mars II",
       "The Dread Moon"
@@ -936,7 +956,7 @@
       {
         "claim": "Deimos has active geysers venting steam into the Martian sky.",
         "verdict": "myth",
-        "explanation": "Deimos is a cold, dead, airless rock with zero geological activity or internal heat.",
+        "explanation": "Deimos is a cold, quiet, airless rock with no geological activity or internal heat.",
         "fun_fact": "The United Arab Emirates Hope spacecraft captured the closest, most detailed images of Deimos in 2023."
       }
     ],
@@ -952,6 +972,7 @@
     "subtopic_id": "solar_system",
     "name": "Charon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pluto I",
       "The Ferryman of Pluto"
@@ -997,6 +1018,7 @@
     "subtopic_id": "solar_system",
     "name": "Comet Halley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "1P/Halley",
       "Halley's Comet"
@@ -1018,9 +1040,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Mark Twain was born in a year Halley's Comet appeared and died the day after it returned.",
+        "claim": "Halley's Comet last swung past the Sun and Earth in 1986.",
         "verdict": "fact",
-        "explanation": "Twain was born on November 30, 1835 (two weeks after perihelion) and died on April 21, 1910 (the day after perihelion).",
+        "explanation": "In 1986, several spacecraft, including Europe's Giotto probe, flew past the comet to study it up close.",
         "fun_fact": "Halley's Comet will make its next dramatic approach to Earth in mid-2061."
       },
       {
@@ -1042,6 +1064,7 @@
     "subtopic_id": "solar_system",
     "name": "Asteroid Belt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Main Asteroid Belt",
       "Main Belt"
@@ -1087,6 +1110,7 @@
     "subtopic_id": "solar_system",
     "name": "Kuiper Belt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Edgeworth-Kuiper Belt",
       "Trans-Neptunian Belt"
@@ -1132,6 +1156,7 @@
     "subtopic_id": "solar_system",
     "name": "Oort Cloud",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Opik-Oort Cloud",
       "Cometary Cloud"
@@ -1177,6 +1202,7 @@
     "subtopic_id": "solar_system",
     "name": "Olympus Mons",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mount Olympus of Mars"
     ],
@@ -1221,6 +1247,7 @@
     "subtopic_id": "solar_system",
     "name": "Great Red Spot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jupiter's Eye",
       "The Great Storm"
@@ -1266,6 +1293,7 @@
     "subtopic_id": "solar_system",
     "name": "Valles Marineris",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Grand Canyon of Mars",
       "Mariner Valley"
@@ -1311,6 +1339,7 @@
     "subtopic_id": "solar_system",
     "name": "Solar Wind",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solar Particle Stream",
       "Heliospheric Wind"
@@ -1356,6 +1385,7 @@
     "subtopic_id": "solar_system",
     "name": "Solar Flare",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solar Eruption",
       "Solar Blast"
@@ -1364,7 +1394,7 @@
     "visual_anchor": "A blinding flash of electromagnetic radiation exploding violently from a twisted magnetic sunspot loop on the Sun's surface.",
     "core_traits": [
       "Intense localized burst of electromagnetic radiation in the Sun's atmosphere caused by magnetic reconnection",
-      "Releases energy equivalent to millions of 100-megaton hydrogen bombs exploding simultaneously",
+      "Releases a huge burst of energy in minutes, far more than all people on Earth use in a year",
       "Travels at the speed of light, reaching Earth in just over 8 minutes",
       "Can cause immediate high-frequency radio blackouts on the sunlit side of Earth"
     ],
@@ -1401,6 +1431,7 @@
     "subtopic_id": "solar_system",
     "name": "Sunspot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solar Spot",
       "Photospheric Blemish"
@@ -1446,6 +1477,7 @@
     "subtopic_id": "solar_system",
     "name": "Solar Eclipse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Total Solar Eclipse",
       "Eclipse of the Sun"
@@ -1491,8 +1523,8 @@
     "subtopic_id": "solar_system",
     "name": "Lunar Eclipse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Blood Moon",
       "Total Lunar Eclipse"
     ],
     "difficulty": 1,
@@ -1536,6 +1568,7 @@
     "subtopic_id": "solar_system",
     "name": "Meteor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shooting Star Streak",
       "Fireball"
@@ -1581,6 +1614,7 @@
     "subtopic_id": "solar_system",
     "name": "Meteorite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fallen Space Rock",
       "Aerolite"
@@ -1626,6 +1660,7 @@
     "subtopic_id": "solar_system",
     "name": "Meteoroid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Space Pebble",
       "Micrometeoroid"
@@ -1671,6 +1706,7 @@
     "subtopic_id": "solar_system",
     "name": "Shooting Star",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Falling Star",
       "Wish Upon a Star"
@@ -1692,7 +1728,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Shooting stars are actually genuine stars dying and plummeting from the galaxy.",
+        "claim": "Shooting stars are real stars falling down out of the sky.",
         "verdict": "myth",
         "explanation": "Stars are colossal thermonuclear suns light-years away; a shooting star is merely a tiny speck of dust burning in Earth's upper atmosphere.",
         "fun_fact": "On any clear dark night, an observer can typically see 5 to 10 shooting stars per hour."
@@ -1716,6 +1752,7 @@
     "subtopic_id": "solar_system",
     "name": "Perseid Meteor Shower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Perseids",
       "Tears of Saint Lawrence"
@@ -1761,6 +1798,7 @@
     "subtopic_id": "solar_system",
     "name": "Geminid Meteor Shower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Geminids"
     ],
@@ -1805,6 +1843,7 @@
     "subtopic_id": "solar_system",
     "name": "Rings of Saturn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Saturn's Ring System"
     ],
@@ -1849,6 +1888,7 @@
     "subtopic_id": "deep_space",
     "name": "Black Hole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stellar Black Hole",
       "Gravitational Sinkhole"
@@ -1857,7 +1897,7 @@
     "visual_anchor": "An ominous pitch-black sphere bending background starlight into a warped Einstein ring encircled by a white-hot glowing accretion disk.",
     "core_traits": [
       "Region of spacetime where gravity is so strong that nothing, not even light, can escape",
-      "Forms when a massive dying star undergoes gravitational collapse at the end of its life",
+      "Forms when a very massive star collapses under its own gravity at the end of its life",
       "Surrounded by a boundary called the event horizon marking the point of no return",
       "First directly imaged in 2019 by the Event Horizon Telescope at the heart of galaxy M87"
     ],
@@ -1894,6 +1934,7 @@
     "subtopic_id": "deep_space",
     "name": "Supermassive Black Hole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "SMBH",
       "Galactic Monster"
@@ -1921,7 +1962,7 @@
         "fun_fact": "The diameter of TON 618's event horizon is roughly 400 billion kilometers, over 40 times the orbit of Neptune."
       },
       {
-        "claim": "Supermassive black holes formed recently from regular dying stars.",
+        "claim": "Supermassive black holes formed recently from ordinary stars at the end of their lives.",
         "verdict": "myth",
         "explanation": "They formed in the early universe through mechanisms still being researched, including direct collapse of primordial gas clouds.",
         "fun_fact": "The Milky Way's supermassive black hole is named Sagittarius A* and contains 4.3 million solar masses."
@@ -1939,6 +1980,7 @@
     "subtopic_id": "deep_space",
     "name": "Sagittarius A*",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sgr A*",
       "Milky Way Central Black Hole"
@@ -1984,6 +2026,7 @@
     "subtopic_id": "deep_space",
     "name": "Event Horizon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Point of No Return",
       "Schwarzschild Radius"
@@ -2029,6 +2072,7 @@
     "subtopic_id": "deep_space",
     "name": "Wormhole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Einstein-Rosen Bridge",
       "Spacetime Shortcut"
@@ -2074,6 +2118,7 @@
     "subtopic_id": "deep_space",
     "name": "Supernova",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stellar Explosion",
       "Type II Supernova"
@@ -2097,7 +2142,7 @@
       {
         "claim": "Virtually all the gold, silver, and heavy elements on Earth were forged inside ancient supernovae.",
         "verdict": "fact",
-        "explanation": "Nuclear fusion in dying stars and explosive nucleosynthesis in supernovae created the heavy elements that formed our planet.",
+        "explanation": "Nuclear fusion inside giant stars and the blasts of supernovae created the heavy elements that later formed our planet.",
         "fun_fact": "As Carl Sagan famously said, 'We are made of star-stuff.'"
       },
       {
@@ -2119,6 +2164,7 @@
     "subtopic_id": "deep_space",
     "name": "Milky Way Galaxy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Milky Way",
       "Our Galaxy"
@@ -2164,6 +2210,7 @@
     "subtopic_id": "deep_space",
     "name": "Andromeda Galaxy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M31",
       "NGC 224",
@@ -2210,6 +2257,7 @@
     "subtopic_id": "deep_space",
     "name": "Triangulum Galaxy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M33",
       "NGC 598",
@@ -2256,6 +2304,7 @@
     "subtopic_id": "deep_space",
     "name": "Large Magellanic Cloud",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "LMC",
       "Nubecula Major"
@@ -2301,6 +2350,7 @@
     "subtopic_id": "deep_space",
     "name": "Small Magellanic Cloud",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "SMC",
       "Nubecula Minor"
@@ -2346,6 +2396,7 @@
     "subtopic_id": "deep_space",
     "name": "Whirlpool Galaxy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M51",
       "NGC 5194",
@@ -2364,7 +2415,7 @@
       "Andromeda Galaxy",
       "Pinwheel Galaxy",
       "Cartwheel Galaxy",
-      "Cigar Galaxy"
+      "Triangulum Galaxy"
     ],
     "facts_and_myths": [
       {
@@ -2392,6 +2443,7 @@
     "subtopic_id": "deep_space",
     "name": "Sombrero Galaxy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M104",
       "NGC 4594"
@@ -2408,7 +2460,7 @@
       "Whirlpool Galaxy",
       "Andromeda Galaxy",
       "Black Eye Galaxy",
-      "Cigar Galaxy",
+      "Pinwheel Galaxy",
       "Cartwheel Galaxy"
     ],
     "facts_and_myths": [
@@ -2437,6 +2489,7 @@
     "subtopic_id": "deep_space",
     "name": "Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Interstellar Cloud",
       "Cosmic Nursery"
@@ -2482,6 +2535,7 @@
     "subtopic_id": "deep_space",
     "name": "Orion Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M42",
       "NGC 1976",
@@ -2528,6 +2582,7 @@
     "subtopic_id": "deep_space",
     "name": "Crab Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M1",
       "NGC 1952",
@@ -2574,6 +2629,7 @@
     "subtopic_id": "deep_space",
     "name": "Eagle Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M16",
       "NGC 6611",
@@ -2620,16 +2676,17 @@
     "subtopic_id": "deep_space",
     "name": "Ring Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M57",
       "NGC 6720",
       "The Donut Nebula"
     ],
     "difficulty": 2,
-    "visual_anchor": "A perfect glowing oval ring of rainbow-colored gas surrounding a solitary dying white dwarf star in Lyra.",
+    "visual_anchor": "A perfect glowing oval ring of rainbow-colored gas surrounding a tiny, hot white dwarf star in Lyra.",
     "core_traits": [
       "Textbook planetary nebula located in the northern constellation Lyra, roughly 2,570 light-years away",
-      "Formed when a dying medium-mass star expelled its outer layers of ionized gas thousands of years ago",
+      "Formed when an aging medium-mass star puffed off its outer layers of glowing gas thousands of years ago",
       "Features a central white dwarf star that illuminates the expanding shell of gas",
       "Displays concentric rings of blue ionized helium, green oxygen, and red nitrogen gas"
     ],
@@ -2666,6 +2723,7 @@
     "subtopic_id": "deep_space",
     "name": "Helix Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "NGC 7293",
       "The Eye of God",
@@ -2675,7 +2733,7 @@
     "visual_anchor": "A titanic glowing celestial iris of turquoise and crimson gas staring out from deep space like a colossal cosmic eye.",
     "core_traits": [
       "One of the closest planetary nebulae to Earth, located roughly 655 light-years away in Aquarius",
-      "Spans nearly 3 light-years across, formed by a dying Sun-like star shedding its outer layers",
+      "Spans nearly 3 light-years across, formed by an aging Sun-like star shedding its outer layers",
       "Earned the popular internet nickname 'Eye of God' due to its striking resemblance to a human eye",
       "Contains thousands of cometary knots - dense globules of gas trailing gaseous tails outward"
     ],
@@ -2712,6 +2770,7 @@
     "subtopic_id": "deep_space",
     "name": "Horsehead Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Barnard 33",
       "B33"
@@ -2757,6 +2816,7 @@
     "subtopic_id": "deep_space",
     "name": "Carina Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "NGC 3372",
       "Great Nebula in Carina",
@@ -2803,6 +2863,7 @@
     "subtopic_id": "deep_space",
     "name": "Tarantula Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "30 Doradus",
       "NGC 2070"
@@ -2848,6 +2909,7 @@
     "subtopic_id": "deep_space",
     "name": "Cat's Eye Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "NGC 6543",
       "The Cat's Eye"
@@ -2858,7 +2920,7 @@
       "Complex planetary nebula in the northern constellation Draco, located roughly 3,300 light-years away",
       "One of the most structurally intricate nebulae known, displaying concentric shells, jets, and knotted gas arcs",
       "First planetary nebula whose spectrum was analyzed by William Huggins in 1864, proving nebulae are made of hot gas",
-      "Formed by pulses and stellar wind ejections from a dying binary central star system"
+      "Shaped by pulses of stellar wind blown out by an aging pair of central stars"
     ],
     "distractor_pool": [
       "Ring Nebula",
@@ -2893,6 +2955,7 @@
     "subtopic_id": "deep_space",
     "name": "Butterfly Nebula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "NGC 6302",
       "Bug Nebula"
@@ -2901,7 +2964,7 @@
     "visual_anchor": "Two colossal sweeping wings of glowing white and violet gas stretching across space like a celestial butterfly spreading its wings.",
     "core_traits": [
       "Bipolar planetary nebula in the constellation Scorpius, roughly 3,800 light-years from Earth",
-      "Displays two vast delicate wings of superheated gas expanding outward from a dying central star",
+      "Displays two vast delicate wings of superheated gas expanding outward from an aging central star",
       "Has one of the hottest central stars known, with a surface temperature exceeding 250,000 degrees Celsius",
       "The central star is hidden behind a dark equatorial donut of dense cosmic dust"
     ],
@@ -2922,7 +2985,7 @@
       {
         "claim": "The Butterfly Nebula is made of organic living butterfly wings.",
         "verdict": "myth",
-        "explanation": "It is composed of incandescent plasma, ionized nitrogen, hydrogen, and mineral dust grains ejected by a dying white dwarf.",
+        "explanation": "It is made of glowing hot gases like nitrogen and hydrogen, plus tiny dust grains, blown out by its central star.",
         "fun_fact": "The nebula spans over three light-years from wingtip to wingtip."
       }
     ],
@@ -2938,6 +3001,7 @@
     "subtopic_id": "deep_space",
     "name": "Pillars of Creation",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M16 Columns",
       "Elephant Trunks of Serpens"
@@ -2983,12 +3047,13 @@
     "subtopic_id": "deep_space",
     "name": "White Dwarf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Degenerate Dwarf",
       "Stellar Ember"
     ],
     "difficulty": 1,
-    "visual_anchor": "An intensely glowing blue-white compact stellar corpse the size of Earth gleaming amid darkness, supported by electron degeneracy pressure.",
+    "visual_anchor": "An intensely glowing blue-white compact star remnant the size of Earth gleaming amid darkness, supported by electron degeneracy pressure.",
     "core_traits": [
       "Stellar core remnant left behind after a low-to-medium mass star sheds its outer envelopes",
       "Extremely dense: packs roughly the mass of the Sun into a volume approximately the size of Earth",
@@ -3028,6 +3093,7 @@
     "subtopic_id": "deep_space",
     "name": "Red Giant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Swollen Star",
       "Luminous Giant"
@@ -3073,6 +3139,7 @@
     "subtopic_id": "deep_space",
     "name": "Red Supergiant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cosmic Behemoth",
       "Supergiant Star"
@@ -3118,6 +3185,7 @@
     "subtopic_id": "deep_space",
     "name": "Blue Supergiant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "OB Supergiant",
       "Rigel-type Star"
@@ -3163,6 +3231,7 @@
     "subtopic_id": "deep_space",
     "name": "Neutron Star",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Collapsed Core",
       "Nuclear Star"
@@ -3208,6 +3277,7 @@
     "subtopic_id": "deep_space",
     "name": "Pulsar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pulsating Radio Star",
       "Cosmic Lighthouse"
@@ -3253,6 +3323,7 @@
     "subtopic_id": "deep_space",
     "name": "Dark Matter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Invisible Matter",
       "Cold Dark Matter"
@@ -3298,6 +3369,7 @@
     "subtopic_id": "deep_space",
     "name": "Dark Energy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cosmological Constant",
       "Vacuum Energy"
@@ -3343,6 +3415,7 @@
     "subtopic_id": "deep_space",
     "name": "Gravitational Wave",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spacetime Ripple",
       "Einstein's Waves"
@@ -3388,6 +3461,7 @@
     "subtopic_id": "deep_space",
     "name": "Light-Year",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ly",
       "Astronomical Distance Unit"
@@ -3433,6 +3507,7 @@
     "subtopic_id": "deep_space",
     "name": "Exoplanet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Extrasolar Planet",
       "Alien World"
@@ -3478,6 +3553,7 @@
     "subtopic_id": "deep_space",
     "name": "Super-Earth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giant Terrestrial Planet"
     ],
@@ -3522,6 +3598,7 @@
     "subtopic_id": "deep_space",
     "name": "Hot Jupiter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pegasid Planet",
       "Roaster Planet"
@@ -3567,6 +3644,7 @@
     "subtopic_id": "deep_space",
     "name": "Rogue Planet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nomad Planet",
       "Interstellar Orphan Planet"
@@ -3612,17 +3690,18 @@
     "subtopic_id": "deep_space",
     "name": "Gamma-Ray Burst",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "GRB",
-      "Cosmic Death Ray"
+      "Gamma Burst"
     ],
     "difficulty": 1,
-    "visual_anchor": "A hyper-energetic blinding beam of emerald-blue gamma radiation stabbing across billions of light-years of intergalactic space.",
+    "visual_anchor": "A hyper-energetic blinding beam of emerald-blue gamma radiation shooting across billions of light-years of intergalactic space.",
     "core_traits": [
       "Most energetic electromagnetic explosions in the universe since the Big Bang",
       "Short-duration bursts are caused by colliding neutron stars, while long bursts are caused by hypernovae collapsing into black holes",
       "Releases more energy in a few seconds than the Sun will produce in its entire 10-billion-year lifespan",
-      "Beams out in narrow relativistic jets focused along the rotational axis of the dying progenitor"
+      "Beams out in narrow, super-fast jets aimed along the spin axis of the collapsing star"
     ],
     "distractor_pool": [
       "Supernova",
@@ -3641,7 +3720,7 @@
       {
         "claim": "Gamma-ray bursts were discovered by astronomers searching for alien communications.",
         "verdict": "myth",
-        "explanation": "They were discovered in 1967 by American Vela satellites designed to spy on secret Soviet atmospheric nuclear bomb tests.",
+        "explanation": "They were found by accident in 1967 by satellites that had been built to look for something else entirely.",
         "fun_fact": "GRBs occur roughly once per day across the observable universe."
       }
     ],
@@ -3657,6 +3736,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Polaris",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "North Star",
       "Pole Star",
@@ -3703,6 +3783,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Sirius",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dog Star",
       "Alpha Canis Majoris",
@@ -3749,6 +3830,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Betelgeuse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alpha Orionis",
       "The Red Shoulder of Orion"
@@ -3794,6 +3876,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Rigel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beta Orionis",
       "The Blue Foot of Orion"
@@ -3839,6 +3922,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Alpha Centauri",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rigil Kentaurus",
       "Toliman"
@@ -3884,6 +3968,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Proxima Centauri",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alpha Centauri C",
       "The Nearest Star"
@@ -3929,6 +4014,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Arcturus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alpha Bootis",
       "Guardian of the Bear"
@@ -3974,6 +4060,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Orion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Hunter",
       "Orion Constellation"
@@ -4019,6 +4106,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Ursa Major",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great Bear",
       "The Big Bear"
@@ -4064,6 +4152,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Ursa Minor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Little Bear",
       "The Lesser Bear"
@@ -4109,6 +4198,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Big Dipper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Plough",
       "Charles's Wain",
@@ -4155,6 +4245,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Cassiopeia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Vain Queen",
       "The W Constellation"
@@ -4200,6 +4291,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Southern Cross",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crux",
       "Crux Australis"
@@ -4245,6 +4337,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Canis Major",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Greater Dog",
       "Hunting Dog of Orion"
@@ -4275,7 +4368,7 @@
         "claim": "Canis Major is a northern constellation visible only from the Arctic.",
         "verdict": "myth",
         "explanation": "It is a southern celestial constellation, best seen in the winter evening sky from both hemispheres.",
-        "fun_fact": "Ancient Romans sacrificed a red dog in spring to appease Sirius and protect their crops."
+        "fun_fact": "Ancient Egyptians watched for Sirius rising at dawn each year to know the Nile flood was coming."
       }
     ],
     "versus_candidates": [
@@ -4290,6 +4383,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Cygnus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Swan",
       "Northern Cross"
@@ -4320,7 +4414,7 @@
         "claim": "Cygnus is located on the surface of planet Mars.",
         "verdict": "myth",
         "explanation": "Cygnus is an astronomical star pattern spanning thousands of light-years in the Milky Way.",
-        "fun_fact": "In Greek myth, Cygnus represents Zeus disguised as a swan to seduce Leda."
+        "fun_fact": "In one Greek myth, Cygnus was a loyal friend who was turned into a swan and placed among the stars."
       }
     ],
     "versus_candidates": [
@@ -4335,6 +4429,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Scorpius",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Scorpion",
       "Scorpio"
@@ -4359,7 +4454,7 @@
         "claim": "In Polynesian mythology, the curving tail of Scorpius is the magic fishhook of demigod Maui.",
         "verdict": "fact",
         "explanation": "Maui used the hook (known as Manaiakalani) to pull up the North Island of New Zealand from the bottom of the ocean.",
-        "fun_fact": "Scorpius and Orion are on opposite sides of the sky, honoring the myth where the scorpion stung Orion to death."
+        "fun_fact": "In Greek myth, the scorpion chased Orion, so the two were placed on opposite sides of the sky."
       },
       {
         "claim": "Scorpius is only visible during daytime with special radar goggles.",
@@ -4380,6 +4475,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Taurus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Bull",
       "Taurus Constellation"
@@ -4404,7 +4500,7 @@
         "claim": "Cave paintings in Lascaux, France, dating back 17,000 years depict the constellation Taurus and the Pleiades.",
         "verdict": "fact",
         "explanation": "Astronomers and archaeologists agree that the 'Hall of the Bulls' paintings align accurately with the stars of Taurus and the Seven Sisters.",
-        "fun_fact": "In Greek mythology, Zeus transformed into a magnificent white bull (Taurus) to abduct princess Europa."
+        "fun_fact": "In Greek mythology, Zeus turned himself into a magnificent white bull, which is remembered as Taurus."
       },
       {
         "claim": "Taurus is made entirely of dark matter with no visible stars.",
@@ -4425,6 +4521,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Leo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Lion",
       "Leo Constellation"
@@ -4470,6 +4567,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Pegasus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Winged Horse",
       "Pegasus Constellation"
@@ -4494,7 +4592,7 @@
         "claim": "The 2019 Nobel Prize in Physics was awarded for discovering the first exoplanet around a star in Pegasus.",
         "verdict": "fact",
         "explanation": "Michel Mayor and Didier Queloz detected 51 Pegasi b in 1995, launching the modern era of exoplanet science.",
-        "fun_fact": "In classical mythology, Pegasus sprang from the severed neck of Medusa when Perseus defeated her."
+        "fun_fact": "In Greek myth, the hero Bellerophon rode Pegasus, and Zeus later placed the winged horse among the stars."
       },
       {
         "claim": "The Great Square of Pegasus contains thousands of naked-eye stars inside its borders.",
@@ -4515,6 +4613,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Andromeda Constellation",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Chained Maiden",
       "Andromeda"
@@ -4560,6 +4659,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Centaurus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Centaur",
       "Constellation Centaurus"
@@ -4605,6 +4705,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Pleiades",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Seven Sisters",
       "M45",
@@ -4651,6 +4752,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Hyades",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caldwell 41",
       "The Face of the Bull"
@@ -4696,6 +4798,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Zodiac",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zodiacal Belt",
       "Circle of Animals"
@@ -4741,6 +4844,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Sagittarius Constellation",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Archer",
       "The Teapot"
@@ -4786,6 +4890,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Gemini Constellation",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Twins",
       "Gemini"
@@ -4831,6 +4936,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Aries",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Ram",
       "Aries Constellation"
@@ -4876,6 +4982,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Aquarius",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Water Bearer",
       "Water Carrier"
@@ -4921,6 +5028,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Pisces",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Fishes",
       "Pisces Constellation"
@@ -4966,6 +5074,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Virgo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Maiden",
       "Virgo Constellation"
@@ -5011,6 +5120,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Libra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Scales",
       "The Balance"
@@ -5056,6 +5166,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Capricornus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Sea-Goat",
       "Capricorn"
@@ -5101,6 +5212,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Summer Triangle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Great Summer Triangle"
     ],
@@ -5145,6 +5257,7 @@
     "subtopic_id": "constellations_stars",
     "name": "Orion's Belt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Three Kings",
       "The Three Sisters",
@@ -5191,6 +5304,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Grand Canyon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Great Canyon of the Colorado",
       "Grand Canyon National Park"
@@ -5236,6 +5350,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Great Barrier Reef",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Barrier Reef",
       "Queensland Reef"
@@ -5263,7 +5378,7 @@
         "fun_fact": "The reef undergoes a synchronized mass coral spawning event once a year, timed precisely to the lunar cycle in spring."
       },
       {
-        "claim": "The Great Barrier Reef is made entirely of dead mineral limestone rock with no living animals.",
+        "claim": "The Great Barrier Reef is just plain rock with no living animals in it.",
         "verdict": "myth",
         "explanation": "Corals are tiny living colonial invertebrate animals (polyps) that build calcium carbonate exoskeletons.",
         "fun_fact": "The reef is threatened by marine heatwaves causing coral bleaching, where corals expel their colorful symbiotic algae."
@@ -5281,6 +5396,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mount Kilimanjaro",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kilimanjaro",
       "The Roof of Africa"
@@ -5326,6 +5442,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mount Fuji",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fuji-san",
       "Fujiyama"
@@ -5371,6 +5488,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mount Vesuvius",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vesuvius",
       "Vesuvio"
@@ -5394,14 +5512,14 @@
       {
         "claim": "Mount Vesuvius's 79 AD eruption buried Pompeii so thoroughly that the city remained hidden and preserved for over 1,500 years.",
         "verdict": "fact",
-        "explanation": "Deep pyroclastic flows and pumice preserved buildings, frescoes, and body hollows intact until rediscovery in the 18th century.",
+        "explanation": "Thick layers of ash and pumice preserved buildings, wall paintings, and everyday objects until rediscovery in the 18th century.",
         "fun_fact": "Pliny the Younger's eyewitness letters describing the towering ash umbrella pine cloud gave birth to the term 'Plinian eruption'."
       },
       {
         "claim": "Mount Vesuvius has been completely extinct since ancient Roman times.",
         "verdict": "myth",
-        "explanation": "Vesuvius erupted repeatedly throughout history, including major eruptions in 1631, 1906, and during World War II in March 1944.",
-        "fun_fact": "Its volcanic soil is extraordinarily fertile, producing world-famous Lacryma Christi wine and sweet San Marzano tomatoes."
+        "explanation": "Vesuvius has erupted many times through history, including big eruptions in 1631, 1906, and 1944.",
+        "fun_fact": "Its volcanic soil is very fertile, growing famous sweet San Marzano tomatoes, lemons, and apricots."
       }
     ],
     "versus_candidates": [
@@ -5416,6 +5534,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mount St. Helens",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "St. Helens",
       "Lawetlat'la"
@@ -5461,6 +5580,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mount Rainier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tahoma",
       "Tacoma",
@@ -5507,6 +5627,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Denali",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mount McKinley",
       "The High One"
@@ -5552,6 +5673,7 @@
     "subtopic_id": "earth_wonders",
     "name": "K2",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mount Godwin-Austen",
       "The Savage Mountain",
@@ -5598,6 +5720,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Matterhorn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Monte Cervino",
       "Mont Cervin",
@@ -5644,6 +5767,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Yellowstone Supervolcano",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yellowstone Caldera",
       "North American Supervolcano"
@@ -5689,6 +5813,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Old Faithful Geyser",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Old Faithful",
       "Yellowstone Cone Geyser"
@@ -5734,6 +5859,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Victoria Falls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mosi-oa-Tunya",
       "The Smoke That Thunders"
@@ -5755,9 +5881,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "During low-water season, daredevils can swim right up to the cliff edge in the natural 'Devil's Pool'.",
+        "claim": "Victoria Falls can show rainbows at night, lit only by the Moon.",
         "verdict": "fact",
-        "explanation": "A natural rock lip prevents swimmers from being swept over the 100-meter abyss when river flow is at its annual low.",
+        "explanation": "When a bright full moon shines on the falls' spray, its light splits into a faint lunar rainbow, or moonbow.",
         "fun_fact": "David Livingstone was the first European to view the falls in 1855, naming them in honor of Queen Victoria."
       },
       {
@@ -5779,6 +5905,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Niagara Falls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Horseshoe Falls",
       "American Falls"
@@ -5824,16 +5951,17 @@
     "subtopic_id": "earth_wonders",
     "name": "Iguazu Falls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Iguacu Falls",
-      "Devil's Throat Falls"
+      "Iguassu Falls"
     ],
     "difficulty": 1,
     "visual_anchor": "A sprawling horseshoe staircase of 275 thunderous waterfalls cascading through lush subtropical jungle mist on the Argentina-Brazil border.",
     "core_traits": [
       "Massive chain of 275 individual waterfalls along the Iguazu River on the border of Argentina and Brazil",
       "Spans nearly 2.7 kilometers in width, dropping between 60 and 82 meters into misty rainforest chasms",
-      "Anchored by the 'Devil's Throat' (Garganta del Diablo), a dramatic U-shaped chasm where half the river's flow plunges",
+      "Its biggest drop is a dramatic U-shaped chasm where about half of the river's water plunges down",
       "Surrounded by UNESCO World Heritage subtropical rainforest national parks teeming with toucans and jaguars"
     ],
     "distractor_pool": [
@@ -5848,7 +5976,7 @@
         "claim": "When US First Lady Eleanor Roosevelt saw Iguazu Falls, she famously exclaimed: 'Poor Niagara!'",
         "verdict": "fact",
         "explanation": "Its sheer scale, lush jungle setting, and 275 individual cascades make it wider and more visually dramatic than Niagara.",
-        "fun_fact": "In Guarani indigenous myth, the falls were created when a jealous serpent god sliced the riverbed in rage after a lover fled."
+        "fun_fact": "In a Guarani legend, an angry serpent god sliced the riverbed in two, creating the falls."
       },
       {
         "claim": "Iguazu Falls is located high in the snow-covered Andes Mountains.",
@@ -5869,6 +5997,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Angel Falls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salto Angel",
       "Kerepakupai Meru"
@@ -5914,6 +6043,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Yosemite Falls",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yosemite Valley Falls"
     ],
@@ -5958,6 +6088,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Amazon River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rio Amazonas",
       "The River Sea"
@@ -6003,6 +6134,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Nile River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Father of African Rivers",
       "The River Nile"
@@ -6048,6 +6180,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mississippi River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ol' Man River",
       "The Big Muddy"
@@ -6093,6 +6226,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Yangtze River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chang Jiang",
       "The Long River"
@@ -6138,6 +6272,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Danube River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Donau",
       "Dunaj",
@@ -6184,6 +6319,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Ganges River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ganga",
       "Holy River Ganga"
@@ -6229,6 +6365,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Colorado River",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "River of the Canyons"
     ],
@@ -6273,6 +6410,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mariana Trench",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Marianas Trench",
       "Challenger Deep Abyss"
@@ -6318,6 +6456,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Dead Sea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salt Sea",
       "Sea of Death"
@@ -6363,9 +6502,8 @@
     "subtopic_id": "earth_wonders",
     "name": "Great Salt Lake",
     "language": "en",
-    "aliases": [
-      "America's Dead Sea"
-    ],
+    "audience_rating": "kids",
+    "aliases": [],
     "difficulty": 1,
     "visual_anchor": "A wide, shallow inland salt lake reflecting dramatic purple mountains and shimmering pink-tinted waters in northern Utah.",
     "core_traits": [
@@ -6407,6 +6545,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Lake Baikal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Pearl of Siberia",
       "Sacred Sea of Siberia"
@@ -6436,7 +6575,7 @@
       {
         "claim": "Lake Baikal freezes so solidly in winter that trains and trucks can drive across its surface.",
         "verdict": "fact",
-        "explanation": "The ice reaches up to two meters thick, and during the Russo-Japanese War in 1904, engineers laid train tracks directly onto the ice.",
+        "explanation": "The ice can reach up to two meters thick, and in 1904 engineers even laid train tracks right across it.",
         "fun_fact": "Its water is so exceptionally pure that observers can see down 40 meters through open water."
       }
     ],
@@ -6452,6 +6591,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Lake Superior",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gitche Gumee",
       "Great Lake Superior"
@@ -6497,6 +6637,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Lake Victoria",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Victoria Nyanza",
       "Nalubaale"
@@ -6542,6 +6683,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Lake Titicaca",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lago Titicaca",
       "Sacred Lake of the Incas"
@@ -6587,6 +6729,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Lake Michigan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Third Great Lake"
     ],
@@ -6631,6 +6774,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Lake Tanganyika",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Great Rift Valley Lake"
     ],
@@ -6660,7 +6804,7 @@
         "claim": "Famous explorer David Livingstone was rescued on the shores of Lake Tanganyika.",
         "verdict": "fact",
         "explanation": "Journalist Henry Morton Stanley famously met him in Ujiji on Lake Tanganyika in 1871, uttering 'Dr. Livingstone, I presume?'",
-        "fun_fact": "Famous giant man-eating crocodile Gustave, rumored to have killed hundreds of people, inhabited the northern shores of Lake Tanganyika."
+        "fun_fact": "Stretching about 673 kilometers, Lake Tanganyika is the longest freshwater lake in the world."
       }
     ],
     "versus_candidates": [
@@ -6675,6 +6819,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Crater Lake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mount Mazama Lake"
     ],
@@ -6719,6 +6864,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Loch Ness",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Loch Nis",
       "Home of Nessie"
@@ -6764,6 +6910,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Sahara Desert",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great Desert",
       "Al-Sahra' al-Kubra"
@@ -6809,6 +6956,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Gobi Desert",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Waterless Place",
       "Mongolian Desert"
@@ -6854,6 +7002,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Atacama Desert",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Driest Place on Earth",
       "Chilean Desert"
@@ -6899,6 +7048,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mojave Desert",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "High Desert",
       "The Joshua Tree Desert"
@@ -6944,6 +7094,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Death Valley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Badwater Basin Valley",
       "Furnace Creek"
@@ -6971,7 +7122,7 @@
         "fun_fact": "The mysterious 'Sailing Stones' on Racetrack Playa slide across the mud when rare winter freeze produces floating ice sheets pushed by wind."
       },
       {
-        "claim": "Nothing has ever lived in Death Valley because human blood boils instantly upon entering.",
+        "claim": "Nothing can live in Death Valley because it is far too hot.",
         "verdict": "myth",
         "explanation": "The Timbisha Shoshone Native American tribe has lived in Death Valley for over 1,000 years, and it hosts bighorn sheep, coyotes, and pupfish.",
         "fun_fact": "Badwater Basin lies only 136 kilometers from Mount Whitney, the highest peak in the contiguous United States."
@@ -6989,6 +7140,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Namib Desert",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Skeleton Coast Desert",
       "The Red Dune Desert"
@@ -6999,7 +7151,7 @@
       "Coastal desert in southern Africa stretching over 2,000 kilometers along the Atlantic coast of Namibia",
       "Considered the oldest desert in the world, having endured hyper-arid conditions for at least 55 to 80 million years",
       "Famous for colossal terra-cotta sand dunes at Sossusvlei, some exceeding 300 meters in height",
-      "Features Deadvlei, a white clay pan punctuated by 900-year-old dead camel thorn trees preserved by aridity"
+      "Features Deadvlei, a white clay pan dotted with 900-year-old leafless camel thorn trees preserved by the dry air"
     ],
     "distractor_pool": [
       "Kalahari Desert",
@@ -7034,6 +7186,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Kalahari Desert",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kgalagadi",
       "The Great Thirstland"
@@ -7079,6 +7232,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Antarctica Ice Sheet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Antarctic Ice Cap",
       "South Polar Ice"
@@ -7124,6 +7278,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Greenland Ice Sheet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sermersuaq",
       "Inland Ice of Greenland"
@@ -7169,6 +7324,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Permafrost",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Permanently Frozen Ground",
       "Cryotic Soil"
@@ -7199,7 +7355,7 @@
         "claim": "Thawing permafrost has no effect on global climate change.",
         "verdict": "myth",
         "explanation": "As permafrost thaws, microbes digest ancient plant material, releasing enormous volumes of methane and carbon dioxide into the atmosphere.",
-        "fun_fact": "Thawing permafrost causes 'drunken forests' where trees tilt haphazardly as the ground beneath them collapses."
+        "fun_fact": "Thawing permafrost creates 'tilted forests' where trees lean every which way as the ground beneath them sinks."
       }
     ],
     "versus_candidates": [
@@ -7214,6 +7370,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Glacier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "River of Ice",
       "Alpine Glacier"
@@ -7259,6 +7416,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Iceberg",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Calved Ice Mountain",
       "Bergy Bit"
@@ -7304,6 +7462,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Fjord",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fiord",
       "Glacial Inlet"
@@ -7349,6 +7508,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Geyser",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hydrothermal Spout",
       "Gushing Spring"
@@ -7394,6 +7554,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Hot Springs",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thermal Spring",
       "Geothermal Bath"
@@ -7439,6 +7600,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Mammoth Cave",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mammoth Cave National Park",
       "The World's Longest Cave"
@@ -7463,7 +7625,7 @@
         "claim": "Mammoth Cave is the longest surveyed cave system in the entire world.",
         "verdict": "fact",
         "explanation": "With more than 426 miles of interconnected passages surveyed, it is nearly twice as long as the second-longest cave (Sac Actun in Mexico).",
-        "fun_fact": "During the War of 1812, enslaved miners extracted potassium nitrate (saltpeter) from Mammoth Cave dirt to make gunpowder for the US military."
+        "fun_fact": "Mammoth Cave became a US national park in 1941 and is also a UNESCO World Heritage Site."
       },
       {
         "claim": "Mammoth Cave was named because skeletons of woolly mammoths were found inside.",
@@ -7484,6 +7646,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Waitomo Glowworm Caves",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Waitomo Caves",
       "Arachnocampa Grotto"
@@ -7529,6 +7692,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Giant's Causeway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clochan an Aifir",
       "Basalt Causeway"
@@ -7574,6 +7738,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Pamukkale Thermal Terraces",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cotton Castle",
       "Hierapolis Terraces"
@@ -7619,6 +7784,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Salar de Uyuni",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Uyuni Salt Flat",
       "The World's Largest Mirror"
@@ -7646,7 +7812,7 @@
         "fun_fact": "During rainy season, the horizon completely disappears, making travelers feel as if they are walking on clouds."
       },
       {
-        "claim": "Salar de Uyuni is made of toxic powdered lead that kills anyone who touches it.",
+        "claim": "Salar de Uyuni is made of harmful powdered lead that is unsafe to touch.",
         "verdict": "myth",
         "explanation": "The crust is composed primarily of ordinary common table salt (sodium chloride) and gypsum minerals.",
         "fun_fact": "Isla Incahuasi is a rocky island in the middle of the salt flat covered in giant 1,000-year-old cacti."
@@ -7664,6 +7830,7 @@
     "subtopic_id": "earth_wonders",
     "name": "Cliffs of Moher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aillte an Mhothair",
       "The Cliffs of County Clare"
@@ -7709,6 +7876,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Aurora Borealis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Northern Lights",
       "Polar Lights"
@@ -7754,6 +7922,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Aurora Australis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Southern Lights",
       "Southern Polar Lights"
@@ -7799,6 +7968,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Volcano",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Volcanic Mountain",
       "Igneous Vent"
@@ -7844,6 +8014,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Caldera",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Volcanic Crater Basin",
       "Collapsed Magma Chamber"
@@ -7889,6 +8060,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Lava Flow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pahoehoe and Aa",
       "Molten Basalt Stream"
@@ -7934,6 +8106,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Magma",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Subterranean Molten Rock",
       "Molten Mantle Slurry"
@@ -7979,6 +8152,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Earthquake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Temblor",
       "Seismic Quake"
@@ -8024,6 +8198,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Tsunami",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seismic Sea Wave",
       "Harbor Wave"
@@ -8054,7 +8229,7 @@
         "claim": "A tsunami is a tidal wave caused by the gravitational pull of the Moon.",
         "verdict": "myth",
         "explanation": "Tsunamis have nothing to do with astronomical tides; they are generated by geological displacement of water by earthquakes or landslides.",
-        "fun_fact": "The 2004 Indian Ocean tsunami generated energy equivalent to 23,000 Hiroshima atomic bombs, killing over 230,000 people."
+        "fun_fact": "If the sea suddenly pulls far back from the beach, move to high ground right away."
       }
     ],
     "versus_candidates": [
@@ -8069,6 +8244,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Tornado",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Twister",
       "Cyclone Funnel"
@@ -8099,7 +8275,7 @@
         "claim": "Tornadoes never strike downtown skyscrapers or cross large rivers.",
         "verdict": "myth",
         "explanation": "Tornadoes routinely cross major rivers and have directly struck downtown areas in Atlanta, Dallas, St. Louis, and Nashville.",
-        "fun_fact": "The 1925 Tri-State Tornado traveled 352 kilometers across Missouri, Illinois, and Indiana, killing 695 people."
+        "fun_fact": "The safest place during a tornado is a basement or a small inner room with no windows."
       }
     ],
     "versus_candidates": [
@@ -8114,6 +8290,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Waterspout",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ocean Tornado",
       "Sea Spout"
@@ -8159,6 +8336,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Hurricane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atlantic Tropical Cyclone",
       "Category 5 Storm"
@@ -8186,10 +8364,10 @@
         "fun_fact": "Inside the calm central 'eye' of a hurricane, winds can drop to near zero and blue skies or stars can often be seen overhead."
       },
       {
-        "claim": "Firing a nuclear bomb into the eye of a hurricane will safely disperse the storm.",
+        "claim": "Big tropical storms like hurricanes spin the same way everywhere on Earth.",
         "verdict": "myth",
-        "explanation": "A fully developed hurricane releases the thermal energy equivalent of a 10-megaton nuclear bomb every 20 minutes; a bomb would merely add radioactive fallout to the storm winds.",
-        "fun_fact": "Storm surge - the ocean dome pushed ashore by hurricane winds - is historically the deadliest part of a hurricane."
+        "explanation": "Earth's spin makes these storms turn counterclockwise north of the equator and clockwise south of the equator.",
+        "fun_fact": "Storm surge, ocean water pushed ashore by strong winds, is why coastal families are asked to evacuate early."
       }
     ],
     "versus_candidates": [
@@ -8204,6 +8382,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Typhoon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pacific Super Typhoon",
       "Bagyo"
@@ -8249,6 +8428,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Cyclone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tropical Cyclone",
       "Indian Ocean Cyclone"
@@ -8270,9 +8450,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The 1970 Bhola Cyclone in the Bay of Bengal was the deadliest tropical cyclone in human history.",
+        "claim": "The calm center of a cyclone is called the eye.",
         "verdict": "fact",
-        "explanation": "The storm surge inundated the low-lying islands of the Ganges delta in modern-day Bangladesh, killing an estimated 300,000 to 500,000 people.",
+        "explanation": "Air sinks gently inside the eye, so it can be calm and clear while fierce winds swirl all around it.",
         "fun_fact": "The word 'cyclone' was coined in 1848 by Henry Piddington, derived from the Greek 'kyklon' (moving in a circle or coil of a snake)."
       },
       {
@@ -8294,6 +8474,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Monsoon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seasonal Monsoon Rain",
       "Mawsim"
@@ -8339,6 +8520,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Blizzard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Snowstorm",
       "Whiteout Storm"
@@ -8384,6 +8566,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Avalanche",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Snowslide",
       "Snowslip"
@@ -8429,6 +8612,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Lightning",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lightning Bolt",
       "Electrostatic Discharge"
@@ -8474,6 +8658,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Thunder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thunderclap",
       "Acoustic Shockwave"
@@ -8519,6 +8704,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Ball Lightning",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kugelblitz",
       "Globe Lightning"
@@ -8564,6 +8750,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Rainbow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solar Rainbow",
       "Spectrum Arch"
@@ -8609,6 +8796,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Double Rainbow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Secondary Rainbow",
       "Alexander's Dark Band"
@@ -8654,6 +8842,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Hailstorm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hail Fall",
       "Severe Hail Shower"
@@ -8684,7 +8873,7 @@
         "claim": "Hail only occurs during freezing sub-zero winter temperatures.",
         "verdict": "myth",
         "explanation": "Hail is most common during warm spring and summer afternoons because intense ground heat powers the ferocious updrafts needed to keep ice suspended.",
-        "fun_fact": "Roopkund Lake in the Himalayas is known as 'Skeleton Lake' because hundreds of ancient travelers were killed by an apocalyptic sudden hailstorm in the 9th century."
+        "fun_fact": "Hailstones can bounce up and down inside a storm cloud many times, adding a new ice layer each trip."
       }
     ],
     "versus_candidates": [
@@ -8699,6 +8888,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Sandstorm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Haboob",
       "Dust Storm"
@@ -8744,6 +8934,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Dust Devil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Whirlwind",
       "Sand Devil",
@@ -8755,7 +8946,7 @@
       "Strong, well-formed, and relatively short-lived whirlwind that forms in desert and arid environments",
       "Develops on hot, sunny days when intense ground heating creates a pockets of hot air that rises rapidly through cooler air above",
       "Typically lasts for only a few minutes, usually spanning a few meters wide and up to hundreds of meters tall",
-      "Known as a 'willy-willy' in Australia and a 'dancing devil' in various Native American traditions"
+      "Known as a 'willy-willy' in Australia and simply a 'whirlwind' in many other places"
     ],
     "distractor_pool": [
       "Tornado",
@@ -8790,6 +8981,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Mirage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Inferior Mirage",
       "Fata Morgana"
@@ -8835,6 +9027,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Fog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ground Cloud",
       "Sea Mist"
@@ -8880,6 +9073,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Dew",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Morning Dew",
       "Condensation Droplets"
@@ -8904,7 +9098,7 @@
         "claim": "Dew falls down from storm clouds like miniature gentle rain showers.",
         "verdict": "myth",
         "explanation": "Dew never falls from clouds; it condenses in place directly from invisible water vapor in the ambient air onto cold surfaces.",
-        "fun_fact": "Ancient Greeks believed dew was the tears shed by Eos, the goddess of dawn, mourning the death of her son Memnon."
+        "fun_fact": "Ancient Greeks told stories that dew was the tears of Eos, the goddess of the dawn."
       },
       {
         "claim": "Engineers in arid desert regions build passive 'dew condensers' to harvest drinking water from nighttime air.",
@@ -8925,6 +9119,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Frost",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hoarfrost",
       "Jack Frost Crystals"
@@ -8935,7 +9130,7 @@
       "Thin layer of ice crystals that forms on solid surfaces when water vapor changes directly into ice (deposition)",
       "Occurs when the temperature of an exposed surface cools below the freezing point (0 degrees Celsius) and below the frost point",
       "Hoarfrost displays stunning microscopic needles, scales, and fern-like dendritic crystals",
-      "Major agricultural hazard that kills budding fruit blossoms and tender crops during late spring freezes"
+      "A big farm hazard that can harm budding fruit blossoms and tender crops during late spring freezes"
     ],
     "distractor_pool": [
       "Dew",
@@ -8970,6 +9165,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Tectonic Plates",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lithospheric Plates",
       "Crustal Slabs"
@@ -9015,6 +9211,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Ring of Fire",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Circum-Pacific Belt",
       "Pacific Rim of Fire"
@@ -9060,6 +9257,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Continental Drift",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wegener's Theory",
       "Pangaea Breakup"
@@ -9105,6 +9303,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Mid-Atlantic Ridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atlantic Seafloor Rift",
       "Underwater Mountain Range"
@@ -9150,6 +9349,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "San Andreas Fault",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great California Fault",
       "San Andreas Rift"
@@ -9195,6 +9395,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Sinkhole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cenote",
       "Dolina",
@@ -9217,9 +9418,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The ancient Maya used natural limestone sinkholes (cenotes) as sacred portals to the underworld for ritual human sacrifice.",
+        "claim": "The ancient Maya treated natural sinkholes called cenotes as sacred places.",
         "verdict": "fact",
-        "explanation": "Archaeologists exploring the Sacred Cenote at Chichen Itza have recovered gold artifacts, jade jewelry, and skeletal remains of sacrificed victims.",
+        "explanation": "The Yucatan has almost no rivers on the surface, so cenotes were vital sources of fresh water for Maya cities.",
         "fun_fact": "The Great Blue Hole off the coast of Belize is a world-famous underwater marine sinkhole spanning 318 meters across and 124 meters deep."
       },
       {
@@ -9241,6 +9442,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Stalactite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dripstone Icicle",
       "Speleothem Icicle"
@@ -9286,6 +9488,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Stalagmite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Floor Dripstone",
       "Cave Floor Spire"
@@ -9331,6 +9534,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Sand Dunes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Desert Dunes",
       "Aeolian Barchans"
@@ -9376,6 +9580,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Bioluminescence",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Living Light",
       "Cold Light"
@@ -9421,6 +9626,7 @@
     "subtopic_id": "natural_phenomena",
     "name": "Hydrothermal Vent",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Black Smoker",
       "Deep-Sea Geothermal Chimney"

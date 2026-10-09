@@ -16,12 +16,7 @@ export function sandboxGameplayTimeline(input: SandboxPreviewInput): SandboxPhas
   if (input.layout_id === "baseline") return computeSandboxPhaseTimeline();
   const policy = resolveGameplayPolicy({
     layout_id: input.layout_id,
-    gameplay_id:
-      input.choices.length === 2 && input.layout_id !== "split_versus_two"
-        ? input.layout_id === "verdict_yes_no"
-          ? "verdict_yes_no"
-          : "verdict_true_false"
-        : undefined,
+    gameplay_id: input.choices.length === 2 && input.layout_id !== "split_versus_two" ? "verdict_yes_no" : undefined,
   });
   const blueprint = getQuizGameplayArchetype(policy.id)!;
   const choices = input.choices.map((text, index) => ({ id: `c${index}`, text }));

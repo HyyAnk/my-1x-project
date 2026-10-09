@@ -1,6 +1,7 @@
 import { existsSync, type Dirent } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { LEGACY_VERDICT_ARCHETYPE_IDS, isLegacyVerdictIdentifier } from "@studio/shared";
 import { RepositoryError } from "../../../errors.js";
 import type { RepositoryRuntime } from "../../../runtime.js";
 import { QUESTION_BANK_DIR, getQuestionBankPath } from "../bankPathResolver.js";
@@ -8,13 +9,12 @@ import { assertSafeBankFilesystemPath, assertSafeBankPathSegments } from "../ban
 
 /**
  * Checks if a directory archetype matches an archetype filter,
- * treating verdict_fact_myth and verdict_true_false as compatible synonyms.
+ * treating the retired True/False directories as synonyms of verdict_yes_no.
  */
 export function matchesArchetypeFilter(dirArchetype: string, filterArchetype?: string): boolean {
   if (!filterArchetype) return true;
   if (dirArchetype === filterArchetype) return true;
-  const isVerdict = (arch: string) =>
-    arch === "verdict_yes_no" || arch === "verdict_true_false" || arch === "verdict_fact_myth";
+  const isVerdict = (arch: string) => arch === "verdict_yes_no" || isLegacyVerdictIdentifier(arch);
   if (isVerdict(filterArchetype) && isVerdict(dirArchetype)) {
     return true;
   }
@@ -137,7 +137,8 @@ export async function readSafeBankBatchContent(bankRoot: string, filePath: strin
 }
 
 /**
- * Reads raw batch content from disk, falling back to legacy archetype path if primary does not exist.
+ * Reads raw batch content from disk. A Yes/No batch that has not been migrated yet is read from the
+ * retired True/False directories.
  */
 export async function readBatchContentWithFallback(
   runtime: RepositoryRuntime,
@@ -155,15 +156,16 @@ export async function readBatchContentWithFallback(
       if (err instanceof RepositoryError) throw err;
       throw new RepositoryError(`Failed to read batch file ${filePath}`, "BANK_BATCH_READ_FAILED", { cause: err });
     }
-    if (normalizedArch !== "verdict_true_false") return null;
-    try {
-      const legacyPath = getQuestionBankPath.call(runtime, "verdict_fact_myth", domainId, `${subtopicId}.json`);
+    if (normalizedArch !== "verdict_yes_no") return null;
+    for (const legacyArch of LEGACY_VERDICT_ARCHETYPE_IDS) {
+      const legacyPath = getQuestionBankPath.call(runtime, legacyArch, domainId, `${subtopicId}.json`);
       await assertSafeTarget(runtime, legacyPath);
-      const raw = await readFile(legacyPath, "utf8");
-      return { raw, filePath: legacyPath };
-    } catch (legacyErr: unknown) {
-      if ((legacyErr as NodeJS.ErrnoException).code === "ENOENT") return null;
-      throw legacyErr;
+      try {
+        return { raw: await readFile(legacyPath, "utf8"), filePath: legacyPath };
+      } catch (legacyErr: unknown) {
+        if ((legacyErr as NodeJS.ErrnoException).code !== "ENOENT") throw legacyErr;
+      }
     }
+    return null;
   }
 }

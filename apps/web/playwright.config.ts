@@ -11,7 +11,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [["github"], ["list"], ["html", { open: "never" }]] : "list",
   use: {
-    baseURL: "http://127.0.0.1:2244",
+    baseURL: "http://127.0.0.1:7743",
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
     screenshot: "only-on-failure",
@@ -26,7 +26,7 @@ export default defineConfig({
     },
     {
       command: "pnpm --filter @studio/web dev",
-      url: "http://127.0.0.1:2244",
+      url: "http://127.0.0.1:7743",
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
     },

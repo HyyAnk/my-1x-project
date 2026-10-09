@@ -1,7 +1,7 @@
 import type { BankGameplayArchetypeId } from "@studio/shared";
 
 export interface ArchetypePromptGuideline {
-  format: "multiple_choice" | "true_false" | "yes_no" | "odd_one_out" | "open_guess" | "slider" | "ordering" | "image_guess";
+  format: "multiple_choice" | "yes_no" | "odd_one_out" | "open_guess" | "slider" | "ordering" | "image_guess";
   choiceCount: number;
   visualIntent: "none" | "question_illustration" | "choice_illustration";
   defaultThinkingSeconds: number;
@@ -27,8 +27,8 @@ export const ZERO_STEM_LEAK_MANDATE_LINES: string[] = [
 export const FRANCHISE_ANCHOR_MANDATE = `=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===
 When generating questions about anime, manga, gaming, comics, movies, or fictional characters:
 1. NEVER formulate a question around an isolated, naked character name (e.g. NEVER ask 'Whose hand clap swaps positions?' or 'Who is Tenko Shimura?').
-2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Jujutsu Kaisen...', 'In Dragon Ball Z...', 'In Demon Slayer...', 'In Naruto...').
-3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals (e.g. NEVER write 'Across the Spider-Verse', 'The Fellowship of the Ring', 'Kimetsu no Yaiba', or 'Episode V - The Empire Strikes Back'). Keep the franchise prefix ultra-concise to preserve question character budget for 9:16 mobile screens.
+2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Pokemon...', 'In Dragon Ball Z...', 'In SpongeBob...', 'In Naruto...').
+3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals (e.g. NEVER write 'Across the Spider-Verse', 'The Fellowship of the Ring', 'Breath of the Wild', or 'Episode V - The Empire Strikes Back'). Keep the franchise prefix ultra-concise to preserve question character budget for 9:16 mobile screens.
 4. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.
 5. ZERO STEM-ANSWER LEAKAGE (EPONYMOUS FRANCHISE RULE): When a work/franchise title matches the main character (e.g. Pinocchio, Cinderella, Naruto, Harry Potter, Spider-Man):
    - STRICTLY FORBIDDEN: NEVER ask for the protagonist's identity if the title is anchored in the stem (e.g. NEVER 'In Pinocchio, who is this puppet boy? -> Pinocchio' or 'In Cinderella, who lost a glass slipper? -> Cinderella').
@@ -40,8 +40,8 @@ export const FRANCHISE_ANCHOR_MANDATE_LINES: string[] = [
   "=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===",
   "When generating questions about anime, manga, gaming, comics, movies, or fictional characters:",
   "1. NEVER formulate a question around an isolated, naked character name (e.g. NEVER ask 'Whose hand clap swaps positions?' or 'Who is Tenko Shimura?').",
-  "2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Jujutsu Kaisen...', 'In Dragon Ball Z...', 'In Demon Slayer...', 'In Naruto...').",
-  "3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals (e.g. NEVER write 'Across the Spider-Verse', 'The Fellowship of the Ring', 'Kimetsu no Yaiba', or 'Episode V - The Empire Strikes Back'). Keep the franchise prefix ultra-concise to preserve question character budget for 9:16 mobile screens.",
+  "2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Pokemon...', 'In Dragon Ball Z...', 'In SpongeBob...', 'In Naruto...').",
+  "3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals (e.g. NEVER write 'Across the Spider-Verse', 'The Fellowship of the Ring', 'Breath of the Wild', or 'Episode V - The Empire Strikes Back'). Keep the franchise prefix ultra-concise to preserve question character budget for 9:16 mobile screens.",
   "4. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.",
   "5. ZERO STEM-ANSWER LEAKAGE (EPONYMOUS TITLES): When franchise title matches character name (e.g. Pinocchio, Cinderella, Naruto, Spider-Man):",
   "   - NEVER ask for protagonist name when title is in stem (e.g. NEVER 'In Pinocchio, who is this puppet? -> Pinocchio').",
@@ -52,20 +52,20 @@ export const FRANCHISE_ANCHOR_MANDATE_LINES: string[] = [
 
 export const VISUAL_ANCHOR_MANDATE = `=== VISUAL SPEC & CONTINUITY ANCHOR MANDATE (CRITICAL FOR ACCURATE ILLUSTRATIONS) ===
 When generating visual_spec.prompt or visual_opportunity:
-1. ALWAYS explicitly name the character/entity and their parent franchise or lore universe (e.g. 'Eren Yeager in Attack Titan form from Attack on Titan', 'Tanjiro Kamado from Demon Slayer', 'Izuku Midoriya (Deku) from My Hero Academia').
-2. NEVER describe iconic subjects with vague generic placeholders (e.g. NEVER write 'a muscular giant' instead of 'Eren Yeager's Attack Titan', NEVER write 'a swordsman' instead of 'Tanjiro Kamado').
-3. ALWAYS describe signature physical traits, distinct anatomy, and iconic gear (e.g. jagged lipless teeth, pointed titan ears, glowing green eyes, green-checkered haori, hanafuda earrings).
-4. ALWAYS anchor the subject in an authentic, lore-accurate environment/setting (e.g. 'standing before the colossal 50-meter stone Wall Maria in the Shiganshina district with billowing transformation steam and yellow lightning sparks' instead of a generic open sky or empty studio).
+1. ALWAYS explicitly name the character/entity and their parent franchise or lore universe (e.g. 'Pikachu crackling with Thunderbolt sparks from Pokemon', 'Mario from Super Mario Bros.', 'Totoro from My Neighbor Totoro').
+2. NEVER describe iconic subjects with vague generic placeholders (e.g. NEVER write 'a yellow mouse' instead of 'Pikachu', NEVER write 'a plumber' instead of 'Mario').
+3. ALWAYS describe signature physical traits, distinct anatomy, and iconic gear (e.g. red cheek pouches, a lightning-bolt tail, black-tipped ears, a red cap with an M emblem, blue overalls).
+4. ALWAYS anchor the subject in an authentic, lore-accurate environment/setting (e.g. 'racing through the tall grass of Pallet Town under a bright summer sky with crackling yellow sparks' instead of a generic open sky or empty studio).
 5. Focus strictly on clean scene content, subject action, and atmospheric lighting. NEVER copy/paste camera/lens buzzwords (such as 'wildlife and nature photography style') or UI elements (cards, text, buttons, timers).
 6. ALWAYS write in 100% English because the underlying AI image generation models require English prompts.`;
 
 export const VISUAL_ANCHOR_MANDATE_LINES: string[] = [
   "=== VISUAL SPEC & CONTINUITY ANCHOR MANDATE (CRITICAL FOR ACCURATE ILLUSTRATIONS) ===",
   "When generating visual_spec.prompt or visual_opportunity:",
-  "1. ALWAYS explicitly name the character/entity and their parent franchise or lore universe (e.g. 'Eren Yeager in Attack Titan form from Attack on Titan', 'Tanjiro Kamado from Demon Slayer', 'Izuku Midoriya (Deku) from My Hero Academia').",
-  "2. NEVER describe iconic subjects with vague generic placeholders (e.g. NEVER write 'a muscular giant' instead of 'Eren Yeager's Attack Titan', NEVER write 'a swordsman' instead of 'Tanjiro Kamado').",
-  "3. ALWAYS describe signature physical traits, distinct anatomy, and iconic gear (e.g. jagged lipless teeth, pointed titan ears, glowing green eyes, green-checkered haori, hanafuda earrings).",
-  "4. ALWAYS anchor the subject in an authentic, lore-accurate environment/setting (e.g. 'standing before the colossal 50-meter stone Wall Maria in the Shiganshina district with billowing transformation steam and yellow lightning sparks' instead of a generic open sky or empty studio).",
+  "1. ALWAYS explicitly name the character/entity and their parent franchise or lore universe (e.g. 'Pikachu crackling with Thunderbolt sparks from Pokemon', 'Mario from Super Mario Bros.', 'Totoro from My Neighbor Totoro').",
+  "2. NEVER describe iconic subjects with vague generic placeholders (e.g. NEVER write 'a yellow mouse' instead of 'Pikachu', NEVER write 'a plumber' instead of 'Mario').",
+  "3. ALWAYS describe signature physical traits, distinct anatomy, and iconic gear (e.g. red cheek pouches, a lightning-bolt tail, black-tipped ears, a red cap with an M emblem, blue overalls).",
+  "4. ALWAYS anchor the subject in an authentic, lore-accurate environment/setting (e.g. 'racing through the tall grass of Pallet Town under a bright summer sky with crackling yellow sparks' instead of a generic open sky or empty studio).",
   "5. Focus strictly on clean scene content, subject action, and atmospheric lighting. NEVER copy/paste camera/lens buzzwords (such as 'wildlife and nature photography style') or UI elements (cards, text, buttons, timers).",
   "6. ALWAYS write in 100% English because the underlying AI image generation models require English prompts.",
 ];
@@ -97,43 +97,13 @@ export const ARCHETYPE_GUIDELINES: Record<Exclude<BankGameplayArchetypeId, "clue
     visualIntent: "question_illustration",
     defaultThinkingSeconds: 5,
     instructions: [
-      "Yes or No format. Must be a punchy, single-clause statement or question strictly 60 to 80 characters (never exceed 80 chars).",
-      "Format: Direct question or assertion ending in 'Yes or No?' (e.g. 'Can penguins fly? Yes or No?').",
+      "Yes or No format. Must be a punchy, natural, kid-friendly question strictly 60 to 80 characters (never exceed 80 chars).",
+      "Format: Direct question opening with Is / Are / Do / Does / Can / Did and ending in 'Yes or No?' (e.g. 'Can penguins fly? Yes or No?'). Never a statement to judge.",
       "Do NOT cram numbers, secondary clauses, or explanations into the question text.",
       "Exactly 2 choices: 'Yes' and 'No'.",
       "Truth Balance: Maintain a strict ~50/50 balance between Yes and No as the correct choice across the generated questions to keep viewer suspense.",
-      "Provide a clear explanation of why it is Yes or No along with a scientific/real-world fun fact.",
-      "Visual prompt describes a realistic, cinematic background scene illustrating the statement.",
-    ],
-  },
-  verdict_true_false: {
-    format: "true_false",
-    choiceCount: 2,
-    visualIntent: "question_illustration",
-    defaultThinkingSeconds: 5,
-    instructions: [
-      "True or False format. Must be a punchy, single-clause statement or question strictly 60 to 80 characters (never exceed 80 chars).",
-      "Format: Direct factual or counter-factual statement ending in 'True or False?' (e.g. 'Blue whales are bigger than any dinosaur. True or False?').",
-      "Do NOT cram numbers, secondary clauses, or explanations into the question text.",
-      "Exactly 2 choices: 'True' and 'False'.",
-      "Truth Balance: Maintain a strict ~50/50 balance between True and False as the correct choice across the generated questions to keep viewer suspense.",
-      "Provide a clear explanation of why it is True or False along with a scientific/real-world fun fact.",
-      "Visual prompt describes a realistic, cinematic background scene illustrating the statement.",
-    ],
-  },
-  verdict_fact_myth: {
-    format: "true_false",
-    choiceCount: 2,
-    visualIntent: "question_illustration",
-    defaultThinkingSeconds: 5,
-    instructions: [
-      "True or False format. Must be a punchy, single-clause statement or question strictly 60 to 80 characters (never exceed 80 chars).",
-      "Format: Direct factual or counter-factual statement ending in 'True or False?' (e.g. 'Blue whales are bigger than any dinosaur. True or False?').",
-      "Do NOT cram numbers, secondary clauses, or explanations into the question text.",
-      "Exactly 2 choices: 'True' and 'False'.",
-      "Truth Balance: Maintain a strict ~50/50 balance between True and False as the correct choice across the generated questions to keep viewer suspense.",
-      "Provide a clear explanation of why it is True or False along with a scientific/real-world fun fact.",
-      "Visual prompt describes a realistic, cinematic background scene illustrating the statement.",
+      "Provide a short, simple explanation of why it is Yes or No along with a surprising real-world fun fact a child can understand.",
+      "Visual prompt describes a realistic, cinematic background scene illustrating the question subject.",
     ],
   },
   speed_blitz: {
@@ -161,10 +131,10 @@ export const ARCHETYPE_GUIDELINES: Record<Exclude<BankGameplayArchetypeId, "clue
       "FRANCHISE ANCHOR MANDATE: When questioning fictional characters or pop culture lore (anime, manga, gaming, comics, movies), ALWAYS anchor the parent franchise in the prompt using its short, canonical umbrella title (e.g. 'In Spider-Man', 'In Lord of the Rings'). NEVER ask about naked, unanchored character names, and STRICTLY FORBIDDEN to include lengthy movie subtitles or arc tags.",
       "Rotate continuously across these 5 punchy phrasing styles:",
       "  1. Feat / Signature Action: 'In Dragon Ball Z, whose signature energy wave is the Kamehameha?'",
-      "  2. Iconic Relic / Hallmarks: 'In One Piece, what straw accessory was given to Luffy by Shanks?'",
+      "  2. Iconic Relic / Hallmarks: 'In One Piece, what promise token did Shanks give Luffy?'",
       "  3. Universal Mascot / Partner: 'In Pokemon, which electric mouse is Ash Ketchum's loyal partner?'",
       "  4. Signature Jutsu / Technique: 'In Naruto, which swirling blue sphere technique did Minato invent?'",
-      "  5. Detective Gadget / Identity: 'In Detective Conan, what gadget lets Conan mimic Kogoro's voice?'",
+      "  5. Detective Gadget / Identity: 'In Detective Conan, what gadget lets Conan speak as Kogoro?'",
       "ANTI-OBSCURITY NEGATIVE CONSTRAINTS: NEVER test obscure manga chapter numbers, release dates, or background animator names.",
       "NEVER test secondary character family lineages, blood types, or obscure minor jutsu/spells.",
       "ALWAYS focus questions on world-famous hallmarks: signature attacks, legendary relics, iconic character traits, or universal plot premises that casual viewers and social media audiences immediately recognize and celebrate.",

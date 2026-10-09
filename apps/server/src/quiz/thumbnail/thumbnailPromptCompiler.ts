@@ -29,11 +29,7 @@ export function resolveMascotDescription(
     ? `Pose & Action: ${plan.mascotPersona.poseDescription}.`
     : "Pose & Action: dynamic, natural posture engaging with the quiz challenge.";
   let rawProp = plan.mascotPersona.prop;
-  if (
-    (plan.layout === "true_false" || plan.layout === "yes_no") &&
-    rawProp &&
-    /\b(paddle|true|false|yes|no|checkmark|cross|✅|❌)\b/i.test(rawProp)
-  ) {
+  if (plan.layout === "yes_no" && rawProp && /\b(paddle|true|false|yes|no|checkmark|cross|✅|❌)\b/i.test(rawProp)) {
     rawProp = "hand resting thoughtfully under chin in skeptical contemplation";
   }
   const propText =
@@ -82,13 +78,6 @@ function resolveLayoutPrompt(plan: QuizThumbnailPlan, isLandscape: boolean, masc
       return isLandscape
         ? `Layout: Center focal point showcases a prominent, oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating with crisp rim lighting as the primary visual subject. Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'YES' and red 'NO'. Beside the buttons, ${mascotDescription}. STRICT: The ONLY place displaying 'YES' and 'NO' in the entire image must be the two tactile buttons at the base; mascot must NOT hold Yes/No paddles or checkmark/cross signs, and zero duplicate Yes/No words elsewhere.`
         : `Layout: Center safe zone showcases an oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating prominently with crisp rim lighting. Cleanly stacked beneath it are two tactile modern 3D arcade buttons: green 'YES' and red 'NO', accompanied cleanly by ${mascotDescription}. STRICT: The ONLY place displaying 'YES' and 'NO' must be the two tactile buttons; mascot must NOT hold Yes/No paddles or checkmarks, maintaining the 440px bottom buffer.`;
-    }
-
-    case "true_false": {
-      const heroSubject = plan.subjectAnchors[0]?.visualPrompt || "a prominent topic-themed 3D icon";
-      return isLandscape
-        ? `Layout: Center focal point showcases a prominent, oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating with crisp rim lighting as the primary visual subject. Directly beneath the hero artwork are two clean modern tactile 3D arcade buttons: green 'TRUE' and red 'FALSE'. Beside the buttons, ${mascotDescription}. STRICT: The ONLY place displaying 'TRUE' and 'FALSE' in the entire image must be the two tactile buttons at the base; mascot must NOT hold True/False paddles or checkmark/cross signs, and zero duplicate True/False words elsewhere.`
-        : `Layout: Center safe zone showcases an oversized, highly-detailed 3D hero artwork of ${heroSubject}, floating prominently with crisp rim lighting. Cleanly stacked beneath it are two tactile modern 3D arcade buttons: green 'TRUE' and red 'FALSE', accompanied cleanly by ${mascotDescription}. STRICT: The ONLY place displaying 'TRUE' and 'FALSE' must be the two tactile buttons; mascot must NOT hold True/False paddles or checkmarks, maintaining the 440px bottom buffer.`;
     }
 
     case "mega_grid":

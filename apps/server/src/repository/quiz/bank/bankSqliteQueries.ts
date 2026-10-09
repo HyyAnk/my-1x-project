@@ -1,5 +1,5 @@
 import type { DatabaseSync as SqliteDatabase } from "node:sqlite";
-import { normalizeLanguageCode, type BankQuestion } from "@studio/shared";
+import { LEGACY_VERDICT_ARCHETYPE_IDS, isLegacyVerdictIdentifier, normalizeLanguageCode, type BankQuestion } from "@studio/shared";
 import { normalizeQuestionText } from "../../../quiz/qa/questionHistory.js";
 import { rowToBankQuestion, type BankQuestionRow } from "./bankSqliteMapper.js";
 import type { QueryQuestionBankParams } from "./bankQueryEngine.js";
@@ -25,23 +25,7 @@ export function queryBankQuestionsSqlite(
   `;
 
   const rows = db.prepare(selectSql).all(...bindings, limit, offset) as unknown as BankQuestionRow[];
-  let questions = rows.map(rowToBankQuestion);
-
-  if (params.archetypeId === "verdict_fact_myth") {
-    questions = questions.map((q) => {
-      if (q.archetype_id === "verdict_yes_no" || q.archetype_id === "verdict_true_false") {
-        return { ...q, archetype_id: "verdict_fact_myth" as const };
-      }
-      return q;
-    });
-  } else if (params.archetypeId === "verdict_true_false") {
-    questions = questions.map((q) => {
-      if (q.archetype_id === "verdict_yes_no") {
-        return { ...q, archetype_id: "verdict_true_false" as const };
-      }
-      return q;
-    });
-  }
+  const questions = rows.map(rowToBankQuestion);
 
   return { questions, total };
 }
@@ -64,12 +48,8 @@ function buildWhereClause(params: QueryQuestionBankParams): { whereClause: strin
   const bindings: SqlBinding[] = [];
 
   if (params.archetypeId) {
-    if (
-      params.archetypeId === "verdict_yes_no" ||
-      params.archetypeId === "verdict_fact_myth" ||
-      params.archetypeId === "verdict_true_false"
-    ) {
-      conditions.push("archetype_id IN ('verdict_yes_no', 'verdict_true_false', 'verdict_fact_myth')");
+    if (params.archetypeId === "verdict_yes_no" || isLegacyVerdictIdentifier(params.archetypeId)) {
+      conditions.push(`archetype_id IN ('verdict_yes_no', ${LEGACY_VERDICT_ARCHETYPE_IDS.map((id) => `'${id}'`).join(", ")})`);
     } else {
       conditions.push("archetype_id = ?");
       bindings.push(params.archetypeId);

@@ -31,7 +31,7 @@ const mockStats: BankIndex = {
   current_total: 250,
   by_archetype: {
     speed_blitz: 100,
-    verdict_fact_myth: 150,
+    verdict_yes_no: 150,
   },
   by_domain: {
     logic_puzzles: 100,

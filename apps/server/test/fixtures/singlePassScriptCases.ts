@@ -2,6 +2,7 @@ import { expect, it, vi } from "vitest";
 import type { IntroOutroScriptJob, IntroOutroScriptProject, IntroOutroScriptRevision } from "@studio/shared";
 import type { StudioApp } from "../../src/app.js";
 import type { FakeGeminiFlashClient } from "./introOutroScriptClient.js";
+import { SCRIPT_JOB_WAIT_OPTIONS } from "./scriptJobPolling.js";
 
 type Context = { app: StudioApp; channelId: string; client: FakeGeminiFlashClient };
 type WaitForJob = (app: StudioApp, channelId: string, jobId: string) => Promise<IntroOutroScriptJob>;
@@ -90,9 +91,10 @@ export function registerSinglePassScriptCases(getContext: () => Context, waitFor
       entered();
       await gate;
     };
+    const callsBefore = client.generationPrompts.length;
     try {
       const started = await generate(context, project, ["intro", "outro"], `pending-${operation}`);
-      await vi.waitFor(() => expect(entered).toHaveBeenCalledTimes(2));
+      await vi.waitFor(() => expect(entered).toHaveBeenCalledTimes(2), SCRIPT_JOB_WAIT_OPTIONS);
       if (operation === "cancel") {
         const cancelled = await app.server.inject({
           method: "POST",
@@ -110,7 +112,8 @@ export function registerSinglePassScriptCases(getContext: () => Context, waitFor
       release();
       const terminal = await waitForJob(app, channelId, started.job_id);
       expect(terminal.status).toBe(operation === "cancel" ? "cancelled" : "succeeded");
-      // Allow a late provider result to settle before checking persistence.
+      // Wait until both released provider calls have returned, then allow their late results to settle.
+      await vi.waitFor(() => expect(client.generationPrompts.length - callsBefore).toBe(2), SCRIPT_JOB_WAIT_OPTIONS);
       await new Promise((resolve) => setTimeout(resolve, 60));
       const revisions = (await app.server.inject({ method: "GET", url: `${base}/revisions` })).json<{
         revisions: IntroOutroScriptRevision[];

@@ -40,7 +40,7 @@ Read thresholds in source/tests instead of copying numeric rules into new module
 
 ## Gameplay policy
 
-[The shared gameplay policy](../packages/shared/src/quizGameplayPolicy.ts) controls choice narration, thinking windows, countdowns, and pacing by gameplay and age band. `gameplay_id` remains distinct from question format and visual layout; a Versus faceoff has two choices and must not be mislabeled as True/False. Director plans carry a policy version so a resume can regenerate an outdated plan and invalidate dependent assets, voice, timeline, QA, and render output.
+[The shared gameplay policy](../packages/shared/src/quizGameplayPolicy.ts) controls choice narration, thinking windows, countdowns, and pacing by gameplay and age band. `gameplay_id` remains distinct from question format and visual layout; a Versus faceoff has two choices and must not be mislabeled as Yes/No. Director plans carry a policy version so a resume can regenerate an outdated plan and invalidate dependent assets, voice, timeline, QA, and render output.
 
 Timeline timing waits for measured narration and complete choice entrances. QA rejects incompatible voice roles, premature answer narration, invalid Versus labels, and other gameplay conflicts. Keep source facts and answers intact when adapting a question to a layout. [Gameplay tests](../apps/server/test/gameplayPolicy.test.ts) cover the policy; [render specimens](../apps/server/test/gameplayRender.system.test.ts) are opt-in system tests for media changes.
 

@@ -250,7 +250,10 @@ describe("Phase 6: Independent Bank-Topic Closeout Acceptance Matrix", () => {
       const quiz = await app.repository.readQuiz(channel.channel_id, episode.episode_id);
       expect(quiz?.language).toBe("en");
       expect(quiz?.questions[0].question).toBe(q1.question);
-      expect(quiz?.questions[0].choices.map((c) => c.text)).toEqual(q1.choices.map((c) => c.text));
+      // Episode bridges balance answer positions, so compare choices by id rather than by position.
+      const choiceTextById = Object.fromEntries((quiz?.questions[0].choices ?? []).map((c) => [c.id, c.text]));
+      expect(choiceTextById).toEqual(Object.fromEntries(q1.choices.map((c) => [c.id, c.text])));
+      expect(quiz?.questions[0].correct_choice_id).toBe(q1.correct_choice_id);
 
       // Canonical Bank questions remain strictly English
       const bankQ = await app.repository.getQuestionBankQuestion(q1.id);

@@ -3,6 +3,7 @@ import {
   type CompleteShortReelSourceSnapshotSchema,
   type ShortReelSourceChoice,
   type ShortReelTopicSnapshot,
+  type ReelArchetype,
   type ReelScriptSeed,
   resolveScriptSeed,
   resolveDefaultSeedForArchetype,
@@ -35,7 +36,7 @@ function formatSourceChoices(source: CompleteShortReelSourceSnapshot): string {
 }
 
 function formatArchetypeAndSeedGuidance(
-  archetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false" | "verdict_yes_no",
+  archetype: ReelArchetype,
   seed: ReelScriptSeed,
 ): string {
   const archetypeHeader =
@@ -43,9 +44,7 @@ function formatArchetypeAndSeedGuidance(
       ? "Archetype: VERSUS FACEOFF (9:16 portrait duel/comparison)"
       : archetype === "verdict_yes_no"
         ? "Archetype: YES OR NO (9:16 portrait verdict showdown)"
-        : archetype === "verdict_true_false"
-          ? "Archetype: TRUE OR FALSE (9:16 portrait verdict showdown)"
-          : "Archetype: DEEP TRIVIA (9:16 portrait curiosity/mystery)";
+        : "Archetype: DEEP TRIVIA (9:16 portrait curiosity/mystery)";
 
   return [
     `=== DIRECTORIAL SEED: ${seed.name.toUpperCase()} (${archetypeHeader}) ===`,

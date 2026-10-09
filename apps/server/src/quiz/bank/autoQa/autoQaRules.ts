@@ -3,6 +3,7 @@ import { calculateQuestionSimilarity, normalizeQuestionText } from "../../qa/que
 import { DEFAULT_SIMILARITY_THRESHOLD, type AutoQaIssue, type AutoQaResult } from "./autoQa.types.js";
 import { QuestionBankAutoQaIndex } from "./autoQaIndex.js";
 import { detectStemAnswerLeak } from "./stemLeakDetector.js";
+import { checkKidAudienceIssues } from "./kidAudienceRules.js";
 
 export { detectStemAnswerLeak } from "./stemLeakDetector.js";
 
@@ -93,6 +94,8 @@ export function checkQualityAndSchemaIssues(question: BankQuestion): AutoQaIssue
   if (stemLeakIssue) {
     issues.push(stemLeakIssue);
   }
+
+  issues.push(...checkKidAudienceIssues(question));
 
   return issues;
 }

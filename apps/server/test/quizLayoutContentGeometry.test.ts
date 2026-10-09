@@ -60,9 +60,9 @@ describe("quizLayoutContentGeometry", () => {
     });
   });
 
-  describe("verdict_true_false", () => {
+  describe("verdict_yes_no", () => {
     it("defines hero and 2 stacked verdict choice cards", () => {
-      const g = LAYOUT_CONTENT_GEOMETRY.verdict_true_false;
+      const g = LAYOUT_CONTENT_GEOMETRY.verdict_yes_no;
       expect(g.hero).toEqual({ x: 380, y: 253, width: 820, height: 565 });
       expect(g.answers[2]).toEqual([
         { x: 1240, y: 349.5, width: 560, height: 164 },

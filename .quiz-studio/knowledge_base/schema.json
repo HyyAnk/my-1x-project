@@ -36,6 +36,16 @@
       "default": "en",
       "description": "Strictly 'en' (English) to maintain unified linguistic baseline"
     },
+    "audience_rating": {
+      "type": "string",
+      "enum": [
+        "kids",
+        "teen",
+        "mature"
+      ],
+      "default": "kids",
+      "description": "Youngest audience the subject suits. Only kids-rated subjects reach the kids and family channel; teen covers PG-13/T-rated franchises, mature covers alcohol, gambling, and R/M-rated content."
+    },
     "aliases": {
       "type": "array",
       "items": {

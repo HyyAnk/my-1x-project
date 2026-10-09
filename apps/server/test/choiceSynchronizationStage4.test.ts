@@ -42,10 +42,10 @@ function renderClipHtml(layoutId: QuizPreviewLayoutId, format: QuizQuestionForma
   const effectiveChoices =
     layoutId === "mystery_reveal"
       ? choices.slice(0, 1)
-      : format === "true_false" || choices.length === 2
+      : format === "yes_no" || choices.length === 2
         ? choices.slice(0, 2)
         : choices.slice(0, 3);
-  const effectiveFormat = layoutId === "mystery_reveal" ? "image_guess" : effectiveChoices.length === 2 ? "true_false" : format;
+  const effectiveFormat = layoutId === "mystery_reveal" ? "image_guess" : effectiveChoices.length === 2 ? "yes_no" : format;
   const quiz = createTestQuiz(layoutId, effectiveFormat, effectiveChoices);
   const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
   director.beats[0].layout_id = layoutId;
@@ -57,8 +57,8 @@ function renderClipHtml(layoutId: QuizPreviewLayoutId, format: QuizQuestionForma
   } else if (layoutId.startsWith("visual_")) {
     director.beats[0].archetype = "visual_multiple_choice";
     director.beats[0].asset_intents = ["choice_illustration"];
-  } else if (effectiveFormat === "true_false") {
-    director.beats[0].archetype = "true_false";
+  } else if (effectiveFormat === "yes_no") {
+    director.beats[0].archetype = "yes_no";
     director.beats[0].asset_intents = ["question_illustration"];
   } else {
     director.beats[0].archetype = "text_multiple_choice";
@@ -99,14 +99,14 @@ describe("Stage 4: Choice Cards Staggered Entrance & Reveal Settling Synchroniza
     },
     {
       id: "split_versus_two",
-      format: "true_false",
+      format: "yes_no",
       choices: ["Contender One", "Contender Two"],
       isVisual: false,
     },
     {
-      id: "verdict_true_false",
-      format: "true_false",
-      choices: ["True", "False"],
+      id: "verdict_yes_no",
+      format: "yes_no",
+      choices: ["Yes", "No"],
       isVisual: false,
     },
     {
@@ -172,7 +172,7 @@ describe("Stage 4: Choice Cards Staggered Entrance & Reveal Settling Synchroniza
     });
 
     it("verifies split_versus_two has staggered entrance (0.00s, 0.14s) landing <= 1.53s", () => {
-      const html = renderClipHtml("split_versus_two", "true_false", ["Left", "Right"]);
+      const html = renderClipHtml("split_versus_two", "yes_no", ["Left", "Right"]);
 
       expect(html).toContain(".layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1)");
       expect(html).toContain(".layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2)");
@@ -184,11 +184,11 @@ describe("Stage 4: Choice Cards Staggered Entrance & Reveal Settling Synchroniza
       // Default: delay 0.85s + 0.14s = 0.99s + 0.54s = 1.53s < 2.0s
     });
 
-    it("verifies verdict_true_false has staggered entrance (0.00s, 0.14s) landing <= 1.53s", () => {
-      const html = renderClipHtml("verdict_true_false", "true_false", ["True", "False"]);
+    it("verifies verdict_yes_no has staggered entrance (0.00s, 0.14s) landing <= 1.53s", () => {
+      const html = renderClipHtml("verdict_yes_no", "yes_no", ["Yes", "No"]);
 
-      expect(html).toContain(".layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(1)");
-      expect(html).toContain(".layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(2)");
+      expect(html).toContain(".layout-verdict_yes_no.quiz-question-clip .choice-card:nth-child(1)");
+      expect(html).toContain(".layout-verdict_yes_no.quiz-question-clip .choice-card:nth-child(2)");
       expect(html).toContain("calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s)");
       expect(html).toContain("enter-from-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1)");
       expect(html).toContain(
@@ -301,7 +301,7 @@ describe("Stage 4: Choice Cards Staggered Entrance & Reveal Settling Synchroniza
     it("verifies Sandbox preview in reveal phase renders settled correct border and dimmed incorrect choices", () => {
       for (const layout of layoutsToTest) {
         const effectiveChoices = layout.id === "mystery_reveal" ? layout.choices.slice(0, 1) : layout.choices;
-        const effectiveFormat = layout.id === "mystery_reveal" ? "image_guess" : layout.choices.length === 2 ? "true_false" : layout.format;
+        const effectiveFormat = layout.id === "mystery_reveal" ? "image_guess" : layout.choices.length === 2 ? "yes_no" : layout.format;
 
         const res = buildSandboxComposition({
           layout_id: layout.id,
@@ -329,7 +329,7 @@ describe("Stage 4: Choice Cards Staggered Entrance & Reveal Settling Synchroniza
     it("verifies Sandbox preview in question phase does not have active answer-correct card", () => {
       for (const layout of layoutsToTest) {
         const effectiveChoices = layout.id === "mystery_reveal" ? layout.choices.slice(0, 1) : layout.choices;
-        const effectiveFormat = layout.id === "mystery_reveal" ? "image_guess" : layout.choices.length === 2 ? "true_false" : layout.format;
+        const effectiveFormat = layout.id === "mystery_reveal" ? "image_guess" : layout.choices.length === 2 ? "yes_no" : layout.format;
 
         const res = buildSandboxComposition({
           layout_id: layout.id,

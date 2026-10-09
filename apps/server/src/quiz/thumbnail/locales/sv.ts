@@ -8,7 +8,6 @@ export const svLocale: ThumbnailLocalization = {
     odd_one_out: "HITTA DEN SOM SKILJER SIG!",
     difficulty_tier: "KLARAR DU NIVÅ 4?",
     yes_no: "JA ELLER NEJ?",
-    true_false: "SANT ELLER FALSKT?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} FRÅGOR`,
@@ -17,6 +16,5 @@ export const svLocale: ThumbnailLocalization = {
     odd_one_out: () => "10 SEKUNDER! ⏱️",
     difficulty_tier: () => "ENDAST FÖR IQ 140+ 🔥",
     yes_no: () => "JA ELLER NEJ? ⚡",
-    true_false: () => "SANT ELLER FALSKT? ⚡",
   },
 };

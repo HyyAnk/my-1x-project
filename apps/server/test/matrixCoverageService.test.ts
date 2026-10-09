@@ -15,15 +15,18 @@ import {
   selectAutoCandidates,
   selectManualCandidates,
 } from "../src/quiz/bank/matrixCoverageService.js";
+import { readKidsAudienceExpectations } from "./fixtures/knowledgeBaseExpectations.js";
+
+const kb = readKidsAudienceExpectations();
 
 describe("Knowledge Base Loader", () => {
-  it("loads exactly 2,759 entities across 18 domains", () => {
+  it("loads every kids-rated entity across all domains", () => {
     clearKnowledgeBaseCache();
     const entities = loadAllKnowledgeEntities();
-    expect(entities.length).toBe(2759);
+    expect(entities.length).toBe(kb.entityCount);
 
     const domains = getAllKnowledgeDomains();
-    expect(domains.length).toBe(18);
+    expect(domains.length).toBe(kb.domainCount);
     expect(domains).toContain("global_brands");
     expect(domains).toContain("anime_manga");
     expect(domains).toContain("gaming_esports");
@@ -49,31 +52,13 @@ describe("Knowledge Base Loader", () => {
     }
 
     const natureAnimals = getEntitiesByDomain("nature_animals");
-    expect(natureAnimals.length).toBe(343);
+    expect(natureAnimals.length).toBe(kb.domainCounts.nature_animals);
   });
 
   it("calculates knowledge base domain statistics correctly", () => {
     const stats = getKnowledgeBaseStats();
-    expect(stats.totalEntities).toBe(2759);
-    expect(Object.keys(stats.domainCounts).length).toBe(18);
-    expect(stats.domainCounts.global_brands).toBe(160);
-    expect(stats.domainCounts.anime_manga).toBe(53);
-    expect(stats.domainCounts.gaming_esports).toBe(138);
-    expect(stats.domainCounts.modern_cinema_tv).toBe(114);
-    expect(stats.domainCounts.nature_animals).toBe(343);
-    expect(stats.domainCounts.vehicles_technology).toBe(268);
-    expect(stats.domainCounts.pop_culture_classics).toBe(223);
-    expect(stats.domainCounts.food_gastronomy).toBe(250);
-    expect(stats.domainCounts.space_earth).toBe(210);
-    expect(stats.domainCounts.daily_objects).toBe(146);
-    expect(stats.domainCounts.careers_occupations).toBe(146);
-    expect(stats.domainCounts.human_body).toBe(121);
-    expect(stats.domainCounts.mythology_creatures).toBe(150);
-    expect(stats.domainCounts.countries_nations).toBe(100);
-    expect(stats.domainCounts.places_facilities).toBe(95);
-    expect(stats.domainCounts.sports_games).toBe(100);
-    expect(stats.domainCounts.music_instruments_gear).toBe(75);
-    expect(stats.domainCounts.school_learning).toBe(67);
+    expect(stats.totalEntities).toBe(kb.entityCount);
+    expect(stats.domainCounts).toEqual(kb.domainCounts);
   });
 });
 
@@ -158,30 +143,30 @@ describe("Matrix Coverage Service", () => {
 
   it("builds matrix coverage map correctly ignoring legacy questions without entity_id", () => {
     const map = buildMatrixCoverageMap(mockSampleQuestions);
-    expect(map.get("verdict_true_false:ENT-ANI-001")).toBe(1);
+    expect(map.get("verdict_yes_no:ENT-ANI-001")).toBe(1);
     expect(map.get("deep_trivia:ENT-ANI-001")).toBe(1);
     expect(map.get("speed_blitz:ENT-ANI-001")).toBeUndefined();
     expect(map.size).toBe(2);
   });
 
-  it("calculates matrix coverage statistics across all 19,313 combos", () => {
+  it("calculates matrix coverage statistics across every entity x archetype combo", () => {
     const stats = calculateMatrixCoverageStats(mockSampleQuestions);
-    expect(stats.total_combos).toBe(19313); // 2,759 entities * 7 archetypes = 19,313 combos
+    expect(stats.total_combos).toBe(kb.comboCount);
     expect(stats.covered_combos).toBe(2);
     expect(stats.total_variants).toBe(2);
-    expect(stats.coverage_percent).toBeCloseTo((2 / 19313) * 100, 1);
+    expect(stats.coverage_percent).toBeCloseTo((2 / kb.comboCount) * 100, 1);
 
     // Check domain breakdown
     expect(stats.by_domain.nature_animals).toBeDefined();
-    expect(stats.by_domain.nature_animals.total_entities).toBe(343);
-    expect(stats.by_domain.nature_animals.total_combos).toBe(343 * 7); // 2,401
+    expect(stats.by_domain.nature_animals.total_entities).toBe(kb.domainCounts.nature_animals);
+    expect(stats.by_domain.nature_animals.total_combos).toBe(kb.domainCounts.nature_animals * 7);
     expect(stats.by_domain.nature_animals.covered_combos).toBe(2);
 
     // Check archetype breakdown
-    expect(stats.by_archetype.verdict_true_false.covered_combos).toBe(1);
+    expect(stats.by_archetype.verdict_yes_no.covered_combos).toBe(1);
     expect(stats.by_archetype.deep_trivia.covered_combos).toBe(1);
     expect(stats.by_archetype.versus_faceoff.covered_combos).toBe(0);
-    expect(stats.by_archetype.versus_faceoff.total_combos).toBe(2759);
+    expect(stats.by_archetype.versus_faceoff.total_combos).toBe(kb.entityCount);
   });
 
   it("selectAutoCandidates selects empty combos (0 variants) first", () => {
@@ -404,8 +389,12 @@ describe("Matrix Coverage Service", () => {
     expect(entityIds.size).toBe(3);
   });
 
-  describe("Phase 2: Franchise-First Priority & Difficulty Tiering", () => {
-    it("strongly prioritizes iconic_franchises and difficulty 1 in selectAutoCandidates for anime_manga", () => {
+  // Fair priority (no hardcoded franchise bias): Tier 1 household icons (difficulty 1) come before
+  // difficulty 2, then fewer existing variants, then entity id.
+  describe("Phase 2: Fair Difficulty Tiering", () => {
+    const entityDifficulty = (entityId: string) => getEntityById(entityId)?.difficulty ?? 2;
+
+    it("selects only Tier 1 entities in selectAutoCandidates for anime_manga while enough exist", () => {
       const candidates = selectAutoCandidates([], {
         count: 20,
         domain_id: "anime_manga",
@@ -413,33 +402,26 @@ describe("Matrix Coverage Service", () => {
       });
 
       expect(candidates).toHaveLength(20);
-      // All 20 candidates must belong to iconic_franchises because there are 25 franchise entities
       for (const c of candidates) {
-        expect(c.subtopic_id).toBe("iconic_franchises");
+        expect(entityDifficulty(c.entity_id)).toBe(1);
       }
     });
 
-    it("prioritizes iconic_franchises before Tier 1 icons, and Tier 1 icons before Tier 2 secondary entities", () => {
-      // Request 35 candidates: 25 iconic_franchises (diff 1), then remaining diff 1 entities, then diff 2
+    it("draws from more than one subtopic instead of exhausting iconic_franchises first", () => {
       const candidates = selectAutoCandidates([], {
-        count: 35,
+        count: 20,
         domain_id: "anime_manga",
         archetype_ids: ["deep_trivia"],
       });
 
-      expect(candidates).toHaveLength(35);
-      // First 25 are iconic_franchises
-      const first25 = candidates.slice(0, 25);
-      for (const c of first25) {
-        expect(c.subtopic_id).toBe("iconic_franchises");
+      expect(candidates).toHaveLength(20);
+      for (const c of candidates) {
+        expect(entityDifficulty(c.entity_id)).toBe(1);
       }
-
-      // Next 10 are non-franchise entities, where difficulty 1 precedes difficulty 2
-      const next10 = candidates.slice(25);
-      expect(next10.some((c) => c.subtopic_id !== "iconic_franchises")).toBe(true);
+      expect(new Set(candidates.map((c) => c.subtopic_id)).size).toBeGreaterThan(1);
     });
 
-    it("prioritizes iconic_franchises and difficulty 1 in selectManualCandidates when variants are tied", () => {
+    it("prefers Tier 1 entities in selectManualCandidates when variants are tied", () => {
       const candidates = selectManualCandidates([], {
         count: 10,
         domain_id: "anime_manga",
@@ -447,9 +429,8 @@ describe("Matrix Coverage Service", () => {
       });
 
       expect(candidates).toHaveLength(10);
-      // When all variants are 0, iconic_franchises must be chosen first
       for (const c of candidates) {
-        expect(c.subtopic_id).toBe("iconic_franchises");
+        expect(entityDifficulty(c.entity_id)).toBe(1);
         expect(c.current_variants).toBe(0);
       }
     });

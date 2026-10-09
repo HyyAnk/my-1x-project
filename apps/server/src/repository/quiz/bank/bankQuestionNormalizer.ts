@@ -1,4 +1,4 @@
-import type { BankChoice, BankQuestion, BankTranslationContent } from "@studio/shared";
+import { isLegacyVerdictIdentifier, type BankChoice, type BankQuestion, type BankTranslationContent } from "@studio/shared";
 
 /**
  * Normalizes question text from legacy "True or False?" phrasing to "Yes or No?".
@@ -58,12 +58,11 @@ function normalizeVerdictTranslations(
  * Preserves all non-verdict questions unmodified.
  */
 export function normalizeVerdictQuestion(question: BankQuestion): BankQuestion {
-  const isVerdictArchetype =
-    question.archetype_id === "verdict_yes_no" ||
-    question.archetype_id === "verdict_true_false" ||
-    question.archetype_id === "verdict_fact_myth";
-
-  const isVerdictFormat = question.format === "yes_no" || question.format === "true_false";
+  // Rows read straight from SQLite bypass schema parsing, so retired identifiers can still appear here.
+  const rawArchetype: string = question.archetype_id;
+  const rawFormat: string = question.format;
+  const isVerdictArchetype = rawArchetype === "verdict_yes_no" || isLegacyVerdictIdentifier(rawArchetype);
+  const isVerdictFormat = rawFormat === "yes_no" || isLegacyVerdictIdentifier(rawFormat);
 
   if (!isVerdictArchetype && !isVerdictFormat) {
     return question;

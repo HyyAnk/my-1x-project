@@ -114,7 +114,9 @@ describe("Quiz production style contract", () => {
     } as Parameters<typeof buildMascotRenderDependencies>[1];
     const cyberDependencies = buildMascotRenderDependencies(mascot, cyberEpisode);
 
-    expect(cyberDependencies).toContain("mascot-style:builtin_cyber_neon:preset_cyber_neon:4");
+    // Style dependencies end with the per-variant animation fingerprints after the style revision.
+    const cyberStyleDependency = cyberDependencies.find((dependency) => dependency.startsWith("mascot-style:builtin_cyber_neon:"));
+    expect(cyberStyleDependency).toMatch(/^mascot-style:builtin_cyber_neon:preset_cyber_neon:4:/);
     expect(cyberDependencies.some((dependency) => dependency.includes("builtin_comic_boom"))).toBe(false);
 
     const cycleEpisode = {

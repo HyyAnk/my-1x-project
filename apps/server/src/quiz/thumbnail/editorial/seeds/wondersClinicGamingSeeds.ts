@@ -59,7 +59,7 @@ export const CLINIC_DOMAIN_SEED: EditorialDomainSeed = {
   id: "medicine_firstaid",
   domainName: "First Aid & Clinic Secrets",
   pattern: /\b(clinic|first aid|nurse|doctor|hospital|medical|ice pack|stethoscope|bandage|saline|medicine|health heroes)\b/i,
-  preferredLayout: "true_false",
+  preferredLayout: "yes_no",
   preferredTemplate: "big_object",
   background: "bright",
   backgroundAtmosphere:
@@ -68,7 +68,7 @@ export const CLINIC_DOMAIN_SEED: EditorialDomainSeed = {
     {
       label: "Instant Chilling Ice Pack",
       keywords: ["clinic", "first aid", "nurse", "ice pack", "saline", "bandage"],
-      hook: "TRUE OR FALSE?",
+      hook: "YES OR NO?",
       background: "bright",
       backgroundAtmosphere:
         "Bright cheerful clinical studio with soft daylight-white and clean mint-teal tones, polished stainless steel medical dish reflections, sparkling clean and sterile.",
@@ -92,7 +92,7 @@ export const GAMING_DOMAIN_SEED: EditorialDomainSeed = {
   id: "gaming_arcade",
   domainName: "Gaming & Arcade",
   pattern: /\b(game|gaming|arcade|retro|joystick|nintendo|playstation|speedrun|esports|glitch|secret code|cheat|pacman|mario)\b/i,
-  preferredLayout: "true_false",
+  preferredLayout: "yes_no",
   preferredTemplate: "big_object",
   background: "bright",
   backgroundAtmosphere:
@@ -101,7 +101,7 @@ export const GAMING_DOMAIN_SEED: EditorialDomainSeed = {
     {
       label: "Arcade Secret",
       keywords: ["arcade", "button", "switch", "micro-switch", "cabinet"],
-      hook: "TRUE OR FALSE?",
+      hook: "YES OR NO?",
       background: "bright",
       backgroundAtmosphere:
         "Moody retro arcade ambient glow with vivid neon cherry-red and emerald-green LED button lights reflecting off polished gloss cabinet panel.",

@@ -14,7 +14,6 @@ export interface QuestionBankMetaFieldsProps {
 
 const ARCHETYPE_OPTIONS: Array<{ id: string; defaultLabel: string; icon: string }> = [
   { id: "verdict_yes_no", defaultLabel: "Yes or No", icon: "✨" },
-  { id: "verdict_true_false", defaultLabel: "True or False", icon: "⚖️" },
   { id: "speed_blitz", defaultLabel: "Speed Blitz", icon: "⚡" },
   { id: "deep_trivia", defaultLabel: "Deep Trivia", icon: "🧠" },
   { id: "versus_faceoff", defaultLabel: "1v1 Faceoff", icon: "⚔️" },

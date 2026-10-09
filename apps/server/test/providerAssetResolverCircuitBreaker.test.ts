@@ -9,6 +9,7 @@ import {
   IMGSTUDIO_DEFAULT_MODEL_ID,
   IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
   IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
+  IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID,
 } from "@studio/shared";
 import { StudioLogger } from "../src/logger.js";
 import { RepositoryService } from "../src/repository.js";
@@ -32,6 +33,8 @@ describe("providerAssetResolver with circuit breaker short-circuit dispatch", ()
   let shouldPrimaryFail: boolean;
   let shouldLevel1Fail: boolean;
   let shouldLevel2Fail: boolean;
+  let fallbackLevel3CallCount: number;
+  let shouldLevel3Fail: boolean;
 
   beforeEach(async () => {
     root = await mkdtemp(path.join(os.tmpdir(), "resolver-cb-test-"));
@@ -83,6 +86,12 @@ describe("providerAssetResolver with circuit breaker short-circuit dispatch", ()
     shouldPrimaryFail = false;
     shouldLevel1Fail = false;
     shouldLevel2Fail = false;
+    fallbackLevel3CallCount = 0;
+    shouldLevel3Fail = false;
+
+    // Keep the optional GPTi2 bridge fallback out of the cascade regardless of the developer shell.
+    vi.stubEnv("GPTI2_API_KEY", "");
+    vi.stubEnv("SHOPAIKEY_API_KEY", "");
 
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
       const urlStr = String(url);
@@ -148,6 +157,26 @@ describe("providerAssetResolver with circuit breaker short-circuit dispatch", ()
               }),
           } as unknown as Response;
         }
+
+        if (parsed.provider_id === IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID) {
+          fallbackLevel3CallCount++;
+          if (shouldLevel3Fail) {
+            return {
+              ok: false,
+              status: 409,
+              text: async () => JSON.stringify({ error: { message: "Level 3 simulated failure" } }),
+            } as unknown as Response;
+          }
+          return {
+            ok: true,
+            status: 200,
+            text: async () =>
+              JSON.stringify({
+                data: [{ url: "https://imgstudio.site/cdn/level3-img.png" }],
+                usage: { price_vnd: 120 },
+              }),
+          } as unknown as Response;
+        }
       }
 
       if (urlStr.includes(".png")) {
@@ -165,6 +194,7 @@ describe("providerAssetResolver with circuit breaker short-circuit dispatch", ()
 
   afterEach(async () => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
     await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   });
 
@@ -309,24 +339,29 @@ describe("providerAssetResolver with circuit breaker short-circuit dispatch", ()
     expect(breaker.isBypassed("primary")).toBe(true);
   });
 
-  it("throws directly when Fallback Level 2 circuit breaker is also tripped", async () => {
+  it("throws directly when every fallback level circuit breaker is tripped", async () => {
     const breaker = createProviderCircuitBreaker();
     shouldPrimaryFail = true;
     shouldLevel1Fail = true;
     shouldLevel2Fail = true;
+    shouldLevel3Fail = true;
 
     for (let i = 1; i <= 5; i++) {
       await expect(
         resolveProviderAsset(createTestInput(`asset_l2_fail_${i}`, breaker)),
-      ).rejects.toThrow("Level 2 simulated failure");
+      ).rejects.toThrow("Level 3 simulated failure");
     }
 
+    expect(fallbackLevel2CallCount).toBeGreaterThanOrEqual(5);
     expect(breaker.isBypassed("fallback-level-2")).toBe(true);
+    expect(breaker.isBypassed("fallback-level-3")).toBe(true);
 
     fallbackLevel2CallCount = 0;
+    fallbackLevel3CallCount = 0;
     await expect(
       resolveProviderAsset(createTestInput("asset_l2_bypassed", breaker)),
-    ).rejects.toThrow("ImgStudio Level 2 circuit breaker tripped for asset asset_l2_bypassed");
+    ).rejects.toThrow("ImgStudio Level 3 circuit breaker tripped for asset asset_l2_bypassed");
     expect(fallbackLevel2CallCount).toBe(0);
+    expect(fallbackLevel3CallCount).toBe(0);
   });
 });

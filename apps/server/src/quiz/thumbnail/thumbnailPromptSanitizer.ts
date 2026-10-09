@@ -11,7 +11,7 @@ export function stripForbiddenStickers(text: string): string {
 }
 
 /**
- * Sanitizes true/false and yes/no prompt text to ensure binary buttons only appear in the designated
+ * Sanitizes yes/no prompt text to ensure binary buttons only appear in the designated
  * tactile pushbuttons at the base, eliminating duplicate labels on props, mascots, or backgrounds.
  */
 export function sanitizeBinaryPromptTokens(prompt: string): string {
@@ -32,7 +32,6 @@ export function sanitizeBinaryPromptTokens(prompt: string): string {
   return sanitized;
 }
 
-export const sanitizeTrueFalsePromptTokens = sanitizeBinaryPromptTokens;
 
 /**
  * Ensures safe-zone directives are present and properly phrased for the given aspect ratio.
@@ -56,7 +55,7 @@ export function ensureSafeZoneDirectives(prompt: string, aspectRatio: ThumbnailA
 /**
  * Sanitizes and normalizes compiled thumbnail prompt strings:
  * - Strips forbidden stickers and glyphs (✅, ❌, ✓, ✗).
- * - Enforces single-location button rules for true_false and yes_no layouts.
+ * - Enforces single-location button rules for the yes_no layout.
  * - Collapses duplicate whitespace and redundant punctuation.
  * - Verifies safe-zone compliance.
  */
@@ -67,7 +66,7 @@ export function sanitizeCompiledPrompt(
 ): string {
   let cleaned = stripForbiddenStickers(rawPrompt);
 
-  if (layout === "true_false" || layout === "yes_no") {
+  if (layout === "yes_no") {
     cleaned = sanitizeBinaryPromptTokens(cleaned);
   }
 

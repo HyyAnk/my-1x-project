@@ -3,6 +3,7 @@ import { ThumbnailLayoutTypeSchema } from "@studio/shared";
 import { buildEditorialPlannerPrompt } from "./editorial/editorialPlannerPrompt.js";
 import { applyEditorialDesign } from "./editorial/editorialPlan.js";
 import { EditorialAiPlanSchema } from "./editorial/editorialAiPlanSchema.js";
+import { refineEditorialPlan } from "./editorial/refinement/editorialPlanRefiner.js";
 import type { StudioLogger } from "../../logger.js";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
 import {
@@ -82,9 +83,9 @@ export function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput, directedAr
     JSON.stringify(sampleQuestions, null, 2),
     "",
     "[CRITICAL INSTRUCTIONS]:",
-    `1. hook_text: Ultra-punchy headline (2 to 6 words MAX, strictly under 30 characters in ${input.language || "English"}). Specifically about the episode's subject. High CTR, bold, concise. NEVER output generic "GENERAL KNOWLEDGE" or "TRUE OR FALSE" or "TRUE OR FALSE?" or "YES OR NO" or "YES OR NO?". For true_false / yes_no format, the headline MUST be about the topic (e.g., "ARCADE MYTHS?", "ANIMAL FACTS?"). NEVER output long sentences, descriptions, or question bodies.`,
+    `1. hook_text: Ultra-punchy headline (2 to 6 words MAX, strictly under 30 characters in ${input.language || "English"}). Specifically about the episode's subject. High CTR, bold, concise. NEVER output generic "GENERAL KNOWLEDGE" or "TRUE OR FALSE" or "TRUE OR FALSE?" or "YES OR NO" or "YES OR NO?". For yes_no format, the headline MUST be about the topic (e.g., "ARCADE MYTHS?", "ANIMAL FACTS?"). NEVER output long sentences, descriptions, or question bodies.`,
     `2. badge_text: High-impact curiosity trigger badge (1-3 words + 1 relevant emoji in ${input.language || "English"}). Dynamically pick ONE psychological hook fitting this episode (such as extreme failure rate/stakes, IQ/genius tier, time pressure, or direct challenge). DO NOT always repeat "99% FAIL!". Be creative and contextually relevant.`,
-    '3. layout: Select best layout: ["mega_grid", "split_vs", "mystery_silhouette", "odd_one_out", "difficulty_tier", "yes_no", "true_false"].',
+    '3. layout: Select best layout: ["mega_grid", "split_vs", "mystery_silhouette", "odd_one_out", "difficulty_tier", "yes_no"].',
     "4. environment_atmosphere: A clean minimalist, soft-focus Pixar 3D studio background specifically tailored to this episode's topic with heavy depth of field, smooth warm gradients, and ZERO busy landscape clutter.",
     "5. lighting_palette: Rich saturated warm studio lighting with luminous rim lighting on foreground characters.",
     "6. mascot_persona_variations: Generate exactly 5 completely distinct, topic-tailored mascot variations corresponding to the 5 randomly selected emotional/behavioral archetypes below.",
@@ -93,7 +94,7 @@ export function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput, directedAr
     "   - DO NOT rely on generic pointing poses.",
     "   - DO NOT copy archetype descriptions verbatim; invent authentic, topic-specific costumes, expressions, props, and actions.",
     "   - STRICT CULTURAL & THEMATIC AUTHENTICITY: Analyze the specific cultural setting, era, or theme deeply. NEVER default to a generic wizard robe, wizard hat, or lab coat unless the topic is specifically about wizardry or chemistry. If Norse/Viking: Viking warrior leather tunic, fur mantle, runic armor, miniature Thor's hammer Mjolnir; if Greek: Olympian chiton with laurel wreath; if Samurai: braided armor; if Pirates: captain coat.",
-    "   - STRICT FOR true_false / yes_no: The mascot must NEVER hold True/False or Yes/No paddles or checkmark/cross signs. Only the two tactile arcade buttons at the base display the options.",
+    "   - STRICT FOR yes_no: The mascot must NEVER hold Yes/No paddles or checkmark/cross signs. Only the two tactile arcade buttons at the base display the options.",
     "",
     "[SELECTED MASCOT ARCHETYPES FOR THIS EPISODE]:",
     archetypesSection,
@@ -164,6 +165,11 @@ export const GENERIC_CLICHE_PATTERN =
   /^(general\s+knowledge|true\s+or\s+false|true\/false|yes\s+or\s+no|yes\/no|vrai\s+ou\s+faux|verdadero\s+o\s+falso|richtig\s+oder\s+falsch|which\s+would\s+you\s+choose|who\s+is\s+this|find\s+the\s+odd\s+one|can\s+you\s+solve\s+level\s+\d+|can\s+you\s+beat\s+level\s+\d+|quiz\s+challenge|knowledge\s+quiz|trivia\s+quiz|trivia\s+challenge)[?!.]*$/i;
 
 export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Promise<QuizThumbnailPlan> {
+  const plan = await planThumbnailDraft(input);
+  return input.editorial ? refineEditorialPlan(plan, input) : plan;
+}
+
+async function planThumbnailDraft(input: PlanThumbnailWithAiInput): Promise<QuizThumbnailPlan> {
   input.signal?.throwIfAborted();
   const resolvedPlan = resolveThumbnailLayout(input);
   const fallbackPlan = input.editorial ? applyEditorialDesign(resolvedPlan, { ...input, editorialFallback: true }) : resolvedPlan;
@@ -280,7 +286,7 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
     }
 
     if (
-      (layout === "true_false" || layout === "yes_no") &&
+      (layout === "yes_no") &&
       mascotPersona.prop &&
       /\b(paddle|true|false|yes|no|checkmark|cross|✅|❌)\b/i.test(mascotPersona.prop)
     ) {

@@ -132,7 +132,7 @@ describe("Quiz V2 shared schemas", () => {
     ).not.toThrow();
   });
 
-  it("requires exactly 2 choices for true or false questions", () => {
+  it("reads a retired true_false question as Yes/No and requires exactly 2 choices", () => {
     const question = validQuiz().questions[0];
     expect(() =>
       QuizV2Schema.parse({
@@ -152,7 +152,7 @@ describe("Quiz V2 shared schemas", () => {
           },
         ],
       }),
-    ).toThrow("True or false questions require exactly two choices");
+    ).toThrow("Yes/No questions require exactly two choices");
   });
 
   it("rejects duplicate or non-sequential question identity", () => {

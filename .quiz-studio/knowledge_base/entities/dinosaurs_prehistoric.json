@@ -1,0 +1,1740 @@
+[
+  {
+    "id": "ENT-DIN-001",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Tyrannosaurus Rex",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "T. rex",
+      "T-Rex",
+      "Tyrant Lizard King"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A big olive-green Tyrannosaurus rex with a few fluffy feathers on its back, standing tall in a sunny valley of ferns and palm trees with a curious, friendly look, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge meat-eating dinosaur that walked on two strong legs",
+      "Had very short arms with only two fingers on each hand",
+      "Had one of the strongest bites of any land animal ever",
+      "Lived in western North America at the very end of the dinosaur age"
+    ],
+    "distractor_pool": [
+      "Allosaurus",
+      "Giganotosaurus",
+      "Albertosaurus",
+      "Tarbosaurus",
+      "Spinosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "T. rex had only two fingers on each hand.",
+        "verdict": "fact",
+        "explanation": "Its small arms ended in two clawed fingers, and the arms were surprisingly strong for their size.",
+        "fun_fact": "One of the most complete T. rex skeletons, nicknamed Sue, is on display at Chicago's Field Museum."
+      },
+      {
+        "claim": "T. rex could only see things that were moving.",
+        "verdict": "myth",
+        "explanation": "That idea comes from movies. Its forward-facing eyes gave it good depth vision, so it could likely see still things well.",
+        "fun_fact": "Its biggest teeth, roots included, were about as long as a banana."
+      }
+    ],
+    "versus_candidates": [
+      "Spinosaurus",
+      "Triceratops",
+      "Giganotosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-002",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Triceratops",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A sturdy orange-brown Triceratops with three shiny horns and a wide patterned frill, munching leafy plants beside a calm river at golden hour, 9:16 vertical shot.",
+    "core_traits": [
+      "Big plant-eating dinosaur that walked on four legs",
+      "Had three horns on its face",
+      "Had a large bony frill behind its head",
+      "Lived in the same time and place as T. rex"
+    ],
+    "distractor_pool": [
+      "Styracosaurus",
+      "Torosaurus",
+      "Centrosaurus",
+      "Chasmosaurus",
+      "Protoceratops"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The name Triceratops means three-horned face.",
+        "verdict": "fact",
+        "explanation": "It had two long horns above its eyes and one shorter horn on its nose.",
+        "fun_fact": "Triceratops had a beak like a parrot's for snipping tough plants."
+      },
+      {
+        "claim": "Triceratops and Stegosaurus lived at the same time.",
+        "verdict": "myth",
+        "explanation": "Stegosaurus lived about 80 million years earlier. Triceratops actually lived closer in time to us than to Stegosaurus!",
+        "fun_fact": "A Triceratops skull could be over two meters long, one of the biggest skulls of any land animal."
+      }
+    ],
+    "versus_candidates": [
+      "Tyrannosaurus Rex",
+      "Stegosaurus",
+      "Ankylosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-003",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Stegosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A friendly green Stegosaurus with two rows of tall orange plates along its back and a spiky tail, walking through a sunny Jurassic forest of ferns, 9:16 vertical shot.",
+    "core_traits": [
+      "Plant-eating dinosaur that walked on four legs",
+      "Had two rows of tall, flat plates along its back",
+      "Had four long spikes at the end of its tail",
+      "Had a tiny head for its big body and lived in the Jurassic"
+    ],
+    "distractor_pool": [
+      "Kentrosaurus",
+      "Ankylosaurus",
+      "Huayangosaurus",
+      "Miragaia",
+      "Scelidosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Stegosaurus lived long before T. rex existed.",
+        "verdict": "fact",
+        "explanation": "Stegosaurus lived about 150 million years ago, roughly 80 million years before T. rex appeared.",
+        "fun_fact": "Stegosaurus is the official state dinosaur of Colorado."
+      },
+      {
+        "claim": "Stegosaurus had a second brain in its hips.",
+        "verdict": "myth",
+        "explanation": "This old idea came from a space in its hip bones. Scientists now agree it was not a brain.",
+        "fun_fact": "Its spiky tail is nicknamed the thagomizer, a word that started in a newspaper cartoon."
+      }
+    ],
+    "versus_candidates": [
+      "Ankylosaurus",
+      "Triceratops",
+      "Allosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-004",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Velociraptor",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Raptor"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A small turkey-sized Velociraptor covered in brown and cream feathers, standing alert on a sandy desert dune under a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, fast dinosaur that ran on two legs",
+      "Was covered in feathers and was about the size of a turkey",
+      "Had a big curved claw on each foot",
+      "Lived in the deserts of what is now Mongolia"
+    ],
+    "distractor_pool": [
+      "Deinonychus",
+      "Utahraptor",
+      "Microraptor",
+      "Troodon",
+      "Oviraptor"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Velociraptor had feathers.",
+        "verdict": "fact",
+        "explanation": "Its arm bones have small bumps called quill knobs, where large feathers were attached.",
+        "fun_fact": "The name Velociraptor means swift seizer."
+      },
+      {
+        "claim": "Velociraptor was as tall as a grown-up person.",
+        "verdict": "myth",
+        "explanation": "Movies made it look huge, but the real Velociraptor was only about the size of a turkey.",
+        "fun_fact": "The movie raptors were based more on a bigger cousin called Deinonychus."
+      }
+    ],
+    "versus_candidates": [
+      "Microraptor",
+      "Gallimimus",
+      "Oviraptor"
+    ]
+  },
+  {
+    "id": "ENT-DIN-005",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Brachiosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A gentle giant Brachiosaurus with a long neck stretching up to nibble leaves from a tall tree, soft morning light over a green valley, 9:16 vertical shot.",
+    "core_traits": [
+      "Giant plant-eating dinosaur with a very long neck",
+      "Held its head high like a giraffe to reach treetops",
+      "Its front legs were longer than its back legs",
+      "Lived in North America during the Late Jurassic"
+    ],
+    "distractor_pool": [
+      "Giraffatitan",
+      "Diplodocus",
+      "Apatosaurus",
+      "Sauroposeidon",
+      "Camarasaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Brachiosaurus had front legs longer than its back legs.",
+        "verdict": "fact",
+        "explanation": "Its name means arm lizard because of its long front legs, which tilted its body upward.",
+        "fun_fact": "A close relative mounted in a Berlin museum is one of the tallest dinosaur skeletons on display."
+      },
+      {
+        "claim": "Brachiosaurus lived in lakes to hold up its heavy body.",
+        "verdict": "myth",
+        "explanation": "Scientists once thought so, but its strong legs show it walked on land like other long-necked dinosaurs.",
+        "fun_fact": "Brachiosaurus could reach leaves far higher than a giraffe can."
+      }
+    ],
+    "versus_candidates": [
+      "Diplodocus",
+      "Argentinosaurus",
+      "Apatosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-006",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Ankylosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A low, wide Ankylosaurus covered in bumpy tan armor plates with a round club on its tail, strolling across a flowery meadow on a sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Low, wide plant-eating dinosaur that walked on four legs",
+      "Its back was covered in thick bony armor",
+      "Had a heavy bony club at the end of its tail",
+      "Lived in North America at the end of the Cretaceous"
+    ],
+    "distractor_pool": [
+      "Euoplocephalus",
+      "Nodosaurus",
+      "Stegosaurus",
+      "Edmontonia",
+      "Borealopelta"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ankylosaurus had a bony club at the end of its tail.",
+        "verdict": "fact",
+        "explanation": "The heavy club was made of joined bones and could be swung to protect itself.",
+        "fun_fact": "Its name means fused lizard because many of its bones were joined together."
+      },
+      {
+        "claim": "Ankylosaurus was one of the biggest dinosaurs of all.",
+        "verdict": "myth",
+        "explanation": "It was roughly six to eight meters long, much smaller than the giant long-necked dinosaurs.",
+        "fun_fact": "Ankylosaurus is often called a living tank because of its thick armor."
+      }
+    ],
+    "versus_candidates": [
+      "Stegosaurus",
+      "Tyrannosaurus Rex",
+      "Triceratops"
+    ]
+  },
+  {
+    "id": "ENT-DIN-007",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Spinosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A long Spinosaurus with a tall red-and-orange sail on its back, wading in a shallow sparkling river with a fish nearby, lush green riverbanks, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge meat-eating dinosaur with a tall sail on its back",
+      "Had a long, narrow snout like a crocodile",
+      "Caught lots of fish in rivers",
+      "Lived in North Africa"
+    ],
+    "distractor_pool": [
+      "Baryonyx",
+      "Suchomimus",
+      "Irritator",
+      "Carcharodontosaurus",
+      "Ouranosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Spinosaurus ate a lot of fish.",
+        "verdict": "fact",
+        "explanation": "Its long, narrow jaws and cone-shaped teeth were great for grabbing slippery fish, like a crocodile's.",
+        "fun_fact": "Spinosaurus may have been longer than T. rex, making it one of the longest meat-eating dinosaurs."
+      },
+      {
+        "claim": "Spinosaurus and T. rex lived at the same time.",
+        "verdict": "myth",
+        "explanation": "Spinosaurus lived in Africa millions of years earlier, so the two never met outside of movies.",
+        "fun_fact": "Its sail was held up by very long spines growing from its backbone."
+      }
+    ],
+    "versus_candidates": [
+      "Tyrannosaurus Rex",
+      "Giganotosaurus",
+      "Mosasaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-008",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Diplodocus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A very long gray-green Diplodocus with a long neck and whip-like tail, stretched across a wide sunny plain with ferns and distant hills, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge plant-eating dinosaur with a long neck",
+      "Had an extra-long, whip-like tail",
+      "Had peg-shaped teeth for stripping leaves off branches",
+      "Lived in North America during the Late Jurassic"
+    ],
+    "distractor_pool": [
+      "Apatosaurus",
+      "Brachiosaurus",
+      "Barosaurus",
+      "Supersaurus",
+      "Camarasaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Copies of one Diplodocus skeleton stand in museums around the world.",
+        "verdict": "fact",
+        "explanation": "Businessman Andrew Carnegie gave casts of a skeleton nicknamed Dippy to museums in many countries.",
+        "fun_fact": "A Dippy cast welcomed visitors at London's Natural History Museum for over 100 years."
+      },
+      {
+        "claim": "Diplodocus was the heaviest dinosaur ever.",
+        "verdict": "myth",
+        "explanation": "It was very long but quite slim. Giants like Argentinosaurus were much heavier.",
+        "fun_fact": "Some scientists think Diplodocus could flick its tail tip faster than the speed of sound."
+      }
+    ],
+    "versus_candidates": [
+      "Brachiosaurus",
+      "Argentinosaurus",
+      "Apatosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-009",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Parasaurolophus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A cheerful duck-billed Parasaurolophus with a long curved tube-shaped crest, calling out beside a misty lake surrounded by tall green trees, 9:16 vertical shot.",
+    "core_traits": [
+      "Duck-billed plant-eating dinosaur",
+      "Had a long, hollow crest curving back from its head",
+      "May have used its crest to make loud honking calls",
+      "Lived in North America during the Late Cretaceous"
+    ],
+    "distractor_pool": [
+      "Corythosaurus",
+      "Lambeosaurus",
+      "Edmontosaurus",
+      "Hadrosaurus",
+      "Maiasaura"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Parasaurolophus could probably make deep sounds with its crest.",
+        "verdict": "fact",
+        "explanation": "Air tubes ran through its hollow crest like a trombone, so it likely made booming calls.",
+        "fun_fact": "Scientists used computer models of its crest to recreate what its call may have sounded like."
+      },
+      {
+        "claim": "The Parasaurolophus crest was a snorkel for breathing underwater.",
+        "verdict": "myth",
+        "explanation": "Scientists dropped this idea because the crest had no opening at the top.",
+        "fun_fact": "Parasaurolophus could walk on two legs or on all four."
+      }
+    ],
+    "versus_candidates": [
+      "Edmontosaurus",
+      "Triceratops",
+      "Pachycephalosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-010",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Pachycephalosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A Pachycephalosaurus with a smooth round dome on its head ringed by little knobs, standing on two legs in a sunny grassy clearing, 9:16 vertical shot.",
+    "core_traits": [
+      "Plant-eating dinosaur that walked on two legs",
+      "Had a very thick, dome-shaped skull",
+      "Small knobs and short spikes ringed the dome",
+      "Lived in North America during the Late Cretaceous"
+    ],
+    "distractor_pool": [
+      "Stegoceras",
+      "Dracorex",
+      "Stygimoloch",
+      "Prenocephale",
+      "Homalocephale"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pachycephalosaurus had a very thick skull roof.",
+        "verdict": "fact",
+        "explanation": "Its name means thick-headed lizard. The bony dome on top could be about 25 centimeters thick.",
+        "fun_fact": "Some scientists think Dracorex and Stygimoloch were just young Pachycephalosaurus."
+      },
+      {
+        "claim": "Scientists are certain Pachycephalosaurus smashed heads together like rams.",
+        "verdict": "myth",
+        "explanation": "Scientists still debate it. Some think they pushed sides instead, or used their domes for showing off.",
+        "fun_fact": "Its dome was ringed by little bony knobs and short spikes."
+      }
+    ],
+    "versus_candidates": [
+      "Triceratops",
+      "Protoceratops",
+      "Ankylosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-011",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Allosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A sleek brown-and-gold Allosaurus with small ridges above its eyes, standing on two legs among tall Jurassic conifers on a bright day, 9:16 vertical shot.",
+    "core_traits": [
+      "Large meat-eating dinosaur that walked on two legs",
+      "Had small ridges like little horns above its eyes",
+      "Had three fingers with big curved claws on each hand",
+      "Was a top hunter in Jurassic North America"
+    ],
+    "distractor_pool": [
+      "Tyrannosaurus Rex",
+      "Ceratosaurus",
+      "Torvosaurus",
+      "Carnotaurus",
+      "Giganotosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Allosaurus lived millions of years before T. rex.",
+        "verdict": "fact",
+        "explanation": "Allosaurus lived about 150 million years ago, in the Jurassic, at the same time as Stegosaurus.",
+        "fun_fact": "A famous Allosaurus skeleton nicknamed Big Al was found in Wyoming."
+      },
+      {
+        "claim": "Allosaurus had just two fingers on each hand like T. rex.",
+        "verdict": "myth",
+        "explanation": "Allosaurus had three fingers on each hand, each with a big curved claw.",
+        "fun_fact": "Allosaurus is the official state fossil of Utah."
+      }
+    ],
+    "versus_candidates": [
+      "Tyrannosaurus Rex",
+      "Stegosaurus",
+      "Spinosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-012",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Iguanodon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A large green Iguanodon with a pointed thumb spike, reaching for leafy branches in a sunny Cretaceous forest, 9:16 vertical shot.",
+    "core_traits": [
+      "Large plant-eating dinosaur that could walk on two or four legs",
+      "Had a cone-shaped spike on each thumb",
+      "Was one of the very first dinosaurs ever given a name",
+      "Many fossils were found in England and Belgium"
+    ],
+    "distractor_pool": [
+      "Ouranosaurus",
+      "Camptosaurus",
+      "Hadrosaurus",
+      "Muttaburrasaurus",
+      "Tenontosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Iguanodon had a spike on each thumb.",
+        "verdict": "fact",
+        "explanation": "The cone-shaped thumb spike may have helped it protect itself or grab food.",
+        "fun_fact": "Iguanodon was only the second dinosaur ever to get a scientific name, back in 1825."
+      },
+      {
+        "claim": "Iguanodon had a horn on its nose.",
+        "verdict": "myth",
+        "explanation": "Early scientists put the thumb spike on its nose. Later skeletons showed it belonged on the hand.",
+        "fun_fact": "Dozens of Iguanodon skeletons were found together deep in a coal mine in Belgium."
+      }
+    ],
+    "versus_candidates": [
+      "Stegosaurus",
+      "Allosaurus",
+      "Parasaurolophus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-013",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Archaeopteryx",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A crow-sized Archaeopteryx with black-and-brown feathered wings and a long feathery tail, perched on a branch above a sunny lagoon, 9:16 vertical shot.",
+    "core_traits": [
+      "Crow-sized animal with feathers and wings",
+      "Had teeth in its jaws and a long bony tail",
+      "Fossils were found in limestone in Germany",
+      "Famous as an early link between dinosaurs and birds"
+    ],
+    "distractor_pool": [
+      "Microraptor",
+      "Confuciusornis",
+      "Anchiornis",
+      "Pterodactylus",
+      "Hesperornis"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Archaeopteryx had teeth and a bony tail, unlike birds today.",
+        "verdict": "fact",
+        "explanation": "It mixed bird features like feathered wings with dinosaur features like teeth, claws and a long tail.",
+        "fun_fact": "Its fossils formed in fine limestone that kept even the outlines of its feathers."
+      },
+      {
+        "claim": "Archaeopteryx is the direct ancestor of all birds today.",
+        "verdict": "myth",
+        "explanation": "Scientists see it as an early bird relative, not the exact great-grandparent of today's birds.",
+        "fun_fact": "Archaeopteryx was first described in 1861, just two years after Darwin's famous book on evolution."
+      }
+    ],
+    "versus_candidates": [
+      "Microraptor",
+      "Pteranodon",
+      "Dimorphodon"
+    ]
+  },
+  {
+    "id": "ENT-DIN-014",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Carnotaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A reddish Carnotaurus with two short bull-like horns above its eyes and tiny arms, standing on a dusty plain under a wide orange sunset sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Meat-eating dinosaur that walked on two legs",
+      "Had two thick horns above its eyes, like a bull",
+      "Had extremely tiny arms, even for a big meat-eater",
+      "Lived in what is now Argentina"
+    ],
+    "distractor_pool": [
+      "Majungasaurus",
+      "Abelisaurus",
+      "Ceratosaurus",
+      "Aucasaurus",
+      "Allosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Carnotaurus had two horns above its eyes.",
+        "verdict": "fact",
+        "explanation": "Its name means meat-eating bull because of those short, thick horns.",
+        "fun_fact": "Scientists found impressions of its skin, showing rows of bumpy scales."
+      },
+      {
+        "claim": "Carnotaurus lived alongside T. rex in North America.",
+        "verdict": "myth",
+        "explanation": "Carnotaurus lived in South America, in what is now Argentina, so it never met T. rex.",
+        "fun_fact": "For its body size, Carnotaurus had some of the tiniest arms of any big meat-eating dinosaur."
+      }
+    ],
+    "versus_candidates": [
+      "Tyrannosaurus Rex",
+      "Allosaurus",
+      "Spinosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-015",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Apatosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A huge gentle Apatosaurus with a thick neck and long tail held up off the ground, walking beside a shining lake under fluffy white clouds, 9:16 vertical shot.",
+    "core_traits": [
+      "Giant plant-eating dinosaur with a long neck",
+      "Its neck was unusually thick and heavy",
+      "Lived in North America during the Late Jurassic",
+      "Was famously mixed up with a dinosaur called Brontosaurus"
+    ],
+    "distractor_pool": [
+      "Diplodocus",
+      "Brontosaurus",
+      "Brachiosaurus",
+      "Camarasaurus",
+      "Barosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Apatosaurus was once mixed up with Brontosaurus.",
+        "verdict": "fact",
+        "explanation": "Scientists once merged them under the name Apatosaurus. A 2015 study argued Brontosaurus is separate after all.",
+        "fun_fact": "The name Apatosaurus means deceptive lizard."
+      },
+      {
+        "claim": "Long-necked dinosaurs like Apatosaurus dragged their tails on the ground.",
+        "verdict": "myth",
+        "explanation": "Fossil footprint trails rarely show tail marks, so scientists think they held their tails up.",
+        "fun_fact": "Old museum skeletons were later rebuilt to lift their tails off the floor."
+      }
+    ],
+    "versus_candidates": [
+      "Diplodocus",
+      "Brachiosaurus",
+      "Allosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-016",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Argentinosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "An enormous long-necked Argentinosaurus towering over small trees on a wide green plain, with a flock of little birds flying past its neck for scale, bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Gigantic long-necked plant-eating dinosaur",
+      "One of the largest land animals ever found",
+      "Belonged to a giant dinosaur group called titanosaurs",
+      "Named after the South American country where it was found"
+    ],
+    "distractor_pool": [
+      "Patagotitan",
+      "Dreadnoughtus",
+      "Puertasaurus",
+      "Brachiosaurus",
+      "Diplodocus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Argentinosaurus is one of the largest land animals ever found.",
+        "verdict": "fact",
+        "explanation": "Scientists estimate it was over 30 meters long, based on a few giant bones.",
+        "fun_fact": "Just one of its backbones is about as tall as a grown-up person."
+      },
+      {
+        "claim": "Scientists have found a complete Argentinosaurus skeleton.",
+        "verdict": "myth",
+        "explanation": "Only a few bones have been found, so its size is estimated by comparing it with relatives.",
+        "fun_fact": "This plant-eater may have weighed about as much as ten big elephants."
+      }
+    ],
+    "versus_candidates": [
+      "Brachiosaurus",
+      "Blue Whale",
+      "Diplodocus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-017",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Oviraptor",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A feathered Oviraptor with a short crested head and toothless beak, sitting gently on a nest of oval eggs in a sandy desert, warm sunlight, 9:16 vertical shot.",
+    "core_traits": [
+      "Small feathered dinosaur that walked on two legs",
+      "Had a short, toothless beak and a crest on its head",
+      "Lived in the deserts of what is now Mongolia",
+      "Its name means egg thief, but that turned out to be unfair"
+    ],
+    "distractor_pool": [
+      "Citipati",
+      "Caudipteryx",
+      "Gigantoraptor",
+      "Velociraptor",
+      "Gallimimus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Oviraptor had a beak and no teeth.",
+        "verdict": "fact",
+        "explanation": "Its short, strong beak was toothless, and scientists still debate exactly what it ate.",
+        "fun_fact": "Some Oviraptor relatives were found sitting on nests with arms spread, like a bird keeping eggs warm."
+      },
+      {
+        "claim": "Oviraptor stole and ate other dinosaurs' eggs.",
+        "verdict": "myth",
+        "explanation": "Its name means egg thief, but the eggs found with it turned out to be its own kind.",
+        "fun_fact": "Oviraptor was a caring parent that likely guarded its nest like birds do today."
+      }
+    ],
+    "versus_candidates": [
+      "Velociraptor",
+      "Gallimimus",
+      "Protoceratops"
+    ]
+  },
+  {
+    "id": "ENT-DIN-018",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Gallimimus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A slender ostrich-like Gallimimus with long legs and a small beaked head, running across a golden grassy plain with dust swirling behind it, 9:16 vertical shot.",
+    "core_traits": [
+      "Fast dinosaur shaped a lot like an ostrich",
+      "Had long legs built for running",
+      "Had a small head with a toothless beak",
+      "Lived in what is now Mongolia"
+    ],
+    "distractor_pool": [
+      "Struthiomimus",
+      "Ornithomimus",
+      "Deinocheirus",
+      "Dromiceiomimus",
+      "Pelecanimimus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The name Gallimimus means chicken mimic.",
+        "verdict": "fact",
+        "explanation": "Scientists thought parts of its neck looked like a chicken's, so they named it after one.",
+        "fun_fact": "A herd of Gallimimus raced across the screen in the first Jurassic Park movie."
+      },
+      {
+        "claim": "Gallimimus had big sharp teeth for catching large animals.",
+        "verdict": "myth",
+        "explanation": "It had a toothless beak and likely ate plants, insects and small animals.",
+        "fun_fact": "With legs like an ostrich, it was probably one of the fastest dinosaurs."
+      }
+    ],
+    "versus_candidates": [
+      "Velociraptor",
+      "Ostrich",
+      "Oviraptor"
+    ]
+  },
+  {
+    "id": "ENT-DIN-019",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Therizinosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A tall, fluffy-feathered Therizinosaurus with enormous curved hand claws, gently pulling down a leafy branch in a green forest, soft daylight, 9:16 vertical shot.",
+    "core_traits": [
+      "Tall, pot-bellied dinosaur that was probably feathered",
+      "Had enormous curved claws on its hands",
+      "Probably ate plants instead of meat",
+      "Lived in what is now Mongolia"
+    ],
+    "distractor_pool": [
+      "Segnosaurus",
+      "Nothronychus",
+      "Beipiaosaurus",
+      "Deinocheirus",
+      "Falcarius"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Therizinosaurus had some of the longest claws of any land animal.",
+        "verdict": "fact",
+        "explanation": "Its hand claws could reach about one meter long, as long as a baseball bat.",
+        "fun_fact": "Its name means scythe lizard, because its claws curve like a farmer's cutting blade."
+      },
+      {
+        "claim": "Therizinosaurus used its giant claws to hunt other dinosaurs.",
+        "verdict": "myth",
+        "explanation": "Scientists think it mostly ate plants and used its claws to pull branches closer.",
+        "fun_fact": "When its claws were first found, scientists thought they came from a giant turtle-like reptile."
+      }
+    ],
+    "versus_candidates": [
+      "Tyrannosaurus Rex",
+      "Spinosaurus",
+      "Giant Ground Sloth"
+    ]
+  },
+  {
+    "id": "ENT-DIN-020",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Microraptor",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A small crow-sized Microraptor with glossy black shimmering feathers on its arms and legs, gliding between leafy trees in a bright forest, 9:16 vertical shot.",
+    "core_traits": [
+      "Small feathered dinosaur about the size of a crow",
+      "Had feathered wings on both its arms and its legs",
+      "Probably glided or flew between trees",
+      "Fossils were found in China"
+    ],
+    "distractor_pool": [
+      "Archaeopteryx",
+      "Anchiornis",
+      "Sinornithosaurus",
+      "Changyuraptor",
+      "Velociraptor"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Microraptor had feathered wings on its arms and legs.",
+        "verdict": "fact",
+        "explanation": "Long feathers on all four limbs helped it glide, and maybe fly, between trees.",
+        "fun_fact": "Scientists studying its fossil feathers found they were glossy black with a shimmer, like a starling."
+      },
+      {
+        "claim": "No dinosaurs had feathers.",
+        "verdict": "myth",
+        "explanation": "Fossils like Microraptor from China clearly show feathers, and many other dinosaurs had them too.",
+        "fun_fact": "One Microraptor fossil was found with the remains of a small fish in its belly."
+      }
+    ],
+    "versus_candidates": [
+      "Archaeopteryx",
+      "Velociraptor",
+      "Pteranodon"
+    ]
+  },
+  {
+    "id": "ENT-DIN-021",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Protoceratops",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A sheep-sized Protoceratops with a parrot-like beak and a neat neck frill, resting on red sandstone in a sunny desert, 9:16 vertical shot.",
+    "core_traits": [
+      "Small plant-eating dinosaur about the size of a sheep",
+      "Had a parrot-like beak and a frill on its neck",
+      "Was an early cousin of Triceratops without big horns",
+      "Many skeletons were found in the Gobi Desert"
+    ],
+    "distractor_pool": [
+      "Triceratops",
+      "Leptoceratops",
+      "Psittacosaurus",
+      "Bagaceratops",
+      "Zuniceratops"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Protoceratops was about the size of a sheep.",
+        "verdict": "fact",
+        "explanation": "This small frilled dinosaur was much smaller than its famous cousin Triceratops.",
+        "fun_fact": "Some historians think Protoceratops fossils inspired ancient legends of the griffin."
+      },
+      {
+        "claim": "Protoceratops had three big horns like Triceratops.",
+        "verdict": "myth",
+        "explanation": "It had a neck frill and a beak, but no big horns, just a small bump on its nose.",
+        "fun_fact": "Scientists have found many Protoceratops skeletons, from tiny babies to adults."
+      }
+    ],
+    "versus_candidates": [
+      "Velociraptor",
+      "Triceratops",
+      "Oviraptor"
+    ]
+  },
+  {
+    "id": "ENT-DIN-022",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "dinosaurs",
+    "name": "Edmontosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A large duck-billed Edmontosaurus with a flat head and wide beak, grazing on low plants near a cool northern forest on a sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Large duck-billed plant-eating dinosaur",
+      "Had a flat head with no big bony crest",
+      "Had hundreds of teeth packed together for grinding plants",
+      "Named after rocks near a city in Canada"
+    ],
+    "distractor_pool": [
+      "Parasaurolophus",
+      "Maiasaura",
+      "Hadrosaurus",
+      "Corythosaurus",
+      "Shantungosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Edmontosaurus had hundreds of teeth in its jaws.",
+        "verdict": "fact",
+        "explanation": "Rows of teeth ground tough plants, and new teeth kept replacing worn ones.",
+        "fun_fact": "Some Edmontosaurus fossils are mummies that kept the shape of their scaly skin."
+      },
+      {
+        "claim": "Edmontosaurus had a tall bony crest like Parasaurolophus.",
+        "verdict": "myth",
+        "explanation": "Its head was flat, though one fossil showed a soft, fleshy comb like a rooster's.",
+        "fun_fact": "It was named after rocks near Edmonton, a city in Canada."
+      }
+    ],
+    "versus_candidates": [
+      "Tyrannosaurus Rex",
+      "Triceratops",
+      "Parasaurolophus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-023",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Pteranodon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A Pteranodon with wide leathery wings and a long backward-pointing crest, soaring over a sparkling blue sea with white waves below, 9:16 vertical shot.",
+    "core_traits": [
+      "Flying reptile with big wings made of skin",
+      "Had a long crest pointing back from its head",
+      "Had a long beak with no teeth",
+      "Caught fish over an ancient sea that covered Kansas"
+    ],
+    "distractor_pool": [
+      "Quetzalcoatlus",
+      "Pterodactylus",
+      "Dimorphodon",
+      "Rhamphorhynchus",
+      "Tapejara"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pteranodon had no teeth.",
+        "verdict": "fact",
+        "explanation": "Its name means wing without tooth. It likely scooped up fish with its long beak.",
+        "fun_fact": "Big adults had wings over six meters across, wider than a giraffe is tall."
+      },
+      {
+        "claim": "Pteranodon was a flying dinosaur.",
+        "verdict": "myth",
+        "explanation": "It was a pterosaur, a flying reptile. Pterosaurs were close cousins of dinosaurs, not dinosaurs.",
+        "fun_fact": "Pterosaurs were the first animals with backbones to fly by flapping their wings."
+      }
+    ],
+    "versus_candidates": [
+      "Quetzalcoatlus",
+      "Archaeopteryx",
+      "Dimorphodon"
+    ]
+  },
+  {
+    "id": "ENT-DIN-024",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Quetzalcoatlus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A giant Quetzalcoatlus standing tall as a giraffe on a grassy plain with wings folded, its long beak pointing down at the grass, golden evening light, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge flying reptile with a very long beak and neck",
+      "One of the largest flying animals ever",
+      "Standing on the ground, it was about as tall as a giraffe",
+      "Fossils were found in Texas"
+    ],
+    "distractor_pool": [
+      "Hatzegopteryx",
+      "Pteranodon",
+      "Arambourgiania",
+      "Tupuxuara",
+      "Dimorphodon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Quetzalcoatlus was one of the largest flying animals ever.",
+        "verdict": "fact",
+        "explanation": "Its wingspan was around 10 to 11 meters, about as wide as a small airplane.",
+        "fun_fact": "It was named after Quetzalcoatl, a feathered serpent from Aztec legends."
+      },
+      {
+        "claim": "Quetzalcoatlus only fed by catching fish over the ocean.",
+        "verdict": "myth",
+        "explanation": "Scientists think it often walked on land, picking up small animals like a giant stork.",
+        "fun_fact": "It walked on all four limbs, folding its wings up when on the ground."
+      }
+    ],
+    "versus_candidates": [
+      "Pteranodon",
+      "Wandering Albatross",
+      "Giraffe"
+    ]
+  },
+  {
+    "id": "ENT-DIN-025",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Mosasaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A long blue-gray Mosasaurus with paddle flippers and a finned tail, gliding through clear turquoise ocean water with sunbeams shining down, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge reptile that lived in the sea",
+      "Had paddle-like flippers and a long, finned tail",
+      "Was related to today's lizards and snakes",
+      "Its first fossil was found near the Meuse River in Europe"
+    ],
+    "distractor_pool": [
+      "Tylosaurus",
+      "Liopleurodon",
+      "Plesiosaurus",
+      "Ichthyosaurus",
+      "Kronosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mosasaurus was a giant sea reptile, not a dinosaur.",
+        "verdict": "fact",
+        "explanation": "Mosasaurs were ocean-going reptiles related to today's lizards and snakes.",
+        "fun_fact": "Its name means lizard of the Meuse, a river in the Netherlands where it was found."
+      },
+      {
+        "claim": "The real Mosasaurus was as huge as the one in Jurassic World.",
+        "verdict": "myth",
+        "explanation": "The movie made it much bigger. Real ones were roughly as long as a bus.",
+        "fun_fact": "It had an extra row of teeth on the roof of its mouth to grip slippery food."
+      }
+    ],
+    "versus_candidates": [
+      "Megalodon",
+      "Liopleurodon",
+      "Spinosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-026",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Plesiosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A Plesiosaurus with a long neck, small head and four big flippers, swimming gracefully through a sunlit green-blue sea full of tiny fish, 9:16 vertical shot.",
+    "core_traits": [
+      "Sea reptile with a long neck and a small head",
+      "Swam using four large flippers",
+      "Lived in the seas of the Early Jurassic",
+      "A famous early skeleton was found by Mary Anning in England"
+    ],
+    "distractor_pool": [
+      "Elasmosaurus",
+      "Liopleurodon",
+      "Ichthyosaurus",
+      "Kronosaurus",
+      "Nothosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Plesiosaurus swam using four big flippers.",
+        "verdict": "fact",
+        "explanation": "It moved with four paddle-shaped limbs, a bit like a sea turtle flying underwater.",
+        "fun_fact": "Fossil hunter Mary Anning found an early complete Plesiosaurus skeleton in England in 1823."
+      },
+      {
+        "claim": "Plesiosaurus was a swimming dinosaur.",
+        "verdict": "myth",
+        "explanation": "It was a marine reptile from a separate group that lived at the same time as dinosaurs.",
+        "fun_fact": "Many drawings of the Loch Ness Monster legend look a lot like a plesiosaur."
+      }
+    ],
+    "versus_candidates": [
+      "Ichthyosaurus",
+      "Mosasaurus",
+      "Elasmosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-027",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Ichthyosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A sleek dolphin-shaped Ichthyosaurus with big round eyes and a tall tail fin, leaping through bright blue waves under a sunny sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Sea reptile shaped a lot like a dolphin",
+      "Had very large eyes and a tall tail fin",
+      "Gave birth to live babies instead of laying eggs",
+      "Early fossils were found by Mary Anning and her brother in England"
+    ],
+    "distractor_pool": [
+      "Ophthalmosaurus",
+      "Shonisaurus",
+      "Temnodontosaurus",
+      "Mosasaurus",
+      "Plesiosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ichthyosaurs gave birth to live babies in the water.",
+        "verdict": "fact",
+        "explanation": "Fossils show mothers with babies, so they did not need to lay eggs on beaches.",
+        "fun_fact": "Mary Anning and her brother found one of the first ichthyosaur fossils in England."
+      },
+      {
+        "claim": "Ichthyosaurus was an early kind of dolphin.",
+        "verdict": "myth",
+        "explanation": "It looked like a dolphin but was a reptile. Dolphins are mammals that appeared much later.",
+        "fun_fact": "Some ichthyosaurs had eyes about as big as dinner plates."
+      }
+    ],
+    "versus_candidates": [
+      "Dolphin",
+      "Plesiosaurus",
+      "Mosasaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-028",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Dimorphodon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A colorful Dimorphodon with an oversized puffin-like head, small wings and a long tail, perched on a rocky seaside cliff on a sunny morning, 9:16 vertical shot.",
+    "core_traits": [
+      "Small flying reptile with an oversized head",
+      "Had a long tail behind its wings",
+      "Had two different kinds of teeth",
+      "Lived in Early Jurassic England"
+    ],
+    "distractor_pool": [
+      "Rhamphorhynchus",
+      "Pteranodon",
+      "Pterodactylus",
+      "Eudimorphodon",
+      "Quetzalcoatlus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dimorphodon had two different kinds of teeth.",
+        "verdict": "fact",
+        "explanation": "Its name means two-form tooth: long teeth at the front and small teeth behind.",
+        "fun_fact": "Its first fossil was found by Mary Anning on the coast of England."
+      },
+      {
+        "claim": "Dimorphodon's big head was too heavy for it to fly.",
+        "verdict": "myth",
+        "explanation": "Its large skull had big openings that kept it light enough for flight.",
+        "fun_fact": "It had a long tail, unlike Pteranodon, which had a very short one."
+      }
+    ],
+    "versus_candidates": [
+      "Pteranodon",
+      "Archaeopteryx",
+      "Microraptor"
+    ]
+  },
+  {
+    "id": "ENT-DIN-029",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Elasmosaurus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "An Elasmosaurus with an extremely long neck stretched straight out and four flippers, swimming calmly through a clear blue sea with sunlight rippling above, 9:16 vertical shot.",
+    "core_traits": [
+      "Sea reptile with an extremely long neck",
+      "Had a small head and four flippers",
+      "Its neck had about 72 bones",
+      "Lived in a sea that once covered Kansas"
+    ],
+    "distractor_pool": [
+      "Plesiosaurus",
+      "Albertonectes",
+      "Styxosaurus",
+      "Liopleurodon",
+      "Mosasaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Elasmosaurus had about 72 bones in its neck.",
+        "verdict": "fact",
+        "explanation": "That is more than almost any other animal. Its neck was over half its body length.",
+        "fun_fact": "Giraffes have only seven neck bones, even though their necks look very long."
+      },
+      {
+        "claim": "Elasmosaurus held its neck high above the water like a swan.",
+        "verdict": "myth",
+        "explanation": "Its long neck was stiff and heavy, so scientists think it mostly held it straight out.",
+        "fun_fact": "A famous scientist once put its head on the wrong end, on the tip of its tail!"
+      }
+    ],
+    "versus_candidates": [
+      "Plesiosaurus",
+      "Mosasaurus",
+      "Giraffe"
+    ]
+  },
+  {
+    "id": "ENT-DIN-030",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "sea_and_sky_reptiles",
+    "name": "Liopleurodon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A big-headed Liopleurodon with a short neck and four strong flippers, swimming through deep blue water with shafts of sunlight, 9:16 vertical shot.",
+    "core_traits": [
+      "Sea reptile with a short neck and a very large head",
+      "Swam with four strong flippers",
+      "Was a top hunter in Jurassic seas",
+      "Fossils come from England and France"
+    ],
+    "distractor_pool": [
+      "Kronosaurus",
+      "Pliosaurus",
+      "Mosasaurus",
+      "Elasmosaurus",
+      "Plesiosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Liopleurodon had a short neck and a very large head.",
+        "verdict": "fact",
+        "explanation": "It was a pliosaur, a short-necked cousin of the long-necked plesiosaurs.",
+        "fun_fact": "Its long jaws were lined with big, cone-shaped teeth."
+      },
+      {
+        "claim": "Liopleurodon was 25 meters long, as a famous TV show claimed.",
+        "verdict": "myth",
+        "explanation": "Scientists now think adults were more like six or seven meters long.",
+        "fun_fact": "Liopleurodon lived in the Jurassic, millions of years before Mosasaurus appeared."
+      }
+    ],
+    "versus_candidates": [
+      "Mosasaurus",
+      "Megalodon",
+      "Ichthyosaurus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-031",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Woolly Mammoth",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Mammoth"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shaggy brown woolly mammoth with long curved tusks, walking through a snowy meadow with snowflakes falling and pale blue mountains behind, 9:16 vertical shot.",
+    "core_traits": [
+      "Large elephant relative covered in shaggy fur",
+      "Had very long, curved tusks",
+      "Had small ears and a short tail to keep in heat",
+      "Lived in cold lands during the Ice Age"
+    ],
+    "distractor_pool": [
+      "Mastodon",
+      "Columbian Mammoth",
+      "Asian Elephant",
+      "Steppe Mammoth",
+      "Deinotherium"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some woolly mammoths were still around when Egypt's pyramids were built.",
+        "verdict": "fact",
+        "explanation": "A small group lived on Wrangel Island in the Arctic until about 4,000 years ago.",
+        "fun_fact": "Mammoth tusks could grow about four meters long."
+      },
+      {
+        "claim": "Woolly mammoths were much bigger than today's elephants.",
+        "verdict": "myth",
+        "explanation": "Most woolly mammoths were about the size of an African elephant.",
+        "fun_fact": "Their small ears and short tails helped stop heat from escaping in the cold."
+      }
+    ],
+    "versus_candidates": [
+      "Woolly Rhinoceros",
+      "Saber-Toothed Cat",
+      "African Elephant"
+    ]
+  },
+  {
+    "id": "ENT-DIN-032",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Saber-Toothed Cat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Smilodon",
+      "Saber-Toothed Tiger",
+      "Sabertooth"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sturdy tan saber-toothed cat with two long upper fangs and a short tail, resting on a rocky ledge above a grassy Ice Age valley in warm sunlight, 9:16 vertical shot.",
+    "core_traits": [
+      "Big Ice Age cat with two very long upper teeth",
+      "Had a short tail and powerful front legs",
+      "Lived in North and South America",
+      "Thousands of its fossils were found in tar pits in Los Angeles"
+    ],
+    "distractor_pool": [
+      "Homotherium",
+      "American Lion",
+      "Thylacosmilus",
+      "Cave Lion",
+      "Machairodus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Smilodon could open its jaws extremely wide.",
+        "verdict": "fact",
+        "explanation": "Its mouth opened about 120 degrees, making room to use its long upper teeth.",
+        "fun_fact": "Smilodon is the official state fossil of California."
+      },
+      {
+        "claim": "The saber-toothed cat was a kind of tiger.",
+        "verdict": "myth",
+        "explanation": "Despite the nickname, Smilodon was not closely related to tigers or other living big cats.",
+        "fun_fact": "Thousands of Smilodon fossils have been found at the La Brea Tar Pits in Los Angeles."
+      }
+    ],
+    "versus_candidates": [
+      "Dire Wolf",
+      "Woolly Mammoth",
+      "Lion"
+    ]
+  },
+  {
+    "id": "ENT-DIN-033",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Megalodon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Megatooth Shark"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A gigantic gray megalodon shark gliding through bright blue ocean water beside a small school of silver fish for scale, sunbeams from above, 9:16 vertical shot.",
+    "core_traits": [
+      "Giant prehistoric shark",
+      "Much bigger than a great white shark",
+      "Had huge triangular teeth with jagged edges",
+      "Disappeared from the oceans millions of years ago"
+    ],
+    "distractor_pool": [
+      "Great White Shark",
+      "Whale Shark",
+      "Basking Shark",
+      "Livyatan",
+      "Mosasaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Megalodon teeth could be about as big as a grown-up's hand.",
+        "verdict": "fact",
+        "explanation": "The largest megalodon teeth are over 15 centimeters long. Its name means big tooth.",
+        "fun_fact": "Megalodon fossils are mostly teeth, because shark skeletons are made of soft cartilage."
+      },
+      {
+        "claim": "Megalodon still lives hidden in the deep ocean.",
+        "verdict": "myth",
+        "explanation": "Megalodon vanished millions of years ago, and no living one has ever been found.",
+        "fun_fact": "Sharks replace their teeth all their lives, so one megalodon could leave thousands behind."
+      }
+    ],
+    "versus_candidates": [
+      "Mosasaurus",
+      "Blue Whale",
+      "Great White Shark"
+    ]
+  },
+  {
+    "id": "ENT-DIN-034",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Woolly Rhinoceros",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Woolly Rhino"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A shaggy reddish-brown woolly rhinoceros with a long curved front horn, grazing on frosty grass across a wide snowy plain, soft winter sunlight, 9:16 vertical shot.",
+    "core_traits": [
+      "Rhino covered in thick shaggy fur",
+      "Had a very long, flattened front horn",
+      "Grazed on cold grasslands across Europe and Asia",
+      "Was painted by ancient people on cave walls in France"
+    ],
+    "distractor_pool": [
+      "Elasmotherium",
+      "Sumatran Rhinoceros",
+      "White Rhinoceros",
+      "Woolly Mammoth",
+      "Mastodon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ancient people painted woolly rhinos on cave walls.",
+        "verdict": "fact",
+        "explanation": "Woolly rhinos appear in cave art in France, including the famous Chauvet Cave.",
+        "fun_fact": "Its long front horn may have helped it sweep snow aside to reach grass."
+      },
+      {
+        "claim": "Woolly rhinos were close relatives of woolly mammoths.",
+        "verdict": "myth",
+        "explanation": "Both had shaggy fur and lived in the cold, but rhinos and mammoths are very different animal families.",
+        "fun_fact": "Its closest living relative is the Sumatran rhino, the hairiest rhino today."
+      }
+    ],
+    "versus_candidates": [
+      "Woolly Mammoth",
+      "Saber-Toothed Cat",
+      "Rhinoceros"
+    ]
+  },
+  {
+    "id": "ENT-DIN-035",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Giant Ground Sloth",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Megatherium"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A huge shaggy giant ground sloth standing on its back legs to pull down a leafy branch with its big claws, sunny South American woodland, 9:16 vertical shot.",
+    "core_traits": [
+      "Enormous furry plant-eater with big curved claws",
+      "Lived on the ground instead of in trees",
+      "Could stand on its back legs to reach leaves",
+      "Lived in South America during the Ice Age"
+    ],
+    "distractor_pool": [
+      "Megalonyx",
+      "Eremotherium",
+      "Mylodon",
+      "Glyptodon",
+      "Three-Toed Sloth"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Megatherium was about as big as an elephant.",
+        "verdict": "fact",
+        "explanation": "This giant ground sloth could weigh several tonnes and stand tall on its back legs.",
+        "fun_fact": "Charles Darwin collected giant ground sloth fossils during his famous voyage on the HMS Beagle."
+      },
+      {
+        "claim": "Giant ground sloths hung upside down from trees like sloths today.",
+        "verdict": "myth",
+        "explanation": "They were far too heavy. They lived on the ground and stood up to reach leaves.",
+        "fun_fact": "Because of its big claws, it walked on the sides of its feet."
+      }
+    ],
+    "versus_candidates": [
+      "Woolly Mammoth",
+      "Saber-Toothed Cat",
+      "Glyptodon"
+    ]
+  },
+  {
+    "id": "ENT-DIN-036",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Dodo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A plump gray dodo with a big hooked yellow-green beak and a tuft of tail feathers, standing on a sunny tropical beach with palm trees, 9:16 vertical shot.",
+    "core_traits": [
+      "Large bird that could not fly",
+      "Had a big, hooked beak",
+      "Lived only on the island of Mauritius in the Indian Ocean",
+      "Disappeared in the 1600s after sailors arrived"
+    ],
+    "distractor_pool": [
+      "Rodrigues Solitaire",
+      "Great Auk",
+      "Moa",
+      "Elephant Bird",
+      "Passenger Pigeon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The dodo was a flightless bird from the island of Mauritius.",
+        "verdict": "fact",
+        "explanation": "With no big predators on the island, it lived on the ground and did not need to fly.",
+        "fun_fact": "The dodo's closest living relative is the colorful Nicobar pigeon."
+      },
+      {
+        "claim": "Dodos were fat, clumsy, slow birds.",
+        "verdict": "myth",
+        "explanation": "Old paintings showed overfed birds kept by people. Scientists think wild dodos were slimmer and quite active.",
+        "fun_fact": "A dodo appears as a character in the book Alice's Adventures in Wonderland."
+      }
+    ],
+    "versus_candidates": [
+      "Ostrich",
+      "Penguin",
+      "Archaeopteryx"
+    ]
+  },
+  {
+    "id": "ENT-DIN-037",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Trilobite",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A group of colorful trilobites with segmented shells crawling across a sandy sea floor among swaying seaweed, soft blue underwater light, 9:16 vertical shot.",
+    "core_traits": [
+      "Small sea creature with a hard, segmented shell",
+      "Its body was divided into three long sections",
+      "Distant relative of crabs and insects",
+      "Lived in the oceans long before the first dinosaurs"
+    ],
+    "distractor_pool": [
+      "Ammonite",
+      "Horseshoe Crab",
+      "Eurypterid",
+      "Anomalocaris",
+      "Pill Bug"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Trilobites had eyes with lenses made of a clear mineral.",
+        "verdict": "fact",
+        "explanation": "Their eye lenses were made of calcite, a mineral, which is why their eyes fossilized so well.",
+        "fun_fact": "Trilobites lived in the oceans for more than 250 million years."
+      },
+      {
+        "claim": "Trilobites lived at the same time as T. rex.",
+        "verdict": "myth",
+        "explanation": "Trilobites disappeared about 252 million years ago, long before the first dinosaurs appeared.",
+        "fun_fact": "Some trilobites could roll up into a ball, like a pill bug."
+      }
+    ],
+    "versus_candidates": [
+      "Ammonite",
+      "Horseshoe Crab",
+      "Anomalocaris"
+    ]
+  },
+  {
+    "id": "ENT-DIN-038",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Ammonite",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A shiny ammonite with a coiled striped spiral shell and little tentacles, floating in clear turquoise water above a sandy sea floor, 9:16 vertical shot.",
+    "core_traits": [
+      "Sea animal that lived inside a coiled, spiral shell",
+      "Was related to squid and octopuses",
+      "Its shell had chambers that helped it float",
+      "Disappeared at about the same time as the dinosaurs"
+    ],
+    "distractor_pool": [
+      "Nautilus",
+      "Trilobite",
+      "Belemnite",
+      "Orthoceras",
+      "Sea Snail"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ammonites were related to octopuses and squid.",
+        "verdict": "fact",
+        "explanation": "They were mollusks with tentacles that lived in coiled, chambered shells, like today's nautilus.",
+        "fun_fact": "Some ammonite shells grew nearly two meters across."
+      },
+      {
+        "claim": "Ammonite fossils are curled-up snakes that turned to stone.",
+        "verdict": "myth",
+        "explanation": "People once carved snake heads onto them, but ammonites were sea animals with shells.",
+        "fun_fact": "Ammonites are so common that scientists use them to tell the age of rocks."
+      }
+    ],
+    "versus_candidates": [
+      "Trilobite",
+      "Nautilus",
+      "Octopus"
+    ]
+  },
+  {
+    "id": "ENT-DIN-039",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Dire Wolf",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A sturdy light-gray dire wolf with a broad head standing on a grassy hill at sunrise, its fur glowing in the warm light, 9:16 vertical shot.",
+    "core_traits": [
+      "Large wolf-like Ice Age animal",
+      "Was a bit bigger and heavier than most gray wolves",
+      "Lived across North and South America",
+      "Thousands of its fossils were found in tar pits in Los Angeles"
+    ],
+    "distractor_pool": [
+      "Gray Wolf",
+      "Coyote",
+      "Thylacine",
+      "Cave Hyena",
+      "Hyaenodon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dire wolves were bigger and heavier than most gray wolves.",
+        "verdict": "fact",
+        "explanation": "They were a bit larger than gray wolves, with strong jaws for crunching bones.",
+        "fun_fact": "Thousands of dire wolf fossils have been found at the La Brea Tar Pits."
+      },
+      {
+        "claim": "Dire wolves were the ancestors of today's gray wolves.",
+        "verdict": "myth",
+        "explanation": "DNA shows dire wolves were a separate branch of dog relatives that split off millions of years ago.",
+        "fun_fact": "Dire wolves lived in the Americas until around 13,000 years ago."
+      }
+    ],
+    "versus_candidates": [
+      "Saber-Toothed Cat",
+      "Gray Wolf",
+      "Cave Lion"
+    ]
+  },
+  {
+    "id": "ENT-DIN-040",
+    "domain_id": "dinosaurs_prehistoric",
+    "subtopic_id": "ice_age_and_ancient_life",
+    "name": "Glyptodon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A big round Glyptodon with a domed shell made of many small patterned plates, walking across a grassy South American plain under a bright sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Large mammal with a huge, domed shell",
+      "Its shell was made of many small bony plates",
+      "Was a giant relative of armadillos",
+      "Lived in South America during the Ice Age"
+    ],
+    "distractor_pool": [
+      "Doedicurus",
+      "Giant Armadillo",
+      "Pampatherium",
+      "Nine-Banded Armadillo",
+      "Ankylosaurus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Glyptodon was a giant relative of armadillos.",
+        "verdict": "fact",
+        "explanation": "It had a huge domed shell made of many small bony plates joined together.",
+        "fun_fact": "Its shell was roughly the size of a small car."
+      },
+      {
+        "claim": "Glyptodon was a giant turtle.",
+        "verdict": "myth",
+        "explanation": "It looked a bit like a turtle, but it was a mammal, closely related to armadillos.",
+        "fun_fact": "Some scientists think early people in South America may have used glyptodon shells as shelters."
+      }
+    ],
+    "versus_candidates": [
+      "Ankylosaurus",
+      "Giant Ground Sloth",
+      "Galapagos Tortoise"
+    ]
+  }
+]

@@ -1,9 +1,9 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, fireEvent } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ThumbnailManifestSchema } from "@studio/shared";
 import { ThumbnailControlsDeck } from "./ThumbnailControlsDeck";
 
-function setup(generating = false) {
+function setup(generating = false, hookText = "") {
   const onGenerateThumbnail = vi.fn();
   const setSelectedLayout = vi.fn();
   render(
@@ -18,6 +18,7 @@ function setup(generating = false) {
         episode_id: "episode",
         layout: "mega_grid",
         design_template: "big_object",
+        hook_text: hookText,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })}
@@ -32,6 +33,7 @@ function setup(generating = false) {
 }
 
 describe("thumbnail controls", () => {
+  afterEach(cleanup);
   it("exposes compact labelled controls before the first generation", () => {
     const { setSelectedLayout, onGenerateThumbnail } = setup();
     expect(screen.getByRole("combobox", { name: "Layout" })).toBeTruthy();
@@ -49,5 +51,11 @@ describe("thumbnail controls", () => {
     expect(button.getAttribute("aria-busy")).toBe("true");
     fireEvent.click(button);
     expect(onGenerateThumbnail).not.toHaveBeenCalled();
+  });
+  it("shows the current headline as a hint without filling the manual headline", () => {
+    setup(false, "WHO RIDES CATS?");
+    const input = screen.getByRole("textbox", { name: "Headline" }) as HTMLInputElement;
+    expect(input.value).toBe("");
+    expect(input.placeholder).toBe("Auto (current: WHO RIDES CATS?)");
   });
 });

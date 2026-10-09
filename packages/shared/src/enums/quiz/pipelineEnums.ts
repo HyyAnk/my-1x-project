@@ -1,42 +1,48 @@
 import { z } from "zod";
 import { ImageAspectRatioSchema } from "../core.js";
+import { acceptLegacyVerdictAliases } from "./legacyVerdictAliases.js";
 
-export const QuizQuestionFormatSchema = z.enum(["multiple_choice", "image_guess", "yes_no", "true_false", "odd_one_out"]);
+export * from "./legacyVerdictAliases.js";
+
+export const QUIZ_QUESTION_FORMATS = ["multiple_choice", "image_guess", "yes_no", "odd_one_out"] as const;
+export const QuizQuestionFormatSchema = acceptLegacyVerdictAliases(z.enum(QUIZ_QUESTION_FORMATS));
 export type QuizQuestionFormat = z.infer<typeof QuizQuestionFormatSchema>;
 
 export const QuizAgeBandSchema = z.enum(["4-6", "7-9", "10-12", "family"]);
 export type QuizAgeBand = z.infer<typeof QuizAgeBandSchema>;
 
-export const DirectorArchetypeSchema = z.enum([
-  "text_multiple_choice",
-  "illustrated_multiple_choice",
-  "visual_multiple_choice",
-  "image_guess",
-  "yes_no",
-  "true_false",
-  "odd_one_out",
-  "visual_reveal",
-  "mystery_reveal",
-  "speed_round",
-  "final_challenge",
-]);
+export const DirectorArchetypeSchema = acceptLegacyVerdictAliases(
+  z.enum([
+    "text_multiple_choice",
+    "illustrated_multiple_choice",
+    "visual_multiple_choice",
+    "image_guess",
+    "yes_no",
+    "odd_one_out",
+    "visual_reveal",
+    "mystery_reveal",
+    "speed_round",
+    "final_challenge",
+  ]),
+);
 export type DirectorArchetype = z.infer<typeof DirectorArchetypeSchema>;
 
 export const DirectorEnergySchema = z.enum(["gentle", "curious", "playful", "excited", "triumphant"]);
 
 export const DirectorVisualDensitySchema = z.enum(["calm", "focused", "lively", "burst"]);
 
-export const QuizLayoutIdSchema = z.enum([
+export const QUIZ_LAYOUT_IDS = [
   "auto",
   "media_left_choices_right",
   "visual_choices_three",
   "visual_choices_three_pure",
   "split_versus_two",
   "verdict_yes_no",
-  "verdict_true_false",
   "full_stack_list",
   "mystery_reveal",
-]);
+] as const;
+export const QuizLayoutIdValuesSchema = z.enum(QUIZ_LAYOUT_IDS);
+export const QuizLayoutIdSchema = acceptLegacyVerdictAliases(QuizLayoutIdValuesSchema);
 export type QuizLayoutId = z.infer<typeof QuizLayoutIdSchema>;
 
 export const QuizMotionIdSchema = z.enum([

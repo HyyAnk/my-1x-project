@@ -45,6 +45,8 @@ export function mergeUpdatedDescription(params: {
         expert: "7-8: Genius",
         cta_text: "Comment below!",
       },
+    ...(existing?.chapters ? { chapters: existing.chapters } : {}),
+    ...(existing?.made_for_kids === undefined ? {} : { made_for_kids: existing.made_for_kids }),
     full_description_text: input.full_description_text,
     char_count: input.full_description_text.length,
     language: existing?.language ?? channel.language ?? "English",

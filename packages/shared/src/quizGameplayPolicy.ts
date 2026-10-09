@@ -1,4 +1,4 @@
-import type { QuizAgeBand, QuizLayoutId, QuizQuestionFormat } from "./enums.js";
+import { normalizeLegacyVerdictIdentifier, type QuizAgeBand, type QuizLayoutId, type QuizQuestionFormat } from "./enums.js";
 import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import { timingPolicyForAgeBand, type QuizTimingPolicy } from "./timing.js";
 
@@ -50,24 +50,6 @@ export const QUIZ_GAMEPLAY_POLICIES = {
     countdown: 3,
     cycle: [10, 23],
   },
-  verdict_true_false: {
-    id: "verdict_true_false",
-    choiceCount: 2,
-    readChoices: false,
-    thinkingPrompt: false,
-    thinking: [4, 6],
-    countdown: 3,
-    cycle: [10, 23],
-  },
-  verdict_fact_myth: {
-    id: "verdict_fact_myth",
-    choiceCount: 2,
-    readChoices: false,
-    thinkingPrompt: false,
-    thinking: [4, 6],
-    countdown: 3,
-    cycle: [10, 23],
-  },
   versus_faceoff: {
     id: "versus_faceoff",
     choiceCount: 2,
@@ -102,7 +84,6 @@ const LAYOUT_GAMEPLAY: Partial<Record<QuizLayoutId, QuizGameplayArchetypeId>> = 
   visual_choices_three: "visual_identification",
   visual_choices_three_pure: "visual_spotting",
   verdict_yes_no: "verdict_yes_no",
-  verdict_true_false: "verdict_true_false",
   split_versus_two: "versus_faceoff",
   full_stack_list: "speed_blitz",
   mystery_reveal: "mystery_reveal",
@@ -110,19 +91,22 @@ const LAYOUT_GAMEPLAY: Partial<Record<QuizLayoutId, QuizGameplayArchetypeId>> = 
 
 export function resolveGameplayPolicy(input: {
   gameplay_id?: QuizGameplayArchetypeId;
-  layout_id?: QuizLayoutId;
+  /** Persisted questions may carry a free-form or retired layout id; unknown ids fall through. */
+  layout_id?: QuizLayoutId | (string & {});
   format?: QuizQuestionFormat;
   answer_mode?: string;
 }): GameplayPolicy {
+  const gameplayId = normalizeLegacyVerdictIdentifier<string | undefined>(input.gameplay_id) as QuizGameplayArchetypeId | undefined;
+  const layoutId = normalizeLegacyVerdictIdentifier<string | undefined>(input.layout_id) as QuizLayoutId | undefined;
   const id =
-    input.gameplay_id ??
-    (input.layout_id && LAYOUT_GAMEPLAY[input.layout_id]) ??
+    (gameplayId && gameplayId in QUIZ_GAMEPLAY_POLICIES ? gameplayId : undefined) ??
+    (layoutId && LAYOUT_GAMEPLAY[layoutId]) ??
     (input.answer_mode === "single_reveal"
       ? "mystery_reveal"
       : input.format === "odd_one_out"
         ? "visual_spotting"
-        : input.format === "true_false"
-          ? "verdict_true_false"
+        : input.format === "yes_no"
+          ? "verdict_yes_no"
           : "deep_trivia");
   return QUIZ_GAMEPLAY_POLICIES[id];
 }

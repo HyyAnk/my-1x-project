@@ -81,7 +81,14 @@ export async function generateChunkCandidates(
       existingQuestionSamples: sampleExisting,
     });
 
-    const rawOutput = await executePromptWithRetry(input.llmClient!, prompt, input.signal, rateLimiter);
+    const rawOutput = await executePromptWithRetry(
+      input.llmClient!,
+      prompt,
+      input.signal,
+      rateLimiter,
+      input.timeoutMs,
+      input.modelOverride,
+    );
     const parsed = parseBatchGenerationOutput(rawOutput, {
       archetypeId: archId,
       domainId: domId,
@@ -107,7 +114,14 @@ export async function generateChunkCandidates(
       existingQuestionSamples: sampleExisting,
     });
 
-    const rawOutput = await executePromptWithRetry(input.llmClient!, prompt, input.signal, rateLimiter);
+    const rawOutput = await executePromptWithRetry(
+      input.llmClient!,
+      prompt,
+      input.signal,
+      rateLimiter,
+      input.timeoutMs,
+      input.modelOverride,
+    );
     const parsed = parseReverseBatchGenerationOutput(rawOutput, targets, {
       archetypeId: chunk.archetypeId,
       language: input.language,

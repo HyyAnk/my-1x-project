@@ -2,6 +2,7 @@ import {
   BankTranslationContentSchema,
   normalizeLanguageCode,
   getLanguageDisplayLabel,
+  normalizeLegacyVerdictIdentifier,
   type BankGameplayArchetypeId,
   type BankQuestion,
   type BankTranslationContent,
@@ -18,11 +19,7 @@ const ARCHETYPE_TRANSCREATION_NUANCE: Record<Exclude<BankGameplayArchetypeId, "c
   [archetype: string]: string | undefined;
 } = {
   verdict_yes_no:
-    "Archetype: 'Yes or No'. The question asks a direct question or asserts a bold statement ending in 'Yes or No?' (or localized equivalent). Choice translations must strictly be Yes and No (e.g. 'Yes' / 'No', 'Sí' / 'No'). Explanations must convincingly clarify the scientific or factual reasoning.",
-  verdict_true_false:
-    "Archetype: 'True or False'. The question asserts a bold statement that sparks curiosity and challenges intuition, ending in 'True or False?' (or localized equivalent). Choice translations must strictly be True and False (e.g. 'True' / 'False', 'Verdadero' / 'Falso'). Explanations must convincingly clarify the scientific or factual reasoning.",
-  verdict_fact_myth:
-    "Archetype: 'True or False'. The question asserts a bold statement that sparks curiosity and challenges intuition, ending in 'True or False?' (or localized equivalent). Choice translations must strictly be True and False (e.g. 'True' / 'False', 'Verdadero' / 'Falso'). Explanations must convincingly clarify the scientific or factual reasoning.",
+    "Archetype: 'Yes or No'. The question is a natural, kid-friendly direct question ending in 'Yes or No?' (or localized equivalent). Choice translations must strictly be Yes and No (e.g. 'Yes' / 'No', 'Sí' / 'No'). Explanations must convincingly clarify the scientific or factual reasoning.",
   speed_blitz:
     "Archetype: 'Speed Blitz'. Phrasing must be ultra-concise with a rapid, driving rhythm (3-5 second read). Preserve wit, humor, and intuitive twist of the riddle without cluttered words.",
   deep_trivia:
@@ -44,7 +41,7 @@ export function buildQuestionTranscreationPrompt(params: BuildQuestionTranscreat
   const { question, targetLanguage, channelTone, additionalGuidelines } = params;
   const normLang = normalizeLanguageCode(targetLanguage);
   const langLabel = getLanguageDisplayLabel(normLang);
-  const archetypeNuance = ARCHETYPE_TRANSCREATION_NUANCE[question.archetype_id] || "";
+  const archetypeNuance = ARCHETYPE_TRANSCREATION_NUANCE[normalizeLegacyVerdictIdentifier<string>(question.archetype_id)] || "";
 
   const choicesList = question.choices
     .map((c) => `  - [ID: "${c.id}"] "${c.text}" (is_correct: ${c.id === question.correct_choice_id})`)

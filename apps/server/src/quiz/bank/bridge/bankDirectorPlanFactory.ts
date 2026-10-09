@@ -3,6 +3,7 @@ import {
   QuizPaletteIdSchema,
   QuizConfigSchema,
   getQuizGameplayArchetype,
+  normalizeLegacyVerdictIdentifier,
   type Channel,
   type DirectorArchetype,
   type DirectorPlan,
@@ -18,7 +19,7 @@ import { createEpisodeDirectorPlan } from "../../director/episodeDirectorPlan.js
  * Maps a quiz archetype identifier to a corresponding DirectorArchetype.
  */
 export function mapToDirectorArchetype(archetypeId?: string, fallback: DirectorArchetype = "text_multiple_choice"): DirectorArchetype {
-  switch (archetypeId) {
+  switch (normalizeLegacyVerdictIdentifier(archetypeId)) {
     case "mystery_reveal":
       return "mystery_reveal";
     case "versus_faceoff":
@@ -26,9 +27,6 @@ export function mapToDirectorArchetype(archetypeId?: string, fallback: DirectorA
       return "visual_multiple_choice";
     case "verdict_yes_no":
       return "yes_no";
-    case "verdict_true_false":
-    case "verdict_fact_myth":
-      return "true_false";
     case "visual_spotting":
       return "odd_one_out";
     case "speed_blitz":
@@ -54,9 +52,6 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
         return "mystery_reveal";
       case "verdict_yes_no":
         return "verdict_yes_no";
-      case "verdict_true_false":
-      case "verdict_fact_myth":
-        return "verdict_true_false";
       case "versus_faceoff":
         return "split_versus_two";
       case "visual_spotting":
@@ -71,9 +66,6 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
   }
   if (topic.quiz_format === "yes_no") {
     return "verdict_yes_no";
-  }
-  if (topic.quiz_format === "true_false") {
-    return "verdict_true_false";
   }
   if (topic.quiz_format === "odd_one_out") {
     return "visual_choices_three_pure";

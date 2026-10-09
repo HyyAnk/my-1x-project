@@ -36,8 +36,8 @@ export function assessGameplayQa(input: {
       )
     )
       add("gameplay_early_answer_voice", "Answer narration precedes the visual reveal.");
-    if (policy.id === "versus_faceoff" && question.choices.some((choice) => /^(true|false)$/i.test(choice.text.trim())))
-      add("gameplay_versus_verdict_labels", "Versus requires named competitors, not True/False labels.");
+    if (policy.id === "versus_faceoff" && question.choices.some((choice) => /^(true|false|yes|no)$/i.test(choice.text.trim())))
+      add("gameplay_versus_verdict_labels", "Versus requires named competitors, not Yes/No labels.");
     if (policy.id === "speed_blitz" && (question.question.length > 70 || question.choices.some((choice) => choice.text.length > 40)))
       add("gameplay_speed_reading_load", "Speed Blitz text is too long for a rapid reading window.", "warning");
     if (policy.id === "visual_spotting")

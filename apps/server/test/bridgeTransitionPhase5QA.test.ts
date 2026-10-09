@@ -274,7 +274,7 @@ describe("Phase 5: Automated Testing, Rendering Parity & QA", () => {
 
       const topicEvent = timeline.events.find((e) => e.type === "bridge.topic.enter");
       const stingerEvent = timeline.events.find(
-        (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_cta",
+        (e) => e.type === "transition.start" && e.payload?.instance_id === "bridge_topic_to_question",
       );
       const ctaEvent = timeline.events.find((e) => e.type === "bridge.cta.enter");
       const ctaVoiceNarrationEvent = timeline.events.find(
@@ -297,8 +297,10 @@ describe("Phase 5: Automated Testing, Rendering Parity & QA", () => {
       // 2. Stinger duration is calibrated to 1.3s
       expect(stingerEvent!.duration_seconds).toBe(1.3);
 
-      // 3. CTA scene starts at transition midpoint (0.65s after stinger start)
-      expect(ctaStart - stingerStart).toBeCloseTo(0.65, 2);
+      // 3. Question 1 enters at the stinger midpoint (0.65s after stinger start); the CTA plays later, mid-roll
+      const firstQuestionStart = timeline.events.find((e) => e.type === "question.enter")!.at_seconds;
+      expect(firstQuestionStart - stingerStart).toBeCloseTo(0.65, 2);
+      expect(ctaStart).toBeGreaterThan(firstQuestionStart);
 
       // 4. CTA voice narration begins slightly after CTA scene enters (giving visual reveal room)
       expect(ctaVoiceNarrationEvent!.at_seconds).toBeGreaterThanOrEqual(ctaStart);

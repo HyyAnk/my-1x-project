@@ -1003,23 +1003,6 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   box-sizing: border-box;
 }
 
-.bridge-item-caption {
-  position: absolute;
-  bottom: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.9);
-  border: 2px solid #FFFFFF;
-  border-radius: 999px;
-  padding: 4px 16px;
-  font-family: "Fredoka", "Baloo 2", "Nunito", sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  color: #FFFFFF;
-  white-space: nowrap;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
-}
-
 /* Pop-in Entrance & Float Keyframes */
 .bridge-showcase-item.item-1 {
   animation: bridge-item-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.30s) both,

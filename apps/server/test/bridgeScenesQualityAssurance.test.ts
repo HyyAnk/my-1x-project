@@ -187,10 +187,11 @@ describe("Stage 9: Quality Assurance & Contrast Linting", () => {
       expect(ctaEvent).toBeDefined();
       expect(ctaEvent?.duration_seconds).toBeGreaterThanOrEqual(2.0);
 
-      // Question 1 must start AFTER the bridge CTA scene
+      // Question 1 follows the topic scene directly; the CTA is a mid-roll interstitial after it
       const q1EnterEvent = timeline.events.find((e) => e.question_id === "q-1" && e.type === "question.enter");
       expect(q1EnterEvent).toBeDefined();
-      expect(q1EnterEvent!.at_seconds).toBeGreaterThanOrEqual(ctaEvent!.at_seconds + ctaEvent!.duration_seconds);
+      expect(q1EnterEvent!.at_seconds).toBeGreaterThanOrEqual(topicEvent!.at_seconds + topicEvent!.duration_seconds);
+      expect(ctaEvent!.at_seconds).toBeGreaterThan(q1EnterEvent!.at_seconds);
 
       // Build candy arcade composition bundle
       const styleContext = {

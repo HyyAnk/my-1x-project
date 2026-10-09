@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import sharp from "sharp";
 import { hashBankQuestionSource, type BankQuestion, type TopicCandidate, type ShortReelTopicCandidate } from "@studio/shared";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
 import { RepositoryService } from "../src/repository/service.js";
@@ -11,6 +12,7 @@ import { createEpisodeFromTopicWithBank } from "../src/quiz/bank/questionBankToQ
 import { confirmShortReelTopic } from "../src/shortReel/topicConfirmation.js";
 import { generateEpisodeDescription } from "../src/quiz/pipeline/orchestrator.js";
 import { generateEpisodeThumbnail } from "../src/quiz/thumbnail/thumbnailService.js";
+import { AntigravityImageChainProvider } from "../src/providers/antigravityImageChain.js";
 import { generateReelScriptUnit } from "../src/shortReel/packageService.js";
 import { exportShortReelPackage } from "../src/shortReel/exportService.js";
 import {
@@ -25,11 +27,20 @@ const projectRoot = path.resolve(__dirname, "../../..");
 
 const testConfig = { audio_generation: { provider: "mock" } as never };
 
+function createMockArtworkPng(): Promise<Buffer> {
+  return sharp({
+    create: { width: 1280, height: 720, channels: 3, background: { r: 24, g: 48, b: 96 } },
+  })
+    .png()
+    .toBuffer();
+}
+
 describe("Phase 4: Product Localization Consumers & Finding L1/L2 Regressions", () => {
   const roots: string[] = [];
 
   afterEach(async () => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
     await Promise.all(roots.splice(0).map((r) => rm(r, { recursive: true, force: true }).catch(() => {})));
   });
 
@@ -438,7 +449,7 @@ describe("Phase 4: Product Localization Consumers & Finding L1/L2 Regressions", 
 
   describe("Thumbnail and Script Prompt Boundaries", () => {
     it("keeps thumbnail AI planner instructions English while setting target language to de", async () => {
-      const { repo, channel } = await createFixture("de");
+      const { repo, channel, root } = await createFixture("de");
       const bankQuestions = await seedBankQuestions(repo, 3);
 
       const epCandidate = makeEpisodeCandidate(channel.channel_id, "top-ep-thumb", bankQuestions);
@@ -485,6 +496,19 @@ describe("Phase 4: Product Localization Consumers & Finding L1/L2 Regressions", 
         },
       };
 
+      // Editorial thumbnails fail closed without artwork, so stub the Antigravity image chain
+      // with local 16:9 art and keep developer provider keys out of the provider cascade.
+      for (const envKey of ["GPTI2_API_KEY", "SHOPAIKEY_API_KEY", "IMGSTUDIO_API_KEY", "GEMINI_API_KEY"]) {
+        vi.stubEnv(envKey, "");
+      }
+      const mockArtworkPath = path.join(root, "mock-thumbnail-artwork.png");
+      await writeFile(mockArtworkPath, await createMockArtworkPng());
+      vi.spyOn(AntigravityImageChainProvider.prototype, "generateReference").mockResolvedValue({
+        asset_path: mockArtworkPath,
+        fallback_tier: 1,
+        degraded: false,
+      });
+
       await generateEpisodeThumbnail(repo, {
         channelId: channel.channel_id,
         episodeId: episode.episode_id,
@@ -492,10 +516,12 @@ describe("Phase 4: Product Localization Consumers & Finding L1/L2 Regressions", 
         antigravityClient: mockThumbLlm,
       });
 
-      // Target language in prompt must be "de", NOT "fr"
-      expect(capturedThumbnailPrompt).toContain('- Target Language: "de"');
+      // Editorial planner (default when no layout override) carries the target language as data: "de", NOT "fr"
+      expect(capturedThumbnailPrompt).toContain('"language":"de"');
+      expect(capturedThumbnailPrompt).not.toContain('"language":"fr"');
       // Visual scene instructions stay English
-      expect(capturedThumbnailPrompt).toContain("clean minimalist, soft-focus Pixar 3D studio background");
+      expect(capturedThumbnailPrompt).toContain("Plan an editorial YouTube quiz thumbnail");
+      expect(capturedThumbnailPrompt).toContain("environment_atmosphere");
       expect(capturedThumbnailPrompt).toContain("lighting_palette");
     });
 

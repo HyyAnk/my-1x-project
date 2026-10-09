@@ -5,6 +5,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Kratos",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Ghost of Sparta",
       "God of War",
@@ -51,6 +52,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Geralt of Rivia",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "White Wolf",
       "Butcher of Blaviken",
@@ -97,6 +99,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Arthur Morgan",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Tacitus Kilgore",
       "Fenton",
@@ -143,6 +146,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Master Chief",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "John-117",
       "The Demon",
@@ -189,6 +193,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Nathan Drake",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Nate",
       "Sir Francis Drake",
@@ -235,6 +240,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Lara Croft",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Tomb Raider",
       "Countess of Abbingdon",
@@ -281,6 +287,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Joel Miller",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Joel",
       "Texas Smuggler",
@@ -327,6 +334,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Ellie Williams",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Ellie",
       "The Immune Girl",
@@ -373,6 +381,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Solid Snake",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "David",
       "Old Snake",
@@ -419,6 +428,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Ezio Auditore da Firenze",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Mentor of the Italian Brotherhood",
       "Il Mentore",
@@ -465,6 +475,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Aloy",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Aloy of the Nora",
       "The Anointed",
@@ -512,6 +523,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "John Marston",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Rip Van Winkle",
       "Jim Milton",
@@ -559,6 +571,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Atreus",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Loki",
       "Boy",
@@ -606,6 +619,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Big Boss",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Naked Snake",
       "John",
@@ -655,6 +669,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Altair Ibn-La'Ahad",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Altair",
       "The Mentor",
@@ -702,6 +717,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Jin Sakai",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Ghost",
       "Ghost of Tsushima",
@@ -748,6 +764,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Marcus Fenix",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Marcus Michael Fenix",
       "Sergeant Fenix",
@@ -794,6 +811,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Sam Porter Bridges",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Great Deliverer",
       "Sam Strand",
@@ -840,6 +858,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Gordon Freeman",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The One Free Man",
       "The Freeman",
@@ -886,6 +905,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "G-Man",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Bureaucrat",
       "The Interdimensional Bureaucrat",
@@ -932,6 +952,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Alan Wake",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Champion of Light",
       "Tom Zane's Double",
@@ -978,6 +999,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Corvo Attano",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Royal Protector",
       "Lord Protector",
@@ -1025,6 +1047,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Bayonetta",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Cereza",
       "The Umbra Witch",
@@ -1071,6 +1094,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Dante",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Tony Redgrave",
       "The Legendary Dark Knight's Son",
@@ -1117,6 +1141,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Vergil",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Alpha and the Omega",
       "Nelo Angelo",
@@ -1163,6 +1188,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Leon S. Kennedy",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Leon Scott Kennedy",
       "Agent Kennedy",
@@ -1209,6 +1235,7 @@
     "subtopic_id": "action_adventure_openworld",
     "name": "Jill Valentine",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Master of Unlocking",
       "Special Agent Valentine",
@@ -1255,6 +1282,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Jinx",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Loose Cannon",
       "Powder",
@@ -1301,6 +1329,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Yasuo",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Unforgiven",
       "Wind Samurai",
@@ -1347,6 +1376,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Ahri",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Nine-Tailed Fox",
       "Gumiho",
@@ -1393,6 +1423,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Faker",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Unkillable Demon King",
       "Lee Sang-hyeok",
@@ -1439,6 +1470,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Pudge",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Butcher",
       "Meat Hook Master",
@@ -1485,6 +1517,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Invoker",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Kael",
       "Carl",
@@ -1531,6 +1564,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Tracer",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Lena Oxton",
       "The Time Jumper",
@@ -1577,6 +1611,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Mercy",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Dr. Angela Ziegler",
       "Valkyrie",
@@ -1623,6 +1658,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Genji",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Genji Shimada",
       "Sparrow",
@@ -1669,6 +1705,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Jett",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Sunwoo Han",
       "Wind Duelist",
@@ -1715,6 +1752,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Phoenix",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Grant Sloane",
       "Firestarter",
@@ -1762,6 +1800,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Reyna",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Zyanya Mondragon",
       "The Empress",
@@ -1809,6 +1848,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Sova",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Sasha Novikov",
       "The Hunter",
@@ -1856,6 +1896,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Wraith",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Renee Hope Blasey",
       "Interdimensional Skirmisher",
@@ -1903,6 +1944,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Bloodhound",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Technological Tracker",
       "Child of the Allfather",
@@ -1950,6 +1992,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Pathfinder",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "MRVN",
       "Forward Scout",
@@ -1997,6 +2040,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Jonesy",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Agent Jones",
       "Default Jonesy",
@@ -2044,6 +2088,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Peely",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Agent Peely",
       "Bananaman",
@@ -2091,6 +2136,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Ryu",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "World Warrior",
       "Master of the Fist",
@@ -2138,6 +2184,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Chun-Li",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "First Lady of Fighting Games",
       "The Strongest Woman in the World",
@@ -2184,6 +2231,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Jin Kazama",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Devil Jin",
       "The Child of Destiny",
@@ -2230,6 +2278,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Kazuya Mishima",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Devil Kazuya",
       "Cold-Blooded Oppressor",
@@ -2276,6 +2325,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Scorpion",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Hanzo Hasashi",
       "Specter of the Netherrealm",
@@ -2322,6 +2372,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Sub-Zero",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Kuai Liang",
       "Bi-Han",
@@ -2368,6 +2419,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "s1mple",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Oleksandr Kostyliev",
       "The Undertaker",
@@ -2414,6 +2466,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Shadow Fiend",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Nevermore",
       "Lord of the Abysm",
@@ -2460,6 +2513,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Teemo",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Swift Scout",
       "Captain Teemo",
@@ -2506,6 +2560,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Thresh",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Chain Warden",
       "Ghost of the Shadow Isles",
@@ -2552,6 +2607,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Lee Sin",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Blind Monk",
       "Dragon of Ionia",
@@ -2598,6 +2654,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Reinhardt",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Reinhardt Wilhelm",
       "The Lion of Overwatch",
@@ -2644,6 +2701,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Octane",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Octavio Silva",
       "The High-Speed Daredevil",
@@ -2653,24 +2711,24 @@
     "difficulty": 1,
     "visual_anchor": "A high-octane 9:16 vertical action shot of Octane sprinting forward at breakneck speed across a sun-scorched canyon in Kings Canyon, wearing his signature leather aviator cap, skull-patterned green mouth filter, goggles, and cybernetic bionic legs, leaving a vibrant trail of glowing green stim fluid and sparks in his wake.",
     "core_traits": [
-      "Thrill-seeking competitor in the Apex Games who lost both of his biological legs after grenade-jumping across a Gauntlet obstacle course",
+      "Thrill-seeking competitor who replaced both legs with high-tech bionic ones after a risky racing stunt",
       "Uses robotic bionic prosthetics engineered by his close friend Lifeline (Ajay Che) to maintain relentless agility",
       "Tactical ability Stim grants a sudden burst of movement speed at the cost of his own health, offset by passive Swift Mend regeneration",
       "Ultimate ability deploys an explosive Launch Pad that catapults teammates and foes high through the air with a double-jump mechanic"
     ],
     "distractor_pool": [
-      "Pathfinder",
-      "Wraith",
-      "Lucio",
-      "Jett",
-      "Valkyrie"
+      "Sonic the Hedgehog",
+      "Lightning McQueen",
+      "Speedy Gonzales",
+      "The Flash",
+      "Crash Bandicoot"
     ],
     "facts_and_myths": [
       {
-        "claim": "Octane blew off his own legs with a grenade to set an impossible speedrun record in a simulation gauntlet.",
+        "claim": "Octane's speed-running backstory was inspired by real video game speedrunners.",
         "verdict": "fact",
-        "explanation": "In Apex Legends lore, Octavio Silva used a frag grenade blast to propel himself across the finish line of the Titanfall Gauntlet course, inspired by real-world Titanfall 2 speedrunners.",
-        "fun_fact": "Respawn Entertainment specifically based Octane's backstory on legendary speedrunner Cash_Mayo, who held the real-world world record for Titanfall 2's Pilot Gauntlet using grenade propulsion."
+        "explanation": "His creators based his story on Titanfall 2 players who raced through that game's Pilot Gauntlet training course.",
+        "fun_fact": "Octane's real name is Octavio Silva, and he loves speed and wild stunts."
       },
       {
         "claim": "Octane's robotic legs were manufactured and gifted to him by his wealthy corporate father Torres Silva.",
@@ -2680,9 +2738,9 @@
       }
     ],
     "versus_candidates": [
-      "Pathfinder",
-      "Lucio",
-      "Jett"
+      "Sonic the Hedgehog",
+      "Lightning McQueen",
+      "The Flash"
     ]
   },
   {
@@ -2691,6 +2749,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Sage",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Ling Ying Wei",
       "The Healer",
@@ -2738,6 +2797,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Cypher",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Aamir El Amari",
       "The Information Broker",
@@ -2785,6 +2845,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Akuma",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Gouki",
       "The Master of the Fist",
@@ -2832,6 +2893,7 @@
     "subtopic_id": "multiplayer_esports",
     "name": "Raiden",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Lord Raiden",
       "God of Thunder",
@@ -2879,6 +2941,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Mario",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Super Mario",
       "Jumpman",
@@ -2925,6 +2988,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Luigi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Green Plumber",
       "Mama Luigi",
@@ -2971,6 +3035,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Princess Peach",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Princess Toadstool",
       "Peach",
@@ -3017,6 +3082,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Bowser",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "King Koopa",
       "Bowser Koopa",
@@ -3063,6 +3129,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Yoshi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "T. Yoshisaur Munchakoopas",
       "Green Yoshi",
@@ -3109,6 +3176,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Link",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hero of Time",
       "Hero of the Wild",
@@ -3126,7 +3194,7 @@
       "Princess Zelda",
       "Pit",
       "Marth",
-      "Cloud Strife",
+      "Shovel Knight",
       "Ganondorf"
     ],
     "facts_and_myths": [
@@ -3145,7 +3213,7 @@
     ],
     "versus_candidates": [
       "Ganondorf",
-      "Cloud Strife",
+      "Pit",
       "Princess Zelda"
     ]
   },
@@ -3155,6 +3223,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Princess Zelda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sheik",
       "Tetra",
@@ -3201,6 +3270,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Ganondorf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ganon",
       "Great King of Evil",
@@ -3212,11 +3282,11 @@
       "Primary arch-nemesis of Link and Princess Zelda across the Legend of Zelda chronology",
       "Sole male born to the desert-dwelling Gerudo tribe once every one hundred years, crowned as their king",
       "Bearer of the Triforce of Power, seeking to conquer Hyrule and reshape reality in his twisted image",
-      "Transforms into the titanic, demonic beast known as Ganon through the unchecked power of ancient hatred"
+      "Transforms into the giant boar-like beast Ganon through dark magic"
     ],
     "distractor_pool": [
       "Bowser",
-      "Sephiroth",
+      "King Dedede",
       "Ridley",
       "King K. Rool",
       "Mewtwo"
@@ -3238,7 +3308,7 @@
     "versus_candidates": [
       "Link",
       "Bowser",
-      "Sephiroth"
+      "Dr. Eggman"
     ]
   },
   {
@@ -3247,6 +3317,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Samus Aran",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Hunter",
       "Metroid Hunter",
@@ -3264,8 +3335,8 @@
       "Mega Man",
       "Captain Falcon",
       "Fox McCloud",
-      "Master Chief",
-      "Doom Slayer"
+      "Ratchet",
+      "Buzz Lightyear"
     ],
     "facts_and_myths": [
       {
@@ -3283,7 +3354,7 @@
     ],
     "versus_candidates": [
       "Ridley",
-      "Master Chief",
+      "Fox McCloud",
       "Mega Man"
     ]
   },
@@ -3293,8 +3364,8 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Ridley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "The Cunning God of Death",
       "Meta Ridley",
       "Geoform 187"
     ],
@@ -3302,9 +3373,9 @@
     "visual_anchor": "A menacing 9:16 vertical portrait of the skeletal dragon Ridley perched on a metal precipice over a smelting reactor, glowing yellow reptilian eyes gleaming, barbed tail raised ready to strike, and leathery purple pterodactyl wings spread wide in smoke.",
     "core_traits": [
       "High-ranking commander of the Space Pirates and the supreme personal archenemy of bounty hunter Samus Aran",
-      "Sentient extraterrestrial dragon possessing ruthless sadistic intellect despite his feral, monstrous appearance",
-      "Directly responsible for the slaughter of Samus Aran's parents during the Space Pirate assault on colony K-2L",
-      "Displays miraculous regenerative biology, repeatedly returning from death as cybernetically upgraded Meta Ridley and Omega Ridley"
+      "Space dragon with a sharp, cunning mind despite his monstrous appearance",
+      "The space dragon who attacked Samus Aran's home colony K-2L when she was a child",
+      "Keeps coming back stronger after defeat, returning as robotic Meta Ridley and Omega Ridley"
     ],
     "distractor_pool": [
       "Kraid",
@@ -3315,16 +3386,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Ridley was named in tribute to Ridley Scott, the director of the seminal 1979 sci-fi horror film Alien.",
+        "claim": "Ridley was named after Ridley Scott, a famous science fiction film director.",
         "verdict": "fact",
-        "explanation": "Metroid was heavily inspired by the visual atmosphere and bio-mechanical horror of Ridley Scott's Alien, leading the Nintendo design team to name the primary draconic boss after the director.",
-        "fun_fact": "Metroid co-creator Yoshio Sakamoto has cited Ridley Scott and H.R. Giger as primary visual influences for the series."
+        "explanation": "Metroid's creators admired the dark space look of Ridley Scott's films and named their dragon boss after him.",
+        "fun_fact": "Ridley became a playable fighter for the first time in Super Smash Bros. Ultimate (2018)."
       },
       {
         "claim": "Ridley is a mindless savage space beast controlled through telepathic commands by Mother Brain.",
         "verdict": "myth",
-        "explanation": "Official Metroid lore and manga confirm Ridley is a highly intelligent military commander capable of speech, tactical engineering, and sadistic cunning, often serving as the field general of the Space Pirates.",
-        "fun_fact": "In official manga canon, Ridley taunted a young Samus about consuming the flesh of her deceased parents to regenerate his cells."
+        "explanation": "Metroid stories show Ridley as a clever commander who can speak and leads the Space Pirates in the field.",
+        "fun_fact": "In Super Smash Bros. Ultimate, Ridley was shrunk down so he could fit alongside the other fighters."
       }
     ],
     "versus_candidates": [
@@ -3339,8 +3410,8 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Kirby",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "The Pink Demon",
       "Star Warrior",
       "Popstar Hero",
       "Super Star"
@@ -3386,6 +3457,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Meta Knight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Masked Swordsman",
       "Captain of the Halberd",
@@ -3432,6 +3504,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "King Dedede",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Self-proclaimed King of Dream Land",
       "Dedede",
@@ -3441,7 +3514,7 @@
     "visual_anchor": "Vibrant vertical 9:16 illustration of King Dedede wearing his royal red trimmed robe and crowned yellow pom-pom cap, swinging a massive wooden mechanized hammer with a booming laugh in his grand castle throne room.",
     "core_traits": [
       "Self-proclaimed monarch of Dream Land portrayed as an oversized, rotund blue penguin-like creature",
-      "Wields a colossal star-stamped wooden mallet equipped with hidden rocketry and mechanical weaponry",
+      "Swings a giant star-stamped wooden mallet, sometimes fitted with rocket boosters",
       "Capable of inhaling air to float and puffing himself up to rival Kirby's flight and vacuum abilities",
       "Serves as an alternating arch-rival and reluctant ally who frequently falls victim to dark mind control"
     ],
@@ -3462,8 +3535,8 @@
       {
         "claim": "King Dedede is a malicious, evil tyrant who wants to conquer and destroy the universe.",
         "verdict": "myth",
-        "explanation": "Dedede is primarily selfish, greedy, and prideful rather than truly evil; in several games he stole food or stars for petty reasons or broke sacred relics like the Star Rod to protect the kingdom from greater evils like Nightmare.",
-        "fun_fact": "In Kirby's Adventure, Dedede hid the pieces of the Star Rod specifically to keep the nightmare entity sealed away, making him an unwitting protector."
+        "explanation": "Dedede is mostly selfish, greedy, and proud rather than truly evil, and he sometimes even protects Dream Land.",
+        "fun_fact": "In Kirby's Adventure, Dedede broke the Star Rod into pieces to keep a dark villain sealed away."
       }
     ],
     "versus_candidates": [
@@ -3478,6 +3551,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Donkey Kong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DK",
       "The King of the Jungle",
@@ -3524,6 +3598,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Diddy Kong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diddy",
       "The Little Chimpanzee",
@@ -3570,6 +3645,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Fox McCloud",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leader of Star Fox",
       "Fox",
@@ -3616,6 +3692,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Captain Falcon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Douglas Jay Falcon",
       "The Blue Falcon Pilot",
@@ -3662,6 +3739,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Wario",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Scoundrel of Greed",
       "Wario-Man",
@@ -3708,6 +3786,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Waluigi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Purple Troublemaker",
       "Wario's Partner",
@@ -3754,6 +3833,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Toad",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kinopio",
       "Captain Toad",
@@ -3782,10 +3862,10 @@
         "fun_fact": "In Japan, Toad is known as Kinopio, derived from the Japanese word 'kinoko' which means mushroom."
       },
       {
-        "claim": "Toad and Toadette are canonically confirmed to be husband and wife or romantic lovers.",
+        "claim": "Captain Toad can jump just like Mario in Captain Toad: Treasure Tracker.",
         "verdict": "myth",
-        "explanation": "Nintendo representative Koichi Hayashida clarified during the release of Captain Toad: Treasure Tracker that Toads are genderless and Toad and Toadette are simply adventure buddies, not romantically involved.",
-        "fun_fact": "Captain Toad's backpack is so heavy with excavation gear that he is one of the few platformer heroes completely unable to jump."
+        "explanation": "Captain Toad's backpack is so heavy with treasure-hunting gear that he cannot jump at all.",
+        "fun_fact": "Captain Toad first appeared in Super Mario Galaxy in 2007."
       }
     ],
     "versus_candidates": [
@@ -3800,6 +3880,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Sonic the Hedgehog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Blue Blur",
       "Sonic",
@@ -3847,6 +3928,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Miles 'Tails' Prower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tails",
       "Miles Prower",
@@ -3893,6 +3975,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Knuckles the Echidna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Knuckles",
       "Rad Red",
@@ -3939,6 +4022,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Dr. Eggman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dr. Ivo Robotnik",
       "Doctor Eggman",
@@ -3986,6 +4070,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Shadow the Hedgehog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Ultimate Lifeform",
       "Shadow",
@@ -4003,21 +4088,21 @@
       "Knuckles the Echidna",
       "Silver the Hedgehog",
       "Metal Sonic",
-      "Sephiroth",
+      "Rouge the Bat",
       "Riku"
     ],
     "facts_and_myths": [
       {
-        "claim": "Shadow was originally intended to die permanently at the end of his debut appearance in Sonic Adventure 2.",
+        "claim": "Shadow's story was first planned to end after Sonic Adventure 2.",
         "verdict": "fact",
-        "explanation": "Sonic Adventure 2 was written as a one-off story where Shadow sacrifices himself falling into Earth's atmosphere, but overwhelming fan popularity prompted Sonic Team to revive him in Sonic Heroes.",
+        "explanation": "Sonic Adventure 2 seemed to be Shadow's last adventure, but fans loved him so much that he returned in Sonic Heroes.",
         "fun_fact": "During development of Sonic Adventure 2, Shadow was codenamed Terios, which translates roughly to reflection of."
       },
       {
         "claim": "Shadow is a direct physical clone created in a laboratory from Sonic the Hedgehog's DNA.",
         "verdict": "myth",
         "explanation": "Shadow was engineered aboard the Space Colony ARK using the alien DNA of Black Doom fifty years before Sonic was even born, meaning he is not a clone of Sonic.",
-        "fun_fact": "Shadow wielded real firearms and drove military motorcycles in his self-titled 2005 spin-off game Shadow the Hedgehog."
+        "fun_fact": "Shadow got his own self-titled spin-off game, Shadow the Hedgehog, in 2005."
       }
     ],
     "versus_candidates": [
@@ -4032,16 +4117,16 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Mega Man",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rockman",
-      "The Blue Bomber",
       "Rock"
     ],
     "difficulty": 1,
     "visual_anchor": "Classic vertical 9:16 retro-futuristic illustration of Mega Man sliding across a metallic futuristic factory floor, blue armored arm cannon Mega Buster charging a bright turquoise plasma blast surrounded by flying robot sentries.",
     "core_traits": [
       "Iconic humanoid robot created by Dr. Thomas Light in 200X to defeat the rogue robotic forces of Dr. Albert Wily",
-      "Equipped with the arm-mounted Mega Buster plasma cannon and the unique Variable Weapon System to copy defeated bosses' powers",
+      "Uses the arm-mounted Mega Buster and copies the special powers of the bosses he defeats",
       "Debuted on the Nintendo Entertainment System in 1987 as Capcom's legendary action-platforming mascot",
       "Accompanied into combat by his faithful cybernetic canine companion Rush and robotic sister Roll"
     ],
@@ -4063,7 +4148,7 @@
         "claim": "Keiji Inafune was the sole creative designer who invented the original concept and sprite of Mega Man.",
         "verdict": "myth",
         "explanation": "Keiji Inafune has clarified that Akira Kitamura originally created the concept and sprite design for Mega Man, while Inafune refined the art and drew the character illustrations.",
-        "fun_fact": "The infamous North American NES cover art featured an awkwardly posed middle-aged man in a yellow-and-blue suit holding a real pistol."
+        "fun_fact": "The odd North American cover art for the first game showed a grown man in a yellow-and-blue suit."
       }
     ],
     "versus_candidates": [
@@ -4078,6 +4163,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Pac-Man",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Puck Man",
       "The Yellow Dot-Eater",
@@ -4109,7 +4195,7 @@
         "claim": "The four ghosts in Pac-Man pursue the player with identical chasing algorithms to ensure relentless pressure.",
         "verdict": "myth",
         "explanation": "Each ghost operates under completely different behavioral logic: Blinky pursues directly, Pinky ambushes four tiles ahead, Inky flanks based on Blinky's position, and Clyde wanders away when close.",
-        "fun_fact": "A perfect game of Pac-Man requires completing all 256 stages without dying once, reaching the famous half-screen glitch with a maximum score of 3,333,360 points."
+        "fun_fact": "A perfect game of Pac-Man means clearing all 256 levels without losing a life, scoring 3,333,360 points."
       }
     ],
     "versus_candidates": [
@@ -4124,6 +4210,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Crash Bandicoot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crash",
       "The Orange Menace",
@@ -4170,6 +4257,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Spyro the Dragon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spyro",
       "The Purple Dragon"
@@ -4215,6 +4303,7 @@
     "subtopic_id": "platformer_nintendo",
     "name": "Rayman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Limbless Wonder",
       "Ray"
@@ -4260,6 +4349,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Cloud Strife",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Ex-SOLDIER First Class",
       "Spiky-Headed Hero",
@@ -4307,6 +4397,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Sephiroth",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The One-Winged Angel",
       "The Silver-Haired SOLDIER",
@@ -4354,6 +4445,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Tifa Lockhart",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Brawler of Seventh Heaven",
       "AVALANCHE Martial Artist",
@@ -4400,6 +4492,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Aerith Gainsborough",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Last Cetra",
       "The Flower Girl of Sector 5",
@@ -4447,6 +4540,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Noctis Lucis Caelum",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The True King",
       "Prince of Lucis",
@@ -4495,6 +4589,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Clive Rosfield",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "First Shield of Rosaria",
       "Dominant of Ifrit",
@@ -4543,6 +4638,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Squall Leonhart",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Lone Wolf of Balamb",
       "SeeD Commander",
@@ -4590,6 +4686,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Dragonborn",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Dovahkiin",
       "Hero of Skyrim",
@@ -4638,6 +4735,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Alduin",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The World-Eater",
       "Firstborn of Akatosh",
@@ -4685,6 +4783,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Sheogorath",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Madgod",
       "Daedric Prince of Madness",
@@ -4733,6 +4832,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Commander Shepard",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The First Human Spectre",
       "Shepard-Commander",
@@ -4780,6 +4880,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Garrus Vakarian",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Archangel",
       "Vakarian",
@@ -4826,6 +4927,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Liara T'Soni",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Dr. T'Soni",
       "The Shadow Broker",
@@ -4872,6 +4974,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Malenia, Blade of Miquella",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Goddess of Rot",
       "Severed Twin",
@@ -4919,6 +5022,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Ranni the Witch",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Lunar Princess Ranni",
       "Renna",
@@ -4965,6 +5069,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Radahn",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Starscourge Radahn",
       "General Radahn",
@@ -5012,6 +5117,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "The Tarnished",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Tarnished of No Renown",
       "Elden Lord",
@@ -5059,6 +5165,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Artorias the Abysswalker",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Knight Artorias",
       "The Abysswalker",
@@ -5105,6 +5212,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Solaire of Astora",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Knight Solaire",
       "Warrior of Sunlight",
@@ -5151,6 +5259,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Gwyn, Lord of Cinder",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Lord Gwyn",
       "Lord of Sunlight",
@@ -5198,6 +5307,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Hunter",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Good Hunter",
       "Yharnam Hunter",
@@ -5245,6 +5355,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Wolf",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Sekiro",
       "One-Armed Wolf",
@@ -5292,6 +5403,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Isshin, the Sword Saint",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Sword Saint Isshin",
       "Lord Isshin",
@@ -5339,6 +5451,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Sora",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Keyblade Wielder",
       "Keyblade's Chosen",
@@ -5347,7 +5460,7 @@
     "difficulty": 1,
     "visual_anchor": "Vibrant 9:16 vertical portrait of Sora with spiky brown hair, oversized yellow shoes, and silver crown necklace, triumphantly pointing the gleaming Kingdom Key Keyblade upward toward a heart-shaped moon.",
     "core_traits": [
-      "Upbeat, kindhearted youth from Destiny Islands whose heart was chosen to wield the mystical Kingdom Key weapon",
+      "Upbeat, kindhearted youth from Destiny Islands whose heart was chosen to wield the magical Kingdom Key",
       "Journeys through iconic Disney and Square Enix realms aboard the Gummi Ship accompanied by Donald Duck and Goofy",
       "Battles the shadow Heartless, Organization XIII Nobodies, and the dark machinations of Master Xehanort across timelines",
       "Draws unstoppable strength from unbreakable friendship bonds, declaring that his friends are his true power"
@@ -5356,7 +5469,7 @@
       "Riku",
       "Roxas",
       "Ventus",
-      "Cloud Strife",
+      "Aqua",
       "Kairi"
     ],
     "facts_and_myths": [
@@ -5385,6 +5498,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Riku",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master Riku",
       "Keyblade Master Riku",
@@ -5416,7 +5530,7 @@
         "claim": "Riku permanently purged all darkness from his heart after defeating Ansem, Seeker of Darkness.",
         "verdict": "myth",
         "explanation": "Rather than obliterating his dark power, Riku learned to accept, tame, and channel darkness harmoniously alongside light, making him unique among Keyblade Masters.",
-        "fun_fact": "Riku's iconic intermediate blade, Way to the Dawn, manifests from his transformed soul weapon, Soul Eater."
+        "fun_fact": "Riku's Keyblade, Way to the Dawn, appears after his dark blade Soul Eater changes form."
       }
     ],
     "versus_candidates": [
@@ -5431,6 +5545,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "Chrono",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crono",
       "Hero of Time",
@@ -5442,21 +5557,21 @@
     "core_traits": [
       "Spiky red-haired silent swordsman from the peaceful village of Truce who stumbles into time travel at the Millennial Fair",
       "Journeys across prehistoric, medieval, post-apocalyptic, and magical antique eras aboard the flying time-ship Epoch",
-      "Wields deadly katana techniques infused with elemental lightning magic, climaxing in the legendary spell Luminaire",
+      "Uses swift katana skills charged with lightning magic, ending with the legendary spell Luminaire",
       "Unites diverse allies across millennia including a robotic humanoid, prehistoric chieftain, medieval knight frog, and reformed sorcerer"
     ],
     "distractor_pool": [
       "Magus",
       "Frog (Glenn)",
-      "Cloud Strife",
+      "Ness",
       "Link",
       "Serge"
     ],
     "facts_and_myths": [
       {
-        "claim": "Chrono can be permanently left dead for the remainder of the game if players choose not to revive him atop Death Peak.",
+        "claim": "Chrono Trigger has more than ten different endings that players can unlock.",
         "verdict": "fact",
-        "explanation": "After Chrono sacrifices himself against Lavos in the Ocean Palace, completing the quest with the Chrono Trigger doll to resurrect him is entirely optional to finish the game.",
+        "explanation": "Depending on when players challenge the final boss Lavos, they can see one of over a dozen different endings.",
         "fun_fact": "Chrono character designer Akira Toriyama styled Chrono's iconic spiked hair and determined face very similarly to his Dragon Ball protagonist Goku."
       },
       {
@@ -5469,7 +5584,7 @@
     "versus_candidates": [
       "Magus",
       "Link",
-      "Cloud Strife"
+      "Ness"
     ]
   },
   {
@@ -5478,6 +5593,7 @@
     "subtopic_id": "rpg_lore_franchises",
     "name": "2B",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "YoRHa No.2 Type B",
       "YoRHa No.2 Type E",
@@ -5525,6 +5641,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Steve",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Default Skin",
       "Minecraft Steve",
@@ -5540,10 +5657,10 @@
     ],
     "distractor_pool": [
       "Alex",
-      "Terrarian",
-      "Wilson",
+      "Villager (Animal Crossing)",
+      "Sackboy",
       "Roblox Noob",
-      "Guide"
+      "Mii"
     ],
     "facts_and_myths": [
       {
@@ -5560,7 +5677,7 @@
       }
     ],
     "versus_candidates": [
-      "Terrarian",
+      "Sackboy",
       "Alex",
       "Robloxian"
     ]
@@ -5571,6 +5688,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Alex",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Minecraft Alex",
       "Female Default Skin",
@@ -5586,10 +5704,10 @@
     ],
     "distractor_pool": [
       "Steve",
-      "Willow",
-      "Wendy",
-      "Zoologist",
-      "Party Girl"
+      "Inkling Girl",
+      "Isabelle",
+      "Mii",
+      "Villager (Animal Crossing)"
     ],
     "facts_and_myths": [
       {
@@ -5607,8 +5725,8 @@
     ],
     "versus_candidates": [
       "Steve",
-      "Willow",
-      "Guide"
+      "Inkling Girl",
+      "Isabelle"
     ]
   },
   {
@@ -5617,6 +5735,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Creeper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Charged Creeper",
       "Silent Terror",
@@ -5631,7 +5750,7 @@
       "Transforms into an electrified charged variant with massively amplified explosive force when struck by lightning."
     ],
     "distractor_pool": [
-      "Zombie",
+      "Iron Golem",
       "Skeleton",
       "Enderman",
       "Spider",
@@ -5645,9 +5764,9 @@
         "fun_fact": "Creepers are terrified of ocelots and domestic cats, immediately fleeing whenever a feline is nearby."
       },
       {
-        "claim": "Creepers drop music discs whenever they successfully kill a player with their suicide blast.",
+        "claim": "Creepers drop music discs whenever they explode near a player.",
         "verdict": "myth",
-        "explanation": "Creepers drop music discs only when their final fatal blow is delivered by a skeleton or stray's arrow, not when they kill players.",
+        "explanation": "Creepers drop music discs only when they are defeated by an arrow from a skeleton or a stray.",
         "fun_fact": "The Creeper face has become the iconic brand logo of Minecraft, appearing integrated directly into the letter 'A' of the title."
       }
     ],
@@ -5663,6 +5782,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Ender Dragon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jean",
       "The Dragon",
@@ -5709,6 +5829,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Sans",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sans the Skeleton",
       "Comic Sans",
@@ -5718,7 +5839,7 @@
     "visual_anchor": "Atmospheric vertical 9:16 shot of Sans standing in the sunlit Judgement Hall, hands casually tucked into blue hoodie pockets, left eye socket igniting with flashing cyan and yellow flame while skeletal Gaster Blasters loom in the background.",
     "core_traits": [
       "Laid-back, pun-loving skeleton sentry in Snowdin who frequently slacks off at hot dog stands and pranks the protagonist.",
-      "Serves as the notoriously unforgiving final boss in the Genocide route, punishing players for their sins in the Last Corridor.",
+      "Becomes the toughest boss in Undertale for players who choose to fight every monster",
       "Attacks with telekinesis, bone mazes, and laser-firing dragon-like skulls known as Gaster Blasters while breaking fourth-wall mechanics.",
       "Named after the Comic Sans typeface, which he uses exclusively for all of his dialogue text boxes."
     ],
@@ -5755,6 +5876,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Papyrus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great Papyrus",
       "Papy",
@@ -5766,7 +5888,7 @@
       "Flamboyant, loud, and kindhearted skeleton living in Snowdin who passionately dreams of joining the elite Royal Guard.",
       "Crafts elaborate yet comically harmless puzzle traps and has a bizarre obsession with cooking spaghetti that he rarely eats.",
       "Speaks in ALL CAPS using the Papyrus font and refers to himself proudly in the third person as 'The Great Papyrus'.",
-      "His boss battle features the 'blue soul' gravity mechanic, yet he is so compassionate that he refuses to kill the player, capturing them instead."
+      "In his boss fight, he is too kind to hurt the player and simply captures them instead."
     ],
     "distractor_pool": [
       "Sans",
@@ -5777,7 +5899,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Papyrus cannot actually kill the player during his boss battle, leaving them at 1 HP and imprisoning them in his doghouse.",
+        "claim": "If Papyrus wins his boss battle, he simply captures the player instead of hurting them.",
         "verdict": "fact",
         "explanation": "If Papyrus's attacks reduce the player's HP to 1, the battle peacefully ends, and the human is safely placed inside his unlocked garage with a bowl of dog food.",
         "fun_fact": "Papyrus's online username in the UnderNet forum is 'CoolSkeleton95', hinting at his youthful, exuberant personality."
@@ -5801,6 +5923,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "The Knight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Little Ghost",
       "Vessel",
@@ -5837,7 +5960,7 @@
     ],
     "versus_candidates": [
       "Hornet",
-      "Zagreus",
+      "Shovel Knight",
       "Ori"
     ]
   },
@@ -5847,17 +5970,18 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Hornet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Protector of Hallownest",
       "Princess-Knight",
       "Daughter of Hallownest"
     ],
     "difficulty": 3,
-    "visual_anchor": "Dynamic vertical 9:16 framing of Hornet leaping gracefully through the misty greenery of Greenpath, crimson cloaks billowing around her needle weapon tethered to glistening white silk threads as she prepares a mid-air dash.",
+    "visual_anchor": "Dynamic vertical 9:16 framing of Hornet leaping gracefully through the misty greenery of Greenpath, crimson cloak billowing around her long needle tethered to glistening white silk threads as she prepares a mid-air dash.",
     "core_traits": [
       "Fierce protector of Hallownest's ruins who tests the strength of Vessels with her rapid needle-and-thread combat.",
       "Daughter of the Pale King and Herrah the Beast, earning her the title of gendered child among the genderless vessels.",
-      "Recognizable by her flowing scarlet cloak, curved two-pronged white mask, and sharp needle weapon.",
+      "Recognizable by her flowing scarlet cloak, curved two-pronged white mask, and long sharp needle.",
       "Stars as the agile, silk-weaving protagonist of the highly anticipated sequel Hollow Knight: Silksong."
     ],
     "distractor_pool": [
@@ -5893,6 +6017,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Zagreus",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Prince of the Underworld",
       "Son of Hades",
@@ -5939,6 +6064,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Hades",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Lord Hades",
       "God of the Dead",
@@ -5985,16 +6111,17 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Cuphead",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cuphead Hero",
       "Inkwell Isle Brawler",
       "Chalice Ally"
     ],
     "difficulty": 2,
-    "visual_anchor": "A cheerful vintage 1930s rubber hose cartoon cup-headed character wearing red shorts and white gloves, firing glowing finger bullets against whimsical watercolor carnival backdrops in high resolution vertical frame.",
+    "visual_anchor": "A cheerful vintage 1930s rubber hose cartoon cup-headed character wearing red shorts and white gloves, firing glowing magic finger blasts against whimsical watercolor carnival backdrops in a high resolution vertical frame.",
     "core_traits": [
-      "Protagonist of a notorious retro run-and-gun platformer known for extreme hand-drawn boss fights",
-      "Traveled across Inkwell Isle alongside brother Mugman after losing a fateful wager to the Devil",
+      "Hero of a famously tough retro action platformer known for its hand-drawn boss fights",
+      "Journeys across Inkwell Isle with his brother Mugman to collect contracts from runaway bosses",
       "Attacks enemies by finger-snapping magical energy projectiles while executing precision pink parries",
       "Features authentic 1930s Fleischer-style rubber hose animation and big band jazz orchestration"
     ],
@@ -6002,8 +6129,8 @@
       "Mugman",
       "Shovel Knight",
       "Hollow Knight",
-      "Meat Boy",
-      "Bendy"
+      "Rayman",
+      "Shantae"
     ],
     "facts_and_myths": [
       {
@@ -6015,7 +6142,7 @@
       {
         "claim": "Cuphead was originally intended to be a turn-based role playing game.",
         "verdict": "myth",
-        "explanation": "Cuphead was conceived from day one as a twitch-reflex run-and-gun boss-rush platformer inspired by Gunstar Heroes and Contra III.",
+        "explanation": "Cuphead was planned from the start as a fast action boss-rush game inspired by classic 1980s and 1990s arcade games.",
         "fun_fact": "A special uncompressed jazz big band recorded the entire energetic soundtrack live in studio."
       }
     ],
@@ -6031,6 +6158,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Mugman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mug Brother",
       "Blue Straw Companion",
@@ -6041,13 +6169,13 @@
     "core_traits": [
       "The cautious and thoughtful brother of Cuphead who acts as second player in cooperative play",
       "Distinguished by his large spherical blue nose and calm demeanor compared to his impulsive sibling",
-      "Assisted Cuphead in collecting soul contracts across Inkwell Isle to save their own souls from the Devil",
-      "Equipped with identical finger-gun projectile magic and acrobatic pink parry abilities"
+      "Helps Cuphead collect contracts from bosses across Inkwell Isle to undo a big mistake",
+      "Shares Cuphead's magical finger-blast attacks and acrobatic pink parry moves"
     ],
     "distractor_pool": [
       "Cuphead",
       "Ms. Chalice",
-      "King Dice",
+      "Rayman",
       "Luigi",
       "Tails"
     ],
@@ -6061,7 +6189,7 @@
       {
         "claim": "Mugman has a slower running speed than Cuphead to balance co-op gameplay.",
         "verdict": "myth",
-        "explanation": "Both Cuphead and Mugman possess completely identical hitboxes, movement speeds, jump heights, and weapon firing rates in the core game.",
+        "explanation": "Cuphead and Mugman have identical hitboxes, running speed, jump height, and attack power in the main game.",
         "fun_fact": "Player two can freely revive a fallen ghost teammate by parrying their rising spirit before it floats offscreen."
       }
     ],
@@ -6077,6 +6205,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Shovel Knight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Shovel of Hope",
       "Blue Knight of Justice",
@@ -6123,6 +6252,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Madeline",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Celeste Mountain Climber",
       "Red-Haired Climber",
@@ -6169,6 +6299,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Goose",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Horrible Goose",
       "Village Menace",
@@ -6178,7 +6309,7 @@
     "visual_anchor": "A mischievous pure white goose with bright orange bill and webbed feet waddling across an idyllic English village garden carrying a stolen silver bell in vertical comedic frame.",
     "core_traits": [
       "Unruly feathered protagonist of House House smash hit comedy stealth game Untitled Goose Game",
-      "Terrorizes an unsuspecting quaint English village by stealing items, honking loudly, and tripping locals",
+      "Causes chaos in a quaint English village by stealing items, honking loudly, and tripping locals",
       "Maintains a meticulous to-do list notebook filled with hilariously antisocial rural pranks",
       "Features dynamic interactive piano ragtime music that synchronizes with the waterfowl mischief"
     ],
@@ -6186,7 +6317,7 @@
       "Groundskeeper",
       "Boy with Glasses",
       "The Shopkeeper",
-      "Goat Simulator Goat",
+      "Hat Kid",
       "Octodad"
     ],
     "facts_and_myths": [
@@ -6204,7 +6335,7 @@
       }
     ],
     "versus_candidates": [
-      "Goat Simulator Goat",
+      "Hat Kid",
       "Octodad",
       "Cat (Stray)"
     ]
@@ -6215,6 +6346,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Guide",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Guide NPC",
       "Wall of Flesh Catalyst",
@@ -6261,6 +6393,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Wilson",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "The Gentleman Scientist",
       "Wilson Higgsbury",
@@ -6307,17 +6440,18 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Impostor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Shape-Shifter",
       "Vent Lurker",
       "Alien Saboteur"
     ],
     "difficulty": 1,
-    "visual_anchor": "A sinister red spacesuit astronaut revealing sharp alien fangs and a deadly extendable tongue inside an emergency reactor room bathed in flashing crimson emergency sirens in vertical frame.",
+    "visual_anchor": "A sneaky red spacesuit astronaut peeking out of a floor vent inside a spaceship reactor room bathed in flashing red alarm lights in vertical frame.",
     "core_traits": [
       "Deceptive parasitic alien antagonist disguising itself among space crewmates in social deduction phenomenon Among Us",
       "Sabotages critical ship systems including reactor meltdowns, oxygen deprivation, and electrical blackouts",
-      "Navigates the spaceship secretly through ventilation ducts while waiting to assassinate isolated astronauts",
+      "Sneaks around the spaceship through vents while secretly causing trouble for the crew",
       "Engages in psychological deceit, misdirection, and false accusations during emergency meetings"
     ],
     "distractor_pool": [
@@ -6343,7 +6477,7 @@
     ],
     "versus_candidates": [
       "Crewmate",
-      "Spy (TF2)",
+      "Sly Cooper",
       "Ghost (Among Us)"
     ]
   },
@@ -6353,6 +6487,7 @@
     "subtopic_id": "sandbox_survival_indie",
     "name": "Crewmate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Innocent Astronaut",
       "Bean Spaceman",
@@ -6363,7 +6498,7 @@
     "core_traits": [
       "Dedicated astronaut protagonist in InnerSloth multiplayer party game Among Us",
       "Completes various mini-game maintenance chores such as rewiring circuits, emptying garbage, and aligning engines",
-      "Reports dead bodies and convenes emergency meetings to debate and vote suspected shapeshifters off the ship",
+      "Calls emergency meetings to debate and vote suspected impostors off the ship",
       "Can continue completing assigned ship maintenance tasks as a benevolent floating ghost after demise"
     ],
     "distractor_pool": [
@@ -6381,9 +6516,9 @@
         "fun_fact": "InnerSloth canceled their planned sequel Among Us 2 in order to pour all development focus into expanding the original game."
       },
       {
-        "claim": "Crewmates can carry weapons to directly battle and defeat an attacking Impostor in real time.",
+        "claim": "Crewmates carry tools to fight back against an Impostor in real time.",
         "verdict": "myth",
-        "explanation": "Crewmates possess zero weapons or physical combat abilities; their sole defenses are keen observation, surveillance cameras, and democratic voting.",
+        "explanation": "Crewmates have no way to fight back; they rely on sharp observation, security cameras, and group voting.",
         "fun_fact": "The characteristic spacesuit design was chosen by the artist purely because it was quick and easy to draw repeatedly."
       }
     ],
@@ -6391,6 +6526,810 @@
       "Impostor",
       "Fall Guy",
       "Steve"
+    ]
+  },
+  {
+    "id": "ENT-GAM-139",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Inkling",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Inkling Girl",
+      "Inkling Boy"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful squid-kid character with bright orange tentacle hair splashing colorful paint across a sunny city plaza, 9:16 vertical shot.",
+    "core_traits": [
+      "Kid character who can turn into a squid",
+      "Covers the ground in bright colorful ink",
+      "Swims through ink to move super fast",
+      "Star of Nintendo's Splatoon series"
+    ],
+    "distractor_pool": [
+      "Octoling",
+      "Isabelle",
+      "Minecraft Villager",
+      "Kirby",
+      "Fall Guys Bean"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Inklings can switch between kid form and squid form.",
+        "verdict": "fact",
+        "explanation": "In squid form they dive into and swim through their own team's ink.",
+        "fun_fact": "In classic Splatoon matches, the team that covers the most ground in ink wins."
+      },
+      {
+        "claim": "Splatoon first came out on the Wii U in 2015.",
+        "verdict": "fact",
+        "explanation": "Nintendo released it in 2015, then made sequels for the Nintendo Switch.",
+        "fun_fact": "Inklings can swim in ink, but deep water sends them back to the start."
+      }
+    ],
+    "versus_candidates": [
+      "Octoling",
+      "Kirby",
+      "Fall Guys Bean"
+    ]
+  },
+  {
+    "id": "ENT-GAM-140",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Isabelle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful yellow Shih Tzu puppy character with a small topknot, wearing a green vest and holding a clipboard in a sunny flower-filled town plaza, 9:16 vertical shot.",
+    "core_traits": [
+      "Cheerful yellow puppy with a little topknot",
+      "Works as a helpful assistant at Town Hall",
+      "Gives the daily announcements to the player",
+      "Character from the Animal Crossing series"
+    ],
+    "distractor_pool": [
+      "Digby",
+      "Tom Nook",
+      "K.K. Slider",
+      "Blathers",
+      "Celeste"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Isabelle is a Shih Tzu dog.",
+        "verdict": "fact",
+        "explanation": "Nintendo designed her as a sweet yellow Shih Tzu with a bell in her hair.",
+        "fun_fact": "Isabelle has a twin brother named Digby."
+      },
+      {
+        "claim": "Isabelle first appeared in Animal Crossing: New Leaf.",
+        "verdict": "fact",
+        "explanation": "She debuted as the mayor's helpful secretary in New Leaf, released in 2012.",
+        "fun_fact": "Isabelle became a playable character in Super Smash Bros. Ultimate."
+      }
+    ],
+    "versus_candidates": [
+      "Tom Nook",
+      "Kirby",
+      "Pikachu"
+    ]
+  },
+  {
+    "id": "ENT-GAM-141",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Tom Nook",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Nook"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A friendly round raccoon-dog shopkeeper in a cozy shirt standing in front of a little wooden store on a sunny tropical island, 9:16 vertical shot.",
+    "core_traits": [
+      "Friendly raccoon-like shopkeeper",
+      "Lends players money to upgrade their house",
+      "Has two nephews named Timmy and Tommy",
+      "Animal Crossing character who is actually a tanuki"
+    ],
+    "distractor_pool": [
+      "Isabelle",
+      "Blathers",
+      "K.K. Slider",
+      "Timmy Nook",
+      "Mabel"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Tom Nook is a raccoon.",
+        "verdict": "myth",
+        "explanation": "He is a tanuki, also called a Japanese raccoon dog, which only looks like a raccoon.",
+        "fun_fact": "The money in Animal Crossing is called bells."
+      },
+      {
+        "claim": "Tom Nook never charges interest on home loans.",
+        "verdict": "fact",
+        "explanation": "Players can pay back their home loan slowly, with no extra fees or deadlines.",
+        "fun_fact": "In New Horizons, his nephews Timmy and Tommy run the island shop."
+      }
+    ],
+    "versus_candidates": [
+      "Isabelle",
+      "K.K. Slider",
+      "Captain Olimar"
+    ]
+  },
+  {
+    "id": "ENT-GAM-142",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Captain Olimar",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Olimar"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A tiny astronaut in a red spacesuit with a glowing antenna on his helmet leading a line of little red, blue and yellow plant creatures through giant garden leaves, 9:16 vertical shot.",
+    "core_traits": [
+      "Very tiny space explorer",
+      "Wears a helmet with a little glowing antenna",
+      "Leads plant-like helpers called Pikmin",
+      "Comes from the planet Hocotate"
+    ],
+    "distractor_pool": [
+      "Louie",
+      "Alph",
+      "Mario",
+      "Astro Bot",
+      "Isabelle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pikmin come in different colors with different powers.",
+        "verdict": "fact",
+        "explanation": "Red Pikmin resist fire, blue Pikmin can go in water, and yellow Pikmin can be thrown higher.",
+        "fun_fact": "Pikmin was inspired by creator Shigeru Miyamoto's love of gardening."
+      },
+      {
+        "claim": "In the first Pikmin game, Olimar must rebuild his broken ship.",
+        "verdict": "fact",
+        "explanation": "After crash-landing, he gathers lost ship parts with Pikmin help before his air supply runs out.",
+        "fun_fact": "Olimar's ship, the S.S. Dolphin, is named after the GameCube's code name."
+      }
+    ],
+    "versus_candidates": [
+      "Astro Bot",
+      "Mario",
+      "Isabelle"
+    ]
+  },
+  {
+    "id": "ENT-GAM-143",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Fall Guys Bean",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Fall Guy",
+      "Bean"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A chubby jelly-bean-shaped character in a bright pink costume wobbling across a colorful bouncy obstacle course in the sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Wobbly jelly-bean-shaped character",
+      "Races through silly obstacle courses",
+      "Competes against many other players at once",
+      "Wins the whole show by grabbing the crown"
+    ],
+    "distractor_pool": [
+      "Sackboy",
+      "Crewmate",
+      "Kirby",
+      "Rabbids",
+      "Astro Bot"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Fall Guys became free to play in 2022.",
+        "verdict": "fact",
+        "explanation": "The game first launched in 2020, then became free for everyone in 2022.",
+        "fun_fact": "The last bean standing in each show wins a shiny crown."
+      },
+      {
+        "claim": "Fall Guys beans can wear many silly costumes.",
+        "verdict": "fact",
+        "explanation": "Players unlock outfits like animals, foods and famous characters for their beans.",
+        "fun_fact": "Fall Guys was inspired by wacky TV game shows like Takeshi's Castle."
+      }
+    ],
+    "versus_candidates": [
+      "Sackboy",
+      "Kirby",
+      "Crewmate"
+    ]
+  },
+  {
+    "id": "ENT-GAM-144",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Sackboy",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sackperson"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A small knitted fabric doll with button eyes and a zipper on his chest standing in a craft world of cardboard, felt and stickers, 9:16 vertical shot.",
+    "core_traits": [
+      "Small doll made of knitted fabric",
+      "Has a zipper on his chest",
+      "Lives in a world made of crafts and cardboard",
+      "Star of LittleBigPlanet on PlayStation"
+    ],
+    "distractor_pool": [
+      "Fall Guys Bean",
+      "Astro Bot",
+      "Yarny",
+      "Kirby",
+      "Rayman"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Players can build their own levels in LittleBigPlanet.",
+        "verdict": "fact",
+        "explanation": "LittleBigPlanet lets players design levels and share them online with others.",
+        "fun_fact": "The game's motto was 'Play, Create, Share.'"
+      },
+      {
+        "claim": "Sackboy can be dressed in many different costumes.",
+        "verdict": "fact",
+        "explanation": "Players change his outfit, stickers and colors to make him unique.",
+        "fun_fact": "Sackboy got his own game, Sackboy: A Big Adventure, in 2020."
+      }
+    ],
+    "versus_candidates": [
+      "Astro Bot",
+      "Fall Guys Bean",
+      "Kirby"
+    ]
+  },
+  {
+    "id": "ENT-GAM-145",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Astro Bot",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Astro"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A tiny white robot with glowing blue eyes on a screen-like face jumping through a colorful space playground, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny white robot with glowing eyes",
+      "Cheerful PlayStation mascot hero",
+      "Rescues lost little bots in each level",
+      "Starred in the Game of the Year at The Game Awards 2024"
+    ],
+    "distractor_pool": [
+      "Sackboy",
+      "Captain Olimar",
+      "Kirby",
+      "Mega Man",
+      "Clank"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Astro Bot won Game of the Year at The Game Awards 2024.",
+        "verdict": "fact",
+        "explanation": "The 2024 game Astro Bot beat many big games to win the top prize.",
+        "fun_fact": "Astro Bot's levels include cameos of many famous PlayStation characters."
+      },
+      {
+        "claim": "Astro's Playroom came free on every PlayStation 5.",
+        "verdict": "fact",
+        "explanation": "It was preinstalled to show off the new controller's vibrations and triggers.",
+        "fun_fact": "Its worlds are named after parts inside a PlayStation 5, like CPU Plaza."
+      }
+    ],
+    "versus_candidates": [
+      "Sackboy",
+      "Kirby",
+      "Mega Man"
+    ]
+  },
+  {
+    "id": "ENT-GAM-146",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Banjo-Kazooie",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Banjo and Kazooie"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A friendly brown honey bear in yellow shorts with a cheerful red bird popping out of his blue backpack in a sunny storybook mountain land, 9:16 vertical shot.",
+    "core_traits": [
+      "Friendly bear and bird adventure duo",
+      "The bird rides inside the bear's blue backpack",
+      "Collect golden musical notes and jigsaw pieces",
+      "Created by Rare for the Nintendo 64"
+    ],
+    "distractor_pool": [
+      "Crash Bandicoot",
+      "Spyro the Dragon",
+      "Conker",
+      "Ratchet and Clank",
+      "Yooka-Laylee"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Kazooie is a bird who rides in Banjo's backpack.",
+        "verdict": "fact",
+        "explanation": "Kazooie pops out of the backpack to help Banjo fly, run fast and jump higher.",
+        "fun_fact": "Banjo-Kazooie was first released in 1998."
+      },
+      {
+        "claim": "Banjo-Kazooie's golden puzzle pieces are called Jiggies.",
+        "verdict": "fact",
+        "explanation": "Collecting Jiggies unlocks new worlds to explore in the game.",
+        "fun_fact": "Banjo and Kazooie joined Super Smash Bros. Ultimate in 2019."
+      }
+    ],
+    "versus_candidates": [
+      "Crash Bandicoot",
+      "Spyro the Dragon",
+      "Rayman"
+    ]
+  },
+  {
+    "id": "ENT-GAM-147",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Red (Angry Birds)",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Red"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A round red cartoon bird with thick black eyebrows and a determined face perched on a giant slingshot above a grassy hill, 9:16 vertical shot.",
+    "core_traits": [
+      "Round red bird with bushy eyebrows",
+      "Gets launched from a giant slingshot",
+      "Leader of the flock who protects their eggs",
+      "Main star of a hit mobile game from Finland"
+    ],
+    "distractor_pool": [
+      "Chuck",
+      "Terence",
+      "Matilda",
+      "Stella",
+      "Om Nom"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Angry Birds was made by a company from Finland.",
+        "verdict": "fact",
+        "explanation": "Rovio Entertainment, based in Espoo, Finland, released Angry Birds in 2009.",
+        "fun_fact": "The birds want their eggs back from the green pigs who took them."
+      },
+      {
+        "claim": "Angry Birds became a movie in 2016.",
+        "verdict": "fact",
+        "explanation": "The Angry Birds Movie showed Red as a grumpy bird who helps save his island's eggs.",
+        "fun_fact": "Angry Birds became one of the most downloaded mobile games ever."
+      }
+    ],
+    "versus_candidates": [
+      "Om Nom",
+      "Chuck",
+      "Fall Guys Bean"
+    ]
+  },
+  {
+    "id": "ENT-GAM-148",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Om Nom",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A small round green creature with big eyes and a wide smile opening its mouth for a candy dangling on a rope, 9:16 vertical shot.",
+    "core_traits": [
+      "Little round green creature",
+      "Loves eating candy",
+      "Players cut ropes to drop sweets into his mouth",
+      "Star of the mobile puzzle game Cut the Rope"
+    ],
+    "distractor_pool": [
+      "Red (Angry Birds)",
+      "Cookie Monster",
+      "Pou",
+      "Talking Tom",
+      "Kirby"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Players feed Om Nom by cutting ropes.",
+        "verdict": "fact",
+        "explanation": "Players swipe to cut ropes so the candy swings and drops into Om Nom's mouth.",
+        "fun_fact": "Cut the Rope was first released in 2010."
+      },
+      {
+        "claim": "Cut the Rope was made by a studio called ZeptoLab.",
+        "verdict": "fact",
+        "explanation": "ZeptoLab, a game studio founded by twin brothers, created Cut the Rope.",
+        "fun_fact": "Om Nom's story begins when he arrives in a cardboard box delivered to the player."
+      }
+    ],
+    "versus_candidates": [
+      "Red (Angry Birds)",
+      "Kirby",
+      "Talking Tom"
+    ]
+  },
+  {
+    "id": "ENT-GAM-149",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Rabbids",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Raving Rabbids"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A group of silly white rabbit-like creatures with long ears and wide open mouths shouting happily while running across a bright playground, 9:16 vertical shot.",
+    "core_traits": [
+      "Silly white rabbit-like creatures",
+      "Famous for yelling 'Bwaaah!'",
+      "Love to cause chaos and play pranks",
+      "First appeared in Rayman Raving Rabbids by Ubisoft"
+    ],
+    "distractor_pool": [
+      "Minions",
+      "Fall Guys Bean",
+      "Om Nom",
+      "Rayman",
+      "Pikmin"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Rabbids first appeared in a Rayman game.",
+        "verdict": "fact",
+        "explanation": "They debuted in Rayman Raving Rabbids in 2006 and became stars of their own games.",
+        "fun_fact": "Rabbids teamed up with Mario in Mario + Rabbids Kingdom Battle."
+      },
+      {
+        "claim": "The Rabbids have their own cartoon show.",
+        "verdict": "fact",
+        "explanation": "Rabbids Invasion is an animated TV series full of silly Rabbid adventures.",
+        "fun_fact": "Rabbids love toilet plungers and often stick them on things, even their heads."
+      }
+    ],
+    "versus_candidates": [
+      "Minions",
+      "Fall Guys Bean",
+      "Rayman"
+    ]
+  },
+  {
+    "id": "ENT-GAM-150",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Minecraft Villager",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Villager"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A blocky pixel-style villager with a big nose and a brown robe standing in a sunny blocky village of wooden houses and crops, 9:16 vertical shot.",
+    "core_traits": [
+      "Blocky character with a big nose",
+      "Makes 'hmm' sounds instead of talking",
+      "Trades items for emeralds",
+      "Lives in villages in Minecraft"
+    ],
+    "distractor_pool": [
+      "Steve",
+      "Alex",
+      "Creeper",
+      "Wandering Trader",
+      "Iron Golem"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Minecraft villagers trade items for emeralds.",
+        "verdict": "fact",
+        "explanation": "Players swap emeralds with villagers for tools, food, books and more.",
+        "fun_fact": "Villagers get jobs from work blocks, like a lectern for librarians."
+      },
+      {
+        "claim": "Iron golems protect Minecraft villages.",
+        "verdict": "fact",
+        "explanation": "These big friendly golems guard villagers from hostile mobs.",
+        "fun_fact": "Villagers go to bed at night and wake up in the morning."
+      }
+    ],
+    "versus_candidates": [
+      "Steve",
+      "Creeper",
+      "Isabelle"
+    ]
+  },
+  {
+    "id": "ENT-GAM-151",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Professor Layton",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Hershel Layton"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A polite gentleman in a tall brown top hat and orange sweater thinking about a puzzle in a cozy old English town, 9:16 vertical shot.",
+    "core_traits": [
+      "Polite gentleman in a tall top hat",
+      "Solves puzzles to crack mysteries",
+      "Travels with his young apprentice Luke",
+      "Star of a puzzle adventure series by Level-5"
+    ],
+    "distractor_pool": [
+      "Phoenix Wright",
+      "Sherlock Holmes",
+      "Detective Pikachu",
+      "Luke Triton",
+      "Hercule Poirot"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Professor Layton almost never takes off his top hat.",
+        "verdict": "fact",
+        "explanation": "His tall top hat is his trademark, and he wears it nearly all the time.",
+        "fun_fact": "The first game, Professor Layton and the Curious Village, came out in 2007."
+      },
+      {
+        "claim": "Professor Layton games are full of brain-teaser puzzles.",
+        "verdict": "fact",
+        "explanation": "Players solve riddles, logic and picture puzzles to move the story forward.",
+        "fun_fact": "Many puzzles were created by Akira Tago, a famous Japanese puzzle book author."
+      }
+    ],
+    "versus_candidates": [
+      "Phoenix Wright",
+      "Detective Pikachu",
+      "Sherlock Holmes"
+    ]
+  },
+  {
+    "id": "ENT-GAM-152",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Geometry Dash Cube",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "The Cube"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A bright square cube with a smiling face bouncing over neon spikes across a glowing, colorful music-filled level, 9:16 vertical shot.",
+    "core_traits": [
+      "Bright square icon with a face",
+      "Jumps over spikes to the beat of music",
+      "Turns into ships, balls and other shapes",
+      "Main icon in a rhythm game by RobTop Games"
+    ],
+    "distractor_pool": [
+      "Tetris Block",
+      "Pac-Man",
+      "Om Nom",
+      "Flappy Bird",
+      "Super Meat Boy"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Geometry Dash was made by one developer.",
+        "verdict": "fact",
+        "explanation": "Swedish developer Robert Topala, known as RobTop, created the game.",
+        "fun_fact": "Geometry Dash was released in 2013."
+      },
+      {
+        "claim": "Players can build and share their own Geometry Dash levels.",
+        "verdict": "fact",
+        "explanation": "A built-in level editor lets players create levels for others to try.",
+        "fun_fact": "Geometry Dash levels are built so the jumps match the beat of the music."
+      }
+    ],
+    "versus_candidates": [
+      "Pac-Man",
+      "Flappy Bird",
+      "Om Nom"
+    ]
+  },
+  {
+    "id": "ENT-GAM-153",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "AiAi",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Aiai"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A cheerful little monkey rolling inside a clear ball along a twisty sky track floating above colorful islands, 9:16 vertical shot.",
+    "core_traits": [
+      "Happy little monkey",
+      "Rolls around inside a clear ball",
+      "Collects bananas on twisting sky tracks",
+      "Main star of Sega's Super Monkey Ball"
+    ],
+    "distractor_pool": [
+      "MeeMee",
+      "Diddy Kong",
+      "Curious George",
+      "Sonic the Hedgehog",
+      "Crash Bandicoot"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "In Super Monkey Ball, players tilt the stage, not AiAi.",
+        "verdict": "fact",
+        "explanation": "You tip the whole stage so AiAi's ball rolls toward the goal.",
+        "fun_fact": "Super Monkey Ball first rolled into arcades in Japan in 2001."
+      },
+      {
+        "claim": "AiAi loves collecting bananas.",
+        "verdict": "fact",
+        "explanation": "Bananas appear in every level, and collecting 100 earns AiAi an extra life.",
+        "fun_fact": "AiAi also races in Sonic and Sega All-Stars Racing."
+      }
+    ],
+    "versus_candidates": [
+      "Diddy Kong",
+      "Sonic the Hedgehog",
+      "Curious George"
+    ]
+  },
+  {
+    "id": "ENT-GAM-154",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Klonoa",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A cheerful catlike hero with very long floppy ears and a blue cap holding a glowing magic ring in a dreamy sunset land, 9:16 vertical shot.",
+    "core_traits": [
+      "Catlike hero with very long floppy ears",
+      "Uses a magic Wind Ring",
+      "Grabs enemies and uses them to jump higher",
+      "Bandai Namco hero who adventures in dream worlds"
+    ],
+    "distractor_pool": [
+      "Sonic the Hedgehog",
+      "Spyro the Dragon",
+      "Rayman",
+      "Crash Bandicoot",
+      "Tails"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Klonoa uses a magic Wind Ring.",
+        "verdict": "fact",
+        "explanation": "The ring sends out a puff of wind that captures enemies like balloons.",
+        "fun_fact": "Klonoa can flap his long ears to float in the air for a moment."
+      },
+      {
+        "claim": "Klonoa first appeared in 1997.",
+        "verdict": "fact",
+        "explanation": "Klonoa: Door to Phantomile was released on the original PlayStation in 1997.",
+        "fun_fact": "His first two games were remade together in the Klonoa Phantasy Reverie Series in 2022."
+      }
+    ],
+    "versus_candidates": [
+      "Rayman",
+      "Spyro the Dragon",
+      "Sonic the Hedgehog"
+    ]
+  },
+  {
+    "id": "ENT-GAM-155",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Katamari Prince",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "The Prince"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A tiny green prince with a wide flat head rolling a giant sticky ball covered in toys, fruit and furniture across a colorful town, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny green prince with a wide head",
+      "Rolls a sticky ball that collects objects",
+      "Rebuilds the stars for his royal father",
+      "Star of the Katamari Damacy games"
+    ],
+    "distractor_pool": [
+      "King of All Cosmos",
+      "Kirby",
+      "AiAi",
+      "Pac-Man",
+      "Captain Olimar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The katamari ball grows bigger as it picks things up.",
+        "verdict": "fact",
+        "explanation": "Small items stick first, then the ball grows big enough to roll up houses and clouds.",
+        "fun_fact": "The Prince's father, the King of All Cosmos, accidentally knocked all the stars out of the sky."
+      },
+      {
+        "claim": "Katamari Damacy first came out on the PlayStation 2.",
+        "verdict": "fact",
+        "explanation": "Namco released it in Japan in 2004, and it became a cult favorite.",
+        "fun_fact": "The word katamari means 'clump' in Japanese."
+      }
+    ],
+    "versus_candidates": [
+      "Kirby",
+      "AiAi",
+      "Pac-Man"
+    ]
+  },
+  {
+    "id": "ENT-GAM-156",
+    "domain_id": "gaming_esports",
+    "subtopic_id": "family_party_games",
+    "name": "Rosalina",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A tall kind princess in a light blue gown with a silver crown floating in space beside small glowing star creatures, 9:16 vertical shot.",
+    "core_traits": [
+      "Tall princess in a light blue gown",
+      "Watches over the cosmos from a space observatory",
+      "Cares for little star creatures called Lumas",
+      "First appeared in Super Mario Galaxy"
+    ],
+    "distractor_pool": [
+      "Princess Peach",
+      "Princess Daisy",
+      "Princess Zelda",
+      "Pauline",
+      "Isabelle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rosalina first appeared in Super Mario Galaxy.",
+        "verdict": "fact",
+        "explanation": "She debuted in the 2007 Wii game Super Mario Galaxy.",
+        "fun_fact": "Rosalina lives aboard the Comet Observatory, which travels through space."
+      },
+      {
+        "claim": "Rosalina takes care of star creatures called Lumas.",
+        "verdict": "fact",
+        "explanation": "The little star-shaped Lumas are like her family, and she looks after them.",
+        "fun_fact": "Rosalina became a playable racer in Mario Kart Wii."
+      }
+    ],
+    "versus_candidates": [
+      "Princess Peach",
+      "Princess Daisy",
+      "Isabelle"
     ]
   }
 ]

@@ -92,6 +92,8 @@ export function compactImagePrompt(prompt: string, aspectRatio?: string): string
 /**
  * Executes a single standalone prompt turn with an LLM client (Antigravity or Codex) and returns the text result.
  */
+export const DEFAULT_SINGLE_PROMPT_TIMEOUT_MS = 600_000;
+
 export async function executeSinglePromptText(
   client: LLMClient,
   prompt: string,
@@ -103,7 +105,7 @@ export async function executeSinglePromptText(
     requireCompleteOutput?: boolean;
   } = {},
 ): Promise<string> {
-  const timeoutMs = options.timeoutMs ?? 180_000;
+  const timeoutMs = options.timeoutMs ?? DEFAULT_SINGLE_PROMPT_TIMEOUT_MS;
   options.signal?.throwIfAborted();
   await client.connect();
   options.signal?.throwIfAborted();

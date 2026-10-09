@@ -279,56 +279,56 @@ describe("Quiz V2 domain and Director", () => {
     ).toThrow("received 1");
   });
 
-  it("handles true_false quiz format with strictly 2 choices and rejects every other count", () => {
-    // Exact 2 choices for true_false
-    const trueFalseScene = scene(1, "True");
+  it("handles yes_no quiz format with strictly 2 choices and rejects every other count", () => {
+    // Exact 2 choices for yes_no
+    const trueFalseScene = scene(1, "Yes");
     trueFalseScene.quiz = {
       ...trueFalseScene.quiz!,
-      choices: ["True", "False"],
-      answer: "True",
+      choices: ["Yes", "No"],
+      answer: "Yes",
     };
     const quiz = deriveQuizV2FromScenes({
       episodeId: "episode-1",
       language: "English",
       ageBand: "7-9",
-      format: "true_false",
+      format: "yes_no",
       scenes: [trueFalseScene],
     });
-    expect(quiz.questions[0].format).toBe("true_false");
+    expect(quiz.questions[0].format).toBe("yes_no");
     expect(quiz.questions[0].choices).toHaveLength(2);
-    expect(quiz.questions[0].choices.map((c) => c.text)).toEqual(["True", "False"]);
+    expect(quiz.questions[0].choices.map((c) => c.text)).toEqual(["Yes", "No"]);
     expect(quiz.questions[0].correct_choice_id).toBe("choice-a");
 
     // A third option is rejected instead of being silently removed
-    const threeChoiceTfScene = scene(1, "False");
+    const threeChoiceTfScene = scene(1, "No");
     threeChoiceTfScene.quiz = {
       ...threeChoiceTfScene.quiz!,
-      choices: ["True", "False", "Neither"],
-      answer: "False",
+      choices: ["Yes", "No", "Neither"],
+      answer: "No",
     };
     expect(() =>
       deriveQuizV2FromScenes({
         episodeId: "episode-1",
         language: "English",
         ageBand: "7-9",
-        format: "true_false",
+        format: "yes_no",
         scenes: [threeChoiceTfScene],
       }),
     ).toThrow("received 3");
 
-    // 1 choice throws for true_false
-    const singleChoiceTfScene = scene(1, "True");
+    // 1 choice throws for yes_no
+    const singleChoiceTfScene = scene(1, "Yes");
     singleChoiceTfScene.quiz = {
       ...singleChoiceTfScene.quiz!,
-      choices: ["True"],
-      answer: "True",
+      choices: ["Yes"],
+      answer: "Yes",
     };
     expect(() =>
       deriveQuizV2FromScenes({
         episodeId: "episode-1",
         language: "English",
         ageBand: "7-9",
-        format: "true_false",
+        format: "yes_no",
         scenes: [singleChoiceTfScene],
       }),
     ).toThrow("received 1");

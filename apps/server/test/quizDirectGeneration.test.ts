@@ -58,12 +58,12 @@ describe("quizDirectPromptBuilder", () => {
     expect(contract).toContain("Visual Opportunity Entity & Setting Mandate");
   });
 
-  it("builds a contract respecting true_false format", () => {
+  it("builds a kid-friendly Yes/No contract for the yes_no format", () => {
     const tfEpisode: Episode = {
       ...mockEpisode,
       quiz_config: {
         ...mockEpisode.quiz_config,
-        quiz_format: "true_false",
+        quiz_format: "yes_no",
       },
     };
     const contract = buildDirectQuizOutputContract({
@@ -74,7 +74,10 @@ describe("quizDirectPromptBuilder", () => {
       quizSourceMinimum: 1,
     });
 
-    expect(contract).toContain("exactly 2 choices with ids 'choice-true' and 'choice-false'");
+    expect(contract).toContain("exactly 2 choices with ids 'choice-yes' and 'choice-no'");
+    expect(contract).toContain("Never write a flat statement to be judged true or false.");
+    expect(contract).toContain("roughly even mix of Yes and No answers");
+    expect(contract).not.toContain("choice-true");
   });
 });
 
@@ -283,7 +286,7 @@ describe("directQuizHandler", () => {
     expect(questions[1].choices[2].text).toBe("Recovered Text C");
   });
 
-  it("recovers boolean choice texts when LLM omits text for true_false questions", async () => {
+  it("recovers Yes/No choice texts when the LLM omits text, including retired true/false ids", async () => {
     let savedQuiz: unknown = null;
     const mockRepository = {
       getEpisode: vi.fn().mockResolvedValue(mockEpisode),
@@ -322,7 +325,7 @@ describe("directQuizHandler", () => {
         {
           id: "question-01",
           number: 1,
-          format: "true_false",
+          format: "yes_no",
           difficulty: 1,
           question: "Can penguins fly?",
           choices: [
@@ -341,8 +344,8 @@ describe("directQuizHandler", () => {
     expect(result).toEqual(["channels/channel-1/episodes/ep-101/quiz.json"]);
     expect(savedQuiz).toBeDefined();
     const questions = (savedQuiz as { questions: Array<{ choices: Array<{ text: string }> }> }).questions;
-    expect(questions[0].choices[0].text).toBe("True");
-    expect(questions[0].choices[1].text).toBe("False");
+    expect(questions[0].choices[0].text).toBe("Yes");
+    expect(questions[0].choices[1].text).toBe("No");
   });
 });
 

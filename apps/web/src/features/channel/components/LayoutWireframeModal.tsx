@@ -103,21 +103,6 @@ export function LayoutWireframeModal({ layoutId, layoutInfo }: LayoutWireframeMo
                 </div>
               </div>
             </div>
-          ) : layoutId === "verdict_true_false" ? (
-            <div className="wf-media-row">
-              <div className="wf-hero-box">
-                <div className="wf-hero-icon">🖼️</div>
-                <div className="wf-hero-lbl">HERO TOPIC (580px)</div>
-              </div>
-              <div className="wf-choices-col wf-choices-tf">
-                <div className="wf-choice-pill wf-tf-true">
-                  <b className="wf-badge-true">✓</b> <span>TRUE</span>
-                </div>
-                <div className="wf-choice-pill wf-tf-false">
-                  <b className="wf-badge-false">✗</b> <span>FALSE</span>
-                </div>
-              </div>
-            </div>
           ) : layoutId === "full_stack_list" ? (
             <div className="wf-stack-col">
               <div className="wf-choice-pill">

@@ -6,10 +6,13 @@ import {
   nowIso,
   type EpisodeExportMetadata,
   type ExportsManifestItem,
+  type QuizTimeline,
   type VideoDescription,
 } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { getEpisodeThumbnailManifest } from "../../quiz/thumbnail/index.js";
+import { refreshDescriptionChapters } from "../../quiz/description/descriptionChapterSection.js";
+import { resolveAudiencePolicy } from "../../quiz/description/descriptionAudiencePolicy.js";
 import { formatExportDescriptionText } from "./descriptionExportFormatter.js";
 import { packageExportThumbnails } from "./thumbnailExportPackager.js";
 import { updateExportsManifest } from "./exportsManifestManager.js";
@@ -49,6 +52,15 @@ export async function refreshEpisodeExport(
     }
     return buildEpisodeExport(options, "metadata-only");
   });
+}
+
+async function readTimelineForChapters(repository: RepositoryService, channelId: string, episodeId: string): Promise<QuizTimeline | null> {
+  try {
+    return await repository.readQuizTimeline(channelId, episodeId);
+  } catch {
+    // Chapters are optional; a missing or unreadable timeline keeps the stored description untouched.
+    return null;
+  }
 }
 
 async function buildEpisodeExport(
@@ -101,10 +113,20 @@ async function buildEpisodeExport(
     // Fallback description.md may not exist
   }
 
+  const effectiveDuration = duration ?? episode.video_duration_seconds ?? 0;
+  const timeline = await readTimelineForChapters(repository, channelId, episodeId);
+  const refreshedBody = refreshDescriptionChapters({
+    text: videoDesc?.full_description_text ?? fallbackText ?? "",
+    timeline,
+    language: videoDesc?.language ?? channel.language,
+    videoDurationSeconds: effectiveDuration || undefined,
+  });
+
   const descriptionContent = formatExportDescriptionText({
     title: episode.topic.title,
     description: videoDesc,
     fallbackText,
+    bodyText: refreshedBody.text,
   });
   await repository.writeTextAtomic(path.join(exportDir, "description.txt"), descriptionContent);
 
@@ -117,7 +139,6 @@ async function buildEpisodeExport(
   });
 
   // 4. Create and write metadata.json
-  const effectiveDuration = duration ?? episode.video_duration_seconds ?? 0;
   const renderedAt = episode.video_generated_at ?? nowIso();
   const exportedAt = nowIso();
 
@@ -137,6 +158,8 @@ async function buildEpisodeExport(
     tags: videoDesc ? [videoDesc.primary_keyword, ...videoDesc.keyword_variations].filter(Boolean) : [],
     hashtags: videoDesc?.hashtags ?? [],
     category: videoDesc?.suggested_playlist_category,
+    chapters: timeline ? refreshedBody.chapters : (videoDesc?.chapters ?? []),
+    made_for_kids: resolveAudiencePolicy(episode.quiz_config?.age_band).madeForKids,
     rendered_at: renderedAt,
     exported_at: exportedAt,
   };

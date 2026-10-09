@@ -1,4 +1,7 @@
 import type { VideoDescriptionScoringCta } from "@studio/shared";
+import type { DescriptionChapter } from "./description.types.js";
+import { formatChaptersBlock } from "./descriptionChapters.js";
+import { getDescriptionSectionLocale } from "./descriptionSectionLocales.js";
 
 export interface AssembleDescriptionInput {
   hookLines: string;
@@ -6,6 +9,7 @@ export interface AssembleDescriptionInput {
   scoringCta: VideoDescriptionScoringCta;
   suggestedPlaylistCategory: string;
   hashtags: string[];
+  chapters?: DescriptionChapter[];
   language?: string;
 }
 
@@ -38,35 +42,22 @@ export function assembleFullDescription(input: AssembleDescriptionInput): {
   charCount: number;
   hashtags: string[];
 } {
-  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language = "English" } = input;
+  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, chapters = [], language = "English" } = input;
   const normalizedTags = normalizeHashtags(input.hashtags);
-  const langKey = language.trim().toLowerCase();
-
-  const scoringHeader =
-    langKey === "de" || langKey === "german"
-      ? "🏆 PUNKTESTUFEN:"
-      : langKey === "fr" || langKey === "french"
-        ? "🏆 BAREME DE SCORE :"
-        : "🏆 SCORING TIERS:";
-
-  const playlistHeader =
-    langKey === "de" || langKey === "german"
-      ? "📂 Playlist-Kategorie:"
-      : langKey === "fr" || langKey === "french"
-        ? "📂 Catégorie de playlist :"
-        : "📂 Playlist Category:";
+  const locale = getDescriptionSectionLocale(language);
 
   const sections: string[] = [
     hookLines.trim(),
     semanticParagraph.trim(),
+    formatChaptersBlock(chapters, locale.chaptersHeader),
     [
-      scoringHeader,
+      locale.scoringHeader,
       `• ${scoringCta.beginner.trim()}`,
       `• ${scoringCta.intermediate.trim()}`,
       `• ${scoringCta.expert.trim()}`,
       `👉 ${scoringCta.cta_text.trim()}`,
     ].join("\n"),
-    `${playlistHeader} ${suggestedPlaylistCategory.trim()}`,
+    `${locale.playlistHeader} ${suggestedPlaylistCategory.trim()}`,
     normalizedTags.join(" "),
   ];
 

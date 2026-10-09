@@ -44,6 +44,15 @@ function buildGenerateBatchPayload(body: Record<string, unknown>, llmClient?: LL
 
   const count = typeof body.count === "number" ? body.count : typeof body.target_count === "number" ? body.target_count : 20;
 
+  const timeoutMs =
+    typeof body.timeout_ms === "number" && body.timeout_ms > 0
+      ? body.timeout_ms
+      : typeof body.timeoutMs === "number" && body.timeoutMs > 0
+        ? body.timeoutMs
+        : typeof body.timeout === "number" && body.timeout > 0
+          ? body.timeout * 1000
+          : undefined;
+
   return {
     mode,
     archetypeId: typeof body.archetype_id === "string" ? (body.archetype_id as BankGameplayArchetypeId) : undefined,
@@ -51,6 +60,7 @@ function buildGenerateBatchPayload(body: Record<string, unknown>, llmClient?: LL
     subtopicId: typeof body.subtopic_id === "string" ? body.subtopic_id : undefined,
     subtopicTitle: typeof body.subtopic_title === "string" ? body.subtopic_title : undefined,
     count,
+    timeoutMs,
     language: typeof body.language === "string" ? body.language : undefined,
     difficulty: typeof body.difficulty === "number" ? body.difficulty : undefined,
     ageBand:

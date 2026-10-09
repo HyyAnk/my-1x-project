@@ -20,15 +20,17 @@ describe("CandyArcade Bridge Sticker Shader & Photo Card Styles (Phase 5)", () =
   });
 
   describe("candyArcadeBridgeTopicStylesCss", () => {
-    it("contains showcase row and card/sticker presentation classes", () => {
+    it("contains showcase row and unified framed photo card presentation", () => {
       const css = candyArcadeBridgeTopicStylesCss();
 
       expect(css).toContain(".bridge-showcase-row");
       expect(css).toContain(".bridge-showcase-item");
-      expect(css).toContain(".is-sticker");
-      expect(css).toContain(".is-photo-card");
-      expect(css).toContain("filter: url(#bridge-sticker-filter)");
-      expect(css).toContain("border: 5px solid #FFFFFF");
+      expect(css).toContain(".bridge-showcase-item img");
+      expect(css).toMatch(/\.bridge-showcase-item \{[^}]*border: \d+px solid #FFFFFF;/);
+      // Sticker vs photo-card presentation modes were replaced by one framed card style.
+      expect(css).not.toContain(".is-sticker");
+      expect(css).not.toContain(".is-photo-card");
+      expect(css).not.toContain("filter: url(#bridge-sticker-filter)");
     });
 
     it("contains staggered entrance keyframes and idle float animations", () => {

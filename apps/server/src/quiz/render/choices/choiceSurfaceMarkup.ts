@@ -24,7 +24,6 @@ export function resolveChoiceDecorationVariant(
       return "media_bottom_badge";
     case "split_versus_two":
     case "verdict_yes_no":
-    case "verdict_true_false":
       return "text_only";
     case "mystery_reveal":
       return "single_reveal";
@@ -71,7 +70,7 @@ export function renderChoiceCard(input: RenderChoiceCardInput): string {
     return `<div class="choice-card choice-card-visual visual-answer-card choice-pure-visual skin-${groupInput.skin.id} ${stateClasses} choice-tier-${layout.tier}" style="--item-phase:${itemPhase}s" ${semanticAttributes} data-layout-allow-occlusion data-layout-allow-overflow>${renderChoiceMedia(choice)}${badgeHtml}${hiddenTextHtml}</div>`;
   }
 
-  // Variant 2: Text Only or Single Reveal (split_versus_two, verdict_true_false, mystery_reveal)
+  // Variant 2: Text Only or Single Reveal (split_versus_two, verdict_yes_no, mystery_reveal)
   if (isTextOnly) {
     const singleClass = variant === "single_reveal" ? " choice-single-reveal" : "";
     const surfaceDecorations = decorations.beforeLabelHtml ?? "";

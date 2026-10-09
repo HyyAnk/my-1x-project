@@ -26,11 +26,9 @@ export function sandboxPreviewLayoutIssues(input: SandboxPreviewLayoutContext): 
     input.question_format ??
     (input.layout_id === "mystery_reveal" || input.choices.length === 1
       ? "image_guess"
-      : input.layout_id === "verdict_yes_no"
+      : input.layout_id === "verdict_yes_no" || input.choices.length === 2
         ? "yes_no"
-        : input.choices.length === 2
-          ? "true_false"
-          : "multiple_choice");
+        : "multiple_choice");
   const hasSemanticContext = Boolean(input.question_format || input.archetype);
   const defaultPresentation = capability.supportedPresentations[0];
   const archetype = resolveSandboxArchetype(input.archetype, questionFormat, defaultPresentation);
@@ -78,6 +76,5 @@ function resolveSandboxArchetype(
   if (archetype) return archetype;
   if (questionFormat === "odd_one_out") return "visual_multiple_choice";
   if (questionFormat === "yes_no") return "yes_no";
-  if (questionFormat === "true_false") return "true_false";
   return defaultPresentation === "visual" ? "visual_multiple_choice" : "text_multiple_choice";
 }

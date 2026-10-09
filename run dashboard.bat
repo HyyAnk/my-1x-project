@@ -15,7 +15,7 @@ set "C_STEP=!ESC![1;34m"
 set "C_DEBUG=!ESC![2m"
 
 set "CHATTERBOX_MODEL=turbo"
-set "DASHBOARD_WEB_PORT=2244"
+set "DASHBOARD_WEB_PORT=7743"
 
 REM Seed .env from .env.example if missing
 if not exist "!ROOT!\.env" if exist "!ROOT!\.env.example" (
@@ -131,11 +131,13 @@ call :log OK T:setup ffmpeg "FFmpeg ready"
 call :log STEP T:setup antigravity "Checking Google Antigravity active session and CLI"
 if not defined ANTIGRAVITY_LS_ADDRESS (
   for /f "usebackq delims=" %%P in (`powershell -NoProfile -Command "$p = Get-Process -Name 'language_server' -ErrorAction SilentlyContinue; if ($p) { (Get-NetTCPConnection -OwningProcess $p.Id -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalAddress -in @('127.0.0.1','0.0.0.0') } | Select-Object -First 1).LocalPort }"` ) do (
-    if not "%%P"=="" set "ANTIGRAVITY_LS_ADDRESS=localhost:%%P"
+    if not "%%P"=="" set "ANTIGRAVITY_DETECTED_PORT=%%P"
   )
 )
-if defined ANTIGRAVITY_LS_ADDRESS (
-  call :log OK T:setup antigravity "Antigravity active IDE session detected (!ANTIGRAVITY_LS_ADDRESS!)"
+if defined ANTIGRAVITY_DETECTED_PORT (
+  call :log OK T:setup antigravity "Antigravity active IDE session detected (localhost:!ANTIGRAVITY_DETECTED_PORT!)"
+) else if defined ANTIGRAVITY_LS_ADDRESS (
+  call :log OK T:setup antigravity "Antigravity configured address detected (!ANTIGRAVITY_LS_ADDRESS!)"
 ) else (
   where agy >nul 2>nul
   if errorlevel 1 (

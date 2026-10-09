@@ -65,8 +65,11 @@ describe("Quiz Voice Plan Bridge Segments Pipeline (Stage 3)", () => {
     const segmentIds = plan.segments.map((s) => s.segment_id);
     assert.equal(segmentIds[0], "intro");
     assert.equal(segmentIds[1], "intro_topic");
-    assert.equal(segmentIds[2], "intro_cta");
-    assert.equal(segmentIds[3], "q1:question");
+    assert.equal(segmentIds[2], "q1:question");
+    // Two-question quiz: the mid-roll CTA follows the last q1 segment, before q2 starts
+    const ctaIndex = segmentIds.indexOf("intro_cta");
+    assert.ok(ctaIndex > segmentIds.lastIndexOf("q1:explanation"));
+    assert.equal(segmentIds[ctaIndex + 1], "q2:question");
 
     const topicSegment = plan.segments.find((s) => s.segment_id === "intro_topic");
     assert.ok(topicSegment);

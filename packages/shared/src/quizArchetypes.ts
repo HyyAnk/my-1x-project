@@ -1,12 +1,10 @@
-import type { QuizQuestionFormat } from "./enums/quiz/pipelineEnums.js";
+import { normalizeLegacyVerdictIdentifier, type QuizQuestionFormat } from "./enums/quiz/pipelineEnums.js";
 import type { ResolvedQuizLayoutId } from "./quizLayouts.catalog.js";
 
 export type QuizGameplayArchetypeId =
   | "deep_trivia"
   | "visual_spotting"
   | "verdict_yes_no"
-  | "verdict_true_false"
-  | "verdict_fact_myth"
   | "versus_faceoff"
   | "visual_identification"
   | "speed_blitz"
@@ -54,20 +52,6 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
     ],
   },
   {
-    id: "verdict_true_false",
-    name: "True or False",
-    description:
-      "Verdict evaluation question testing True vs False with a cinematic background visual and 2 prominent TRUE / FALSE buttons.",
-    defaultFormat: "true_false",
-    targetLayout: "verdict_true_false",
-    creativeAngles: [
-      "Surprising Realities & Misconceptions",
-      "Human Body Surprises",
-      "Counter-Intuitive Truths",
-      "Strange Laws Around the World",
-    ],
-  },
-  {
     id: "versus_faceoff",
     name: "Versus Face-off (1v1)",
     description: "Head-to-head comparison between two entities or characters across a balanced split-screen layout.",
@@ -107,6 +91,6 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
 ] as const;
 
 export function getQuizGameplayArchetype(id: string): QuizGameplayArchetypeBlueprint | undefined {
-  const targetId = id === "verdict_fact_myth" ? "verdict_true_false" : id;
+  const targetId = normalizeLegacyVerdictIdentifier(id);
   return QUIZ_GAMEPLAY_ARCHETYPES.find((archetype) => archetype.id === targetId);
 }

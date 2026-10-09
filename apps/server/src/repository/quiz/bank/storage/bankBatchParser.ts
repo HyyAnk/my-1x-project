@@ -1,14 +1,19 @@
-import { BankSubtopicBatchSchema, type BankSubtopicBatch } from "@studio/shared";
+import {
+  BankSubtopicBatchSchema,
+  isLegacyVerdictIdentifier,
+  normalizeLegacyVerdictIdentifier,
+  type BankSubtopicBatch,
+} from "@studio/shared";
 import { RepositoryError } from "../../../errors.js";
 import { matchesArchetypeFilter } from "./bankBatchPathGuard.js";
 
 import { normalizeVerdictQuestion } from "../bankQuestionNormalizer.js";
 
 /**
- * Normalizes legacy archetype ID synonyms (e.g. verdict_fact_myth / verdict_true_false -> verdict_yes_no).
+ * Normalizes retired verdict archetype IDs (verdict_true_false / verdict_fact_myth -> verdict_yes_no).
  */
 export function normalizeLegacyArchetype<T extends string>(archetypeId: T): T | "verdict_yes_no" {
-  return archetypeId === "verdict_fact_myth" || archetypeId === "verdict_true_false" ? "verdict_yes_no" : archetypeId;
+  return normalizeLegacyVerdictIdentifier(archetypeId) as T | "verdict_yes_no";
 }
 
 /**
@@ -134,9 +139,15 @@ export function assertUniqueQuestionIds(batches: BankSubtopicBatch[]): void {
   }
 }
 
+function mergeLegacyVerdictBatch(canonical: BankSubtopicBatch, legacy: BankSubtopicBatch): BankSubtopicBatch {
+  const canonicalIds = new Set(canonical.questions.map((question) => question.id));
+  return { ...canonical, questions: [...canonical.questions, ...legacy.questions.filter((question) => !canonicalIds.has(question.id))] };
+}
+
 /**
  * Stores or updates a discovered batch in the deduplication map,
- * applying precedence rules for runtime vs project and modern vs legacy archetypes.
+ * applying precedence rules for runtime vs project roots. A retired True/False directory that has not been
+ * migrated yet is merged into the canonical Yes/No batch, with the canonical copy winning per question ID.
  */
 export function storeDiscoveredBatch(
   batchesMap: Map<string, { data: BankSubtopicBatch; isRuntime: boolean; archDir: string }>,
@@ -150,7 +161,12 @@ export function storeDiscoveredBatch(
     batchesMap.set(key, { data, isRuntime, archDir });
   } else if (isRuntime && !existing.isRuntime) {
     batchesMap.set(key, { data, isRuntime, archDir });
-  } else if (isRuntime === existing.isRuntime && archDir === "verdict_true_false" && existing.archDir !== "verdict_true_false") {
-    batchesMap.set(key, { data, isRuntime, archDir });
+  } else if (isRuntime === existing.isRuntime && (isLegacyVerdictIdentifier(archDir) || isLegacyVerdictIdentifier(existing.archDir))) {
+    // The canonical folder wins; between two retired folders the first one discovered wins.
+    const [canonical, legacy] = isLegacyVerdictIdentifier(archDir) ? [existing.data, data] : [data, existing.data];
+    // Only mark the merge as canonical once a canonical batch took part, so a later canonical batch still wins.
+    const mergedArchDir =
+      isLegacyVerdictIdentifier(archDir) && isLegacyVerdictIdentifier(existing.archDir) ? existing.archDir : "verdict_yes_no";
+    batchesMap.set(key, { data: mergeLegacyVerdictBatch(canonical, legacy), isRuntime, archDir: mergedArchDir });
   }
 }

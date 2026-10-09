@@ -24,7 +24,7 @@ function clearSceneAudio(scene: Scene): Scene {
 export function assertQuizSceneChoicePolicy(scenes: Scene[], episode: Episode): void {
   const normalizedFormat = episode.quiz_config.quiz_format === "knowledge" ? "multiple_choice" : episode.quiz_config.quiz_format;
   const defaultRequiredChoiceCount = quizChoiceCountForFormat(
-    episode.quiz_config.target_layout === "split_versus_two" ? "true_false" : normalizedFormat,
+    episode.quiz_config.target_layout === "split_versus_two" ? "yes_no" : normalizedFormat,
   );
   for (const scene of scenes) {
     if (!scene.quiz || !scene.quiz.question_number || ["intro", "outro"].includes(scene.quiz.phase)) continue;

@@ -124,17 +124,17 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       expect(dims).toEqual({ maxWidth: 1120, maxHeight: 840, aspectRatio: "4:3" });
     });
 
-    it("executes full pipeline for '4:3' layout: verdict_true_false", () => {
+    it("executes full pipeline for '4:3' layout: verdict_yes_no", () => {
       const quiz = buildTestQuiz([
         {
           id: "q-tf",
           number: 1,
-          format: "true_false",
+          format: "yes_no",
           difficulty: 1,
           question: "Sound travels faster in water than in air.",
           choices: [
-            { id: "c-t", text: "True" },
-            { id: "c-f", text: "False" },
+            { id: "c-t", text: "Yes" },
+            { id: "c-f", text: "No" },
           ],
           correct_choice_id: "c-t",
           explanation: "Water is denser, carrying sound waves faster.",
@@ -148,8 +148,8 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const director = buildTestDirectorPlan([
         {
           question_id: "q-tf",
-          archetype: "true_false",
-          layout_id: "verdict_true_false",
+          archetype: "yes_no",
+          layout_id: "verdict_yes_no",
           energy: "excited",
           visual_density: "lively",
           palette_id: "aqua",
@@ -178,7 +178,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const compiled = compileQuizAssetPrompt(hero!);
       expect(compiled.prompt).toContain("Output framing: 4:3.");
 
-      const dims = getOptimalAssetDimensions("hero", "verdict_true_false");
+      const dims = getOptimalAssetDimensions("hero", "verdict_yes_no");
       expect(dims).toEqual({ maxWidth: 1216, maxHeight: 912, aspectRatio: "4:3" });
     });
 
@@ -394,7 +394,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
     it("renders valid markup via renderQuizLayoutBody for all supported layouts without breakages", () => {
       const layouts: QuizPreviewLayoutId[] = [
         "media_left_choices_right",
-        "verdict_true_false",
+        "verdict_yes_no",
         "visual_choices_three",
         "visual_choices_three_pure",
         "split_versus_two",

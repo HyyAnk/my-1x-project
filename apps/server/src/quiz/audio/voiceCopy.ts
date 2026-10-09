@@ -19,16 +19,17 @@ export const ENGLISH_TOPIC_TEASER_VARIANTS = [
   (count: number, topic: string) => `Fire up your brains! Today we're solving ${count} thrilling mystery questions about ${topic}! Let's jump right in!`,
 ] as const;
 
+/** Played mid-video (after question 10), so the copy must not reference the start of the quiz. */
 export const ENGLISH_SUBSCRIBE_CTA_VARIANTS = [
-  (channel: string) => `Quick shout-out! Smash that subscribe button for ${channel} right now and join our awesome quiz crew! You won't want to miss a single challenge!`,
-  (channel: string) => `Before question one kicks off, smash that subscribe button for ${channel} to unlock daily brain-busting fun!`,
-  (channel: string) => `Are you ready to play? Hit that subscribe button for ${channel} right now so you never miss our next epic showdown!`,
+  (channel: string) => `Quick break! You're doing awesome! Smash that subscribe button for ${channel} and join our quiz crew so you never miss a challenge!`,
+  (channel: string) => `Great job so far! If you're having fun, hit that subscribe button for ${channel} to unlock more brain-busting quizzes!`,
+  (channel: string) => `Wow, look how far you've come! Tap subscribe for ${channel} right now so you never miss our next epic showdown!`,
 ] as const;
 
 export const ENGLISH_KICKOFF_VARIANTS = [
-  "Let's go!",
-  "Here we go!",
-  "Let's do this!",
+  "Now, back to the quiz!",
+  "Let's keep going!",
+  "On to the next question!",
   "Ready? Let's go!",
 ] as const;
 
@@ -45,14 +46,14 @@ export const CHINESE_TOPIC_TEASER_VARIANTS = [
 ] as const;
 
 export const CHINESE_SUBSCRIBE_CTA_VARIANTS = [
-  (channel: string) => `\u5728\u5f00\u59cb\u4e4b\u524d\uff0c\u522b\u5fd8\u4e86\u8ba2\u9605${channel}\uff0c\u4f53\u9a8c\u66f4\u591a\u6709\u8da3\u7684\u6311\u6218\uff01`,
-  (channel: string) => `\u5728\u5f00\u59cb\u7b2c\u4e00\u9898\u524d\uff0c\u8bb0\u5f97\u8ba2\u9605${channel}\uff0c\u63a2\u7d22\u66f4\u591a\u7cbe\u5f69\u95ee\u7b54\uff01`,
+  (channel: string) => `\u4f60\u7b54\u5f97\u771f\u68d2\uff01\u522b\u5fd8\u4e86\u8ba2\u9605${channel}\uff0c\u4f53\u9a8c\u66f4\u591a\u6709\u8da3\u7684\u6311\u6218\uff01`,
+  (channel: string) => `\u4f11\u606f\u4e00\u4e0b\uff01\u8bb0\u5f97\u8ba2\u9605${channel}\uff0c\u63a2\u7d22\u66f4\u591a\u7cbe\u5f69\u95ee\u7b54\uff01`,
 ] as const;
 
 export const CHINESE_KICKOFF_VARIANTS = [
-  "\u6211\u4eec\u9a6c\u4e0a\u5f00\u59cb\uff01",
+  "\u6211\u4eec\u7ee7\u7eed\u5427\uff01",
   "\u51c6\u5907\u597d\u4e86\u5417\uff1f\u51fa\u53d1\uff01",
-  "\u6765\u5427\uff0c\u7b2c\u4e00\u9898\uff01",
+  "\u6765\u5427\uff0c\u4e0b\u4e00\u9898\uff01",
 ] as const;
 
 export const CHINESE_OUTRO_CLOSING_VARIANTS = [

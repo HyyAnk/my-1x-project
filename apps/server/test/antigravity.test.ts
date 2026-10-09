@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { createServer } from "node:http";
 import { AntigravityClient } from "../src/antigravity.js";
+import { isPortResponsive } from "../src/antigravity/discovery.js";
 import { DEFAULT_CONFIG } from "../src/config.js";
 import { StudioLogger } from "../src/logger.js";
 
@@ -120,5 +122,28 @@ describe("Antigravity Client", () => {
     expect(isDone).toBe(true);
     expect(extracted).toContain("# Research Dossier");
     expect(extracted).not.toContain("Tool search result");
+  });
+
+  it("accurately detects port responsiveness", async () => {
+    // Unreachable port should return false
+    const deadPortResult = await isPortResponsive("127.0.0.1:59999", 200);
+    expect(deadPortResult).toBe(false);
+
+    // Live HTTP server port should return true
+    const server = createServer((_req, res) => {
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      res.end("ok");
+    });
+
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", () => resolve()));
+    const address = server.address();
+    const port = typeof address === "object" && address ? address.port : 0;
+
+    try {
+      const livePortResult = await isPortResponsive(`127.0.0.1:${port}`, 500);
+      expect(livePortResult).toBe(true);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
   });
 });

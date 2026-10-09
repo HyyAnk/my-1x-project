@@ -71,6 +71,31 @@ export const dummyMascot: MascotProfile = {
 };
 
 /**
+ * Mascot with ready still-image variants. The default static media mode only
+ * renders question mascots backed by a real still variant, so tests that need
+ * a visible question mascot use this fixture instead of `dummyMascot`.
+ */
+export const stillImageMascot: MascotProfile = {
+  ...dummyMascot,
+  master_image_url: "/assets/mascot.png",
+  styles: [
+    {
+      id: "core",
+      name: "Core",
+      keyword: "",
+      anchor_image_url: "/assets/mascot.png",
+      is_default: true,
+      states: {
+        thinking: [{ id: "core_thinking_1", slot_index: 1, image_url: "/assets/mascot_thinking_1.png", status: "ready" }],
+        celebrate: [{ id: "core_celebrate_1", slot_index: 1, image_url: "/assets/mascot_celebrate_1.png", status: "ready" }],
+      },
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    },
+  ],
+};
+
+/**
  * Builds the quiz, director, and timeline trio shared by composition tests.
  */
 export function buildQuizDirectorTimeline() {

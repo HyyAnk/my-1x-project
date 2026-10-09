@@ -1,4 +1,5 @@
-import type { BankQuestion } from "@studio/shared";
+import { BankVisualSpecSchema, type BankQuestion } from "@studio/shared";
+import { KID_AUDIENCE_POLICY_LINES } from "../prompts/kidAudiencePolicy.js";
 import type {
   RemediatedQuestionOutput,
   StemLeakRemediationInput,
@@ -74,6 +75,8 @@ export function buildStemLeakRemediationPrompt(input: StemLeakRemediationInput):
     `- QA Issue Message: "${issue.message}"`,
     ``,
     ...strategyInstructions,
+    ``,
+    ...KID_AUDIENCE_POLICY_LINES,
     ``,
     `=== MOBILE BREVITY & EDITORIAL RULES ===`,
     `- Question length strictly 60 to 80 characters (never exceed 80 chars).`,
@@ -159,9 +162,16 @@ export function parseStemLeakRemediationOutput(
     explanation: String(parsed.explanation || originalQuestion.explanation || "").trim(),
     fun_fact: parsed.fun_fact ? String(parsed.fun_fact).trim() : originalQuestion.fun_fact,
     visual_spec: {
-      intent: parsed.visual_spec.intent || originalQuestion.visual_spec?.intent || "question_illustration",
+      // LLM output is untrusted: unknown intents or ratios fall back to the original question's valid values.
+      intent:
+        BankVisualSpecSchema.shape.intent.removeDefault().safeParse(parsed.visual_spec.intent).data ??
+        originalQuestion.visual_spec?.intent ??
+        "question_illustration",
       prompt: String(parsed.visual_spec.prompt).trim(),
-      aspect_ratio: parsed.visual_spec.aspect_ratio || originalQuestion.visual_spec?.aspect_ratio || "16:9",
+      aspect_ratio:
+        BankVisualSpecSchema.shape.aspect_ratio.removeDefault().safeParse(parsed.visual_spec.aspect_ratio).data ??
+        originalQuestion.visual_spec?.aspect_ratio ??
+        "16:9",
     },
     remediation_strategy_applied: strategyApplied,
   };

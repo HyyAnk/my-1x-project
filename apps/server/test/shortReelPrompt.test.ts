@@ -177,15 +177,15 @@ describe("Short-Reel Prompt Compiler and Prompt Builder (Phase 04)", () => {
     expect(prompt).toContain("Break down strengths and weaknesses");
   });
 
-  it("buildScriptGenerationPrompt formats verdict_true_false archetype and mythbusters lab seed", () => {
+  it("buildScriptGenerationPrompt formats verdict_yes_no archetype and mythbusters lab seed", () => {
     const tfSource: CompleteShortReelSourceSnapshot = {
       ...source,
-      archetype_id: "verdict_true_false",
+      archetype_id: "verdict_yes_no",
       choices: [
-        { id: "A", text: "True", is_correct: true },
-        { id: "B", text: "False", is_correct: false },
+        { id: "A", text: "Yes", is_correct: true },
+        { id: "B", text: "No", is_correct: false },
       ],
-      selected_answer_text: "True",
+      selected_answer_text: "Yes",
     };
 
     const prompt = buildScriptGenerationPrompt({
@@ -195,7 +195,7 @@ describe("Short-Reel Prompt Compiler and Prompt Builder (Phase 04)", () => {
     });
 
     expect(prompt).toContain("DIRECTORIAL SEED: COURTROOM VERDICT");
-    expect(prompt).toContain("TRUE OR FALSE");
+    expect(prompt).toContain("YES OR NO");
     expect(prompt).toContain("High-drama trial with gavel-slamming justice");
     expect(prompt).toContain("Courtroom bench, judge's gavel");
   });

@@ -7,6 +7,7 @@ import {
   QuizLayoutIdSchema,
   QuizPreviewLayoutIdSchema,
   QuizV2Schema,
+  RESOLVED_QUIZ_LAYOUT_IDS,
   ResolvedQuizLayoutIdSchema,
   resolveQuizLayout,
   SandboxPreviewInputSchema,
@@ -21,8 +22,8 @@ import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 
 describe("Phase 2 layout capability catalog", () => {
   it("P2-CAT-01, P2-CAT-04, and P2-MIG-01 keep persisted IDs exhaustive and capabilities complete", () => {
-    expect(Object.keys(QUIZ_LAYOUT_CATALOG).sort()).toEqual([...ResolvedQuizLayoutIdSchema.options].sort());
-    expect(QUIZ_LAYOUTS.map((layout) => layout.id).sort()).toEqual([...ResolvedQuizLayoutIdSchema.options].sort());
+    expect(Object.keys(QUIZ_LAYOUT_CATALOG).sort()).toEqual([...RESOLVED_QUIZ_LAYOUT_IDS].sort());
+    expect(QUIZ_LAYOUTS.map((layout) => layout.id).sort()).toEqual([...RESOLVED_QUIZ_LAYOUT_IDS].sort());
     expect(QuizLayoutIdSchema.parse("auto")).toBe("auto");
 
     for (const layout of QUIZ_LAYOUTS) {
@@ -55,7 +56,7 @@ describe("Phase 2 layout resolution policy", () => {
       ok: true,
       layoutId: "media_left_choices_right",
     });
-    expect(resolveAuto("true_false", "true_false", 2)).toMatchObject({ ok: true, layoutId: "verdict_true_false" });
+    expect(resolveAuto("yes_no", "yes_no", 2)).toMatchObject({ ok: true, layoutId: "verdict_yes_no" });
   });
 
   it("P2-RES-02 preserves visual and odd-one-out auto resolution", () => {
@@ -78,8 +79,8 @@ describe("Phase 2 layout resolution policy", () => {
   it("P2-RES-04 returns a structured count incompatibility without fallback", () => {
     const result = resolveQuizLayout({
       requestedLayout: "visual_choices_three",
-      archetype: "true_false",
-      questionFormat: "true_false",
+      archetype: "yes_no",
+      questionFormat: "yes_no",
       choiceCount: 2,
     });
     expect(result.ok).toBe(false);
@@ -142,7 +143,7 @@ describe("Phase 2 layout resolution policy", () => {
       layoutId: "visual_choices_three",
       choicePresentation: "visual",
       choiceCount: 3,
-      questionFormat: "true_false",
+      questionFormat: "yes_no",
       aspectRatio: "16:9",
       media: ["choice"],
     });
@@ -197,7 +198,7 @@ describe("Phase 2 layout resolution policy", () => {
 
 describe("Phase 2 validation consumers", () => {
   it("P2-INT-01 and P2-INT-02 surface stable Director and QA issue codes", () => {
-    const quiz = QuizV2Schema.parse(quizInput("true_false", 2));
+    const quiz = QuizV2Schema.parse(quizInput("yes_no", 2));
     const plan = createDefaultDirectorPlan(quiz);
     const incompatible = { ...plan, beats: plan.beats.map((beat) => ({ ...beat, layout_id: "visual_choices_three" as const })) };
     const directorIssues = validateDirectorPlan(quiz, incompatible).issues;
@@ -210,10 +211,10 @@ describe("Phase 2 validation consumers", () => {
   });
 
   it("P2-INT-04 rejects incompatible Sandbox combinations but preserves baseline compatibility", () => {
-    const incompatible = SandboxPreviewInputSchema.safeParse({ layout_id: "visual_choices_three", choices: ["True", "False"] });
+    const incompatible = SandboxPreviewInputSchema.safeParse({ layout_id: "visual_choices_three", choices: ["Yes", "No"] });
     expect(incompatible.success).toBe(false);
     if (!incompatible.success) expect(incompatible.error.message).toContain("layout_choice_count_unsupported");
-    expect(SandboxPreviewInputSchema.safeParse({ layout_id: "baseline", choices: ["True", "False"] }).success).toBe(true);
+    expect(SandboxPreviewInputSchema.safeParse({ layout_id: "baseline", choices: ["Yes", "No"] }).success).toBe(true);
   });
 
   it("P2-INT-06 composes both production renderer layouts", () => {
@@ -236,13 +237,13 @@ describe("Phase 2 validation consumers", () => {
 
 function resolveAuto(
   archetype: Parameters<typeof resolveQuizLayout>[0]["archetype"],
-  questionFormat: "multiple_choice" | "true_false" | "odd_one_out" | "image_guess",
+  questionFormat: "multiple_choice" | "yes_no" | "odd_one_out" | "image_guess",
   choiceCount: number,
 ) {
   return resolveQuizLayout({ requestedLayout: "auto", archetype, questionFormat, choiceCount });
 }
 
-function quizInput(format: "multiple_choice" | "true_false", choiceCount: number) {
+function quizInput(format: "multiple_choice" | "yes_no", choiceCount: number) {
   const choices = ["Alpha", "Beta", "Gamma", "Delta"].slice(0, choiceCount).map((text, index) => ({
     id: `choice-${index + 1}`,
     text,

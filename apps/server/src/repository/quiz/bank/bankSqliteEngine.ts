@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import type { DatabaseSync as SqliteDatabase } from "node:sqlite";
 import { RepositoryError } from "../../errors.js";
+import { normalizeLegacyVerdictRows } from "./bankLegacyVerdictRows.js";
 
 let SqliteDatabaseConstructor: (new (path: string) => SqliteDatabase) | null = null;
 try {
@@ -22,6 +23,8 @@ interface ScopedConnection {
 }
 
 const asyncLocalStorage = new AsyncLocalStorage<ScopedConnection>();
+/** Retired True/False rows only need rewriting once per database per process. */
+const legacyVerdictNormalizedRoots = new Set<string>();
 const standalonePool = new Map<string, SqliteDatabase>();
 
 export function getBankSqliteDbPath(runtimeBankRoot: string): string {
@@ -37,6 +40,15 @@ function openDatabaseInstance(runtimeBankRoot: string): SqliteDatabase {
   const db = new SqliteDatabaseConstructor(dbPath);
   configureDatabase(db);
   initializeSchema(db);
+  if (!legacyVerdictNormalizedRoots.has(runtimeBankRoot)) {
+    legacyVerdictNormalizedRoots.add(runtimeBankRoot);
+    try {
+      normalizeLegacyVerdictRows(db);
+    } catch (error) {
+      // Reads still normalize legacy rows on the fly, so a failed rewrite must never block opening the bank.
+      console.warn(`[BankSqlite] Legacy True/False row normalization skipped: ${(error as Error).message}`);
+    }
+  }
   return db;
 }
 

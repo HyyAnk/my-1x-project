@@ -44,6 +44,8 @@ export interface GenerateBatchInput {
   retryBaseDelayMs?: number;
   rateLimiter?: AdaptiveRateLimiter;
   useDynamicChunks?: boolean;
+  timeoutMs?: number;
+  modelOverride?: string;
 }
 
 export interface BatchGenerationResult {

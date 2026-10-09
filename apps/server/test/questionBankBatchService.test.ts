@@ -15,6 +15,9 @@ import {
   type QuestionBankChunkProgress,
 } from "../src/quiz/bank/questionBankBatchService.js";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
+import { readKidsAudienceExpectations } from "./fixtures/knowledgeBaseExpectations.js";
+
+const kb = readKidsAudienceExpectations();
 
 describe("Question Bank Batch Generator Prompt & Parser", () => {
   const sampleTargets: TargetEntityForGeneration[] = [
@@ -67,7 +70,7 @@ describe("Question Bank Batch Generator Prompt & Parser", () => {
     expect(prompt).toContain("King of the Jungle");
     expect(prompt).toContain("ENT-ANI-002");
     expect(prompt).toContain("African Elephant");
-    expect(prompt).toContain("verdict_fact_myth");
+    expect(prompt).toContain("verdict_yes_no");
     expect(prompt).toContain("SPECIALIZED YES / NO ARCHETYPE DIRECTIVE");
     expect(prompt).toContain("REVERSE MATRIX GENERATION CONTRACT");
   });
@@ -195,7 +198,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressEvents.length).toBe(1);
     expect(progressEvents[0].completedCount).toBe(1);
     expect(result.matrixCoverage).toBeDefined();
-    expect(result.matrixCoverage?.total_combos).toBe(19313);
+    expect(result.matrixCoverage?.total_combos).toBe(kb.comboCount);
   });
 
   it.each(["fr", "vi", "unknown", undefined, "English"])(
@@ -316,7 +319,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressReports[1].chunkSize).toBe(5);
 
     expect(result.matrixCoverage).toBeDefined();
-    expect(result.matrixCoverage?.total_combos).toBe(19313);
+    expect(result.matrixCoverage?.total_combos).toBe(kb.comboCount);
   });
 
   it("rotates domain and archetype across multi-chunk auto generation", async () => {
@@ -606,5 +609,62 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     const finalReport = progressReports[progressReports.length - 1];
     expect(finalReport.failedChunksCount).toBe(1);
     expect(finalReport.currentChunk).toBe(3);
+  });
+
+  it("uses 600,000ms default timeout or configured timeoutMs when invoking LLM client", async () => {
+    let capturedTimeoutMs: number | undefined;
+
+    const mockLlmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: (_prompt: string, options?: any) => {
+        capturedTimeoutMs = options?.timeoutMs;
+        return Promise.resolve({
+          text: JSON.stringify([
+            {
+              entity_id: "ENT-ANI-001",
+              question: "Sample timeout test question?",
+              format: "multiple_choice",
+              choices: [
+                { id: "A", text: "Choice A", is_correct: true },
+                { id: "B", text: "Choice B", is_correct: false },
+              ],
+              correct_choice_id: "A",
+              explanation: "Explanation",
+              visual_spec: { intent: "none" },
+              difficulty: 1,
+              thinking_seconds: 5,
+              tags: ["test"],
+            },
+          ]),
+        });
+      },
+    };
+
+    // Default timeout should be 600_000ms (600s)
+    await generateQuestionBankBatch(repo, {
+      mode: "manual",
+      archetypeId: "speed_blitz",
+      domainId: "animals",
+      subtopicId: "dogs",
+      count: 1,
+      persist: false,
+      llmClient: mockLlmClient,
+    });
+
+    expect(capturedTimeoutMs).toBe(600_000);
+
+    // Custom timeout override should be respected
+    await generateQuestionBankBatch(repo, {
+      mode: "manual",
+      archetypeId: "speed_blitz",
+      domainId: "animals",
+      subtopicId: "dogs",
+      count: 1,
+      persist: false,
+      timeoutMs: 450_000,
+      llmClient: mockLlmClient,
+    });
+
+    expect(capturedTimeoutMs).toBe(450_000);
   });
 });

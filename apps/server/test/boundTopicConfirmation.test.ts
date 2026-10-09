@@ -465,12 +465,13 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       expect(result.quiz.language).toBe("de");
       expect(result.quiz.questions).toHaveLength(3);
       expect(result.quiz.questions[0].question).toBe("Welche Frage 1?");
-      expect(result.quiz.questions[0].choices.map((c) => c.text)).toEqual([
-        "Option A auf Deutsch",
-        "Option B auf Deutsch",
-        "Option C auf Deutsch",
-      ]);
-      expect(result.quiz.questions[0].choices.map((c) => c.id)).toEqual(["c1", "c2", "c3"]);
+      // Episode bridges reorder choices for answer-position balance; ids and their localized texts stay paired.
+      const localizedChoicesById = Object.fromEntries(result.quiz.questions[0].choices.map((c) => [c.id, c.text]));
+      expect(localizedChoicesById).toEqual({
+        c1: "Option A auf Deutsch",
+        c2: "Option B auf Deutsch",
+        c3: "Option C auf Deutsch",
+      });
 
       // Returned quiz must match persisted quiz exactly
       const persistedQuiz = await repo.readQuiz(channel.channel_id, result.episode.episode_id);

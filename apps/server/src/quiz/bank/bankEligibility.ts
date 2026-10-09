@@ -4,8 +4,12 @@ import {
   type BankQuestion,
   type BankQuestionWithCooldown,
   type QuizQuestionFormat,
+  type ReelArchetype,
   type TopicSourceExclusionReasonCode,
 } from "@studio/shared";
+import { detectStemAnswerLeak } from "./autoQa/stemLeakDetector.js";
+import { describeKidSafetyFinding, detectKidSafetyIssue } from "./kidSafety/kidSafetyDetector.js";
+import { isEntityRestrictedForChannel } from "./knowledgeBaseLoader.js";
 
 export interface EvaluatedBankQuestionCandidate {
   question: BankQuestion;
@@ -29,10 +33,13 @@ interface SharedEligibilityOptions {
   targetLanguage: string;
   expectedFormat?: QuizQuestionFormat | "knowledge";
   expectedChoiceCount?: number;
+  /** Already-bound topic sources predate answer-leak screening and are grandfathered at confirmation. */
+  allowStemLeak?: boolean;
 }
 
 export interface ShortReelEligibilityOptions {
-  targetArchetype: "versus_faceoff" | "deep_trivia" | "verdict_yes_no" | "verdict_true_false";
+  targetArchetype: ReelArchetype;
+  allowStemLeak?: boolean;
 }
 
 export interface EpisodeEligibilityOptions extends SharedEligibilityOptions {
@@ -115,7 +122,7 @@ function validateStructure(question: BankQuestionWithCooldown, options: BankElig
     options.expectedChoiceCount ??
     (options.targetArchetype
       ? bankRequiredChoiceCountForArchetype(options.targetArchetype)
-      : question.format === "true_false"
+      : question.format === "yes_no"
         ? 2
         : bankRequiredChoiceCountForArchetype(question.archetype_id));
   if (expectedCount !== undefined && question.choices.length !== expectedCount) {
@@ -134,11 +141,7 @@ function validateStructure(question: BankQuestionWithCooldown, options: BankElig
     return reject("EMPTY_QUESTION_OR_EXPLANATION", "Question text or explanation is empty");
   if (
     options.expectedFormat &&
-    (options.expectedFormat === "knowledge"
-      ? question.format !== "multiple_choice"
-      : options.expectedFormat === "yes_no" || options.expectedFormat === "true_false"
-        ? question.format !== "yes_no" && question.format !== "true_false"
-        : question.format !== options.expectedFormat)
+    (options.expectedFormat === "knowledge" ? question.format !== "multiple_choice" : question.format !== options.expectedFormat)
   ) {
     return reject(
       "INCOMPATIBLE_FORMAT",
@@ -177,13 +180,25 @@ export function evaluateBankQuestionEligibility(
   const structureFailure = validateStructure(question, options);
   if (structureFailure) return structureFailure;
   const native = projectNative(question);
-  if (native) return { eligible: true, candidate: native };
-  return reject(
-    "MISSING_ENGLISH_SOURCE",
-    question.language?.trim()
-      ? "Bank source language must be explicitly 'en'"
-      : "Bank source is missing explicit English language metadata",
-  );
+  if (!native) {
+    return reject(
+      "MISSING_ENGLISH_SOURCE",
+      question.language?.trim()
+        ? "Bank source language must be explicitly 'en'"
+        : "Bank source is missing explicit English language metadata",
+    );
+  }
+  const kidSafetyFinding = detectKidSafetyIssue(question);
+  if (kidSafetyFinding) return reject("KID_UNSAFE_CONTENT", describeKidSafetyFinding(kidSafetyFinding));
+  if (isEntityRestrictedForChannel(question.entity_id)) {
+    return reject(
+      "KID_UNSAFE_CONTENT",
+      `Subject ${question.entity_id} is curated as teen or mature and is not shown on the kids and family channel.`,
+    );
+  }
+  const stemLeak = options.allowStemLeak ? null : detectStemAnswerLeak(question);
+  if (stemLeak) return reject("ANSWER_LEAKED_IN_STEM", stemLeak.message);
+  return { eligible: true, candidate: native };
 }
 
 export function evaluateShortReelQuestionEligibility(
@@ -194,6 +209,7 @@ export function evaluateShortReelQuestionEligibility(
     policy: "short_reel",
     targetLanguage: "en",
     targetArchetype: options.targetArchetype,
+    allowStemLeak: options.allowStemLeak,
   });
 }
 

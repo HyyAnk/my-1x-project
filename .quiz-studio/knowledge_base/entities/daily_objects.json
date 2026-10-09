@@ -5,6 +5,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Mirror",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Looking Glass",
       "Hand Mirror",
@@ -52,6 +53,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Hair Comb",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pocket Comb",
       "Fine-Tooth Comb",
@@ -98,6 +100,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Hairbrush",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paddle Brush",
       "Bristle Brush",
@@ -144,6 +147,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Umbrella",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Parasol",
       "Brolly",
@@ -191,6 +195,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Key",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Door Key",
       "House Key",
@@ -239,6 +244,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Keychain",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Keyring",
       "Key Fob",
@@ -285,6 +291,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Wallet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leather Wallet",
       "Bifold Wallet",
@@ -333,6 +340,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Handbag",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Purse",
       "Shoulder Bag",
@@ -380,6 +388,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Eyeglasses",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spectacles",
       "Glasses",
@@ -427,6 +436,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Sunglasses",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shades",
       "Sunnies",
@@ -474,6 +484,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Scissors",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shears",
       "Pair of Scissors",
@@ -521,6 +532,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Toothbrush",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Manual Toothbrush",
       "Electric Toothbrush",
@@ -532,7 +544,7 @@
       "I have a narrow plastic handle ending in a compact head with hundreds of nylon bristles",
       "Paired twice daily with fluoridated paste to clean plaque and food particles from teeth",
       "Dentists recommend replacing me every three months when my bristles fray",
-      "Your primary daily hygienic weapon against dental cavities and bad breath"
+      "Your best daily helper for fighting cavities and bad breath"
     ],
     "distractor_pool": [
       "Dental Floss",
@@ -567,6 +579,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Dental Floss",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Floss",
       "Dental Tape",
@@ -598,7 +611,7 @@
         "claim": "Dental floss was invented in 1815 by a New Orleans dentist using unspun silk thread.",
         "verdict": "fact",
         "explanation": "Dr. Levi Spear Parmly advised patients to run thin silk thread between teeth to clean 'the noxious matter' causing tooth decay.",
-        "fun_fact": "Silk was replaced by resilient synthetic nylon during World War II."
+        "fun_fact": "Silk floss was later replaced by strong, stretchy nylon in the 1940s."
       }
     ],
     "versus_candidates": [
@@ -613,6 +626,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Backpack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rucksack",
       "Bookbag",
@@ -660,6 +674,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Padlock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Combination Lock",
       "Brass Padlock",
@@ -689,10 +704,10 @@
         "fun_fact": "If frozen solid, that hole allows heat or de-icer to reach the inner spring mechanism directly."
       },
       {
-        "claim": "Shooting a heavy padlock with a handgun like in action movies easily shatters the lock open.",
+        "claim": "Padlocks are a modern invention from the last 100 years.",
         "verdict": "myth",
-        "explanation": "Ballistic testing shows standard handgun bullets flatten, ricochet, or deform the casing without releasing the hardened steel locking cams.",
-        "fun_fact": "MythBusters confirmed handguns only wedge the tumblers tighter, requiring a high-powered rifle to breach."
+        "explanation": "Ancient Romans and Chinese already used padlocks around 2,000 years ago to protect chests and doors.",
+        "fun_fact": "The U-shaped metal loop that opens and closes on a padlock is called the shackle."
       }
     ],
     "versus_candidates": [
@@ -707,6 +722,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Wristwatch",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Watch",
       "Chronometer",
@@ -738,8 +754,8 @@
       {
         "claim": "All wristwatches were traditionally designed for men, while women carried pocket watches.",
         "verdict": "myth",
-        "explanation": "Wristwatches were initially worn exclusively by aristocratic women as decorative jewelry; men only adopted them during World War I for trench warfare synchronization.",
-        "fun_fact": "Soldiers in trenches quickly realized reaching into a pocket for a watch in battle was dangerously slow."
+        "explanation": "Wristwatches were first popular as decorative jewelry for women; men widely switched from pocket watches in the early 1900s.",
+        "fun_fact": "Cartier made an early men's wristwatch for pilot Alberto Santos-Dumont so he could keep his hands on the controls."
       }
     ],
     "versus_candidates": [
@@ -754,6 +770,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Pocket Knife",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Swiss Army Knife",
       "Jackknife",
@@ -777,16 +794,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The original Swiss Army Knife was commissioned by the Swiss military in 1889 specifically to open canned rations and disassemble their service rifle.",
+        "claim": "The first Swiss Army Knife, from 1890, included a can opener for opening canned food.",
         "verdict": "fact",
-        "explanation": "The Model 1890 knife featured a blade, can opener, flat screwdriver for the Schmidt-Rubin rifle, and a leather punch.",
+        "explanation": "The Model 1890 knife had a blade, a can opener, a screwdriver, and a punch for making holes.",
         "fun_fact": "Karl Elsener later founded Victorinox, naming the company after his mother Victoria and 'inox' stainless steel."
       },
       {
-        "claim": "A pocket knife is completely illegal to carry anywhere under all international laws.",
+        "claim": "It is safe to cut toward yourself with a pocket knife if you go slowly.",
         "verdict": "myth",
-        "explanation": "Laws vary by jurisdiction, but non-locking folding knives with short blades under 3 inches are legal everyday carry tools in many countries.",
-        "fun_fact": "Airport security restrictions however universally forbid pocket knives in carry-on luggage."
+        "explanation": "Always cut away from your body and fingers, and kids should only use a pocket knife with an adult's help.",
+        "fun_fact": "Always ask an adult first, and close the blade carefully with your fingers kept clear of the edge."
       }
     ],
     "versus_candidates": [
@@ -801,6 +818,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Belt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leather Belt",
       "Belt",
@@ -833,7 +851,7 @@
         "claim": "Belts have always been more popular than suspenders throughout all modern history.",
         "verdict": "myth",
         "explanation": "Until the 1920s, suspenders (braces) were considered the only proper way for gentlemen to support high-waisted trousers; belts were viewed as utilitarian military gear.",
-        "fun_fact": "Lower-waisted modern trousers popularized the belt worldwide after World War I."
+        "fun_fact": "Lower-waisted trousers in the 1920s and 1930s helped make belts popular worldwide."
       }
     ],
     "versus_candidates": [
@@ -848,6 +866,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Ring",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Finger Ring",
       "Wedding Band",
@@ -880,7 +899,7 @@
       {
         "claim": "Diamonds have always been the universal standard gemstone for engagement rings throughout all human history.",
         "verdict": "myth",
-        "explanation": "The diamond engagement ring became standard primarily due to the De Beers advertising campaign 'A Diamond is Forever' launched in 1947.",
+        "explanation": "The diamond engagement ring became standard largely thanks to a famous 1947 advertising slogan, 'A Diamond is Forever'.",
         "fun_fact": "Before the 1940s, colored gemstones, plain bands, or pearls were far more common."
       }
     ],
@@ -896,6 +915,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Coin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Metal Coin",
       "Coin",
@@ -916,7 +936,7 @@
       "Token",
       "Medallion",
       "Credit Card",
-      "Poker Chip"
+      "Bottle Cap"
     ],
     "facts_and_myths": [
       {
@@ -944,6 +964,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Banknote",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paper Money",
       "Cash Bill",
@@ -973,9 +994,9 @@
         "fun_fact": "Tiny red and blue synthetic fibers are embedded throughout the paper to thwart counterfeiters."
       },
       {
-        "claim": "Microscopic traces of cocaine found on banknotes are only present on bills directly used by drug traffickers.",
+        "claim": "Paper money lasts forever and never needs replacing.",
         "verdict": "myth",
-        "explanation": "Cocaine residue transfers effortlessly inside cash counting machines and ATM dispensers, causing up to 90% of circulating bills in major cities to test positive.",
+        "explanation": "Banknotes wear out from folding and handling; a US $1 bill stays in circulation for about 6.6 years on average.",
         "fun_fact": "Paper money is also home to thousands of harmless everyday environmental bacteria species."
       }
     ],
@@ -991,6 +1012,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Sun Hat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Straw Hat",
       "Panama Hat",
@@ -1038,6 +1060,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Perfume Bottle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fragrance Bottle",
       "Cologne Bottle",
@@ -1048,7 +1071,7 @@
     "visual_anchor": "A heavy faceted crystal fragrance flacon filled with amber essence, featuring a fine mist pump spray nozzle surrounded by shimmering atomized vapor.",
     "core_traits": [
       "An artistic flacon made of thick blown crystal or glass with an airtight spray pump",
-      "Filled with concentrated scented essential oils blended with cosmetic alcohol",
+      "Filled with concentrated scented essential oils blended with a clear, fast-drying base liquid",
       "Depressing the nozzle releases an ultra-fine aromatic mist onto pulse points",
       "Used on wrists and neck to impart a long-lasting signature personal fragrance"
     ],
@@ -1085,6 +1108,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Matchbox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Matches",
       "Safety Matches",
@@ -1100,7 +1124,7 @@
       "A timeless, non-electronic emergency fire source for power outages and wilderness camping"
     ],
     "distractor_pool": [
-      "Cigarette Lighter",
+      "Barbecue Lighter",
       "Candle",
       "Firecracker",
       "Toothpick",
@@ -1114,14 +1138,14 @@
         "fun_fact": "Separating the reactive chemicals between head and box is what makes safety matches safe."
       },
       {
-        "claim": "Early 19th-century match factory workers suffered from a horrifying bone necrosis disease known as 'phossy jaw'.",
+        "claim": "Early matches were made with a harmful chemical that was later banned.",
         "verdict": "fact",
-        "explanation": "White phosphorus used in early friction matches was toxic, causing necrosis of the jawbone until the Geneva Convention banned it in 1906.",
-        "fun_fact": "The development of non-toxic red phosphorus safety matches saved thousands of workers worldwide."
+        "explanation": "Early matches used poisonous white phosphorus, which made factory workers sick; an international agreement in 1906 banned it.",
+        "fun_fact": "Matches are for grown-ups: always ask an adult instead of lighting one yourself."
       }
     ],
     "versus_candidates": [
-      "Cigarette Lighter",
+      "Barbecue Lighter",
       "Flint and Steel",
       "Candle"
     ]
@@ -1132,6 +1156,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Nail Clipper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nail Trimmer",
       "Toe Clipper",
@@ -1178,6 +1203,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Hair Dryer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Blow Dryer",
       "Blowdryer",
@@ -1224,6 +1250,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Lip Balm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chapstick",
       "Lip Salve",
@@ -1270,6 +1297,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Hand Sanitizer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hand Rub",
       "Antiseptic Gel",
@@ -1316,6 +1344,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Earphones",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Earbuds",
       "In-Ear Headphones",
@@ -1363,6 +1392,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Smartphone Case",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phone Cover",
       "Phone Case",
@@ -1409,6 +1439,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Travel Suitcase",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Luggage",
       "Rolling Suitcase",
@@ -1456,6 +1487,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Passport",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Travel Document",
       "Pass",
@@ -1502,6 +1534,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Credit Card",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Payment Card",
       "Debit Card",
@@ -1549,6 +1582,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Safety Pin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pin",
       "Diaper Pin",
@@ -1595,6 +1629,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Sewing Needle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Needle",
       "Hand Sewing Needle",
@@ -1641,6 +1676,7 @@
     "subtopic_id": "personal_essentials",
     "name": "Shoelace",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shoestring",
       "Bootlace",
@@ -1688,6 +1724,7 @@
     "subtopic_id": "household_living",
     "name": "Scented Candle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Candle",
       "Wax Candle",
@@ -1735,6 +1772,7 @@
     "subtopic_id": "household_living",
     "name": "Pillow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bed Pillow",
       "Pillow",
@@ -1767,7 +1805,7 @@
       {
         "claim": "A good pillow lasts for twenty years without needing replacement if you wash the pillowcase regularly.",
         "verdict": "myth",
-        "explanation": "Over one to two years, pillows accumulate dead skin flakes, dust mites, sweat, and fungal spores while losing mechanical spinal support.",
+        "explanation": "Over one to two years, pillows collect old skin flakes, dust mites, and sweat while losing their neck support.",
         "fun_fact": "Sleep experts recommend replacing standard pillows every 18 to 24 months."
       }
     ],
@@ -1783,6 +1821,7 @@
     "subtopic_id": "household_living",
     "name": "Blanket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wool Blanket",
       "Blanket",
@@ -1831,6 +1870,7 @@
     "subtopic_id": "household_living",
     "name": "Mattress",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bed Mattress",
       "Mattress",
@@ -1879,6 +1919,7 @@
     "subtopic_id": "household_living",
     "name": "Wall Clock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clock",
       "Analog Wall Clock",
@@ -1926,6 +1967,7 @@
     "subtopic_id": "household_living",
     "name": "Alarm Clock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bedside Clock",
       "Digital Alarm Clock",
@@ -1972,6 +2014,7 @@
     "subtopic_id": "household_living",
     "name": "Desk Lamp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Table Lamp",
       "Reading Lamp",
@@ -2019,6 +2062,7 @@
     "subtopic_id": "household_living",
     "name": "Clothespin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clothespeg",
       "Peg",
@@ -2066,6 +2110,7 @@
     "subtopic_id": "household_living",
     "name": "Clothes Hanger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coat Hanger",
       "Hanger",
@@ -2113,6 +2158,7 @@
     "subtopic_id": "household_living",
     "name": "Fan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Electric Fan",
       "Desk Fan",
@@ -2143,10 +2189,10 @@
         "fun_fact": "Leaving a fan running in an empty room only wastes electrical energy without cooling the room."
       },
       {
-        "claim": "A widespread cultural belief in South Korea warns that sleeping with an electric fan on in a closed room can cause suffocation or death.",
+        "claim": "Some South Koreans believe sleeping with a fan on in a closed room is harmful.",
         "verdict": "fact",
-        "explanation": "'Fan death' is a well-known urban myth in Korea where auto-shutoff timers were mandated on domestic fans to allay public fears.",
-        "fun_fact": "Medical science confirms standard domestic fans cannot cause hypothermia or asphyxiation in closed rooms."
+        "explanation": "This well-known Korean urban legend is why many fans sold there come with automatic shut-off timers.",
+        "fun_fact": "Scientists say ordinary household fans just move air and cannot make a closed room unsafe."
       }
     ],
     "versus_candidates": [
@@ -2161,6 +2207,7 @@
     "subtopic_id": "household_living",
     "name": "Space Heater",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Portable Heater",
       "Electric Heater",
@@ -2208,6 +2255,7 @@
     "subtopic_id": "household_living",
     "name": "Air Conditioner Remote",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "AC Remote",
       "Climate Remote",
@@ -2239,7 +2287,7 @@
         "claim": "You can check if an AC remote's infrared emitter is working by pointing it into your smartphone's digital camera.",
         "verdict": "fact",
         "explanation": "Smartphone camera sensors detect infrared light that is invisible to human eyes, displaying the pulsating infrared LED flashes as bright purplish-pink blips on screen.",
-        "fun_fact": "This simple trick instantly confirms whether remote batteries are dead or functional."
+        "fun_fact": "This simple trick quickly shows whether the remote's batteries still work."
       }
     ],
     "versus_candidates": [
@@ -2254,6 +2302,7 @@
     "subtopic_id": "household_living",
     "name": "Broom",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sweeper",
       "Corn Broom",
@@ -2301,6 +2350,7 @@
     "subtopic_id": "household_living",
     "name": "Dustpan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dust Pan",
       "Hand Dustpan",
@@ -2348,6 +2398,7 @@
     "subtopic_id": "household_living",
     "name": "Mop",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Floor Mop",
       "String Mop",
@@ -2395,6 +2446,7 @@
     "subtopic_id": "household_living",
     "name": "Cleaning Bucket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bucket",
       "Pail",
@@ -2442,6 +2494,7 @@
     "subtopic_id": "household_living",
     "name": "Clothes Iron",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steam Iron",
       "Flatiron",
@@ -2471,7 +2524,7 @@
         "fun_fact": "Appliance manufacturers recommend distilled or demineralized water to preserve steam iron life."
       },
       {
-        "claim": "Electric clothes irons were only invented after World War II when polyester fabric became popular.",
+        "claim": "Electric clothes irons were only invented in the 1950s, after polyester fabric appeared.",
         "verdict": "myth",
         "explanation": "Henry W. Seely patented the first electric flatiron in New York in 1882, long before synthetic fabrics existed.",
         "fun_fact": "Before electricity, heavy cast iron 'sadirons' were heated directly on coal or wood stoves."
@@ -2489,6 +2542,7 @@
     "subtopic_id": "household_living",
     "name": "Ironing Board",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pressing Board",
       "Folding Ironing Board",
@@ -2535,6 +2589,7 @@
     "subtopic_id": "household_living",
     "name": "Trash Can",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Garbage Can",
       "Dustbin",
@@ -2582,6 +2637,7 @@
     "subtopic_id": "household_living",
     "name": "Vase",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Flower Vase",
       "Vase",
@@ -2630,6 +2686,7 @@
     "subtopic_id": "household_living",
     "name": "Carpet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Area Rug",
       "Floor Rug",
@@ -2677,6 +2734,7 @@
     "subtopic_id": "household_living",
     "name": "Curtain",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Window Curtain",
       "Drapes",
@@ -2703,7 +2761,7 @@
       {
         "claim": "Thermal blackout curtains can reduce household window heat loss during winter by up to 25%.",
         "verdict": "fact",
-        "explanation": "Dense, tight-fitting insulated curtains create an insulating dead air space between the cold window glass and the heated room.",
+        "explanation": "Dense, tight-fitting insulated curtains trap a layer of still air between the cold window glass and the warm room.",
         "fun_fact": "The US Department of Energy actively recommends drawing curtains on winter nights to save heating energy."
       },
       {
@@ -2725,6 +2783,7 @@
     "subtopic_id": "household_living",
     "name": "Doormat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Welcome Mat",
       "Entry Mat",
@@ -2772,6 +2831,7 @@
     "subtopic_id": "household_living",
     "name": "Doorbell",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Door Chime",
       "Wireless Doorbell",
@@ -2819,6 +2879,7 @@
     "subtopic_id": "household_living",
     "name": "Towel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bath Towel",
       "Towel",
@@ -2851,7 +2912,7 @@
       {
         "claim": "Because you are completely clean when drying off after a shower, a bath towel stays sterile forever without washing.",
         "verdict": "myth",
-        "explanation": "Towels slough off millions of dead skin cells and moisture, creating an ideal warm humid breeding ground for bacteria and mold within days.",
+        "explanation": "Towels collect skin cells and moisture, creating a warm, damp home where bacteria and mold can grow within days.",
         "fun_fact": "Microbiologists recommend washing bath towels after every three to five uses."
       }
     ],
@@ -2867,6 +2928,7 @@
     "subtopic_id": "household_living",
     "name": "Flashlight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Torch",
       "Electric Torch",
@@ -2914,6 +2976,7 @@
     "subtopic_id": "household_living",
     "name": "Lightbulb",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Light Bulb",
       "LED Bulb",
@@ -2961,6 +3024,7 @@
     "subtopic_id": "household_living",
     "name": "Extension Cord",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Power Strip",
       "Extension Lead",
@@ -3008,6 +3072,7 @@
     "subtopic_id": "household_living",
     "name": "Electrical Wall Outlet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wall Socket",
       "Power Outlet",
@@ -3055,6 +3120,7 @@
     "subtopic_id": "household_living",
     "name": "Television Remote",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "TV Remote",
       "Remote Control",
@@ -3084,7 +3150,7 @@
         "fun_fact": "Because it made a mechanical clicking sound when buttons were pressed, remotes became permanently nicknamed 'clickers'."
       },
       {
-        "claim": "Wrapping dead remote control batteries in aluminum foil makes them fully recharged permanently.",
+        "claim": "Wrapping used-up remote batteries in aluminum foil recharges them completely.",
         "verdict": "myth",
         "explanation": "Foil cannot recharge depleted chemical electrolytes inside alkaline cells and can cause a short circuit or chemical leakage.",
         "fun_fact": "Rotating or rolling the batteries in their compartment can sometimes scrape off oxidation for a few minutes of emergency life."
@@ -3102,6 +3168,7 @@
     "subtopic_id": "household_living",
     "name": "Tissue Box",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Facial Tissue Box",
       "Kleenex Box",
@@ -3124,7 +3191,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Facial tissues were originally invented during World War I as gas mask filters and later sold to remove cold cream makeup.",
+        "claim": "Facial tissues were first sold in 1924 as a way to remove cold cream makeup.",
         "verdict": "fact",
         "explanation": "Kimberly-Clark marketed Kleenex in 1924 as a disposable cold cream remover; after thousands of letters revealed customers blew their noses in them, they rebranded as pocket handkerchiefs.",
         "fun_fact": "Sales doubled immediately once marketed for blowing noses."
@@ -3148,6 +3215,7 @@
     "subtopic_id": "household_living",
     "name": "Wastebasket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wastepaper Basket",
       "Wastebasket",
@@ -3196,6 +3264,7 @@
     "subtopic_id": "household_living",
     "name": "Laundry Hamper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clothes Hamper",
       "Laundry Basket",
@@ -3242,6 +3311,7 @@
     "subtopic_id": "household_living",
     "name": "Shoe Rack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shoe Shelf",
       "Shoe Organizer",
@@ -3289,6 +3359,7 @@
     "subtopic_id": "household_living",
     "name": "Coat Rack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hat Stand",
       "Coat Tree",
@@ -3336,6 +3407,7 @@
     "subtopic_id": "household_living",
     "name": "Throw Pillow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Accent Pillow",
       "Scatter Cushion",
@@ -3383,6 +3455,7 @@
     "subtopic_id": "household_living",
     "name": "Bookend",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Book End",
       "Book Stopper",
@@ -3429,6 +3502,7 @@
     "subtopic_id": "household_living",
     "name": "Reed Diffuser",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aroma Diffuser",
       "Fragrance Diffuser",
@@ -3475,6 +3549,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Hammer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Claw Hammer",
       "Hammer",
@@ -3522,6 +3597,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Pliers",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Combination Pliers",
       "Linesman Pliers",
@@ -3568,6 +3644,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Screwdriver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hand Screwdriver",
       "Phillips Screwdriver",
@@ -3614,6 +3691,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Tape Measure",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Measuring Tape",
       "Steel Rule",
@@ -3660,6 +3738,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Duct Tape",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Duck Tape",
       "Gaffer Tape",
@@ -3683,10 +3762,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Duct tape was originally invented during World War II to seal ammunition cases against water damage and was nicknamed 'Duck tape'.",
+        "claim": "Duct tape got its early nickname 'duck tape' because water rolled right off it.",
         "verdict": "fact",
-        "explanation": "Vesta Stoudt proposed the waterproof cloth tape to President Franklin D. Roosevelt in 1943; soldiers called it 'duck tape' because water beaded off like water off a duck's back.",
-        "fun_fact": "Johnson & Johnson developed the adhesive cloth tape specifically for military ordnance crates."
+        "explanation": "The waterproof cloth tape was developed in the 1940s; people said water beaded off it like water off a duck's back.",
+        "fun_fact": "Apollo 13 astronauts used duct tape to help fix an air filter problem on their spacecraft."
       },
       {
         "claim": "Duct tape is the best material in the world for sealing home heating and air conditioning ventilation ducts.",
@@ -3707,6 +3786,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Adjustable Wrench",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crescent Wrench",
       "Shifting Spanner",
@@ -3753,6 +3833,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Handsaw",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hand Saw",
       "Wood Saw",
@@ -3763,7 +3844,7 @@
     "visual_anchor": "A traditional steel handsaw blade with razor-sharp alternating teeth biting into an oak plank, casting curling sawdust motes across sunlit workbenches.",
     "core_traits": [
       "A wide, flexible steel blade with a row of sharp serrated teeth along its lower cutting edge",
-      "Fitted with a contoured wooden or composite pistol-grip handle for two-handed or one-handed thrusting",
+      "Fitted with a contoured wooden or plastic handle for a firm one-handed or two-handed grip",
       "Pushed and pulled rhythmically across lumber to slice boards, planks, and beams to length",
       "Sings with a distinctive metallic rasping hum as sawdust showers from the cutting kerf"
     ],
@@ -3800,6 +3881,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Paintbrush",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paint Brush",
       "Wall Brush",
@@ -3819,7 +3901,7 @@
       "Putty Knife",
       "Paint Scraper",
       "Hairbrush",
-      "Spray Gun"
+      "Paint Sprayer"
     ],
     "facts_and_myths": [
       {
@@ -3837,7 +3919,7 @@
     ],
     "versus_candidates": [
       "Paint Roller",
-      "Spray Gun",
+      "Paint Sprayer",
       "Palette Knife"
     ]
   },
@@ -3847,6 +3929,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Paint Roller",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Roller",
       "Wall Roller",
@@ -3870,7 +3953,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The paint roller was invented by Canadian Norman Breakey in 1940, but he failed to patent it globally and died in poverty.",
+        "claim": "Canadian Norman Breakey invented the paint roller in Toronto in 1940.",
         "verdict": "fact",
         "explanation": "Breakey created the rotating cylinder applicator in Toronto in 1940; others made minor modifications and secured US patents, reaping massive commercial fortunes.",
         "fun_fact": "Sherwin-Williams engineer Richard Adams patented an independent roller design in 1940."
@@ -3894,6 +3977,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Stepladder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Step Stool",
       "A-Frame Ladder",
@@ -3941,6 +4025,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Rope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Braided Rope",
       "Rope",
@@ -3989,6 +4074,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Nail",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Common Nail",
       "Nail",
@@ -4000,7 +4086,7 @@
     "visual_anchor": "A large bright steel framing nail driven halfway into thick Douglas fir lumber, surrounded by wood splinters under sharp workshop spotlight.",
     "core_traits": [
       "A pin-shaped fastener made of cold-drawn steel wire with a pointed tip and a flat circular head",
-      "Pounded into wood framing and construction joints using a heavy claw hammer or pneumatic nail gun",
+      "Pounded into wood framing and construction joints using a heavy claw hammer or pneumatic nailer",
       "Binds structural timbers together using friction along its shank and lateral shear strength",
       "Sizes are traditionally measured in historic 'penny' units such as 8d or 16d nails"
     ],
@@ -4037,6 +4123,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Screw",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wood Screw",
       "Screw",
@@ -4085,6 +4172,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Nut and Bolt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hex Bolt",
       "Machine Bolt",
@@ -4132,6 +4220,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Toolbox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tool Box",
       "Tool Chest",
@@ -4179,6 +4268,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Spirit Level",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bubble Level",
       "Torpedo Level",
@@ -4226,6 +4316,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Sandpaper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glasspaper",
       "Abrasive Paper",
@@ -4273,6 +4364,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Utility Knife",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Box Cutter",
       "Stanley Knife",
@@ -4320,6 +4412,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Toilet Plunger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Plunger",
       "Force Cup",
@@ -4367,6 +4460,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Garden Hose",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hosepipe",
       "Hose",
@@ -4414,6 +4508,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Garden Shovel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shovel",
       "Spade",
@@ -4461,6 +4556,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Garden Rake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Leaf Rake",
       "Lawn Rake",
@@ -4484,9 +4580,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Leaving thick piles of wet fallen autumn leaves unraked all winter can suffocate and kill the underlying grass.",
+        "claim": "Leaving thick piles of wet leaves on a lawn all winter can harm the grass underneath.",
         "verdict": "fact",
-        "explanation": "A dense mat of soggy leaves blocks sunlight and traps moisture, creating fungal snow mold conditions that kill perennial turfgrass crowns.",
+        "explanation": "A dense mat of soggy leaves blocks sunlight and traps moisture, encouraging snow mold that damages the grass.",
         "fun_fact": "Mulching leaves with a mower into tiny flakes feeds the soil without suffocating the turf."
       },
       {
@@ -4508,6 +4604,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Wheelbarrow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Barrow",
       "Garden Cart",
@@ -4554,6 +4651,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Lawn Mower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mower",
       "Lawnmower",
@@ -4601,6 +4699,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Electric Drill",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Power Drill",
       "Cordless Drill",
@@ -4624,10 +4723,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Black & Decker patented the first portable handheld electric drill featuring a pistol grip and trigger switch in 1916.",
+        "claim": "Black & Decker created a famous handheld electric drill with a trigger switch in the 1910s.",
         "verdict": "fact",
-        "explanation": "S. Duncan Black and Alonzo G. Decker adapted the ergonomic grip and trigger mechanism of the Colt .45 automatic pistol for their universal electric drill.",
-        "fun_fact": "The pistol grip and trigger remains the universal ergonomic standard for power tools today."
+        "explanation": "S. Duncan Black and Alonzo G. Decker designed a comfortable hand grip with a squeeze trigger to switch the drill on.",
+        "fun_fact": "This grip-and-trigger design is still the standard shape for most power tools today."
       },
       {
         "claim": "Setting a drill driver's torque clutch collar to maximum drilling mode is ideal for driving tiny brass screws into softwood.",
@@ -4648,6 +4747,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Drill Bit",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Twist Drill Bit",
       "Masonry Bit",
@@ -4695,6 +4795,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Hex Key",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Allen Wrench",
       "Allen Key",
@@ -4742,6 +4843,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Sledgehammer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sledge",
       "Heavy Hammer",
@@ -4789,10 +4891,10 @@
     "subtopic_id": "tools_maintenance",
     "name": "Rubber Mallet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mallet",
       "Soft-Faced Hammer",
-      "Dead Blow Mallet",
       "Rubber Hammer"
     ],
     "difficulty": 1,
@@ -4812,10 +4914,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A 'dead-blow' mallet contains loose steel shot inside its hollow head to eliminate bounce entirely.",
+        "claim": "Some mallets have loose steel shot inside their hollow heads to stop bouncing.",
         "verdict": "fact",
         "explanation": "When swung, internal steel pellets rush forward just milliseconds after initial impact, transferring momentum forward to cancel out the rebounding bounce.",
-        "fun_fact": "Dead-blow mallets deliver maximum driving energy with almost zero rebound fatigue."
+        "fun_fact": "These no-bounce mallets put almost all their energy into the hit instead of springing back."
       },
       {
         "claim": "Standard black rubber mallets can be used safely on pristine white marble and light hardwood without any marks.",
@@ -4826,7 +4928,7 @@
     ],
     "versus_candidates": [
       "Claw Hammer",
-      "Dead-Blow Hammer",
+      "Ball-Peen Hammer",
       "Wooden Mallet"
     ]
   },
@@ -4836,6 +4938,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Wire Cutters",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diagonal Cutters",
       "Side Cutters",
@@ -4883,6 +4986,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Putty Knife",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spackle Knife",
       "Joint Knife",
@@ -4930,6 +5034,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Caulking Gun",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caulk Gun",
       "Silicone Gun",
@@ -4977,6 +5082,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Pruning Shears",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Secateurs",
       "Hand Pruners",
@@ -5002,7 +5108,7 @@
       {
         "claim": "Bypass pruners and anvil pruners are engineered for completely different types of wood.",
         "verdict": "fact",
-        "explanation": "Bypass pruners scissor past each other for clean cuts on living green plants without crushing stems; anvil pruners close onto a flat brass block, ideal for dead brittle branches.",
+        "explanation": "Bypass pruners scissor past each other for clean cuts on living green plants; anvil pruners close onto a flat block, ideal for dry, brittle branches.",
         "fun_fact": "Using anvil pruners on living green stems crushes plant vascular cambium, hindering healing."
       },
       {
@@ -5024,6 +5130,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Watering Can",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Water Can",
       "Watering Pot",
@@ -5071,6 +5178,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Cable Zip Tie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zip Tie",
       "Cable Tie",
@@ -5118,6 +5226,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Bench Vise",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Workbench Vise",
       "Bench Vice",
@@ -5165,6 +5274,7 @@
     "subtopic_id": "tools_maintenance",
     "name": "Safety Goggles",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Safety Glasses",
       "Eye Protection",
@@ -5212,6 +5322,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Mug",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ceramic Mug",
       "Coffee Mug",
@@ -5260,6 +5371,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Plate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dinner Plate",
       "Plate",
@@ -5308,6 +5420,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Bowl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cereal Bowl",
       "Soup Bowl",
@@ -5356,6 +5469,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Fork",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Table Fork",
       "Dinner Fork",
@@ -5404,6 +5518,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Spoon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Soup Spoon",
       "Tablespoon",
@@ -5452,6 +5567,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Chopsticks",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hashi",
       "Eating Sticks",
@@ -5477,14 +5593,14 @@
       {
         "claim": "Sticking chopsticks vertically upright into a bowl of rice is considered a grave taboo in Asian cultures.",
         "verdict": "fact",
-        "explanation": "Vertical chopsticks mimic burning incense sticks offered at ancestral funeral shrines and tombstones, bringing ominous connotations of death.",
+        "explanation": "Upright chopsticks look like incense sticks used at memorial ceremonies for ancestors, so it is considered bad manners at meals.",
         "fun_fact": "Etiquette dictates always resting chopsticks horizontally on a ceramic rest or bowl rim."
       },
       {
         "claim": "Chopsticks were originally invented primarily as cooking and stirring utensils rather than table eating implements.",
         "verdict": "fact",
         "explanation": "During the Shang dynasty in China (around 1200 BCE), long bronze sticks were used to reach deep into boiling cauldrons of simmering broth; they only became personal dining utensils centuries later.",
-        "fun_fact": "Confucius promoted chopsticks at the dinner table, preaching that sharp metal knives reminded diners of slaughterhouses."
+        "fun_fact": "In Japan chopsticks are called 'hashi', and in Mandarin Chinese they are called 'kuaizi'."
       }
     ],
     "versus_candidates": [
@@ -5499,6 +5615,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Knife",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kitchen Chef Knife",
       "Chefs Knife",
@@ -5547,6 +5664,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Teapot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ceramic Teapot",
       "Teapot",
@@ -5595,6 +5713,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Frying Pan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skillet",
       "Cast Iron Skillet",
@@ -5642,6 +5761,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Cooking Pot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Saucepan",
       "Stockpot",
@@ -5689,6 +5809,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Cutting Board",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chopping Board",
       "Butcher Block",
@@ -5736,6 +5857,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Bottle Opener",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crown Opener",
       "Bar Blade",
@@ -5747,15 +5869,15 @@
     "core_traits": [
       "A metal lever tool designed to pry crimped metal crown caps off glass beverage bottles",
       "Hooks underneath the serrated corrugated cap flange to lever it upward with a sharp pop",
-      "Available as handheld bar blades, wall-mounted tavern openers, or keychain multi-tools",
-      "The indispensable beverage tool for bartenders and party hosts serving bottled sodas and beers"
+      "Available as handheld flat openers, wall-mounted openers, or keychain multi-tools",
+      "A handy kitchen tool for opening bottled sodas, sparkling water, and juices at parties"
     ],
     "distractor_pool": [
       "Can Opener",
-      "Corkscrew",
+      "Jar Opener",
       "Pocket Knife",
       "Key",
-      "Wine Stopper"
+      "Bottle Stopper"
     ],
     "facts_and_myths": [
       {
@@ -5765,7 +5887,7 @@
         "fun_fact": "Painter's company evolved into Crown Holdings, still one of the world's largest packaging giants."
       },
       {
-        "claim": "Twist-off beer bottle caps require a heavy steel bottle opener or they cannot be opened.",
+        "claim": "Twist-off bottle caps need a metal bottle opener or they cannot be opened.",
         "verdict": "myth",
         "explanation": "Twist-off caps feature threaded glass necks designed specifically to unscrew by hand with a firm twist; using a lever opener on twist-offs can chip the glass threads.",
         "fun_fact": "Wrap a cloth over the cap if twist-off ridges hurt your palm."
@@ -5783,6 +5905,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Can Opener",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tin Opener",
       "Manual Can Opener",
@@ -5829,6 +5952,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Thermos Flask",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vacuum Flask",
       "Insulated Bottle",
@@ -5876,6 +6000,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Wire Whisk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Balloon Whisk",
       "Whisk",
@@ -5923,6 +6048,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Rolling Pin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wooden Rolling Pin",
       "Rolling Pin",
@@ -5971,6 +6097,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Colander",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Colander",
       "Pasta Strainer",
@@ -6018,6 +6145,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Vegetable Peeler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Potato Peeler",
       "Y-Peeler",
@@ -6065,6 +6193,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Bread Toaster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Toaster",
       "Pop-Up Toaster",
@@ -6112,6 +6241,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Blender",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kitchen Blender",
       "Blender",
@@ -6160,6 +6290,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Microwave Oven",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Microwave",
       "Countertop Microwave",
@@ -6207,6 +6338,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Electric Kettle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kettle",
       "Cordless Kettle",
@@ -6254,6 +6386,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Spatula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fish Spatula",
       "Pancake Turner",
@@ -6301,6 +6434,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Soup Ladle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ladle",
       "Gravy Ladle",
@@ -6348,6 +6482,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Tongs",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tongs",
       "Cooking Tongs",
@@ -6395,6 +6530,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Cheese Grater",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Box Grater",
       "Grater",
@@ -6442,6 +6578,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Garlic Press",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Garlic Crusher",
       "Garlic Mincer",
@@ -6488,6 +6625,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Salt and Pepper Shakers",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Condiment Shakers",
       "Salt Cellar",
@@ -6535,6 +6673,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Glass Jar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glass Mason Jar",
       "Mason Jar",
@@ -6562,7 +6701,7 @@
         "claim": "John Landis Mason invented and patented the reusable threaded glass canning jar with a zinc screw lid in 1858.",
         "verdict": "fact",
         "explanation": "Before Mason's threaded glass rim, canning required messy sealing wax and lead solder; Mason's reusable screw jar revolutionized household food preservation.",
-        "fun_fact": "Mason failed to renew his patent and died impoverished despite his name becoming universal."
+        "fun_fact": "Today, people still call these screw-top glass jars 'Mason jars' after him."
       },
       {
         "claim": "Reusing the flat metal sealing lid disc for home canning multiple times guarantees a 100% airtight vacuum seal.",
@@ -6583,6 +6722,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Ice Cube Tray",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ice Tray",
       "Silicone Ice Mold",
@@ -6606,7 +6746,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Boiling water before freezing it in an ice cube tray produces perfectly crystal-clear ice cubes like fine cocktail bars.",
+        "claim": "Boiling water before freezing it always makes perfectly crystal-clear ice cubes.",
         "verdict": "myth",
         "explanation": "Cloudiness in home ice is caused by dissolved air and minerals trapped when water freezes from all four sides inward; clear ice requires directional freezing (freezing from the top down).",
         "fun_fact": "Boiling water removes some air, but directional freezing coolers are required for truly transparent ice."
@@ -6621,7 +6761,7 @@
     "versus_candidates": [
       "Automatic Ice Maker",
       "Ice Bucket",
-      "Whiskey Ice Sphere"
+      "Popsicle Mold"
     ]
   },
   {
@@ -6630,6 +6770,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Oven Mitt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Silicone Oven Mitt",
       "Oven Mitt",
@@ -6678,6 +6819,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Dish Drying Rack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dish Rack",
       "Dish Drainer",
@@ -6725,6 +6867,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Sponge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dish Sponge",
       "Scrub Sponge",
@@ -6772,6 +6915,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Scale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Digital Kitchen Scale",
       "Kitchen Scale",
@@ -6785,7 +6929,7 @@
       "A slim countertop electronic scale equipped with internal piezoelectric strain gauge sensors",
       "Displays weight measurements in precise grams or ounces on a backlit digital LCD display",
       "Features a crucial 'Tare' button that zeroes out the weight of bowls and containers",
-      "The indispensable secret weapon of bakers for achieving pinpoint culinary baking accuracy"
+      "The handy secret tool of bakers for measuring ingredients with pinpoint accuracy"
     ],
     "distractor_pool": [
       "Measuring Cup",
@@ -6820,6 +6964,7 @@
     "subtopic_id": "kitchen_dining",
     "name": "Measuring Cup",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Liquid Measuring Cup",
       "Pyrex Cup",

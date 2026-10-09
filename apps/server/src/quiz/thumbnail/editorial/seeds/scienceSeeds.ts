@@ -50,7 +50,7 @@ export const SCIENCE_DOMAIN_SEED: EditorialDomainSeed = {
     {
       label: "Tesla Coil Arc",
       keywords: ["electricity", "plasma", "lightning", "tesla", "arc", "voltage"],
-      hook: "TRUE OR FALSE?",
+      hook: "YES OR NO?",
       background: "bright",
       backgroundAtmosphere:
         "Atmospheric electrical physics stage illuminated by brilliant violet and electric blue lightning filament webs; punchy, electric, and high-contrast.",

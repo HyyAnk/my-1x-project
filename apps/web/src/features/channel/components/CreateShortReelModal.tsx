@@ -18,8 +18,7 @@ const ARCHETYPE_PILLS = [
   { id: "all", label: "All" },
   { id: "versus_faceoff", label: "Versus Faceoff" },
   { id: "deep_trivia", label: "Deep Trivia" },
-  { id: "fact_chain", label: "Fact Chain" },
-  { id: "odd_one_out", label: "Odd One Out" },
+  { id: "verdict_yes_no", label: "Yes or No" },
 ];
 
 export function CreateShortReelModal({ channel, onClose, onCreated }: CreateShortReelModalProps) {

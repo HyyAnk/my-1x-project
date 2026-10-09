@@ -4,11 +4,25 @@ import { SandboxPreviewInputSchema } from "@studio/shared";
 import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "../src/quiz/render/layouts/visualChoicesThreePure.js";
 import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.js";
-import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
+import { verdictYesNoLayout } from "../src/quiz/render/layouts/verdictYesNo.js";
 import { candyArcadeKeyframesCss } from "../src/quiz/render/candyArcade/styles/candyArcadeKeyframes.js";
 import { choiceStateStyles } from "../src/quiz/render/choices/choiceStateStyles.js";
 import { rusticWoodPlankVariant } from "../src/quiz/visual/elements/answerCard/variants/rusticWoodPlank.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
+
+/** Longest scheduled reveal animation on the cards (ac-rustic-wood-plank-win runs 0.68s). */
+const REVEAL_SETTLE_SECONDS = 1.0;
+
+/**
+ * Rehearsal follows the production gameplay timeline, so the reveal time depends on the layout and
+ * estimated narration. Sample once the reveal animations have settled, before the explain beat.
+ */
+function settledRevealSeconds(composition: ReturnType<typeof buildSandboxComposition>): number {
+  const timeline = composition.timeline!;
+  const settledAt = timeline.revealStart + REVEAL_SETTLE_SECONDS;
+  expect(settledAt).toBeLessThan(timeline.explainStart);
+  return settledAt;
+}
 
 describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual Layouts", () => {
   describe("Layout: 3 Choice Pure Visual Cards (visual_choices_three_pure)", () => {
@@ -134,13 +148,13 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
     });
   });
 
-  describe("Layout: Verdict True/False (verdict_true_false)", () => {
+  describe("Layout: Verdict Yes/No (verdict_yes_no)", () => {
     it("decouples scheduled answer-reveal-correct and answer-reveal-incorrect from static reveal styling", () => {
-      const css = verdictTrueFalseLayout.css();
+      const css = verdictYesNoLayout.css();
 
       // Winner surface: scheduled class must not have static green border or box shadow
       const scheduledWinRule = css.match(
-        /\.layout-verdict_true_false\s+\.choice-card\.answer-reveal-correct\s+\.choice-card-surface[\s\S]*?\{([^}]+)\}/,
+        /\.layout-verdict_yes_no\s+\.choice-card\.answer-reveal-correct\s+\.choice-card-surface[\s\S]*?\{([^}]+)\}/,
       );
       expect(scheduledWinRule).toBeTruthy();
       expect(scheduledWinRule![1]).toContain("animation: verdict-surface-pop");
@@ -149,28 +163,28 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
 
       // Winner surface: snapshot class maintains static green border and glowing shadow
       const snapshotWinRule = css.match(
-        /\.layout-verdict_true_false\s+\.choice-card\.answer-correct\s+\.choice-card-surface[\s\S]*?\{([^}]+)\}/,
+        /\.layout-verdict_yes_no\s+\.choice-card\.answer-correct\s+\.choice-card-surface[\s\S]*?\{([^}]+)\}/,
       );
       expect(snapshotWinRule).toBeTruthy();
       expect(snapshotWinRule![1]).toContain("border-color: #22C55E;");
       expect(snapshotWinRule![1]).toContain("box-shadow:");
 
       // Loser card: scheduled class must not have static opacity 0.58 or grayscale filter
-      const scheduledDefeatRule = css.match(/\.layout-verdict_true_false\s+\.choice-card\.answer-reveal-incorrect[\s\S]*?\{([^}]+)\}/);
+      const scheduledDefeatRule = css.match(/\.layout-verdict_yes_no\s+\.choice-card\.answer-reveal-incorrect[\s\S]*?\{([^}]+)\}/);
       expect(scheduledDefeatRule).toBeTruthy();
       expect(scheduledDefeatRule![1]).toContain("animation: verdict-incorrect-settle");
       expect(scheduledDefeatRule![1]).not.toContain("opacity: 0.58");
       expect(scheduledDefeatRule![1]).not.toContain("grayscale(65%)");
 
       // Loser card: snapshot class maintains static opacity 0.58 and grayscale filter
-      const snapshotDefeatRule = css.match(/\.layout-verdict_true_false\s+\.choice-card\.answer-incorrect[\s\S]*?\{([^}]+)\}/);
+      const snapshotDefeatRule = css.match(/\.layout-verdict_yes_no\s+\.choice-card\.answer-incorrect[\s\S]*?\{([^}]+)\}/);
       expect(snapshotDefeatRule).toBeTruthy();
       expect(snapshotDefeatRule![1]).toContain("opacity: 0.58;");
       expect(snapshotDefeatRule![1]).toContain("grayscale(65%)");
     });
 
     it("ensures verdict keyframes start at resting parity during countdown delay", () => {
-      const css = verdictTrueFalseLayout.css();
+      const css = verdictYesNoLayout.css();
 
       // Verdict win keyframe 0% must not leak green border or glowing shadow
       const winKeyframesIdx = css.indexOf("@keyframes verdict-surface-pop");
@@ -192,12 +206,12 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
     });
 
     it("contains complete button styling for rustic_wood_plank skin", () => {
-      const css = verdictTrueFalseLayout.css();
+      const css = verdictYesNoLayout.css();
 
-      expect(css).toContain(".layout-verdict_true_false .skin-rustic_wood_plank:nth-child(1) .choice-card-surface");
-      expect(css).toContain(".layout-verdict_true_false .skin-rustic_wood_plank:nth-child(2) .choice-card-surface");
-      expect(css).toContain(".layout-verdict_true_false .skin-rustic_wood_plank:nth-child(1) .choice-text");
-      expect(css).toContain(".layout-verdict_true_false .skin-rustic_wood_plank:nth-child(2) .choice-text");
+      expect(css).toContain(".layout-verdict_yes_no .skin-rustic_wood_plank:nth-child(1) .choice-card-surface");
+      expect(css).toContain(".layout-verdict_yes_no .skin-rustic_wood_plank:nth-child(2) .choice-card-surface");
+      expect(css).toContain(".layout-verdict_yes_no .skin-rustic_wood_plank:nth-child(1) .choice-text");
+      expect(css).toContain(".layout-verdict_yes_no .skin-rustic_wood_plank:nth-child(2) .choice-text");
     });
   });
 
@@ -243,13 +257,13 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       expect(composition.html).toContain("answer-normal answer-pending");
     });
 
-    it("renders rustic_wood_plank in verdict_true_false with skin classes and decorations", () => {
+    it("renders rustic_wood_plank in verdict_yes_no with skin classes and decorations", () => {
       const input = SandboxPreviewInputSchema.parse({
-        layout_id: "verdict_true_false",
+        layout_id: "verdict_yes_no",
         aspect_ratio: "16:9",
         phase: "choices",
-        choices: ["True", "False"],
-        question_format: "true_false",
+        choices: ["Yes", "No"],
+        question_format: "yes_no",
         correct_choice_index: 0,
         question_text: "Is this claim accurate?",
         answer_card_style: "rustic_wood_plank",
@@ -257,7 +271,7 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       });
 
       const composition = buildSandboxComposition(input);
-      expect(composition.html).toContain("layout-verdict_true_false");
+      expect(composition.html).toContain("layout-verdict_yes_no");
       expect(composition.html).toContain("skin-rustic_wood_plank");
       expect(composition.html).toContain("wood-bracket");
       expect(composition.html).toContain("wood-nail");
@@ -341,7 +355,7 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       await browser?.close();
     });
 
-    it("maintains 100% computed style parity between winner and loser at t=1.0s and reveals gold at t=8.0s", async () => {
+    it("maintains 100% computed style parity between winner and loser at t=1.0s and reveals gold after the reveal", async () => {
       const input = SandboxPreviewInputSchema.parse({
         layout_id: "visual_choices_three",
         aspect_ratio: "16:9",
@@ -358,7 +372,8 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       const composition = buildSandboxComposition(input);
       await page.setContent(composition.html);
 
-      // Seek to t=1.0s (countdown phase, prior to reveal at ~6.0s)
+      // Seek to t=1.0s (well before the scheduled reveal)
+      expect(composition.timeline!.revealStart).toBeGreaterThan(1.0);
       await page.evaluate(`window.__hyperframesRehearsal.seek(1.0)`);
       await page.waitForTimeout(50);
 
@@ -408,8 +423,8 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       expect(preReveal.img0_transform).not.toBe("none");
       expect(preReveal.img1_transform).not.toBe("none");
 
-      // Seek to t=8.0s (reveal phase)
-      await page.evaluate(`window.__hyperframesRehearsal.seek(8.0)`);
+      // Seek past the scheduled reveal (reveal phase)
+      await page.evaluate(`window.__hyperframesRehearsal.seek(${settledRevealSeconds(composition)})`);
       await page.waitForTimeout(50);
 
       const postReveal = (await page.evaluate(`(() => {
@@ -423,13 +438,13 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
         };
       })()`)) as Record<string, string>;
 
-      // Winner card 1 has transitioned to glowing gold treasure border
-      expect(postReveal.surf1_border).toBe("rgb(245, 156, 10)");
+      // Winner card 1 has settled on the glowing gold treasure border (#F59E0B)
+      expect(postReveal.surf1_border).toBe("rgb(245, 158, 11)");
       // Loser card 0 has dimmed to 0.35 opacity
       expect(postReveal.card0_opacity).toBe("0.35");
     });
 
-    it("maintains 100% computed style parity in split_versus_two at t=3.0s (countdown) and reveals gold at t=8.0s", async () => {
+    it("maintains 100% computed style parity in split_versus_two at t=3.0s (countdown) and reveals gold after the reveal", async () => {
       const input = SandboxPreviewInputSchema.parse({
         layout_id: "split_versus_two",
         aspect_ratio: "16:9",
@@ -446,7 +461,8 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       const composition = buildSandboxComposition(input);
       await page.setContent(composition.html);
 
-      // Seek to t=3.0s (middle of countdown phase, prior to reveal at ~7.47s)
+      // Seek to t=3.0s (before the scheduled reveal)
+      expect(composition.timeline!.revealStart).toBeGreaterThan(3.0);
       await page.evaluate(`window.__hyperframesRehearsal.seek(3.0)`);
       await page.waitForTimeout(50);
 
@@ -503,8 +519,8 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
       expect(preReveal.versus_badge_animations).toContain("split-versus-badge-pulse");
       expect(preReveal.versus_badge_animations).toContain("split-versus-badge-victory");
 
-      // Seek to t=8.0s (reveal phase)
-      await page.evaluate(`window.__hyperframesRehearsal.seek(8.0)`);
+      // Seek past the scheduled reveal (reveal phase)
+      await page.evaluate(`window.__hyperframesRehearsal.seek(${settledRevealSeconds(composition)})`);
       await page.waitForTimeout(50);
 
       const postReveal = (await page.evaluate(`(() => {
@@ -518,8 +534,8 @@ describe("Answer Leak Prevention for Rustic Wood Plank across Binary and Visual 
         };
       })()`)) as Record<string, string>;
 
-      // Winner card 1 has transitioned to glowing gold treasure border
-      expect(postReveal.surf1_border).toBe("rgb(245, 156, 10)");
+      // Winner card 1 has settled on the glowing gold treasure border (#F59E0B)
+      expect(postReveal.surf1_border).toBe("rgb(245, 158, 11)");
       // Loser card 0 has dimmed to 0.35 opacity
       expect(postReveal.card0_opacity).toBe("0.35");
     });

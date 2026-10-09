@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
       keyword_variations: ["trắc nghiệm đại dương", "bí ẩn biển sâu"],
       question_count: 3,
       hook_lines: "Đố vui sinh vật biển - Bạn biết bao nhiêu loài dưới đại dương?\nCùng thử thách kiến thức biển sâu ngay!",
-      semantic_paragraph: "Khám phá thế giới đại dương bao la với những câu đố về loài cá voi khổng lồ và các sinh vật kỳ thú.",
+      semantic_paragraph: "Khám phá thế giới đại dương bao la với những câu đố về các sinh vật kỳ thú.",
       scoring_cta: {
         beginner: "1 câu: Thủy thủ tập sự",
         intermediate: "2 câu: Nhà thám hiểm biển",

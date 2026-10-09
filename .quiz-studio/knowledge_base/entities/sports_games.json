@@ -5,6 +5,7 @@
     "subtopic_id": "active_sports",
     "name": "Football (Soccer)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Soccer",
       "Association Football",
@@ -51,6 +52,7 @@
     "subtopic_id": "active_sports",
     "name": "Basketball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hoops",
       "B-ball"
@@ -96,6 +98,7 @@
     "subtopic_id": "active_sports",
     "name": "Tennis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lawn Tennis"
     ],
@@ -140,6 +143,7 @@
     "subtopic_id": "active_sports",
     "name": "Swimming",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aquatics",
       "Competitive Swimming"
@@ -170,7 +174,7 @@
         "claim": "Human hair has zero measurable impact on professional swimming speed.",
         "verdict": "myth",
         "explanation": "Swimmers shave all exposed body hair and wear hydrodynamic silicone caps because water surface friction creates measurable hydrodynamic drag.",
-        "fun_fact": "Shaving hair also removes microscopic dead skin cells, increasing sensory feel for water flow."
+        "fun_fact": "Shaving also helps swimmers feel the water flowing over their skin more sharply."
       }
     ],
     "versus_candidates": [
@@ -185,6 +189,7 @@
     "subtopic_id": "active_sports",
     "name": "Volleyball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Indoor Volleyball"
     ],
@@ -229,6 +234,7 @@
     "subtopic_id": "active_sports",
     "name": "Badminton",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shuttlecock Sport"
     ],
@@ -273,6 +279,7 @@
     "subtopic_id": "active_sports",
     "name": "Table Tennis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ping Pong",
       "Whiff Whaff"
@@ -318,6 +325,7 @@
     "subtopic_id": "active_sports",
     "name": "Baseball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "America's Pastime",
       "Hardball"
@@ -345,7 +353,7 @@
         "fun_fact": "Baseballs are rubbed with a specific muddy silt harvested from a secret spot in the Delaware River before every game."
       },
       {
-        "claim": "Civil War hero Abner Doubleday invented baseball in Cooperstown, New York in 1839.",
+        "claim": "Abner Doubleday invented baseball in Cooperstown, New York in 1839.",
         "verdict": "myth",
         "explanation": "Historical evidence demonstrates the Doubleday origin was an invented patriotic legend; baseball evolved from English folk games like rounders.",
         "fun_fact": "Alexander Cartwright codified the basic modern diamond rules in 1845."
@@ -363,6 +371,7 @@
     "subtopic_id": "active_sports",
     "name": "Golf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Links Sport"
     ],
@@ -407,6 +416,7 @@
     "subtopic_id": "active_sports",
     "name": "Boxing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Sweet Science",
       "Pugilism"
@@ -430,14 +440,14 @@
       {
         "claim": "Ancient Greek boxers wrapped their hands in leather strips called himantes rather than padded gloves.",
         "verdict": "fact",
-        "explanation": "Ancient pugilists used rawhide thongs to protect their knuckles, which later evolved into studded Roman caestus weapons.",
-        "fun_fact": "Bare-knuckle champion James Figg popularized modern prize fighting in London in 1719."
+        "explanation": "Ancient boxers used rawhide strips to protect their knuckles, long before padded gloves were invented.",
+        "fun_fact": "Boxing first appeared in the ancient Olympic Games in 688 BC."
       },
       {
-        "claim": "Padded boxing gloves were invented primarily to prevent knockouts and brain trauma.",
+        "claim": "Boxing matches have always been held without any rules about gloves.",
         "verdict": "myth",
-        "explanation": "Gloves were introduced primarily to protect fighters' delicate hand bones from fractures, allowing them to punch harder without breaking fingers.",
-        "fun_fact": "Bare-knuckle bouts actually saw fewer concussions because fighters avoided striking hard skull bones."
+        "explanation": "The Marquess of Queensberry Rules, published in 1867, required padded gloves and set three-minute rounds.",
+        "fun_fact": "Boxing rings are actually square, even though they are called 'rings'."
       }
     ],
     "versus_candidates": [
@@ -452,6 +462,7 @@
     "subtopic_id": "active_sports",
     "name": "Bowling",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ten-Pin Bowling",
       "Kegeling"
@@ -497,6 +508,7 @@
     "subtopic_id": "active_sports",
     "name": "Ice Hockey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hockey",
       "Puck Sport"
@@ -542,6 +554,7 @@
     "subtopic_id": "active_sports",
     "name": "Archery",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Toxophily",
       "Bow and Arrow"
@@ -587,6 +600,7 @@
     "subtopic_id": "active_sports",
     "name": "Billiards",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cue Sports",
       "Pool",
@@ -633,6 +647,7 @@
     "subtopic_id": "active_sports",
     "name": "Rugby",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rugby Union",
       "Rugby League"
@@ -678,6 +693,7 @@
     "subtopic_id": "active_sports",
     "name": "Cricket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Gentleman's Game"
     ],
@@ -722,6 +738,7 @@
     "subtopic_id": "active_sports",
     "name": "Surfing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wave Riding",
       "Board Riding"
@@ -731,8 +748,8 @@
     "core_traits": [
       "Surface water sport where an athlete rides on the forward face of a moving ocean wave",
       "Riders stand upright upon lightweight composite or fiberglass surfboards",
-      "Surfers paddle into swell velocity before executing a rapid pop-up transition",
-      "Judged on speed, power, flow, and the execution of radical maneuvers like cutbacks and airs"
+      "Surfers paddle into swell velocity before performing a rapid pop-up transition",
+      "Judged on speed, power, flow, and how well surfers perform maneuvers like cutbacks and airs"
     ],
     "distractor_pool": [
       "Skateboarding",
@@ -767,6 +784,7 @@
     "subtopic_id": "active_sports",
     "name": "Skateboarding",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skating",
       "Boarding"
@@ -812,6 +830,7 @@
     "subtopic_id": "active_sports",
     "name": "Skiing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alpine Skiing",
       "Downhill Skiing"
@@ -857,6 +876,7 @@
     "subtopic_id": "active_sports",
     "name": "Snowboarding",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shredding",
       "Boarding"
@@ -902,6 +922,7 @@
     "subtopic_id": "active_sports",
     "name": "Cycling",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bicycle Racing",
       "Biking"
@@ -947,6 +968,7 @@
     "subtopic_id": "active_sports",
     "name": "Marathon Running",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Marathon",
       "Long-Distance Running"
@@ -992,6 +1014,7 @@
     "subtopic_id": "active_sports",
     "name": "Gymnastics",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Artistic Gymnastics"
     ],
@@ -1001,7 +1024,7 @@
       "Discipline demanding intense physical strength, flexibility, coordination, and acrobatic balance",
       "Women compete on vault, uneven bars, balance beam, and floor exercise",
       "Men compete on floor, pommel horse, still rings, vault, parallel bars, and horizontal bar",
-      "Routines are judged by difficulty scores combined with execution deductions"
+      "Routines are judged by difficulty scores combined with deductions for form and landing mistakes"
     ],
     "distractor_pool": [
       "Figure Skating",
@@ -1036,6 +1059,7 @@
     "subtopic_id": "active_sports",
     "name": "Fencing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Swordplay",
       "Olympic Fencing"
@@ -1043,8 +1067,8 @@
     "difficulty": 1,
     "visual_anchor": "High-contrast vertical shot inside a darkened hall as two white-clad fencers lunge across a conductive metallic piste, steel blades flashing under spotlights.",
     "core_traits": [
-      "Combat sport based on traditional swordsmanship fought on a narrow fourteen-meter piste",
-      "Competitors fence using three distinct blunted weapons: foil, epee, and sabre",
+      "Olympic sport based on traditional swordsmanship fought on a narrow fourteen-meter piste",
+      "Competitors fence using three distinct blunted blades: foil, epee, and sabre",
       "Athletes wear protective mesh masks, puncture-resistant jackets, and electronic scoring vests",
       "Touches are registered instantly via electric sensors connected to scoring box lights"
     ],
@@ -1059,14 +1083,14 @@
       {
         "claim": "Electronic scoring was introduced in fencing long before video replay existed in most other sports.",
         "verdict": "fact",
-        "explanation": "The epee weapon adopted electrical buzzer scoring in 1936 to eliminate judging controversies over microsecond touches.",
+        "explanation": "The epee adopted electrical buzzer scoring in 1936 to settle judging arguments over lightning-fast touches.",
         "fun_fact": "Foil hits are registered only when pressed with a tip force exceeding 500 grams."
       },
       {
         "claim": "Fencing jackets were traditionally white purely because the sport was associated with royalty.",
         "verdict": "myth",
         "explanation": "Before electronic cords, blades were tipped with ink or soot, and white cotton uniforms allowed judges to verify touch marks clearly.",
-        "fun_fact": "Modern competition uniforms are made of bulletproof Kevlar or Dyneema ballistic fabrics."
+        "fun_fact": "Modern competition uniforms are made of super-strong Kevlar or Dyneema fabrics."
       }
     ],
     "versus_candidates": [
@@ -1081,6 +1105,7 @@
     "subtopic_id": "active_sports",
     "name": "Judo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Gentle Way"
     ],
@@ -1125,6 +1150,7 @@
     "subtopic_id": "active_sports",
     "name": "Wrestling",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Amateur Wrestling",
       "Freestyle Wrestling",
@@ -1150,7 +1176,7 @@
         "claim": "Wrestling has been part of every single ancient and modern Olympic Games except 1900.",
         "verdict": "fact",
         "explanation": "It was contested at the ancient Olympic Games in 708 BC and featured at Athens 1896, missing only the 1900 Paris edition.",
-        "fun_fact": "Ancient Greek wrestlers competed completely naked and coated their skin with olive oil."
+        "fun_fact": "Ancient Greek wrestlers coated their skin with olive oil and then dusted it with fine powder."
       },
       {
         "claim": "Greco-Roman wrestling was the exact style practiced by ancient Roman gladiators.",
@@ -1171,6 +1197,7 @@
     "subtopic_id": "active_sports",
     "name": "Weightlifting",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Olympic Weightlifting"
     ],
@@ -1215,6 +1242,7 @@
     "subtopic_id": "active_sports",
     "name": "Rowing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crew",
       "Sculling"
@@ -1260,6 +1288,7 @@
     "subtopic_id": "active_sports",
     "name": "Water Polo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Polo Aquatics"
     ],
@@ -1304,6 +1333,7 @@
     "subtopic_id": "active_sports",
     "name": "High Jump",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vertical Jump",
       "Track and Field High Jump"
@@ -1349,6 +1379,7 @@
     "subtopic_id": "active_sports",
     "name": "Figure Skating",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ice Dancing"
     ],
@@ -1393,6 +1424,7 @@
     "subtopic_id": "active_sports",
     "name": "Rock Climbing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sport Climbing",
       "Bouldering"
@@ -1438,6 +1470,7 @@
     "subtopic_id": "active_sports",
     "name": "Karate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Karate-Do",
       "Empty Hand"
@@ -1461,7 +1494,7 @@
       {
         "claim": "The Japanese kanji characters for karate literally translate to 'empty hand'.",
         "verdict": "fact",
-        "explanation": "Originally written as 'Chinese hand', master Gichin Funakoshi changed the kanji character in the 1930s to mean 'empty hand' emphasizing weaponless self-defense.",
+        "explanation": "Originally written as 'Chinese hand', master Gichin Funakoshi changed the characters in the 1930s to mean 'empty hand'.",
         "fun_fact": "Karate made its long-awaited debut as an Olympic medal sport at Tokyo 2020."
       },
       {
@@ -1483,6 +1516,7 @@
     "subtopic_id": "active_sports",
     "name": "American Football",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gridiron",
       "Football (US)"
@@ -1528,6 +1562,7 @@
     "subtopic_id": "active_sports",
     "name": "Long Jump",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Broad Jump"
     ],
@@ -1572,6 +1607,7 @@
     "subtopic_id": "active_sports",
     "name": "Taekwondo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tae Kwon Do",
       "Korean Martial Art"
@@ -1617,6 +1653,7 @@
     "subtopic_id": "active_sports",
     "name": "Polo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Horse Polo",
       "Sport of Kings"
@@ -1638,15 +1675,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Polo originated over two thousand years ago in ancient Persia as a training exercise for cavalry troops.",
+        "claim": "Polo began over two thousand years ago in ancient Persia.",
         "verdict": "fact",
-        "explanation": "Persian kings and elite royal guards played the game, known as 'chovgan', to simulate battlefield riding maneuverability.",
+        "explanation": "Persian kings and nobles played the game, called 'chovgan', to practice skillful horse riding.",
         "fun_fact": "Polo grounds are the largest field in organized sport, measuring 300 yards long by 160 yards wide."
       },
       {
         "claim": "Players can hold their polo mallets with either their left or right hand.",
         "verdict": "myth",
-        "explanation": "For safety reasons to prevent catastrophic head-on horse collisions, all polo players must wield the mallet exclusively with their right hand.",
+        "explanation": "For safety, and to avoid head-on horse crashes, all polo players must hold the mallet in their right hand.",
         "fun_fact": "Left-handed play was officially outlawed in competitive polo in 1975."
       }
     ],
@@ -1662,6 +1699,7 @@
     "subtopic_id": "active_sports",
     "name": "Speed Skating",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Long Track Speed Skating",
       "Short Track"
@@ -1707,6 +1745,7 @@
     "subtopic_id": "active_sports",
     "name": "Kayaking",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Whitewater Kayaking",
       "Canoe Slalom"
@@ -1752,6 +1791,7 @@
     "subtopic_id": "active_sports",
     "name": "Handball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Team Handball",
       "Olympic Handball"
@@ -1797,6 +1837,7 @@
     "subtopic_id": "board_table_games",
     "name": "Chess",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Royal Game"
     ],
@@ -1820,7 +1861,7 @@
         "claim": "Chess evolved from an ancient Indian strategy game called Chaturanga created in the sixth century.",
         "verdict": "fact",
         "explanation": "Chaturanga represented the four divisions of the Indian military: infantry, cavalry, elephants, and chariotry, spreading to Persia as Shatranj.",
-        "fun_fact": "The phrase 'Checkmate' comes from the Persian 'Shah mat', meaning 'the King is helpless' or 'the King is dead'."
+        "fun_fact": "The word 'Checkmate' comes from the Persian 'Shah mat', meaning 'the King is helpless'."
       },
       {
         "claim": "The Queen piece was always the most powerful piece on the board since the game's earliest origins.",
@@ -1841,6 +1882,7 @@
     "subtopic_id": "board_table_games",
     "name": "Checkers",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Draughts",
       "English Draughts"
@@ -1886,6 +1928,7 @@
     "subtopic_id": "board_table_games",
     "name": "Rubik's Cube",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Magic Cube",
       "Speedcube"
@@ -1931,6 +1974,7 @@
     "subtopic_id": "board_table_games",
     "name": "Dominoes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bones",
       "Tiles"
@@ -1976,6 +2020,7 @@
     "subtopic_id": "board_table_games",
     "name": "Monopoly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Fast-Dealing Property Trading Game"
     ],
@@ -1996,15 +2041,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Monopoly was originally invented as an anti-capitalist critique called The Landlord's Game.",
+        "claim": "Monopoly grew out of an earlier board game called The Landlord's Game.",
         "verdict": "fact",
-        "explanation": "Feminist Georgist Lizzie Magie patented the game in 1904 to illustrate how rent enrichment by monopolists impoverishes tenants.",
-        "fun_fact": "During World War II, British intelligence sent special Monopoly sets to POWs containing real currency, compasses, and silk escape maps hidden inside."
+        "explanation": "Lizzie Magie patented The Landlord's Game in 1904 to teach players how renting land and property works.",
+        "fun_fact": "Atlantic City, New Jersey, inspired the street names on the classic American Monopoly board."
       },
       {
         "claim": "Official Monopoly rules state that all tax and penalty money is placed in the center for Free Parking winners.",
         "verdict": "myth",
-        "explanation": "Official rules state Free Parking is strictly a neutral resting space with zero payout; the jackpot cash pot is a widespread house rule that makes games drag on for hours.",
+        "explanation": "Official rules say Free Parking is just a resting space; collecting money there is a popular house rule that makes games longer.",
         "fun_fact": "Official rules also require unbought properties to be auctioned immediately to the highest bidder."
       }
     ],
@@ -2020,6 +2065,7 @@
     "subtopic_id": "board_table_games",
     "name": "Scrabble",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Word Tile Game"
     ],
@@ -2064,6 +2110,7 @@
     "subtopic_id": "board_table_games",
     "name": "Jenga",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wooden Block Stacking Game"
     ],
@@ -2108,31 +2155,32 @@
     "subtopic_id": "board_table_games",
     "name": "Playing Cards",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Deck of Cards",
       "Standard 52-Card Pack"
     ],
     "difficulty": 1,
-    "visual_anchor": "Crisp vertical slow-motion capture of a deck of plastic-coated cards riffling together in an elegant casino bridge shuffle, revealing red hearts and black spades.",
+    "visual_anchor": "Crisp vertical slow-motion capture of a deck of plastic-coated cards riffling together in an elegant bridge shuffle on a family game table, revealing red hearts and black spades.",
     "core_traits": [
       "Standard deck containing fifty-two cards divided into four distinct suits: Spades, Hearts, Diamonds, and Clubs",
       "Each suit comprises thirteen ranks: Ace, numbers two through ten, and face cards Jack, Queen, and King",
       "Includes two decorative Joker cards frequently used as wild cards or trump indicators",
-      "Serves as the foundation for hundreds of classic card games including Poker, Blackjack, Bridge, and Rummy"
+      "Serves as the foundation for hundreds of classic family card games like Go Fish, Old Maid, Snap, and Rummy"
     ],
     "distractor_pool": [
       "Six-Sided Dice",
       "Dominoes",
       "Mahjong",
-      "Poker",
-      "Roulette Wheel"
+      "Uno",
+      "Jigsaw Puzzle"
     ],
     "facts_and_myths": [
       {
-        "claim": "The 52 cards in a standard deck correspond mathematically to the 52 weeks in a solar calendar year.",
+        "claim": "A standard deck has the same number of cards as there are weeks in a year.",
         "verdict": "fact",
-        "explanation": "Card historians note the four suits represent the four seasons, thirteen cards per suit match lunar cycles, and summing all card values equals 365 days (366 with a Joker).",
-        "fun_fact": "The King of Hearts is the only king depicted without a mustache and appears to push a sword into his head, earning the nickname 'the Suicide King'."
+        "explanation": "There are 52 cards and 52 weeks in a year, and the four suits are often compared to the four seasons.",
+        "fun_fact": "The King of Hearts is the only king drawn without a mustache in the classic card design."
       },
       {
         "claim": "Playing cards originated in medieval France alongside court nobility.",
@@ -2153,23 +2201,24 @@
     "subtopic_id": "board_table_games",
     "name": "Six-Sided Dice",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dice",
       "D6",
       "Gaming Cubes"
     ],
     "difficulty": 1,
-    "visual_anchor": "Dynamic vertical macro shot of two sharp-edged casino dice tumbling across green felt, white pips glowing under low craps table illumination.",
+    "visual_anchor": "Dynamic vertical macro shot of two colorful dice tumbling across a wooden family game table, white pips catching warm light.",
     "core_traits": [
       "Small throwable polyhedral cubes with six numbered faces used for generating random numbers",
       "Faces are marked with one to six circular indented dots known as pips",
       "Opposite faces on a standard western die always sum mathematically to seven (1+6, 2+5, 3+4)",
-      "Essential probability engine for board games, tabletop roleplaying games, and casino craps"
+      "Essential random-number maker for board games, family games, and tabletop roleplaying games"
     ],
     "distractor_pool": [
       "Playing Cards",
       "Dominoes",
-      "Roulette Wheel",
+      "Game Spinner",
       "Chess Clock",
       "Rubik's Cube"
     ],
@@ -2177,19 +2226,19 @@
       {
         "claim": "The oldest dice known to history were made from carved sheep and goat ankle bones called knucklebones.",
         "verdict": "fact",
-        "explanation": "Astragali (talus ankle bones) have four distinct naturally landing sides and were used for divination and gambling throughout Mesopotamia, Egypt, and Greece.",
+        "explanation": "Astragali (ankle bones) have four natural landing sides and were used in games across Mesopotamia, Egypt, and Greece.",
         "fun_fact": "The 5,000-year-old Royal Game of Ur excavated in Iraq included pyramidal four-sided dice."
       },
       {
         "claim": "Drilling pips into a standard board game die has zero effect on its mathematical balance.",
         "verdict": "myth",
         "explanation": "Standard cheap dice have more material scooped out of the 6-face than the 1-face, making the 6-face slightly lighter and slightly more likely to land facing down (favoring 1).",
-        "fun_fact": "Casino dice use flush-filled pips of identical density and sharp razor edges to ensure exact 1-in-6 probability."
+        "fun_fact": "Precision dice have flush-filled pips and sharp edges so every side lands equally often."
       }
     ],
     "versus_candidates": [
       "Playing Cards",
-      "Roulette Wheel",
+      "Game Spinner",
       "Dominoes"
     ]
   },
@@ -2199,6 +2248,7 @@
     "subtopic_id": "board_table_games",
     "name": "Poker",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Texas Hold'em",
       "Card Game of Bluffing"
@@ -2244,12 +2294,13 @@
     "subtopic_id": "board_table_games",
     "name": "Darts",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pub Darts",
       "Target Darts"
     ],
     "difficulty": 1,
-    "visual_anchor": "Dramatic vertical closeup down the flight path of a brass dart with nylon flights embedding dead center into a red sisal bullseye ring.",
+    "visual_anchor": "Dramatic vertical closeup down the flight path of a brass dart with nylon flights landing right in the center of a red sisal bullseye ring.",
     "core_traits": [
       "Target sport where pointed hand-thrown missiles are aimed at a circular sisal fiber board",
       "Board is divided into twenty numbered pie-slice sections with outer double and inner triple scoring rings",
@@ -2289,6 +2340,7 @@
     "subtopic_id": "board_table_games",
     "name": "Foosball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Table Football",
       "Babyfoot",
@@ -2335,6 +2387,7 @@
     "subtopic_id": "board_table_games",
     "name": "Air Hockey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Air Table Hockey"
     ],
@@ -2379,6 +2432,7 @@
     "subtopic_id": "board_table_games",
     "name": "Mahjong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mah-Jongg",
       "Sparrow Tiles"
@@ -2424,6 +2478,7 @@
     "subtopic_id": "board_table_games",
     "name": "Backgammon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tavla",
       "Tables Game"
@@ -2469,9 +2524,9 @@
     "subtopic_id": "board_table_games",
     "name": "Connect Four",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Four in a Row",
-      "Captain's Mistress"
+      "Four in a Row"
     ],
     "difficulty": 1,
     "visual_anchor": "Bright vertical perspective of a blue vertical plastic grid suspended in front of a window, a red checker dropping into the center column to seal a diagonal four.",
@@ -2498,7 +2553,7 @@
       {
         "claim": "Legend says British explorer Captain James Cook invented Connect Four during his naval voyages.",
         "verdict": "myth",
-        "explanation": "The tale that Captain Cook spent hours in his cabin playing 'The Captain's Mistress' is an unsubstantiated twentieth-century marketing legend.",
+        "explanation": "The tale that Captain Cook spent hours in his cabin playing a similar game is an unproven twentieth-century marketing legend.",
         "fun_fact": "Milton Bradley officially released the modern commercial game in 1974."
       }
     ],
@@ -2514,6 +2569,7 @@
     "subtopic_id": "board_table_games",
     "name": "Twister",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Game That Ties You Up in Knots"
     ],
@@ -2558,12 +2614,13 @@
     "subtopic_id": "board_table_games",
     "name": "Chess Clock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Game Timer",
       "Dual Timer"
     ],
     "difficulty": 2,
-    "visual_anchor": "Vertical macro focus on a modern digital chess clock sitting beside a board, large red plungers and glowing LED digits ticking down in sudden-death blitz.",
+    "visual_anchor": "Vertical macro focus on a modern digital chess clock sitting beside a board, large red plungers and glowing LED digits ticking down in a fast-paced blitz game.",
     "core_traits": [
       "Specialized timing device consisting of two adjacent connected clocks with buttons on top",
       "Pressing the button on one clock stops the player's countdown and immediately starts the opponent's timer",
@@ -2603,6 +2660,7 @@
     "subtopic_id": "board_table_games",
     "name": "Roulette Wheel",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "The Devil's Wheel",
       "Casino Roulette"
@@ -2648,6 +2706,7 @@
     "subtopic_id": "board_table_games",
     "name": "Carrom",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Finger Billiards",
       "Karom"
@@ -2693,6 +2752,7 @@
     "subtopic_id": "board_table_games",
     "name": "Go (Board Game)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Weiqi",
       "Baduk",
@@ -2739,6 +2799,7 @@
     "subtopic_id": "board_table_games",
     "name": "Battleship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Naval Combat Game",
       "Broadside"
@@ -2760,9 +2821,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Battleship originated as a pencil-and-paper pad game played by French soldiers during World War I.",
+        "claim": "Battleship began as a pencil-and-paper grid guessing game in the early 1900s.",
         "verdict": "fact",
-        "explanation": "Before plastic peg cases were produced in 1967, soldiers and schoolchildren played 'L'Attaque' and paper grid games during the early 1900s.",
+        "explanation": "Before the plastic peg version arrived in 1967, people played it with paper grids, pencils, and lots of clever guessing.",
         "fun_fact": "It was one of the earliest games adapted into a commercial home video game in the late 1970s."
       },
       {
@@ -2784,17 +2845,18 @@
     "subtopic_id": "board_table_games",
     "name": "Clue (Cluedo)",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Cluedo",
       "The Classic Detective Game"
     ],
     "difficulty": 1,
-    "visual_anchor": "Moody vertical closeup of a miniature pewter candlestick weapon lying on the wood floor of a Victorian mansion ballroom, cards of Colonel Mustard and Miss Scarlet nearby.",
+    "visual_anchor": "Vertical closeup of a miniature pewter candlestick game token on the mansion ballroom square of the board, cards of Colonel Mustard and Miss Scarlet nearby.",
     "core_traits": [
-      "Murder mystery deduction board game set inside Tudor Mansion where players solve a crime",
-      "Players deduce three mystery variables concealed in a confidential envelope: the killer, the murder weapon, and the crime room",
+      "Classic mystery deduction board game set inside Tudor Mansion where players solve a puzzle",
+      "Players deduce three hidden answers sealed in a confidential envelope: the suspect, the item, and the room",
       "Features six colorful suspects: Miss Scarlet, Colonel Mustard, Mrs. White, Mr. Green, Mrs. Peacock, and Professor Plum",
-      "Contains six iconic weapons: Candlestick, Dagger, Lead Pipe, Revolver, Rope, and Wrench"
+      "Contains six tiny metal game tokens, including the famous Candlestick, Rope, and Wrench"
     ],
     "distractor_pool": [
       "Monopoly",
@@ -2805,13 +2867,13 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Clue was invented by a British factory clerk sheltering in air-raid shelters during the London Blitz.",
+        "claim": "Clue was invented in England in the 1940s by a man named Anthony E. Pratt.",
         "verdict": "fact",
-        "explanation": "Anthony E. Pratt invented 'Murder!' in 1944 to pass time during World War II blackouts, drawing on his love of Agatha Christie murder mystery novels.",
+        "explanation": "Pratt, a pianist who loved detective stories, designed the game in the 1940s; Waddingtons released it in 1949.",
         "fun_fact": "The game is titled 'Cluedo' in the UK and Australia, combining 'clue' with the Latin 'ludo' meaning 'I play'."
       },
       {
-        "claim": "Players can make multiple false murder accusations without penalty until they get it right.",
+        "claim": "Players can make multiple wrong final accusations without penalty until they get it right.",
         "verdict": "myth",
         "explanation": "If a player makes an official final Accusation and checks the confidential envelope but is mistaken on even one card, they are immediately eliminated from winning.",
         "fun_fact": "Eliminated players must still remain seated to show cards when suggested by others."
@@ -2829,6 +2891,7 @@
     "subtopic_id": "board_table_games",
     "name": "Risk (Board Game)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Game of Global Domination",
       "La Conquete du Monde"
@@ -2874,6 +2937,7 @@
     "subtopic_id": "board_table_games",
     "name": "Settlers of Catan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Catan",
       "Die Siedler von Catan"
@@ -2919,6 +2983,7 @@
     "subtopic_id": "board_table_games",
     "name": "Boggle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Word Search Grid Game"
     ],
@@ -2963,6 +3028,7 @@
     "subtopic_id": "board_table_games",
     "name": "Cribbage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crib",
       "Pegging Card Game"
@@ -2976,9 +3042,9 @@
       "Goal is to be the first player to peg all the way around the track to 121 points"
     ],
     "distractor_pool": [
-      "Poker",
+      "Gin Rummy",
       "Bridge",
-      "Blackjack",
+      "Hearts",
       "Euchre",
       "Backgammon"
     ],
@@ -2990,14 +3056,14 @@
         "fun_fact": "The odds of being dealt a perfect 29 hand in a two-player game are approximately 1 in 216,580."
       },
       {
-        "claim": "Cribbage was created by sailors during the American Civil War.",
+        "claim": "Cribbage was created by sailors in the 1860s.",
         "verdict": "myth",
         "explanation": "Cribbage was invented in early seventeenth-century England by poet Sir John Suckling as an evolution of the older card game Noddy.",
         "fun_fact": "It is the official wardroom pastime of American submarine crews."
       }
     ],
     "versus_candidates": [
-      "Poker",
+      "Gin Rummy",
       "Backgammon",
       "Bridge"
     ]
@@ -3008,6 +3074,7 @@
     "subtopic_id": "board_table_games",
     "name": "Mancala",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kalah",
       "Sowing Game",
@@ -3054,6 +3121,7 @@
     "subtopic_id": "board_table_games",
     "name": "Yahtzee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Five-Dice Game",
       "Yacht Game"
@@ -3063,12 +3131,12 @@
     "core_traits": [
       "Classic probability dice game played with five six-sided dice and a specialized scorecard",
       "Players get up to three rolls per turn, holding favorable dice while rerolling unwanted ones",
-      "Categories correspond to poker hands: three-of-a-kind, full house, small straight, large straight, and chance",
+      "Scoring categories include three-of-a-kind, full house, small straight, large straight, and chance",
       "Scoring five-of-a-kind earns fifty points and is shouted out as 'Yahtzee!'"
     ],
     "distractor_pool": [
       "Six-Sided Dice",
-      "Poker",
+      "Connect Four",
       "Boggle",
       "Scrabble",
       "Dominoes"
@@ -3089,7 +3157,7 @@
     ],
     "versus_candidates": [
       "Six-Sided Dice",
-      "Poker",
+      "Connect Four",
       "Boggle"
     ]
   },
@@ -3099,6 +3167,7 @@
     "subtopic_id": "board_table_games",
     "name": "Uno (Card Game)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Uno",
       "Color Shedding Card Game"
@@ -3113,7 +3182,7 @@
     ],
     "distractor_pool": [
       "Playing Cards",
-      "Poker",
+      "Go Fish",
       "Monopoly",
       "Exploding Kittens",
       "Dominos"
@@ -3135,7 +3204,7 @@
     "versus_candidates": [
       "Playing Cards",
       "Monopoly",
-      "Poker"
+      "Go Fish"
     ]
   },
   {
@@ -3144,6 +3213,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Tetris",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Soviet Tile Puzzle",
       "Falling Block Game"
@@ -3184,56 +3254,12 @@
     ]
   },
   {
-    "id": "ENT-SPO-072",
-    "domain_id": "sports_games",
-    "subtopic_id": "classic_arcade_video",
-    "name": "Pac-Man",
-    "language": "en",
-    "aliases": [
-      "Puck Man",
-      "The Yellow Pellet Muncher"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Nostalgic vertical arcade monitor glow framing a yellow wedge-shaped character navigating neon-blue maze corridors, chased by four colorful ghosts.",
-    "core_traits": [
-      "Pioneering 1980 arcade maze chase game developed by Namco and designed by Toru Iwatani",
-      "Player guides a circular yellow character through a maze consuming 240 pellets while avoiding four roaming ghosts",
-      "Chased by four ghosts with distinct artificial intelligence behaviors: Blinky, Pinky, Inky, and Clyde",
-      "Chomping one of four flashing Power Pellets temporarily turns ghosts vulnerable and dark blue to be eaten"
-    ],
-    "distractor_pool": [
-      "Tetris",
-      "Space Invaders",
-      "Donkey Kong (Arcade)",
-      "Frogger",
-      "Galaga"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Game designer Toru Iwatani was inspired to create Pac-Man after taking a slice out of a round pizza.",
-        "verdict": "fact",
-        "explanation": "Iwatani famously conceived the iconic wedge-mouthed character in 1979 when looking at a whole pizza with a missing slice at lunch.",
-        "fun_fact": "Billy Mitchell achieved the first documented perfect game of Pac-Man in 1999, scoring 3,333,360 points without losing a single life."
-      },
-      {
-        "claim": "The four ghosts chase the player by following identical programming scripts.",
-        "verdict": "myth",
-        "explanation": "Each ghost possesses unique algorithms: Blinky gives direct chase, Pinky ambushes four tiles ahead, Inky flanks based on Blinky's vector, and Clyde wanders away when close.",
-        "fun_fact": "At level 256, an 8-bit integer overflow bug corrupts the right half of the screen with garbled fruit and symbols, creating the famous 'kill screen'."
-      }
-    ],
-    "versus_candidates": [
-      "Space Invaders",
-      "Tetris",
-      "Donkey Kong (Arcade)"
-    ]
-  },
-  {
     "id": "ENT-SPO-073",
     "domain_id": "sports_games",
     "subtopic_id": "classic_arcade_video",
     "name": "Space Invaders",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Invaders from Space",
       "Taito Arcade Classic"
@@ -3279,6 +3305,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Pong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atari Pong",
       "Table Tennis Video Game"
@@ -3324,6 +3351,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Snake (Retro Mobile)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nokia Snake",
       "Blockade"
@@ -3369,6 +3397,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Minesweeper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Windows Minesweeper",
       "Minefield Game"
@@ -3414,6 +3443,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Klondike Solitaire",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Windows Solitaire",
       "Patience"
@@ -3428,7 +3458,7 @@
     ],
     "distractor_pool": [
       "Minesweeper",
-      "Poker",
+      "Hearts",
       "Playing Cards",
       "FreeCell",
       "Spider Solitaire"
@@ -3459,6 +3489,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Donkey Kong (Arcade)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DK Arcade",
       "Jumpman Arcade"
@@ -3504,6 +3535,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Galaga",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Namco Galaga",
       "Alien Swarm Arcade"
@@ -3549,6 +3581,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Asteroids (Arcade)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atari Asteroids",
       "Vector Asteroids"
@@ -3594,6 +3627,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Street Fighter II",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Street Fighter II: The World Warrior",
       "SF2"
@@ -3607,7 +3641,7 @@
       "Pioneered special combo attacks and directional joystick motions like the quarter-circle Hadouken and Dragon Punch"
     ],
     "distractor_pool": [
-      "Mortal Kombat",
+      "Super Smash Bros.",
       "Tekken",
       "Pac-Man",
       "Donkey Kong (Arcade)",
@@ -3628,7 +3662,7 @@
       }
     ],
     "versus_candidates": [
-      "Mortal Kombat",
+      "Super Smash Bros.",
       "Tekken",
       "Virtua Fighter"
     ]
@@ -3639,6 +3673,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Frogger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Road Crossing Arcade",
       "Konami Frogger"
@@ -3684,6 +3719,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Pinball Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pinball",
       "Flipper Table"
@@ -3705,10 +3741,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Pinball was outlawed in major American cities including New York and Chicago for over thirty years.",
+        "claim": "Pinball grew out of an older tabletop game called bagatelle.",
         "verdict": "fact",
-        "explanation": "Mayor Fiorello La Guardia banned pinball in NYC in 1942, smashing tables with sledgehammers because it was deemed mafia-linked gambling without skill.",
-        "fun_fact": "The ban was overturned in 1976 when star player Roger Sharpe testified in court and called his exact shot on a demonstration machine to prove it was a game of skill."
+        "explanation": "Bagatelle, played in 1700s France, had players send balls rolling among pins and holes on a slanted wooden board.",
+        "fun_fact": "In 1976, Roger Sharpe called his shot in a famous New York demonstration, proving pinball takes real skill."
       },
       {
         "claim": "Bumping or shoving the physical pinball machine is completely legal with zero limits.",
@@ -3729,6 +3765,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Claw Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crane Game",
       "UFO Catcher",
@@ -3775,6 +3812,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Dance Dance Revolution Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DDR Machine",
       "Dance Stage Arcade"
@@ -3820,6 +3858,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Arcade Joystick",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fight Stick",
       "Arcade Stick",
@@ -3835,7 +3874,7 @@
     ],
     "distractor_pool": [
       "Gamepad Controller",
-      "Light Gun",
+      "Trackball",
       "Arcade CRT Cabinet",
       "Dance Dance Revolution Machine",
       "Steering Wheel"
@@ -3856,7 +3895,7 @@
     ],
     "versus_candidates": [
       "Gamepad Controller",
-      "Light Gun",
+      "Trackball",
       "Arcade CRT Cabinet"
     ]
   },
@@ -3866,6 +3905,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Gamepad Controller",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Joypad",
       "Game Controller"
@@ -3911,6 +3951,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Game Cartridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ROM Cartridge",
       "Game Pak"
@@ -3951,102 +3992,12 @@
     ]
   },
   {
-    "id": "ENT-SPO-089",
-    "domain_id": "sports_games",
-    "subtopic_id": "classic_arcade_video",
-    "name": "Handheld Console",
-    "language": "en",
-    "aliases": [
-      "Portable Console",
-      "Handheld Game System"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Iconic vertical shot of a classic gray Game Boy held in two hands, green reflective dot-matrix screen illuminated by sunlight, A and B magenta buttons at the ready.",
-    "core_traits": [
-      "Self-contained portable video game console integrating display, game controls, speakers, and battery power",
-      "Allows players to enjoy video games anywhere on the move without requiring a television set",
-      "Pioneered by Nintendo's 1989 Game Boy created by Gunpei Yokoi, running swappable Game Paks on AA batteries",
-      "Evolutionary line includes Sega Game Gear, Game Boy Advance, PlayStation Portable (PSP), Nintendo DS, and Nintendo Switch"
-    ],
-    "distractor_pool": [
-      "Gamepad Controller",
-      "Game Cartridge",
-      "VR Headset",
-      "Arcade CRT Cabinet",
-      "Smartphone"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A Nintendo Game Boy survived a bomb explosion during the Gulf War and still functioned perfectly.",
-        "verdict": "fact",
-        "explanation": "A soldier's charred and melted Game Boy recovered from an exploded barracks was displayed at the Nintendo World Store in NYC, still running Tetris flawlessly.",
-        "fun_fact": "The original Game Boy could run for over thirty continuous hours on just four AA batteries due to its unbacklit screen."
-      },
-      {
-        "claim": "The Game Boy was the very first handheld electronic game ever released.",
-        "verdict": "myth",
-        "explanation": "Mattel released handheld LED football games in 1977, Milton Bradley launched the Microvision with swappable cartridges in 1979, and Nintendo sold millions of Game & Watch units in 1980.",
-        "fun_fact": "Over 118 million units of the original Game Boy and Game Boy Color were sold worldwide."
-      }
-    ],
-    "versus_candidates": [
-      "Gamepad Controller",
-      "VR Headset",
-      "Game Cartridge"
-    ]
-  },
-  {
-    "id": "ENT-SPO-090",
-    "domain_id": "sports_games",
-    "subtopic_id": "classic_arcade_video",
-    "name": "VR Headset",
-    "language": "en",
-    "aliases": [
-      "Virtual Reality Headset",
-      "HMD",
-      "VR Goggles"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Futuristic vertical shot of a sleek matte white virtual reality headset with Fresnel lenses reflecting glowing digital worlds, framed by tracked wireless hand controllers.",
-    "core_traits": [
-      "Head-mounted display device providing immersive stereoscopic 3D vision and sensory spatial simulation",
-      "Tracks user head movements in real time using 6-Degrees-of-Freedom (6DoF) inertial sensors and cameras",
-      "Equipped with twin displays and precision lenses to present independent perspectives to each eye for depth perception",
-      "Paired with motion-tracked handheld controllers enabling natural grabbing and interaction in virtual space"
-    ],
-    "distractor_pool": [
-      "Handheld Console",
-      "Gamepad Controller",
-      "Arcade CRT Cabinet",
-      "Light Gun",
-      "Dance Dance Revolution Machine"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Cinematographer Morton Heilig built a functioning multisensory VR arcade booth called the 'Sensorama' in 1962.",
-        "verdict": "fact",
-        "explanation": "The Sensorama featured stereoscopic 3D widescreen visuals, stereo sound, vibrating seat mechanics, and chemical scent dispensers to simulate a motorcycle ride through New York.",
-        "fun_fact": "Computer scientist Ivan Sutherland built the first computer-driven head-mounted display, nicknamed 'The Sword of Damocles', in 1968."
-      },
-      {
-        "claim": "Virtual reality sickness is caused entirely by low screen resolution.",
-        "verdict": "myth",
-        "explanation": "Motion sickness primarily stems from vestibular-ocular mismatch: your eyes detect visual movement while the fluid in your inner ear senses your physical body is sitting stationary.",
-        "fun_fact": "Reducing display latency below twenty milliseconds dramatically cuts motion sickness rates."
-      }
-    ],
-    "versus_candidates": [
-      "Handheld Console",
-      "Arcade CRT Cabinet",
-      "Gamepad Controller"
-    ]
-  },
-  {
     "id": "ENT-SPO-091",
     "domain_id": "sports_games",
     "subtopic_id": "classic_arcade_video",
     "name": "Arcade CRT Cabinet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coin-Op Cabinet",
       "Arcade Machine"
@@ -4057,7 +4008,7 @@
       "Freestanding coin-operated wooden entertainment machine housing a cathode ray tube (CRT) monitor and printed circuit board (PCB)",
       "Equipped with an illuminated graphic marquee header, control panel with joysticks, and coin door acceptor slots",
       "Heavy curved glass CRT display creates natural authentic scanlines and instantaneous zero-input-lag video",
-      "Available in upright stand-up cabinets, cocktail sit-down tables, and sit-in cockpit racing configurations"
+      "Available in upright stand-up cabinets, sit-down table-style cabinets, and sit-in cockpit racing configurations"
     ],
     "distractor_pool": [
       "Pinball Machine",
@@ -4071,13 +4022,13 @@
         "claim": "Classic arcade games look dramatically sharper and warmer on native CRT monitors than on modern LCD flat screens.",
         "verdict": "fact",
         "explanation": "Pixel art was designed specifically around CRT phosphor bloom and horizontal scanline blending; raw pixel displays without shaders look unnaturally harsh.",
-        "fun_fact": "Authentic arcade CRT tubes operate at lethal voltages exceeding 25,000 volts inside the flyback transformer."
+        "fun_fact": "Arcade CRT tubes use very high voltages inside, so only trained adults should ever open one."
       },
       {
         "claim": "The coin mechanisms in arcade cabinets simply measure the physical weight of a dropped coin.",
         "verdict": "myth",
         "explanation": "Mechanical coin comparators test diameter, thickness, metallic alloy conductivity, and drop bounce trajectory to reject slugs and washers.",
-        "fun_fact": "Cocktail table arcade cabinets were designed in Japan so businessmen could place drinks while playing in upscale coffee shops."
+        "fun_fact": "Sit-down table cabinets let two players face each other across a glass-topped screen."
       }
     ],
     "versus_candidates": [
@@ -4092,12 +4043,13 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Light Gun",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "NES Zapper",
       "Optical Light Gun"
     ],
     "difficulty": 1,
-    "visual_anchor": "Striking vertical closeup of a retro gray-and-blaze-orange plastic ray-gun aimed directly at a television screen, trigger held halfway back with a sharp mechanical click.",
+    "visual_anchor": "Striking vertical closeup of a retro gray-and-orange plastic light zapper controller pointed at a television screen, trigger held halfway back with a sharp mechanical click.",
     "core_traits": [
       "Pointing input peripheral shaped like a handgun used for target shooting games on television screens",
       "Contains an internal photodiode sensor inside the barrel that detects light flashing on the television screen",
@@ -4113,16 +4065,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The NES Zapper light gun does not shoot out light beams, but instead receives incoming light like a camera.",
+        "claim": "The NES Zapper does not shoot out light, but instead senses light like a camera.",
         "verdict": "fact",
-        "explanation": "The gun contains a photodiode optical sensor that reads the rapid black-and-white flash sequences painted by the television screen when the trigger is pulled.",
+        "explanation": "The Zapper contains a light sensor that reads quick black-and-white flashes on the TV screen when the trigger is pulled.",
         "fun_fact": "The entire optical detection process occurs in less than one-sixtieth of a second."
       },
       {
-        "claim": "Classic cathode ray light guns work completely fine when plugged into modern 4K OLED televisions.",
+        "claim": "Classic Zapper-style controllers work perfectly on modern 4K OLED televisions.",
         "verdict": "myth",
-        "explanation": "Light guns rely on the exact microsecond timing of a CRT's traveling electron beam; modern digital display signal processing introduces latency that breaks the optical sensor timing.",
-        "fun_fact": "The NES Zapper was redesigned in bright neon orange in 1989 to comply with US toy firearm safety laws."
+        "explanation": "These controllers depend on the precise timing of old CRT TV screens; modern screens add tiny delays that break the timing.",
+        "fun_fact": "The NES Zapper was redesigned in bright orange in 1989 to follow US toy safety rules."
       }
     ],
     "versus_candidates": [
@@ -4137,6 +4089,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Duck Hunt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "NES Duck Hunt",
       "Shooting Gallery"
@@ -4144,16 +4097,16 @@
     "difficulty": 1,
     "visual_anchor": "Vertical pixel art view of bright blue skies over tall marsh grass, two mallard ducks taking flight as an infamous grinning orange hound dog peeks over the grass.",
     "core_traits": [
-      "Legendary 1984 light-gun shooter video game developed by Nintendo for the Famicom and NES",
-      "Bundled with the NES Zapper light gun, challenging players to shoot ducks launched from marsh grass",
-      "Features a hunting dog companion who retrieves downed ducks or notoriously snickers if the player misses",
+      "Legendary 1984 Nintendo target game made for the Famicom and NES",
+      "Played with the NES Zapper controller, aiming at ducks that fly up from the marsh grass",
+      "Features a famous dog companion who pops up and snickers if the player misses",
       "Offers three gameplay modes: One-Duck, Two-Ducks, and Clay Shooting disc targets"
     ],
     "distractor_pool": [
       "Space Invaders",
       "Pac-Man",
-      "Time Crisis",
-      "Light Gun",
+      "Excitebike",
+      "Galaga",
       "Pong"
     ],
     "facts_and_myths": [
@@ -4171,8 +4124,8 @@
       }
     ],
     "versus_candidates": [
-      "Time Crisis",
-      "Light Gun",
+      "Excitebike",
+      "Galaga",
       "Space Invaders"
     ]
   },
@@ -4182,6 +4135,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Breakout (Arcade)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brick Breaker",
       "Atari Breakout"
@@ -4227,6 +4181,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Centipede (Arcade)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atari Centipede",
       "Bug Shooter"
@@ -4272,6 +4227,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Dig Dug",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Namco Dig Dug",
       "Subterranean Arcade"
@@ -4299,9 +4255,9 @@
         "fun_fact": "Fygar is a green dragon enemy capable of breathing horizontal jets of flame through dirt walls."
       },
       {
-        "claim": "Dig Dug uses a pickaxe weapon to strike monsters directly.",
+        "claim": "Dig Dug uses a pickaxe to bonk monsters directly.",
         "verdict": "myth",
-        "explanation": "Dig Dug wields a specialized harpoon attached to an air hose pump, inflating monsters with successive button taps until they explode.",
+        "explanation": "Dig Dug uses an air pump harpoon, inflating monsters with button taps until they pop.",
         "fun_fact": "Dig Dug's real canonical name in Namco lore is Taizo Hori, an anagram of the Japanese phrase for 'I want to dig'."
       }
     ],
@@ -4317,6 +4273,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Out Run (Arcade)",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sega OutRun",
       "Super Scaler Racing"
@@ -4362,6 +4319,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Time Crisis",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Time Crisis Arcade",
       "Recoil Light Gun Game"
@@ -4407,6 +4365,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Skeeball",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skee-Ball",
       "Alley Roller"
@@ -4452,6 +4411,7 @@
     "subtopic_id": "classic_arcade_video",
     "name": "Whac-A-Mole",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Whack-A-Mole",
       "Mole Bashing Game"

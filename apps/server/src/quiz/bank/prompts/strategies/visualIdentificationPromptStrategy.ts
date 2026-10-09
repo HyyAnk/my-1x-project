@@ -4,6 +4,7 @@ import type {
   BuildReverseBatchPromptOptions,
 } from "./promptStrategy.types.js";
 import {
+  ANSWER_INTEGRITY_MANDATE_LINES,
   COMMON_BATCH_CONTENT_POLICY_LINES,
   COMMON_REVERSE_CONTENT_POLICY_LINES,
   FRANCHISE_ANCHOR_MANDATE_LINES,
@@ -49,7 +50,7 @@ const FAMILY_EDUTAINMENT_VISUAL_ID_MANDATE: string[] = [
   "4. STRICT MOBILE QUESTION BREVITY (STRICTLY 60–80 CHARACTERS):",
   "   - On 9:16 vertical mobile screens, the question box fits at most 2 lines without font shrinkage.",
   "   - Keep question text strictly 60 to 80 characters (never exceed 80 chars) so it can be read and grasped in under 2 seconds.",
-  "   - Reserve rich bonus details strictly for the 'explanation' and 'fun_fact' fields!",
+  "   - Move bonus details into the 'explanation' and 'fun_fact' fields, told in short, simple kid-friendly sentences!",
 ];
 
 export const visualIdentificationPromptStrategy: ArchetypePromptStrategy = {
@@ -79,6 +80,8 @@ export const visualIdentificationPromptStrategy: ArchetypePromptStrategy = {
       ...GOLDEN_VISUAL_IDENTIFICATION_PARADIGMS,
       ``,
       ...FAMILY_EDUTAINMENT_VISUAL_ID_MANDATE,
+      ``,
+      ...ANSWER_INTEGRITY_MANDATE_LINES,
       ``,
       ...FRANCHISE_ANCHOR_MANDATE_LINES,
       ``,
@@ -145,6 +148,8 @@ export const visualIdentificationPromptStrategy: ArchetypePromptStrategy = {
       ...SPECIALIZED_VISUAL_IDENTIFICATION_DIRECTIVE,
       ``,
       ...FAMILY_EDUTAINMENT_VISUAL_ID_MANDATE,
+      ``,
+      ...ANSWER_INTEGRITY_MANDATE_LINES,
       ``,
       ...FRANCHISE_ANCHOR_MANDATE_LINES,
       ``,

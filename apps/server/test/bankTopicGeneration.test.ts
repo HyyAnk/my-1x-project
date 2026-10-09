@@ -15,7 +15,7 @@ function makeQuestion(overrides: Partial<BankQuestion> = {}): BankQuestion {
   const defaultChoices =
     overrides.archetype_id === "mystery_reveal"
       ? [{ id: "a", text: "Choice A" }]
-      : format === "true_false" || overrides.archetype_id === "versus_faceoff"
+      : format === "yes_no" || overrides.archetype_id === "versus_faceoff"
         ? [
             { id: "a", text: "Choice A" },
             { id: "b", text: "Choice B" },
@@ -113,14 +113,14 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           format: "image_guess",
         }),
       );
-      // 8 verdict_true_false for slot 3 (Episode)
+      // 8 verdict_yes_no for slot 3 (Episode)
       const slot3Questions = Array.from({ length: 8 }, (_, i) =>
         makeQuestion({
           id: `tf_ep_${i + 1}`,
-          archetype_id: "verdict_true_false",
+          archetype_id: "verdict_yes_no",
           domain_id: "human_body",
           subtopic_id: "human_brain",
-          format: "true_false",
+          format: "yes_no",
         }),
       );
       // 8 visual_identification for slot 4 (Episode)
@@ -150,14 +150,14 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           subtopic_id: "electric_cars",
         }),
       ];
-      // 1 verdict_true_false for slot 7 (Short-Reel)
+      // 1 verdict_yes_no for slot 7 (Short-Reel)
       const slot7Questions = [
         makeQuestion({
           id: "tf_reel_1",
-          archetype_id: "verdict_true_false",
+          archetype_id: "verdict_yes_no",
           domain_id: "food_gastronomy",
           subtopic_id: "desserts",
-          format: "true_false",
+          format: "yes_no",
         }),
       ];
       // 1 versus_faceoff for slot 8 (Short-Reel)
@@ -239,9 +239,9 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       const slot3Questions = Array.from({ length: 8 }, (_, i) =>
         makeQuestion({
           id: `tf_ep_${i + 1}`,
-          archetype_id: "verdict_true_false",
+          archetype_id: "verdict_yes_no",
           domain_id: "human_body",
-          format: "true_false",
+          format: "yes_no",
         }),
       );
       const slot4Questions = Array.from({ length: 8 }, (_, i) =>
@@ -250,7 +250,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       const slot5Questions = [makeQuestion({ id: "vf_reel_1", archetype_id: "versus_faceoff", domain_id: "space_earth" })];
       const slot6Questions = [makeQuestion({ id: "dt_reel_1", archetype_id: "deep_trivia", domain_id: "nature_animals" })];
       const slot7Questions = [
-        makeQuestion({ id: "tf_reel_1", archetype_id: "verdict_true_false", domain_id: "food_gastronomy", format: "true_false" }),
+        makeQuestion({ id: "tf_reel_1", archetype_id: "verdict_yes_no", domain_id: "food_gastronomy", format: "yes_no" }),
       ];
       const slot8Questions = [makeQuestion({ id: "vf_reel_2", archetype_id: "versus_faceoff", domain_id: "nature_animals" })];
 

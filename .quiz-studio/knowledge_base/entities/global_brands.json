@@ -5,6 +5,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Apple",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apple Inc.",
       "Cupertino Giant",
@@ -51,6 +52,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Microsoft",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "MSFT",
       "Redmond Giant",
@@ -97,6 +99,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Google",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alphabet Inc.",
       "Mountain View Giant",
@@ -113,7 +116,7 @@
     "distractor_pool": [
       "Microsoft",
       "Yahoo",
-      "Meta",
+      "Samsung",
       "Amazon",
       "Apple"
     ],
@@ -134,7 +137,7 @@
     "versus_candidates": [
       "Microsoft",
       "Apple",
-      "Meta"
+      "Amazon"
     ]
   },
   {
@@ -143,6 +146,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Amazon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Amazon.com",
       "The Everything Store",
@@ -189,6 +193,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Meta",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Meta Platforms",
       "Facebook Inc.",
@@ -235,6 +240,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Samsung",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Samsung Electronics",
       "Samsung Group",
@@ -281,6 +287,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Sony",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sony Group",
       "Tokyo Tsushin Kogyo",
@@ -289,7 +296,7 @@
     "difficulty": 1,
     "visual_anchor": "A matte-black modern gaming console and wireless controller glowing with soft cobalt LED accents beside high-fidelity studio monitor headphones on an acoustic production desk in Tokyo.",
     "core_traits": [
-      "Established in 1946 in bombed-out post-war Tokyo by Masaru Ibuka and Akio Morita",
+      "Established in 1946 in Tokyo by Masaru Ibuka and Akio Morita",
       "Revolutionized personal mobile music listening worldwide with the pocket cassette Walkman in 1979",
       "Global leader in consumer audio, mirrorless digital cameras, Hollywood film studios, and music publishing",
       "Dominates home console video gaming through its record-breaking PlayStation hardware franchise"
@@ -327,6 +334,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Nintendo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Big N",
       "Nintendo of Japan",
@@ -373,6 +381,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Nvidia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Team Green",
       "Nvidia Corporation",
@@ -419,6 +428,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Tesla",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tesla Motors",
       "Tesla Inc.",
@@ -465,6 +475,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Intel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Intel Corporation",
       "Team Blue",
@@ -510,6 +521,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "AMD",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Advanced Micro Devices",
       "Team Red",
@@ -555,6 +567,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Netflix",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Netflix Streaming",
       "The Big Red N",
@@ -565,7 +578,7 @@
     "core_traits": [
       "Started in 1997 as a mail-order DVD rental service with no late fees, challenging traditional brick-and-mortar video stores.",
       "Pioneered modern subscription video on demand in 2007, fundamentally disrupting the global film and cable television industries.",
-      "Popularized binge-watching by dropping full seasons of original critically acclaimed shows like House of Cards and Stranger Things at once."
+      "Popularized binge-watching by releasing whole seasons of its original shows all at once."
     ],
     "distractor_pool": [
       "Disney+",
@@ -600,6 +613,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Spotify",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spotify Music",
       "The Green Giant of Audio",
@@ -645,6 +659,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "OpenAI",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "OpenAI Inc.",
       "OpenAI LP",
@@ -681,7 +696,7 @@
     "versus_candidates": [
       "Anthropic",
       "Google DeepMind",
-      "Meta AI"
+      "Microsoft"
     ]
   },
   {
@@ -690,6 +705,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Uber",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Uber Technologies",
       "UberCab",
@@ -735,6 +751,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Airbnb",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "AirBed & Breakfast",
       "Airbnb Inc.",
@@ -780,6 +797,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "TikTok",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Douyin (International)",
       "ByteDance TikTok",
@@ -825,6 +843,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "YouTube",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "YT",
       "YouTube Video",
@@ -841,15 +860,15 @@
       "Vimeo",
       "Twitch",
       "Dailymotion",
-      "TikTok",
+      "Netflix",
       "Rumble"
     ],
     "facts_and_myths": [
       {
-        "claim": "YouTube was originally envisioned and coded by its founders as an online video dating service called 'Tune In, Hook Up'.",
+        "claim": "The very first YouTube video was a short clip filmed at a zoo.",
         "verdict": "fact",
-        "explanation": "The founders initially created YouTube as a video-based dating site where single people could upload video introductions of themselves, but after getting zero submissions, they opened it to any video content.",
-        "fun_fact": "The very first video ever uploaded to the site was 'Me at the zoo' by co-founder Jawed Karim on April 23, 2005."
+        "explanation": "Co-founder Jawed Karim uploaded 'Me at the zoo' on April 23, 2005, showing himself standing in front of the elephants.",
+        "fun_fact": "That first video is only about 19 seconds long."
       },
       {
         "claim": "YouTube has operated as an independent, standalone subsidiary completely outside of Google's cloud computing infrastructure.",
@@ -860,7 +879,7 @@
     ],
     "versus_candidates": [
       "Twitch",
-      "TikTok",
+      "Vimeo",
       "Netflix"
     ]
   },
@@ -870,6 +889,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "X (Twitter)",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Twitter",
       "X Corp",
@@ -915,6 +935,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Adobe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Adobe Systems",
       "Adobe Inc.",
@@ -961,6 +982,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "IBM",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Big Blue",
       "International Business Machines",
@@ -1007,6 +1029,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Dell",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dell Technologies",
       "Dell Inc.",
@@ -1053,6 +1076,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "HP",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hewlett-Packard",
       "HP Inc.",
@@ -1099,6 +1123,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Xiaomi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Xiaomi Corporation",
       "Mi",
@@ -1145,6 +1170,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Huawei",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Huawei Technologies",
       "Huawei Tech",
@@ -1191,6 +1217,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Qualcomm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Qualcomm Incorporated",
       "QC",
@@ -1237,6 +1264,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Asus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ASUSTeK Computer",
       "ASUS",
@@ -1283,6 +1311,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Lenovo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lenovo Group",
       "Legend Holdings",
@@ -1329,6 +1358,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Cisco",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cisco Systems",
       "Cisco Systems Inc.",
@@ -1375,6 +1405,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Oracle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oracle Corporation",
       "Oracle Cloud",
@@ -1421,6 +1452,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Canon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Canon Inc.",
       "Canon Optics"
@@ -1466,6 +1498,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Nikon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nikon Corporation",
       "Nippon Kogaku"
@@ -1511,6 +1544,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "PlayStation",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "PS",
       "Sony PlayStation",
@@ -1522,7 +1556,7 @@
       "Created by Sony engineer Ken Kutaragi, often revered as the 'Father of PlayStation'",
       "Emerged after a high-profile joint CD-ROM development partnership with Nintendo collapsed publicly in 1991",
       "Debuted in Japan in December 1994, becoming the first computer entertainment platform to ship over 100 million units globally",
-      "Renowned for flagship home console generations, handheld systems like PSP, and exclusive cinematic gaming franchises like God of War and The Last of Us"
+      "Renowned for flagship home console generations, handheld systems like PSP, and exclusive franchises like Gran Turismo, Ratchet & Clank, and Astro Bot"
     ],
     "distractor_pool": [
       "Xbox",
@@ -1557,6 +1591,7 @@
     "subtopic_id": "tech_giants_digital",
     "name": "Xbox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Microsoft Xbox",
       "Xbox Series X",
@@ -1568,7 +1603,7 @@
       "Created by a team of Microsoft DirectX engineers and launched in North America in November 2001",
       "Pioneered integrated hard drive storage and built-in Ethernet for modern home console gaming architectures",
       "Revolutionized competitive online multiplayer gaming through the launch and standardization of Xbox Live in 2002",
-      "Synonymous with legendary first-person shooter franchises like Halo and Gears of War, and the Xbox Game Pass subscription service"
+      "Home of popular franchises like Forza Horizon and Minecraft, plus the Xbox Game Pass subscription service"
     ],
     "distractor_pool": [
       "PlayStation",
@@ -1588,7 +1623,7 @@
         "claim": "Microsoft developed the original Xbox console hardware entirely using proprietary components unrelated to PC technology.",
         "verdict": "myth",
         "explanation": "Unlike contemporary consoles with specialized custom processors, the original Xbox was built largely from off-the-shelf PC architecture, featuring a 733 MHz Intel Pentium III CPU and an Nvidia GeForce3-based GPU.",
-        "fun_fact": "The infamous 'Red Ring of Death' hardware failure on early Xbox 360 consoles cost Microsoft over $1.15 billion to repair and warranty."
+        "fun_fact": "The original Xbox controller was so big that fans nicknamed it 'The Duke'."
       }
     ],
     "versus_candidates": [
@@ -1603,6 +1638,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Ferrari",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Prancing Horse",
       "Scuderia Ferrari",
@@ -1630,9 +1666,9 @@
         "fun_fact": "Enzo Ferrari's favorite color was actually canary yellow, the historical background color of the city of Modena."
       },
       {
-        "claim": "The famous Prancing Horse emblem was originally painted on a World War I Italian fighter plane.",
+        "claim": "The Prancing Horse emblem was given to Enzo Ferrari as a good-luck symbol.",
         "verdict": "fact",
-        "explanation": "Count Francesco Baracca, Italy's top World War I flying ace, painted the black horse on his plane; his mother later suggested Enzo Ferrari use it for good luck.",
+        "explanation": "The family of famous Italian pilot Francesco Baracca, who had a black horse painted on his plane, suggested Enzo use it for luck.",
         "fun_fact": "Ferrari only manufactures a strictly capped number of cars each year to preserve exclusivity and brand value."
       }
     ],
@@ -1648,6 +1684,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Lamborghini",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Raging Bull",
       "Automobili Lamborghini",
@@ -1693,6 +1730,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Porsche",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Porsche AG",
       "The Stuttgart Crest"
@@ -1738,6 +1776,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Mercedes-Benz",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Silver Arrows",
       "Merc",
@@ -1784,6 +1823,7 @@
     "subtopic_id": "automotive_legends",
     "name": "BMW",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bayerische Motoren Werke",
       "The Ultimate Driving Machine",
@@ -1808,12 +1848,12 @@
         "claim": "The famous blue-and-white BMW roundel logo was originally designed to represent a spinning airplane propeller.",
         "verdict": "myth",
         "explanation": "The propeller myth was created by a 1929 magazine advertisement; the blue and white quadrants actually represent the official state colors of Bavaria, reversed to comply with trademark laws.",
-        "fun_fact": "BMW did not actively debunk the airplane propeller myth for decades because they appreciated the romantic aviation connection."
+        "fun_fact": "BMW did not rush to correct the propeller myth for decades because they liked its exciting link to flying."
       },
       {
         "claim": "BMW built an iconic tiny bubble car in the 1950s that opened from the entire front of the vehicle.",
         "verdict": "fact",
-        "explanation": "The BMW Isetta was a single-cylinder microcar licensed from Italian company Iso, featuring a front-hinged door that swung open with the steering wheel assembly to help BMW survive post-war financial crisis.",
+        "explanation": "The BMW Isetta was a tiny microcar whose whole front swung open with the steering wheel; it helped BMW through tough 1950s money troubles.",
         "fun_fact": "The BMW Isetta could achieve up to 78 miles per gallon, making it the top-selling single-cylinder car in history."
       }
     ],
@@ -1829,6 +1869,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Audi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vorsprung durch Technik",
       "The Four Rings",
@@ -1875,6 +1916,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Rolls-Royce",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Spirit of Ecstasy",
       "The Double R",
@@ -1920,6 +1962,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Bentley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Flying B",
       "Bentley Motors",
@@ -1966,6 +2009,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Bugatti",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Automobiles Ettore Bugatti",
       "The Molsheim Hypercar",
@@ -2012,6 +2056,7 @@
     "subtopic_id": "automotive_legends",
     "name": "McLaren",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "McLaren Automotive",
       "The Papaya Orange",
@@ -2042,7 +2087,7 @@
       {
         "claim": "The curved red McLaren Speedmark logo was originally designed to resemble a kiwi bird honoring founder Bruce McLaren.",
         "verdict": "myth",
-        "explanation": "While Bruce McLaren's original personal badge featured a Kiwi, the modern Speedmark swoosh evolved from Marlboro's sponsorship chevron in the 1980s and was stylized as aerodynamic airflow vortexes.",
+        "explanation": "Bruce McLaren's original badge did show a kiwi bird, but the modern Speedmark swoosh is styled like swirling air flowing off a race car.",
         "fun_fact": "Every single McLaren road car built since 1981 features an ultra-stiff carbon-fiber chassis tub."
       }
     ],
@@ -2058,6 +2103,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Aston Martin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aston",
       "Aston Martin Lagonda",
@@ -2086,7 +2132,7 @@
         "fun_fact": "David Brown paid just 20,500 British pounds for Aston Martin in 1947."
       },
       {
-        "claim": "The Aston Martin DB5 was originally written into Ian Fleming's first James Bond novel Casino Royale.",
+        "claim": "The Aston Martin DB5 appeared in Ian Fleming's very first James Bond novel.",
         "verdict": "myth",
         "explanation": "In the original novels, James Bond initially drove a 1930 supercharged 4.5-litre Blower Bentley; the Aston Martin DB Mark III only debuted later in the 1959 novel Goldfinger.",
         "fun_fact": "The movie gadget-laden DB5 in 1964's Goldfinger featured revolving license plates, smoke screen, and an ejector seat."
@@ -2104,6 +2150,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Toyota",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Toyota Motor Corporation",
       "TMC",
@@ -2150,6 +2197,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Honda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Honda Motor Co.",
       "Big H"
@@ -2173,7 +2221,7 @@
       {
         "claim": "Honda started its industrial business by manufacturing compact four-wheeled automobiles.",
         "verdict": "myth",
-        "explanation": "Founder Soichiro Honda began post-war operations in 1946 by attaching surplus wartime two-stroke generator engines to ordinary pedal bicycles, before developing motorcycles.",
+        "explanation": "Founder Soichiro Honda began in 1946 by attaching small spare engines to ordinary pedal bicycles, before developing motorcycles.",
         "fun_fact": "Honda's Super Cub motorcycle is the most produced motor vehicle in history, surpassing 100 million units."
       },
       {
@@ -2195,6 +2243,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Ford",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ford Motor Company",
       "The Blue Oval",
@@ -2241,6 +2290,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Chevrolet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chevy",
       "The Bowtie",
@@ -2266,7 +2316,7 @@
         "claim": "Co-founder Louis Chevrolet was a Swiss-born racing driver and mechanical genius who parted ways with the company early.",
         "verdict": "fact",
         "explanation": "Louis Chevrolet co-founded the brand with GM ousted founder Billy Durant in 1911, but sold his shares in 1915 following creative disagreements over car pricing and luxury focus.",
-        "fun_fact": "Louis Chevrolet died in poverty in 1941, never sharing in the immense corporate fortune of his namesake brand."
+        "fun_fact": "Louis Chevrolet's later racing company, Frontenac, built cars that won the Indianapolis 500 in 1920 and 1921."
       },
       {
         "claim": "The Chevrolet small-block V8 was solely reserved for high-end sports cars and racing prototypes.",
@@ -2287,6 +2337,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Jeep",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jeep 4x4",
       "Jeep Brand"
@@ -2294,7 +2345,7 @@
     "difficulty": 1,
     "visual_anchor": "Vertical 9:16 cinematic framing of a mud-splattered olive-drab Jeep Wrangler tackling steep red rock boulders in Moab, displaying its iconic seven-slot vertical grille, round headlights, and exposed door hinges.",
     "core_traits": [
-      "Legendary American off-road vehicle brand born from a 1940 military contract for light reconnaissance 4x4 utility vehicles",
+      "Legendary American off-road vehicle brand whose first rugged 4x4 models were built in the early 1940s",
       "World-famous for its trademark seven-slot vertical grille, removable roof and doors, and Trail Rated off-road capabilities",
       "Pioneered the civilian sport utility vehicle (SUV) segment with the Willys CJ and Jeep Wagoneer",
       "Currently an iconic cornerstone brand under the multinational automotive manufacturing conglomerate Stellantis"
@@ -2308,16 +2359,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The word 'Jeep' was exclusively coined by soldiers during World War II as an abbreviation for 'General Purpose'.",
-        "verdict": "myth",
-        "explanation": "While 'GP' contributed to popular usage, military mechanics already used the slang term 'jeep' in WWI for untested vehicles and new recruits; the popular cartoon character 'Eugene the Jeep' in Popeye also widely popularized the term before WWII.",
+        "claim": "A magical creature in the Popeye cartoons helped make the word 'jeep' popular.",
+        "verdict": "fact",
+        "explanation": "Eugene the Jeep, a Popeye character created in 1936, helped spread the word 'jeep' before the famous vehicle got its name.",
         "fun_fact": "Eugene the Jeep was a magical cartoon creature that could walk through walls and go anywhere, much like the rugged vehicle."
       },
       {
-        "claim": "Every modern Jeep Wrangler maintains removable doors, a fold-down windshield, and exposed exterior hinges derived from its original military heritage.",
+        "claim": "Every modern Jeep Wrangler keeps removable doors, a fold-down windshield, and exposed hinges from the original 1940s design.",
         "verdict": "fact",
-        "explanation": "The original Willys MB required folding windshields and detachable doors for air transport in cargo gliders and battlefield versatility, features purposefully preserved on modern Wranglers.",
-        "fun_fact": "General Dwight D. Eisenhower listed the Jeep alongside the bulldozer and C-47 transport plane as the primary tools that won WWII."
+        "explanation": "The original Willys jeep had a folding windshield and removable doors so it could be shipped and carried easily, features kept on modern Wranglers.",
+        "fun_fact": "Jeep owners often greet each other on the road with a friendly wave known as the 'Jeep Wave'."
       }
     ],
     "versus_candidates": [
@@ -2332,6 +2383,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Volkswagen",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "VW",
       "People's Car",
@@ -2378,6 +2430,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Volvo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Volvo Cars",
       "Volvo Car Group"
@@ -2423,6 +2476,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Hyundai",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hyundai Motor Company",
       "HMC"
@@ -2468,6 +2522,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Nissan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nissan Motor Co.",
       "Datsun",
@@ -2514,6 +2569,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Subaru",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Subie",
       "Fuji Heavy Industries",
@@ -2560,6 +2616,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Koenigsegg",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Koenigsegg Automotive",
       "The Swedish Hypercar Maker",
@@ -2606,6 +2663,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Harley-Davidson",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Harley",
       "H-D",
@@ -2637,7 +2695,7 @@
         "claim": "Harley-Davidson has exclusively produced traditional heavyweight gasoline cruiser motorcycles throughout its entire history.",
         "verdict": "myth",
         "explanation": "Harley-Davidson has produced lightweight two-stroke scooters like the Topper, small-displacement Italian-built Aermacchi racers, golf carts, and modern high-performance electric motorcycles under the LiveWire brand.",
-        "fun_fact": "During World War I, the United States military purchased over 20,000 Harley-Davidson motorcycles for battlefield messenger duty."
+        "fun_fact": "Harley-Davidson's very first workshop was a small wooden shed in Milwaukee, Wisconsin."
       }
     ],
     "versus_candidates": [
@@ -2652,6 +2710,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Ducati",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ducati Motor",
       "The Ferrari of Motorcycles",
@@ -2698,6 +2757,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Vespa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Piaggio Vespa",
       "The Italian Wasp",
@@ -2706,10 +2766,10 @@
     "difficulty": 1,
     "visual_anchor": "Charming vertical 9:16 cinematic street scene of a pastel mint-green vintage Vespa scooter parked on cobblestones outside a sunlit Roman cafe, warm espresso light reflecting off polished chrome mirrors and leather saddle.",
     "core_traits": [
-      "Legendary Italian scooter brand manufactured by Piaggio, synonymous with post-war European urban freedom.",
+      "Legendary Italian scooter brand made by Piaggio, first launched in 1946 and loved as a symbol of city freedom.",
       "Features a distinctive painted pressed-steel monocoque chassis with enclosed engine and flat floorboard.",
       "Named after the Italian word for 'wasp' due to its buzzing two-stroke engine sound and waist-like body shape.",
-      "Immortalized worldwide as an icon of 'La Dolce Vita' style and romantic Roman street cinema."
+      "Immortalized worldwide as an icon of 'La Dolce Vita' style and classic Roman movies."
     ],
     "distractor_pool": [
       "Lambretta",
@@ -2726,7 +2786,7 @@
         "fun_fact": "Upon first seeing the prototype, company president Enrico Piaggio exclaimed, 'Sembra una vespa!' ('It looks like a wasp!')."
       },
       {
-        "claim": "Vespa was popularized primarily through government mandatory transport quotas in post-war Italy.",
+        "claim": "Vespa became popular mainly because the Italian government ordered people to ride it.",
         "verdict": "myth",
         "explanation": "Vespa became an international cultural phenomenon organically, especially after Audrey Hepburn and Gregory Peck rode one through Rome in the 1953 Hollywood blockbuster film 'Roman Holiday'.",
         "fun_fact": "Over 100,000 Vespa scooters were sold worldwide within months of 'Roman Holiday' premiering in movie theaters."
@@ -2744,6 +2804,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Land Rover",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Defender Maker",
       "JLR Off-Road",
@@ -2790,6 +2851,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Jaguar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jag",
       "Jaguar Cars",
@@ -2820,7 +2882,7 @@
       {
         "claim": "The company was originally named Jaguar when it was founded in 1922.",
         "verdict": "myth",
-        "explanation": "The company was founded as the Swallow Sidecar Company (SS Cars Ltd) and only adopted the Jaguar name after World War II in 1945 to avoid negative associations with the Nazi SS initials.",
+        "explanation": "It began as the Swallow Sidecar Company making motorcycle sidecars; 'Jaguar' first named a car model in 1935, becoming the company name in 1945.",
         "fun_fact": "Jaguar won the grueling 24 Hours of Le Mans five times during the 1950s using pioneering disc brakes."
       }
     ],
@@ -2836,6 +2898,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Maserati",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Trident",
       "Officine Alfieri Maserati",
@@ -2882,6 +2945,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Alfa Romeo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alfa",
       "The Biscione",
@@ -2913,7 +2977,7 @@
         "claim": "The four-leaf clover (Quadrifoglio) badge on Alfa Romeos was chosen simply to denote eco-friendly engine efficiency.",
         "verdict": "myth",
         "explanation": "The green Quadrifoglio was painted on Ugo Sivocci's race car in 1923 as a good-luck charm to break a streak of second-place finishes; he promptly won the Targa Florio, cementing it as a racing symbol.",
-        "fun_fact": "After Sivocci tragically died testing a car without the four-leaf clover, Alfa removed one corner of its white diamond background, turning it into a triangle."
+        "fun_fact": "The green four-leaf clover badge still appears today on Alfa Romeo's fastest, sportiest models."
       }
     ],
     "versus_candidates": [
@@ -2928,6 +2992,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Mazda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mazda Motor Corporation",
       "Toyo Cork Kogyo",
@@ -2974,6 +3039,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Lexus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lexus Division",
       "Toyota Luxury Division",
@@ -2983,7 +3049,7 @@
     "visual_anchor": "Cinematic 9:16 vertical shot of a pearl-white Lexus LFA supercar roaring along an empty coastal cliff highway at dusk, illuminated headlights reflecting sharply off wet asphalt, stylized spindle grille gleaming in golden-hour sunlight.",
     "core_traits": [
       "Luxury automotive division founded by Japanese automaker Toyota in 1989 after the secretive 'Circle F' project",
-      "Famous for introducing the flagship LS 400 sedan, renowned for its champagne glass pyramid engine balance commercial",
+      "Famous for introducing the flagship LS 400 sedan, shown in a TV ad balancing a tower of glasses on its smooth-running engine",
       "Signature design language showcases the aggressive 'spindle grille' and advanced hybrid luxury powertrains",
       "Engineered the legendary carbon-fiber-bodied LFA supercar with a high-revving naturally aspirated V10 engine"
     ],
@@ -3020,6 +3086,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Cadillac",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caddy",
       "Cadillac Motor Car Division",
@@ -3066,6 +3133,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Pagani",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pagani Automobili",
       "Pagani Hypercars"
@@ -3111,6 +3179,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Lotus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lotus Cars",
       "Team Lotus"
@@ -3156,6 +3225,7 @@
     "subtopic_id": "automotive_legends",
     "name": "Dodge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dodge Brothers",
       "Dodge Division",
@@ -3181,7 +3251,7 @@
         "claim": "Dodge's famous HEMI engine was the very first combustion engine design to ever utilize hemispherical cylinder heads.",
         "verdict": "myth",
         "explanation": "Hemispherical cylinder heads were used by European automakers including Welch, Peugeot, and Alfa Romeo in the early 1900s, decades before Chrysler/Dodge trademarked and popularized the 'HEMI' moniker in the 1950s.",
-        "fun_fact": "Chrysler's first hemispherical combustion chamber engine was actually built during World War II for the Republic P-47 Thunderbolt fighter aircraft."
+        "fun_fact": "HEMI engines get their name from their dome-shaped, half-sphere combustion chambers."
       },
       {
         "claim": "The factory Dodge Challenger SRT Demon was officially banned from standard NHRA drag racing competition upon release.",
@@ -3202,6 +3272,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Coca-Cola",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coke",
       "The Coca-Cola Company",
@@ -3230,10 +3301,10 @@
         "fun_fact": "Sundblom initially used his friend Lou Prentiss, a retired salesman, as the live model for Santa's face."
       },
       {
-        "claim": "Coca-Cola once produced a completely clear version specifically for a high-ranking Soviet marshal during World War II.",
+        "claim": "A special can of Coca-Cola once flew into outer space.",
         "verdict": "fact",
-        "explanation": "Marshal Georgy Zhukov loved Coke but could not be seen drinking an American imperialist symbol, so Coca-Cola produced 'White Coke' in straight bottles with a red star cap.",
-        "fun_fact": "President Harry S. Truman personally authorized the special export of White Coke to Soviet-occupied Austria."
+        "explanation": "In 1985, astronauts on a Space Shuttle mission tested a specially designed Coca-Cola 'space can' made to work in zero gravity.",
+        "fun_fact": "Without gravity the bubbles could not rise, so the astronauts found the soda extra foamy."
       }
     ],
     "versus_candidates": [
@@ -3248,6 +3319,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Pepsi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pepsi-Cola",
       "PepsiCo",
@@ -3270,15 +3342,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Pepsi briefly commanded the sixth largest military submarine fleet in the world following a deal with the Soviet Union.",
-        "verdict": "myth",
-        "explanation": "In 1989, Pepsi took title to 17 obsolete, non-operational Soviet submarines and small warships as scrap metal payment to be immediately recycled by a Swedish shipyard, never operating a functional military fleet.",
-        "fun_fact": "Pepsi CEO Donald Kendall famously quipped to the U.S. National Security Advisor: 'We're disarming the Soviet Union faster than you are.'"
+        "claim": "The name 'Pepsi' is linked to the word 'dyspepsia', meaning an upset stomach.",
+        "verdict": "fact",
+        "explanation": "Caleb Bradham believed his drink helped digestion, so in 1898 he renamed 'Brad's Drink' to Pepsi-Cola.",
+        "fun_fact": "Pepsi-Cola was first made in a small pharmacy in New Bern, North Carolina."
       },
       {
         "claim": "Pepsi was the first Western consumer product widely manufactured and sold inside the Soviet Union.",
         "verdict": "fact",
-        "explanation": "Following Richard Nixon and Nikita Khrushchev's 1959 'Kitchen Debate', Pepsi signed a barter deal in 1972 trading soft drink syrup for exclusive Stolichnaya vodka distribution rights.",
+        "explanation": "After a famous 1959 meeting where Nixon handed Khrushchev a cup of Pepsi, Pepsi agreed in 1972 to make and sell its cola there.",
         "fun_fact": "Because Soviet rubles were not convertible on international currency markets, barter trade was the only legal payment mechanism."
       }
     ],
@@ -3294,6 +3366,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "McDonald's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Golden Arches",
       "Mickey D's",
@@ -3340,6 +3413,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Burger King",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "BK",
       "Hungry Jack's",
@@ -3386,6 +3460,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Starbucks",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Starbucks Coffee",
       "Starbucks Corporation",
@@ -3432,6 +3507,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "KFC",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kentucky Fried Chicken",
       "Colonel Sanders",
@@ -3454,7 +3530,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Harland Sanders held the official military rank of Colonel in the United States Army during World War II.",
+        "claim": "Harland Sanders earned the rank of Colonel as an officer in the United States Army.",
         "verdict": "myth",
         "explanation": "Sanders was an honorary Kentucky Colonel, a ceremonial civilian title of honor bestowed upon him twice by Governors of the Commonwealth of Kentucky, not a military officer rank.",
         "fun_fact": "Sanders embraced the persona completely, dressing in a white linen suit, black string tie, and bleached goatee for the rest of his life."
@@ -3478,6 +3554,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Subway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Subway IP LLC",
       "Doctor's Associates",
@@ -3524,6 +3601,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Domino's Pizza",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Domino's",
       "DPI",
@@ -3570,6 +3648,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Pizza Hut",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Hut",
       "Pizza Hut LLC",
@@ -3616,6 +3695,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Red Bull",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Red Bull Energy Drink",
       "Red Bull GmbH",
@@ -3662,6 +3742,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Monster Energy",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Monster",
       "Monster Beverage",
@@ -3708,6 +3789,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Nestle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nestle",
       "Nestle S.A.",
@@ -3754,6 +3836,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Nutella",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nutella Spread",
       "Ferrero Nutella"
@@ -3775,9 +3858,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Nutella was created as a strategic response to severe cocoa shortages during and after World War II.",
+        "claim": "Nutella's ancestor was created because cocoa was scarce and expensive in 1940s Italy.",
         "verdict": "fact",
-        "explanation": "Pietro Ferrero mixed abundant local Piedmont hazelnuts with scarce cocoa to stretch limited chocolate rations, giving birth to Supercrema, the direct ancestor of Nutella.",
+        "explanation": "Pietro Ferrero stretched rare cocoa by mixing it with plentiful Piedmont hazelnuts, creating Supercrema, the direct ancestor of Nutella.",
         "fun_fact": "World Nutella Day was originally launched by an American food blogger living in Italy in 2007."
       },
       {
@@ -3799,6 +3882,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Ferrero Rocher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ferrero",
       "Rocher",
@@ -3845,6 +3929,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Oreo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oreo Cookie",
       "Oreo Biscuit",
@@ -3891,6 +3976,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Hershey's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Hershey Company",
       "Hershey Chocolate",
@@ -3919,7 +4005,7 @@
         "fun_fact": "Many European consumers unfamiliar with this tang describe Hershey's chocolate as tasting slightly sour or like cheese."
       },
       {
-        "claim": "Milton Hershey died penniless after sinking his entire personal fortune into constructing the Hershey chocolate amusement park.",
+        "claim": "Milton Hershey lost his entire fortune building the Hershey amusement park.",
         "verdict": "myth",
         "explanation": "Milton Hershey donated his massive fortune and company controlling stock in 1918 to the Milton Hershey School for orphaned children, where the trust thrives to this day.",
         "fun_fact": "The Milton Hershey School Trust still retains voting control of The Hershey Company."
@@ -3937,6 +4023,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Snickers",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Snickers Bar",
       "Marathon Bar"
@@ -3982,6 +4069,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "M&M's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "M&Ms",
       "M and Ms",
@@ -4028,6 +4116,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Heinz",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kraft Heinz",
       "H.J. Heinz",
@@ -4074,6 +4163,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Lay's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lays",
       "Frito-Lay",
@@ -4120,6 +4210,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Doritos",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Doritos Tortilla Chips",
       "Nacho Cheese Doritos",
@@ -4166,6 +4257,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Pringles",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pringles Potato Crisps",
       "Pringles Chips",
@@ -4188,9 +4280,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The organic chemist who designed the Pringles cylindrical can had his ashes buried in one.",
+        "claim": "The tube-shaped Pringles can was designed by a chemist named Fredric Baur.",
         "verdict": "fact",
-        "explanation": "Dr. Fredric J. Baur, who patented the tubular Pringles container packaging design in 1970, requested that his children bury part of his cremated remains in an Original Pringles can, which they honored in 2008.",
+        "explanation": "Organic chemist Fredric J. Baur patented the tall Pringles can in 1970 so the stacked crisps would not break.",
         "fun_fact": "Renowned sci-fi author Gene Wolfe helped develop the manufacturing machine that cooks the crisps."
       },
       {
@@ -4212,6 +4304,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Taco Bell",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Bell",
       "Taco Bell Restaurant",
@@ -4243,7 +4336,7 @@
         "claim": "Taco Bell's seasoned beef recipe contains only 35 percent real beef with the rest being chemical fillers.",
         "verdict": "myth",
         "explanation": "A 2011 lawsuit alleging this was quickly dropped when Taco Bell proved its seasoned beef mixture is 88 percent USDA-inspected real beef and 12 percent natural spices, seasonings, and thickeners like oats and starch.",
-        "fun_fact": "Taco Bell responded to the dropped lawsuit with full-page newspaper ads saying 'Would it kill you to say you're sorry?'"
+        "fun_fact": "Taco Bell answered the dropped lawsuit with full-page newspaper ads asking for an apology."
       }
     ],
     "versus_candidates": [
@@ -4258,6 +4351,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Dunkin'",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dunkin' Donuts",
       "Dunkin",
@@ -4304,6 +4398,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Wendy's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wendy's Old Fashioned Hamburgers",
       "Wendys"
@@ -4349,6 +4444,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Chipotle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chipotle Mexican Grill",
       "CMG"
@@ -4394,6 +4490,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Heineken",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Heineken Lager Beer",
       "Heineken International",
@@ -4440,6 +4537,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Guinness",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Guinness Draught",
       "Guinness Stout",
@@ -4486,6 +4584,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Nescafe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nescafe",
       "Nescafe Classic",
@@ -4497,7 +4596,7 @@
       "Flagship instant coffee brand created by Swiss multinational food corporation Nestle",
       "Brand name is a portmanteau combining 'Nestle' and the French word 'cafe'",
       "Developed by coffee chemist Max Morgenthaler and launched in Switzerland in 1938",
-      "Became a staple military ration for allied soldiers during World War II"
+      "Became one of the world's best-known instant coffee brands"
     ],
     "distractor_pool": [
       "Maxwell House",
@@ -4511,7 +4610,7 @@
         "claim": "Nescafe was originally developed at the request of the Brazilian government to deal with huge coffee surpluses.",
         "verdict": "fact",
         "explanation": "Following the Wall Street crash of 1929, Brazil faced mountains of unsold surplus green coffee beans; the Brazilian Coffee Institute approached Nestle in 1930 to create soluble coffee cubes, leading to Nescafe's 1938 launch.",
-        "fun_fact": "Allied armed forces consumed millions of cans of Nescafe during WWII, spreading the brand across Europe and Asia."
+        "fun_fact": "The very first Nescafe went on sale in Switzerland on April 1, 1938."
       },
       {
         "claim": "Instant coffee granules are made with synthetic caffeine powder and artificial coffee chemical flavorings.",
@@ -4532,6 +4631,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Twinings",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Twinings of London",
       "Twining and Company"
@@ -4577,6 +4677,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Kellogg's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kellogg",
       "Kellogg Company",
@@ -4623,6 +4724,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Haagen-Dazs",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Haagen-Dazs",
       "Haagen Dazs",
@@ -4669,6 +4771,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Ben & Jerry's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ben and Jerry's",
       "Ben & Jerrys",
@@ -4697,10 +4800,10 @@
         "fun_fact": "Ben Cohen's sensory condition turned into the company's greatest competitive advantage and signature identity."
       },
       {
-        "claim": "Ben & Jerry's maintains a physical graveyard behind its factory where it buries actual surplus or unsold expired ice cream cartons.",
-        "verdict": "myth",
-        "explanation": "The famous Flavor Graveyard on the factory hill in Waterbury, Vermont features real granite headstones, but it only commemorates discontinued, 'dearly de-pouted' recipes—no real ice cream is buried there.",
-        "fun_fact": "Fans frequently petition at the graveyard to 'resurrect' beloved retired flavors like Oatmeal Cookie Chunk and White Russian."
+        "claim": "Ben and Jerry learned to make ice cream from a five-dollar course by mail.",
+        "verdict": "fact",
+        "explanation": "The two friends split the cost of a five-dollar Penn State correspondence course on ice cream making before opening their shop.",
+        "fun_fact": "Ben & Jerry's factory tours in Waterbury, Vermont, end with a free taste of ice cream."
       }
     ],
     "versus_candidates": [
@@ -4715,6 +4818,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "Toblerone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tobler",
       "Mondelez Toblerone",
@@ -4761,6 +4865,7 @@
     "subtopic_id": "food_beverage_empires",
     "name": "KitKat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kit Kat",
       "Kit-Kat",
@@ -4772,7 +4877,7 @@
       "Beloved chocolate-covered wafer bar confection created in 1935 by Rowntree's in York, England (now owned globally by Nestle).",
       "Composed of three layers of light, crispy wafer biscuit separated and covered by smooth milk chocolate.",
       "Famous for its four-finger and two-finger snap-apart format and universal advertising tagline: 'Have a break... have a KitKat'.",
-      "Culturally revered in Japan with over 300 unique localized flavors, from matcha green tea and sake to wasabi and purple sweet potato."
+      "Culturally revered in Japan with over 300 unique localized flavors, from matcha green tea and wasabi to purple sweet potato."
     ],
     "distractor_pool": [
       "Twix",
@@ -4807,6 +4912,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Nike",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nike Inc.",
       "The Swoosh Brand",
@@ -4838,7 +4944,7 @@
         "claim": "The iconic Nike Swoosh logo cost millions of dollars to create and license initially.",
         "verdict": "myth",
         "explanation": "Graphic design student Carolyn Davidson designed the famous Swoosh in 1971 and was originally paid only thirty-five dollars for her work, though Phil Knight later rewarded her with company stock.",
-        "fun_fact": "The company's famous slogan 'Just Do It' was inspired by the final words spoken by death row convict Gary Gilmore."
+        "fun_fact": "Nike's name was suggested by its first employee, Jeff Johnson, who said the idea came to him in a dream."
       }
     ],
     "versus_candidates": [
@@ -4853,6 +4959,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Adidas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Three Stripes Brand",
       "Adidas AG",
@@ -4883,7 +4990,7 @@
       {
         "claim": "Adidas acquired its signature three-stripes trademark from a Finnish athletic shoe brand.",
         "verdict": "fact",
-        "explanation": "In 1952, Adolf Dassler bought the three-stripe trademark rights from Finnish sporting company Karhu for roughly two bottles of whiskey and the equivalent of 1,600 euros.",
+        "explanation": "In 1952, Adolf Dassler bought the three-stripe trademark from Finnish sports company Karhu for a small sum of money.",
         "fun_fact": "Adolf Dassler and his brother Rudolf famously feuded, splitting their family business into fierce rivals Adidas and Puma across the same river in Herzogenaurach."
       }
     ],
@@ -4899,6 +5006,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Puma",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Puma SE",
       "The Leaping Cat Brand"
@@ -4944,6 +5052,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Jordan Brand",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Air Jordan",
       "Jordan",
@@ -4990,6 +5099,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Under Armour",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "UA",
       "Under Armour Inc."
@@ -5035,6 +5145,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "New Balance",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "New Balance Athletics",
       "NB"
@@ -5080,6 +5191,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Lululemon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lululemon Athletica",
       "Lulu"
@@ -5110,7 +5222,7 @@
         "claim": "The Lululemon logo was designed as the Greek letter omega to represent mind-body enlightenment.",
         "verdict": "myth",
         "explanation": "The stylized icon was originally designed for an alternate brand name suggestion called 'Athletically Hip' and is a stylized depiction of a woman's hair and face outline.",
-        "fun_fact": "The brand's patented Align pants made from Nulu fabric were engineered specifically to give wearers a 'naked sensation' with zero friction."
+        "fun_fact": "The brand's Align pants, made from soft Nulu fabric, are designed to feel weightless and buttery-soft."
       }
     ],
     "versus_candidates": [
@@ -5125,6 +5237,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Louis Vuitton",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "LV",
       "Louis Vuitton Malletier"
@@ -5135,7 +5248,7 @@
       "Historic French luxury fashion house founded in Paris in 1854 as a master trunk-maker",
       "World-renowned for its interlocking LV monogram and four-petal floral canvas motifs",
       "Pioneered lightweight stackable flat-topped canvas trunks, revolutionizing luxury travel",
-      "Crown jewel brand of the global luxury conglomerate LVMH Moet Hennessy Louis Vuitton"
+      "Crown jewel brand of the Paris-based global luxury group LVMH"
     ],
     "distractor_pool": [
       "Gucci",
@@ -5170,6 +5283,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Gucci",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "House of Gucci",
       "Guccio Gucci S.p.A."
@@ -5180,7 +5294,7 @@
       "Italian luxury fashion house founded in Florence in 1921 by Guccio Gucci",
       "Distinguished by the interlocking double-G monogram, horsebit metal hardware, and green-red-green webbing",
       "Inspired by refined luggage and aristocratic equestrian culture observed while working at London's Savoy Hotel",
-      "Pioneered bamboo handle handbags during World War II resource shortages"
+      "Pioneered bamboo-handle handbags in 1947 as a clever answer to material shortages"
     ],
     "distractor_pool": [
       "Louis Vuitton",
@@ -5191,9 +5305,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Gucci's signature bamboo handbag handles were invented as a creative solution to wartime rationing.",
+        "claim": "Gucci's signature bamboo handbag handles were invented because leather was hard to find.",
         "verdict": "fact",
-        "explanation": "Due to leather and metal rationing during World War II, Guccio Gucci imported Japanese bamboo canes and heated them over open flames to curve into purse handles in 1947.",
+        "explanation": "In the 1940s, when leather and metal were scarce in Italy, Gucci heated bamboo canes over flames to bend them into purse handles.",
         "fun_fact": "Guccio Gucci worked as a lift attendant and bellhop at The Savoy Hotel in London, where carrying wealthy guests' lavish luggage inspired him to launch his brand."
       },
       {
@@ -5215,6 +5329,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Chanel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "House of Chanel",
       "Chanel S.A."
@@ -5236,15 +5351,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Coco Chanel invented the Little Black Dress specifically to mourn the death of a secret lover.",
+        "claim": "The Little Black Dress was first made popular by a royal princess.",
         "verdict": "myth",
-        "explanation": "While mourning may have influenced her aesthetic, Chanel deliberately designed the 1926 Little Black Dress to democratize chic fashion and liberate women from colorful, restrictive gowns.",
+        "explanation": "Coco Chanel's simple black dress, shown in Vogue in 1926, made the look stylish and easy for everyday women to wear.",
         "fun_fact": "Chanel No. 5 was named because perfumer Ernest Beaux presented Coco with sample vials numbered 1 through 5 and 20 through 24, and she selected number 5."
       },
       {
         "claim": "Coco Chanel popularized using humble jersey knit fabric, which had previously only been used for men's underwear.",
         "verdict": "fact",
-        "explanation": "Facing fabric shortages during World War I, Chanel bought surplus athletic jersey to craft comfortable, fluid women's sportswear that fundamentally transformed haute couture.",
+        "explanation": "Chanel bought plain jersey fabric, which was cheap at the time, and crafted comfortable, flowing women's clothes that transformed high fashion.",
         "fun_fact": "The iconic Chanel 2.55 handbag was named simply after the month and year of its creation: February 1955."
       }
     ],
@@ -5260,6 +5375,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Hermes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hermes",
       "Hermes Paris",
@@ -5288,9 +5404,9 @@
         "fun_fact": "Jane Birkin initially received a complimentary bag in exchange for lending her surname and later asked that royalties be donated to charities."
       },
       {
-        "claim": "Hermes began using its signature orange packaging because of wartime paper shortages during World War II.",
+        "claim": "Hermes started using its famous orange boxes because other colors ran out.",
         "verdict": "fact",
-        "explanation": "Before the 1940s, Hermes boxes were mustard-colored with chocolate edging; wartime supply disruptions left only orange cardboard available, creating an accidental brand hallmark.",
+        "explanation": "In the 1940s, Hermes' usual mustard-colored cardboard ran short, so the only color left, orange, became its famous trademark.",
         "fun_fact": "Hermes now produces over 188 different box sizes, all wrapped in the distinct Pantone orange hue."
       }
     ],
@@ -5306,6 +5422,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Rolex",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Crown",
       "Montres Rolex",
@@ -5352,6 +5469,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Cartier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Maison Cartier",
       "Cartier SA",
@@ -5382,7 +5500,7 @@
       {
         "claim": "Cartier's Tank watch was inspired by an antique grandfather clock in a French palace.",
         "verdict": "myth",
-        "explanation": "Louis Cartier created the Tank watch in 1917 after drawing aesthetic inspiration from the geometric proportions and treads of Renault FT-17 military tanks deployed on the Western Front during World War I.",
+        "explanation": "Louis Cartier designed the Tank watch in 1917, basing its boxy rectangular shape on the outline of early tanks seen from above.",
         "fun_fact": "Famous wearers of the Cartier Tank include Jackie Kennedy, Princess Diana, and Andy Warhol."
       }
     ],
@@ -5398,6 +5516,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Tiffany & Co.",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tiffany's",
       "Tiffany",
@@ -5444,6 +5563,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Prada",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Prada Milano",
       "Prada Group",
@@ -5454,7 +5574,7 @@
     "core_traits": [
       "Italian luxury fashion house founded in Milan in 1913 by brothers Mario and Martino Prada as Fratelli Prada",
       "Transformed into a global avant-garde powerhouse under granddaughter Miuccia Prada and business partner Patrizio Bertelli",
-      "Revolutionized high fashion in 1984 by introducing durable industrial Pocono military parachute nylon into luxury handbags",
+      "Revolutionized high fashion in 1984 by introducing tough, waterproof Pocono nylon into luxury handbags",
       "Recognized worldwide by its enameled triangle logo plaque and conceptual 'ugly chic' design aesthetic"
     ],
     "distractor_pool": [
@@ -5472,10 +5592,10 @@
         "fun_fact": "Miuccia Prada holds a PhD in political science and trained as a mime for five years at Milan's Piccolo Teatro."
       },
       {
-        "claim": "The iconic novel and movie 'The Devil Wears Prada' was commissioned directly by Prada as an elaborate promotional campaign.",
-        "verdict": "myth",
-        "explanation": "Lauren Weisberger wrote the best-selling book based on her personal experiences as a junior assistant to Vogue editor-in-chief Anna Wintour, completely independent of the Prada fashion house.",
-        "fun_fact": "Anna Wintour famously attended the movie's premiere dressed head-to-toe in Prada."
+        "claim": "Prada began as a shop selling fine leather goods and travel trunks.",
+        "verdict": "fact",
+        "explanation": "Brothers Mario and Martino Prada opened their first Milan shop in 1913, selling fine leather bags, trunks, and travel accessories.",
+        "fun_fact": "Prada's first shop sits inside Milan's grand Galleria Vittorio Emanuele II shopping arcade."
       }
     ],
     "versus_candidates": [
@@ -5490,6 +5610,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Dior",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Christian Dior",
       "House of Dior",
@@ -5499,16 +5620,16 @@
     "visual_anchor": "Cinematic vertical 9:16 tracking shot along Paris Avenue Montaigne showcasing an haute couture structured hourglass Bar jacket with cinched waist, flowing pleated skirt, and an embroidered Lady Dior cannage handbag beneath crystal chandeliers.",
     "core_traits": [
       "French luxury haute couture fashion house founded in Paris in 1946 by designer Christian Dior",
-      "Revolutionized post-WWII women's fashion in 1947 with the acclaimed 'New Look', characterized by cinched waists and voluminous skirts",
+      "Revolutionized women's fashion in 1947 with the acclaimed 'New Look', characterized by cinched waists and voluminous skirts",
       "Renowned for iconic creations including the Lady Dior bag, Saddle bag, and Miss Dior perfume",
-      "Flagship maison of Bernard Arnault's luxury conglomerate LVMH (Moet Hennessy Louis Vuitton)"
+      "Flagship fashion house of Bernard Arnault's luxury group LVMH"
     ],
     "distractor_pool": [
       "Chanel",
       "Saint Laurent",
       "Givenchy",
       "Valentino",
-      "Balenciaga"
+      "Louis Vuitton"
     ],
     "facts_and_myths": [
       {
@@ -5518,10 +5639,10 @@
         "fun_fact": "The cannage quilting pattern on the Lady Dior bag was inspired by the woven Napoleon III cane chairs used at Christian Dior's first 1947 fashion show."
       },
       {
-        "claim": "Christian Dior's debut 1947 collection was universally welcomed across post-war Europe without controversy.",
+        "claim": "Christian Dior's first collection in 1947 was loved by everyone without any complaints.",
         "verdict": "myth",
-        "explanation": "While hailed as the 'New Look' by Carmel Snow of Harper's Bazaar, the collection sparked heated protests because it used lavish amounts of fabric and corsetry during an era when fabric rationing and post-war austerity still gripped Europe.",
-        "fun_fact": "Some protesters tore garments off women wearing Dior designs in the streets of Paris and London."
+        "explanation": "Fashion editor Carmel Snow called it the 'New Look', but some people complained it used too much fabric when cloth was still scarce.",
+        "fun_fact": "Christian Dior loved flowers, and many of his dresses and perfumes were inspired by gardens."
       }
     ],
     "versus_candidates": [
@@ -5536,6 +5657,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Ralph Lauren",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Polo Ralph Lauren",
       "Polo",
@@ -5551,7 +5673,7 @@
     ],
     "distractor_pool": [
       "Tommy Hilfiger",
-      "Calvin Klein",
+      "Gap",
       "Brooks Brothers",
       "Lacoste",
       "J.Crew"
@@ -5572,7 +5694,7 @@
     ],
     "versus_candidates": [
       "Tommy Hilfiger",
-      "Calvin Klein",
+      "Brooks Brothers",
       "Lacoste"
     ]
   },
@@ -5582,6 +5704,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Calvin Klein",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "CK",
       "Calvin Klein Inc.",
@@ -5628,6 +5751,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Tommy Hilfiger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hilfiger",
       "Tommy",
@@ -5638,22 +5762,22 @@
     "core_traits": [
       "American premium apparel brand founded in New York in 1985 by fashion designer Thomas Jacob Hilfiger",
       "Known for delivering 'classic American cool' styling with a vibrant preppy twist and red, white, and blue flag crest",
-      "Became a dominant 1990s streetwear and hip-hop phenomenon championed by artists like Snoop Dogg, Aaliyah, and Grand Puba",
+      "Became a hugely popular 1990s streetwear look worn by many pop and hip-hop stars",
       "Pioneered interactive runway shows with its 'TommyNow' see-now-buy-now global fashion spectacles"
     ],
     "distractor_pool": [
       "Ralph Lauren",
-      "Calvin Klein",
+      "Levi's",
       "Nautica",
       "GAP",
       "Guess"
     ],
     "facts_and_myths": [
       {
-        "claim": "Tommy Hilfiger once made racist remarks during a live appearance on 'The Oprah Winfrey Show'.",
-        "verdict": "myth",
-        "explanation": "This was one of the earliest viral internet hoaxes in the late 1990s; Tommy Hilfiger had never even met Oprah Winfrey or appeared on her show until 2007, when Oprah invited him specifically to debunk the persistent rumor on air.",
-        "fun_fact": "Oprah explicitly confirmed during the 2007 broadcast that Hilfiger had never set foot in her studio prior to that day."
+        "claim": "Tommy Hilfiger's red, white, and blue logo is inspired by sailing flags.",
+        "verdict": "fact",
+        "explanation": "The logo was designed to look like nautical signal flags used on ships, giving the brand a classic sailing style.",
+        "fun_fact": "Tommy Hilfiger opened his first store, People's Place, in his hometown of Elmira, New York, as a teenager."
       },
       {
         "claim": "Tommy Hilfiger launched his brand in 1985 with an audacious Times Square billboard comparing himself to Ralph Lauren and Perry Ellis.",
@@ -5664,7 +5788,7 @@
     ],
     "versus_candidates": [
       "Ralph Lauren",
-      "Calvin Klein",
+      "Levi's",
       "Nautica"
     ]
   },
@@ -5674,6 +5798,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Zara",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zara Espana",
       "Inditex Zara",
@@ -5720,6 +5845,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "H&M",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hennes & Mauritz",
       "HM",
@@ -5745,7 +5871,7 @@
         "claim": "The initials 'H&M' stand for 'His & Mine'.",
         "verdict": "myth",
         "explanation": "The company was originally named 'Hennes' (Swedish for 'hers'). When founder Erling Persson acquired men's hunting gear retailer Mauritz Widforss in 1968, the name became 'Hennes & Mauritz', later abbreviated to H&M.",
-        "fun_fact": "The acquisition of Mauritz Widforss also included a stock of hunting rifles, which the fashion retailer briefly sold before dropping them."
+        "fun_fact": "H&M's very first store opened in Vasteras, Sweden, in 1947."
       },
       {
         "claim": "H&M was the first fast-fashion retailer to launch an exclusive designer guest collection with high-end luxury fashion houses.",
@@ -5766,6 +5892,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Uniqlo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Unique Clothing Warehouse",
       "Fast Retailing",
@@ -5812,6 +5939,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Levi's",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Levi Strauss & Co.",
       "Levis",
@@ -5828,7 +5956,7 @@
     "distractor_pool": [
       "Wrangler",
       "Lee",
-      "Calvin Klein",
+      "Gap",
       "Diesel",
       "Guess"
     ],
@@ -5858,6 +5986,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Ray-Ban",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "RayBan",
       "Ray-Ban Aviator",
@@ -5867,9 +5996,9 @@
     "visual_anchor": "Ultra-crisp vertical 9:16 macro shot of gold-framed teardrop aviator sunglasses resting on worn flight-jacket leather, showing subtle green G-15 tinted lenses reflecting a golden afternoon tarmac sunset.",
     "core_traits": [
       "Iconic eyewear brand created in 1937 by American medical equipment firm Bausch & Lomb, now owned by EssilorLuxottica",
-      "Originally commissioned by the U.S. Army Air Corps to protect military pilots from blinding high-altitude glare",
+      "Originally designed in the 1930s to protect pilots' eyes from blinding high-altitude glare",
       "Created timeless cultural eyewear designs including the teardrop Aviator (1937) and the trapezoidal plastic Wayfarer (1952)",
-      "Immortalized in cinematic history by stars including Tom Cruise in 'Top Gun' and Audrey Hepburn in 'Breakfast at Tiffany's'"
+      "Immortalized in movie history by stars including Audrey Hepburn in 'Breakfast at Tiffany's'"
     ],
     "distractor_pool": [
       "Oakley",
@@ -5882,13 +6011,13 @@
       {
         "claim": "The iconic green G-15 sunglasses lenses were developed primarily as a fashion accessory for Hollywood celebrities.",
         "verdict": "myth",
-        "explanation": "The G-15 lens was engineered in 1937 strictly as military equipment for fighter aviators, transmitting 15% of light while preserving authentic color fidelity and blocking infrared and ultraviolet rays.",
+        "explanation": "The G-15 lens was engineered in 1937 for pilots, letting through 15% of light while keeping colors true and blocking harsh rays.",
         "fun_fact": "The 'G' in G-15 stands for green, while '15' signifies that exactly 15% of visible light passes through the glass."
       },
       {
-        "claim": "Tom Cruise wearing Ray-Ban sunglasses in movies like 'Risky Business' and 'Top Gun' saved the brand from massive sales decline in the 1980s.",
+        "claim": "Ray-Ban sales jumped in the 1980s after its sunglasses appeared in hit movies.",
         "verdict": "fact",
-        "explanation": "Ray-Ban signed a product placement deal in 1982; after Tom Cruise wore Wayfarers in 'Risky Business' (1983) and Aviators in 'Top Gun' (1986), sales exploded by millions of pairs.",
+        "explanation": "Ray-Ban signed a product placement deal in 1982, and its Wayfarers and Aviators soon showed up in popular films, sending sales soaring.",
         "fun_fact": "Wayfarer annual sales surged from just 18,000 pairs in 1981 to over 1.5 million pairs by 1986 following the film appearances."
       }
     ],
@@ -5904,6 +6033,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Omega",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Omega SA",
       "Omega Watches",
@@ -5950,6 +6080,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "TAG Heuer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heuer",
       "TAG Heuer SA",
@@ -5996,6 +6127,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Sephora",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sephora LVMH",
       "Sephora Beauty"
@@ -6005,7 +6137,7 @@
     "core_traits": [
       "French multinational personal care and beauty prestige retailer founded in Limoges in 1969 by Dominique Mandonnaud",
       "Revolutionized modern retail by introducing the 'assisted self-service' open-sell model, allowing customers to try products freely before buying",
-      "Acquired in 1997 by French luxury conglomerate LVMH Moet Hennessy Louis Vuitton",
+      "Acquired in 1997 by French luxury group LVMH",
       "Offers thousands of products across makeup, skincare, fragrance, and haircare alongside its private label Sephora Collection"
     ],
     "distractor_pool": [
@@ -6041,6 +6173,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Versace",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gianni Versace",
       "House of Versace",
@@ -6050,9 +6183,9 @@
     "visual_anchor": "Opulent vertical 9:16 cinematic frame of an Italian gilded runway, showcasing a sculpted black evening gown adorned with golden safety pins and an embossed golden Medusa head crest against dark baroque marble.",
     "core_traits": [
       "Italian high-fashion luxury house founded in Milan in 1978 by visionary designer Gianni Versace",
-      "Celebrated for provocative glamour, baroque golden prints, hyper-sensual tailoring, and rock-and-roll extravagance",
-      "The brand's iconic mythological emblem is the Medusa head, chosen because people fall irreversibly in love with her",
-      "Led creatively by Gianni's sister Donatella Versace following his tragic assassination in Miami Beach in 1997"
+      "Celebrated for bold glamour, baroque golden prints, and rock-and-roll extravagance",
+      "The brand's iconic emblem is the Medusa head from Greek mythology, chosen as a symbol of irresistible beauty",
+      "Led creatively by Gianni's sister Donatella Versace since 1997"
     ],
     "distractor_pool": [
       "Gucci",
@@ -6065,7 +6198,7 @@
       {
         "claim": "Gianni Versace selected Medusa as the brand logo because of her terrifying reputation as a monster that petrifies enemies.",
         "verdict": "myth",
-        "explanation": "Gianni chose Medusa because in classical mythology, before being cursed, she had mesmerizing beauty that made anyone who looked at her fall hopelessly and fatally in love.",
+        "explanation": "Gianni chose Medusa because, in some old stories, she was a beauty so captivating that no one could look away.",
         "fun_fact": "Gianni and Donatella played as children among ancient Roman ruins in Reggio Calabria, where Medusa was carved into palace floor mosaics."
       },
       {
@@ -6087,6 +6220,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Balenciaga",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "House of Balenciaga",
       "Balenciaga Paris"
@@ -6132,6 +6266,7 @@
     "subtopic_id": "fashion_luxury_sportswear",
     "name": "Vans",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Van Doren Rubber Company",
       "Vans Off the Wall",
@@ -6178,6 +6313,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "LEGO",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Lego Group",
       "LEGO System",
@@ -6224,6 +6360,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Disney",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Walt Disney Company",
       "House of Mouse",
@@ -6246,10 +6383,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Walt Disney was cryogenically frozen after his death and preserved beneath Disneyland's Pirates of the Caribbean ride.",
-        "verdict": "myth",
-        "explanation": "Walt Disney died of lung cancer complications in December 1966 and was cremated two days later; his ashes are interred at Forest Lawn Memorial Park in Glendale, California.",
-        "fun_fact": "The cryonics urban legend began circulating in tabloid magazines only weeks after his private funeral."
+        "claim": "Mickey Mouse was almost named Mortimer Mouse.",
+        "verdict": "fact",
+        "explanation": "Walt Disney first suggested the name Mortimer, but his wife Lillian thought Mickey sounded friendlier.",
+        "fun_fact": "Walt Disney himself was the original voice of Mickey Mouse."
       },
       {
         "claim": "Disney World in Florida operates on its own self-governing special district that historically granted it the powers of a municipal government.",
@@ -6270,6 +6407,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "IKEA",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "IKEA Group",
       "Ingka Group"
@@ -6315,6 +6453,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Walmart",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wal-Mart",
       "Walmart Inc.",
@@ -6361,6 +6500,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Target",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Target Corporation",
       "Tar-jay",
@@ -6389,10 +6529,10 @@
         "fun_fact": "Target later embraced the cheeky nickname in tongue-in-cheek merchandise and high-fashion boutique pop-ups."
       },
       {
-        "claim": "Target's customer data analytics model once deduced a teenage girl was pregnant before her father knew.",
+        "claim": "Target's mascot, Bullseye, is a real Bull Terrier dog.",
         "verdict": "fact",
-        "explanation": "By tracking sudden purchasing shifts toward unscented lotions, magnesium supplements, and cotton pads, Target's predictive algorithm assigned pregnancy scores and mailed prenatal coupons to the household.",
-        "fun_fact": "Target subsequently mixed baby product coupons with unrelated items like wine glasses and lawnmowers so promotions felt less intrusive."
+        "explanation": "Bullseye is a white Bull Terrier with the red Target logo painted around one eye, starring in ads since 1999.",
+        "fun_fact": "The red ring around Bullseye's eye is drawn with safe, dog-friendly paint."
       }
     ],
     "versus_candidates": [
@@ -6407,6 +6547,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Costco",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Costco Wholesale",
       "Costco Wholesale Corporation"
@@ -6431,7 +6572,7 @@
         "claim": "Costco's iconic $1.50 hot dog and soda combo price increases automatically with standard national inflation adjustments.",
         "verdict": "myth",
         "explanation": "Costco has maintained the exact $1.50 price tag since introducing the hot dog combo in 1985, even opening its own hot dog manufacturing plant to preserve the price point without losing money.",
-        "fun_fact": "When a former CEO suggested raising the hot dog price, co-founder Jim Sinegal famously threatened him: 'If you raise the effing hot dog, I will kill you.'"
+        "fun_fact": "Co-founder Jim Sinegal famously refused to raise the hot dog price, making it a symbol of Costco's promise to members."
       },
       {
         "claim": "Costco caps markups on brand-name goods at no more than 14 to 15 percent above wholesale cost.",
@@ -6452,6 +6593,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Mattel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mattel Inc.",
       "Mattel Toys"
@@ -6473,10 +6615,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Ruth Handler based Barbie doll's physical design and concept entirely on an innocent German nursery doll.",
-        "verdict": "myth",
-        "explanation": "Barbie was inspired by Bild Lilli, a German adult comic-strip character turned novelty gag doll marketed to adult men in tobacco shops, which Ruth Handler discovered during a European family vacation.",
-        "fun_fact": "Mattel eventually bought the copyright and patent rights to Bild Lilli in 1964 to settle patent infringement lawsuits."
+        "claim": "Barbie was named after a real girl.",
+        "verdict": "fact",
+        "explanation": "Ruth Handler named Barbie after her daughter, Barbara, and later named the Ken doll after her son, Kenneth.",
+        "fun_fact": "Barbie's full name is Barbara Millicent Roberts."
       },
       {
         "claim": "Mattel originally started out as a picture-frame manufacturing business before transitioning into toys.",
@@ -6497,6 +6639,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Hasbro",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hasbro Inc.",
       "Hassenfeld Brothers"
@@ -6542,6 +6685,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Bandai Namco",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bandai Namco Holdings",
       "Bandai",
@@ -6551,7 +6695,7 @@
     "visual_anchor": "Vibrant 9:16 vertical spectacle of glowing arcade cabinets illuminated in neon cyberpunk hues, towering plastic Gundam mecha model kits assembling with precision, and iconic pixel-art characters floating in a dynamic Japanese gaming arcade atmosphere.",
     "core_traits": [
       "Japanese multinational entertainment and video game conglomerate formed by the merger of Bandai and Namco in 2005.",
-      "Renowned for iconic arcade and console video game franchises such as Pac-Man, Tekken, Dark Souls, and Elden Ring.",
+      "Renowned for iconic arcade and console video game franchises such as Pac-Man, Katamari Damacy, Ridge Racer, and Taiko no Tatsujin.",
       "World's leading producer of plastic mecha model kits ('Gunpla') based on the legendary Mobile Suit Gundam anime franchise.",
       "Major global licensee and manufacturer for anime merchandise including Dragon Ball, One Piece, and Tamagotchi."
     ],
@@ -6588,6 +6732,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Gillette",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Gillette Company",
       "Gillette Shave",
@@ -6616,10 +6761,10 @@
         "fun_fact": "In its first full sales year in 1903, the Gillette company sold only 51 razors and 168 blades before explosive growth."
       },
       {
-        "claim": "The US military issued Gillette safety razors to every American soldier during World War I, cementing razor shaving as a mass-market standard.",
+        "claim": "King C. Gillette's face was printed on Gillette razor blade packages.",
         "verdict": "fact",
-        "explanation": "During WWI, Gillette secured a contract supplying 3.5 million razors and 32 million blades so doughboys could achieve an airtight facial seal with gas masks in the trenches.",
-        "fun_fact": "Returning veterans brought their government-issued Gillette kits home, permanently transforming clean-shaven faces into the American peacetime grooming norm."
+        "explanation": "Gillette's own portrait and signature appeared on blade wrappers for decades, making his face famous around the world.",
+        "fun_fact": "'King' was not a royal title; it was simply King Camp Gillette's first name."
       }
     ],
     "versus_candidates": [
@@ -6634,6 +6779,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Colgate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Colgate-Palmolive",
       "Colgate Total",
@@ -6680,6 +6826,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Dyson",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dyson Ltd",
       "James Dyson",
@@ -6726,6 +6873,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Durex",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "London Rubber Company",
       "Durex Condoms",
@@ -6772,6 +6920,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Tupperware",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tupperware Brands",
       "Tupperware Party",
@@ -6818,6 +6967,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "3M",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Minnesota Mining and Manufacturing",
       "3M Company",
@@ -6864,6 +7014,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "FedEx",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Federal Express",
       "FedEx Express",
@@ -6886,10 +7037,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Founder Fred Smith saved FedEx from bankruptcy in its early days by winning money at blackjack in Las Vegas.",
+        "claim": "FedEx was originally called Federal Express.",
         "verdict": "fact",
-        "explanation": "Down to the company's last $5,000 and unable to afford jet fuel in 1973, Smith flew to Vegas, won $27,000 playing blackjack, and kept planes flying until major equity arrived.",
-        "fun_fact": "The $27,000 covered jet fuel expenses for the following Monday, buying time to close $11 million in critical venture funding."
+        "explanation": "The company started as Federal Express in 1971 and officially shortened its everyday name to FedEx in 1994.",
+        "fun_fact": "On its first night of service in 1973, Federal Express delivered 186 packages to 25 cities."
       },
       {
         "claim": "Fred Smith received an 'F' grade at Yale for his term paper outlining the concept of overnight parcel delivery.",
@@ -6910,6 +7061,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "UPS",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "United Parcel Service",
       "Big Brown",
@@ -6956,6 +7108,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "GoPro",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Woodman Labs",
       "GoPro HERO",
@@ -7002,6 +7155,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Samsonite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Samsonite International",
       "Samsonite Luggage",
@@ -7048,6 +7202,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Nivea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nivea Creme",
       "Beiersdorf Nivea",
@@ -7094,6 +7249,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "eBay",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "eBay Inc.",
       "AuctionWeb",
@@ -7140,6 +7296,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Amazon Prime",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Prime",
       "Amazon Prime Video",
@@ -7186,6 +7343,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Victorinox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Swiss Army",
       "Victorinox Swiss Army",
@@ -7232,6 +7390,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "Polaroid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Polaroid Corporation",
       "Polaroid Originals",
@@ -7278,6 +7437,7 @@
     "subtopic_id": "lifestyle_retail_entertainment",
     "name": "BIC",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Societe Bic",
       "Bic",

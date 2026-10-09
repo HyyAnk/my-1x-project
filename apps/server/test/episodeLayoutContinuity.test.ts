@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { QUIZ_GAMEPLAY_ARCHETYPES, QuizConfigSchema, QuizV2Schema, type QuizQuestionFormat } from "@studio/shared";
+import { QUIZ_GAMEPLAY_ARCHETYPES, QUIZ_GAMEPLAY_POLICIES, QuizConfigSchema, QuizV2Schema, type QuizQuestionFormat } from "@studio/shared";
 import { deriveQuizV2FromScenes } from "../src/quiz/domain/quiz.js";
 import { synthesizeScenesFromQuiz } from "../src/quiz/domain/quizArtifactSynthesizer.js";
 import { createEpisodeDirectorPlan, matchesEpisodeLayout } from "../src/quiz/director/episodeDirectorPlan.js";
@@ -28,8 +28,8 @@ function quizFixture(format: QuizQuestionFormat, count: number) {
 
 describe("episode layout continuity", () => {
   it.each(QUIZ_GAMEPLAY_ARCHETYPES)("preserves $id across scenes, director and final question", (blueprint) => {
-    const count = blueprint.id === "mystery_reveal" ? 1 : ["versus_faceoff", "verdict_true_false"].includes(blueprint.id) ? 2 : 3;
-    const format = count === 2 ? "true_false" : blueprint.defaultFormat;
+    const count = QUIZ_GAMEPLAY_POLICIES[blueprint.id].choiceCount;
+    const format = count === 2 ? "yes_no" : blueprint.defaultFormat;
     const quiz = quizFixture(format, count);
     const reconstructed = deriveQuizV2FromScenes({
       episodeId: quiz.episode_id,

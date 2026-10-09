@@ -66,7 +66,7 @@ async function main() {
 Usage: node scripts/generate-question-bank-batch.mjs [options]
 
 Required:
-  -a, --archetype <id>          Archetype ID (e.g. speed_blitz, verdict_fact_myth, deep_trivia)
+  -a, --archetype <id>          Archetype ID (e.g. speed_blitz, verdict_yes_no, deep_trivia)
   -d, --domain <id>             Domain ID (e.g. logic_puzzles, nature_animals)
   -s, --subtopic <id>           Subtopic ID (e.g. tricky_riddles, ocean_giants)
 

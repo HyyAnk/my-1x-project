@@ -2,6 +2,7 @@ import {
   hashBankQuestionSource,
   type BankQuestion,
   type BankQuestionWithCooldown,
+  type ReelArchetype,
   type TopicSourceBinding,
   type TopicSourceShortage,
 } from "@studio/shared";
@@ -56,7 +57,7 @@ function evaluateSlotEligibility(
     });
   }
   return evaluateShortReelQuestionEligibility(rawQuestion, {
-    targetArchetype: def.archetype as "versus_faceoff" | "deep_trivia" | "verdict_true_false",
+    targetArchetype: def.archetype as ReelArchetype,
   });
 }
 

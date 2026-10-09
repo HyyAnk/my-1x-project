@@ -1,6 +1,7 @@
 import { type Episode, type TaskType } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../quiz/assets/promptCompiler.js";
 import { continuityBundleId } from "../visualBundles.js";
+import { resolveQuizPromptGameplay } from "./quizPromptGameplay.js";
 
 export interface OutputContractInput {
   taskType: TaskType;
@@ -21,14 +22,14 @@ type ChoiceContracts = {
   questionPhrasing: string;
 };
 
-const TRUE_FALSE_CHOICE_CONTRACTS: ChoiceContracts = {
-  treatment: "Answer choices (strictly exactly 2 choices: True or False — never add a 3rd option)",
-  script: "choices (strictly exactly 2 choices: True or False)",
+const YES_NO_CHOICE_CONTRACTS: ChoiceContracts = {
+  treatment: "Answer choices (strictly exactly 2 choices: Yes or No — never add a 3rd option; mix Yes and No answers roughly evenly)",
+  script: "choices (strictly exactly 2 choices: Yes or No)",
   maximum: "2",
-  sequenceBeat: "Choices array must contain exactly 2 choices (True and False only; never add a 3rd option).",
-  sceneBeat: "Choices must have exactly 2 options (True and False only; never exceed 2 choices).",
+  sequenceBeat: "Choices array must contain exactly 2 choices (Yes and No only; never add a 3rd option).",
+  sceneBeat: "Choices must have exactly 2 options (Yes and No only; never exceed 2 choices).",
   questionPhrasing:
-    "Questions must end with a question mark '?' (phrased as an interrogative challenge like 'Did player two steer the ducks in Duck Hunt?' or 'Is it true that...?', never a flat statement ending in a period).",
+    "Questions must be natural kid-friendly direct questions ending with ' Yes or No?' (like 'Can penguins fly? Yes or No?'), never a flat statement to be judged true or false",
 };
 
 const MULTIPLE_CHOICE_CONTRACTS: ChoiceContracts = {
@@ -44,8 +45,8 @@ const MULTIPLE_CHOICE_CONTRACTS: ChoiceContracts = {
   questionPhrasing: "Questions must always be an interrogative ending with a question mark '?'.",
 };
 
-function resolveChoiceContracts(isTrueFalse: boolean): ChoiceContracts {
-  return isTrueFalse ? TRUE_FALSE_CHOICE_CONTRACTS : MULTIPLE_CHOICE_CONTRACTS;
+function resolveChoiceContracts(isYesNo: boolean): ChoiceContracts {
+  return isYesNo ? YES_NO_CHOICE_CONTRACTS : MULTIPLE_CHOICE_CONTRACTS;
 }
 
 function resolveVisualStyleContract(episode: Episode | null) {
@@ -66,7 +67,7 @@ export function buildOutputContract(input: OutputContractInput): string {
   const episodeQuestionCount = quizConfig?.question_count;
   const resolvedSceneNumber = sceneNumber ?? 0;
   const paddedSceneNumber = String(resolvedSceneNumber).padStart(2, "0");
-  const choiceContracts = resolveChoiceContracts(quizConfig?.quiz_format === "true_false");
+  const choiceContracts = resolveChoiceContracts(resolveQuizPromptGameplay(quizConfig).isYesNo);
 
   if (taskType === "GENERATE_RESEARCH") {
     return `Return only a completed Markdown quiz research dossier. The episode has exactly ${quizQuestionCount} questions. Build an answer ledger with exactly ${quizQuestionCount} entries, one entry for every question in order, and assign each entry one unique claim ID exactly once from C01 through ${quizLastClaimId}. Do not stop early, merge questions, reuse a claim ID, or invent extra question numbers. Every ledger entry must include Question number, Claim ID, canonical answer, one ultra-concise child-friendly explanation (strictly 1 punchy fun fact under 10 words and under 70 characters, single clause, direct and crisp with no filler or preamble), direct authoritative URL(s), and a note about ambiguity or safety. Include at least ${quizSourceMinimum} distinct direct authoritative URLs and enough evidence for every answer. Before returning, silently check that every ID in the complete sequence C01, C02, ... ${quizLastClaimId} appears in the ledger and that each question has evidence.`;
@@ -82,7 +83,7 @@ export function buildOutputContract(input: OutputContractInput): string {
 
   if (taskType === "GENERATE_VISUAL_BIBLE") {
     const styleContract = resolveVisualStyleContract(episode);
-    return `Return only a completed Markdown Quiz Visual Bible. Define a single child-friendly, vibrant, high-appeal visual direction strictly adhering to the locked art style "${styleContract.name}" (${styleContract.renderingMedium}; ${styleContract.lighting}; ${styleContract.edgeTreatment}; ${styleContract.detailLevel}). Backgrounds must be subtle and fitting (${styleContract.heroBackground}), avoiding pure flat white backgrounds while ensuring the main subject remains the sharpest and most prominent element. Include an explicit second-level section named exactly \`## Safe motion\` with labeled Allowed motion, Prohibited motion, and Reduced-motion fallback rules; the phrase "safe motion" must appear exactly in the document. Create exactly ${episodeQuestionCount} continuity bundles formatted as \`## Continuity bundle CB-01 — Title\` through CB-${String(episodeQuestionCount).padStart(2, "0")}. Every bundle must include an Anchor-frame prompt explicitly naming the specific hero character/entity and parent franchise (e.g. 'Eren Yeager in Attack Titan form from Attack on Titan', never generic placeholders like 'a muscular giant'), describing their signature physical traits, attire, and lore-accurate environmental setting with ${styleContract.continuityPromptBrief}. Never include question cards, answer choices, countdown timers, UI boxes, or text inside Anchor-frame prompts because the video composition engine renders all quiz UI dynamically on top of the clean artwork.`;
+    return `Return only a completed Markdown Quiz Visual Bible. Define a single child-friendly, vibrant, high-appeal visual direction strictly adhering to the locked art style "${styleContract.name}" (${styleContract.renderingMedium}; ${styleContract.lighting}; ${styleContract.edgeTreatment}; ${styleContract.detailLevel}). Backgrounds must be subtle and fitting (${styleContract.heroBackground}), avoiding pure flat white backgrounds while ensuring the main subject remains the sharpest and most prominent element. Include an explicit second-level section named exactly \`## Safe motion\` with labeled Allowed motion, Prohibited motion, and Reduced-motion fallback rules; the phrase "safe motion" must appear exactly in the document. Create exactly ${episodeQuestionCount} continuity bundles formatted as \`## Continuity bundle CB-01 — Title\` through CB-${String(episodeQuestionCount).padStart(2, "0")}. Every bundle must include an Anchor-frame prompt explicitly naming the specific hero character/entity and parent franchise (e.g. 'Pikachu crackling with Thunderbolt sparks from Pokemon', never generic placeholders like 'a yellow mouse'), describing their signature physical traits, attire, and lore-accurate environmental setting with ${styleContract.continuityPromptBrief}. Never include question cards, answer choices, countdown timers, UI boxes, or text inside Anchor-frame prompts because the video composition engine renders all quiz UI dynamically on top of the clean artwork.`;
   }
 
   if (taskType === "GENERATE_SEQUENCE_SCENES") {

@@ -1,4 +1,4 @@
-import { hashBankQuestionSource, makeId, nowIso, type TopicRunCandidate, type TopicRunResult } from "@studio/shared";
+import { hashBankQuestionSource, makeId, nowIso, type ReelArchetype, type TopicRunCandidate, type TopicRunResult } from "@studio/shared";
 import { RepositoryError } from "../repository/errors.js";
 import type { RepositoryService } from "../repository/service.js";
 
@@ -32,9 +32,9 @@ export async function createDirectShortReelCandidate(input: CreateDirectShortRee
   }
 
   const topicId = makeId("topic_reel");
-  const archetype: "versus_faceoff" | "deep_trivia" | "verdict_true_false" =
-    bankQuestion.archetype_id === "verdict_true_false"
-      ? "verdict_true_false"
+  const archetype: ReelArchetype =
+    bankQuestion.archetype_id === "verdict_yes_no"
+      ? "verdict_yes_no"
       : bankQuestion.archetype_id === "versus_faceoff"
         ? "versus_faceoff"
         : "deep_trivia";

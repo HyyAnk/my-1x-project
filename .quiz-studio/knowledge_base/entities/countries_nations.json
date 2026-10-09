@@ -5,6 +5,7 @@
     "subtopic_id": "world_geography",
     "name": "Vietnam",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "VN",
       "Socialist Republic of Vietnam"
@@ -56,6 +57,7 @@
     "subtopic_id": "world_geography",
     "name": "Japan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nippon",
       "Nihon",
@@ -102,6 +104,7 @@
     "subtopic_id": "world_geography",
     "name": "France",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "French Republic",
       "Hexagon"
@@ -111,7 +114,7 @@
     "core_traits": [
       "Hexagonal territory located in Western Europe",
       "Capital is Paris, known as the City of Light",
-      "Global epicenter of haute cuisine, wine, cheese, and fashion",
+      "Global epicenter of haute cuisine, cheese, pastries, and fashion",
       "Home to the Louvre Museum and Mona Lisa"
     ],
     "distractor_pool": [
@@ -147,6 +150,7 @@
     "subtopic_id": "world_geography",
     "name": "United States",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "USA",
       "America",
@@ -178,7 +182,7 @@
         "claim": "George Washington had dentures made of wood.",
         "verdict": "myth",
         "explanation": "Washington's dentures were actually crafted from hippopotamus ivory, gold, brass screws, and human teeth, not wood.",
-        "fun_fact": "Over time, wine and tea stained the ivory to look like wood grain."
+        "fun_fact": "Over time, everyday foods and drinks like tea stained the ivory to look like wood grain."
       }
     ],
     "versus_candidates": [
@@ -193,6 +197,7 @@
     "subtopic_id": "world_geography",
     "name": "United Kingdom",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "UK",
       "Britain",
@@ -239,6 +244,7 @@
     "subtopic_id": "world_geography",
     "name": "Italy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Italia",
       "Italian Republic"
@@ -284,6 +290,7 @@
     "subtopic_id": "world_geography",
     "name": "China",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "PRC",
       "People's Republic of China",
@@ -330,6 +337,7 @@
     "subtopic_id": "world_geography",
     "name": "South Korea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Korea",
       "ROK"
@@ -357,9 +365,9 @@
         "fun_fact": "In South Korea, infants were traditionally considered one year old on the day of their birth."
       },
       {
-        "claim": "Sleeping in an enclosed room with an electric fan running will cause fatal suffocation.",
+        "claim": "Sleeping in a closed room with an electric fan running can make you seriously ill.",
         "verdict": "myth",
-        "explanation": "This is a widespread Korean urban legend known as 'fan death'; electric fans cannot consume oxygen or induce hypothermia in normal rooms.",
+        "explanation": "This is a well-known Korean urban legend; fans only move air and cannot use up a room's oxygen or chill you dangerously.",
         "fun_fact": "Many fans sold in Korea still come equipped with auto-shutoff timers."
       }
     ],
@@ -375,6 +383,7 @@
     "subtopic_id": "world_geography",
     "name": "Germany",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Deutschland",
       "Federal Republic of Germany"
@@ -385,7 +394,7 @@
       "Economic powerhouse located in Central Europe",
       "Capital is Berlin, known for the Brandenburg Gate and historic wall",
       "Famous for precision engineering, Autobahn highways, and automotive brands",
-      "Host of the world-renowned annual Oktoberfest beer festival"
+      "Famous for Christmas markets, pretzels, and fairy tales collected by the Brothers Grimm"
     ],
     "distractor_pool": [
       "Austria",
@@ -420,6 +429,7 @@
     "subtopic_id": "world_geography",
     "name": "Egypt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arab Republic of Egypt",
       "Land of the Pharaohs"
@@ -465,6 +475,7 @@
     "subtopic_id": "world_geography",
     "name": "Brazil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brasil",
       "Federative Republic of Brazil"
@@ -510,6 +521,7 @@
     "subtopic_id": "world_geography",
     "name": "Australia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Commonwealth of Australia",
       "Land Down Under"
@@ -555,6 +567,7 @@
     "subtopic_id": "world_geography",
     "name": "India",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bharat",
       "Republic of India"
@@ -600,6 +613,7 @@
     "subtopic_id": "world_geography",
     "name": "Russia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Russian Federation"
     ],
@@ -644,6 +658,7 @@
     "subtopic_id": "world_geography",
     "name": "Canada",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dominion of Canada",
       "Great White North"
@@ -689,6 +704,7 @@
     "subtopic_id": "world_geography",
     "name": "Spain",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kingdom of Spain",
       "Espana"
@@ -734,6 +750,7 @@
     "subtopic_id": "world_geography",
     "name": "Mexico",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "United Mexican States",
       "Mexico"
@@ -743,8 +760,8 @@
     "core_traits": [
       "Located in southern North America bordering the US to the north",
       "Capital is Mexico City, built on the historic ruins of Aztec Tenochtitlan",
-      "Famous for Tacos, Guacamole, Tequila, and Mariachi music",
-      "Celebrates the colorful Day of the Dead (Dia de los Muertos)"
+      "Famous for Tacos, Guacamole, Tamales, and Mariachi music",
+      "Celebrates the colorful Dia de los Muertos festival with marigold flowers and family altars"
     ],
     "distractor_pool": [
       "Spain",
@@ -779,6 +796,7 @@
     "subtopic_id": "world_geography",
     "name": "Thailand",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Siam",
       "Kingdom of Thailand",
@@ -825,6 +843,7 @@
     "subtopic_id": "world_geography",
     "name": "Greece",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hellas",
       "Hellenic Republic"
@@ -870,6 +889,7 @@
     "subtopic_id": "world_geography",
     "name": "Switzerland",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Swiss Confederation",
       "Helvetia"
@@ -897,7 +917,7 @@
         "fun_fact": "Switzerland possesses four official languages: German, French, Italian, and Romansh."
       },
       {
-        "claim": "Switzerland has enough nuclear bomb fallout shelter space for its entire population.",
+        "claim": "Switzerland has enough emergency shelter space for its entire population.",
         "verdict": "fact",
         "explanation": "Swiss federal law requires every citizen to have a designated shelter space in their building or community bunker.",
         "fun_fact": "The Sonnenberg Tunnel was once equipped to shelter 20,000 people."
@@ -915,6 +935,7 @@
     "subtopic_id": "world_geography",
     "name": "Netherlands",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Holland",
       "Kingdom of the Netherlands"
@@ -960,6 +981,7 @@
     "subtopic_id": "world_geography",
     "name": "Singapore",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lion City",
       "Republic of Singapore"
@@ -1005,6 +1027,7 @@
     "subtopic_id": "world_geography",
     "name": "Argentina",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Argentine Republic"
     ],
@@ -1033,7 +1056,7 @@
       {
         "claim": "Tango dance originated in upscale European ballrooms.",
         "verdict": "myth",
-        "explanation": "Tango originated in the working-class port brothels and tenements of Buenos Aires and Montevideo in the late 19th century.",
+        "explanation": "Tango began in the working-class port neighborhoods of Buenos Aires and Montevideo in the late 1800s.",
         "fun_fact": "It blended African rhythms, Cuban habanera, and European polkas."
       }
     ],
@@ -1049,6 +1072,7 @@
     "subtopic_id": "world_geography",
     "name": "Turkey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Turkiye",
       "Republic of Turkiye"
@@ -1094,6 +1118,7 @@
     "subtopic_id": "world_geography",
     "name": "South Africa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of South Africa",
       "Rainbow Nation"
@@ -1139,6 +1164,7 @@
     "subtopic_id": "world_geography",
     "name": "Saudi Arabia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "KSA",
       "Kingdom of Saudi Arabia"
@@ -1184,6 +1210,7 @@
     "subtopic_id": "world_geography",
     "name": "Norway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kingdom of Norway",
       "Land of the Midnight Sun"
@@ -1229,6 +1256,7 @@
     "subtopic_id": "world_geography",
     "name": "Sweden",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kingdom of Sweden",
       "Sverige"
@@ -1274,6 +1302,7 @@
     "subtopic_id": "world_geography",
     "name": "New Zealand",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aotearoa",
       "Land of the Long White Cloud"
@@ -1319,6 +1348,7 @@
     "subtopic_id": "world_geography",
     "name": "Indonesia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Indonesia",
       "Nusantara"
@@ -1364,6 +1394,7 @@
     "subtopic_id": "world_geography",
     "name": "Cuba",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Cuba",
       "Pearl of the Antilles"
@@ -1373,8 +1404,8 @@
     "core_traits": [
       "Largest island nation in the Caribbean Sea located south of Florida",
       "Capital is Havana, famous for historic colonial plazas and fortresses",
-      "Famed for Cuban cigars, Havana Club rum, and lively Salsa rhythm",
-      "Signature historical figures include Che Guevara and Fidel Castro"
+      "Famed for colorful classic 1950s American cars and lively Salsa rhythm",
+      "Baseball is the national sport, played and loved all across the island"
     ],
     "distractor_pool": [
       "Mexico",
@@ -1391,10 +1422,10 @@
         "fun_fact": "Cuba developed its own homegrown COVID-19 vaccines (Abdala and Soberana)."
       },
       {
-        "claim": "The Cuba Libre cocktail was created to celebrate the Cuban socialist revolution of 1959.",
+        "claim": "Cuba is a single island with no other islands around it.",
         "verdict": "myth",
-        "explanation": "It originated around 1900 during the Spanish-American War when US soldiers mixed Coca-Cola with local rum and lime.",
-        "fun_fact": "The toast 'Por Cuba Libre' meant 'To a Free Cuba' from Spanish colonial rule."
+        "explanation": "Cuba is an archipelago: the main island plus Isla de la Juventud and thousands of smaller islands and cays.",
+        "fun_fact": "Cuba is home to the bee hummingbird, the smallest bird in the world."
       }
     ],
     "versus_candidates": [
@@ -1409,6 +1440,7 @@
     "subtopic_id": "world_geography",
     "name": "Peru",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Peru"
     ],
@@ -1453,6 +1485,7 @@
     "subtopic_id": "world_geography",
     "name": "Portugal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Portuguese Republic"
     ],
@@ -1460,9 +1493,9 @@
     "visual_anchor": "Vintage yellow Tram 28 climbing the steep narrow cobblestone hills of Alfama in Lisbon.",
     "core_traits": [
       "Located on the Atlantic coast of the Iberian Peninsula next to Spain",
-      "Capital is Lisbon, northern historic wine city is Porto",
+      "Capital is Lisbon, famous for its yellow trams and hilly streets",
       "Pioneered the Age of Discovery with navigators like Vasco da Gama",
-      "Famous for Pastel de Nata custard tarts and Port wine"
+      "Famous for Pastel de Nata custard tarts and colorful azulejo tiles"
     ],
     "distractor_pool": [
       "Spain",
@@ -1497,6 +1530,7 @@
     "subtopic_id": "world_geography",
     "name": "Belgium",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kingdom of Belgium"
     ],
@@ -1505,7 +1539,7 @@
     "core_traits": [
       "Western European nation bordered by France, Germany, and the Netherlands",
       "Capital is Brussels, headquarters of both the European Union and NATO",
-      "Famous for Belgian waffles, luxury pralines chocolate, and Trappist beers",
+      "Famous for Belgian waffles, luxury pralines chocolate, and crispy fries",
       "Home to classic comic heroes Tintin and The Smurfs"
     ],
     "distractor_pool": [
@@ -1541,6 +1575,7 @@
     "subtopic_id": "world_geography",
     "name": "Ireland",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Ireland",
       "Emerald Isle",
@@ -1550,7 +1585,7 @@
     "visual_anchor": "Sheer vertical drop of the Cliffs of Moher plunging into the wild frothy Atlantic Ocean.",
     "core_traits": [
       "Island nation in the North Atlantic known for lush green countryside",
-      "Capital is Dublin, birthplace of Guinness stout and James Joyce",
+      "Capital is Dublin, home city of famous writers James Joyce and Oscar Wilde",
       "Famous cultural symbols include the Shamrock clover, Celtic harp, and Leprechauns",
       "Celebrates Saint Patrick's Day worldwide every March 17"
     ],
@@ -1587,6 +1622,7 @@
     "subtopic_id": "world_geography",
     "name": "Iceland",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Iceland",
       "Land of Fire and Ice"
@@ -1632,6 +1668,7 @@
     "subtopic_id": "world_geography",
     "name": "Denmark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kingdom of Denmark"
     ],
@@ -1676,6 +1713,7 @@
     "subtopic_id": "world_geography",
     "name": "Finland",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Suomi",
       "Republic of Finland",
@@ -1722,6 +1760,7 @@
     "subtopic_id": "world_geography",
     "name": "Austria",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Austria",
       "Osterreich"
@@ -1746,7 +1785,7 @@
         "claim": "Wolfgang Amadeus Mozart was born in Vienna.",
         "verdict": "myth",
         "explanation": "Mozart was born in the city of Salzburg (which was then part of the Prince-Archbishopric of Salzburg).",
-        "fun_fact": "Vienna is where Mozart lived, composed his greatest operas, and died."
+        "fun_fact": "Vienna is where Mozart later lived and composed many of his greatest operas."
       },
       {
         "claim": "Vienna has the oldest operating public zoo in the world.",
@@ -1767,6 +1806,7 @@
     "subtopic_id": "world_geography",
     "name": "Poland",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Poland",
       "Polska"
@@ -1812,6 +1852,7 @@
     "subtopic_id": "world_geography",
     "name": "Philippines",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of the Philippines"
     ],
@@ -1856,6 +1897,7 @@
     "subtopic_id": "world_geography",
     "name": "Malaysia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Federation of Malaysia"
     ],
@@ -1900,6 +1942,7 @@
     "subtopic_id": "world_geography",
     "name": "Morocco",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kingdom of Morocco",
       "Al-Maghrib"
@@ -1945,6 +1988,7 @@
     "subtopic_id": "world_geography",
     "name": "Kenya",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Kenya"
     ],
@@ -1989,6 +2033,7 @@
     "subtopic_id": "world_geography",
     "name": "Chile",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Chile"
     ],
@@ -2033,6 +2078,7 @@
     "subtopic_id": "world_geography",
     "name": "Colombia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Republic of Colombia"
     ],
@@ -2077,6 +2123,7 @@
     "subtopic_id": "world_geography",
     "name": "Mongolia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "State of Mongolia",
       "Land of the Eternal Blue Sky"
@@ -2122,6 +2169,7 @@
     "subtopic_id": "world_geography",
     "name": "Nepal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Federal Democratic Republic of Nepal"
     ],
@@ -2166,6 +2214,7 @@
     "subtopic_id": "world_geography",
     "name": "Jamaica",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Island of Jamaica"
     ],
@@ -2210,6 +2259,7 @@
     "subtopic_id": "world_geography",
     "name": "Vatican City",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Holy See",
       "Vatican City State"
@@ -2255,6 +2305,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Eiffel Tower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tour Eiffel",
       "The Iron Lady",
@@ -2301,6 +2352,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Great Wall of China",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great Wall",
       "Wanli Changcheng",
@@ -2347,6 +2399,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Pyramids of Giza",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giza Necropolis",
       "Great Pyramid of Khufu",
@@ -2393,6 +2446,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Colosseum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Flavian Amphitheatre",
       "Colosseo",
@@ -2415,15 +2469,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The Romans could flood the arena floor of the Colosseum to stage mock naval battles.",
+        "claim": "The Romans may have flooded the Colosseum's arena floor to stage shows with real boats.",
         "verdict": "fact",
-        "explanation": "Historical chronicles record that water was channeled into the arena during inaugural games to stage realistic naval battles called naumachiae.",
+        "explanation": "Roman writers describe water channeled into the arena during the opening games for spectacular boat shows called naumachiae.",
         "fun_fact": "The Colosseum featured a massive retractable canvas awning system called the velarium to shade spectators from blistering summer sun."
       },
       {
-        "claim": "Gladiatorial bouts always culminated in the ritual execution of the defeated fighter.",
+        "claim": "The Colosseum was built mainly out of wood.",
         "verdict": "myth",
-        "explanation": "Gladiators were highly prized, expensive athletic investments; most fights ended upon submission or injury, with survival rates estimated at over 80%.",
+        "explanation": "It was built from travertine limestone, volcanic tuff, and brick-faced concrete, and could seat around 50,000 spectators.",
         "fun_fact": "The name Colosseum derives from a colossal bronze statue of Emperor Nero that once stood just outside the amphitheater."
       }
     ],
@@ -2439,6 +2493,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Taj Mahal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Taj",
       "Crown of the Palace",
@@ -2485,6 +2540,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Statue of Liberty",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Liberty Enlightening the World",
       "Lady Liberty",
@@ -2510,7 +2566,7 @@
         "claim": "The Statue of Liberty was originally constructed in its present green color.",
         "verdict": "myth",
         "explanation": "She was originally the shiny reddish-brown color of a newly minted copper penny before natural oxidation created a protective green patina called verdigris.",
-        "fun_fact": "The broken shackle and chain at her feet symbolize the abolition of slavery and liberation from oppression."
+        "fun_fact": "The broken chain at her feet is a symbol of freedom."
       },
       {
         "claim": "Wind causes the Statue of Liberty to sway several inches during major storms.",
@@ -2531,6 +2587,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Machu Picchu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lost City of the Incas",
       "Old Mountain",
@@ -2577,6 +2634,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Sydney Opera House",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Opera House",
       "Bennelong Point Opera House"
@@ -2622,6 +2680,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Big Ben",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Elizabeth Tower",
       "Clock Tower of Westminster",
@@ -2650,9 +2709,9 @@
         "fun_fact": "Old British penny coins are placed onto the giant pendulum to fine-tune the clock's speed by fractions of a second."
       },
       {
-        "claim": "Big Ben kept chiming accurately even after being bombed during World War II.",
+        "claim": "Big Ben's Great Bell weighs more than a large African elephant.",
         "verdict": "fact",
-        "explanation": "Despite German Luftwaffe bombs damaging two clock faces and the palace roof during the Blitz, the clockwork mechanism continued chiming on time.",
+        "explanation": "The Great Bell weighs about 13.7 tonnes and has rung out over London since 1859.",
         "fun_fact": "The minute hands on the four clock faces are each 4.2 meters (14 feet) long and made of copper sheet."
       }
     ],
@@ -2668,6 +2727,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Christ the Redeemer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cristo Redentor",
       "Corcovado Statue",
@@ -2714,6 +2774,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Petra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Rose City",
       "Al-Batra",
@@ -2761,6 +2822,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Angkor Wat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Temple City",
       "Nokor Wat",
@@ -2791,7 +2853,7 @@
       {
         "claim": "Angkor Wat faces west, whereas most other Khmer temples face east towards the rising sun.",
         "verdict": "fact",
-        "explanation": "Facing west—the direction associated with death and the setting sun—strongly indicates that King Suryavarman II conceived it as a funerary monument.",
+        "explanation": "Facing west, toward the setting sun, suggests a special purpose; scholars link this to the god Vishnu, to whom it was dedicated.",
         "fun_fact": "Over 5 million tons of sandstone blocks were floated down the Siem Reap River on wooden rafts from Mount Kulen 40 kilometers away."
       }
     ],
@@ -2807,6 +2869,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Chichen Itza",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "El Castillo",
       "Temple of Kukulcan",
@@ -2835,10 +2898,10 @@
         "fun_fact": "Clapping your hands at the base of El Castillo produces an echo that mimics the chirping call of the sacred quetzal bird."
       },
       {
-        "claim": "The entire ancient city of Chichen Itza was devoted strictly to human sacrifice and ritual warfare.",
+        "claim": "The ancient city of Chichen Itza was used only for religious ceremonies.",
         "verdict": "myth",
         "explanation": "While religious rituals took place, Chichen Itza was primarily a thriving cosmopolitan trade metropolis, political capital, and hub for astronomy and mathematics.",
-        "fun_fact": "Beneath El Castillo lies a massive subterranean water sinkhole called a cenote, which the Maya considered an entrance to the underworld."
+        "fun_fact": "Beneath El Castillo lies a hidden cenote, a natural water-filled sinkhole that was sacred to the Maya."
       }
     ],
     "versus_candidates": [
@@ -2853,6 +2916,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Acropolis of Athens",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Acropolis",
       "The Sacred Rock",
@@ -2899,6 +2963,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Stonehenge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Standing Stones",
       "Salisbury Monoliths"
@@ -2920,7 +2985,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Stonehenge was built by Celtic Druids as a pagan sacrificial altar.",
+        "claim": "Stonehenge was built by Celtic Druids as their temple.",
         "verdict": "myth",
         "explanation": "Archaeological dating proves Stonehenge was built over a millennium before Celtic Druids ever existed in the British Isles.",
         "fun_fact": "The smaller volcanic 'bluestones' weighing up to 4 tons were transported over 150 miles (240 km) from the Preseli Hills in Wales."
@@ -2944,6 +3009,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Leaning Tower of Pisa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Torre di Pisa",
       "Tower of Pisa",
@@ -2953,7 +3019,7 @@
     "visual_anchor": "Playful vertical 9:16 perspective of the white marble freestanding bell tower tilting conspicuously on the emerald lawn of the Piazza dei Miracoli in Pisa.",
     "core_traits": [
       "Freestanding Romanesque white marble bell tower situated in the Piazza dei Miracoli in Pisa, Italy",
-      "Began construction in 1173 and took nearly two centuries to finish due to frequent wars",
+      "Began construction in 1173 and took nearly two centuries to finish, with long pauses in building",
       "Internationally famous for its unintended tilt caused by an unstable soft clay and sand foundation",
       "Contains eight tiers of open marble arcades and houses seven functional bronze bells"
     ],
@@ -2985,239 +3051,12 @@
     ]
   },
   {
-    "id": "ENT-COU-067",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Mount Fuji",
-    "language": "en",
-    "aliases": [
-      "Fuji-san",
-      "Fujiyama",
-      "Mount Fuji Volcano"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Serene vertical 9:16 portrait of snow-capped Mount Fuji mirrored across Lake Kawaguchi, framed by blooming pink cherry blossom branches.",
-    "core_traits": [
-      "Active stratovolcano and the highest mountain peak in Japan, standing 3,776 meters tall",
-      "Celebrated worldwide for its exceptionally symmetrical snow-capped volcanic cone",
-      "One of Japan's 'Three Holy Mountains' (Sanreizan) and a sacred pilgrimage site for Shinto and Buddhism",
-      "Immortalized in global art through Katsushika Hokusai's woodblock print series 'Thirty-Six Views of Mount Fuji'"
-    ],
-    "distractor_pool": [
-      "Mount Everest",
-      "Mount Kilimanjaro",
-      "Matterhorn",
-      "Grand Canyon",
-      "Mount Rushmore"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Mount Fuji is an extinct volcano that will never erupt again.",
-        "verdict": "myth",
-        "explanation": "Geologists classify Mount Fuji as an active volcano with a low eruption risk; its last confirmed major eruption occurred in 1707 (the Hoei eruption).",
-        "fun_fact": "Mount Fuji is actually composed of three distinct overlapping volcanoes: Komitake, Ko-Fuji, and Shin-Fuji."
-      },
-      {
-        "claim": "Mount Fuji's summit is privately owned rather than state public land.",
-        "verdict": "fact",
-        "explanation": "The peak above the eighth station belongs to Fujisan Hongu Seng Taisha, an ancient Shinto shrine that received formal ownership title centuries ago.",
-        "fun_fact": "Over 300,000 people climb to the summit of Mount Fuji every year during the official summer climbing season."
-      }
-    ],
-    "versus_candidates": [
-      "Mount Everest",
-      "Mount Kilimanjaro",
-      "Matterhorn"
-    ]
-  },
-  {
-    "id": "ENT-COU-068",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Grand Canyon",
-    "language": "en",
-    "aliases": [
-      "The Grand Canyon",
-      "Grand Canyon of the Colorado"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Breathtaking vertical 9:16 cliffside vista over the immense red, ochre, and purple stratified rock canyon walls carved by the Colorado River far below.",
-    "core_traits": [
-      "Vast steep-sided river gorge carved by the Colorado River in northwestern Arizona, United States",
-      "Measures 446 kilometers (277 miles) long, up to 29 kilometers (18 miles) wide, and over a mile (1,800 meters) deep",
-      "Exposes nearly two billion years of Earth's geological history across colorful sedimentary rock strata",
-      "Designated a US National Park in 1919 and recognized as one of the Natural Wonders of the World"
-    ],
-    "distractor_pool": [
-      "Niagara Falls",
-      "Mount Everest",
-      "Victoria Falls",
-      "Yellowstone",
-      "Yosemite Valley"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The Grand Canyon is the deepest canyon in the entire world.",
-        "verdict": "myth",
-        "explanation": "While among the most famous and scenic, deeper canyons exist, such as the Yarlung Tsangpo Grand Canyon in Tibet and Cotahuasi Canyon in Peru.",
-        "fun_fact": "The Colorado River has taken an estimated 5 to 6 million years of continuous water flow to carve the gorge."
-      },
-      {
-        "claim": "The Grand Canyon creates its own localized microclimates and weather systems.",
-        "verdict": "fact",
-        "explanation": "Due to extreme elevation differences between the high rim and low canyon floor, temperatures at the river can be 25 degrees Fahrenheit warmer than the rim.",
-        "fun_fact": "The Havasupai Native American tribe has lived inside the canyon for over 800 years and still receives mail delivered by mule train."
-      }
-    ],
-    "versus_candidates": [
-      "Niagara Falls",
-      "Victoria Falls",
-      "Mount Everest"
-    ]
-  },
-  {
-    "id": "ENT-COU-069",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Niagara Falls",
-    "language": "en",
-    "aliases": [
-      "Horseshoe Falls",
-      "American Falls",
-      "Niagara"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Thundering vertical 9:16 shot of the massive curved curtain of turquoise water plunging into frothing white mist at Horseshoe Falls with a vibrant rainbow arc.",
-    "core_traits": [
-      "Trio of massive waterfalls straddling the international border between Ontario, Canada, and New York, United States",
-      "Composed of Horseshoe Falls (the largest), American Falls, and the smaller Bridal Veil Falls",
-      "Drains Lake Erie into Lake Ontario along the Niagara River with the highest flow rate of any waterfall in North America",
-      "Major global tourist honeymoon attraction and premier source of hydroelectric power generation"
-    ],
-    "distractor_pool": [
-      "Victoria Falls",
-      "Iguazu Falls",
-      "Grand Canyon",
-      "Mount Everest",
-      "Angel Falls"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The flow of water over Niagara Falls completely froze solid into a stationary wall of ice.",
-        "verdict": "myth",
-        "explanation": "While ice bridges and heavy surface freezing occur in sub-zero winters, the tremendous rushing water beneath the ice crust has never stopped flowing entirely.",
-        "fun_fact": "In 1969, the US Army Corps of Engineers completely diverted the American Falls dry for five months to clean the riverbed and study rock erosion."
-      },
-      {
-        "claim": "Niagara Falls produces enough renewable hydroelectric energy to power millions of homes across two countries.",
-        "verdict": "fact",
-        "explanation": "Massive underground tunnels divert up to 75% of river flow to hydroelectric plants on both Canadian and American sides.",
-        "fun_fact": "Annie Edson Taylor became the first person to survive going over the falls in a wooden pickle barrel in 1901 at age 63."
-      }
-    ],
-    "versus_candidates": [
-      "Victoria Falls",
-      "Iguazu Falls",
-      "Grand Canyon"
-    ]
-  },
-  {
-    "id": "ENT-COU-070",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Victoria Falls",
-    "language": "en",
-    "aliases": [
-      "Mosi-oa-Tunya",
-      "The Smoke That Thunders"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Spectacular vertical 9:16 aerial perspective of the Zambezi River plunging into a deep basalt gorge, creating a massive rising cloud of shimmering mist.",
-    "core_traits": [
-      "Colossal waterfall situated on the Zambezi River on the international border between Zambia and Zimbabwe",
-      "Known locally as 'Mosi-oa-Tunya' which translates to 'The Smoke That Thunders'",
-      "Forms the largest sheet of falling water on Earth based on its combined width (1,708 meters) and height (108 meters)",
-      "First documented by a Western explorer when Scottish missionary David Livingstone visited in 1855"
-    ],
-    "distractor_pool": [
-      "Niagara Falls",
-      "Iguazu Falls",
-      "Grand Canyon",
-      "Mount Kilimanjaro",
-      "Mount Everest"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Victoria Falls is the highest single-drop waterfall in the world.",
-        "verdict": "myth",
-        "explanation": "Angel Falls in Venezuela is the highest waterfall at 979 meters; Victoria Falls is celebrated instead for forming the widest unbroken curtain of falling water.",
-        "fun_fact": "The mist spray from the cataract can shoot over 400 meters into the sky and is visible from up to 50 kilometers (30 miles) away."
-      },
-      {
-        "claim": "Swimmers can safely sit on the very precipice of the waterfall during low water seasons.",
-        "verdict": "fact",
-        "explanation": "A natural rock depression called 'Devil's Pool' allows adventurous swimmers to lounge right at the cliff's edge without being carried over between August and January.",
-        "fun_fact": "On nights with a full moon, the spray from Victoria Falls creates an ethereal 'lunar rainbow' or moonbow."
-      }
-    ],
-    "versus_candidates": [
-      "Niagara Falls",
-      "Iguazu Falls",
-      "Grand Canyon"
-    ]
-  },
-  {
-    "id": "ENT-COU-071",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Mount Everest",
-    "language": "en",
-    "aliases": [
-      "Sagarmatha",
-      "Chomolungma",
-      "Peak XV"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Imposing vertical 9:16 telephoto shot of the windswept snow plume trailing off the razor-sharp pyramid summit of Mount Everest under an icy cobalt sky.",
-    "core_traits": [
-      "Earth's highest mountain above sea level, reaching an official elevation of 8,848.86 meters (29,031.7 feet)",
-      "Located in the Mahalangur Himal sub-range of the Himalayas along the border of Nepal and Tibet, China",
-      "Known natively as Sagarmatha in Nepali ('Goddess of the Sky') and Chomolungma in Tibetan ('Mother Goddess of the World')",
-      "First officially summitted on May 29, 1953, by Sir Edmund Hillary of New Zealand and Tenzing Norgay Sherpa of Nepal"
-    ],
-    "distractor_pool": [
-      "Mount Fuji",
-      "Mount Kilimanjaro",
-      "Matterhorn",
-      "K2",
-      "Mont Blanc"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Mount Everest is the furthest point on Earth's surface from the planet's center.",
-        "verdict": "myth",
-        "explanation": "Because the Earth bulges around the equator, Mount Chimborazo in Ecuador is actually 2,168 meters further from Earth's center than Everest.",
-        "fun_fact": "Tectonic plate collisions continue to push Mount Everest upward by approximately 4 millimeters each year."
-      },
-      {
-        "claim": "Marine limestone and fossils from ancient seafloors are found near the summit of Mount Everest.",
-        "verdict": "fact",
-        "explanation": "The upper pyramid is composed of Ordovician limestone formed beneath the ancient Tethys Ocean hundreds of millions of years before plate tectonics raised the Himalayas.",
-        "fun_fact": "Above 8,000 meters lies the notorious 'Death Zone' where atmospheric oxygen levels are insufficient to sustain human life long term."
-      }
-    ],
-    "versus_candidates": [
-      "K2",
-      "Mount Kilimanjaro",
-      "Mount Fuji"
-    ]
-  },
-  {
     "id": "ENT-COU-072",
     "domain_id": "countries_nations",
     "subtopic_id": "world_landmarks",
     "name": "Burj Khalifa",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Burj Dubai",
       "Khalifa Tower",
@@ -3264,6 +3103,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Golden Gate Bridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Golden Gate",
       "San Francisco Suspension Bridge"
@@ -3309,6 +3149,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Empire State Building",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Empire State",
       "ESB",
@@ -3331,7 +3172,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Dropping a penny from the observation deck of the Empire State Building can kill a pedestrian on the sidewalk.",
+        "claim": "A penny dropped from the Empire State Building can seriously hurt someone below.",
         "verdict": "myth",
         "explanation": "Because of air resistance and terminal velocity (around 30-50 mph), a falling penny flutters like a leaf and would at worst feel like a minor sting.",
         "fun_fact": "The skyscraper was constructed at breakneck speed, taking only 1 year and 45 days (410 days total) to complete."
@@ -3355,6 +3196,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Sagrada Familia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Basilica of the Sagrada Familia",
       "Holy Family Basilica",
@@ -3401,6 +3243,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Louvre Museum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Louvre",
       "Louvre Palace",
@@ -3423,16 +3266,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The glass pyramid of the Louvre was built with exactly 666 panes of glass to symbolize the devil.",
+        "claim": "The Louvre's glass pyramid has fewer than 100 glass panes.",
         "verdict": "myth",
-        "explanation": "This sensational conspiracy rumor was popularized by fictional thrillers; official museum documentation confirms there are exactly 673 glass panes (603 rhombi and 70 triangles).",
+        "explanation": "Museum figures count 673 glass panes on the pyramid: 603 diamond-shaped rhombi and 70 triangles.",
         "fun_fact": "If you spent 30 seconds viewing every single artwork in the Louvre, it would take you about 100 continuous days without sleeping."
       },
       {
         "claim": "The Mona Lisa was once stolen from the Louvre by an Italian museum employee.",
         "verdict": "fact",
         "explanation": "In 1911, handyman Vincenzo Peruggia hid inside a broom closet and walked out with the Mona Lisa under his coat, believing the painting belonged back in Italy.",
-        "fun_fact": "During World War II, museum curators evacuated and hid over 3,000 priceless artworks in the French countryside to protect them from Nazi looting."
+        "fun_fact": "The Mona Lisa is surprisingly small, measuring only about 77 by 53 centimeters."
       }
     ],
     "versus_candidates": [
@@ -3447,6 +3290,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Saint Basil's Cathedral",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pokrovsky Cathedral",
       "Cathedral of the Intercession",
@@ -3469,15 +3313,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Ivan the Terrible ordered the architects blinded so they could never duplicate its astonishing beauty.",
+        "claim": "Saint Basil's Cathedral is located in Saint Petersburg.",
         "verdict": "myth",
-        "explanation": "This is a popular folkloric legend without historical support; records show architect Postnik Yakovlev later designed walls for the Kazan Kremlin.",
+        "explanation": "It stands on Red Square in Moscow, right next to the Kremlin, and was built between 1555 and 1561.",
         "fun_fact": "The cathedral is actually a cluster of nine independent small churches built around a central tenth core church."
       },
       {
         "claim": "The cathedral was once slated for demolition by Joseph Stalin's urban planners.",
         "verdict": "fact",
-        "explanation": "Soviet planners wanted to raze the church to widen Red Square for military parades, but architect Pyotr Baranovsky heroically threatened suicide to save it.",
+        "explanation": "Soviet planners wanted to remove it to widen Red Square, but preservation architect Pyotr Baranovsky bravely refused and fought to save it.",
         "fun_fact": "The iconic multicolored candy-cane patterns were added over a century after original construction, which was originally plain white and gold."
       }
     ],
@@ -3493,6 +3337,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Great Sphinx of Giza",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Great Sphinx",
       "Sphinx of Giza",
@@ -3539,6 +3384,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Mount Rushmore",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mount Rushmore National Memorial",
       "The Presidents Mountain"
@@ -3560,10 +3406,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Several workers died from falls and dynamite blasts during the 14 years of carving.",
+        "claim": "Mount Rushmore's carvers removed most of the rock with hammers and chisels.",
         "verdict": "myth",
-        "explanation": "Despite precarious cliff scaffolding and explosive dynamite removal of 450,000 tons of rock, zero fatalities occurred during the entire project.",
-        "fun_fact": "About 90 percent of the rock removal was accomplished using precision dynamite charges detonated by skilled blasters."
+        "explanation": "About 90 percent of the 450,000 tons of rock was removed using carefully placed dynamite blasts.",
+        "fun_fact": "Each president's face is about 60 feet (18 meters) tall, roughly as tall as a six-story building."
       },
       {
         "claim": "There is a hidden secret vault room carved into the mountain behind the presidential faces.",
@@ -3584,6 +3430,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Easter Island Moai",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moai Statues",
       "Rapa Nui Moai",
@@ -3630,6 +3477,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Alhambra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Red Castle",
       "Qalat al-Hamra",
@@ -3676,6 +3524,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Neuschwanstein Castle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Schloss Neuschwanstein",
       "New Swanstone Castle",
@@ -3704,10 +3553,10 @@
         "fun_fact": "Despite its medieval outward appearance, it featured revolutionary modern technology including central heating, telephone lines, and flush toilets."
       },
       {
-        "claim": "King Ludwig II was declared insane and deposed before the castle was even completed.",
+        "claim": "Neuschwanstein Castle helped inspire Sleeping Beauty Castle at Disneyland.",
         "verdict": "fact",
-        "explanation": "In 1886, Bavarian ministers declared Ludwig mentally unfit to rule due to his massive personal construction debts; he died mysteriously in Lake Starnberg days later.",
-        "fun_fact": "The castle was opened to paying visitors just seven weeks after King Ludwig's death to pay off his accumulated debts."
+        "explanation": "Disney designers borrowed ideas from the Bavarian castle's tall towers and fairy-tale look for the Disneyland castle, opened in 1955.",
+        "fun_fact": "Its name means 'New Swanstone', honoring the Swan Knight from a Wagner opera King Ludwig loved."
       }
     ],
     "versus_candidates": [
@@ -3722,6 +3571,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Forbidden City",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Palace Museum",
       "Zijincheng",
@@ -3744,9 +3594,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Common citizens were legally forbidden from entering the palace complex on pain of death.",
+        "claim": "Ordinary people were not allowed inside the Forbidden City for about 500 years.",
         "verdict": "fact",
-        "explanation": "Because it was the sacred residence of the Son of Heaven, unauthorized ordinary subjects caught trespassing were subject to immediate execution.",
+        "explanation": "It was the private home of Chinese emperors; ordinary people could not enter until it became the Palace Museum in 1925.",
         "fun_fact": "Yellow was the exclusive imperial color of the Emperor, which is why nearly all roof tiles in the palace are glazed bright yellow."
       },
       {
@@ -3768,6 +3618,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Hollywood Sign",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Hollywood Hills Sign",
       "Hollywoodland Sign",
@@ -3793,13 +3644,13 @@
         "claim": "The sign was originally intended to stand permanently as a monument to cinema.",
         "verdict": "myth",
         "explanation": "It was built in 1923 as a temporary 18-month real estate advertisement for 'Hollywoodland'; the final 'LAND' was removed during a 1949 restoration.",
-        "fun_fact": "Rock star Alice Cooper spearheaded a public 1978 campaign to rebuild the decaying sign, with Hugh Hefner and other celebrities funding individual letters."
+        "fun_fact": "Rock star Alice Cooper led a 1978 campaign to rebuild the old sign, with celebrities sponsoring individual letters."
       },
       {
-        "claim": "British actress Peg Entwistle tragically leaped to her death from atop the letter 'H' in 1932.",
+        "claim": "Each letter of the Hollywood Sign is about 45 feet (14 meters) tall.",
         "verdict": "fact",
-        "explanation": "Devastated by career disappointments, the 24-year-old Broadway actress climbed a maintenance ladder to the top of the letter 'H' and jumped.",
-        "fun_fact": "The sign is protected by 24/7 infrared security cameras, motion sensors, and razor-wire fencing to deter hikers and pranksters."
+        "explanation": "The giant letters stand high on Mount Lee in the Hollywood Hills and can be seen from far across Los Angeles.",
+        "fun_fact": "The sign is protected by 24/7 security cameras, motion sensors, and fencing to keep hikers and pranksters away."
       }
     ],
     "versus_candidates": [
@@ -3814,6 +3665,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Times Square",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Crossroads of the World",
       "The Great White Way",
@@ -3860,6 +3712,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Tower of London",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "His Majesty's Royal Palace and Fortress of the Tower of London",
       "The White Tower"
@@ -3869,7 +3722,7 @@
     "core_traits": [
       "Historic fortified castle situated on the north bank of the River Thames in London, England",
       "Founded in 1066 as part of the Norman Conquest by William the Conqueror, who built the central White Tower in 1078",
-      "Served historically as a royal residence, notorious prison, execution site, armory, and Royal Mint",
+      "Has served as a royal palace, fortress, armory, treasury, and Royal Mint",
       "Home to the British Crown Jewels, the Yeoman Warders (Beefeaters), and the ceremonial Ravens"
     ],
     "distractor_pool": [
@@ -3881,10 +3734,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Hundreds of high-profile historical prisoners were publicly beheaded on the grassy green inside the Tower.",
+        "claim": "The Tower of London is a single tower standing by itself.",
         "verdict": "myth",
-        "explanation": "Only ten elite prisoners were executed on private Tower Green (including Anne Boleyn and Lady Jane Grey); most were executed outside on Tower Hill.",
-        "fun_fact": "Legend holds that if the six resident ravens ever leave the Tower of London, the fortress and the kingdom will fall."
+        "explanation": "It is actually a large castle complex with many towers and walls, centered on the White Tower built by William the Conqueror.",
+        "fun_fact": "Legend says that if the Tower's six resident ravens ever leave, the kingdom will fall."
       },
       {
         "claim": "The King's Guard and Yeoman Warders have guarded the fortress and Crown Jewels for centuries.",
@@ -3905,6 +3758,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Tower Bridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "London Tower Bridge",
       "The Twin Towers Bridge"
@@ -3950,6 +3804,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Notre-Dame Cathedral",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Notre-Dame de Paris",
       "Our Lady of Paris",
@@ -3996,6 +3851,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Arc de Triomphe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arc de Triomphe de l'Etoile",
       "The Triumphal Arch of Paris"
@@ -4004,8 +3860,8 @@
     "visual_anchor": "Heroic vertical 9:16 twilight view of the monumental neoclassical Arc de Triomphe at the center of Place Charles de Gaulle, glowing against streams of car headlights.",
     "core_traits": [
       "Monumental neoclassical triumphal arch standing at the western end of the Champs-Elysees in Paris, France",
-      "Commissioned in 1806 by French Emperor Napoleon Bonaparte following his decisive victory at the Battle of Austerlitz",
-      "Honors those who fought and died for France in the French Revolutionary and Napoleonic Wars",
+      "Commissioned in 1806 by French Emperor Napoleon Bonaparte and completed in 1836",
+      "Decorated with huge carved stone sculptures, including the famous 'La Marseillaise' relief",
       "Houses France's Tomb of the Unknown Soldier and an eternal memorial flame beneath its central archway"
     ],
     "distractor_pool": [
@@ -4017,15 +3873,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Napoleon Bonaparte marched his triumphant Grand Army through the completed arch after defeating Russia and Austria.",
+        "claim": "Napoleon got to see the finished Arc de Triomphe that he ordered built.",
         "verdict": "myth",
-        "explanation": "Construction was delayed and completed in 1836, fifteen years after Napoleon's death in exile; his body was carried beneath it during his 1840 state funeral.",
-        "fun_fact": "In 1919, French aviator Charles Godefroy flew his Nieuport biplane straight through the arch to honor aviators killed in World War I."
+        "explanation": "Construction took 30 years and finished in 1836, long after Napoleon's reign had ended.",
+        "fun_fact": "In 1919, French pilot Charles Godefroy flew a small biplane right through the arch."
       },
       {
         "claim": "The eternal flame beneath the arch has burned continuously without being extinguished for over a century.",
         "verdict": "fact",
-        "explanation": "First lit on Armistice Day in 1923 at the Tomb of the Unknown Soldier, the flame is rekindled every evening at 6:30 PM and was never put out, even during Nazi occupation.",
+        "explanation": "First lit in 1923, the memorial flame has never gone out and is ceremonially rekindled every evening at 6:30 PM.",
         "fun_fact": "All 12 grand avenues radiating from the traffic circle create a massive star pattern, which is why the square was originally named Place de l'Etoile (Star)."
       }
     ],
@@ -4041,6 +3897,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Sydney Harbour Bridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Coathanger",
       "Harbour Bridge",
@@ -4087,6 +3944,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Hagia Sophia",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ayasofya",
       "Church of the Holy Wisdom",
@@ -4128,194 +3986,12 @@
     ]
   },
   {
-    "id": "ENT-COU-092",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Mount Kilimanjaro",
-    "language": "en",
-    "aliases": [
-      "Kilimanjaro",
-      "Roof of Africa",
-      "Mount Kibo"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Spectacular vertical 9:16 wildlife scene with a herd of wild elephants grazing on golden savanna beneath the snow-capped flat dome of Mount Kilimanjaro.",
-    "core_traits": [
-      "Dormant volcanic mountain located in northeastern Tanzania, near the border with Kenya",
-      "Highest mountain in Africa and the tallest single free-standing mountain above sea level in the world at 5,895 meters (19,341 feet)",
-      "Comprises three distinct volcanic cones: Kibo (the highest summit), Mawenzi, and Shira",
-      "Encompasses virtually every ecological climate zone on Earth, from tropical rainforest to arctic glaciers"
-    ],
-    "distractor_pool": [
-      "Mount Everest",
-      "Mount Fuji",
-      "Table Mountain",
-      "Matterhorn",
-      "Mount Kenya"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Mount Kilimanjaro's equatorial glaciers are expanding due to shifting Indian Ocean cloud patterns.",
-        "verdict": "myth",
-        "explanation": "Scientific measurements show that Kilimanjaro's ancient summit glaciers have shrunk by more than 85 percent over the last century and may vanish in coming decades.",
-        "fun_fact": "Because it is a non-technical walk-up climb, thousands of trekkers of varying experience attempt to reach Uhuru Peak each year."
-      },
-      {
-        "claim": "Almost every major ecological climatic zone can be experienced while hiking to the summit.",
-        "verdict": "fact",
-        "explanation": "Climbers traverse five distinct ecological zones: cultivated farmland, rainforest, heather-moorland, alpine desert, and the arctic summit ice cap.",
-        "fun_fact": "In 1889, German geographer Hans Meyer and Austrian mountaineer Ludwig Purtscheller became the first recorded people to reach the summit."
-      }
-    ],
-    "versus_candidates": [
-      "Mount Everest",
-      "Mount Fuji",
-      "Table Mountain"
-    ]
-  },
-  {
-    "id": "ENT-COU-093",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Great Barrier Reef",
-    "language": "en",
-    "aliases": [
-      "The Great Barrier",
-      "Coral Sea Reef"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Stunning vertical 9:16 underwater shot of a vibrant green sea turtle gliding through crystalline turquoise waters above kaleidoscopic coral bommies.",
-    "core_traits": [
-      "World's largest coral reef system, stretching over 2,300 kilometers (1,400 miles) along the coast of Queensland, Australia",
-      "Composed of over 2,900 individual reefs and 900 tropical islands in the Coral Sea",
-      "Largest single living structure on Earth, created by billions of tiny marine organisms called coral polyps",
-      "So colossal that it can be distinctly seen and photographed from outer space"
-    ],
-    "distractor_pool": [
-      "Great Wall of China",
-      "Grand Canyon",
-      "Niagara Falls",
-      "Galapagos Islands",
-      "Amazon Rainforest"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The Great Barrier Reef is composed of a single massive solid wall of coral rock.",
-        "verdict": "myth",
-        "explanation": "It is a complex dynamic ecosystem of thousands of separate reefs, coral cays, mangrove estuaries, and deep marine channels.",
-        "fun_fact": "Once a year in late spring, the entire reef participates in a synchronized mass coral spawning event triggered by water temperature and moonlight."
-      },
-      {
-        "claim": "The reef is home to over 1,500 species of marine fish and 400 species of hard coral.",
-        "verdict": "fact",
-        "explanation": "It supports roughly 10 percent of the world's total fish species, alongside whales, dolphins, dugongs, and six species of threatened sea turtles.",
-        "fun_fact": "The Great Barrier Reef is roughly the same physical land size as Italy or Japan."
-      }
-    ],
-    "versus_candidates": [
-      "Grand Canyon",
-      "Galapagos Islands",
-      "Amazon Rainforest"
-    ]
-  },
-  {
-    "id": "ENT-COU-094",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Matterhorn",
-    "language": "en",
-    "aliases": [
-      "Monte Cervino",
-      "Mont Cervin",
-      "The Jewel of the Alps"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Breathtaking vertical 9:16 alpine sunrise view of the razor-sharp pyramid peak of the Matterhorn glowing fiery golden above the pristine Riffelsee lake.",
-    "core_traits": [
-      "Iconic pyramid-shaped mountain peak in the Pennine Alps, straddling the border between Switzerland and Italy",
-      "Stands 4,478 meters (14,692 feet) tall, overlooking the Swiss resort town of Zermatt",
-      "Famous for its steep, four-sided pyramidal horn facing the four cardinal compass directions",
-      "Universal symbol of the Swiss Alps and mountaineering, featured on Toblerone chocolate packaging for decades"
-    ],
-    "distractor_pool": [
-      "Mont Blanc",
-      "Mount Fuji",
-      "Mount Everest",
-      "Eiger",
-      "Mount Kilimanjaro"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The Matterhorn is the highest mountain peak in the Alps.",
-        "verdict": "myth",
-        "explanation": "Mont Blanc is the highest peak in the Alps at 4,808 meters; the Matterhorn is famous for its dramatic isolated pyramidal shape and steep climbing ridges.",
-        "fun_fact": "Edward Whymper led the first successful ascent in 1865, which ended in tragedy when four climbers fell to their deaths on the descent."
-      },
-      {
-        "claim": "The distinctive bear hidden in the Toblerone mountain logo references the city of Bern.",
-        "verdict": "fact",
-        "explanation": "Toblerone chocolate was created in Bern, known as 'The City of Bears', which is why a subtle bear silhouette is incorporated into the Matterhorn illustration.",
-        "fun_fact": "The four distinct faces of the Matterhorn are so steep that snow cannot accumulate heavily, frequently causing massive avalanches down its flanks."
-      }
-    ],
-    "versus_candidates": [
-      "Mont Blanc",
-      "Mount Fuji",
-      "Mount Everest"
-    ]
-  },
-  {
-    "id": "ENT-COU-095",
-    "domain_id": "countries_nations",
-    "subtopic_id": "world_landmarks",
-    "name": "Iguazu Falls",
-    "language": "en",
-    "aliases": [
-      "Iguassu Falls",
-      "Cataratas del Iguazu",
-      "Devil's Throat Falls"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Spectacular vertical 9:16 panoramic shot looking directly into the deafening, horseshoe-shaped Devil's Throat gorge of Iguazu Falls surrounded by lush jungle.",
-    "core_traits": [
-      "Monumental semicircular system of 275 individual waterfalls spanning the Iguazu River between Argentina and Brazil",
-      "Spans an astonishing 2.7 kilometers (1.7 miles) in width, surrounded by subtropical Atlantic rainforest",
-      "Centered on the awe-inspiring 'Devil's Throat' (Garganta del Diablo), a U-shaped chasm dropping 82 meters",
-      "Upon seeing Iguazu, US First Lady Eleanor Roosevelt famously remarked: 'Poor Niagara!'"
-    ],
-    "distractor_pool": [
-      "Niagara Falls",
-      "Victoria Falls",
-      "Angel Falls",
-      "Grand Canyon",
-      "Amazon Rainforest"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Iguazu Falls has a higher water volume and is wider than Niagara Falls.",
-        "verdict": "fact",
-        "explanation": "Iguazu is nearly four times wider than Niagara and features 275 discrete drops, making it the most extensive waterfall system on Earth.",
-        "fun_fact": "Depending on the rainy season, the number of individual cascades can range between 150 and nearly 300 waterfalls."
-      },
-      {
-        "claim": "The waterfalls are located entirely within Brazilian sovereign territory.",
-        "verdict": "myth",
-        "explanation": "Approximately 80 percent of the waterfall falls within Argentina's national park, while Brazil offers the most expansive panoramic vistas across the river gorge.",
-        "fun_fact": "The falls are home to thousands of great dusky swifts, small birds that fly straight through the crushing waterfalls to roost safely on the wet rock face behind."
-      }
-    ],
-    "versus_candidates": [
-      "Niagara Falls",
-      "Victoria Falls",
-      "Angel Falls"
-    ]
-  },
-  {
     "id": "ENT-COU-096",
     "domain_id": "countries_nations",
     "subtopic_id": "world_landmarks",
     "name": "Terracotta Army",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Terracotta Warriors",
       "Emperor Qin's Army",
@@ -4362,6 +4038,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Panama Canal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Big Ditch",
       "Canal de Panama"
@@ -4386,7 +4063,7 @@
         "claim": "The Atlantic Ocean end of the canal is west of the Pacific Ocean end due to the S-shaped curvature of Panama.",
         "verdict": "fact",
         "explanation": "Because of the winding geography of the Isthmus of Panama, ships traveling from the Atlantic to the Pacific travel from northwest to southeast.",
-        "fun_fact": "Over 25,000 workers died from yellow fever, malaria, and landslides during the French and early American construction eras."
+        "fun_fact": "The canal's locks lift ships about 26 meters (85 feet) up to Gatun Lake and back down again."
       },
       {
         "claim": "Saltwater from the Atlantic and Pacific oceans mixes directly together inside the canal locks.",
@@ -4407,6 +4084,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Mont-Saint-Michel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Wonder of the West",
       "Le Mont-Saint-Michel",
@@ -4432,13 +4110,13 @@
         "claim": "The ocean tide in Mont-Saint-Michel bay rushes in as fast as a galloping horse.",
         "verdict": "myth",
         "explanation": "While popularized by author Victor Hugo, the tide actually advances at about 3 to 4 miles per hour (walking speed), though its rapid rise across flat sand quickly traps unwary walkers.",
-        "fun_fact": "During the French Revolution, the historic abbey was turned into a high-security prison nicknamed the 'Bastille of the Sea'."
+        "fun_fact": "Mont-Saint-Michel and its bay were listed as a UNESCO World Heritage Site in 1979."
       },
       {
-        "claim": "The fortress island successfully resisted English sieges for over 30 years during the Hundred Years' War.",
+        "claim": "Mont-Saint-Michel can become completely surrounded by seawater at high tide.",
         "verdict": "fact",
-        "explanation": "Protected by its massive defensive walls, treacherous tides, and quicksand, a small garrison of French knights repelled repeated English military assaults.",
-        "fun_fact": "A golden statue of Saint Michael slaying a dragon crowns the soaring 91-meter-high abbey spire."
+        "explanation": "Some of Europe's biggest tides sweep across the bay, turning the hill into an island; a bridge now lets visitors cross anytime.",
+        "fun_fact": "A golden statue of Saint Michael defeating a dragon crowns the soaring 91-meter-high abbey spire."
       }
     ],
     "versus_candidates": [
@@ -4453,6 +4131,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Table Mountain",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hoerikwaggo",
       "Tafelberg",
@@ -4478,7 +4157,7 @@
         "claim": "Table Mountain is among the most biologically diverse floral hotspots on the planet.",
         "verdict": "fact",
         "explanation": "It is home to over 2,200 plant species in the Cape Floral Region, containing more plant diversity than the entire United Kingdom.",
-        "fun_fact": "Local folklore attributes the cascading cloud 'tablecloth' to a pipe-smoking contest between a pirate named Van Hunks and the devil."
+        "fun_fact": "The cloud that often pours over the flat summit is nicknamed the 'tablecloth'."
       },
       {
         "claim": "The flat top of Table Mountain was created by ancient volcanic lava plateau eruptions.",
@@ -4499,6 +4178,7 @@
     "subtopic_id": "world_landmarks",
     "name": "Brandenburg Gate",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brandenburger Tor",
       "Berlin Peace Gate"
@@ -4509,7 +4189,7 @@
       "18th-century neoclassical sandstone triumphal monument located in Mitte, Berlin, Germany",
       "Commissioned by Prussian King Frederick William II and designed by Carl Gotthard Langhans, completed in 1791",
       "Crowned by the iconic bronze sculpture of the Quadriga, a chariot drawn by four horses driven by the goddess of peace (later victory)",
-      "Historic symbol of German division during the Cold War (standing inside the Berlin Wall buffer) and the ultimate emblem of German reunification"
+      "Famous symbol of a divided Berlin that became the emblem of German reunification in 1990"
     ],
     "distractor_pool": [
       "Arc de Triomphe",
@@ -4520,22 +4200,1110 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Napoleon Bonaparte stole the bronze Quadriga chariot from the top of the gate and hauled it back to Paris.",
+        "claim": "The Quadriga statue on top of the gate once spent several years in Paris.",
         "verdict": "fact",
-        "explanation": "After conquering Prussia in 1806, Napoleon took the Quadriga to Paris as a war trophy, where it remained until Prussian troops reclaimed it in 1814 after Waterloo.",
-        "fun_fact": "US President Ronald Reagan delivered his famous 1987 speech in front of the gate, declaring: 'Mr. Gorbachev, tear down this wall!'"
+        "explanation": "Napoleon had it taken to Paris in 1806; it was brought back to Berlin and returned to the gate in 1814.",
+        "fun_fact": "In 1987, US President Ronald Reagan gave a famous speech at the gate: 'Tear down this wall!'"
       },
       {
-        "claim": "The Brandenburg Gate was completely demolished by Allied bombing in World War II and rebuilt from scratch.",
-        "verdict": "myth",
-        "explanation": "Although heavily damaged and pockmarked by artillery and bullets, the gate's columns survived the war and were carefully restored by East and West Berlin authorities.",
-        "fun_fact": "During the Cold War, the gate stood in no-man's land directly behind the Berlin Wall, inaccessible to citizens of both sides."
+        "claim": "The Brandenburg Gate was originally built as one of Berlin's city gates.",
+        "verdict": "fact",
+        "explanation": "It was one of several gates in Berlin's old customs wall, marking the start of the road to the town of Brandenburg.",
+        "fun_fact": "Its design was inspired by the Propylaea, the grand gateway to the Acropolis in Athens."
       }
     ],
     "versus_candidates": [
       "Arc de Triomphe",
       "Eiffel Tower",
       "Colosseum"
+    ]
+  },
+  {
+    "id": "ENT-COU-101",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Vietnam",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Vietnamese Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A red flag with one big yellow five-pointed star in the center waving on a pole against a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Red flag with one star",
+      "The star is yellow and has five points",
+      "The star sits right in the middle",
+      "Flag of a long, S-shaped country in Southeast Asia"
+    ],
+    "distractor_pool": [
+      "Flag of China",
+      "Flag of Turkey",
+      "Flag of Morocco",
+      "Flag of Ghana",
+      "Flag of Somalia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Vietnam's flag has one yellow star on a red background.",
+        "verdict": "fact",
+        "explanation": "A big five-pointed yellow star sits in the center of a red field.",
+        "fun_fact": "Vietnam's flag is often called the red flag with a yellow star."
+      },
+      {
+        "claim": "Vietnam's flag has five stars, just like China's flag.",
+        "verdict": "myth",
+        "explanation": "Vietnam's flag has just one big star; China's flag has five stars.",
+        "fun_fact": "Vietnam's flag is 3 units wide for every 2 units tall."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of China",
+      "Flag of Turkey",
+      "Flag of Japan"
+    ]
+  },
+  {
+    "id": "ENT-COU-102",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Japan",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Japanese Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A white flag with a bright red circle in the center fluttering in front of pink cherry blossoms, 9:16 vertical shot.",
+    "core_traits": [
+      "White flag with just one shape",
+      "The shape is a red circle",
+      "The circle stands for the sun",
+      "Flag of the island nation called the Land of the Rising Sun"
+    ],
+    "distractor_pool": [
+      "Flag of Bangladesh",
+      "Flag of Palau",
+      "Flag of South Korea",
+      "Flag of Laos",
+      "Flag of Greenland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The red circle on Japan's flag represents the sun.",
+        "verdict": "fact",
+        "explanation": "Japan is nicknamed the Land of the Rising Sun, and the flag shows a red sun disc.",
+        "fun_fact": "Bangladesh's flag also has a red circle, but on a green background."
+      },
+      {
+        "claim": "Japan's flag is one of the simplest flags in the world.",
+        "verdict": "fact",
+        "explanation": "It uses only two colors and one shape: a red circle on white.",
+        "fun_fact": "Japan's flag became the official national flag by law in 1999."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of South Korea",
+      "Flag of Bangladesh",
+      "Flag of China"
+    ]
+  },
+  {
+    "id": "ENT-COU-103",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Canada",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Maple Leaf Flag",
+      "Canadian Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flag with a red maple leaf on a white square between two red side bands waving over snowy pine forests, 9:16 vertical shot.",
+    "core_traits": [
+      "Red and white flag",
+      "Has a big leaf in the middle",
+      "The leaf comes from a maple tree",
+      "Has two red bands on the sides"
+    ],
+    "distractor_pool": [
+      "Flag of Peru",
+      "Flag of Lebanon",
+      "Flag of Austria",
+      "Flag of Japan",
+      "Flag of Switzerland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The maple leaf on Canada's flag has 11 points.",
+        "verdict": "fact",
+        "explanation": "The flag uses a simple stylized red maple leaf with exactly 11 points.",
+        "fun_fact": "Canada adopted its maple leaf flag in 1965."
+      },
+      {
+        "claim": "Canada's flag has always shown a maple leaf.",
+        "verdict": "myth",
+        "explanation": "Before 1965, Canada mostly used flags based on the British Red Ensign.",
+        "fun_fact": "February 15 is National Flag of Canada Day."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of the United States",
+      "Flag of Peru",
+      "Flag of Switzerland"
+    ]
+  },
+  {
+    "id": "ENT-COU-104",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of the United States",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Stars and Stripes",
+      "Old Glory",
+      "American Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flag with red and white stripes and white stars on a blue corner waving proudly against a sunny blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Red, white and blue flag",
+      "Has 13 stripes",
+      "Has 50 white stars",
+      "Each star stands for one state"
+    ],
+    "distractor_pool": [
+      "Flag of Liberia",
+      "Flag of Malaysia",
+      "Flag of the United Kingdom",
+      "Flag of Chile",
+      "Flag of Puerto Rico"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The US flag has 50 stars, one for each state.",
+        "verdict": "fact",
+        "explanation": "A star is added when a state joins; the 50th star was added for Hawaii in 1960.",
+        "fun_fact": "The 13 stripes stand for the original 13 colonies."
+      },
+      {
+        "claim": "The US flag has always had 50 stars.",
+        "verdict": "myth",
+        "explanation": "The first flags had 13 stars, and more stars were added as states joined.",
+        "fun_fact": "Astronauts placed US flags on the Moon during the Apollo missions."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of the United Kingdom",
+      "Flag of Liberia",
+      "Flag of Canada"
+    ]
+  },
+  {
+    "id": "ENT-COU-105",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of the United Kingdom",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Union Jack",
+      "Union Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flag with overlapping red and white crosses on a deep blue background waving above a red double-decker bus in London, 9:16 vertical shot.",
+    "core_traits": [
+      "Red, white and blue flag",
+      "Covered in overlapping crosses",
+      "Combines crosses for England, Scotland and Ireland",
+      "Also appears in the corner of Australia's and New Zealand's flags"
+    ],
+    "distractor_pool": [
+      "Flag of Australia",
+      "Flag of New Zealand",
+      "Flag of Fiji",
+      "Flag of Norway",
+      "Flag of Iceland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The UK flag mixes three crosses for England, Scotland and Ireland.",
+        "verdict": "fact",
+        "explanation": "The red cross of England, white diagonal of Scotland and red diagonal of Ireland overlap.",
+        "fun_fact": "Wales is part of the UK, but it is not shown on the Union Jack."
+      },
+      {
+        "claim": "The UK flag looks the same when flipped upside down.",
+        "verdict": "myth",
+        "explanation": "The red diagonal stripes are off-center, so an upside-down flag looks slightly different.",
+        "fun_fact": "Australia, New Zealand, Fiji and Tuvalu all include the Union Jack on their flags."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Australia",
+      "Flag of the United States",
+      "Flag of France"
+    ]
+  },
+  {
+    "id": "ENT-COU-106",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Brazil",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Brazilian Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A green flag with a big yellow diamond and a blue starry globe in the center waving above a lush green rainforest, 9:16 vertical shot.",
+    "core_traits": [
+      "Green flag with a yellow diamond",
+      "Has a blue circle inside the diamond",
+      "The circle shows a starry night sky",
+      "A white band across the circle has a motto on it"
+    ],
+    "distractor_pool": [
+      "Flag of Portugal",
+      "Flag of Jamaica",
+      "Flag of Argentina",
+      "Flag of Colombia",
+      "Flag of Mexico"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Brazil's flag shows the night sky with stars.",
+        "verdict": "fact",
+        "explanation": "The blue globe shows stars as they appeared over Rio de Janeiro on 15 November 1889.",
+        "fun_fact": "Each of the 27 stars stands for a Brazilian state or the Federal District."
+      },
+      {
+        "claim": "Brazil's flag includes the motto 'Order and Progress.'",
+        "verdict": "fact",
+        "explanation": "The motto is written in Portuguese across a white band on the blue globe.",
+        "fun_fact": "Brazil's flag is one of only a few national flags with words on it."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Argentina",
+      "Flag of Portugal",
+      "Flag of Jamaica"
+    ]
+  },
+  {
+    "id": "ENT-COU-107",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of France",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "French Tricolor",
+      "Tricolore"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flag with blue, white and red vertical stripes waving near the Eiffel Tower on a sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Three vertical stripes",
+      "Colors are blue, white and red",
+      "Blue is on the side closest to the flagpole",
+      "Nicknamed the Tricolor"
+    ],
+    "distractor_pool": [
+      "Flag of Italy",
+      "Flag of Ireland",
+      "Flag of Belgium",
+      "Flag of the Netherlands",
+      "Flag of Russia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "France's flag has blue, white and red vertical stripes.",
+        "verdict": "fact",
+        "explanation": "Blue is nearest the pole, white is in the middle and red is on the outside.",
+        "fun_fact": "Many countries borrowed France's three-stripe idea for their own flags."
+      },
+      {
+        "claim": "France's flag stripes go across, like the Netherlands' flag.",
+        "verdict": "myth",
+        "explanation": "France's stripes are vertical; the Netherlands has horizontal red, white and blue stripes.",
+        "fun_fact": "France's three-colored flag dates back to the 1790s."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Italy",
+      "Flag of the Netherlands",
+      "Flag of the United Kingdom"
+    ]
+  },
+  {
+    "id": "ENT-COU-108",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of South Korea",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "South Korean Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A white flag with a red and blue swirl circle in the middle and four black bar patterns in the corners waving in a gentle breeze, 9:16 vertical shot.",
+    "core_traits": [
+      "White flag with a circle in the center",
+      "The circle is a red and blue swirl",
+      "Has four black bar patterns in the corners",
+      "Flag of a peninsula country in East Asia"
+    ],
+    "distractor_pool": [
+      "Flag of Japan",
+      "Flag of Mongolia",
+      "Flag of China",
+      "Flag of Taiwan",
+      "Flag of North Korea"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "South Korea's flag has a red and blue circle like yin and yang.",
+        "verdict": "fact",
+        "explanation": "The swirl shows balance between opposites, a classic idea from East Asian philosophy.",
+        "fun_fact": "The four black symbols stand for sky, earth, water and fire."
+      },
+      {
+        "claim": "South Korea's flag background is white.",
+        "verdict": "fact",
+        "explanation": "The white background is commonly said to stand for peace and purity.",
+        "fun_fact": "Each black symbol is a trigram made of three broken or solid lines."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Japan",
+      "Flag of China",
+      "Flag of Mongolia"
+    ]
+  },
+  {
+    "id": "ENT-COU-109",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of China",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Five-Star Red Flag",
+      "Chinese Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A red flag with one large yellow star and four smaller yellow stars in the top corner waving in the wind, 9:16 vertical shot.",
+    "core_traits": [
+      "Red flag with yellow stars",
+      "Has five stars in total",
+      "One big star and four smaller ones",
+      "Stars are grouped in the top corner near the pole"
+    ],
+    "distractor_pool": [
+      "Flag of Vietnam",
+      "Flag of Hong Kong",
+      "Flag of Turkey",
+      "Flag of Kyrgyzstan",
+      "Flag of Morocco"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "China's flag has five yellow stars.",
+        "verdict": "fact",
+        "explanation": "One large star and four smaller stars sit together in the upper corner.",
+        "fun_fact": "Each of the four small stars points toward the center of the big star."
+      },
+      {
+        "claim": "China's flag is officially called the Five-Star Red Flag.",
+        "verdict": "fact",
+        "explanation": "The name simply describes its five yellow stars on a red background.",
+        "fun_fact": "China's flag was first raised in Beijing's Tiananmen Square in 1949."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Vietnam",
+      "Flag of Japan",
+      "Flag of India"
+    ]
+  },
+  {
+    "id": "ENT-COU-110",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of India",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Indian Tricolour",
+      "Indian Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A flag with saffron, white and green horizontal stripes and a navy blue wheel in the center waving in bright sunshine, 9:16 vertical shot.",
+    "core_traits": [
+      "Three horizontal stripes",
+      "Saffron on top, white in the middle, green at the bottom",
+      "Has a navy blue wheel in the center",
+      "The wheel has 24 spokes"
+    ],
+    "distractor_pool": [
+      "Flag of Niger",
+      "Flag of Ireland",
+      "Flag of Italy",
+      "Flag of Ivory Coast",
+      "Flag of Hungary"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The wheel on India's flag has 24 spokes.",
+        "verdict": "fact",
+        "explanation": "The navy blue wheel in the white stripe is often said to stand for motion and progress.",
+        "fun_fact": "India's official flags were traditionally made from hand-spun cotton or silk cloth."
+      },
+      {
+        "claim": "India's flag has three stripes of equal size.",
+        "verdict": "fact",
+        "explanation": "The saffron, white and green stripes are all the same height.",
+        "fun_fact": "India adopted its national flag on 22 July 1947."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Niger",
+      "Flag of Ireland",
+      "Flag of Italy"
+    ]
+  },
+  {
+    "id": "ENT-COU-111",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Australia",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Australian Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A dark blue flag with the Union Jack in the corner and white stars waving over a sunny beach with a kangaroo nearby, 9:16 vertical shot.",
+    "core_traits": [
+      "Dark blue flag with white stars",
+      "Has the Union Jack in the top corner",
+      "Shows the Southern Cross star pattern",
+      "Has a large seven-pointed star under the Union Jack"
+    ],
+    "distractor_pool": [
+      "Flag of New Zealand",
+      "Flag of Fiji",
+      "Flag of Tuvalu",
+      "Flag of the United Kingdom",
+      "Flag of Papua New Guinea"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Australia's flag shows the Southern Cross constellation.",
+        "verdict": "fact",
+        "explanation": "The Southern Cross shines clearly in the night sky of the Southern Hemisphere.",
+        "fun_fact": "The big seven-pointed star is called the Commonwealth Star."
+      },
+      {
+        "claim": "Australia's and New Zealand's flags are exactly the same.",
+        "verdict": "myth",
+        "explanation": "New Zealand's flag has four red stars, while Australia's has six white stars.",
+        "fun_fact": "Six points of the Commonwealth Star stand for the states, and one for the territories."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of New Zealand",
+      "Flag of the United Kingdom",
+      "Flag of Brazil"
+    ]
+  },
+  {
+    "id": "ENT-COU-112",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Germany",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "German Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flag with black, red and gold horizontal stripes waving in front of a fairy-tale castle on a green hill, 9:16 vertical shot.",
+    "core_traits": [
+      "Three horizontal stripes",
+      "Black stripe on top",
+      "Red stripe in the middle",
+      "Gold stripe at the bottom"
+    ],
+    "distractor_pool": [
+      "Flag of Belgium",
+      "Flag of Uganda",
+      "Flag of Lithuania",
+      "Flag of Armenia",
+      "Flag of Spain"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Germany's flag and Belgium's flag are the same.",
+        "verdict": "myth",
+        "explanation": "Both use black, red and gold-yellow, but Belgium's stripes are vertical and in another order.",
+        "fun_fact": "The bottom stripe on Germany's flag is officially called gold, not yellow."
+      },
+      {
+        "claim": "Germany's flag has three horizontal stripes.",
+        "verdict": "fact",
+        "explanation": "Black, red and gold stripes run across the flag from top to bottom.",
+        "fun_fact": "Germany's black, red and gold colors date back to the 1800s."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Belgium",
+      "Flag of France",
+      "Flag of Italy"
+    ]
+  },
+  {
+    "id": "ENT-COU-113",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Italy",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Italian Tricolour",
+      "Italian Flag"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flag with green, white and red vertical stripes waving above a sunny Italian town square, 9:16 vertical shot.",
+    "core_traits": [
+      "Three vertical stripes",
+      "Green is closest to the pole",
+      "White in the middle and red on the outside",
+      "Its colors match the basil, mozzarella and tomato on a famous pizza"
+    ],
+    "distractor_pool": [
+      "Flag of Mexico",
+      "Flag of Ireland",
+      "Flag of France",
+      "Flag of Hungary",
+      "Flag of India"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Italy's flag colors were chosen because of pizza.",
+        "verdict": "myth",
+        "explanation": "It's a fun joke, but the flag's colors were used in the 1790s, before that pizza existed.",
+        "fun_fact": "Pizza Margherita uses basil, mozzarella and tomato, matching Italy's flag colors."
+      },
+      {
+        "claim": "Italy's and Mexico's flags use the same three colors.",
+        "verdict": "fact",
+        "explanation": "Both have green, white and red vertical stripes, but Mexico's has an emblem in the center.",
+        "fun_fact": "Italy celebrates its Flag Day on 7 January."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Mexico",
+      "Flag of Ireland",
+      "Flag of France"
+    ]
+  },
+  {
+    "id": "ENT-COU-114",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Mexico",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Mexican Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A flag with green, white and red vertical stripes and an eagle perched on a cactus in the center waving under a sunny desert sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Green, white and red vertical stripes",
+      "Has a picture in the middle stripe",
+      "The picture shows an eagle perched on a cactus",
+      "Based on a legend about where a great city was founded"
+    ],
+    "distractor_pool": [
+      "Flag of Italy",
+      "Flag of Ireland",
+      "Flag of Hungary",
+      "Flag of Niger",
+      "Flag of Bolivia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mexico's flag shows an eagle on a cactus.",
+        "verdict": "fact",
+        "explanation": "It comes from an Aztec legend about where to build their great city.",
+        "fun_fact": "That city, Tenochtitlan, stood where Mexico City is today."
+      },
+      {
+        "claim": "Mexico's flag looks a lot like Italy's flag.",
+        "verdict": "fact",
+        "explanation": "Both have green, white and red stripes, but Mexico's is longer and has an emblem.",
+        "fun_fact": "Mexico celebrates Flag Day every year on 24 February."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Italy",
+      "Flag of Brazil",
+      "Flag of Argentina"
+    ]
+  },
+  {
+    "id": "ENT-COU-115",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Switzerland",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Swiss Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A square red flag with a white cross in the center waving in front of snowy Alps and green meadows, 9:16 vertical shot.",
+    "core_traits": [
+      "Red flag with a white cross",
+      "The cross has equal arms and does not touch the edges",
+      "The flag is square, not rectangular",
+      "Flag of an Alpine country famous for chocolate and cheese"
+    ],
+    "distractor_pool": [
+      "Flag of Denmark",
+      "Flag of Vatican City",
+      "Flag of Tonga",
+      "Flag of Georgia",
+      "Flag of Canada"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Switzerland's flag is square.",
+        "verdict": "fact",
+        "explanation": "It is one of only two square national flags; the other belongs to Vatican City.",
+        "fun_fact": "The Red Cross symbol is the Swiss flag with its colors swapped."
+      },
+      {
+        "claim": "Switzerland's flag is the same as Denmark's flag.",
+        "verdict": "myth",
+        "explanation": "Denmark's white cross is off-center and touches the edges; Switzerland's is centered on a square.",
+        "fun_fact": "Swiss boats fly a rectangular version of the flag."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Denmark",
+      "Flag of Nepal",
+      "Flag of Canada"
+    ]
+  },
+  {
+    "id": "ENT-COU-116",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Nepal",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Nepalese Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A flag shaped like two stacked crimson triangles with a blue border, showing a white moon and sun, fluttering before snowy Himalayan peaks, 9:16 vertical shot.",
+    "core_traits": [
+      "Not shaped like a rectangle",
+      "Made of two stacked triangles",
+      "Crimson with a blue border",
+      "Shows a white moon and a white sun"
+    ],
+    "distractor_pool": [
+      "Flag of Bhutan",
+      "Flag of Switzerland",
+      "Flag of India",
+      "Flag of Sri Lanka",
+      "Flag of Bangladesh"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Nepal has the only national flag that is not a rectangle or square.",
+        "verdict": "fact",
+        "explanation": "It is shaped like two stacked triangles, a bit like two mountain peaks.",
+        "fun_fact": "Its crimson color matches the rhododendron, Nepal's national flower."
+      },
+      {
+        "claim": "Nepal's constitution explains exactly how to draw the flag.",
+        "verdict": "fact",
+        "explanation": "It gives step-by-step geometry instructions for drawing the shape, moon and sun.",
+        "fun_fact": "The moon and sun express the hope that Nepal lasts as long as they do."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Switzerland",
+      "Flag of Bhutan",
+      "Flag of India"
+    ]
+  },
+  {
+    "id": "ENT-COU-117",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of South Africa",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "South African Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A colorful flag with a sideways green Y shape and red, blue, black, yellow and white bands waving over a sunny savanna with a flat-topped mountain behind, 9:16 vertical shot.",
+    "core_traits": [
+      "Very colorful flag with six colors",
+      "Has a sideways green Y shape",
+      "First flown in 1994",
+      "Flag of the southernmost country in Africa"
+    ],
+    "distractor_pool": [
+      "Flag of Kenya",
+      "Flag of Namibia",
+      "Flag of Zimbabwe",
+      "Flag of Jamaica",
+      "Flag of Botswana"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "South Africa's flag uses six colors.",
+        "verdict": "fact",
+        "explanation": "It has red, white, green, yellow, black and blue, with no official meaning given to each color.",
+        "fun_fact": "The flag was first flown in 1994, the year Nelson Mandela became president."
+      },
+      {
+        "claim": "The green Y shape stands for different groups coming together.",
+        "verdict": "fact",
+        "explanation": "The design is often described as paths meeting and then continuing as one.",
+        "fun_fact": "The flag was designed by Frederick Brownell, South Africa's State Herald at the time."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Kenya",
+      "Flag of Brazil",
+      "Flag of Jamaica"
+    ]
+  },
+  {
+    "id": "ENT-COU-118",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Argentina",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Argentine Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A flag with light blue and white horizontal stripes and a golden sun with a face in the center waving in a clear sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Light blue and white stripes",
+      "The white stripe sits in the middle",
+      "Has a golden sun with a face",
+      "The sun is called the Sun of May"
+    ],
+    "distractor_pool": [
+      "Flag of Uruguay",
+      "Flag of Nicaragua",
+      "Flag of El Salvador",
+      "Flag of Honduras",
+      "Flag of Guatemala"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Argentina's flag has a sun with a face.",
+        "verdict": "fact",
+        "explanation": "This golden Sun of May has a human-looking face and many rays.",
+        "fun_fact": "Uruguay's flag also shows a Sun of May."
+      },
+      {
+        "claim": "Argentina's flag was created by Manuel Belgrano.",
+        "verdict": "fact",
+        "explanation": "Belgrano designed the light blue and white flag in 1812.",
+        "fun_fact": "Argentina celebrates its Flag Day on 20 June."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Uruguay",
+      "Flag of Brazil",
+      "Flag of Greece"
+    ]
+  },
+  {
+    "id": "ENT-COU-119",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Thailand",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Thai Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A flag with red, white and a wide blue middle stripe waving above a busy floating market full of colorful fruit boats, 9:16 vertical shot.",
+    "core_traits": [
+      "Five horizontal stripes",
+      "Uses red, white and blue",
+      "The middle blue stripe is twice as wide",
+      "Looks the same when flipped upside down"
+    ],
+    "distractor_pool": [
+      "Flag of Costa Rica",
+      "Flag of Laos",
+      "Flag of the Netherlands",
+      "Flag of Cambodia",
+      "Flag of Norway"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Thailand's flag has a wide blue stripe in the middle.",
+        "verdict": "fact",
+        "explanation": "The blue middle stripe is twice as tall as each red or white stripe.",
+        "fun_fact": "Costa Rica's flag has a similar pattern, but with red and blue swapped."
+      },
+      {
+        "claim": "Thailand's current flag has been used since 1917.",
+        "verdict": "fact",
+        "explanation": "King Vajiravudh introduced the red, white and blue striped flag in 1917.",
+        "fun_fact": "Some earlier flags of Thailand showed a white elephant on red."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Costa Rica",
+      "Flag of Vietnam",
+      "Flag of Japan"
+    ]
+  },
+  {
+    "id": "ENT-COU-120",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Kenya",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Kenyan Flag"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A flag with black, red and green stripes separated by thin white lines and a traditional Maasai shield in the center waving over a sunny savanna, 9:16 vertical shot.",
+    "core_traits": [
+      "Black, red and green stripes",
+      "Thin white lines between the stripes",
+      "Has a traditional Maasai shield in the middle",
+      "Flag of an East African country famous for safaris"
+    ],
+    "distractor_pool": [
+      "Flag of South Sudan",
+      "Flag of Malawi",
+      "Flag of Uganda",
+      "Flag of Tanzania",
+      "Flag of Libya"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Kenya's flag shows a traditional Maasai shield.",
+        "verdict": "fact",
+        "explanation": "The shield in the center is a well-known design from the Maasai people.",
+        "fun_fact": "Kenya adopted its flag in 1963."
+      },
+      {
+        "claim": "The green stripe on Kenya's flag stands for the land.",
+        "verdict": "fact",
+        "explanation": "Green represents Kenya's land and natural riches.",
+        "fun_fact": "The thin white lines stand for peace and honesty."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of South Africa",
+      "Flag of Uganda",
+      "Flag of Tanzania"
+    ]
+  },
+  {
+    "id": "ENT-COU-121",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Sweden",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Swedish Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A blue flag with a yellow cross shifted toward the pole waving above red wooden cottages beside a calm lake, 9:16 vertical shot.",
+    "core_traits": [
+      "Blue flag with a yellow cross",
+      "The cross is shifted toward the flagpole",
+      "Part of the Nordic cross flag family",
+      "Flag of a Scandinavian country"
+    ],
+    "distractor_pool": [
+      "Flag of Finland",
+      "Flag of Denmark",
+      "Flag of Norway",
+      "Flag of Iceland",
+      "Flag of Ukraine"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Sweden's flag has a yellow cross on a blue background.",
+        "verdict": "fact",
+        "explanation": "Its off-center cross design is known as a Nordic cross.",
+        "fun_fact": "Sweden celebrates its National Day and Flag Day on 6 June."
+      },
+      {
+        "claim": "Several Nordic countries use the same cross design.",
+        "verdict": "fact",
+        "explanation": "Denmark, Norway, Finland, Iceland and Sweden all have off-center crosses.",
+        "fun_fact": "Denmark's flag is thought to be the oldest Nordic cross flag."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Finland",
+      "Flag of Denmark",
+      "Flag of Norway"
+    ]
+  },
+  {
+    "id": "ENT-COU-122",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Greece",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Greek Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A flag with blue and white stripes and a white cross in the blue corner waving above white houses with blue roofs by the sea, 9:16 vertical shot.",
+    "core_traits": [
+      "Blue and white flag",
+      "Has nine horizontal stripes",
+      "A white cross sits in the top corner",
+      "Flag of a Mediterranean country with many islands"
+    ],
+    "distractor_pool": [
+      "Flag of Uruguay",
+      "Flag of Finland",
+      "Flag of Argentina",
+      "Flag of Cyprus",
+      "Flag of Honduras"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Greece's flag has nine blue and white stripes.",
+        "verdict": "fact",
+        "explanation": "Five blue stripes and four white stripes run across the flag.",
+        "fun_fact": "The blue and white are often said to stand for the sea and sky of Greece."
+      },
+      {
+        "claim": "Greece's flag has a white cross in the top corner.",
+        "verdict": "fact",
+        "explanation": "The cross sits on a blue square in the corner nearest the flagpole.",
+        "fun_fact": "Uruguay's flag also has nine blue and white stripes."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Uruguay",
+      "Flag of Finland",
+      "Flag of Argentina"
+    ]
+  },
+  {
+    "id": "ENT-COU-123",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Egypt",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Egyptian Flag"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A flag with red, white and black horizontal stripes and a golden eagle in the center waving near the pyramids under a sunny sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Red, white and black horizontal stripes",
+      "Has a golden eagle in the middle",
+      "The eagle is called the Eagle of Saladin",
+      "Flag of the country with the Great Pyramids"
+    ],
+    "distractor_pool": [
+      "Flag of Iraq",
+      "Flag of Yemen",
+      "Flag of Syria",
+      "Flag of Sudan",
+      "Flag of Germany"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Egypt's flag has a golden eagle in the center.",
+        "verdict": "fact",
+        "explanation": "The eagle, known as the Eagle of Saladin, sits on the white stripe.",
+        "fun_fact": "Yemen's flag has the same red, white and black stripes, but no eagle."
+      },
+      {
+        "claim": "Egypt's current flag was adopted in 1984.",
+        "verdict": "fact",
+        "explanation": "The stripes stayed similar for decades, but the center emblem changed over time.",
+        "fun_fact": "The eagle holds a scroll with Egypt's name written in Arabic."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Yemen",
+      "Flag of Germany",
+      "Flag of Kenya"
+    ]
+  },
+  {
+    "id": "ENT-COU-124",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_flags",
+    "name": "Flag of Turkey",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Turkish Flag"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A red flag with a white crescent moon and a white star waving over a sunny seaside city at golden hour, 9:16 vertical shot.",
+    "core_traits": [
+      "Red flag with white shapes",
+      "Has a white crescent moon",
+      "Has a white star beside the moon",
+      "Flag of a country that sits in both Europe and Asia"
+    ],
+    "distractor_pool": [
+      "Flag of Tunisia",
+      "Flag of Pakistan",
+      "Flag of Algeria",
+      "Flag of Azerbaijan",
+      "Flag of Singapore"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Turkey's flag has a white crescent and star on red.",
+        "verdict": "fact",
+        "explanation": "The crescent moon and five-pointed star sit closer to the flagpole side.",
+        "fun_fact": "Tunisia's flag also has a crescent and star on a red background."
+      },
+      {
+        "claim": "An official law sets the exact design of Turkey's flag.",
+        "verdict": "fact",
+        "explanation": "A 1936 flag law sets the exact sizes and positions of the crescent and star.",
+        "fun_fact": "Istanbul, Turkey's biggest city, stretches across both Europe and Asia."
+      }
+    ],
+    "versus_candidates": [
+      "Flag of Tunisia",
+      "Flag of Pakistan",
+      "Flag of Japan"
     ]
   }
 ]

@@ -390,7 +390,7 @@ describe("Phase 10 - Image Prompt, Request and Cache Propagation", () => {
     });
 
     it("provides Verdict safe region without literal percentage annotations", () => {
-      const rules = framingRules("4:3", "hero_question_image", { layoutId: "verdict_true_false" });
+      const rules = framingRules("4:3", "hero_question_image", { layoutId: "verdict_yes_no" });
       expect(rules).toContain("Output aspect ratio: 4:3.");
       expect(rules).toContain("safe region with comfortable breathing room");
       expect(rules).toContain("verdict question card");

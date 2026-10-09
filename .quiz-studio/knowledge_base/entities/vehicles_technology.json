@@ -5,6 +5,7 @@
     "subtopic_id": "aviation",
     "name": "Airplane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Commercial Airplane",
       "Airliner",
@@ -52,6 +53,7 @@
     "subtopic_id": "rail",
     "name": "Steam Locomotive",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steam Train",
       "Iron Horse"
@@ -97,6 +99,7 @@
     "subtopic_id": "maritime",
     "name": "Submarine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "U-Boat",
       "Submersible"
@@ -142,6 +145,7 @@
     "subtopic_id": "automotive",
     "name": "Electric Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "EV",
       "Electric Vehicle"
@@ -187,6 +191,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Smartphone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mobile Phone",
       "Cell Phone",
@@ -233,6 +238,7 @@
     "subtopic_id": "aviation",
     "name": "Helicopter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chopper",
       "Rotary-Wing Aircraft",
@@ -279,6 +285,7 @@
     "subtopic_id": "aviation",
     "name": "Hot Air Balloon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aerostat",
       "Thermal Airship",
@@ -325,6 +332,7 @@
     "subtopic_id": "aviation",
     "name": "Blimp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Non-Rigid Airship",
       "Goodyear Blimp",
@@ -371,6 +379,7 @@
     "subtopic_id": "aviation",
     "name": "Hang Glider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Delta Wing",
       "Rogallo Glider"
@@ -416,6 +425,7 @@
     "subtopic_id": "aviation",
     "name": "Parachute",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Canopy",
       "Chute",
@@ -462,6 +472,7 @@
     "subtopic_id": "aviation",
     "name": "Fighter Jet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Combat Jet",
       "Supersonic Interceptor",
@@ -470,14 +481,14 @@
     "difficulty": 1,
     "visual_anchor": "Sharp twin-engine supersonic fighter jet tearing through the sky with bright afterburners blazing at dusk.",
     "core_traits": [
-      "High-speed, highly maneuverable military fixed-wing aircraft designed primarily for air-to-air combat",
+      "High-speed, highly maneuverable jet aircraft built for super-fast turns, climbs, and dives",
       "Powered by advanced afterburning turbofan engines achieving speeds beyond Mach 2",
-      "Equipped with radar-guided air-to-air missiles, precision bombs, and high-rate autocannons",
+      "Pilots sit under a clear bubble-shaped canopy that gives a wide view in every direction",
       "Flown by pilots wearing pressurized G-suits to withstand turns exceeding 9 times Earth gravity"
     ],
     "distractor_pool": [
       "Commercial Airplane",
-      "Stealth Bomber",
+      "Supersonic Concorde",
       "Attack Helicopter",
       "Cargo Plane",
       "Drone"
@@ -497,7 +508,7 @@
       }
     ],
     "versus_candidates": [
-      "Stealth Bomber",
+      "Supersonic Concorde",
       "Attack Helicopter",
       "Commercial Airplane"
     ]
@@ -508,6 +519,7 @@
     "subtopic_id": "aviation",
     "name": "Supersonic Concorde",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Concorde SST",
       "Aerospatiale BAC Concorde"
@@ -525,7 +537,7 @@
       "Fighter Jet",
       "Space Shuttle",
       "Cargo Plane",
-      "Stealth Bomber"
+      "Seaplane"
     ],
     "facts_and_myths": [
       {
@@ -553,6 +565,7 @@
     "subtopic_id": "aviation",
     "name": "Cargo Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Air Freighter",
       "Cargo Aircraft",
@@ -599,6 +612,7 @@
     "subtopic_id": "aviation",
     "name": "Seaplane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Floatplane",
       "Hydroplane",
@@ -645,6 +659,7 @@
     "subtopic_id": "aviation",
     "name": "Glider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sailplane",
       "Soaring Plane",
@@ -691,6 +706,7 @@
     "subtopic_id": "aviation",
     "name": "Biplane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Double-Wing Aircraft",
       "Vintage Biplane"
@@ -699,7 +715,7 @@
     "visual_anchor": "Classic wooden and fabric yellow biplane performing an aerial loop with dual wings connected by gleaming wire struts.",
     "core_traits": [
       "Fixed-wing aircraft featuring two stacked wings, one placed above the other",
-      "Dominant design during the early aviation era, World War I, and 1920s barnstorming",
+      "Dominant design during the early aviation era and the 1920s barnstorming air shows",
       "Stacked wing architecture provided high structural strength with lightweight wood and fabric",
       "Renowned for exceptional low-speed agility and short takeoff distances"
     ],
@@ -736,6 +752,7 @@
     "subtopic_id": "aviation",
     "name": "Stealth Bomber",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "B-2 Spirit",
       "Flying Wing Bomber",
@@ -782,6 +799,7 @@
     "subtopic_id": "aviation",
     "name": "Flying Boat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clipper",
       "Hull Seaplane",
@@ -812,8 +830,8 @@
       {
         "claim": "Modern aviation no longer uses flying boats for any purpose.",
         "verdict": "myth",
-        "explanation": "Giant modern amphibious flying boats like the Canadair CL-415 and ShinMaywa US-2 serve as vital water bombers and sea rescue craft.",
-        "fun_fact": "Water bomber flying boats can scoop 6,000 liters of lake water into their belly tanks in just 12 seconds."
+        "explanation": "Big modern amphibious planes like the Canadair CL-415 and ShinMaywa US-2 help fight wildfires and rescue people at sea.",
+        "fun_fact": "Firefighting flying boats can scoop about 6,000 liters of lake water into their tanks in just 12 seconds."
       }
     ],
     "versus_candidates": [
@@ -828,8 +846,8 @@
     "subtopic_id": "aviation",
     "name": "Aerial Firefighting Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Water Bomber",
       "Air Tanker",
       "Airtanker"
     ],
@@ -874,6 +892,7 @@
     "subtopic_id": "aviation",
     "name": "Jetpack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rocket Belt",
       "Personal Jet Suit",
@@ -920,6 +939,7 @@
     "subtopic_id": "aviation",
     "name": "Paraglider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paragliding Wing",
       "Ram-Air Glider"
@@ -965,6 +985,7 @@
     "subtopic_id": "aviation",
     "name": "Wingsuit",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Birdman Suit",
       "Squirrel Suit",
@@ -1011,6 +1032,7 @@
     "subtopic_id": "aviation",
     "name": "Zeppelin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rigid Airship",
       "Dirigible",
@@ -1057,6 +1079,7 @@
     "subtopic_id": "aviation",
     "name": "Spy Plane",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "SR-71 Blackbird",
       "U-2 Dragon Lady",
@@ -1103,6 +1126,7 @@
     "subtopic_id": "aviation",
     "name": "Spaceplane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aerospace Plane",
       "Suborbital Spaceplane",
@@ -1149,6 +1173,7 @@
     "subtopic_id": "aviation",
     "name": "Air Ambulance Helicopter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medevac Helicopter",
       "EMS Chopper",
@@ -1180,7 +1205,7 @@
         "claim": "Medevac helicopters dramatically increase survival rates for trauma patients during the critical 'golden hour'.",
         "verdict": "fact",
         "explanation": "The golden hour refers to the first 60 minutes after severe traumatic injury where rapid definitive care saves lives.",
-        "fun_fact": "Helicopter medical transport was first popularized during the Korean and Vietnam wars."
+        "fun_fact": "Many hospitals have rooftop helipads so air ambulances can land just steps from the emergency room."
       }
     ],
     "versus_candidates": [
@@ -1195,6 +1220,7 @@
     "subtopic_id": "aviation",
     "name": "Bush Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wilderness Aircraft",
       "STOL Aircraft",
@@ -1241,6 +1267,7 @@
     "subtopic_id": "aviation",
     "name": "Military Transport Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "C-130 Hercules",
       "Tactical Airlifter",
@@ -1258,7 +1285,7 @@
       "Cargo Plane",
       "Commercial Airplane",
       "Fighter Jet",
-      "Stealth Bomber",
+      "Seaplane",
       "Helicopter"
     ],
     "facts_and_myths": [
@@ -1287,6 +1314,7 @@
     "subtopic_id": "aviation",
     "name": "Drone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "UAV",
       "Quadcopter",
@@ -1333,6 +1361,7 @@
     "subtopic_id": "aviation",
     "name": "Solar-Powered Airplane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solar Impulse",
       "Sun Flyer",
@@ -1379,6 +1408,7 @@
     "subtopic_id": "aviation",
     "name": "Aerobatic Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stunt Plane",
       "Air Racer",
@@ -1425,17 +1455,18 @@
     "subtopic_id": "aviation",
     "name": "Vintage Triplane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fokker Dr.I",
       "Three-Wing Fighter",
       "Red Baron Plane"
     ],
     "difficulty": 2,
-    "visual_anchor": "Iconic crimson three-winged Fokker Triplane diving steeply through World War I clouds with rotary engine humming.",
+    "visual_anchor": "Iconic crimson three-winged Fokker Triplane swooping through puffy white clouds with its rotary engine humming.",
     "core_traits": [
-      "Early fighter aircraft featuring three stacked main wings mounted vertically on the fuselage",
-      "Achieved immortal fame during World War I as the aircraft flown by the 'Red Baron' Manfred von Richthofen",
-      "Offered an extraordinary rate of climb and unmatched dogfight turning agility at low speeds",
+      "Early aircraft featuring three stacked main wings mounted one above another on the fuselage",
+      "Became world-famous as the bright red plane flown by the pilot nicknamed the 'Red Baron'",
+      "Offered an extraordinary rate of climb and very tight turning agility at low speeds",
       "Powered by a whirling rotary radial engine where the cylinders spun around a stationary crankshaft"
     ],
     "distractor_pool": [
@@ -1447,10 +1478,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Manfred von Richthofen, the Red Baron, scored all 80 of his aerial victories in the Fokker Triplane.",
+        "claim": "Triplanes were the most common kind of airplane in the early days of flying.",
         "verdict": "myth",
-        "explanation": "He scored only 19 of his 80 kills in the Dr.I triplane; the majority were won in Albatros biplanes.",
-        "fun_fact": "His red triplane became an international cultural icon despite his short operational time in it."
+        "explanation": "Biplanes were far more common; a third wing added extra drag and weight, so only a few triplane designs were built.",
+        "fun_fact": "The bright red Fokker Dr.I, first built in 1917, is the most famous triplane ever made."
       },
       {
         "claim": "In rotary aircraft engines of that era, the engine cylinders spun around together with the propeller.",
@@ -1471,6 +1502,7 @@
     "subtopic_id": "aviation",
     "name": "VTOL Jet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Harrier Jump Jet",
       "F-35B Lightning II",
@@ -1488,21 +1520,21 @@
       "Fighter Jet",
       "Helicopter",
       "Tiltrotor Aircraft",
-      "Stealth Bomber",
+      "Airship",
       "Drone"
     ],
     "facts_and_myths": [
       {
         "claim": "VTOL jets take off vertically on every single operational combat mission.",
         "verdict": "myth",
-        "explanation": "Taking off vertically consumes vast amounts of fuel and severely limits weapon payload; they usually perform Short Take-Off and Vertical Landing (STOVL).",
-        "fun_fact": "Running takeoffs along a short ramp allow the jet to lift thousands of pounds of extra bombs and fuel."
+        "explanation": "Taking off straight up burns huge amounts of fuel, so they usually use a short rolling takeoff and land vertically.",
+        "fun_fact": "A short upward-curving ramp on some ships helps the jet lift off while carrying more fuel."
       },
       {
-        "claim": "The Harrier jump jet could rotate its exhaust nozzles forward in mid-flight to decelerate violently in dogfights.",
+        "claim": "A VTOL jet can hover in mid-air like a helicopter.",
         "verdict": "fact",
-        "explanation": "Called 'viffing' (vectoring in forward flight), pilots used this combat trick to cause pursuing enemy jets to overshoot.",
-        "fun_fact": "The Royal Air Force demonstrated this tactical move during the 1982 Falklands War."
+        "explanation": "It points its engine thrust straight down, pushing hard enough to hold the jet's whole weight up in the air.",
+        "fun_fact": "The British Harrier, which entered service in 1969, was the first successful vertical takeoff jet."
       }
     ],
     "versus_candidates": [
@@ -1517,6 +1549,7 @@
     "subtopic_id": "aviation",
     "name": "Search and Rescue Helicopter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "SAR Chopper",
       "Coast Guard Helicopter",
@@ -1563,6 +1596,7 @@
     "subtopic_id": "aviation",
     "name": "Heavy-Lift Helicopter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skycrane",
       "CH-47 Chinook",
@@ -1609,6 +1643,7 @@
     "subtopic_id": "aviation",
     "name": "Reconnaissance Balloon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Observation Balloon",
       "Aerostat Radar",
@@ -1618,7 +1653,7 @@
     "visual_anchor": "Massive tethered aerodynamic aerostat balloon floating thousands of feet above the desert carrying high-tech surveillance radar.",
     "core_traits": [
       "Lighter-than-air tethered or free-floating gas envelope carrying intelligence sensors and communication relays",
-      "Historically deployed from the American Civil War and World War I to observe artillery fire and enemy troop movements",
+      "Among the earliest flying machines used as high lookout posts with a view stretching for many miles",
       "Modern stratospheric variants float in near-space at 60,000 to 100,000 feet carrying solar-powered sensor arrays",
       "Provides persistent, long-duration monitoring over fixed territories at far lower cost than satellites"
     ],
@@ -1631,10 +1666,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Observation balloons in World War I were the first military aircraft where observers were equipped with parachutes.",
+        "claim": "Some lookout balloons stay tied to the ground by a long cable.",
         "verdict": "fact",
-        "explanation": "Because balloons were stationary targets filled with flammable hydrogen, observers had parachutes years before fighter pilots did.",
-        "fun_fact": "Attacking enemy observation balloons was among the most dangerous missions for fighter aces due to heavy anti-aircraft rings."
+        "explanation": "These tethered balloons, called aerostats, float high on a cable so their sensors can watch over a wide area.",
+        "fun_fact": "Tethered aerostats can stay up in the sky for weeks at a time without landing."
       },
       {
         "claim": "Stratospheric spy balloons have no way to control their direction and simply drift randomly forever.",
@@ -1655,6 +1690,7 @@
     "subtopic_id": "aviation",
     "name": "Attack Helicopter",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Gunship",
       "AH-64 Apache",
@@ -1701,13 +1737,14 @@
     "subtopic_id": "aviation",
     "name": "Experimental Rocket Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bell X-1",
       "North American X-15",
       "X-Plane"
     ],
     "difficulty": 2,
-    "visual_anchor": "Bullet-shaped orange Bell X-1 dropping from the bomb bay of a B-29 bomber before igniting four rocket chambers into supersonic flight.",
+    "visual_anchor": "Bullet-shaped orange Bell X-1 dropping from beneath a giant four-engine mother plane before igniting four rocket chambers into supersonic flight.",
     "core_traits": [
       "Research aircraft powered by liquid-propellant rocket engines rather than air-breathing jet engines",
       "Designed to explore extreme aerodynamic frontiers, supersonic flight, and hypersonic atmospheric entry",
@@ -1747,6 +1784,7 @@
     "subtopic_id": "aviation",
     "name": "Skydiving Plane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jump Ship",
       "Dropzone Aircraft",
@@ -1793,6 +1831,7 @@
     "subtopic_id": "spacecraft",
     "name": "Space Shuttle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Space Transportation System",
       "Orbiter",
@@ -1839,6 +1878,7 @@
     "subtopic_id": "spacecraft",
     "name": "Multi-Stage Rocket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Launch Vehicle",
       "Orbital Rocket",
@@ -1848,7 +1888,7 @@
     "visual_anchor": "Mighty skyscraper-sized multi-stage rocket ascending majestically into the twilight sky shedding its first booster stage.",
     "core_traits": [
       "Space vehicle utilizing stacked rocket stages to reach orbital velocity or escape Earth gravity",
-      "Discards spent propellant tanks and heavy booster engines in sequence as fuel is exhausted to shed dead weight",
+      "Drops empty fuel tanks and booster engines in sequence as fuel runs out, making the rocket lighter",
       "Propelled by chemical reaction mass combining liquid kerosene or hydrogen with liquid oxygen oxidizer",
       "Pioneered historically by Konstantin Tsiolkovsky's rocket equation and Robert Goddard's liquid rocket tests"
     ],
@@ -1885,6 +1925,7 @@
     "subtopic_id": "spacecraft",
     "name": "International Space Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ISS",
       "Orbital Station",
@@ -1931,6 +1972,7 @@
     "subtopic_id": "spacecraft",
     "name": "Lunar Rover",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moon Buggy",
       "LRV",
@@ -1977,6 +2019,7 @@
     "subtopic_id": "spacecraft",
     "name": "Mars Rover",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Curiosity",
       "Perseverance",
@@ -2023,6 +2066,7 @@
     "subtopic_id": "spacecraft",
     "name": "Space Telescope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hubble",
       "James Webb Space Telescope",
@@ -2069,6 +2113,7 @@
     "subtopic_id": "spacecraft",
     "name": "Communications Satellite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Comsat",
       "Geostationary Satellite",
@@ -2100,7 +2145,7 @@
         "claim": "All communications satellites stay in orbit forever without needing any steering or propulsion.",
         "verdict": "myth",
         "explanation": "Gravitational tugs from the Moon, Sun, and Earth oblateness require satellites to use station-keeping thrusters to maintain position.",
-        "fun_fact": "At the end of their 15-year operational lives, geostationary satellites are boosted into a graveyard orbit higher up."
+        "fun_fact": "At the end of their 15-year working lives, geostationary satellites are boosted into a higher 'disposal orbit' to make room."
       }
     ],
     "versus_candidates": [
@@ -2115,6 +2160,7 @@
     "subtopic_id": "spacecraft",
     "name": "Apollo Lunar Module",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "LEM",
       "Lunar Excursion Module",
@@ -2161,6 +2207,7 @@
     "subtopic_id": "spacecraft",
     "name": "Space Capsule",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crew Capsule",
       "Apollo CM",
@@ -2207,6 +2254,7 @@
     "subtopic_id": "spacecraft",
     "name": "Interplanetary Space Probe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Voyager",
       "New Horizons",
@@ -2253,6 +2301,7 @@
     "subtopic_id": "spacecraft",
     "name": "Solar Observatory Satellite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solar Probe",
       "SOHO",
@@ -2299,6 +2348,7 @@
     "subtopic_id": "spacecraft",
     "name": "Reusable Rocket Booster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Falcon 9 First Stage",
       "Propulsive Landing Booster",
@@ -2330,7 +2380,7 @@
         "claim": "Reusable rocket boosters use parachutes to float down slowly onto their ocean landing platforms.",
         "verdict": "myth",
         "explanation": "Boosters land propulsively, using pinpoint rocket engine thrust to decelerate from supersonic speeds to zero velocity at touchdown.",
-        "fun_fact": "The maneuver is known as a 'hoverslam' or 'suicide burn' because the rocket cannot hover; it must reach zero speed precisely at ground level."
+        "fun_fact": "The final landing burn is called a 'hoverslam' because the booster must reach zero speed exactly at touchdown."
       }
     ],
     "versus_candidates": [
@@ -2345,6 +2395,7 @@
     "subtopic_id": "spacecraft",
     "name": "Astronaut Jetpack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Manned Maneuvering Unit",
       "MMU",
@@ -2391,6 +2442,7 @@
     "subtopic_id": "spacecraft",
     "name": "Lunar Lander",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moon Lander",
       "Commercial Lunar Lander",
@@ -2437,6 +2489,7 @@
     "subtopic_id": "spacecraft",
     "name": "Mars Helicopter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ingenuity",
       "Rotorcraft Lander",
@@ -2483,6 +2536,7 @@
     "subtopic_id": "spacecraft",
     "name": "Cargo Resupply Spacecraft",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cargo Dragon",
       "Progress",
@@ -2529,6 +2583,7 @@
     "subtopic_id": "spacecraft",
     "name": "Weather Satellite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Meteorological Satellite",
       "GOES",
@@ -2575,6 +2630,7 @@
     "subtopic_id": "spacecraft",
     "name": "GPS Navigation Satellite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Navstar",
       "GNSS Satellite",
@@ -2621,6 +2677,7 @@
     "subtopic_id": "spacecraft",
     "name": "Orbital Space Laboratory",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skylab",
       "Mir",
@@ -2667,6 +2724,7 @@
     "subtopic_id": "spacecraft",
     "name": "CubeSat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nanosatellite",
       "Miniature Satellite",
@@ -2713,6 +2771,7 @@
     "subtopic_id": "spacecraft",
     "name": "Deep Space Probe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pioneer",
       "Cassini-Huygens",
@@ -2759,6 +2818,7 @@
     "subtopic_id": "spacecraft",
     "name": "Sample Return Capsule",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "OSIRIS-REx SRC",
       "Hayabusa Capsule",
@@ -2805,6 +2865,7 @@
     "subtopic_id": "spacecraft",
     "name": "Crew Spacecraft",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crew Dragon",
       "Orion MPCV",
@@ -2851,6 +2912,7 @@
     "subtopic_id": "spacecraft",
     "name": "Solar Sail Spacecraft",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "LightSail",
       "IKAROS",
@@ -2897,6 +2959,7 @@
     "subtopic_id": "rail",
     "name": "Bullet Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shinkansen",
       "High-Speed Rail",
@@ -2925,7 +2988,7 @@
         "fun_fact": "The biomimetic design also reduced electricity consumption by 15% and increased speed by 10%."
       },
       {
-        "claim": "In its 60-year history carrying over 10 billion passengers, zero passengers have died from Shinkansen train collisions or derailments.",
+        "claim": "The Shinkansen has carried over 10 billion passengers with an outstanding safety record.",
         "verdict": "fact",
         "explanation": "Strict automatic train control (ATC) systems and automatic earthquake emergency braking have maintained a legendary safety record.",
         "fun_fact": "During major earthquakes, onboard sensors cut power and apply emergency brakes seconds before the seismic shaking arrives."
@@ -2943,6 +3006,7 @@
     "subtopic_id": "rail",
     "name": "Monorail",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Straddle Monorail",
       "Suspended Monorail",
@@ -2989,6 +3053,7 @@
     "subtopic_id": "rail",
     "name": "Maglev Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Magnetic Levitation Train",
       "SCMaglev",
@@ -3035,6 +3100,7 @@
     "subtopic_id": "rail",
     "name": "Subway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Metro",
       "Underground",
@@ -3081,6 +3147,7 @@
     "subtopic_id": "rail",
     "name": "Cable Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "San Francisco Cable Car",
       "Grip Car",
@@ -3127,6 +3194,7 @@
     "subtopic_id": "rail",
     "name": "Tram",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Streetcar",
       "Trolley Car",
@@ -3173,6 +3241,7 @@
     "subtopic_id": "rail",
     "name": "Diesel Locomotive",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diesel-Electric Locomotive",
       "Road Switcher",
@@ -3219,6 +3288,7 @@
     "subtopic_id": "rail",
     "name": "High-Speed Electric Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "TGV",
       "ICE",
@@ -3265,6 +3335,7 @@
     "subtopic_id": "rail",
     "name": "Freight Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Goods Train",
       "Cargo Train",
@@ -3311,6 +3382,7 @@
     "subtopic_id": "rail",
     "name": "Cog Railway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rack Railway",
       "Mountain Cog Train",
@@ -3357,6 +3429,7 @@
     "subtopic_id": "rail",
     "name": "Commuter Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Suburban Train",
       "Regional Passenger Train",
@@ -3403,6 +3476,7 @@
     "subtopic_id": "rail",
     "name": "Elevated Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The L",
       "Overhead Railway",
@@ -3449,6 +3523,7 @@
     "subtopic_id": "rail",
     "name": "Handcar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pump Trolley",
       "Rail Handcar",
@@ -3495,6 +3570,7 @@
     "subtopic_id": "rail",
     "name": "Intercity Passenger Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Express Train",
       "Amtrak",
@@ -3541,6 +3617,7 @@
     "subtopic_id": "rail",
     "name": "Double-Decker Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bi-Level Train",
       "Superliner",
@@ -3587,6 +3664,7 @@
     "subtopic_id": "rail",
     "name": "Luxury Sleeper Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Orient Express",
       "Blue Train",
@@ -3617,7 +3695,7 @@
       {
         "claim": "The Orient Express was a fictional train invented by mystery novelist Agatha Christie.",
         "verdict": "myth",
-        "explanation": "The Orient Express was a real luxury train running between Paris and Istanbul starting in 1883; Christie famously set a murder mystery aboard it.",
+        "explanation": "The Orient Express was a real luxury train running between Paris and Istanbul from 1883; Christie set a famous mystery novel aboard it.",
         "fun_fact": "Royalty, diplomats, and spies frequented the train during the height of early 20th-century espionage."
       }
     ],
@@ -3633,6 +3711,7 @@
     "subtopic_id": "rail",
     "name": "Aerial Tramway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cable Car Gondola",
       "Sky Tram",
@@ -3679,6 +3758,7 @@
     "subtopic_id": "rail",
     "name": "Airport People Mover",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Automated People Mover",
       "APM",
@@ -3725,6 +3805,7 @@
     "subtopic_id": "rail",
     "name": "Armored Train",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Combat Train",
       "Military Armored Railcar",
@@ -3771,6 +3852,7 @@
     "subtopic_id": "rail",
     "name": "Mine Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mining Locomotive",
       "Ore Tram",
@@ -3817,6 +3899,7 @@
     "subtopic_id": "rail",
     "name": "Hybrid Passenger Train",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bi-Mode Train",
       "Battery-Electric Train",
@@ -3863,6 +3946,7 @@
     "subtopic_id": "rail",
     "name": "Funicular Railway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Incline Railway",
       "Cliff Railway",
@@ -3909,6 +3993,7 @@
     "subtopic_id": "rail",
     "name": "Vintage Trolley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heritage Streetcar",
       "Birney Safety Car",
@@ -3955,6 +4040,7 @@
     "subtopic_id": "maritime",
     "name": "Sailboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sailing Yacht",
       "Sloop",
@@ -4001,6 +4087,7 @@
     "subtopic_id": "maritime",
     "name": "Luxury Yacht",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Superyacht",
       "Mega Yacht",
@@ -4047,6 +4134,7 @@
     "subtopic_id": "maritime",
     "name": "Cruise Ship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ocean Liner",
       "Floating Resort",
@@ -4056,7 +4144,7 @@
     "visual_anchor": "Colossal eighteen-deck passenger cruise liner gliding into a tropical port with waterslides, theater domes, and thousands of balcony staterooms.",
     "core_traits": [
       "Massive passenger ocean vessel designed for vacation voyages where the voyage experience itself is the primary attraction",
-      "Accommodates 3,000 to 7,000 passengers with multi-story restaurants, theaters, swimming pools, and casino decks",
+      "Accommodates 3,000 to 7,000 passengers with multi-story restaurants, theaters, swimming pools, and water slides",
       "Powered by massive diesel-electric powerplants driving rotatable underwater azimuth thruster pods (Azipods)",
       "Features dynamic computer-controlled gyroscopic fin stabilizers to minimize ship rolling in rough seas"
     ],
@@ -4093,6 +4181,7 @@
     "subtopic_id": "maritime",
     "name": "Container Ship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Boxship",
       "Container Vessel",
@@ -4139,6 +4228,7 @@
     "subtopic_id": "maritime",
     "name": "Cargo Ship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Freighter",
       "Bulk Carrier",
@@ -4185,6 +4275,7 @@
     "subtopic_id": "maritime",
     "name": "Oil Tanker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "VLCC",
       "Supertanker",
@@ -4231,6 +4322,7 @@
     "subtopic_id": "maritime",
     "name": "Aircraft Carrier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Flattop",
       "Supercarrier",
@@ -4277,18 +4369,19 @@
     "subtopic_id": "maritime",
     "name": "Battleship",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Dreadnought",
       "Iowa-Class Battleship",
       "Capital Warship"
     ],
     "difficulty": 1,
-    "visual_anchor": "Heavily armored Iowa-class battleship firing a devastating full nine-gun broadside of 16-inch artillery pushing massive ocean shockwaves.",
+    "visual_anchor": "Huge gray Iowa-class battleship museum ship moored in a sunny harbor, its long steel deck and tall towers open to visitors.",
     "core_traits": [
-      "Massive heavily armored capital warship armed with gigantic main-battery naval artillery guns",
-      "Pioneered in 1906 by Britain's revolutionary all-big-gun HMS Dreadnought",
+      "Massive, heavily armored steel ship that was once the biggest and most powerful kind of navy vessel",
+      "Pioneered in 1906 by Britain's revolutionary HMS Dreadnought",
       "Protected by thick forged steel armor belts up to 12 to 16 inches thick over vital magazines and engine rooms",
-      "Served as the supreme symbol of naval supremacy until naval aviation and guided missiles eclipsed gun warfare"
+      "Replaced by aircraft carriers; the last active battleships were retired in the early 1990s"
     ],
     "distractor_pool": [
       "Aircraft Carrier",
@@ -4299,15 +4392,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The Yamato and Musashi of the Imperial Japanese Navy were the heaviest and most powerfully armed battleships in history.",
+        "claim": "HMS Dreadnought, launched in 1906, was so new that its name became a type of ship.",
         "verdict": "fact",
-        "explanation": "Displacing over 72,000 tons loaded, they carried nine gargantuan 18.1-inch (460 mm) guns that fired 3,200-pound shells over 26 miles.",
-        "fun_fact": "Each gun turret weighed more than an entire average naval destroyer."
+        "explanation": "After it launched, big battleships built in the same style around the world were simply called 'dreadnoughts'.",
+        "fun_fact": "Iowa-class battleships are about 270 meters long, longer than two and a half soccer fields."
       },
       {
         "claim": "Modern world navies still actively build brand new battleships today.",
         "verdict": "myth",
-        "explanation": "Battleships became obsolete after World War II as aircraft carriers and guided missile destroyers could strike targets hundreds of miles further away.",
+        "explanation": "Navies stopped building battleships decades ago because aircraft carriers can reach much farther across the ocean.",
         "fun_fact": "All surviving iconic battleships, like the USS Missouri and USS Iowa, now serve as floating historic museum ships."
       }
     ],
@@ -4323,6 +4416,7 @@
     "subtopic_id": "maritime",
     "name": "Naval Destroyer",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Guided Missile Destroyer",
       "DDG",
@@ -4369,10 +4463,10 @@
     "subtopic_id": "maritime",
     "name": "Speedboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Motorboat",
-      "Powerboat",
-      "Cigarette Boat"
+      "Powerboat"
     ],
     "difficulty": 1,
     "visual_anchor": "Sleek aerodynamic offshore racing powerboat flying across turquoise waves with twin rooster tails of white water spray arching high.",
@@ -4415,6 +4509,7 @@
     "subtopic_id": "maritime",
     "name": "Jet Ski",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Personal Watercraft",
       "PWC",
@@ -4461,6 +4556,7 @@
     "subtopic_id": "maritime",
     "name": "Canoe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Canadian Canoe",
       "Open Canoe",
@@ -4507,6 +4603,7 @@
     "subtopic_id": "maritime",
     "name": "Kayak",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sea Kayak",
       "Whitewater Kayak",
@@ -4553,6 +4650,7 @@
     "subtopic_id": "maritime",
     "name": "Rowboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rowing Boat",
       "Dinghy",
@@ -4599,6 +4697,7 @@
     "subtopic_id": "maritime",
     "name": "Venetian Gondola",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gondola",
       "Venice Boat",
@@ -4645,6 +4744,7 @@
     "subtopic_id": "maritime",
     "name": "Passenger Ferry",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Car Ferry",
       "Ro-Pax Ferry",
@@ -4691,6 +4791,7 @@
     "subtopic_id": "maritime",
     "name": "Hovercraft",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Air-Cushion Vehicle",
       "ACV",
@@ -4737,6 +4838,7 @@
     "subtopic_id": "maritime",
     "name": "Harbor Tugboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tug",
       "Towing Vessel",
@@ -4783,6 +4885,7 @@
     "subtopic_id": "maritime",
     "name": "Polar Icebreaker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Icebreaker Ship",
       "Nuclear Icebreaker",
@@ -4829,17 +4932,18 @@
     "subtopic_id": "maritime",
     "name": "Pirate Ship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Galleon",
       "Privateer",
       "Blackbeard's Queen Anne's Revenge"
     ],
     "difficulty": 1,
-    "visual_anchor": "Three-masted wooden pirate galleon with black sails and skull-and-crossbones flag firing broadside iron cannons across tropical waves.",
+    "visual_anchor": "Three-masted wooden pirate galleon with black sails and a skull-and-crossbones flag sailing boldly across sparkling tropical waves.",
     "core_traits": [
       "Armed wooden sailing ship captured and modified by ocean outlaws during the Golden Age of Piracy (1650-1725)",
       "Typically fast square-rigged sloops, brigs, or captured armed merchant galleons",
-      "Bristled with broadside cast-iron naval cannons, swivel guns, and boarding grapples",
+      "Built with tall masts, climbable rope rigging, and a deep cargo hold for treasure and supplies",
       "Flew the iconic skull-and-crossbones 'Jolly Roger' flag to terrify merchant ship crews into surrendering without a fight"
     ],
     "distractor_pool": [
@@ -4851,10 +4955,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Pirates always sailed in gigantic three-deck 100-gun war galleons like in Hollywood movies.",
+        "claim": "Pirates always sailed in gigantic three-deck galleons like in the movies.",
         "verdict": "myth",
         "explanation": "Most historical pirates preferred small, fast single-masted sloops that had shallow drafts to escape naval warships into shallow shoals.",
-        "fun_fact": "Blackbeard's famous Queen Anne's Revenge was originally a French slave merchant frigate before he heavily armed it."
+        "fun_fact": "Blackbeard's famous ship, Queen Anne's Revenge, was a captured French ship that he renamed."
       },
       {
         "claim": "Historical pirate ships operated with early democratic systems and written ship constitutions.",
@@ -4875,6 +4979,7 @@
     "subtopic_id": "maritime",
     "name": "Catamaran",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Twin-Hull Vessel",
       "Multihull Boat",
@@ -4921,6 +5026,7 @@
     "subtopic_id": "maritime",
     "name": "Trimaran",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Three-Hull Boat",
       "Maxi Trimaran",
@@ -4932,7 +5038,7 @@
       "Multihull boat comprising a main central hull flanked by two smaller outer outrigger hulls (amas) attached by crossbeams",
       "Provides supreme lateral stability and immense sail-carrying capacity for extreme ocean racing speeds",
       "Dominates round-the-world solo sailing speed records, regularly averaging over 30 knots non-stop across open oceans",
-      "Also used in modern stealth naval warfare, such as the US Navy's Independence-class Littoral Combat Ship"
+      "Also used for fast passenger ferries and some large modern navy ships"
     ],
     "distractor_pool": [
       "Catamaran",
@@ -4967,6 +5073,7 @@
     "subtopic_id": "maritime",
     "name": "Hydrofoil Boat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hydrofoil",
       "Foiling Boat",
@@ -5013,6 +5120,7 @@
     "subtopic_id": "maritime",
     "name": "Houseboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Floating Home",
       "Canal Boat",
@@ -5043,7 +5151,7 @@
       {
         "claim": "Amsterdam has over 2,500 historic licensed houseboats lining its famous urban canals.",
         "verdict": "fact",
-        "explanation": "Following World War II housing shortages, old cargo barges were converted into beloved canal residences with full municipal addresses.",
+        "explanation": "During a housing shortage in the mid-1900s, old cargo barges were turned into canal homes with real street addresses.",
         "fun_fact": "In Seattle, floating home communities inspired the classic movie 'Sleepless in Seattle'."
       }
     ],
@@ -5059,6 +5167,7 @@
     "subtopic_id": "maritime",
     "name": "Pontoon Boat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Party Barge",
       "Pontoon",
@@ -5105,6 +5214,7 @@
     "subtopic_id": "maritime",
     "name": "Fishing Trawler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Commercial Trawler",
       "Stern Trawler",
@@ -5151,6 +5261,7 @@
     "subtopic_id": "maritime",
     "name": "Airboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fanboat",
       "Swamp Boat",
@@ -5197,6 +5308,7 @@
     "subtopic_id": "maritime",
     "name": "Viking Longship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Drakkar",
       "Dragon Ship",
@@ -5227,8 +5339,8 @@
       {
         "claim": "Viking longship rowers sat on padded leather chairs fastened to the hull deck.",
         "verdict": "myth",
-        "explanation": "Longships had no passenger seats; rowers sat directly on their personal wooden sea chests which contained all their clothes and weapons.",
-        "fun_fact": "Shields were slotted into external side racks (shield-racks) to protect rowers from enemy arrows."
+        "explanation": "Longships had no fixed seats; rowers sat on their own wooden sea chests, which held their clothes and belongings.",
+        "fun_fact": "Round painted shields were often hung along the sides, making a colorful row along the hull."
       }
     ],
     "versus_candidates": [
@@ -5243,6 +5355,7 @@
     "subtopic_id": "maritime",
     "name": "Inflatable Raft",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Whitewater Raft",
       "Zodiac",
@@ -5289,6 +5402,7 @@
     "subtopic_id": "maritime",
     "name": "Paddle Steamer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Riverboat",
       "Sternwheeler",
@@ -5335,18 +5449,19 @@
     "subtopic_id": "maritime",
     "name": "Naval Frigate",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
-      "War Frigate",
+      "Navy Frigate",
       "Anti-Submarine Frigate",
       "FFG"
     ],
     "difficulty": 2,
-    "visual_anchor": "Modern grey radar-evading naval frigate cutting through choppy northern seas with its forward 76mm naval gun trained forward.",
+    "visual_anchor": "Modern grey angular navy frigate cutting through choppy northern seas with a helicopter resting on its rear flight deck.",
     "core_traits": [
-      "Medium-sized warship designed for escort duty, anti-submarine warfare (ASW), and fleet coastal patrol",
+      "Medium-sized navy ship designed to escort other ships and patrol coastal waters",
       "Lighter and more cost-effective to operate than heavy guided missile destroyers",
-      "Equipped with advanced towed-array passive sonar arrays to hunt quiet diesel-electric submarines",
-      "Carries anti-ship missiles, short-to-medium range surface-to-air missiles, and an anti-submarine helicopter"
+      "Tows long underwater sonar arrays to listen for quiet submarines far below",
+      "Usually carries a helicopter on a rear flight deck for patrol and rescue missions"
     ],
     "distractor_pool": [
       "Naval Destroyer",
@@ -5359,7 +5474,7 @@
       {
         "claim": "The USS Constitution ('Old Ironsides'), launched in 1797, is the world's oldest commissioned naval warship still afloat.",
         "verdict": "fact",
-        "explanation": "The famous 44-gun wooden sailing frigate earned its nickname in the War of 1812 when British cannonballs bounced off its dense oak hull.",
+        "explanation": "Its sides were built from extra-thick live oak, so tough that sailors nicknamed the wooden ship 'Old Ironsides'.",
         "fun_fact": "She is still an active commissioned ship in the US Navy berthed in Boston, Massachusetts."
       },
       {
@@ -5381,6 +5496,7 @@
     "subtopic_id": "maritime",
     "name": "Coast Guard Cutter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "National Security Cutter",
       "Patrol Cutter",
@@ -5389,8 +5505,8 @@
     "difficulty": 2,
     "visual_anchor": "White cutter ship with the distinctive red-and-blue Coast Guard racing stripe slicing through gale waves on maritime security patrol.",
     "core_traits": [
-      "Armed maritime law enforcement and search-and-rescue patrol vessel operated by national coast guard services",
-      "Enforces maritime sovereignty, drug interdiction, fisheries regulations, and coastal border security",
+      "Maritime law enforcement and search-and-rescue patrol ship operated by national coast guard services",
+      "Enforces fishing rules, stops smugglers, and protects coastal borders",
       "Equipped with flight decks and hangars to operate maritime helicopters and tactical unmanned aerial systems",
       "Features stern launch ramps to deploy fast interceptor boats in high sea states"
     ],
@@ -5403,10 +5519,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Coast guard cutters are strictly unarmed utility ships with no military weaponry.",
-        "verdict": "myth",
-        "explanation": "Major cutters carry automated 57mm naval cannons, Phalanx CIWS close-in weapon systems, and .50 caliber heavy machine guns.",
-        "fun_fact": "During wartime, coast guard cutters can integrate directly into naval battle groups as auxiliary combatants."
+        "claim": "Some coast guard cutters carry their own helicopters.",
+        "verdict": "fact",
+        "explanation": "Larger cutters have a flight deck and hangar, so a helicopter can take off at sea to search for people in trouble.",
+        "fun_fact": "Cutters also carry small, fast boats that launch from a ramp at the back of the ship."
       },
       {
         "claim": "Alexander Hamilton founded the predecessor of the modern US Coast Guard in 1790 as the Revenue Marine.",
@@ -5427,6 +5543,7 @@
     "subtopic_id": "maritime",
     "name": "Offshore Drilling Rig",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Semi-Submersible Rig",
       "Jack-Up Rig",
@@ -5473,6 +5590,7 @@
     "subtopic_id": "maritime",
     "name": "Oceanographic Research Vessel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Survey Vessel",
       "RV",
@@ -5519,6 +5637,7 @@
     "subtopic_id": "maritime",
     "name": "Autonomous Underwater Vehicle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "AUV",
       "Underwater Drone",
@@ -5565,6 +5684,7 @@
     "subtopic_id": "maritime",
     "name": "Dragon Boat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chinese Dragon Boat",
       "Traditional Longboat",
@@ -5611,6 +5731,7 @@
     "subtopic_id": "maritime",
     "name": "Traditional Dhow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arab Dhow",
       "Lateen Sail Vessel",
@@ -5657,6 +5778,7 @@
     "subtopic_id": "maritime",
     "name": "Outrigger Canoe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Proa",
       "Wa'a",
@@ -5703,6 +5825,7 @@
     "subtopic_id": "maritime",
     "name": "River Barge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Inland Barge",
       "Hopper Barge",
@@ -5749,6 +5872,7 @@
     "subtopic_id": "maritime",
     "name": "Car Carrier Ship",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "PCTC",
       "Pure Car and Truck Carrier",
@@ -5795,17 +5919,17 @@
     "subtopic_id": "maritime",
     "name": "Naval Corvette",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
-      "Corvette Warship",
-      "Littoral Patrol Corvette",
-      "Guided Missile Corvette"
+      "Corvette Ship",
+      "Littoral Patrol Corvette"
     ],
     "difficulty": 2,
-    "visual_anchor": "Compact, stealthy grey corvette slicing at high speed through coastal waters with an automatic rapid-fire deck gun firing.",
+    "visual_anchor": "Compact, stealthy grey corvette slicing at high speed through coastal waters, throwing up a white spray of foam.",
     "core_traits": [
-      "Small, agile warship typically ranked below a frigate in size and displacement (500 to 2,000 tons)",
-      "Designed for coastal defense, littoral combat operations, and maritime surface warfare",
-      "Carries heavy firepower relative to its compact size, including anti-ship cruise missiles and point-defense guns",
+      "Small, agile navy ship typically ranked below a frigate in size and displacement (500 to 2,000 tons)",
+      "Designed to patrol and guard a country's coastline and nearby waters",
+      "Built with smooth, angled stealth shapes that make it hard to spot on radar",
       "Highly maneuverable, allowing it to navigate shallow coastal archipelagos where larger destroyers cannot operate"
     ],
     "distractor_pool": [
@@ -5823,7 +5947,7 @@
         "fun_fact": "The name became one of the most famous sports car monikers in automotive history."
       },
       {
-        "claim": "Corvettes have thick foot-thick steel armor plates like World War II battleships.",
+        "claim": "Corvettes are covered in super-thick steel armor like old battleships.",
         "verdict": "myth",
         "explanation": "Modern corvettes rely on speed, angled radar-evading stealth hull shapes, and electronic countermeasures rather than heavy armor.",
         "fun_fact": "Stealth shaping reduces a corvette's radar signature to that of a small fishing skiff."
@@ -5841,6 +5965,7 @@
     "subtopic_id": "maritime",
     "name": "Fireboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Marine Fire Vessel",
       "Water Deluge Boat",
@@ -5887,6 +6012,7 @@
     "subtopic_id": "maritime",
     "name": "Lifeboat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Survival Craft",
       "Totally Enclosed Lifeboat",
@@ -5933,6 +6059,7 @@
     "subtopic_id": "maritime",
     "name": "Stand-Up Paddleboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "SUP",
       "Paddle Board",
@@ -5979,6 +6106,7 @@
     "subtopic_id": "maritime",
     "name": "Submersible Tourist Vessel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Passenger Submarine",
       "Tourist Sub",
@@ -6025,6 +6153,7 @@
     "subtopic_id": "maritime",
     "name": "Motorized Dinghy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tender",
       "Zodiac Dinghy",
@@ -6071,6 +6200,7 @@
     "subtopic_id": "automotive",
     "name": "Bicycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bike",
       "Pushbike",
@@ -6117,6 +6247,7 @@
     "subtopic_id": "automotive",
     "name": "Mountain Bike",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "MTB",
       "Trail Bike",
@@ -6163,6 +6294,7 @@
     "subtopic_id": "automotive",
     "name": "Road Racing Bicycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Road Bike",
       "Tour de France Bike",
@@ -6209,6 +6341,7 @@
     "subtopic_id": "automotive",
     "name": "Cruiser Bicycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beach Cruiser",
       "Classic Cruiser",
@@ -6255,6 +6388,7 @@
     "subtopic_id": "automotive",
     "name": "Tandem Bicycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bicycle Built for Two",
       "Twin Bike",
@@ -6301,6 +6435,7 @@
     "subtopic_id": "automotive",
     "name": "Electric Bicycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "E-Bike",
       "Pedelec",
@@ -6347,6 +6482,7 @@
     "subtopic_id": "automotive",
     "name": "Motorcycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Motorbike",
       "Cruiser Motorcycle",
@@ -6393,6 +6529,7 @@
     "subtopic_id": "automotive",
     "name": "Sportbike",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Superbike",
       "Crotch Rocket",
@@ -6439,6 +6576,7 @@
     "subtopic_id": "automotive",
     "name": "Motor Scooter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scooter",
       "Vespa",
@@ -6450,7 +6588,7 @@
       "Motorcycle featuring a step-through frame, floorboards for the rider's feet, and smaller-diameter wheels (10 to 14 inches)",
       "Engine and transmission are mounted directly onto the rear swingarm beneath the seat, enclosed in clean body panels",
       "Operates with an automatic Continuously Variable Transmission (CVT) requiring no manual clutch or foot shifting",
-      "Iconic Italian symbol of post-war European urban mobility pioneered by Piaggio's Vespa in 1946"
+      "Iconic Italian symbol of city travel, made famous by Piaggio's Vespa in 1946"
     ],
     "distractor_pool": [
       "Moped",
@@ -6485,6 +6623,7 @@
     "subtopic_id": "automotive",
     "name": "Moped",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Motor-Pedal Bike",
       "Autocycle",
@@ -6531,6 +6670,7 @@
     "subtopic_id": "automotive",
     "name": "Kick Scooter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Push Scooter",
       "Foot Scooter",
@@ -6577,6 +6717,7 @@
     "subtopic_id": "automotive",
     "name": "Electric Scooter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "E-Scooter",
       "Standing E-Scooter",
@@ -6623,6 +6764,7 @@
     "subtopic_id": "automotive",
     "name": "Skateboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skate",
       "Deck",
@@ -6669,6 +6811,7 @@
     "subtopic_id": "automotive",
     "name": "Longboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cruiser Longboard",
       "Downhill Longboard",
@@ -6715,6 +6858,7 @@
     "subtopic_id": "automotive",
     "name": "Roller Skates",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Quad Skates",
       "Roller Derby Skates",
@@ -6761,6 +6905,7 @@
     "subtopic_id": "automotive",
     "name": "Rollerblades",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Inline Skates",
       "Blades",
@@ -6807,6 +6952,7 @@
     "subtopic_id": "automotive",
     "name": "Segway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Segway PT",
       "Personal Transporter",
@@ -6853,6 +6999,7 @@
     "subtopic_id": "automotive",
     "name": "Hoverboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Self-Balancing Scooter",
       "Smart Balance Wheel",
@@ -6899,6 +7046,7 @@
     "subtopic_id": "automotive",
     "name": "Electric Unicycle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "EUC",
       "Monowheel",
@@ -6945,6 +7093,7 @@
     "subtopic_id": "automotive",
     "name": "Sedan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gasoline Sedan",
       "Saloon Car",
@@ -6992,6 +7141,7 @@
     "subtopic_id": "automotive",
     "name": "Sports Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Performance Car",
       "Porsche 911 / Ferrari",
@@ -7038,6 +7188,7 @@
     "subtopic_id": "automotive",
     "name": "Convertible",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cabriolet",
       "Roadster",
@@ -7084,6 +7235,7 @@
     "subtopic_id": "automotive",
     "name": "Compact Hatchback",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hatchback",
       "Hot Hatch",
@@ -7130,6 +7282,7 @@
     "subtopic_id": "automotive",
     "name": "Station Wagon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Estate Car",
       "Wagon",
@@ -7176,6 +7329,7 @@
     "subtopic_id": "automotive",
     "name": "Luxury Limousine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Limo",
       "Stretch Limousine",
@@ -7222,6 +7376,7 @@
     "subtopic_id": "automotive",
     "name": "SUV",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sport Utility Vehicle",
       "Crossover",
@@ -7268,6 +7423,7 @@
     "subtopic_id": "automotive",
     "name": "Pickup Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pickup",
       "Bakkie",
@@ -7314,6 +7470,7 @@
     "subtopic_id": "automotive",
     "name": "Monster Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Grave Digger",
       "Bigfoot",
@@ -7324,7 +7481,7 @@
     "core_traits": [
       "Specialized competition vehicle built with gigantic 66-inch agricultural tires and heavy-duty long-travel nitrogen shock absorbers",
       "Built on custom tubular steel roll-cage chassis covered by lightweight fiberglass replica truck bodies",
-      "Powered by supercharged, alcohol-injected big-block V8 engines producing over 1,500 horsepower",
+      "Powered by supercharged, methanol-fueled big-block V8 engines producing over 1,500 horsepower",
       "Performs high-flying stadium jumps, wheelies, donuts, and car-crushing freestyle exhibitions at Monster Jam events"
     ],
     "distractor_pool": [
@@ -7360,6 +7517,7 @@
     "subtopic_id": "automotive",
     "name": "Muscle Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "American Muscle",
       "Pony Car",
@@ -7406,6 +7564,7 @@
     "subtopic_id": "automotive",
     "name": "Vintage Hot Rod",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Street Rod",
       "Deuce Coupe",
@@ -7452,6 +7611,7 @@
     "subtopic_id": "automotive",
     "name": "Formula 1 Racing Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "F1 Car",
       "Grand Prix Car",
@@ -7498,6 +7658,7 @@
     "subtopic_id": "automotive",
     "name": "Stock Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "NASCAR Stock Car",
       "Cup Car",
@@ -7544,6 +7705,7 @@
     "subtopic_id": "automotive",
     "name": "Go-Kart",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kart",
       "Shifter Kart",
@@ -7590,6 +7752,7 @@
     "subtopic_id": "automotive",
     "name": "Dune Buggy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beach Buggy",
       "Meyers Manx",
@@ -7636,6 +7799,7 @@
     "subtopic_id": "automotive",
     "name": "All-Terrain Vehicle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ATV",
       "Quad Bike",
@@ -7682,6 +7846,7 @@
     "subtopic_id": "automotive",
     "name": "Utility Task Vehicle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "UTV",
       "Side-by-Side",
@@ -7728,6 +7893,7 @@
     "subtopic_id": "automotive",
     "name": "Snowmobile",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sled",
       "Ski-Doo",
@@ -7750,9 +7916,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Joseph-Armand Bombardier invented the snowmobile after his young son tragically died because deep snow blocked the hospital.",
+        "claim": "Joseph-Armand Bombardier built snow vehicles so families could reach towns and hospitals in winter.",
         "verdict": "fact",
-        "explanation": "In rural Quebec in 1934, Bombardier vowed to conquer winter travel, inventing the toothed rubber track that revolutionized arctic transportation.",
+        "explanation": "In snowy rural Quebec in the 1930s, roads were often blocked, so he invented a toothed rubber track to cross deep snow.",
         "fun_fact": "His original machine was intended to be called the 'Ski-Dog', but a clerical typo branded it forever as the 'Ski-Doo'."
       },
       {
@@ -7774,6 +7940,7 @@
     "subtopic_id": "automotive",
     "name": "Bobsled",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bobsleigh",
       "Olympic Bobsled",
@@ -7820,6 +7987,7 @@
     "subtopic_id": "automotive",
     "name": "Dog Sled",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sled",
       "Mushing Sled",
@@ -7866,6 +8034,7 @@
     "subtopic_id": "automotive",
     "name": "Golf Cart",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Golf Buggy",
       "Golf Car",
@@ -7912,6 +8081,7 @@
     "subtopic_id": "automotive",
     "name": "Campervan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Motorhome",
       "RV",
@@ -7958,6 +8128,7 @@
     "subtopic_id": "automotive",
     "name": "Travel Trailer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Caravan",
       "Airstream",
@@ -8004,6 +8175,7 @@
     "subtopic_id": "automotive",
     "name": "City Bus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "City Transit Bus",
       "Public Transit Bus",
@@ -8051,6 +8223,7 @@
     "subtopic_id": "automotive",
     "name": "School Bus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yellow School Bus",
       "School Bus",
@@ -8098,6 +8271,7 @@
     "subtopic_id": "automotive",
     "name": "Double-Decker Bus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Routemaster",
       "London Bus",
@@ -8144,6 +8318,7 @@
     "subtopic_id": "automotive",
     "name": "Tour Bus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tour Coach Bus",
       "Motorcoach",
@@ -8191,6 +8366,7 @@
     "subtopic_id": "automotive",
     "name": "Fire Engine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pumper Truck",
       "Fire Truck",
@@ -8237,6 +8413,7 @@
     "subtopic_id": "automotive",
     "name": "Fire Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ladder Fire Truck",
       "Aerial Ladder",
@@ -8284,6 +8461,7 @@
     "subtopic_id": "automotive",
     "name": "Ambulance",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Emergency Ambulance",
       "Medic Unit",
@@ -8303,7 +8481,7 @@
       "Police Cruiser",
       "Fire Engine",
       "City Transit Bus",
-      "Hearse"
+      "Delivery Van"
     ],
     "facts_and_myths": [
       {
@@ -8313,10 +8491,10 @@
         "fun_fact": "This visual standard is adopted in highway safety regulations worldwide."
       },
       {
-        "claim": "Dominique Jean Larrey, Napoleon's chief military surgeon, invented the modern concept of the mobile battlefield ambulance.",
+        "claim": "Early ambulances were pulled by horses.",
         "verdict": "fact",
-        "explanation": "Larrey created 'flying ambulances' (ambulances volantes)-fast, horse-drawn sprung carriages that treated wounded soldiers directly on the battlefield.",
-        "fun_fact": "Before Larrey, wounded soldiers were left abandoned on the battlefield until fighting ended days later."
+        "explanation": "Before motor vehicles, horse-drawn carriages fitted with beds carried sick and injured people to doctors and hospitals.",
+        "fun_fact": "One of the first motor-powered ambulances began service in Chicago in 1899."
       }
     ],
     "versus_candidates": [
@@ -8331,6 +8509,7 @@
     "subtopic_id": "automotive",
     "name": "Police Car",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Police Cruiser",
       "Patrol Car",
@@ -8378,6 +8557,7 @@
     "subtopic_id": "automotive",
     "name": "Garbage Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Waste Collection Vehicle",
       "Trash Truck",
@@ -8424,6 +8604,7 @@
     "subtopic_id": "automotive",
     "name": "Street Sweeper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Road Sweeper",
       "Street Cleaner Truck",
@@ -8470,6 +8651,7 @@
     "subtopic_id": "automotive",
     "name": "Semi Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Semi-Trailer Truck",
       "18-Wheeler",
@@ -8517,6 +8699,7 @@
     "subtopic_id": "automotive",
     "name": "Heavy Tow Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wrecker",
       "Rotator",
@@ -8563,6 +8746,7 @@
     "subtopic_id": "automotive",
     "name": "Wheelchair",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Manual Wheelchair",
       "Self-Propelled Chair",
@@ -8609,6 +8793,7 @@
     "subtopic_id": "automotive",
     "name": "Electric Wheelchair",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Power Chair",
       "Motorized Wheelchair",
@@ -8620,7 +8805,7 @@
       "Wheelchair propelled by electric motors and rechargeable batteries, controlled via an armrest joystick controller",
       "Provides independent mobility for individuals who lack the upper-body arm strength to propel a manual wheelchair",
       "Features powered seat elevation, tilt-in-space, and reclining functions to relieve pressure sores",
-      "George Klein invented the modern electric wheelchair in the 1950s to assist paralyzed World War II veterans"
+      "George Klein invented the modern electric wheelchair in the 1950s to help people who could not move their arms or legs"
     ],
     "distractor_pool": [
       "Wheelchair",
@@ -8655,6 +8840,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Agricultural Tractor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Farm Tractor",
       "John Deere Tractor",
@@ -8701,6 +8887,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Combine Harvester",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "The Combine",
       "Harvester",
@@ -8747,6 +8934,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Bulldozer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dozer",
       "Crawler Tractor",
@@ -8793,6 +8981,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Hydraulic Excavator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Digger",
       "Trackhoe",
@@ -8839,6 +9028,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Crane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Construction Crane",
       "Tower Crane",
@@ -8886,6 +9076,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Mobile Crane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "All-Terrain Crane",
       "Truck Crane",
@@ -8932,6 +9123,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Forklift",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Warehouse Forklift",
       "Forklift",
@@ -8964,7 +9156,7 @@
         "claim": "The invention of the forklift and the wooden shipping pallet in the 1930s laid the foundation for modern global logistics.",
         "verdict": "fact",
         "explanation": "Clark Material Handling and others pioneered the pairing of fork tines with standardized double-deck wooden pallets.",
-        "fun_fact": "World War II military logistics made forklifts indispensable for rapid ship and train loading."
+        "fun_fact": "Today, forklifts help load trucks, ships, and trains in warehouses all around the world."
       }
     ],
     "versus_candidates": [
@@ -8979,6 +9171,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Cement Mixer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cement Mixer Truck",
       "Concrete Transit Mixer",
@@ -9026,6 +9219,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Dump Truck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heavy Dump Truck",
       "Haul Truck",
@@ -9073,6 +9267,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Steamroller",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Road Roller",
       "Compactor",
@@ -9119,6 +9314,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Backhoe Loader",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Backhoe",
       "JCB",
@@ -9165,6 +9361,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Tunnel Boring Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "TBM",
       "Mechanical Mole",
@@ -9211,6 +9408,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Jackhammer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pneumatic Drill",
       "Demolition Hammer",
@@ -9257,6 +9455,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Chainsaw",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Power Saw",
       "Lumberjack Saw",
@@ -9303,6 +9502,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Printing Press",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gutenberg Press",
       "Movable Type Press",
@@ -9334,7 +9534,7 @@
         "claim": "Gutenberg became immensely wealthy and lived in royalty from his printing press invention.",
         "verdict": "myth",
         "explanation": "Gutenberg was sued by his wealthy financier Johann Fust for defaulted loans and lost his entire printing shop and Bible inventory in court.",
-        "fun_fact": "He died in relative poverty, though his invention changed human civilization forever."
+        "fun_fact": "Only about 49 copies of the Gutenberg Bible are known to survive today."
       }
     ],
     "versus_candidates": [
@@ -9349,6 +9549,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Sewing Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Singer Sewing Machine",
       "Lockstitch Machine",
@@ -9395,6 +9596,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Waterwheel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mill Wheel",
       "Water Mill",
@@ -9441,6 +9643,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Windmill",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Traditional Windmill",
       "Dutch Windmill",
@@ -9464,10 +9667,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Dutch windmills were used as secret long-distance military telegraph transmitters during World War II.",
+        "claim": "Dutch millers could send messages to neighbors by stopping windmill sails in special positions.",
         "verdict": "fact",
-        "explanation": "Dutch resistance millers adjusted the resting position of windmill sails to signal Allied parachute drops or warn of Nazi police raids.",
-        "fun_fact": "Certain sail tilt angles conveyed joy, mourning, danger, or readiness to nearby towns."
+        "explanation": "Stopping the sails at certain angles told nearby villages news, like a celebration, a warning, or a short break.",
+        "fun_fact": "The Kinderdijk windmills in the Netherlands, built around 1740, are a UNESCO World Heritage Site."
       },
       {
         "claim": "Traditional windmills generated high-voltage alternating current electricity for city power grids.",
@@ -9488,6 +9691,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Wind Turbine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Modern Wind Turbine",
       "Wind Generator",
@@ -9535,6 +9739,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Hydroelectric Turbine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Francis Turbine",
       "Pelton Wheel",
@@ -9581,6 +9786,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Solar Panel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Photovoltaic Panel",
       "Solar PV Module",
@@ -9627,6 +9833,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Electric Motor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Induction Motor",
       "AC Motor",
@@ -9673,6 +9880,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Internal Combustion Engine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ICE",
       "Gasoline Engine",
@@ -9719,6 +9927,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "3D Printer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Additive Manufacturing",
       "FDM Printer",
@@ -9765,6 +9974,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Industrial Robotic Arm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Articulated Robot",
       "Welding Robot",
@@ -9775,7 +9985,7 @@
     "core_traits": [
       "Programmable mechanical manipulator consisting of linked segments resembling a human shoulder, elbow, and wrist",
       "Features six degrees of freedom driven by high-precision brushless servomotors and cycloidal gear reducers",
-      "Equipped with specialized end-effectors such as spot-welding guns, paint sprayers, suction grippers, or laser deburrers",
+      "Equipped with swappable tool 'hands' such as welding tips, paint sprayers, suction grippers, or laser cutters",
       "Performs repetitive, high-speed manufacturing tasks with sub-millimeter repeatable precision 24 hours a day"
     ],
     "distractor_pool": [
@@ -9811,6 +10021,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Traffic Light",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Traffic Signal",
       "Stoplight",
@@ -9857,6 +10068,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Metal Detector",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Handheld Metal Detector",
       "Security Wand",
@@ -9868,7 +10080,7 @@
       "Electronic instrument that detects the presence of nearby metallic objects using electromagnetic induction",
       "Consists of a transmitter coil that emits a pulsating magnetic field and a receiver coil that detects eddy currents produced in metal objects",
       "Used for recreational treasure hunting, archaeological excavation, and locating buried underground utility pipes",
-      "Essential for security screening at airports, government buildings, and clearing military landmines in conflict zones"
+      "Essential for security screening at airports, stadiums, and government buildings"
     ],
     "distractor_pool": [
       "Radar System",
@@ -9879,15 +10091,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Alexander Graham Bell built a crude metal detector in 1881 to locate an assassin's bullet inside President James A. Garfield.",
+        "claim": "Alexander Graham Bell, inventor of the telephone, also built an early metal detector in 1881.",
         "verdict": "fact",
-        "explanation": "Bell rushed to the White House with an induction balance device; unfortunately, the metal coil springs in the President's bed frame confused the readings.",
-        "fun_fact": "Garfield died from surgical infection, but Bell's prototype proved electromagnetic metal detection was possible."
+        "explanation": "He made an electric 'induction balance' that could sense hidden metal, one of the first devices of its kind.",
+        "fun_fact": "Today, hobbyists use metal detectors to find lost coins, rings, and keys on sandy beaches."
       },
       {
-        "claim": "Metal detectors can easily detect plastic explosives and wooden weapons.",
+        "claim": "Metal detectors can easily find plastic, wood, and glass objects.",
         "verdict": "myth",
-        "explanation": "Metal detectors rely exclusively on electrical conductivity in metals; they cannot detect plastics, wood, ceramics, or chemical explosives.",
+        "explanation": "Metal detectors only sense materials that conduct electricity, like metals; they cannot detect plastic, wood, glass, or ceramics.",
         "fun_fact": "Modern airport security uses millimeter-wave body scanners and X-ray machines alongside metal detectors for full detection."
       }
     ],
@@ -9903,6 +10115,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Industrial Laser",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Laser",
       "Optical Maser",
@@ -9949,6 +10162,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Radar System",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "RADAR",
       "Radio Detection and Ranging",
@@ -9971,10 +10185,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Radar played a decisive role in helping the British Royal Air Force win the Battle of Britain in 1940.",
+        "claim": "Radar helps weather forecasters track rain and storms.",
         "verdict": "fact",
-        "explanation": "Britain's Chain Home coastal radar stations detected incoming German bomber formations across the English Channel with early warning.",
-        "fun_fact": "Radar allowed outnumbered RAF fighter squadrons to intercept raids at exact altitudes without wasting fuel patrolling blindly."
+        "explanation": "Doppler weather radar bounces radio waves off raindrops to show where storms are and which way they are moving.",
+        "fun_fact": "Roadside signs that flash your car's speed use small radar units to measure it."
       },
       {
         "claim": "Radar systems can easily detect submarines cruising deep underwater.",
@@ -9995,6 +10209,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Sonar System",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "SONAR",
       "Sound Navigation and Ranging",
@@ -10006,7 +10221,7 @@
       "Technique and equipment that uses sound propagation underwater to navigate, communicate with, or detect underwater vessels",
       "The acronym SONAR stands for 'Sound Navigation And Ranging'",
       "Operates in Active mode (emitting acoustic 'pings' and listening for returning echoes) or Passive mode (listening silently for engine sounds)",
-      "Essential for submarine warfare, bathymetric seafloor mapping, commercial fish finding, and underwater obstacle avoidance"
+      "Essential for submarine navigation, seafloor mapping, commercial fish finding, and underwater obstacle avoidance"
     ],
     "distractor_pool": [
       "Radar System",
@@ -10041,6 +10256,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "X-Ray Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Radiography Machine",
       "X-Ray Generator",
@@ -10065,7 +10281,7 @@
       {
         "claim": "The very first medical X-ray photograph in history showed the bones of Wilhelm Roentgen's wife's hand with her wedding ring.",
         "verdict": "fact",
-        "explanation": "In December 1895, Anna Bertha Roentgen held her hand in the beam; upon seeing her skeleton, she famously gasped: 'I have seen my death!'",
+        "explanation": "In December 1895, Anna Bertha Roentgen held her hand in the beam, and the image clearly showed her bones and ring.",
         "fun_fact": "Roentgen named them 'X'-rays because 'X' is the mathematical symbol for an unknown quantity."
       },
       {
@@ -10087,6 +10303,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "MRI Scanner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Magnetic Resonance Imaging",
       "NMR Scanner",
@@ -10133,6 +10350,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "CT Scanner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Computed Tomography",
       "CAT Scanner",
@@ -10179,6 +10397,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Ultrasound Scanner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medical Sonography",
       "Echocardiogram",
@@ -10220,57 +10439,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-223",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Stethoscope",
-    "language": "en",
-    "aliases": [
-      "Acoustic Stethoscope",
-      "Doctor Stethoscope",
-      "Littmann Stethoscope"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Polished stainless-steel dual-head acoustic stethoscope draped neatly around the collar of a physician's white medical coat.",
-    "core_traits": [
-      "Acoustic medical device used by healthcare professionals for auscultation (listening to internal sounds of an animal or human body)",
-      "Features a chestpiece with a flat plastic diaphragm for high frequencies and a hollow cup bell for low frequencies",
-      "Flexible rubber tubing channels sound waves up to two angled binaural metal ear tubes with soft silicone earpieces",
-      "Invented in France in 1816 by Rene Laennec, becoming the universal international symbol of the medical profession"
-    ],
-    "distractor_pool": [
-      "Ultrasound Scanner",
-      "Thermometer",
-      "X-Ray Machine",
-      "Microscope",
-      "Sphygmomanometer"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "French physician Rene Laennec invented the stethoscope because he was too embarrassed to place his ear directly on a young woman's chest.",
-        "verdict": "fact",
-        "explanation": "In 1816, Laennec rolled up a tube of paper to listen to a female patient's heart; he was astonished to find the wooden tube amplified heartbeats clearly.",
-        "fun_fact": "He named his invention from the Greek words 'stethos' (chest) and 'skopein' (to look into/examine)."
-      },
-      {
-        "claim": "Traditional acoustic stethoscopes contain electronic amplifiers and miniature speakers inside the tubing.",
-        "verdict": "myth",
-        "explanation": "Classic stethoscopes are 100% passive acoustic devices operating purely on mechanical sound pressure waves traveling through sealed air columns.",
-        "fun_fact": "Electronic digital stethoscopes do exist today that can amplify sounds by 40 times and record audio for telemedicine."
-      }
-    ],
-    "versus_candidates": [
-      "Ultrasound Scanner",
-      "Thermometer",
-      "Microscope"
-    ]
-  },
-  {
     "id": "ENT-VEH-224",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Telescope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Optical Telescope",
       "Refracting Telescope",
@@ -10313,57 +10487,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-225",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Optical Microscope",
-    "language": "en",
-    "aliases": [
-      "Compound Microscope",
-      "Light Microscope",
-      "Laboratory Microscope"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Clinical binocular compound microscope with illuminated stage condenser examining a stained glass slide showing red blood cells under high magnification.",
-    "core_traits": [
-      "Laboratory optical instrument that uses visible light and a series of magnifying glass lenses to view micro-scale specimens",
-      "Features an objective lens array on a revolving nosepiece combined with an ocular eyepiece lens",
-      "Antonie van Leeuwenhoek pioneered microbiology in the 1670s, discovering bacteria and protozoa ('animalcules')",
-      "Robert Hooke coined the biological term 'cell' in 1665 after viewing plant cork structure under a microscope"
-    ],
-    "distractor_pool": [
-      "Electron Microscope",
-      "Optical Telescope",
-      "Magnifying Glass",
-      "Stethoscope",
-      "Centrifuge"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "An optical light microscope can magnify objects by over one million times.",
-        "verdict": "myth",
-        "explanation": "The wavelength of visible light physically limits optical microscope magnification to roughly 1,000x to 2,000x; higher magnification requires electron beams.",
-        "fun_fact": "This fundamental optical physics threshold is known as the Abbe diffraction limit."
-      },
-      {
-        "claim": "Robert Hooke named the biological 'cell' because cork tissue looked like the small rooms inhabited by Christian monks.",
-        "verdict": "fact",
-        "explanation": "Looking at dead oak tree cork in his microscope, the rectangular cell walls reminded Hooke of monastery dormitory rooms called 'cells'.",
-        "fun_fact": "His landmark 1665 book 'Micrographia' featured breathtaking detailed copperplate engravings of fleas and cork."
-      }
-    ],
-    "versus_candidates": [
-      "Electron Microscope",
-      "Optical Telescope",
-      "Stethoscope"
-    ]
-  },
-  {
     "id": "ENT-VEH-226",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Electron Microscope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "SEM",
       "TEM",
@@ -10410,6 +10539,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Magnetic Compass",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mariner's Compass",
       "Pocket Compass",
@@ -10456,6 +10586,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Clock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mechanical Clock",
       "Pendulum Clock",
@@ -10498,103 +10629,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-229",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Hourglass",
-    "language": "en",
-    "aliases": [
-      "Sandglass",
-      "Sand Timer",
-      "Egg Timer"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Classic wooden brass-framed hourglass with fine white silica sand trickling steadily through a narrow glass neck in soft candlelight.",
-    "core_traits": [
-      "Device for measuring the passage of a fixed interval of time consisting of two glass bulbs connected by a narrow neck",
-      "Operates by the regulated gravitational trickle of fine dry sand or powdered eggshell from the upper bulb to the lower bulb",
-      "Once all the sand flows into the bottom chamber, the timer can be inverted to measure the time interval again",
-      "Historic maritime timekeeper used by sailors to measure ship speed with a chip log and time 4-hour watch shifts"
-    ],
-    "distractor_pool": [
-      "Mechanical Clock",
-      "Wristwatch",
-      "Thermometer",
-      "Barometer",
-      "Compass"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Hourglasses on historic wooden sailing ships were filled with ordinary beach sand scooped from the seashore.",
-        "verdict": "myth",
-        "explanation": "Beach sand contains rough pebbles and sea salt that absorbs moisture and clumps; makers used finely sifted powdered marble or crushed eggshells.",
-        "fun_fact": "Dry, perfectly spherical grains were baked in ovens to guarantee steady laminar flow in humid ocean air."
-      },
-      {
-        "claim": "Ferdinand Magellan's fleet carried 18 hourglasses on each ship during the first circumnavigation of the globe in 1519.",
-        "verdict": "fact",
-        "explanation": "Ship's boys were assigned to turn the half-hour sandglass 24 hours a day and ring the ship's bell to keep official voyage time.",
-        "fun_fact": "Sleeping on duty and failing to turn the glass promptly was severely punished at sea."
-      }
-    ],
-    "versus_candidates": [
-      "Mechanical Clock",
-      "Wristwatch",
-      "Sundial"
-    ]
-  },
-  {
-    "id": "ENT-VEH-230",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Thermometer",
-    "language": "en",
-    "aliases": [
-      "Mercury Thermometer",
-      "Digital Thermometer",
-      "Clinical Thermometer"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Clinical glass thermometer with a thin silver mercury column resting alongside a modern digital medical temperature display probe.",
-    "core_traits": [
-      "Instrument used for measuring temperature or a temperature gradient using physical thermodynamic principles",
-      "Traditional liquid-in-glass types utilize the thermal expansion of mercury or red-dyed alcohol in a calibrated capillary tube",
-      "Daniel Gabriel Fahrenheit invented the mercury-in-glass thermometer in 1714 and developed the Fahrenheit temperature scale",
-      "Modern digital models use electronic thermistors, thermocouples, or infrared sensors to measure body heat in seconds"
-    ],
-    "distractor_pool": [
-      "Barometer",
-      "Stethoscope",
-      "Mechanical Clock",
-      "Optical Microscope",
-      "Hydrometer"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Modern digital forehead and ear thermometers measure body temperature using infrared thermal light emitted by human skin.",
-        "verdict": "fact",
-        "explanation": "All objects above absolute zero emit infrared radiation; infrared sensors detect this thermal photonic energy without physical contact.",
-        "fun_fact": "Non-contact infrared thermometers became ubiquitous worldwide during the COVID-19 pandemic."
-      },
-      {
-        "claim": "Mercury thermometers are completely safe to break and clean up with a household vacuum cleaner.",
-        "verdict": "myth",
-        "explanation": "Mercury is a potent neurotoxin; vacuuming broken mercury vaporizes it into toxic airborne fumes that are easily inhaled.",
-        "fun_fact": "Mercury thermometers have been largely banned from clinical use and replaced by safe digital electronic probes."
-      }
-    ],
-    "versus_candidates": [
-      "Barometer",
-      "Stethoscope",
-      "Mechanical Clock"
-    ]
-  },
-  {
     "id": "ENT-VEH-231",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Barometer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aneroid Barometer",
       "Torricellian Tube",
@@ -10636,58 +10676,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-232",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Calculator",
-    "language": "en",
-    "aliases": [
-      "Electronic Calculator",
-      "Pocket Calculator",
-      "Scientific Calculator",
-      "Texas Instruments / Casio"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Handheld solar-powered pocket calculator with rubber number keys and a high-contrast liquid crystal display showing mathematical calculations.",
-    "core_traits": [
-      "Portable electronic device used to perform basic arithmetic operations and complex scientific mathematical calculations",
-      "Contains integrated circuits (microchips), silicone rubber keypad matrix, and LCD or LED digital displays",
-      "Powered by miniature alkaline button cells or built-in photovoltaic solar cells operating on ambient room light",
-      "Replaced mechanical slide rules, logarithms tables, and mechanical adding machines in the 1970s"
-    ],
-    "distractor_pool": [
-      "Desktop Computer",
-      "Mechanical Typewriter",
-      "Smartwatch",
-      "Mechanical Clock",
-      "Smartphone"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The introduction of handheld electronic pocket calculators in the 1970s rendered the centuries-old slide rule obsolete overnight.",
-        "verdict": "fact",
-        "explanation": "When the Hewlett-Packard HP-35 scientific calculator debuted in 1972, engineers and scientists abandoned analog slide rules within months.",
-        "fun_fact": "The HP-35 was named because it had exactly 35 keys and fit in William Hewlett's shirt pocket."
-      },
-      {
-        "claim": "Solar-powered pocket calculators store enough energy in giant internal car batteries to run for ten years in darkness.",
-        "verdict": "myth",
-        "explanation": "Calculators consume mere micro-amperes of power; their low-power LCD displays run directly off tiny ambient room-light solar strips with no battery needed.",
-        "fun_fact": "They are among the lowest-power electronic computing devices ever engineered."
-      }
-    ],
-    "versus_candidates": [
-      "Desktop Computer",
-      "Mechanical Typewriter",
-      "Smartphone"
-    ]
-  },
-  {
     "id": "ENT-VEH-233",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Typewriter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mechanical Typewriter",
       "Typewriter",
@@ -10735,6 +10729,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Desktop Computer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Personal Computer",
       "PC",
@@ -10781,6 +10776,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Laptop",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Notebook Computer",
       "MacBook",
@@ -10827,6 +10823,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Tablet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "iPad",
       "Tablet Computer",
@@ -10873,6 +10870,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Smartwatch",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apple Watch",
       "Fitness Tracker Watch",
@@ -10919,6 +10917,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Digital Camera",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DSLR",
       "Mirrorless Camera",
@@ -10965,6 +10964,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Video Camera",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Camcorder",
       "Cinema Camera",
@@ -11011,6 +11011,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Television",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "TV Set",
       "Smart TV",
@@ -11057,6 +11058,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Radio",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Radio Receiver",
       "Transistor Radio",
@@ -11103,6 +11105,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Walkie-Talkie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Two-Way Radio",
       "Handheld Transceiver",
@@ -11125,10 +11128,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The original backpack 'walkie-talkie' (Motorola SCR-300) was invented in World War II and weighed over 30 pounds.",
+        "claim": "The name 'walkie-talkie' comes from being able to walk and talk at the same time.",
         "verdict": "fact",
-        "explanation": "Engineered for US infantry combat troops, the backpack FM radio allowed soldiers to communicate while literally walking and talking.",
-        "fun_fact": "Soldiers coined the informal nickname 'walkie-talkie', which became an enduring global term."
+        "explanation": "Early portable radios from the 1940s let people chat while moving, instead of sitting at a big base station.",
+        "fun_fact": "Canadian inventor Donald Hings and American inventor Al Gross both helped create early walkie-talkies."
       },
       {
         "claim": "Walkie-talkies rely on cellular telephone phone towers and the internet to communicate.",
@@ -11149,6 +11152,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Headphones",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Over-Ear Headphones",
       "Cans",
@@ -11190,103 +11194,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-244",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Earphones",
-    "language": "en",
-    "aliases": [
-      "Earbuds",
-      "In-Ear Monitors",
-      "AirPods"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Pair of glossy white truly wireless Bluetooth earbuds sitting magnetically in their open compact pocket charging case.",
-    "core_traits": [
-      "Miniature in-ear audio speakers designed to fit directly into the outer ear or seal inside the ear canal",
-      "Truly Wireless Stereo (TWS) earbuds feature separate cordless left and right earpieces with built-in micro-batteries",
-      "Equipped with silicone or memory foam ear tips that provide passive noise isolation and bass seal",
-      "Features capacitive touch controls, voice assistant integration, and pocket-sized battery charging cases"
-    ],
-    "distractor_pool": [
-      "Headphones",
-      "Audio Speaker",
-      "Audio Microphone",
-      "Hearing Aid",
-      "Smartwatch"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The white earbuds bundled with the original 2001 Apple iPod became an international fashion and status symbol.",
-        "verdict": "fact",
-        "explanation": "Before the iPod, all headphones were black; Apple's bright white cords stood out vividly, signaling to the world that you owned an iPod.",
-        "fun_fact": "Iconic silhouette billboard ad campaigns cemented white earbuds in global pop culture."
-      },
-      {
-        "claim": "Listening to earbuds at maximum volume for hours can cause permanent irreversible hearing loss.",
-        "verdict": "fact",
-        "explanation": "Earbuds can produce sound levels exceeding 100 decibels directly against the eardrum, damaging microscopic sensory hair cells in the cochlea.",
-        "fun_fact": "Audiologists recommend the 60/60 rule: listen at no more than 60% volume for no more than 60 minutes at a time."
-      }
-    ],
-    "versus_candidates": [
-      "Headphones",
-      "Audio Speaker",
-      "Smartwatch"
-    ]
-  },
-  {
-    "id": "ENT-VEH-245",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Microphone",
-    "language": "en",
-    "aliases": [
-      "Audio Mic",
-      "Dynamic Microphone",
-      "Condenser Mic"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Classic metallic vintage Shure 55 'Elvis' ribbon microphone mounted on a chrome stand under dramatic moody concert stage spotlights.",
-    "core_traits": [
-      "Transducer device that converts acoustic sound pressure waves in air into an electrical audio signal",
-      "Dynamic microphones use a flexible diaphragm attached to a movable induction coil suspended inside a magnetic field",
-      "Condenser microphones use a vibrating conductive diaphragm spaced parallel to a backplate acting as an electrostatic capacitor",
-      "Essential audio recording tool for studio music vocalists, live concerts, television broadcast, and telecommunications"
-    ],
-    "distractor_pool": [
-      "Audio Speaker",
-      "Headphones",
-      "Earphones",
-      "Radio",
-      "Walkie-Talkie"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "An audio loudspeaker and a dynamic microphone use the exact same electromagnetic physics in reverse.",
-        "verdict": "fact",
-        "explanation": "A speaker turns electricity into coil motion to push air; a dynamic microphone lets air push a coil inside a magnet to create electricity.",
-        "fun_fact": "You can actually plug ordinary headphones into a microphone jack and speak into them as a makeshift mic."
-      },
-      {
-        "claim": "Alexander Graham Bell and Thomas Edison fought major patent battles over the invention of the carbon microphone.",
-        "verdict": "fact",
-        "explanation": "Thomas Edison patented the loose-carbon granule transmitter in 1877, which amplified voice signals strong enough for long-distance telephones.",
-        "fun_fact": "Carbon microphones remained standard in landline telephones for nearly a century."
-      }
-    ],
-    "versus_candidates": [
-      "Audio Speaker",
-      "Headphones",
-      "Radio"
-    ]
-  },
-  {
     "id": "ENT-VEH-246",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Audio Speaker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Loudspeaker",
       "Audio Monitor",
@@ -11333,6 +11246,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Projector",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Video Projector",
       "Home Theater Projector",
@@ -11379,6 +11293,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Gaming Console",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Video Game Console",
       "PlayStation / Xbox / Nintendo",
@@ -11425,6 +11340,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Virtual Reality Headset",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "VR Headset",
       "VR Goggles",
@@ -11466,103 +11382,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-250",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Flashlight",
-    "language": "en",
-    "aliases": [
-      "Electric Torch",
-      "Pocket Torch",
-      "Tactical Flashlight"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Heavy-duty knurled aluminum tactical LED flashlight casting a piercing 2,000-lumen white beam of light through thick midnight woods.",
-    "core_traits": [
-      "Portable handheld electric light source traditionally powered by batteries and housing a light source and reflector",
-      "Invented in 1899 by British inventor David Misell and commercialized by the American Electrical Novelty and Manufacturing Company (Eveready)",
-      "Modern flashlights utilize high-efficiency solid-state light-emitting diodes (LEDs) producing thousands of lumens",
-      "Housed in impact-resistant aircraft-grade anodized aluminum with waterproof O-ring seals"
-    ],
-    "distractor_pool": [
-      "Light Bulb",
-      "Laser",
-      "Battery",
-      "Searchlight",
-      "Candle"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The flashlight got its name because early carbon-filament batteries were weak and only produced a brief 'flash' of light before dying.",
-        "verdict": "fact",
-        "explanation": "Early dry-cell batteries couldn't sustain steady current; users had to turn them on for a brief flash, let them rest, and flash again.",
-        "fun_fact": "In British English, the device is universally known as an 'electric torch' or simply 'torch'."
-      },
-      {
-        "claim": "LED flashlights get extremely hot because they have tiny fire flames inside the bulb.",
-        "verdict": "myth",
-        "explanation": "LEDs produce zero fire; high-power micro-diodes concentrate electrical current heat into their metal circuit board, requiring aluminum heat-sinks.",
-        "fun_fact": "High-powered tactical flashlights have thermal step-down computers to prevent overheating."
-      }
-    ],
-    "versus_candidates": [
-      "Light Bulb",
-      "Battery",
-      "Industrial Laser"
-    ]
-  },
-  {
-    "id": "ENT-VEH-251",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Light Bulb",
-    "language": "en",
-    "aliases": [
-      "Incandescent Lamp",
-      "Electric Lamp",
-      "Edison Bulb"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Warm glowing vintage Edison incandescent light bulb with intricate looped carbon-tungsten filament glowing golden inside clear glass.",
-    "core_traits": [
-      "Electric lamp that produces light by heating a filament wire to a white-hot temperature until it glows with visible incandescence",
-      "Filament is enclosed inside an airtight glass bulb filled with inert argon gas to prevent rapid oxidation and burning",
-      "Thomas Edison perfected the practical commercial incandescent bulb in 1879 using a carbonized bamboo filament",
-      "Banished domestic darkness and nighttime candle fires, extending human productive hours worldwide"
-    ],
-    "distractor_pool": [
-      "Flashlight",
-      "LED Light Bulb",
-      "Solar Panel",
-      "Electrochemical Battery",
-      "Laser"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Thomas Edison was the very first person to discover that electricity could make a wire glow.",
-        "verdict": "myth",
-        "explanation": "Dozens of inventors (including Humphry Davy, Warren de la Rue, and Joseph Swan) demonstrated incandescent light before Edison.",
-        "fun_fact": "Edison's genius was finding a durable, cheap filament that lasted over 1,200 hours and developing a complete electrical grid system."
-      },
-      {
-        "claim": "The 'Centennial Light' in a California firehouse has been burning continuously for over 120 years.",
-        "verdict": "fact",
-        "explanation": "Manufactured by the Shelby Electric Company in the late 1890s, the hand-blown carbon bulb in Livermore, California has burned since 1901.",
-        "fun_fact": "It holds the Guinness World Record for the world's longest-lasting light bulb."
-      }
-    ],
-    "versus_candidates": [
-      "Flashlight",
-      "Electrochemical Battery",
-      "Solar Panel"
-    ]
-  },
-  {
     "id": "ENT-VEH-252",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Battery",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Electrochemical Cell",
       "Dry Cell",
@@ -11609,6 +11434,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Refrigerator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fridge",
       "Icebox",
@@ -11650,151 +11476,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-254",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Microwave Oven",
-    "language": "en",
-    "aliases": [
-      "Microwave",
-      "Radar Range",
-      "Microwave Cooker"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Countertop stainless-steel microwave oven with interior light glowing as a glass turntable rotates a steaming bowl of soup.",
-    "core_traits": [
-      "Electric kitchen appliance that heats and cooks food by exposing it to electromagnetic radiation in the microwave frequency range (2.45 GHz)",
-      "Uses a high-voltage magnetron vacuum tube to generate microwave radio waves",
-      "Heats food by dielectric heating: alternating electromagnetic waves cause polar water and fat molecules in food to rotate rapidly, generating friction heat",
-      "Cooks food significantly faster than traditional thermal convection or gas ovens"
-    ],
-    "distractor_pool": [
-      "Electric Toaster",
-      "Refrigerator",
-      "Kitchen Blender",
-      "Dishwasher",
-      "Conventional Oven"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Percy Spencer discovered microwave cooking when a candy bar melted in his pocket while working on military radar magnetrons.",
-        "verdict": "fact",
-        "explanation": "In 1945 at Raytheon, engineer Spencer noticed his peanut candy bar melted near an active magnetron tube; he then tested popcorn kernels.",
-        "fun_fact": "Raytheon patented the invention and sold the first commercial microwave oven as the 'Radarange'."
-      },
-      {
-        "claim": "Microwave ovens cook food from the inside out starting at the very center core.",
-        "verdict": "myth",
-        "explanation": "Microwaves only penetrate about 1 inch into food from the outside; heat travels to the center via normal thermal conduction.",
-        "fun_fact": "Microwaved food does not become radioactive and carries zero residual radiation."
-      }
-    ],
-    "versus_candidates": [
-      "Electric Toaster",
-      "Refrigerator",
-      "Kitchen Blender"
-    ]
-  },
-  {
-    "id": "ENT-VEH-255",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Toaster",
-    "language": "en",
-    "aliases": [
-      "Electric Toaster",
-      "Pop-Up Toaster",
-      "Bread Toaster",
-      "Toastmaster"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Shiny chrome two-slice pop-up toaster popping up two golden-brown crispy slices of toasted bread with steam gently rising.",
-    "core_traits": [
-      "Small electric kitchen appliance designed to expose sliced bread to radiant heat, browning it into toast via the Maillard reaction",
-      "Uses nichrome (nickel-chromium alloy) ribbon heating wires that glow red hot without oxidizing in air",
-      "Charles Strite invented the automatic pop-up spring toaster with variable timer in 1919",
-      "Features a mechanical spring carriage held down by an electromagnet or latch, released when toasting is complete"
-    ],
-    "distractor_pool": [
-      "Microwave Oven",
-      "Kitchen Blender",
-      "Refrigerator",
-      "Dishwasher",
-      "Coffee Maker"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Nichrome wire, invented in 1905 by Albert Marsh, was the crucial material breakthrough that made electric toasters practical.",
-        "verdict": "fact",
-        "explanation": "Nichrome alloy can heat to glowing red temperatures repeatedly without burning up, rusting, or snapping in open air.",
-        "fun_fact": "Early toasters used iron wires that melted or oxidized into powder within hours."
-      },
-      {
-        "claim": "Sticking a metal fork into a plugged-in toaster is completely safe if the toaster is turned off.",
-        "verdict": "myth",
-        "explanation": "Inserting metal utensils into a toaster can contact live electrical heating elements, causing severe electrical shock or electrocution.",
-        "fun_fact": "Always unplug a toaster from the wall outlet before attempting to dislodge stuck bread."
-      }
-    ],
-    "versus_candidates": [
-      "Microwave Oven",
-      "Kitchen Blender",
-      "Refrigerator"
-    ]
-  },
-  {
-    "id": "ENT-VEH-256",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Blender",
-    "language": "en",
-    "aliases": [
-      "Kitchen Blender",
-      "Blender",
-      "Food Liquidizer",
-      "Smoothie Maker"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "High-powered countertop kitchen blender with a clear glass pitcher pureeing vibrant green kale, bananas, and ice into a smooth vortex.",
-    "core_traits": [
-      "Kitchen laboratory appliance used to mix, puree, crush, or emulsify food and liquids into smooth textures",
-      "Consists of a motor housing base topped with a graduated glass, plastic, or stainless-steel pitcher",
-      "Features a high-speed rotating stainless-steel cross blade at the bottom spinning up to 20,000 to 30,000 RPM",
-      "Creates a fluid vortex that pulls solid food particles downward directly into the spinning chopping blades"
-    ],
-    "distractor_pool": [
-      "Food Processor",
-      "Microwave Oven",
-      "Electric Toaster",
-      "Washing Machine",
-      "Dishwasher"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Stephen Poplawski invented the electric blender in 1922 specifically to make soda fountain malted milk drinks.",
-        "verdict": "fact",
-        "explanation": "Poplawski patented a blender with a rotating blade in the bottom of a container to mix malted milk powder with milk and ice cream.",
-        "fun_fact": "Fred Waring financed and popularized the famous 'Waring Blendor' in the 1930s."
-      },
-      {
-        "claim": "The Waring Blendor was used by Dr. Jonas Salk to help develop the world's first polio vaccine.",
-        "verdict": "fact",
-        "explanation": "Dr. Salk used specialized stainless-steel Waring blenders in his university lab to homogenize monkey kidney tissue and culture the virus.",
-        "fun_fact": "The household kitchen gadget was an essential tool in medical history."
-      }
-    ],
-    "versus_candidates": [
-      "Microwave Oven",
-      "Electric Toaster",
-      "Dishwasher"
-    ]
-  },
-  {
     "id": "ENT-VEH-257",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Dishwasher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Automatic Dishwasher",
       "Dishwashing Machine",
@@ -11841,6 +11528,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Washing Machine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clothes Washer",
       "Laundry Machine",
@@ -11887,6 +11575,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Vacuum Cleaner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hoover",
       "Sweeper",
@@ -11933,6 +11622,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Robot Vacuum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Robovac",
       "Roomba",
@@ -11955,10 +11645,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "iRobot, the company that invented the Roomba robot vacuum, originally built military bomb-disposal robots.",
+        "claim": "Robot vacuums use cliff sensors so they do not fall down stairs.",
         "verdict": "fact",
-        "explanation": "Founders Rodney Brooks, Colin Angle, and Helen Greiner developed the military PackBot robot used in Afghanistan and Iraq before creating the Roomba.",
-        "fun_fact": "They applied military obstacle navigation algorithms to domestic living room furniture."
+        "explanation": "Infrared sensors underneath bounce light off the floor; if no light comes back, the robot knows there is a drop.",
+        "fun_fact": "The company iRobot was founded in 1990 by robot scientists from MIT."
       },
       {
         "claim": "Modern robot vacuums bounce around rooms completely at random like billiard balls forever.",
@@ -11974,57 +11664,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-261",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Hairdryer",
-    "language": "en",
-    "aliases": [
-      "Blow Dryer",
-      "Hair Dryer",
-      "Styling Dryer"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Ergonomic matte-metallic handheld hairdryer blowing a warm stream of ionizing air while drying long flowing hair in a mirror.",
-    "core_traits": [
-      "Electromechanical device that blows ambient or warm air over damp hair to accelerate the evaporation of water particles",
-      "Contains an electric motor spinning an impeller fan and coiled nichrome wire electrical heating elements",
-      "Features temperature switches, speed controls, and a 'cool shot' button that sets hair styling in place",
-      "Modern models incorporate ceramic tourmaline coatings and negative ion generators to eliminate static frizz"
-    ],
-    "distractor_pool": [
-      "Vacuum Cleaner",
-      "Electric Fan",
-      "Air Conditioner",
-      "Electric Toaster",
-      "Hair Curler"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Before portable handheld hairdryers, people dried their hair using the exhaust air pipe of vacuum cleaners.",
-        "verdict": "fact",
-        "explanation": "In the early 1900s, women routinely attached flexible hoses to the warm blowing exhaust vent of early vacuum cleaners to blow-dry hair.",
-        "fun_fact": "French stylist Alexandre-Ferdinand Godefroy invented the first hooded salon hairdryer in 1890 using a gas stove chimney."
-      },
-      {
-        "claim": "Using a hairdryer in the bathtub is safe because household wall outlets have zero lethal voltage.",
-        "verdict": "myth",
-        "explanation": "Dropping a plugged-in hairdryer into water can cause fatal electrocution; modern dryers mandate Ground Fault Circuit Interrupter (GFCI) plugs for safety.",
-        "fun_fact": "GFCI safety plugs shut off electricity in a millisecond if current leaks into water."
-      }
-    ],
-    "versus_candidates": [
-      "Electric Fan",
-      "Air Conditioner",
-      "Vacuum Cleaner"
-    ]
-  },
-  {
     "id": "ENT-VEH-262",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Air Conditioner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "AC Unit",
       "HVAC",
@@ -12066,58 +11711,12 @@
     ]
   },
   {
-    "id": "ENT-VEH-263",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Fan",
-    "language": "en",
-    "aliases": [
-      "Electric Fan",
-      "Desk Fan",
-      "Ceiling Fan",
-      "Oscillating Fan"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Classic three-bladed oscillating chrome desk fan turning smoothly from side to side blowing a refreshing summer breeze.",
-    "core_traits": [
-      "Powered machine used to create a current of moving air for cooling, ventilation, and air circulation",
-      "Features curved aerodynamic blades attached to an electric motor hub enclosed in a protective wire mesh safety cage",
-      "Oscillating models feature a worm gear gearbox that sweeps the fan head automatically from left to right",
-      "Cools human bodies primarily by accelerating the natural evaporation of sweat from skin rather than lowering air temperature"
-    ],
-    "distractor_pool": [
-      "Air Conditioner",
-      "Hairdryer",
-      "Vacuum Cleaner",
-      "Modern Wind Turbine",
-      "Exhaust Hood"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "An electric fan running in an empty closed room physically lowers the temperature of the room.",
-        "verdict": "myth",
-        "explanation": "Fans do not cool air; they actually heat the room slightly due to motor heat. Fans cool humans via wind-chill and evaporative sweat cooling.",
-        "fun_fact": "Running a fan in an empty room accomplishes nothing except wasting electricity."
-      },
-      {
-        "claim": "Schuyler Skaats Wheeler invented the two-bladed electric desktop fan in 1882 at age 22.",
-        "verdict": "fact",
-        "explanation": "Wheeler placed an electric motor on a desk with brass propeller blades, patenting the world's first electric personal fan.",
-        "fun_fact": "Philip Diehl followed in 1887 by mounting a fan motor to a ceiling, inventing the modern ceiling fan."
-      }
-    ],
-    "versus_candidates": [
-      "Air Conditioner",
-      "Hairdryer",
-      "Modern Wind Turbine"
-    ]
-  },
-  {
     "id": "ENT-VEH-264",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Elevator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lift",
       "Passenger Elevator",
@@ -12164,6 +11763,7 @@
     "subtopic_id": "industrial_inventions",
     "name": "Escalator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moving Staircase",
       "Electric Stairs",
@@ -12210,6 +11810,7 @@
     "subtopic_id": "consumer_tech",
     "name": "E-Reader",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Electronic Book Reader",
       "Kindle",
@@ -12256,6 +11857,7 @@
     "subtopic_id": "consumer_tech",
     "name": "Handheld Gaming Console",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Game Boy",
       "Portable Console",
@@ -12278,10 +11880,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A Nintendo Game Boy survived a bombing barracks explosion during the 1991 Gulf War and still worked perfectly.",
+        "claim": "The original Game Boy ran on four AA batteries.",
         "verdict": "fact",
-        "explanation": "A Game Boy scorched and melted in a barracks explosion in Saudi Arabia was displayed at Nintendo World in New York, still running Tetris flawlessly.",
-        "fun_fact": "Its astonishing durability cemented Nintendo's reputation for indestructible handheld hardware."
+        "explanation": "Its simple green-tinted screen used very little power, so one set of batteries could last many hours of play.",
+        "fun_fact": "Gunpei Yokoi, who led the Game Boy's design, also created Nintendo's earlier Game & Watch handhelds."
       },
       {
         "claim": "The legendary puzzle game Tetris was bundled with the original 1989 Game Boy, propelling it to over 118 million sales.",
@@ -12297,49 +11899,49 @@
     ]
   },
   {
-    "id": "ENT-VEH-268",
+    "id": "ENT-VEH-269",
     "domain_id": "vehicles_technology",
-    "subtopic_id": "consumer_tech",
-    "name": "Wristwatch",
+    "subtopic_id": "maritime",
+    "name": "Titanic",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Watch",
-      "Quartz Watch",
-      "Mechanical Watch"
+      "RMS Titanic",
+      "The Ship of Dreams"
     ],
     "difficulty": 1,
-    "visual_anchor": "Exquisite stainless-steel mechanical wristwatch with sapphire crystal caseback showing an intricate balance wheel oscillating at 28,800 beats per hour.",
+    "visual_anchor": "Grand four-funneled ocean liner RMS Titanic slicing through calm starry night waters before striking an iceberg.",
     "core_traits": [
-      "Timepiece designed to be worn strapped around the human wrist using a leather, metal, or silicone strap",
-      "Powered by traditional mechanical mainsprings with balance wheels, or modern quartz crystal resonators vibrating at 32,768 Hz",
-      "Originally worn almost exclusively by women as jewelry until World War I trench warfare proved pocket watches impractical for soldiers",
-      "Represents the pinnacle of precision micro-mechanical horological engineering, personal fashion, and timeless craftsmanship"
+      "British passenger ocean liner operated by the White Star Line, the largest afloat at the time",
+      "Struck an iceberg in the North Atlantic during her maiden voyage from Southampton to New York in April 1912",
+      "Tragically sank with the loss of over 1,500 passenger and crew lives",
+      "Wreck discovered in 1985 by Robert Ballard, inspiring James Cameron's 1997 blockbuster film"
     ],
     "distractor_pool": [
-      "Smartwatch",
-      "Mechanical Clock",
-      "Hourglass",
-      "Compass",
-      "Electronic Calculator"
+      "Lusitania",
+      "Britannic",
+      "Queen Mary",
+      "Bismarck",
+      "Flying Dutchman"
     ],
     "facts_and_myths": [
       {
-        "claim": "World War I popularized the widespread adoption of wristwatches by men across the world.",
-        "verdict": "fact",
-        "explanation": "Soldiers in muddy battle trenches couldn't fumble with pocket watches while holding rifles; 'trench watches' allowed synchronized artillery strikes.",
-        "fun_fact": "After the war, returning soldiers made wristwatches an essential masculine accessory."
+        "claim": "The Titanic was officially claimed and advertised by White Star Line as 'completely unsinkable'.",
+        "verdict": "myth",
+        "explanation": "White Star Line promotional brochures claimed she was 'practically unsinkable' due to watertight compartments; media simplified it to 'unsinkable'.",
+        "fun_fact": "The ship carried only 20 lifeboats, enough for about half the souls on board, complying with outdated regulations."
       },
       {
-        "claim": "Quartz wristwatches keep time using the natural piezoelectric vibrations of a tiny slice of quartz crystal.",
+        "claim": "The Titanic's fourth rear funnel was largely a decorative dummy pipe added for aesthetic symmetry.",
         "verdict": "fact",
-        "explanation": "A battery sends an electrical pulse into a tuning-fork shaped quartz crystal, which vibrates precisely 32,768 times per second to drive microchips.",
-        "fun_fact": "Quartz watches are accurate to within a few seconds per month, far exceeding most luxury mechanical watches."
+        "explanation": "Only three funnels released smoke and steam from the boilers; the fourth was a ventilation pipe designed to make the ship look grander and faster.",
+        "fun_fact": "Passengers associated four funnels with superior prestige and power."
       }
     ],
     "versus_candidates": [
-      "Smartwatch",
-      "Mechanical Clock",
-      "Hourglass"
+      "Lusitania",
+      "Apollo 11",
+      "Concorde"
     ]
   }
 ]

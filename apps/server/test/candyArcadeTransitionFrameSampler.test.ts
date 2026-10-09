@@ -98,7 +98,7 @@ describe("Phase 4: Headless Frame Verification & QA Sign-off", () => {
 
     it("mounts both bridge transitions on overlay track 1 with precise CSS variable bindings", () => {
       // Transition 1: Brand Logo Stinger Mount
-      expect(bundle.html).toContain('id="bridge_topic_to_cta-mount"');
+      expect(bundle.html).toContain('id="bridge_topic_to_question-mount"');
       expect(bundle.html).toContain('data-track-index="1"');
       expect(bundle.html).toContain("transition-brand-logo-stinger");
 
@@ -107,7 +107,7 @@ describe("Phase 4: Headless Frame Verification & QA Sign-off", () => {
       expect(bundle.html).toContain("transition-energy-whip");
 
       // Verify sub-composition templates exist in files bundle
-      const stingerTemplate = Object.entries(bundle.files).find(([k]) => k.includes("bridge_topic_to_cta"))?.[1];
+      const stingerTemplate = Object.entries(bundle.files).find(([k]) => k.includes("bridge_topic_to_question"))?.[1];
       expect(stingerTemplate).toBeDefined();
       expect(stingerTemplate).toContain("--clip-start:");
       expect(stingerTemplate).toContain("--trans-dur:1.300s");

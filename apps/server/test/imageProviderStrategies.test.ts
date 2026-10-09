@@ -66,19 +66,26 @@ describe("Single-Attempt Provider Strategies Modernization", () => {
       trackSpy.mockRestore();
     });
 
-    it("fails immediately on error without inner retry loops", async () => {
+    // GPT-I2 keeps one bounded transient retry (see authorizedContentProviderErrors "Case 3"),
+    // unlike the single-attempt ShopAiKey and Antigravity strategies.
+    it("retries a transient error exactly once before failing", async () => {
+      vi.useFakeTimers();
       const generateSpy = vi
         .spyOn(Gpti2QuizImageProvider.prototype, "generateAsset")
         .mockRejectedValue(new Error("GPT-I2 upstream 503 timeout"));
 
-      const input = createMockInput();
-      await expect(generateGpti2Asset(input)).rejects.toThrow("GPT-I2 upstream 503 timeout");
+      try {
+        const input = createMockInput();
+        const outcome = expect(generateGpti2Asset(input)).rejects.toThrow("GPT-I2 upstream 503 timeout");
+        await vi.runAllTimersAsync();
+        await outcome;
 
-      // Verify single attempt execution (not retried)
-      expect(generateSpy).toHaveBeenCalledTimes(1);
-      expect(input.logger.warn).not.toHaveBeenCalled();
-
-      generateSpy.mockRestore();
+        expect(generateSpy).toHaveBeenCalledTimes(2);
+        expect(input.logger.warn).toHaveBeenCalledTimes(1);
+      } finally {
+        generateSpy.mockRestore();
+        vi.useRealTimers();
+      }
     });
 
     it("immediately rethrows content filter and size conflict errors", async () => {

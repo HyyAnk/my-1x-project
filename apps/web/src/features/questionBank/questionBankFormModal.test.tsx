@@ -71,12 +71,14 @@ describe("useQuestionBankForm hook", () => {
     expect(state.choices).toHaveLength(2);
   });
 
-  it("normalizes legacy archetype verdict_fact_myth to verdict_true_false", () => {
-    const state = resolveInitialFormState({
-      ...mockInitialQuestion,
-      archetype_id: "verdict_fact_myth" as any,
-    });
-    expect(state.archetypeId).toBe("verdict_true_false");
+  it("normalizes retired True/False archetypes to verdict_yes_no", () => {
+    for (const legacyArchetype of ["verdict_fact_myth", "verdict_true_false"]) {
+      const state = resolveInitialFormState({
+        ...mockInitialQuestion,
+        archetype_id: legacyArchetype as any,
+      });
+      expect(state.archetypeId).toBe("verdict_yes_no");
+    }
   });
 
   it("initializes Yes/No choices for verdict_yes_no archetype when no choices provided", () => {

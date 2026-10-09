@@ -1,18 +1,19 @@
 import { z } from "zod";
 import { QuizAgeBandSchema, QuizQuestionFormatSchema } from "../enums.js";
 import { QuestionContentTypeSchema, type QuestionContentType } from "./config.js";
+import { acceptLegacyVerdictAliases, normalizeLegacyVerdictIdentifier } from "../enums/quiz/legacyVerdictAliases.js";
 
-export const BankGameplayArchetypeIdSchema = z.enum([
+export const BANK_GAMEPLAY_ARCHETYPE_IDS = [
   "deep_trivia",
   "visual_spotting",
   "verdict_yes_no",
-  "verdict_true_false",
-  "verdict_fact_myth",
   "versus_faceoff",
   "visual_identification",
   "speed_blitz",
   "mystery_reveal",
-]);
+] as const;
+
+export const BankGameplayArchetypeIdSchema = acceptLegacyVerdictAliases(z.enum(BANK_GAMEPLAY_ARCHETYPE_IDS));
 export type BankGameplayArchetypeId = z.infer<typeof BankGameplayArchetypeIdSchema>;
 
 /** Identifiers used as Question Bank directory and file path segments. */
@@ -55,8 +56,10 @@ export const BankTranslationChoiceSchema = z.object({
 export type BankTranslationChoice = z.infer<typeof BankTranslationChoiceSchema>;
 
 export function bankRequiredChoiceCountForArchetype(archetypeId: BankGameplayArchetypeId): number {
-  if (archetypeId === "mystery_reveal") return 1;
-  return archetypeId === "verdict_yes_no" || archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth" || archetypeId === "versus_faceoff" ? 2 : 3;
+  // Unparsed legacy records may still carry a retired True/False id at runtime.
+  const id = normalizeLegacyVerdictIdentifier<string>(archetypeId);
+  if (id === "mystery_reveal") return 1;
+  return id === "verdict_yes_no" || id === "versus_faceoff" ? 2 : 3;
 }
 
 export const BankTranslationContentSchema = z.object({

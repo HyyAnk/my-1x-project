@@ -182,7 +182,7 @@ describe("ContextEngine", () => {
     }
   });
 
-  it("enforces strict 2-choice prompt contract when quiz format is true_false", async () => {
+  it("enforces strict 2-choice Yes/No prompt contract when quiz format is yes_no", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "quiz-tf-context-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
@@ -209,7 +209,7 @@ describe("ContextEngine", () => {
       estimated_potential: "High",
       generated_at: new Date().toISOString(),
       selected: false,
-      quiz_format: "true_false" as const,
+      quiz_format: "yes_no" as const,
     };
     await repository.saveTopicRun(channel.channel_id, [
       topic,
@@ -228,11 +228,11 @@ describe("ContextEngine", () => {
     const engine = new ContextEngine(repository, logger);
 
     const scriptContext = await engine.build("GENERATE_SCRIPT", channel.channel_id, episode.episode_id);
-    expect(scriptContext.prompt).toContain("strictly exactly 2 choices: True or False");
+    expect(scriptContext.prompt).toContain("strictly exactly 2 choices: Yes or No");
     expect(scriptContext.prompt).toContain("Never provide more than 2 answer choices");
 
     const treatmentContext = await engine.build("GENERATE_TREATMENT", channel.channel_id, episode.episode_id);
-    expect(treatmentContext.prompt).toContain("strictly exactly 2 choices: True or False");
+    expect(treatmentContext.prompt).toContain("strictly exactly 2 choices: Yes or No");
     expect(treatmentContext.prompt).toContain("Never generate more than 2 answer choices");
 
     await repository.saveEpisodeFile(
@@ -249,7 +249,7 @@ describe("ContextEngine", () => {
     );
 
     const sceneContext = await engine.build("GENERATE_SCENES", channel.channel_id, episode.episode_id);
-    expect(sceneContext.prompt).toContain("Choices must have exactly 2 options (True and False only; never exceed 2 choices).");
+    expect(sceneContext.prompt).toContain("Choices must have exactly 2 options (Yes and No only; never exceed 2 choices).");
   });
 
   it("uses the absolute storage path for continuity image output", async () => {

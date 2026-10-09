@@ -68,18 +68,6 @@ describe("TopicLayoutPreviewButton", () => {
     expect(getByText(/Visual A/)).toBeDefined();
   });
 
-  it("resolves True or False / verdict_true_false when quizFormat is true_false", () => {
-    const { getByRole, getByText, getAllByText } = render(<TopicLayoutPreviewButton quizFormat="true_false" />);
-
-    const button = getByRole("button", { name: /Layout: True or False/i });
-    expect(button).toBeDefined();
-
-    fireEvent.click(button);
-    expect(getByText(/verdict_true_false/)).toBeDefined();
-    expect(getAllByText(/TRUE/).length).toBeGreaterThanOrEqual(1);
-    expect(getAllByText(/FALSE/).length).toBeGreaterThanOrEqual(1);
-  });
-
   it("resolves Yes or No / verdict_yes_no when quizFormat is yes_no", () => {
     const { getByRole, getByText, getAllByText } = render(<TopicLayoutPreviewButton quizFormat="yes_no" />);
 

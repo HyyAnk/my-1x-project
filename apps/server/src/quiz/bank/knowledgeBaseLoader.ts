@@ -2,62 +2,28 @@ import fs from "node:fs";
 import path from "node:path";
 
 import type { KnowledgeFactOrMyth, KnowledgeEntity, KnowledgeBaseStats, KnowledgeBaseLoaderOptions } from "./knowledgeBase.types.js";
+import {
+  admitEntityForChannelAudience,
+  entityRedirectsFingerprint,
+  loadEntityRedirects,
+  resolveEntityRedirect,
+  type EntityRedirectMap,
+} from "./knowledgeBase/index.js";
+import { computeEntitiesDirectoryFingerprint, resolveKnowledgeBaseEntitiesDir } from "./knowledgeBase/entitiesDirectory.js";
+import { appendToIndex, isKnowledgeEntityRecord, sanitizeLoadedEntity } from "./knowledgeBase/entityRecord.js";
 
 export type { KnowledgeFactOrMyth, KnowledgeEntity, KnowledgeBaseStats, KnowledgeBaseLoaderOptions };
+export { computeEntitiesDirectoryFingerprint, resolveKnowledgeBaseEntitiesDir };
 
 // In-memory cache structures
 let cachedEntities: KnowledgeEntity[] | null = null;
 let entityByIdMap = new Map<string, KnowledgeEntity>();
 let entitiesByDomainMap = new Map<string, KnowledgeEntity[]>();
 let entitiesByDomainSubtopicMap = new Map<string, KnowledgeEntity[]>();
+let entityRedirects: EntityRedirectMap = new Map();
+let restrictedEntityIds = new Set<string>();
 let cachedBaseDir: string | null = null;
 let cachedFingerprint: string | null = null;
-
-/**
- * Computes a lightweight fingerprint (filenames + mtimeMs + size) of the entities directory.
- * Takes < 0.1ms for 14 files and enables real-time hot-reload when new entities or files are added.
- */
-export function computeEntitiesDirectoryFingerprint(targetDir: string): string {
-  if (!fs.existsSync(targetDir)) return "non-existent";
-  try {
-    const filenames = fs
-      .readdirSync(targetDir)
-      .filter((file) => file.endsWith(".json"))
-      .sort();
-    let fp = "";
-    for (const file of filenames) {
-      const st = fs.statSync(path.join(targetDir, file));
-      fp += `${file}:${st.mtimeMs}:${st.size};`;
-    }
-    return fp;
-  } catch {
-    return "error";
-  }
-}
-
-/**
- * Resolves the directory containing knowledge base JSON files across monorepo runtimes.
- */
-export function resolveKnowledgeBaseEntitiesDir(customDir?: string): string {
-  if (customDir && fs.existsSync(customDir)) {
-    return customDir;
-  }
-
-  const cwd = process.cwd();
-  const candidates = [
-    path.resolve(cwd, ".quiz-studio", "knowledge_base", "entities"),
-    path.resolve(cwd, "..", "..", ".quiz-studio", "knowledge_base", "entities"),
-    path.resolve(cwd, "..", ".quiz-studio", "knowledge_base", "entities"),
-  ];
-
-  for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) {
-      return candidate;
-    }
-  }
-
-  return candidates[0];
-}
 
 /**
  * Loads all knowledge base entities from disk into memory, with instant hash-indexed caching
@@ -65,7 +31,7 @@ export function resolveKnowledgeBaseEntitiesDir(customDir?: string): string {
  */
 export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): KnowledgeEntity[] {
   const targetDir = resolveKnowledgeBaseEntitiesDir(options?.baseDir);
-  const currentFp = computeEntitiesDirectoryFingerprint(targetDir);
+  const currentFp = `${computeEntitiesDirectoryFingerprint(targetDir)}|${entityRedirectsFingerprint(targetDir)}`;
 
   if (cachedEntities && !options?.forceReload && cachedBaseDir === targetDir && cachedFingerprint === currentFp) {
     return cachedEntities;
@@ -75,12 +41,15 @@ export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): 
   const byId = new Map<string, KnowledgeEntity>();
   const byDomain = new Map<string, KnowledgeEntity[]>();
   const byDomainSubtopic = new Map<string, KnowledgeEntity[]>();
+  const restricted = new Set<string>();
 
   if (!fs.existsSync(targetDir)) {
     cachedEntities = [];
     entityByIdMap = byId;
     entitiesByDomainMap = byDomain;
     entitiesByDomainSubtopicMap = byDomainSubtopic;
+    entityRedirects = new Map();
+    restrictedEntityIds = restricted;
     cachedBaseDir = targetDir;
     return [];
   }
@@ -98,18 +67,17 @@ export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): 
       if (Array.isArray(parsed)) {
         for (const item of parsed) {
           if (isKnowledgeEntityRecord(item)) {
-            const entity = sanitizeLoadedEntity(item);
+            // Teen- and adult-rated subjects never reach generation for the kids and family bank.
+            const loaded = sanitizeLoadedEntity(item);
+            const entity = admitEntityForChannelAudience(loaded);
+            if (!entity) {
+              restricted.add(loaded.id);
+              continue;
+            }
             entities.push(entity);
             byId.set(entity.id, entity);
-
-            const domainList = byDomain.get(entity.domain_id) || [];
-            domainList.push(entity);
-            byDomain.set(entity.domain_id, domainList);
-
-            const subtopicKey = `${entity.domain_id}:${entity.subtopic_id}`;
-            const subtopicList = byDomainSubtopic.get(subtopicKey) || [];
-            subtopicList.push(entity);
-            byDomainSubtopic.set(subtopicKey, subtopicList);
+            appendToIndex(byDomain, entity.domain_id, entity);
+            appendToIndex(byDomainSubtopic, `${entity.domain_id}:${entity.subtopic_id}`, entity);
           }
         }
       }
@@ -122,31 +90,41 @@ export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): 
   entityByIdMap = byId;
   entitiesByDomainMap = byDomain;
   entitiesByDomainSubtopicMap = byDomainSubtopic;
+  entityRedirects = loadEntityRedirects(targetDir);
+  restrictedEntityIds = restricted;
   cachedBaseDir = targetDir;
   cachedFingerprint = currentFp;
 
   return entities;
 }
 
-function isKnowledgeEntityRecord(
-  value: unknown,
-): value is Record<string, unknown> & { id: string; domain_id: string; subtopic_id: string } {
-  if (typeof value !== "object" || value === null) return false;
-  const record = value as Record<string, unknown>;
-  return typeof record.id === "string" && typeof record.domain_id === "string" && typeof record.subtopic_id === "string";
-}
-
-function sanitizeLoadedEntity(record: Record<string, unknown>): KnowledgeEntity {
-  const { copyright_risk: _cr, is_trademark_ip: _it, forbidden_visual_keywords: _fv, safe_visual_proxy: _sp, ...clean } = record;
-  return clean as unknown as KnowledgeEntity;
-}
-
 /**
- * Fast O(1) lookup of an entity by its unique ID (e.g. ENT-ANI-001).
+ * Fast O(1) lookup of an entity by its unique ID (e.g. ENT-ANI-001). Ids of merged duplicates
+ * resolve to their canonical entity; ids of subjects not admitted for the channel audience return undefined.
  */
 export function getEntityById(id: string, options?: KnowledgeBaseLoaderOptions): KnowledgeEntity | undefined {
   loadAllKnowledgeEntities(options);
-  return entityByIdMap.get(id);
+  return entityByIdMap.get(resolveEntityRedirect(id, entityRedirects));
+}
+
+/**
+ * True when an entity id (after redirects) names a subject the Knowledge Base holds but does not admit for the
+ * channel audience. Unknown ids and missing ids return false, so free-form bank questions are not affected.
+ * Bank screening calls this once per question across the whole bank, so it reads the most recently loaded
+ * snapshot instead of re-fingerprinting the entities folder on every call; any regular loader call refreshes it.
+ */
+export function isEntityRestrictedForChannel(id: string | null | undefined, options?: KnowledgeBaseLoaderOptions): boolean {
+  if (!id) return false;
+  const needsLoad =
+    !cachedEntities || (options?.baseDir !== undefined && resolveKnowledgeBaseEntitiesDir(options.baseDir) !== cachedBaseDir);
+  if (needsLoad) loadAllKnowledgeEntities(options);
+  return restrictedEntityIds.has(resolveEntityRedirect(id, entityRedirects));
+}
+
+/** Maps a retired entity id (merged duplicate or relocated subject) to its current id; other ids pass through. */
+export function resolveCanonicalEntityId(id: string, options?: KnowledgeBaseLoaderOptions): string {
+  loadAllKnowledgeEntities(options);
+  return resolveEntityRedirect(id, entityRedirects);
 }
 
 /**
@@ -221,6 +199,8 @@ export function clearKnowledgeBaseCache(): void {
   entityByIdMap.clear();
   entitiesByDomainMap.clear();
   entitiesByDomainSubtopicMap.clear();
+  entityRedirects = new Map();
+  restrictedEntityIds = new Set();
   cachedBaseDir = null;
   cachedFingerprint = null;
 }

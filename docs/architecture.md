@@ -92,7 +92,7 @@ AI Quiz Studio is a Windows-supported, local-first pnpm/TypeScript workspace. Lo
 - [services/tts](../services/tts/app.py) is the Python Chatterbox sidecar, kept separate from Node because of its model and native runtime.
 - [app.ts](../apps/server/src/app.ts) is the composition root. It loads environment and configuration, creates the repository, LLM clients, context engine, `TaskManager`, persistent mascot style/slot managers, server plugins, and all routes.
 - [registerAllRoutes.ts](../apps/server/src/routes/registerAllRoutes.ts) is the HTTP composition boundary. It also constructs the Intro/Outro script job manager, portrait image client, and transition preview service; broadcasts TaskManager events; and assembles the mascot animation service graph.
-- [server index.ts](../apps/server/src/index.ts) defaults to loopback port 4310. Vite uses port 2244 in development; Fastify serves the built frontend when `apps/web/dist` exists.
+- [server index.ts](../apps/server/src/index.ts) defaults to loopback port 4310. Vite uses port 7743 in development; Fastify serves the built frontend when `apps/web/dist` exists.
 
 The server owns privileged I/O. Keep filesystem and provider credentials out of browser code. Loopback binding and loopback-only CORS are not a public multi-user authentication model; do not expose the server remotely without a separate security design.
 

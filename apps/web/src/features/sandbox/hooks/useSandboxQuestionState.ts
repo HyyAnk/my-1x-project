@@ -34,14 +34,6 @@ const SAMPLE_QUESTIONS_EN = [
     fact_text: "Emperor penguins have high-density feathers and huddle together to survive harsh Antarctic winters!",
   },
   {
-    type: "true_false" as const,
-    text: "Is the Great Wall of China visible from the Moon with the naked eye?",
-    choices: ["True", "False"],
-    correct: 1,
-    fact_title: "DID YOU KNOW?",
-    fact_text: "It is an urban myth! The Great Wall is not visible from the Moon without magnification.",
-  },
-  {
     type: "versus" as const,
     text: "Which apex predator is heavier in average adult body weight?",
     choices: ["African Lion", "Siberian Tiger"],

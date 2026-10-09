@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import {
   DEFAULT_GPTI2_MODEL,
@@ -50,6 +50,7 @@ export type GenerateEpisodeThumbnailOptions = {
     quality?: "standard" | "high";
   };
   circuitBreaker?: ProviderCircuitBreaker;
+  /** @deprecated Variant failures always throw; no placeholder image is published. */
   throwOnError?: boolean;
   signal?: AbortSignal;
 };
@@ -130,19 +131,7 @@ export async function generateThumbnailVariant(params: GenerateVariantParams): P
     return buildVariantResult({ versionId, variantFilename, ratio, prompt, plan, channel, episode, targets });
   } catch (err) {
     options.signal?.throwIfAborted();
-    return recoverFromVariantGenerationFailure({
-      channel,
-      episode,
-      ratio,
-      prompt,
-      plan,
-      options,
-      logger,
-      versionId,
-      variantFilename,
-      targets,
-      err,
-    });
+    return reportVariantGenerationFailure({ channel, episode, ratio, logger, err });
   }
 }
 
@@ -299,30 +288,20 @@ type VariantGenerationFailureParams = {
   channel: Channel;
   episode: Episode;
   ratio: "16:9" | "9:16";
-  prompt: string;
-  plan: QuizThumbnailPlan;
-  options: GenerateEpisodeThumbnailOptions;
   logger: StudioLogger;
-  versionId: string;
-  variantFilename: string;
-  targets: VariantFileTargets;
   err: unknown;
 };
 
-async function recoverFromVariantGenerationFailure(params: VariantGenerationFailureParams): Promise<VariantGenerationResult> {
-  const { channel, episode, ratio, prompt, plan, options, logger, versionId, variantFilename, targets, err } = params;
-  logger.warn(`Failed to generate ${ratio} thumbnail via AI provider: ${(err as Error).message}`, {
+/**
+ * Logs and rethrows a failed variant. No placeholder is written: publishing a non-image file as the
+ * active thumbnail would break exports and YouTube uploads, so the caller must retry instead.
+ */
+function reportVariantGenerationFailure(params: VariantGenerationFailureParams): never {
+  const { channel, episode, ratio, logger, err } = params;
+  const message = err instanceof Error ? err.message : String(err);
+  logger.warn(`Failed to generate ${ratio} thumbnail via AI provider: ${message}`, {
     profileId: channel.channel_id,
     workerId: episode.episode_id,
   });
-  if (options.throwOnError || plan.editorial) {
-    throw new Error(`Failed to generate ${ratio} thumbnail: ${(err as Error).message}`, { cause: err });
-  }
-  try {
-    await readFile(targets.activeAbsolute);
-  } catch {
-    await writeFile(targets.activeAbsolute, Buffer.from(`AI_QUIZ_THUMBNAIL_${ratio.replace(":", "_")}_PLACEHOLDER`));
-  }
-
-  return buildVariantResult({ versionId, variantFilename, ratio, prompt, plan, channel, episode, targets });
+  throw new Error(`Failed to generate ${ratio} thumbnail: ${message}`, { cause: err });
 }

@@ -1,7 +1,7 @@
 import type { ThumbnailAspectRatio } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import type { QuizThumbnailPlan } from "./thumbnailTypes.js";
-import { composeEditorialThumbnail } from "./editorial/editorialCompositor.js";
+import { normalizeThumbnailImage } from "./thumbnailImageNormalizer.js";
 
 export async function writeGeneratedThumbnail(input: {
   repository: RepositoryService;
@@ -13,7 +13,7 @@ export async function writeGeneratedThumbnail(input: {
   assertCurrent?: () => Promise<void>;
 }): Promise<void> {
   input.signal?.throwIfAborted();
-  const image = await composeEditorialThumbnail(input.source, input.plan, input.ratio, input.repository.rootDirectory);
+  const image = await normalizeThumbnailImage(input.source, input.ratio);
   await input.assertCurrent?.();
   input.signal?.throwIfAborted();
   await input.repository.writeBinaryAtomic(input.targets.variantAbsolute, image);

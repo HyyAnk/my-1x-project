@@ -14,7 +14,7 @@ export const EDITORIAL_CHALLENGE_ARCHETYPES: Record<string, EditorialChallengeAr
       "Luminous bright cinematic studio environment with soft natural depth of field and warm rim lighting; clean, bright, and vibrant, never dark, dull, or muddy.",
     spatialComposition:
       "CLEAR TWO-BLOCK STAGING: Reserved headline block in top-left; expressive mascot block on middle-to-lower left (occupying ~30-35% width); massive hero macro subject filling the entire right half (~60-65% width) in crisp full-bleed vertical scale.",
-    candidateCount: 1,
+    candidateCount: 0,
     defaultHook: "CAN YOU SEE IT?",
     hookFormulas: ["CAN YOU SEE IT?", "LOOK CLOSER!", "WHAT IS THIS?", "CAN YOU GUESS?"],
     mascotPose: {
@@ -76,7 +76,7 @@ export const EDITORIAL_CHALLENGE_ARCHETYPES: Record<string, EditorialChallengeAr
       "Richly lit atmospheric studio corridor with reflective warm golden-amber floor tiles and 4 intensely glowing neon doors (cyan, red, green, amber) casting vibrant colorful reflections.",
     spatialComposition:
       "PERSPECTIVE SELECTION: 4 glowing puzzle doors receding evenly across the background; headline block top-left; mascot in foreground center-right seen from 3/4 back-angle debating which door to choose.",
-    candidateCount: 1,
+    candidateCount: 0,
     defaultHook: "ONLY 1 IS CORRECT!",
     hookFormulas: ["ONLY 1 IS CORRECT!", "PICK THE RIGHT DOOR!", "WHICH DOOR IS SAFE?", "CHOOSE WISELY!"],
     mascotPose: {
@@ -87,19 +87,19 @@ export const EDITORIAL_CHALLENGE_ARCHETYPES: Record<string, EditorialChallengeAr
     },
   },
 
-  true_false_verdict: {
-    id: "true_false_verdict",
-    name: "True or False Verdict",
-    layout: "true_false",
+  yes_no_verdict: {
+    id: "yes_no_verdict",
+    name: "Yes or No Verdict",
+    layout: "yes_no",
     template: "big_object",
     background: "bright",
     backgroundAtmosphere:
       "Vibrant modern tech studio with crisp directional key light, warm amber ambient accents, and crystal-clear contrast; bright and punchy.",
     spatialComposition:
       "DYNAMIC SHOWDOWN: Hero subject prominently displayed on the right (~60% width); headline block top-left; mascot on the left (~35% width) in confident debate posture.",
-    candidateCount: 1,
-    defaultHook: "TRUE OR FALSE?",
-    hookFormulas: ["TRUE OR FALSE?", "FACT OR MYTH?", "ONLY 1 IS TRUE!", "CAN YOU BUST THIS?"],
+    candidateCount: 0,
+    defaultHook: "YES OR NO?",
+    hookFormulas: ["YES OR NO?", "REAL OR NOT?", "CAN YOU GUESS?", "CAN YOU BUST THIS?"],
     mascotPose: {
       prop: "none",
       expression: "Sharp analytical focus with a knowing smirk",
@@ -117,7 +117,7 @@ export const EDITORIAL_CHALLENGE_ARCHETYPES: Record<string, EditorialChallengeAr
       "Vibrant energetic stage arena with colorful floating neon icon halos (cyan, red, green, yellow, purple) and dynamic studio rim lighting.",
     spatialComposition:
       "HOST SHOWCASE: Charismatic mascot centered slightly left (~40% width) reaching out toward the viewer; glowing quiz badges and challenge symbols floating dynamically on the right.",
-    candidateCount: 1,
+    candidateCount: 0,
     defaultHook: "TEST ALL 5 SENSES!",
     hookFormulas: ["TEST ALL 5 SENSES!", "CAN YOU BEAT THIS?", "ONLY GENIUSES PASS!", "LEVEL 10 CHALLENGE!"],
     mascotPose: {

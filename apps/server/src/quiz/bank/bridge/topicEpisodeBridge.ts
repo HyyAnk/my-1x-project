@@ -13,6 +13,7 @@ import {
 import { localizeProductContent } from "../localization/productLocalization.js";
 import { resolveBoundTopicSources } from "./boundSourceResolver.js";
 import { convertBankQuestionToQuizQuestionLossless } from "./bankQuestionConverter.js";
+import { applyStableChoiceOrder, spreadCorrectChoicePositions } from "../choiceOrder/index.js";
 import { resolveRenderAspect, triggerPipelineTask } from "./bootstrapperHelpers.js";
 import { withTopicConfirmationLock } from "./topicConfirmationLock.js";
 import { pinIntroOutroSelection } from "../../introOutro/episodeSelection.js";
@@ -179,14 +180,16 @@ export async function executeEpisodeConfirmation(deps: {
     force: Boolean(input.force || isPreparingRetry),
   });
 
-  const baseQuizQuestions: QuizQuestion[] = boundResult.questions.map((bankQ, idx) => {
-    const q = convertBankQuestionToQuizQuestionLossless(bankQ);
-    q.number = idx + 1;
-    const claimId = `C${String(idx + 1).padStart(2, "0")}`;
-    q.source_ids = Array.from(new Set([claimId, ...(q.source_ids || []), bankQ.id].filter(Boolean)));
-    q.validation.source_coverage = true;
-    return q;
-  });
+  const baseQuizQuestions: QuizQuestion[] = spreadCorrectChoicePositions(
+    boundResult.questions.map((bankQ, idx) => {
+      const q = applyStableChoiceOrder(convertBankQuestionToQuizQuestionLossless(bankQ));
+      q.number = idx + 1;
+      const claimId = `C${String(idx + 1).padStart(2, "0")}`;
+      q.source_ids = Array.from(new Set([claimId, ...(q.source_ids || []), bankQ.id].filter(Boolean)));
+      q.validation.source_coverage = true;
+      return q;
+    }),
+  );
 
   const parentDir = repository.resolvePath("channels", channel.slug, "episodes");
   const episodeSlug = existingReceipt?.product_slug || (await repository.uniqueSlug(topic.title, parentDir));

@@ -5,6 +5,7 @@
     "subtopic_id": "strings_keys",
     "name": "Grand Piano",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Concert Grand",
       "Acoustic Grand Piano",
@@ -52,6 +53,7 @@
     "subtopic_id": "strings_keys",
     "name": "Upright Piano",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vertical Piano",
       "Spinet Piano",
@@ -99,6 +101,7 @@
     "subtopic_id": "strings_keys",
     "name": "Acoustic Guitar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steel-String Acoustic Guitar",
       "Folk Guitar",
@@ -146,6 +149,7 @@
     "subtopic_id": "strings_keys",
     "name": "Classical Guitar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spanish Guitar",
       "Nylon-String Guitar",
@@ -171,7 +175,7 @@
       {
         "claim": "Historically, classical guitar strings were made from animal gut rather than nylon.",
         "verdict": "fact",
-        "explanation": "Prior to World War II, treble strings were made from dried sheep intestines; nylon strings were introduced in 1948 by Albert Augustine and Andres Segovia.",
+        "explanation": "Until the late 1940s, treble strings were made from dried sheep gut; nylon strings were introduced in 1948 by Albert Augustine and Andres Segovia.",
         "fun_fact": "Nylon strings revolutionized classical guitar touring because they stayed in tune much longer than temperamental gut strings."
       },
       {
@@ -193,6 +197,7 @@
     "subtopic_id": "strings_keys",
     "name": "Electric Guitar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solid-Body Electric Guitar",
       "Stratocaster",
@@ -240,6 +245,7 @@
     "subtopic_id": "strings_keys",
     "name": "Bass Guitar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Electric Bass",
       "Bass",
@@ -287,6 +293,7 @@
     "subtopic_id": "strings_keys",
     "name": "Violin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fiddle",
       "Soprano Violin"
@@ -333,6 +340,7 @@
     "subtopic_id": "strings_keys",
     "name": "Viola",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alto Violin",
       "Tenor Violin"
@@ -379,6 +387,7 @@
     "subtopic_id": "strings_keys",
     "name": "Cello",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Violoncello",
       "Bass Viol"
@@ -425,6 +434,7 @@
     "subtopic_id": "strings_keys",
     "name": "Double Bass",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Upright Bass",
       "Contrabass",
@@ -473,6 +483,7 @@
     "subtopic_id": "strings_keys",
     "name": "Concert Harp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pedal Harp",
       "Orchestral Harp"
@@ -519,6 +530,7 @@
     "subtopic_id": "strings_keys",
     "name": "Accordion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Piano Accordion",
       "Squeezebox"
@@ -565,6 +577,7 @@
     "subtopic_id": "strings_keys",
     "name": "Ukulele",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Uke",
       "Hawaiian Ukulele",
@@ -612,6 +625,7 @@
     "subtopic_id": "strings_keys",
     "name": "Banjo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Five-String Banjo",
       "Bluegrass Banjo",
@@ -659,6 +673,7 @@
     "subtopic_id": "strings_keys",
     "name": "Mandolin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bluegrass Mandolin",
       "Bowlback Mandolin",
@@ -706,6 +721,7 @@
     "subtopic_id": "strings_keys",
     "name": "Synthesizer Keyboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Synth",
       "Analog Synthesizer",
@@ -753,6 +769,7 @@
     "subtopic_id": "strings_keys",
     "name": "Pipe Organ",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Church Organ",
       "Cathedral Organ",
@@ -800,6 +817,7 @@
     "subtopic_id": "strings_keys",
     "name": "Harpsichord",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clavicembalo",
       "Cembalo",
@@ -847,6 +865,7 @@
     "subtopic_id": "strings_keys",
     "name": "Lute",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Renaissance Lute",
       "Baroque Lute",
@@ -894,6 +913,7 @@
     "subtopic_id": "strings_keys",
     "name": "Sitar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Indian Sitar",
       "Classical Sitar"
@@ -940,6 +960,7 @@
     "subtopic_id": "strings_keys",
     "name": "Keytar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Remote Keyboard",
       "Shoulder Synthesizer",
@@ -987,6 +1008,7 @@
     "subtopic_id": "strings_keys",
     "name": "Electric Keyboard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Digital Piano",
       "Electronic Piano",
@@ -1034,6 +1056,7 @@
     "subtopic_id": "strings_keys",
     "name": "Melodica",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pianica",
       "Blow-Organ",
@@ -1081,6 +1104,7 @@
     "subtopic_id": "strings_keys",
     "name": "Hammered Dulcimer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dulcimer",
       "Santur",
@@ -1128,6 +1152,7 @@
     "subtopic_id": "strings_keys",
     "name": "Autoharp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chorded Zither",
       "Autoharp Zither"
@@ -1174,6 +1199,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Drum Kit",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Drum Set",
       "Traps",
@@ -1221,6 +1247,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Snare Drum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Side Drum",
       "Trap Snare",
@@ -1268,6 +1295,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Bass Drum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kick Drum",
       "Gran Cassa"
@@ -1314,6 +1342,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Crash Cymbal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cymbal",
       "Crash",
@@ -1361,6 +1390,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Bongos",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bongo Drums",
       "Bongocitos"
@@ -1407,12 +1437,13 @@
     "subtopic_id": "winds_percussion",
     "name": "Congas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Conga Drums",
       "Tumbadoras"
     ],
     "difficulty": 1,
-    "visual_anchor": "A set of three tall barrel-shaped wooden congas with wine-red gloss finish, gleaming chrome tension crowns, and thick rawhide skins standing proud on rubber bottom rings.",
+    "visual_anchor": "A set of three tall barrel-shaped wooden congas with cherry-red gloss finish, gleaming chrome tension crowns, and thick rawhide skins standing proud on rubber bottom rings.",
     "core_traits": [
       "Tall, narrow, single-headed Afro-Cuban barrel drums made from staves of wood or fiberglass",
       "Played standing up or seated using bare hands to produce open tones, muted tones, bass strikes, and heel-toe movements",
@@ -1429,7 +1460,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Original Cuban conga drums were constructed from salvaged wooden rum and lard barrels.",
+        "claim": "Original Cuban conga drums were built from salvaged wooden shipping barrels.",
         "verdict": "fact",
         "explanation": "In nineteenth-century Havana and Matanzas, Afro-Cuban dockworkers converted discarded wooden barrels into drums by tacking cow skins across the top.",
         "fun_fact": "Modern stave-constructed congas still preserve the bulging barrel shape of those early containers."
@@ -1453,6 +1484,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Tambourine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hand Drum with Jingles",
       "Pandero"
@@ -1477,7 +1509,7 @@
       {
         "claim": "A thumb roll on a tambourine is performed by tapping the head repeatedly at lightning speed with fingers.",
         "verdict": "myth",
-        "explanation": "A thumb roll is executed by dragging a rosin-coated thumb across the perimeter of the head, creating rapid friction hops that sustain the jingles smoothly.",
+        "explanation": "A thumb roll is played by dragging a rosin-coated thumb across the perimeter of the head, creating rapid friction hops that sustain the jingles smoothly.",
         "fun_fact": "Orchestral percussionists often apply beeswax or rosin to the tambourine head specifically for thumb rolls."
       },
       {
@@ -1499,6 +1531,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Triangle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Musical Triangle",
       "Orchestral Triangle"
@@ -1545,6 +1578,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Xylophone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Concert Xylophone",
       "Orchestral Xylophone"
@@ -1591,6 +1625,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Marimba",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Concert Marimba",
       "Five-Octave Marimba"
@@ -1637,6 +1672,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Gong",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tam-tam",
       "Chau Gong",
@@ -1684,6 +1720,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Tubular Bells",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Orchestral Chimes",
       "Chimes"
@@ -1730,6 +1767,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Alto Saxophone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Saxophone",
       "Alto Sax"
@@ -1758,10 +1796,10 @@
         "fun_fact": "Brass instruments, by contrast, require buzzing the player's lips into a cup mouthpiece."
       },
       {
-        "claim": "Adolphe Sax survived multiple near-fatal childhood accidents before successfully inventing the saxophone.",
+        "claim": "The saxophone is named after its inventor, Adolphe Sax.",
         "verdict": "fact",
-        "explanation": "As a child, Sax fell down three flights of stairs, swallowed a needle, survived gunpowder explosions, and drank diluted acid before growing up to invent the sax.",
-        "fun_fact": "His neighbors in Belgium called him 'little Sax, the ghost' because he constantly cheated death."
+        "explanation": "Belgian instrument maker Adolphe Sax joined his own last name with 'phone', from the Greek word for sound.",
+        "fun_fact": "Adolphe Sax designed a whole family of saxophones in different sizes, from small high ones to huge low ones."
       }
     ],
     "versus_candidates": [
@@ -1776,6 +1814,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Trumpet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "B-flat Trumpet",
       "Cornet",
@@ -1823,6 +1862,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Trombone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tenor Trombone",
       "Slide Trombone",
@@ -1870,6 +1910,7 @@
     "subtopic_id": "winds_percussion",
     "name": "French Horn",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Horn",
       "Double Horn",
@@ -1917,6 +1958,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Tuba",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Concert Tuba",
       "Bass Tuba",
@@ -1964,6 +2006,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Concert Flute",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Western Concert Flute",
       "Silver Flute",
@@ -2011,6 +2054,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Piccolo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ottavino",
       "Piccolo Flute"
@@ -2057,6 +2101,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Clarinet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "B-flat Clarinet",
       "Soprano Clarinet"
@@ -2103,6 +2148,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Oboe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hautbois",
       "Concert Oboe"
@@ -2149,6 +2195,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Bassoon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fagotto",
       "Double-Reed Bassoon"
@@ -2195,6 +2242,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Harmonica",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Blues Harp",
       "Mouth Organ",
@@ -2242,6 +2290,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Bagpipes",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Great Highland Bagpipe",
       "Scottish Bagpipes"
@@ -2253,7 +2302,7 @@
       "Musician blows air into the bag through a blowpipe with a one-way leather non-return flapper valve",
       "Equipped with a melodic finger chanter and three continuous drone pipes (two tenor drones and one bass drone)",
       "Constant air squeezed from under the arm creates an unbroken, continuous, roaring wall of sound",
-      "Deeply rooted in Scottish national identity, martial piping traditions, and Celtic celebrations worldwide"
+      "Deeply rooted in Scottish national identity, Highland games, and Celtic celebrations worldwide"
     ],
     "distractor_pool": [
       "Accordion",
@@ -2266,14 +2315,14 @@
       {
         "claim": "Bagpipes can easily be played at whisper-soft volumes for intimate living room gatherings.",
         "verdict": "myth",
-        "explanation": "Great Highland bagpipes require immense air pressure to keep all four reeds vibrating, producing an unyielding, ear-splitting 100-plus decibel roar designed for open battlefields.",
+        "explanation": "Great Highland bagpipes need strong air pressure to keep all four reeds vibrating, producing a booming sound made to carry far outdoors.",
         "fun_fact": "Scottish pipers practicing indoors often use quiet practice chanters without the bag and drones."
       },
       {
-        "claim": "British law historically classified Scottish Highland bagpipes as an instrument of war during eighteenth-century rebellions.",
-        "verdict": "fact",
-        "explanation": "Following the Jacobite rising of 1745, British courts prosecuted captured bagpipers because Highland regiments used pipes to stir men to battle like military banners.",
-        "fun_fact": "A single bagpiper led hundreds of charging warriors across smoke-filled battlefields."
+        "claim": "Bagpipes are found only in Scotland.",
+        "verdict": "myth",
+        "explanation": "Many places have their own bagpipes, including Ireland's uilleann pipes, Spain's gaita, and Bulgaria's gaida.",
+        "fun_fact": "Irish uilleann pipes are filled with air from small bellows squeezed under the elbow, not by blowing."
       }
     ],
     "versus_candidates": [
@@ -2288,6 +2337,7 @@
     "subtopic_id": "winds_percussion",
     "name": "Maracas",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rumba Shakers",
       "Gourd Shakers"
@@ -2334,6 +2384,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Gramophone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phonograph",
       "Wind-Up Gramophone",
@@ -2382,6 +2433,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Vinyl Record",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "LP Album",
       "Phonograph Record",
@@ -2430,6 +2482,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Jukebox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coin-Operated Phonograph",
       "Rock-Ola",
@@ -2477,6 +2530,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Boombox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ghetto Blaster",
       "Portable Stereo",
@@ -2524,6 +2578,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Cassette Tape",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Compact Cassette Tape",
       "Audio Cassette",
@@ -2573,6 +2628,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Cassette Player",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Personal Cassette Player",
       "Walkman",
@@ -2621,6 +2677,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Mechanical Metronome",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Maelzel Metronome",
       "Wind-Up Metronome",
@@ -2668,6 +2725,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Transistor Radio",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Retro Transistor Radio",
       "Pocket Radio",
@@ -2716,6 +2774,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Reel-to-Reel Tape Recorder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Open-Reel Tape Deck",
       "Reel-to-Reel",
@@ -2763,6 +2822,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Music Box",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Musical Box",
       "Cylinder Music Box",
@@ -2810,6 +2870,7 @@
     "subtopic_id": "vintage_audio",
     "name": "CD Player",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Portable CD Player",
       "Discman",
@@ -2857,6 +2918,7 @@
     "subtopic_id": "vintage_audio",
     "name": "Antique Tube Radio",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vacuum Tube Radio",
       "Cathedral Radio",
@@ -2883,8 +2945,8 @@
       {
         "claim": "Families in the 1930s gathered around the living room console radio to listen to broadcasts just like people watch television today.",
         "verdict": "fact",
-        "explanation": "During the Great Depression and World War II, living rooms were arranged around the radio console for evening fireside chats, comedy serials, and live concerts.",
-        "fun_fact": "Orson Welles' 1938 'War of the Worlds' radio broadcast famously panicked listeners across America."
+        "explanation": "In the 1930s, families arranged living rooms around the radio for evening news, comedy shows, music, and adventure stories.",
+        "fun_fact": "Radio 'soap operas' got their name from the soap companies that sponsored them."
       },
       {
         "claim": "Antique vacuum tube radios turn on instantaneously the exact millisecond you turn the power switch.",
@@ -2905,6 +2967,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Condenser Microphone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Studio Condenser Microphone",
       "Large-Diaphragm Condenser",
@@ -2953,6 +3016,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Microphone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dynamic Stage Microphone",
       "Vocal Mic",
@@ -2966,7 +3030,7 @@
       "A lightweight diaphragm moves a fine copper voice coil within a permanent magnetic field, generating an audio voltage",
       "Requires zero phantom power or external batteries to operate, functioning purely as a passive induction generator",
       "Engineered with a directional cardioid pickup pattern that rejects ambient stage noise and resists acoustic feedback",
-      "World-renowned for bulletproof road durability, epitomized globally by the legendary Shure SM58 and SM57"
+      "World-renowned for rock-solid road durability, epitomized globally by the legendary Shure SM58 and SM57"
     ],
     "distractor_pool": [
       "Studio Condenser Microphone",
@@ -2983,9 +3047,9 @@
         "fun_fact": "Sound engineers consider cupping the mic the number one mistake made by inexperienced performers."
       },
       {
-        "claim": "The industry-standard Shure SM58 dynamic vocal microphone can survive being dropped from a helicopter, run over by a truck, and submerged in beer.",
+        "claim": "The Shure SM58 microphone is famous for surviving drops, bumps, and rough concert tours.",
         "verdict": "fact",
-        "explanation": "Shure's famous torture tests have repeatedly proved the SM58 continues functioning after extreme physical trauma, drops onto concrete, and outdoor blizzards.",
+        "explanation": "Shure puts the SM58 through tough drop and weather tests, and the mic is known for still working after hard knocks.",
         "fun_fact": "It is the most popular, best-selling vocal microphone in global human history."
       }
     ],
@@ -3001,6 +3065,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "DJ Turntable",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Direct-Drive Turntable",
       "Deck",
@@ -3049,6 +3114,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "DJ Mixing Console",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DJ Mixer",
       "Battle Mixer",
@@ -3097,6 +3163,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Studio Headphones",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Studio Monitor Headphones",
       "Reference Headphones",
@@ -3145,6 +3212,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Guitar Tube Amplifier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Valve Amp",
       "Guitar Amp",
@@ -3193,17 +3261,18 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Electronic Megaphone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bullhorn",
       "Voice Amplifier",
       "Loudhailer"
     ],
     "difficulty": 1,
-    "visual_anchor": "A high-visibility white and red electronic megaphone with flared conical horn, pistol grip handle, trigger switch, and detachable hand microphone held up under bright daylight sky.",
+    "visual_anchor": "A high-visibility white and red electronic megaphone with flared conical horn, comfortable grip handle, push-to-talk switch, and detachable hand microphone held up under bright daylight sky.",
     "core_traits": [
       "Portable handheld acoustic and electronic voice amplification device shaped like a flared cone",
       "Equipped with an integrated microphone, solid-state amplifier circuit, rechargeable battery or D-cells, and re-entrant horn speaker",
-      "Features a pistol-grip trigger switch, built-in siren alarm button, and volume thumbwheel control",
+      "Features a grip handle with a push-to-talk switch, built-in siren alarm button, and volume thumbwheel control",
       "Produces a piercing, focused, band-limited directional vocal blast that cuts across large crowds and outdoor noise",
       "Ubiquitous across sports coaching, rally speeches, crowd safety coordination, film directing, and maritime communications"
     ],
@@ -3240,6 +3309,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Tuning Fork",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Steel Tuning Fork",
       "Tuning Fork",
@@ -3288,6 +3358,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Stage Spotlight",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Followspot",
       "PAR Can",
@@ -3336,6 +3407,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Studio Pop Filter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pop Shield",
       "Pop Screen",
@@ -3383,6 +3455,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Microphone Stand",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Boom Microphone Stand",
       "Tripod Mic Stand",
@@ -3431,6 +3504,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Studio Audio Interface",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "USB Audio Interface",
       "Sound Card",
@@ -3479,6 +3553,7 @@
     "subtopic_id": "studio_stage_gear",
     "name": "Passive Direct Box",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "DI Box",
       "Direct Injection Box",
@@ -3518,6 +3593,632 @@
       "Studio Audio Interface",
       "Guitar Tube Amplifier",
       "XLR Audio Cable"
+    ]
+  },
+  {
+    "id": "ENT-MUS-076",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Recorder",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Soprano Recorder",
+      "Descant Recorder"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smooth cream-colored recorder with finger holes lying on a wooden desk beside colorful sheet music in a sunny classroom, 9:16 vertical shot.",
+    "core_traits": [
+      "Simple wind instrument you blow into",
+      "Has a row of finger holes and a thumb hole",
+      "Many kids learn it first at school",
+      "Comes in sizes like soprano, alto, tenor and bass"
+    ],
+    "distractor_pool": [
+      "Tin Whistle",
+      "Flute",
+      "Ocarina",
+      "Kazoo",
+      "Clarinet"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The recorder was popular in Europe hundreds of years ago.",
+        "verdict": "fact",
+        "explanation": "It was widely played in Medieval, Renaissance and Baroque music.",
+        "fun_fact": "Famous composers like Bach and Handel wrote music for the recorder."
+      },
+      {
+        "claim": "Recorders are only toys for beginners.",
+        "verdict": "myth",
+        "explanation": "Professional musicians play recorders in concerts, especially for early classical music.",
+        "fun_fact": "The thumb hole on the back helps a recorder play higher notes."
+      }
+    ],
+    "versus_candidates": [
+      "Tin Whistle",
+      "Flute",
+      "Ocarina"
+    ]
+  },
+  {
+    "id": "ENT-MUS-077",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Kazoo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A bright red plastic kazoo held up by a smiling child against a cheerful yellow background with floating musical notes, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny tube-shaped instrument",
+      "You hum into it instead of blowing",
+      "Makes a funny buzzing sound",
+      "Has a thin membrane inside that vibrates"
+    ],
+    "distractor_pool": [
+      "Harmonica",
+      "Whistle",
+      "Recorder",
+      "Comb and Paper",
+      "Slide Whistle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "You play a kazoo by blowing air into it.",
+        "verdict": "myth",
+        "explanation": "You hum or sing into a kazoo; just blowing makes no buzzy sound.",
+        "fun_fact": "The kazoo belongs to a family of buzzing instruments called mirlitons."
+      },
+      {
+        "claim": "Kazoos are very easy to play.",
+        "verdict": "fact",
+        "explanation": "If you can hum a tune, you can play a kazoo right away.",
+        "fun_fact": "Eden, New York, has a kazoo factory where visitors can see kazoos being made."
+      }
+    ],
+    "versus_candidates": [
+      "Harmonica",
+      "Recorder",
+      "Slide Whistle"
+    ]
+  },
+  {
+    "id": "ENT-MUS-078",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Kalimba",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Thumb Piano"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A wooden kalimba with shiny metal keys held in two small hands, with soft sunlight and green leaves behind, 9:16 vertical shot.",
+    "core_traits": [
+      "Small wooden box with metal strips",
+      "Played by plucking with your thumbs",
+      "Makes soft, music-box-like notes",
+      "Modern version of African instruments like the mbira"
+    ],
+    "distractor_pool": [
+      "Music Box",
+      "Xylophone",
+      "Glockenspiel",
+      "Ukulele",
+      "Harp"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A kalimba is played with the thumbs.",
+        "verdict": "fact",
+        "explanation": "Players pluck the metal keys, called tines, with their thumbs.",
+        "fun_fact": "Shorter tines make higher notes, and longer tines make lower notes."
+      },
+      {
+        "claim": "The kalimba is based on African instruments with metal keys.",
+        "verdict": "fact",
+        "explanation": "It comes from the mbira and similar instruments played in Africa for centuries.",
+        "fun_fact": "The modern kalimba was made popular by musicologist Hugh Tracey in the 1950s."
+      }
+    ],
+    "versus_candidates": [
+      "Music Box",
+      "Glockenspiel",
+      "Xylophone"
+    ]
+  },
+  {
+    "id": "ENT-MUS-079",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Dan Bau",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Vietnamese Monochord"
+    ],
+    "difficulty": 4,
+    "visual_anchor": "A long wooden Vietnamese monochord with a single shiny string and a flexible rod at one end resting on a red silk cloth, 9:16 vertical shot.",
+    "core_traits": [
+      "String instrument with only one string",
+      "Traditional instrument from Vietnam",
+      "Player bends a flexible rod to change the pitch",
+      "Played with gentle harmonics touched by the side of the hand"
+    ],
+    "distractor_pool": [
+      "Dan Tranh",
+      "Erhu",
+      "Koto",
+      "Sitar",
+      "Guitar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The dan bau has only one string.",
+        "verdict": "fact",
+        "explanation": "It is a monochord, so all its melodies come from a single string.",
+        "fun_fact": "Its wobbly, singing sound can sound almost like a human voice."
+      },
+      {
+        "claim": "Players bend a flexible rod to change the dan bau's notes.",
+        "verdict": "fact",
+        "explanation": "Pushing or pulling the rod changes the string's tightness, making notes slide up and down.",
+        "fun_fact": "Dan bau players mostly play soft harmonic notes instead of plain open-string notes."
+      }
+    ],
+    "versus_candidates": [
+      "Erhu",
+      "Koto",
+      "Dan Tranh"
+    ]
+  },
+  {
+    "id": "ENT-MUS-080",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Glockenspiel",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Orchestra Bells"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A shiny metal glockenspiel with rainbow-colored bars and two small mallets on a wooden table in a bright music room, 9:16 vertical shot.",
+    "core_traits": [
+      "Rows of metal bars laid out like piano keys",
+      "Played by striking bars with small mallets",
+      "Makes bright, bell-like sounds",
+      "Its name means 'set of bells' in German"
+    ],
+    "distractor_pool": [
+      "Xylophone",
+      "Marimba",
+      "Vibraphone",
+      "Celesta",
+      "Kalimba"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A glockenspiel and a xylophone are the same instrument.",
+        "verdict": "myth",
+        "explanation": "A glockenspiel has metal bars, while a xylophone has wooden bars.",
+        "fun_fact": "Glockenspiel music sounds two octaves higher than it is written."
+      },
+      {
+        "claim": "Marching bands often use a glockenspiel called a bell lyre.",
+        "verdict": "fact",
+        "explanation": "The bell lyre is held upright so players can march and play at the same time.",
+        "fun_fact": "Mozart's opera The Magic Flute features a magical glockenspiel."
+      }
+    ],
+    "versus_candidates": [
+      "Xylophone",
+      "Marimba",
+      "Kalimba"
+    ]
+  },
+  {
+    "id": "ENT-MUS-081",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Ocarina",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A round blue ceramic ocarina with finger holes resting on a mossy stone in a sunny meadow, 9:16 vertical shot.",
+    "core_traits": [
+      "Small egg-shaped wind instrument",
+      "Often made of clay or ceramic",
+      "Has finger holes on top and thumb holes underneath",
+      "Made famous by a classic Legend of Zelda video game"
+    ],
+    "distractor_pool": [
+      "Recorder",
+      "Pan Flute",
+      "Tin Whistle",
+      "Kazoo",
+      "Harmonica"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The ocarina became famous from The Legend of Zelda: Ocarina of Time.",
+        "verdict": "fact",
+        "explanation": "The 1998 game let players play songs on an ocarina, making it popular worldwide.",
+        "fun_fact": "The word ocarina means 'little goose' in an Italian dialect."
+      },
+      {
+        "claim": "Ocarina-like instruments have existed for thousands of years.",
+        "verdict": "fact",
+        "explanation": "Ancient cultures in places like China and Central America made similar clay flutes.",
+        "fun_fact": "The modern ocarina was developed in Italy by Giuseppe Donati in 1853."
+      }
+    ],
+    "versus_candidates": [
+      "Recorder",
+      "Pan Flute",
+      "Kazoo"
+    ]
+  },
+  {
+    "id": "ENT-MUS-082",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Steel Drum",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Steelpan",
+      "Steel Pan"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A shiny silver steel drum with dented note areas on a stand by a sunny tropical beach, with two rubber-tipped sticks, 9:16 vertical shot.",
+    "core_traits": [
+      "Shiny metal drum shaped like a big bowl",
+      "Each dented area makes a different note",
+      "Played with rubber-tipped sticks",
+      "National instrument of Trinidad and Tobago"
+    ],
+    "distractor_pool": [
+      "Handpan",
+      "Bongos",
+      "Marimba",
+      "Timpani",
+      "Djembe"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Steel drums were first made from oil barrels.",
+        "verdict": "fact",
+        "explanation": "Musicians in Trinidad shaped old oil drums into instruments in the 1930s and 1940s.",
+        "fun_fact": "A steel band can have dozens of players with drums of different sizes."
+      },
+      {
+        "claim": "A steel drum can play only one note.",
+        "verdict": "myth",
+        "explanation": "Each hammered section is tuned to a different note, so it can play full melodies.",
+        "fun_fact": "Steelpan makers tune each note by carefully hammering the metal."
+      }
+    ],
+    "versus_candidates": [
+      "Handpan",
+      "Djembe",
+      "Marimba"
+    ]
+  },
+  {
+    "id": "ENT-MUS-083",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Didgeridoo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Didjeridu"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A long wooden didgeridoo painted with colorful dot patterns resting on red earth under a bright blue Australian sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Very long wooden tube",
+      "Makes a deep, droning hum",
+      "Played by buzzing your lips",
+      "Traditional instrument of Aboriginal peoples of northern Australia"
+    ],
+    "distractor_pool": [
+      "Alphorn",
+      "Bagpipes",
+      "Trumpet",
+      "Pan Flute",
+      "Tuba"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Traditional didgeridoos are made from trees hollowed out by termites.",
+        "verdict": "fact",
+        "explanation": "Termites eat out the center of eucalyptus trees, leaving a natural tube.",
+        "fun_fact": "Many didgeridoos are decorated with colorful painted designs."
+      },
+      {
+        "claim": "The didgeridoo comes from northern Australia.",
+        "verdict": "fact",
+        "explanation": "Aboriginal peoples of northern Australia have played it for over a thousand years.",
+        "fun_fact": "Skilled players use circular breathing to keep the sound going without stopping."
+      }
+    ],
+    "versus_candidates": [
+      "Alphorn",
+      "Bagpipes",
+      "Pan Flute"
+    ]
+  },
+  {
+    "id": "ENT-MUS-084",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Erhu",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Chinese Violin",
+      "Chinese Two-String Fiddle"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A slender Chinese erhu with two strings and a small round sound box resting on a red cloth beside its bow, soft lantern light, 9:16 vertical shot.",
+    "core_traits": [
+      "String instrument with only two strings",
+      "Played with a bow",
+      "Rests on the player's lap",
+      "Often called the Chinese violin"
+    ],
+    "distractor_pool": [
+      "Violin",
+      "Dan Bau",
+      "Pipa",
+      "Sitar",
+      "Koto"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An erhu's bow is threaded between its two strings.",
+        "verdict": "fact",
+        "explanation": "The bow hair passes between the strings, so the bow stays attached to the instrument.",
+        "fun_fact": "The 'er' in erhu means 'two' in Chinese, for its two strings."
+      },
+      {
+        "claim": "The erhu has no fingerboard.",
+        "verdict": "fact",
+        "explanation": "Players press the strings without touching the neck, which allows sliding, singing notes.",
+        "fun_fact": "Erhu-like fiddles have been played in China for over a thousand years."
+      }
+    ],
+    "versus_candidates": [
+      "Violin",
+      "Dan Bau",
+      "Koto"
+    ]
+  },
+  {
+    "id": "ENT-MUS-085",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Koto",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Japanese Zither"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A long wooden Japanese koto with many strings and white bridges lying on a woven mat in a calm room with cherry blossoms outside, 9:16 vertical shot.",
+    "core_traits": [
+      "Long wooden string instrument that lies flat",
+      "Usually has 13 strings",
+      "Played with picks worn on the fingers",
+      "National instrument of Japan"
+    ],
+    "distractor_pool": [
+      "Guzheng",
+      "Dan Tranh",
+      "Gayageum",
+      "Harp",
+      "Shamisen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A standard koto has 13 strings.",
+        "verdict": "fact",
+        "explanation": "Each string sits on its own movable bridge, which players shift to tune it.",
+        "fun_fact": "The koto came to Japan from China more than 1,000 years ago."
+      },
+      {
+        "claim": "Koto players wear picks on three fingers.",
+        "verdict": "fact",
+        "explanation": "Small picks on the thumb, index and middle fingers pluck the strings with a bright sound.",
+        "fun_fact": "Some modern kotos have 17 or even more strings."
+      }
+    ],
+    "versus_candidates": [
+      "Guzheng",
+      "Dan Tranh",
+      "Harp"
+    ]
+  },
+  {
+    "id": "ENT-MUS-086",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Djembe",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A wooden goblet-shaped djembe drum with colorful ropes standing on warm sand at a golden sunset, 9:16 vertical shot.",
+    "core_traits": [
+      "Goblet-shaped drum",
+      "Played with bare hands",
+      "Tightened with ropes around its body",
+      "Comes from West Africa"
+    ],
+    "distractor_pool": [
+      "Bongos",
+      "Congas",
+      "Tabla",
+      "Cajon",
+      "Steel Drum"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A djembe is played with bare hands.",
+        "verdict": "fact",
+        "explanation": "Players hit the center for a deep bass note and the edge for higher tones.",
+        "fun_fact": "The djembe comes from West Africa, especially around Mali and Guinea."
+      },
+      {
+        "claim": "One djembe can make low, medium and high sounds.",
+        "verdict": "fact",
+        "explanation": "Bass, tone and slap sounds come from hitting different spots with different hand shapes.",
+        "fun_fact": "Djembe drummers often play in groups with bigger drums called dunduns."
+      }
+    ],
+    "versus_candidates": [
+      "Bongos",
+      "Cajon",
+      "Steel Drum"
+    ]
+  },
+  {
+    "id": "ENT-MUS-087",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Pan Flute",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Panpipes",
+      "Pan Pipes"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A row of bamboo tubes of different lengths tied together, held up in front of snowy Andes mountains under a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Row of tubes of different lengths",
+      "Played by blowing across the tops",
+      "Each tube plays one note",
+      "Popular in the Andes mountains of South America"
+    ],
+    "distractor_pool": [
+      "Recorder",
+      "Ocarina",
+      "Flute",
+      "Harmonica",
+      "Didgeridoo"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Longer pan flute tubes make lower notes.",
+        "verdict": "fact",
+        "explanation": "A longer tube holds a longer column of air, which vibrates slower and sounds lower.",
+        "fun_fact": "The pan flute is named after Pan, a nature figure from Greek myths."
+      },
+      {
+        "claim": "Pan flutes are often made from bamboo or cane.",
+        "verdict": "fact",
+        "explanation": "These plants grow naturally hollow, which makes them perfect for pipes.",
+        "fun_fact": "Pan flutes have no finger holes at all."
+      }
+    ],
+    "versus_candidates": [
+      "Recorder",
+      "Ocarina",
+      "Didgeridoo"
+    ]
+  },
+  {
+    "id": "ENT-MUS-088",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Handbells",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Hand Bells"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A row of shiny golden handbells on a table covered in blue cloth, with white-gloved hands lifting one bell, 9:16 vertical shot.",
+    "core_traits": [
+      "Bells held by a handle",
+      "Each bell plays just one note",
+      "A team rings them together to play songs",
+      "Players often wear gloves to protect the shiny metal"
+    ],
+    "distractor_pool": [
+      "Chimes",
+      "Glockenspiel",
+      "Triangle",
+      "Sleigh Bells",
+      "Tubular Bells"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "In a handbell group, each player is in charge of certain notes.",
+        "verdict": "fact",
+        "explanation": "Players ring their bells at just the right moment to build the melody together.",
+        "fun_fact": "Handbells were developed in England so tower bell ringers could practice indoors."
+      },
+      {
+        "claim": "Handbell players often wear gloves.",
+        "verdict": "fact",
+        "explanation": "Gloves keep fingerprints and skin oils off the polished bells so they stay shiny.",
+        "fun_fact": "Bigger handbells play lower notes than smaller ones."
+      }
+    ],
+    "versus_candidates": [
+      "Glockenspiel",
+      "Chimes",
+      "Triangle"
+    ]
+  },
+  {
+    "id": "ENT-MUS-089",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "world_and_kids_instruments",
+    "name": "Castanets",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A pair of shiny wooden castanets tied with a red cord resting on a colorful ruffled flamenco skirt, 9:16 vertical shot.",
+    "core_traits": [
+      "Two small shell-shaped pieces of wood",
+      "Clicked together in your hand",
+      "Tied with a cord looped around the thumb",
+      "Famous in Spanish flamenco music"
+    ],
+    "distractor_pool": [
+      "Maracas",
+      "Tambourine",
+      "Claves",
+      "Spoons",
+      "Woodblock"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Castanets are closely linked to flamenco music from Spain.",
+        "verdict": "fact",
+        "explanation": "Dancers click them to add rhythm while they dance.",
+        "fun_fact": "Orchestra players often use castanets mounted on a handle or board."
+      },
+      {
+        "claim": "Castanets are traditionally carved from hard wood.",
+        "verdict": "fact",
+        "explanation": "Hard woods like ebony and rosewood make a crisp, bright click.",
+        "fun_fact": "The name castanets comes from the Spanish word for chestnut."
+      }
+    ],
+    "versus_candidates": [
+      "Maracas",
+      "Tambourine",
+      "Claves"
     ]
   }
 ]

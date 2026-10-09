@@ -227,14 +227,13 @@ describe("Phase 8: End-to-End Integration & Regression QA", () => {
       assets: mockAssets,
     });
 
-    // Verify Stage document contains inline SVG sticker shader filter
     const topicFile = Object.entries(bundle.files).find(([name]) => name.includes("candy-bridge-topic"))?.[1];
     expect(topicFile).toBeDefined();
 
-    // Inline SVG sticker filter
-    expect(topicFile).toContain('id="bridge-sticker-filter"');
-    expect(topicFile).toContain("feMorphology");
-    expect(topicFile).toContain("bridge-svg-filters");
+    // Items render as unified framed photo cards, so no inline SVG sticker filter is emitted
+    expect(topicFile).not.toContain('id="bridge-sticker-filter"');
+    expect(topicFile).not.toContain("feMorphology");
+    expect(topicFile).not.toContain("bridge-svg-filters");
 
     // Layout classes
     expect(topicFile).toContain("bridge-topic-scene has-showcase");
@@ -242,10 +241,12 @@ describe("Phase 8: End-to-End Integration & Regression QA", () => {
 
     // Showcase row & 4 items
     expect(topicFile).toContain('class="bridge-showcase-row" data-count="4"');
-    expect(topicFile).toContain('class="bridge-showcase-item item-1 is-sticker"');
-    expect(topicFile).toContain('class="bridge-showcase-item item-2 is-photo-card"');
-    expect(topicFile).toContain('class="bridge-showcase-item item-3 is-photo-card"');
-    expect(topicFile).toContain('class="bridge-showcase-item item-4 is-sticker"');
+    expect(topicFile).toContain('class="bridge-showcase-item item-1" data-asset-id="asset-bridge-item-1"');
+    expect(topicFile).toContain('class="bridge-showcase-item item-2" data-asset-id="asset-bridge-item-2"');
+    expect(topicFile).toContain('class="bridge-showcase-item item-3" data-asset-id="asset-bridge-item-3"');
+    expect(topicFile).toContain('class="bridge-showcase-item item-4" data-asset-id="asset-bridge-item-4"');
+    expect(topicFile).not.toContain("is-sticker");
+    expect(topicFile).not.toContain("is-photo-card");
 
     // Image URLs properly resolved (rootRelativeSubCompositionAssets normalizes ./ to root-relative)
     expect(topicFile).toContain('src="assets/showcase/dino_1.png"');

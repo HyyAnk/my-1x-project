@@ -8,7 +8,6 @@ export const fiLocale: ThumbnailLocalization = {
     odd_one_out: "ETSI ERILAINEN!",
     difficulty_tier: "LÄPÄISETKÖ TASON 4?",
     yes_no: "KYLLÄ VAI EI?",
-    true_false: "TOTTA VAI TARUA?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} KYSYMYSTÄ`,
@@ -17,6 +16,5 @@ export const fiLocale: ThumbnailLocalization = {
     odd_one_out: () => "10 SEKUNTIA! ⏱️",
     difficulty_tier: () => "VAIN IQ 140+ 🔥",
     yes_no: () => "KYLLÄ VAI EI? ⚡",
-    true_false: () => "TOTTA VAI TARUA? ⚡",
   },
 };

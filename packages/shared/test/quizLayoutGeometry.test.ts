@@ -21,7 +21,7 @@ void test("quizLayoutGeometry - fixed frame anchors match planning targets", () 
 });
 
 void test("quizLayoutGeometry - all landscape layouts defined and frozen", () => {
-  assert.equal(QUIZ_LANDSCAPE_LAYOUT_IDS.length, 8);
+  assert.equal(QUIZ_LANDSCAPE_LAYOUT_IDS.length, 7);
   for (const layoutId of QUIZ_LANDSCAPE_LAYOUT_IDS) {
     const geom = QUIZ_LAYOUT_GEOMETRY[layoutId];
     assert.notEqual(geom, undefined, `layout ${layoutId} must be defined`);
@@ -163,29 +163,6 @@ void test("quizLayoutGeometry - split_versus_two exact coordinates", () => {
     [709, 709],
   );
   assert.deepEqual(g.extra?.versusEmblem, { x: 1028, y: 414, width: 124, height: 124 });
-});
-
-void test("quizLayoutGeometry - verdict_true_false exact coordinates", () => {
-  const g = QUIZ_LAYOUT_GEOMETRY.verdict_true_false;
-  assert.deepEqual(g.arena, { x: 380, y: 253, width: 1420, height: 565 });
-  assert.deepEqual(g.hero, { x: 380, y: 253, width: 820, height: 565 });
-  assert.deepEqual(g.imageSlot?.viewport, { width: 800, height: 545, fit: "cover" });
-
-  const v2 = g.answerVariants[2]!;
-  assert.deepEqual(
-    v2.outer.map((o) => o.y),
-    [349.5, 557.5],
-  );
-  assert.deepEqual(
-    v2.outer.map((o) => o.width),
-    [560, 560],
-  );
-  assert.deepEqual(
-    v2.outer.map((o) => o.height),
-    [164, 164],
-  );
-  assert.equal(v2.badge.length, 0);
-  assert.equal(v2.gap, 44);
 });
 
 void test("quizLayoutGeometry - verdict_yes_no exact coordinates", () => {

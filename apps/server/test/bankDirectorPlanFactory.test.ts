@@ -29,7 +29,7 @@ describe("bankDirectorPlanFactory portrait retirement", () => {
 
   it.each([
     ["verdict_yes_no", "verdict_yes_no"],
-    ["verdict_true_false", "verdict_true_false"],
+    ["verdict_true_false", "verdict_yes_no"],
     ["versus_faceoff", "split_versus_two"],
     ["visual_spotting", "visual_choices_three_pure"],
     ["visual_identification", "visual_choices_three"],
@@ -48,7 +48,7 @@ describe("bankDirectorPlanFactory portrait retirement", () => {
     expect(mapToDirectorArchetype("mystery_reveal")).toBe("mystery_reveal");
     expect(mapToDirectorArchetype("versus_faceoff")).toBe("visual_multiple_choice");
     expect(mapToDirectorArchetype("verdict_yes_no")).toBe("yes_no");
-    expect(mapToDirectorArchetype("verdict_true_false")).toBe("true_false");
+    expect(mapToDirectorArchetype("verdict_true_false")).toBe("yes_no");
     expect(mapToDirectorArchetype("speed_blitz")).toBe("speed_round");
   });
 });

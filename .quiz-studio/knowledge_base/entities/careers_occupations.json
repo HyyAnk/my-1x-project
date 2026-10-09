@@ -5,6 +5,7 @@
     "subtopic_id": "science_exploration",
     "name": "Astronaut",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cosmonaut",
       "Taikonaut",
@@ -51,6 +52,7 @@
     "subtopic_id": "emergency_services",
     "name": "Firefighter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fireman",
       "Smokejumper"
@@ -93,9 +95,10 @@
   {
     "id": "ENT-CAR-003",
     "domain_id": "careers_occupations",
-    "subtopic_id": "medicine",
+    "subtopic_id": "medicine_healthcare",
     "name": "Surgeon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Operative Physician",
       "Neurosurgeon / Cardiosurgeon"
@@ -125,7 +128,7 @@
       {
         "claim": "Modern surgical robotic systems operate completely autonomously without human doctor hands.",
         "verdict": "myth",
-        "explanation": "Systems like the da Vinci robot are master-slave consoles completely controlled in real time by the human surgeon's fingers.",
+        "explanation": "Systems like the da Vinci robot are fully controlled in real time by the surgeon's hands at a nearby console.",
         "fun_fact": "The robot translates large hand motions into microscopic tremor-free precision cuts."
       }
     ],
@@ -141,6 +144,7 @@
     "subtopic_id": "culinary",
     "name": "Chef",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Head Chef",
       "Executive Chef",
@@ -184,9 +188,10 @@
   {
     "id": "ENT-CAR-005",
     "domain_id": "careers_occupations",
-    "subtopic_id": "investigation",
+    "subtopic_id": "emergency_services",
     "name": "Detective",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Investigator",
       "Private Investigator",
@@ -233,6 +238,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Airline Pilot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Commercial Aviator",
       "Captain",
@@ -279,6 +285,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Flight Attendant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cabin Crew",
       "Air Hostess",
@@ -325,6 +332,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Air Traffic Controller",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ATC Specialist",
       "Tower Controller",
@@ -371,6 +379,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Deep-Sea Diver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Commercial Diver",
       "Saturation Diver",
@@ -401,7 +410,7 @@
       {
         "claim": "Deep-sea divers use regular oxygen tanks identical to recreational scuba divers.",
         "verdict": "myth",
-        "explanation": "Pure oxygen and standard compressed air become toxic and narcotic at deep depths, requiring special heliox or trimix gas mixtures.",
+        "explanation": "Pure oxygen and normal air become harmful at great depths, so deep divers breathe special gas mixes like heliox or trimix.",
         "fun_fact": "Commercial divers depend on thick umbilicals delivering breathing gas, warm water, communications, and power from the surface ship."
       }
     ],
@@ -417,6 +426,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Ship Captain",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master Mariner",
       "Sea Captain",
@@ -448,7 +458,7 @@
         "claim": "Large container ships can require over a mile of stopping distance after cutting engines.",
         "verdict": "fact",
         "explanation": "Massive fully loaded container vessels weighing over 200,000 tons possess enormous momentum in water.",
-        "fun_fact": "A fully laden ultra-large container ship can take 15 to 20 minutes to come to a complete dead stop."
+        "fun_fact": "A fully loaded giant container ship can take 15 to 20 minutes to come to a complete stop."
       }
     ],
     "versus_candidates": [
@@ -463,6 +473,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Naval Officer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Navy Lieutenant",
       "Warship Commander",
@@ -471,10 +482,10 @@
     "difficulty": 2,
     "visual_anchor": "A crisp naval officer in formal white dress uniform standing on the deck of a guided missile destroyer during fleet tactical maneuvers at sea.",
     "core_traits": [
-      "Commissioned officer commanding combat divisions, tactical systems, and warship operations",
-      "Supervises shipboard weapon systems, radar tracking, damage control, and underway replenishment",
-      "Graduates from military naval academies and undergoes specialized maritime tactical warfare training",
-      "Commands surface combatants, aircraft carriers, or amphibious assault ships"
+      "Commissioned officer who leads sailors and helps run large navy ships at sea",
+      "Supervises ship radar, navigation, damage control, and refueling at sea",
+      "Graduates from a naval academy and trains in seamanship and ship handling",
+      "Can serve aboard aircraft carriers, patrol ships, or supply ships"
     ],
     "distractor_pool": [
       "Ship Captain",
@@ -487,7 +498,7 @@
       {
         "claim": "Naval officers must learn celestial navigation with a sextant even in the GPS satellite era.",
         "verdict": "fact",
-        "explanation": "Major navies reinstated celestial sextant navigation training as a vital backup against satellite jamming and cyber warfare.",
+        "explanation": "Major navies brought back sextant training as a vital backup in case satellite GPS signals stop working.",
         "fun_fact": "Naval officers can calculate latitude and longitude using only the stars, sun, and an accurate marine chronometer."
       },
       {
@@ -509,6 +520,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Coast Guard Rescuer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rescue Swimmer",
       "Maritime Search and Rescue Specialist",
@@ -555,10 +567,10 @@
     "subtopic_id": "aviation_maritime",
     "name": "Submarine Officer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Submariner",
-      "Dolphin Officer",
-      "Undersea Warfare Specialist"
+      "Dolphin Officer"
     ],
     "difficulty": 2,
     "visual_anchor": "A submarine officer peering intently through an optical periscope inside the glowing red tactical control room of a submerged nuclear vessel.",
@@ -566,7 +578,7 @@
       "Directs undersea navigation, acoustic stealth operations, and nuclear reactor protocols",
       "Operates for months beneath the ocean without surfacing or seeing sunlight",
       "Analyzes passive sonar signatures and hydrophone arrays to track submerged ocean contacts",
-      "Wears the coveted golden 'Dolphins' warfare qualification insignia"
+      "Wears the golden 'Dolphins' badge earned after mastering every submarine system"
     ],
     "distractor_pool": [
       "Naval Officer",
@@ -601,6 +613,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Harbor Pilot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Marine Pilot",
       "Maritime Pilot",
@@ -647,6 +660,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Helicopter Rescue Pilot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medevac Pilot",
       "Air Ambulance Pilot",
@@ -693,6 +707,7 @@
     "subtopic_id": "emergency_services",
     "name": "Police Officer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Patrol Officer",
       "Law Enforcement Officer",
@@ -739,6 +754,7 @@
     "subtopic_id": "emergency_services",
     "name": "Paramedic",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Emergency Medical Technician - Paramedic",
       "Flight Paramedic",
@@ -785,6 +801,7 @@
     "subtopic_id": "emergency_services",
     "name": "911 Dispatcher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Emergency Telecommunicator",
       "Public Safety Dispatcher",
@@ -831,13 +848,14 @@
     "subtopic_id": "emergency_services",
     "name": "Bomb Disposal Technician",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "EOD Technician",
       "Explosive Ordnance Specialist",
       "Bomb Squad Tech"
     ],
     "difficulty": 2,
-    "visual_anchor": "A bomb squad technician wearing a heavy 80-pound olive-drab blast suit and armored visor carefully approaching a suspicious package accompanied by a tracked robotic rover.",
+    "visual_anchor": "A safety technician in a heavy padded protective suit and armored visor carefully approaching a suspicious package alongside a tracked remote-controlled robot.",
     "core_traits": [
       "Specialist trained in detecting, diagnosing, and rendering safe explosive devices and military ordnance",
       "Wears reinforced Kevlar and ceramic blast suppression suits equipped with internal helmet cooling fans",
@@ -853,16 +871,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Bomb technicians routinely defuse devices by guessing whether to cut the red or blue wire with wire cutters.",
+        "claim": "Disposal technicians make suspicious packages safe by guessing whether to cut the red or blue wire.",
         "verdict": "myth",
-        "explanation": "Cutting colored wires is a fictional Hollywood cliche; technicians deploy robots, portable digital X-rays, and remote liquid disrupters to shatter triggers safely.",
-        "fun_fact": "Modern bombs frequently use anti-handling booby traps that detonate if electrical leads are severed."
+        "explanation": "Cutting colored wires is a movie cliche; real technicians use remote-controlled robots and portable X-ray scanners to work safely.",
+        "fun_fact": "Technicians often send a robot in first so no person has to go near a suspicious package."
       },
       {
-        "claim": "Heavy bomb suits are designed primarily to absorb blunt blast overpressure and flying shrapnel.",
+        "claim": "The heavy padded suit worn by disposal technicians is built to protect them while they work.",
         "verdict": "fact",
-        "explanation": "The layered blast suit uses ballistic Kevlar, rigid chest plates, and helmet acoustic ear-cups to protect the technician's internal organs.",
-        "fun_fact": "A full bomb disposal suit weighs between 70 and 85 pounds and causes rapid heat exhaustion in minutes."
+        "explanation": "The suit has layers of Kevlar, hard chest plates, and a helmet with a visor and built-in hearing protection.",
+        "fun_fact": "A full protective disposal suit weighs about 70 to 85 pounds and gets very hot inside."
       }
     ],
     "versus_candidates": [
@@ -877,6 +895,7 @@
     "subtopic_id": "emergency_services",
     "name": "Mountain Rescue Specialist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alpine Rescuer",
       "Search and Rescue Climber",
@@ -899,16 +918,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Saint Bernard rescue dogs in the Swiss Alps traditionally carried small wooden barrels of brandy around their necks.",
+        "claim": "Saint Bernard rescue dogs in the Alps traditionally carried little wooden barrels around their necks.",
         "verdict": "myth",
-        "explanation": "The brandy barrel was invented by 19th-century English painter Edwin Landseer; alcohol causes peripheral vasodilation and worsens hypothermia.",
+        "explanation": "The neck barrel was made popular by English painter Edwin Landseer's 1800s paintings; real rescue dogs did not carry them.",
         "fun_fact": "Monks of the Great St Bernard Pass bred the dogs for their incredible scent tracking through deep snowdrifts."
       },
       {
         "claim": "Avalanche rescue beacons transmit a standardized 457 kHz radio frequency globally.",
         "verdict": "fact",
         "explanation": "All international avalanche transceivers use 457 kHz to guarantee compatibility when locating buried skiers or climbers.",
-        "fun_fact": "A buried victim's survival rate drops from over 90% down to 30% after just 35 minutes beneath snow."
+        "fun_fact": "Avalanche beacons have two modes: send, to give off a signal, and search, to find one."
       }
     ],
     "versus_candidates": [
@@ -923,6 +942,7 @@
     "subtopic_id": "emergency_services",
     "name": "Hazmat Specialist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hazardous Materials Technician",
       "CBRN Responder",
@@ -938,7 +958,7 @@
     ],
     "distractor_pool": [
       "Firefighter",
-      "Bomb Disposal Technician",
+      "Paramedic",
       "Chemist",
       "Environmental Scientist",
       "Nuclear Physicist"
@@ -969,6 +989,7 @@
     "subtopic_id": "emergency_services",
     "name": "Lifeguard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beach Lifeguard",
       "Aquatic Rescuer",
@@ -1015,6 +1036,7 @@
     "subtopic_id": "emergency_services",
     "name": "Canine Police Handler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "K9 Officer",
       "Police Dog Handler",
@@ -1023,9 +1045,9 @@
     "difficulty": 2,
     "visual_anchor": "A tactical K9 police officer in utility fatigues kneeling beside an alert German Shepherd wearing a ballistic harness and search beacon in an urban training ground.",
     "core_traits": [
-      "Partners with specially trained working dogs to track fleeing suspects, search buildings, and detect contraband",
+      "Partners with specially trained working dogs to search buildings, find people, and sniff out hidden items",
       "Trains in canine behavioral psychology, scent tracking mechanics, and close-quarters tactical handling",
-      "Deploys specialized detector dogs for explosive detection, narcotics interdiction, and search-and-rescue",
+      "Works with detector dogs trained to sniff out hidden dangerous items and to find lost people",
       "Maintains 24/7 care and boarding for their working canine partner at home and on patrol"
     ],
     "distractor_pool": [
@@ -1061,6 +1083,7 @@
     "subtopic_id": "emergency_services",
     "name": "Crime Scene Investigator",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "CSI",
       "Forensic Investigator",
@@ -1107,6 +1130,7 @@
     "subtopic_id": "emergency_services",
     "name": "Smokejumper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aerial Wildland Firefighter",
       "Parachute Firefighter",
@@ -1132,7 +1156,7 @@
         "claim": "Smokejumpers parachute directly into roaring, fully involved crown forest fire infernos.",
         "verdict": "myth",
         "explanation": "Jumpers land safely in clearings or timber edges ahead of small fires to build containment lines before blazes explode in size.",
-        "fun_fact": "Parachuting into active flames would destroy nylon chutes instantly and kill the firefighters upon descent."
+        "fun_fact": "Smokejumpers usually parachute in to stop small new fires in remote places before they can grow."
       },
       {
         "claim": "Smokejumpers sew, inspect, and pack their own parachutes and custom load-bearing harnesses.",
@@ -1153,6 +1177,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Registered Nurse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "RN",
       "Staff Nurse",
@@ -1183,8 +1208,8 @@
       {
         "claim": "Florence Nightingale revolutionized modern nursing through sanitation and statistical data analysis in the 1850s.",
         "verdict": "fact",
-        "explanation": "During the Crimean War, Nightingale's sanitation reforms drastically dropped military hospital mortality rates from 42% to 2%.",
-        "fun_fact": "She was also a pioneering statistician who invented the polar area diagram (coxcomb chart) to illustrate hospital deaths."
+        "explanation": "Nightingale cleaned up crowded army hospitals with fresh air, clean water, and good hygiene, helping many more patients get well.",
+        "fun_fact": "She was also a math whiz who created a colorful chart called the polar area diagram."
       }
     ],
     "versus_candidates": [
@@ -1199,6 +1224,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Pediatrician",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Child Physician",
       "Pediatric Doctor",
@@ -1245,6 +1271,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Dentist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dental Surgeon",
       "General Dentist",
@@ -1291,6 +1318,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Veterinarian",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vet",
       "Veterinary Surgeon",
@@ -1337,6 +1365,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Pharmacist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chemist (Apothecary)",
       "Druggist",
@@ -1383,6 +1412,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Optometrist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eye Doctor",
       "OD",
@@ -1429,6 +1459,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Anesthesiologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anesthetist Physician",
       "Critical Care Anesthesiologist",
@@ -1475,6 +1506,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Radiologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diagnostic Radiologist",
       "Interventional Radiologist",
@@ -1505,7 +1537,7 @@
       {
         "claim": "Wilhelm Roentgen discovered X-rays accidentally in 1895 and took the first X-ray image of his wife's hand.",
         "verdict": "fact",
-        "explanation": "Roentgen observed a glowing fluorescent barium screen while experimenting with cathode rays; his wife Anna Bertha famously exclaimed 'I have seen my death!'",
+        "explanation": "Roentgen noticed a screen glowing during cathode ray experiments, then photographed the bones and ring inside Anna Bertha's hand.",
         "fun_fact": "Roentgen refused to patent X-rays so that medical science could benefit worldwide without commercial hindrance."
       }
     ],
@@ -1521,6 +1553,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Orthopedic Surgeon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Orthopedist",
       "Bone Surgeon",
@@ -1567,6 +1600,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Dermatologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Skin Specialist",
       "Cutaneous Physician",
@@ -1598,7 +1632,7 @@
         "claim": "The human skin is the largest organ of the human body, accounting for roughly 15% of body weight.",
         "verdict": "fact",
         "explanation": "An average adult's skin covers approximately 20 square feet (2 square meters) and acts as the primary barrier against pathogens.",
-        "fun_fact": "Humans shed roughly 30,000 to 40,000 dead skin cells every single minute of the day."
+        "fun_fact": "Humans shed roughly 30,000 to 40,000 old skin cells every single minute of the day."
       }
     ],
     "versus_candidates": [
@@ -1613,6 +1647,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Psychiatrist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medical Psychiatrist",
       "Mental Health Doctor",
@@ -1659,6 +1694,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Physical Therapist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Physiotherapist",
       "PT",
@@ -1687,9 +1723,9 @@
         "fun_fact": "Physical therapy is proven to prevent the need for invasive surgeries in many cases of chronic lower back and shoulder pain."
       },
       {
-        "claim": "The modern profession of physical therapy expanded dramatically during the 1916 polio epidemic and World War I.",
+        "claim": "Modern physical therapy grew quickly in the 1910s, helping polio patients and injured people walk again.",
         "verdict": "fact",
-        "explanation": "Specially trained 'Reconstruction Aides' provided therapeutic muscle exercise and hydrotherapy to wounded soldiers and paralyzed children.",
+        "explanation": "Specially trained 'Reconstruction Aides' used exercise and water therapy to help injured patients move and walk again.",
         "fun_fact": "Mary McMillan was sworn in as the first official U.S. physical therapy Reconstruction Aide in 1918."
       }
     ],
@@ -1705,6 +1741,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Dental Hygienist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oral Hygienist",
       "RDH",
@@ -1751,6 +1788,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Medical Lab Scientist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clinical Laboratory Scientist",
       "Medical Technologist",
@@ -1797,6 +1835,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Obstetrician",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "OB-GYN",
       "Maternity Physician",
@@ -1843,6 +1882,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Chiropractor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Doctor of Chiropractic",
       "DC",
@@ -1889,6 +1929,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Audiologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hearing Specialist",
       "Doctor of Audiology",
@@ -1919,7 +1960,7 @@
       {
         "claim": "The human inner ear contains microscopic sensory hair cells that do not regenerate once damaged by loud noise.",
         "verdict": "fact",
-        "explanation": "Stereocilia hair cells in the cochlea bend to detect sound vibrations; exposure to gunfire or loud concerts permanently shears and kills them.",
+        "explanation": "Tiny hair cells in the cochlea bend to sense sound; very loud noises like concerts or fireworks can permanently damage them.",
         "fun_fact": "Humans are born with only about 16,000 hair cells per cochlea, compared to millions of photoreceptors in the eye."
       }
     ],
@@ -1935,6 +1976,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Genetic Counselor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clinical Geneticist",
       "Hereditary Risk Counselor",
@@ -1981,6 +2023,7 @@
     "subtopic_id": "medicine_healthcare",
     "name": "Biomedical Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bioengineer",
       "Medical Device Engineer",
@@ -2027,6 +2070,7 @@
     "subtopic_id": "science_exploration",
     "name": "Archaeologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Field Archaeologist",
       "Excavator",
@@ -2073,6 +2117,7 @@
     "subtopic_id": "science_exploration",
     "name": "Marine Biologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ocean Biologist",
       "Marine Scientist",
@@ -2119,6 +2164,7 @@
     "subtopic_id": "science_exploration",
     "name": "Paleontologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fossil Hunter",
       "Vertebrate Paleontologist",
@@ -2165,6 +2211,7 @@
     "subtopic_id": "science_exploration",
     "name": "Volcanologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Volcano Scientist",
       "Igneous Petrologist",
@@ -2211,6 +2258,7 @@
     "subtopic_id": "science_exploration",
     "name": "Astronomer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Astrophysicist",
       "Observational Astronomer",
@@ -2257,6 +2305,7 @@
     "subtopic_id": "science_exploration",
     "name": "Meteorologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Weather Forecaster",
       "Atmospheric Scientist",
@@ -2303,6 +2352,7 @@
     "subtopic_id": "science_exploration",
     "name": "Geologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Earth Scientist",
       "Mineralogist",
@@ -2349,6 +2399,7 @@
     "subtopic_id": "science_exploration",
     "name": "Botanist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Plant Biologist",
       "Phytologist",
@@ -2395,6 +2446,7 @@
     "subtopic_id": "science_exploration",
     "name": "Zoologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Animal Biologist",
       "Wildlife Biologist",
@@ -2441,6 +2493,7 @@
     "subtopic_id": "science_exploration",
     "name": "Nuclear Physicist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atomic Physicist",
       "Particle Physicist",
@@ -2487,6 +2540,7 @@
     "subtopic_id": "science_exploration",
     "name": "Chemist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Research Chemist",
       "Chemical Scientist",
@@ -2533,6 +2587,7 @@
     "subtopic_id": "science_exploration",
     "name": "Geneticist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Molecular Geneticist",
       "DNA Researcher",
@@ -2564,7 +2619,7 @@
         "claim": "Gregor Mendel founded the foundational laws of genetics in the 1860s by breeding laboratory mice.",
         "verdict": "myth",
         "explanation": "Mendel was an Austrian monk who conducted his groundbreaking heredity experiments using thousands of common pea plants in a monastery garden.",
-        "fun_fact": "His work on dominant and recessive traits was largely ignored by the scientific community until decades after his death."
+        "fun_fact": "His work on dominant and recessive traits was mostly ignored until scientists rediscovered it in 1900."
       }
     ],
     "versus_candidates": [
@@ -2579,6 +2634,7 @@
     "subtopic_id": "science_exploration",
     "name": "Oceanographer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Physical Oceanographer",
       "Marine Geoscientist",
@@ -2625,6 +2681,7 @@
     "subtopic_id": "science_exploration",
     "name": "Seismologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Earthquake Scientist",
       "Seismic Analyst",
@@ -2671,6 +2728,7 @@
     "subtopic_id": "science_exploration",
     "name": "Glaciologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ice Scientist",
       "Cryosphere Researcher",
@@ -2717,6 +2775,7 @@
     "subtopic_id": "science_exploration",
     "name": "Astrobiologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Exobiologist",
       "Space Biologist",
@@ -2763,6 +2822,7 @@
     "subtopic_id": "science_exploration",
     "name": "Entomologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Insect Scientist",
       "Bug Specialist",
@@ -2809,6 +2869,7 @@
     "subtopic_id": "science_exploration",
     "name": "Anthropologist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cultural Anthropologist",
       "Biological Anthropologist",
@@ -2833,7 +2894,7 @@
       {
         "claim": "Neanderthals were unintelligent, hunched brutes completely distinct and isolated from modern Homo sapiens.",
         "verdict": "myth",
-        "explanation": "Neanderthals used fire, created symbolic art, buried their dead, and interbred with Homo sapiens; non-African modern humans carry 1-2% Neanderthal DNA.",
+        "explanation": "Neanderthals used fire, made symbolic art, and mixed with early Homo sapiens; many people outside Africa carry about 1-2% Neanderthal DNA.",
         "fun_fact": "Neanderthal cranial brain volumes were actually slightly larger on average than modern human brains."
       },
       {
@@ -2855,6 +2916,7 @@
     "subtopic_id": "science_exploration",
     "name": "Robotics Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Roboticist",
       "Automation Engineer",
@@ -2901,6 +2963,7 @@
     "subtopic_id": "science_exploration",
     "name": "Aerospace Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aeronautical Engineer",
       "Rocket Scientist",
@@ -2947,6 +3010,7 @@
     "subtopic_id": "science_exploration",
     "name": "Software Developer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Software Engineer",
       "Programmer",
@@ -2993,6 +3057,7 @@
     "subtopic_id": "science_exploration",
     "name": "Cybersecurity Analyst",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "InfoSec Analyst",
       "Security Operations Center Analyst",
@@ -3039,6 +3104,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Civil Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Structural Engineer",
       "Infrastructure Engineer",
@@ -3085,6 +3151,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Mechanical Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Machine Designer",
       "Thermal Systems Engineer",
@@ -3131,6 +3198,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Electrical Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Power Systems Engineer",
       "Electronics Engineer",
@@ -3159,7 +3227,7 @@
         "fun_fact": "The drift velocity of an electron in a typical household wire is slower than a walking snail."
       },
       {
-        "claim": "The fierce 'War of the Currents' between Thomas Edison's DC and Nikola Tesla's AC was won by AC for power transmission.",
+        "claim": "The famous contest between Edison's DC and Tesla's AC power was won by AC.",
         "verdict": "fact",
         "explanation": "Alternating Current (AC) can be easily stepped up to high voltages with transformers, allowing electrical power to travel hundreds of miles with minimal heat loss.",
         "fun_fact": "Tesla teamed up with George Westinghouse to build the first major AC hydroelectric power plant at Niagara Falls in 1895."
@@ -3177,6 +3245,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Electrician",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master Electrician",
       "Journeyman Electrician",
@@ -3223,6 +3292,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Plumber",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pipefitter",
       "Master Plumber",
@@ -3269,6 +3339,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Carpenter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Woodworker",
       "Framer",
@@ -3315,6 +3386,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Blacksmith",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Forge Master",
       "Metalsmith",
@@ -3361,6 +3433,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Welder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fabricator",
       "MIG/TIG Welder",
@@ -3407,6 +3480,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Construction Worker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Laborer",
       "Builder",
@@ -3432,7 +3506,7 @@
         "claim": "Hard hats have been mandatory on construction projects since ancient Egyptian pyramid times.",
         "verdict": "myth",
         "explanation": "The hard hat was invented in 1919 by Edward Dickinson Bullard; the 1930s Hoover Dam and Golden Gate Bridge were the first major projects to mandate them.",
-        "fun_fact": "Bullard based the design on the Doughboy steel helmets used by American soldiers in World War I."
+        "fun_fact": "Bullard's first 'Hard Boiled' hat was made from steamed canvas, glue, and black paint."
       },
       {
         "claim": "Cured concrete is the most widely consumed synthetic material on Earth by weight.",
@@ -3453,6 +3527,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Crane Operator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tower Crane Operator",
       "Heavy Lift Specialist",
@@ -3499,6 +3574,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Heavy Equipment Operator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Operating Engineer",
       "Excavator Operator",
@@ -3545,13 +3621,14 @@
     "subtopic_id": "crafts_trades",
     "name": "Roofer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Roofing Contractor",
       "Shingle Installer",
       "Roof Mechanic"
     ],
     "difficulty": 2,
-    "visual_anchor": "A roofer wearing harness tie-offs and knee pads kneeling on a steep pitched roof nailing asphalt shingles with a pneumatic coil nail gun against an open sky.",
+    "visual_anchor": "A roofer wearing harness tie-offs and knee pads kneeling on a steep pitched roof fastening asphalt shingles with a pneumatic roofing nailer against an open sky.",
     "core_traits": [
       "Installs, repairs, and replaces weatherproofing roofing systems on residential and commercial structures",
       "Lays asphalt shingles, slate tiles, cedar shakes, standing-seam metal panels, and flat EPDM rubber membranes",
@@ -3591,6 +3668,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Stonemason",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mason",
       "Stone Carver",
@@ -3637,6 +3715,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Locksmith",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lock Technician",
       "Safe Technician",
@@ -3683,6 +3762,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Auto Mechanic",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Automotive Technician",
       "Car Mechanic",
@@ -3692,7 +3772,7 @@
     "visual_anchor": "An auto mechanic in grease-stained coveralls inspecting a vehicle's undercarriage and brake lines with an inspection work light while the car is raised on a hydraulic two-post shop lift.",
     "core_traits": [
       "Diagnoses, repairs, and performs routine maintenance on automobile engines, brakes, transmissions, and electrical systems",
-      "Uses computerized OBD-II diagnostic scanners, socket wrench sets, torque wrenches, and pneumatic impact guns",
+      "Uses computerized OBD-II diagnostic scanners, socket wrench sets, torque wrenches, and pneumatic impact wrenches",
       "Replaces brake pads, timing belts, alternators, shock absorbers, and automotive fluids",
       "Tests automotive emissions and repairs modern hybrid and electric vehicle battery packs"
     ],
@@ -3729,6 +3809,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Aircraft Mechanic",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "A&P Mechanic",
       "Aviation Maintenance Technician",
@@ -3775,6 +3856,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Glassblower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gaffer",
       "Glass Artist",
@@ -3821,6 +3903,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Watchmaker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Horologist",
       "Horological Craftsman",
@@ -3867,6 +3950,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Jeweler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Goldsmith",
       "Silversmith",
@@ -3913,6 +3997,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Potter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ceramicist",
       "Ceramic Artist",
@@ -3959,6 +4044,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Tailor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master Tailor",
       "Bespoke Tailor",
@@ -4005,6 +4091,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Cobbler",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shoemaker",
       "Cordwainer",
@@ -4051,6 +4138,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Lumberjack",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Logger",
       "Falller",
@@ -4097,6 +4185,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Locomotive Engineer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Train Driver",
       "Railroad Engineer",
@@ -4128,7 +4217,7 @@
         "claim": "Modern diesel locomotives use giant diesel engines to turn the train wheels directly through a mechanical clutch.",
         "verdict": "myth",
         "explanation": "Locomotives are diesel-electric hybrids; the massive diesel engine turns an electrical generator, which powers electric traction motors on the wheel axles.",
-        "fun_fact": "Electric traction motors provide maximum torque instantly from a dead standstill."
+        "fun_fact": "Electric traction motors give maximum pulling power right from a complete standstill."
       }
     ],
     "versus_candidates": [
@@ -4143,6 +4232,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Long-Haul Truck Driver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Semi-Truck Driver",
       "Over-The-Road Trucker",
@@ -4189,6 +4279,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Bus Driver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Transit Bus Operator",
       "City Transit Driver",
@@ -4235,6 +4326,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Coal Miner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Underground Miner",
       "Mineral Miner",
@@ -4281,6 +4373,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Wind Turbine Technician",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wind Tech",
       "Turbine Maintenance Specialist",
@@ -4327,6 +4420,7 @@
     "subtopic_id": "culinary",
     "name": "Baker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Artisan Baker",
       "Bread Maker",
@@ -4373,6 +4467,7 @@
     "subtopic_id": "culinary",
     "name": "Pastry Chef",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Patissier",
       "Pastry Artist",
@@ -4419,6 +4514,7 @@
     "subtopic_id": "culinary",
     "name": "Chocolatier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master Chocolatier",
       "Chocolate Maker",
@@ -4465,6 +4561,7 @@
     "subtopic_id": "culinary",
     "name": "Bartender",
     "language": "en",
+    "audience_rating": "mature",
     "aliases": [
       "Mixologist",
       "Barman",
@@ -4511,6 +4608,7 @@
     "subtopic_id": "culinary",
     "name": "Barista",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coffee Specialist",
       "Espresso Craftsman",
@@ -4522,7 +4620,7 @@
       "Prepares, brews, and serves espresso and specialty coffee beverages in specialty cafes and coffeehouses",
       "Calibrates coffee burr grinders by adjusting grind size micron particles to achieve balanced extraction time",
       "Steams whole and plant-based milks into silky microfoam to craft free-pour latte art",
-      "Masters manual filter brewing methods: V60 pour-over, Chemex, Aeropress, and siphon vacuum brewers"
+      "Masters manual filter brewing methods: V60 pour-over, Chemex, Aeropress, and siphon coffee makers"
     ],
     "distractor_pool": [
       "Bartender",
@@ -4557,6 +4655,7 @@
     "subtopic_id": "culinary",
     "name": "Butcher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Meat Cutter",
       "Artisan Butcher",
@@ -4581,7 +4680,7 @@
       {
         "claim": "The red liquid pooling inside raw beef steak packages in grocery stores is pure animal blood.",
         "verdict": "myth",
-        "explanation": "Nearly all blood is drained during slaughter; the red liquid is myoglobin, an oxygen-carrying muscle protein mixed with natural water.",
+        "explanation": "Most blood is removed before meat reaches stores; the red liquid is myoglobin, a muscle protein, mixed with natural water.",
         "fun_fact": "Myoglobin turns brown when cooked or exposed to oxygen, signaling meat doneness."
       },
       {
@@ -4603,6 +4702,7 @@
     "subtopic_id": "culinary",
     "name": "Cheesemaker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Artisan Fromager",
       "Affineur",
@@ -4649,6 +4749,7 @@
     "subtopic_id": "culinary",
     "name": "Sushi Master",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Itamae",
       "Sushi Chef",
@@ -4695,6 +4796,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Farmer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Agriculturalist",
       "Crop Producer",
@@ -4717,7 +4819,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Modern commercial farmers rely on satellite GPS and automated steering to plant crops in dead-straight rows.",
+        "claim": "Modern farmers use satellite GPS and automated steering to plant crops in perfectly straight rows.",
         "verdict": "fact",
         "explanation": "Precision agriculture uses RTK GPS receivers on tractors that steer automatically within one inch of accuracy across vast fields.",
         "fun_fact": "Farmers use infrared drone imagery to spot nitrogen deficiencies in individual plant rows before symptoms are visible to human eyes."
@@ -4741,13 +4843,14 @@
     "subtopic_id": "crafts_trades",
     "name": "Beekeeper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apiarist",
       "Apiculturist",
       "Bee Farmer"
     ],
     "difficulty": 1,
-    "visual_anchor": "A beekeeper in a white protective bee suit and veiled hood holding a wooden honeycomb frame covered in buzzing honeybees with a smoking hive smoker nearby.",
+    "visual_anchor": "A beekeeper in a white protective bee suit and veiled hood holding a wooden honeycomb frame covered in buzzing honeybees, with a hive smoker puffing gentle smoke nearby.",
     "core_traits": [
       "Maintains colonies of honeybees in modern Langstroth beehives to produce honey, beeswax, and royal jelly",
       "Wears a protective white ventilated bee suit, veil, and goatskin beekeeping gloves",
@@ -4787,6 +4890,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Rancher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cattle Rancher",
       "Cowboy",
@@ -4833,6 +4937,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Shepherd",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pastoralist",
       "Sheep Herder",
@@ -4879,6 +4984,7 @@
     "subtopic_id": "aviation_maritime",
     "name": "Commercial Fisherman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Trawler Captain",
       "Deckhand",
@@ -4925,6 +5031,7 @@
     "subtopic_id": "emergency_services",
     "name": "Park Ranger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "National Park Ranger",
       "Conservation Officer",
@@ -4949,7 +5056,7 @@
       {
         "claim": "Feeding wild bears in national parks is harmless and helps them survive harsh winter months.",
         "verdict": "myth",
-        "explanation": "Human food habituates bears to human campgrounds, leading to aggressive encounters that require rangers to euthanize the animal ('A fed bear is a dead bear').",
+        "explanation": "Bears that learn to eat human food lose their fear of people and can become dangerous to campers and to themselves.",
         "fun_fact": "Park rangers enforce bear-proof metal food lockers and canisters throughout wilderness backcountry zones."
       },
       {
@@ -4971,6 +5078,7 @@
     "subtopic_id": "emergency_services",
     "name": "Forest Ranger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Forester",
       "State Forest Officer",
@@ -5017,6 +5125,7 @@
     "subtopic_id": "science_exploration",
     "name": "Safari Guide",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Field Guide",
       "Bush Guide",
@@ -5027,7 +5136,7 @@
     "core_traits": [
       "Leads wildlife game drives and walking safaris through wilderness reserves in Africa and Asia",
       "Interprets animal footprint tracks, alarm calls, scat, and behavioral cues to track elusive big game",
-      "Trained in rifle ballistics, dangerous animal charge deterrence, and wilderness survival",
+      "Trained in reading animal behavior, keeping guests at a safe distance, and wilderness first aid",
       "Educates guests on conservation biology, ornithology, botany, and anti-poaching initiatives"
     ],
     "distractor_pool": [
@@ -5063,6 +5172,7 @@
     "subtopic_id": "science_exploration",
     "name": "Mountain Guide",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alpine Guide",
       "IFMGA Guide",
@@ -5087,7 +5197,7 @@
       {
         "claim": "Mountaineers climb Mount Everest in single-day continuous sprints from base camp without stopping to acclimatize.",
         "verdict": "myth",
-        "explanation": "Sudden exposure to Everest's 'Death Zone' above 8,000 meters causes fatal cerebral or pulmonary edema; climbers take weeks moving up and down camps to acclimatize.",
+        "explanation": "Air above 8,000 meters holds so little oxygen that it is very harmful; climbers spend weeks moving between camps to adjust.",
         "fun_fact": "Acclimatization stimulates bone marrow to produce millions of extra red blood cells to transport scarce oxygen."
       },
       {
@@ -5109,6 +5219,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Dog Groomer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pet Groomer",
       "Canine Stylist",
@@ -5155,6 +5266,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Animal Trainer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Behavioral Animal Specialist",
       "Studio Animal Coordinator",
@@ -5201,6 +5313,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Wildlife Photographer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nature Photographer",
       "Conservation Photographer",
@@ -5247,6 +5360,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Film Director",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Movie Director",
       "Filmmaker",
@@ -5293,6 +5407,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Cinematographer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Director of Photography",
       "DP",
@@ -5339,6 +5454,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Actor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thespian",
       "Screen Actor",
@@ -5385,6 +5501,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Voice Actor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Voiceover Artist",
       "Voice Talent",
@@ -5431,6 +5548,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Musician",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Instrumentalist",
       "Recording Artist",
@@ -5477,6 +5595,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Orchestra Conductor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Maestro",
       "Symphony Director",
@@ -5507,8 +5626,8 @@
       {
         "claim": "Early orchestral conductors used heavy wooden staffs to pound time loudly on the wooden stage floor.",
         "verdict": "fact",
-        "explanation": "In the 17th century, Jean-Baptiste Lully notoriously struck his own foot with his heavy wooden conducting staff, developed gangrene, and died from the wound.",
-        "fun_fact": "Following Lully's death, conductors transitioned to silent paper rolls and eventually the slender modern lightweight baton."
+        "explanation": "In the 1600s, French composer Jean-Baptiste Lully kept the beat by thumping a tall staff on the floor.",
+        "fun_fact": "Conductors later switched to rolled-up paper, then to the light, slender baton used today."
       }
     ],
     "versus_candidates": [
@@ -5523,6 +5642,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Opera Singer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Operatic Vocalist",
       "Soprano / Tenor",
@@ -5551,10 +5671,10 @@
         "fun_fact": "This acoustic phenomenon is called the 'singer's formant' - a resonant frequency peak around 3,000 Hz where the human ear is most sensitive."
       },
       {
-        "claim": "An opera singer's powerful voice can shatter a real crystal wine glass by singing the glass's resonant pitch.",
+        "claim": "An opera singer's powerful voice can shatter a thin crystal glass by singing its resonant pitch.",
         "verdict": "fact",
         "explanation": "If a singer sustains the exact natural resonant frequency of crystal glass with sufficient volume, acoustic resonance amplifies vibrations until the crystal fractures.",
-        "fun_fact": "MythBusters famously proved that rock vocalist Jaime Vendera could shatter a wine glass using purely unamplified vocal power."
+        "fun_fact": "MythBusters showed rock singer Jaime Vendera shattering a crystal glass using only his unamplified voice."
       }
     ],
     "versus_candidates": [
@@ -5569,6 +5689,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Ballet Dancer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ballerina",
       "Danseur",
@@ -5615,6 +5736,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Circus Acrobat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aerialist",
       "Trapeze Artist",
@@ -5661,6 +5783,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Magician",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Illusionist",
       "Sleight-of-Hand Artist",
@@ -5691,8 +5814,8 @@
       {
         "claim": "Harry Houdini made a career out of publicly exposing fraudulent spiritualist mediums and psychic tricksters.",
         "verdict": "fact",
-        "explanation": "Houdini used his mastery of illusion and lock mechanics to debunk fake seances and spirit photography that exploited grieving families.",
-        "fun_fact": "Before he died, Houdini gave his wife a secret coded message to see if any real medium could contact him after death; none ever did."
+        "explanation": "Houdini used his knowledge of illusions and locks to show how fake seances and spirit photos were really done.",
+        "fun_fact": "Houdini was also a world-famous escape artist who wriggled free from handcuffs, chains, and locked boxes."
       }
     ],
     "versus_candidates": [
@@ -5707,6 +5830,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Stunt Performer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stuntman / Stuntwoman",
       "Stunt Double",
@@ -5753,6 +5877,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Ringmaster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Master of Ceremonies",
       "Circus Host",
@@ -5799,6 +5924,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Sculptor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Statuary Artist",
       "Fine Art Sculptor",
@@ -5845,6 +5971,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Painter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fine Artist",
       "Oil Painter",
@@ -5867,10 +5994,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Vincent van Gogh famously cut off his entire ear and mailed it to a lover.",
+        "claim": "Vincent van Gogh sold hundreds of paintings and grew rich during his lifetime.",
         "verdict": "myth",
-        "explanation": "Historical medical records and witness accounts indicate Van Gogh severed only a portion of his left earlobe during an acute mental breakdown in Arles in 1888.",
-        "fun_fact": "Van Gogh sold only one or two paintings during his lifetime, yet today his masterpieces sell for hundreds of millions."
+        "explanation": "Van Gogh sold very few paintings while he was alive; his brother Theo supported him so he could keep painting.",
+        "fun_fact": "Van Gogh created around 2,100 artworks, including about 860 oil paintings, in just over a decade."
       },
       {
         "claim": "The historical pigment 'Ultramarine' was once more valuable than pure gold weight-for-weight.",
@@ -5891,6 +6018,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Fashion Designer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Couturier",
       "Apparel Designer",
@@ -5937,6 +6065,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Makeup Artist",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "MUA",
       "Prosthetic Makeup Artist",
@@ -5959,10 +6088,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Movie monsters and zombie makeup in modern Hollywood are created exclusively with computer-generated CGI.",
+        "claim": "Movie monsters and creature makeup in modern Hollywood are created only with computer CGI.",
         "verdict": "myth",
         "explanation": "Practical prosthetic makeup remains the industry gold standard for tactile realism; actors spend 3 to 6 hours daily having sculpted silicone appliances glued to their faces.",
-        "fun_fact": "Special effects artists use alcohol-activated makeup palettes that do not smudge under hot movie studio lighting."
+        "fun_fact": "Effects artists use long-lasting makeup palettes that do not smudge under hot movie studio lights."
       },
       {
         "claim": "Ancient Egyptians of all social classes wore dark kohl eyeliner to protect their eyes from desert sun glare and eye infections.",
@@ -5983,6 +6112,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Tattoo Artist",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Tattooer",
       "Tattooist",
@@ -6029,6 +6159,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Olympic Gymnast",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Artistic Gymnast",
       "Gymnastic Athlete",
@@ -6038,9 +6169,9 @@
     "visual_anchor": "An elite gymnast with chalked hands frozen in a flawless iron cross position on the stationary wooden gymnastic rings inside an Olympic stadium.",
     "core_traits": [
       "Competes in elite artistic gymnastic apparatus: balance beam, uneven bars, vault, floor, pommel horse, and rings",
-      "Executes high-difficulty acrobatic skills: double-layout somersaults, Tsukahara vaults, and handstand presses",
+      "Performs high-difficulty acrobatic skills: double-layout somersaults, Tsukahara vaults, and handstand presses",
       "Coats hands in magnesium carbonate gym chalk to absorb sweat and secure apparatus grip",
-      "Judged under the international Code of Points scoring Difficulty (D-score) and Execution (E-score)"
+      "Judged under the international Code of Points for Difficulty (D-score) and form and precision (E-score)"
     ],
     "distractor_pool": [
       "Ballet Dancer",
@@ -6075,6 +6206,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Boxing Referee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ring Official",
       "Fight Referee",
@@ -6121,6 +6253,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Sports Coach",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Head Coach",
       "Athletic Coach",
@@ -6167,6 +6300,7 @@
     "subtopic_id": "arts_entertainment",
     "name": "Martial Arts Master",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sensei",
       "Sifu",
@@ -6213,6 +6347,7 @@
     "subtopic_id": "crafts_trades",
     "name": "Architect",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Building Designer",
       "Licensed Architect",
@@ -6259,6 +6394,7 @@
     "subtopic_id": "education_public",
     "name": "Librarian",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Information Specialist",
       "Cataloger",
@@ -6305,6 +6441,7 @@
     "subtopic_id": "education_public",
     "name": "Museum Curator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Curator",
       "Exhibition Director",
@@ -6351,6 +6488,7 @@
     "subtopic_id": "education_public",
     "name": "High School Teacher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Secondary Educator",
       "Subject Teacher",
@@ -6397,6 +6535,7 @@
     "subtopic_id": "education_public",
     "name": "University Professor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tenured Professor",
       "Faculty Scholar",
@@ -6443,6 +6582,7 @@
     "subtopic_id": "education_public",
     "name": "School Principal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Headmaster",
       "School Administrator",
@@ -6489,6 +6629,7 @@
     "subtopic_id": "education_public",
     "name": "Kindergarten Teacher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Early Childhood Educator",
       "Preschool Teacher",
@@ -6535,6 +6676,7 @@
     "subtopic_id": "education_public",
     "name": "Judge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Magistrate",
       "Justice",
@@ -6581,6 +6723,7 @@
     "subtopic_id": "education_public",
     "name": "Lawyer",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Attorney",
       "Counsel",
@@ -6627,6 +6770,7 @@
     "subtopic_id": "education_public",
     "name": "Diplomat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ambassador",
       "Foreign Service Officer",
@@ -6673,6 +6817,7 @@
     "subtopic_id": "education_public",
     "name": "News Anchor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Broadcaster",
       "Television Anchor",
@@ -6688,7 +6833,7 @@
     ],
     "distractor_pool": [
       "Journalist",
-      "War Correspondent",
+      "Radio Host",
       "Meteorologist",
       "Actor",
       "Voice Actor"
@@ -6703,14 +6848,558 @@
       {
         "claim": "Legendary CBS anchor Walter Cronkite was once voted 'the most trusted man in America' in nationwide opinion polls.",
         "verdict": "fact",
-        "explanation": "Cronkite anchored the CBS Evening News from 1962 to 1981, guiding the nation through the JFK assassination, the Moon landing, and Vietnam.",
+        "explanation": "Cronkite anchored the CBS Evening News from 1962 to 1981, guiding viewers through big moments like the 1969 Moon landing.",
         "fun_fact": "Cronkite ended his broadcasts with his iconic sign-off catchphrase: 'And that's the way it is.'"
       }
     ],
     "versus_candidates": [
-      "War Correspondent",
+      "Radio Host",
       "Meteorologist",
       "Journalist"
+    ]
+  },
+  {
+    "id": "ENT-CAR-147",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "science_exploration",
+    "name": "Zookeeper",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Zoo Keeper",
+      "Animal Keeper"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smiling zookeeper in a khaki uniform feeding leafy branches to a friendly giraffe on a sunny day at the zoo, 9:16 vertical shot.",
+    "core_traits": [
+      "Works every day with animals",
+      "Prepares food and cleans animal homes",
+      "Watches animals closely to spot if they feel unwell",
+      "Gives animals puzzles and toys called enrichment"
+    ],
+    "distractor_pool": [
+      "Veterinarian",
+      "Zoologist",
+      "Park Ranger",
+      "Animal Trainer",
+      "Farmer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Zookeepers give animals toys and puzzles to keep them busy.",
+        "verdict": "fact",
+        "explanation": "This enrichment, like hiding food to find, keeps animals active, curious and happy.",
+        "fun_fact": "Some zoos give animals frozen fruit treats to lick on hot days."
+      },
+      {
+        "claim": "Zookeepers only feed animals and play with them.",
+        "verdict": "myth",
+        "explanation": "They also clean habitats, keep records, watch animal health and teach visitors.",
+        "fun_fact": "Many zookeepers study biology or animal science in college."
+      }
+    ],
+    "versus_candidates": [
+      "Veterinarian",
+      "Park Ranger",
+      "Aquarist"
+    ]
+  },
+  {
+    "id": "ENT-CAR-148",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "science_exploration",
+    "name": "Aquarist",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Aquarium Keeper"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A friendly aquarist in a wetsuit waving through the glass of a huge blue aquarium tank full of colorful fish and a sea turtle, 9:16 vertical shot.",
+    "core_traits": [
+      "Works with fish and other sea creatures",
+      "Keeps water clean and at the right temperature",
+      "Sometimes dives into big tanks to feed animals",
+      "Cares for animals at a public aquarium"
+    ],
+    "distractor_pool": [
+      "Marine Biologist",
+      "Zookeeper",
+      "Deep-Sea Diver",
+      "Oceanographer",
+      "Lifeguard"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Aquarists test the water in their tanks very often.",
+        "verdict": "fact",
+        "explanation": "They check things like temperature and saltiness so the animals stay healthy.",
+        "fun_fact": "Some aquarists scuba dive in big tanks to feed fish and clean the glass."
+      },
+      {
+        "claim": "Aquarists only take care of fish.",
+        "verdict": "myth",
+        "explanation": "They also care for jellyfish, corals, octopuses, sea stars and more.",
+        "fun_fact": "Octopuses at aquariums often get puzzle toys because they are so clever."
+      }
+    ],
+    "versus_candidates": [
+      "Marine Biologist",
+      "Zookeeper",
+      "Deep-Sea Diver"
+    ]
+  },
+  {
+    "id": "ENT-CAR-149",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "education_public",
+    "name": "Mail Carrier",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Letter Carrier",
+      "Mailman",
+      "Postal Worker"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful mail carrier in a blue uniform with a big shoulder bag handing a letter to a smiling child at a sunny front door, 9:16 vertical shot.",
+    "core_traits": [
+      "Delivers letters and packages",
+      "Walks or drives the same route most days",
+      "Carries a big bag full of mail",
+      "Works for the post office"
+    ],
+    "distractor_pool": [
+      "Delivery Driver",
+      "Courier",
+      "Bus Driver",
+      "Postmaster",
+      "Newspaper Carrier"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mail carriers deliver mail in rain, snow and heat.",
+        "verdict": "fact",
+        "explanation": "They work outside in many kinds of weather to bring mail to homes.",
+        "fun_fact": "Mail to a village deep in the Grand Canyon is still carried by mules."
+      },
+      {
+        "claim": "Mail carriers only deliver letters.",
+        "verdict": "myth",
+        "explanation": "They also deliver packages and magazines, and often pick up mail people send.",
+        "fun_fact": "Before trucks, mail was carried by horses, trains and even boats."
+      }
+    ],
+    "versus_candidates": [
+      "Delivery Driver",
+      "Garbage Collector",
+      "Bus Driver"
+    ]
+  },
+  {
+    "id": "ENT-CAR-150",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "crafts_trades",
+    "name": "Garbage Collector",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sanitation Worker",
+      "Waste Collector",
+      "Trash Collector"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A friendly sanitation worker in a bright orange safety vest and gloves waving from beside a green garbage truck on a sunny street, 9:16 vertical shot.",
+    "core_traits": [
+      "Wears a bright safety vest",
+      "Works with a big truck that squishes trash",
+      "Picks up bins on the same day each week",
+      "Keeps neighborhoods clean and healthy"
+    ],
+    "distractor_pool": [
+      "Recycling Worker",
+      "Street Sweeper",
+      "Janitor",
+      "Mail Carrier",
+      "Delivery Driver"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Many garbage trucks use a robotic arm to lift bins.",
+        "verdict": "fact",
+        "explanation": "The driver controls the arm to grab, lift and empty bins without leaving the truck.",
+        "fun_fact": "Many kids wave at garbage trucks, and lots of drivers happily wave back."
+      },
+      {
+        "claim": "Garbage collectors help keep people healthy.",
+        "verdict": "fact",
+        "explanation": "Taking away trash keeps away germs, bad smells and pests like rats.",
+        "fun_fact": "Recycling trucks carry cans, bottles and paper away to be turned into new things."
+      }
+    ],
+    "versus_candidates": [
+      "Mail Carrier",
+      "Street Sweeper",
+      "Firefighter"
+    ]
+  },
+  {
+    "id": "ENT-CAR-151",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "arts_entertainment",
+    "name": "Toy Designer",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Toy Inventor"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful toy designer sketching a colorful robot toy at a bright workshop desk covered in building blocks, plush animals and toy models, 9:16 vertical shot.",
+    "core_traits": [
+      "Invents new toys and games",
+      "Draws sketches and builds sample models",
+      "Tests ideas to make sure toys are fun and safe",
+      "Often uses 3D printers to make test toys"
+    ],
+    "distractor_pool": [
+      "Video Game Designer",
+      "Inventor",
+      "Animator",
+      "Industrial Designer",
+      "Engineer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Toy designers make test versions of toys called prototypes.",
+        "verdict": "fact",
+        "explanation": "Prototypes let designers check how a toy looks, feels and works before factories make it.",
+        "fun_fact": "The Slinky was invented by an engineer who saw a spring fall off a shelf."
+      },
+      {
+        "claim": "Toys must pass safety tests before they are sold.",
+        "verdict": "fact",
+        "explanation": "Testers check that toys have no tiny, sharp or easily broken parts that could hurt kids.",
+        "fun_fact": "Play-Doh was first sold as a wallpaper cleaner before becoming a toy."
+      }
+    ],
+    "versus_candidates": [
+      "Video Game Designer",
+      "Inventor",
+      "Animator"
+    ]
+  },
+  {
+    "id": "ENT-CAR-152",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "arts_entertainment",
+    "name": "Animator",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Animation Artist"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A happy animator drawing a bouncing cartoon ball on a glowing light table, with colorful character sketches pinned on the wall, 9:16 vertical shot.",
+    "core_traits": [
+      "Makes drawings or models appear to move",
+      "Creates many pictures for each second of film",
+      "Works on cartoons, movies and video games",
+      "Uses tricks like squash and stretch"
+    ],
+    "distractor_pool": [
+      "Illustrator",
+      "Voice Actor",
+      "Film Director",
+      "Cartoonist",
+      "Video Game Designer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Animation is many pictures shown quickly one after another.",
+        "verdict": "fact",
+        "explanation": "Each picture is a little different, so our eyes see smooth movement.",
+        "fun_fact": "Movies usually show 24 frames every second."
+      },
+      {
+        "claim": "Toy Story was the first full movie made entirely with computer animation.",
+        "verdict": "fact",
+        "explanation": "Pixar's Toy Story, released in 1995, was the first fully computer-animated feature film.",
+        "fun_fact": "Some animators use clay figures and move them a tiny bit for each frame."
+      }
+    ],
+    "versus_candidates": [
+      "Illustrator",
+      "Voice Actor",
+      "Video Game Designer"
+    ]
+  },
+  {
+    "id": "ENT-CAR-153",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "arts_entertainment",
+    "name": "Video Game Designer",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Game Designer"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling game designer sketching a colorful game level on a tablet beside a big screen showing a bright cartoon world, 9:16 vertical shot.",
+    "core_traits": [
+      "Dreams up the rules and goals of games",
+      "Plans levels, characters and puzzles",
+      "Works with artists, coders and musicians",
+      "Tests games again and again to make them fun"
+    ],
+    "distractor_pool": [
+      "Software Developer",
+      "Animator",
+      "Toy Designer",
+      "Graphic Designer",
+      "Video Game Tester"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Video games are made by teams with many different jobs.",
+        "verdict": "fact",
+        "explanation": "Designers, artists, programmers, writers and sound creators all work together.",
+        "fun_fact": "Zelda's creator, Shigeru Miyamoto, was inspired by exploring hills and caves as a boy."
+      },
+      {
+        "claim": "Game designers spend all day just playing games.",
+        "verdict": "myth",
+        "explanation": "They mostly plan, build and fix games, though playtesting is part of the job.",
+        "fun_fact": "Minecraft started as a small project by one developer, Markus Persson."
+      }
+    ],
+    "versus_candidates": [
+      "Software Developer",
+      "Animator",
+      "Toy Designer"
+    ]
+  },
+  {
+    "id": "ENT-CAR-154",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "science_exploration",
+    "name": "Inventor",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Innovator"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful inventor in safety goggles tinkering with a colorful gadget of gears and springs in a bright, busy workshop, 9:16 vertical shot.",
+    "core_traits": [
+      "Creates brand-new things",
+      "Turns ideas into working machines or gadgets",
+      "Often fails many times before succeeding",
+      "May protect an idea with a patent"
+    ],
+    "distractor_pool": [
+      "Engineer",
+      "Scientist",
+      "Toy Designer",
+      "Architect",
+      "Mechanic"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Inventors can get a patent to protect their idea.",
+        "verdict": "fact",
+        "explanation": "A patent means others cannot copy the invention without permission for a set time.",
+        "fun_fact": "Thomas Edison earned more than 1,000 U.S. patents."
+      },
+      {
+        "claim": "Thomas Edison invented the very first light bulb.",
+        "verdict": "myth",
+        "explanation": "Others made earlier bulbs; Edison's team made a longer-lasting, practical one.",
+        "fun_fact": "The Popsicle was invented by an 11-year-old boy named Frank Epperson."
+      }
+    ],
+    "versus_candidates": [
+      "Engineer",
+      "Scientist",
+      "Toy Designer"
+    ]
+  },
+  {
+    "id": "ENT-CAR-155",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "crafts_trades",
+    "name": "Florist",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Flower Arranger"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smiling florist arranging a bright bouquet of roses, sunflowers and tulips in a cozy shop filled with buckets of fresh flowers, 9:16 vertical shot.",
+    "core_traits": [
+      "Works with fresh flowers every day",
+      "Makes bouquets and flower arrangements",
+      "Decorates parties and celebrations",
+      "Knows how to keep cut flowers fresh longer"
+    ],
+    "distractor_pool": [
+      "Gardener",
+      "Botanist",
+      "Farmer",
+      "Baker",
+      "Interior Designer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Florists often trim flower stems at an angle.",
+        "verdict": "fact",
+        "explanation": "An angled cut gives stems more room to drink water, so flowers stay fresh longer.",
+        "fun_fact": "One of the world's biggest flower auctions is in Aalsmeer, near Amsterdam."
+      },
+      {
+        "claim": "Many flowers in shops are flown in from faraway countries.",
+        "verdict": "fact",
+        "explanation": "Countries like Colombia, Kenya and the Netherlands send huge numbers of flowers worldwide.",
+        "fun_fact": "A sunflower head is really hundreds of tiny flowers packed together."
+      }
+    ],
+    "versus_candidates": [
+      "Gardener",
+      "Botanist",
+      "Baker"
+    ]
+  },
+  {
+    "id": "ENT-CAR-156",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "culinary",
+    "name": "Ice Cream Maker",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Ice Cream Chef"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful ice cream maker in a white apron scooping colorful ice cream into cones in a bright shop with rows of flavors, 9:16 vertical shot.",
+    "core_traits": [
+      "Creates frozen sweet treats",
+      "Mixes milk, cream and sugar with flavors",
+      "Churns the mix while freezing it to keep it smooth",
+      "Invents new flavors with fruit, cookies or candy"
+    ],
+    "distractor_pool": [
+      "Pastry Chef",
+      "Baker",
+      "Chocolatier",
+      "Cheesemaker",
+      "Barista"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ice cream is churned while it freezes.",
+        "verdict": "fact",
+        "explanation": "Churning adds air and keeps ice crystals tiny, making ice cream smooth and creamy.",
+        "fun_fact": "Vanilla is one of the most popular ice cream flavors in the world."
+      },
+      {
+        "claim": "Some ice cream makers use liquid nitrogen to freeze ice cream fast.",
+        "verdict": "fact",
+        "explanation": "This super cold liquid freezes ice cream in seconds, and only trained adults should use it.",
+        "fun_fact": "Ice cream cones became popular at the 1904 World's Fair in St. Louis."
+      }
+    ],
+    "versus_candidates": [
+      "Pastry Chef",
+      "Chocolatier",
+      "Baker"
+    ]
+  },
+  {
+    "id": "ENT-CAR-157",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "medicine_healthcare",
+    "name": "School Nurse",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A kind school nurse placing a colorful bandage on a smiling child's knee in a bright, tidy school health room, 9:16 vertical shot.",
+    "core_traits": [
+      "Works in a school health room",
+      "Helps students who feel sick or get small bumps",
+      "Keeps track of allergies and medicines",
+      "Teaches kids about healthy habits"
+    ],
+    "distractor_pool": [
+      "Pediatrician",
+      "Registered Nurse",
+      "Paramedic",
+      "School Counselor",
+      "Pharmacist"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "School nurses help students with allergies and asthma.",
+        "verdict": "fact",
+        "explanation": "They keep care plans and medicines ready so students can stay safe at school.",
+        "fun_fact": "Lina Rogers became the first public school nurse in the United States in 1902."
+      },
+      {
+        "claim": "School nurses teach that handwashing helps stop germs.",
+        "verdict": "fact",
+        "explanation": "Scrubbing with soap and water for about 20 seconds washes many germs away.",
+        "fun_fact": "Humming 'Happy Birthday' twice takes about 20 seconds, perfect for handwashing."
+      }
+    ],
+    "versus_candidates": [
+      "Pediatrician",
+      "Registered Nurse",
+      "Paramedic"
+    ]
+  },
+  {
+    "id": "ENT-CAR-158",
+    "domain_id": "careers_occupations",
+    "subtopic_id": "arts_entertainment",
+    "name": "Children's Book Author",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Picture Book Author",
+      "Kids' Author"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful author writing in a notebook at a cozy desk surrounded by colorful picture books, with a cat napping on a stack of pages, 9:16 vertical shot.",
+    "core_traits": [
+      "Writes stories for young readers",
+      "Often works with an illustrator",
+      "Rewrites stories many times to get them just right",
+      "Visits schools to read and talk about books"
+    ],
+    "distractor_pool": [
+      "Illustrator",
+      "Librarian",
+      "Journalist",
+      "Poet",
+      "Animator"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dr. Seuss wrote Green Eggs and Ham using only 50 different words.",
+        "verdict": "fact",
+        "explanation": "His publisher challenged him to write a whole book with just 50 words, and he did it.",
+        "fun_fact": "Dr. Seuss's real name was Theodor Seuss Geisel."
+      },
+      {
+        "claim": "Many picture books have exactly 32 pages.",
+        "verdict": "fact",
+        "explanation": "Printers fold big sheets into page groups, so 32 pages is a common picture book length.",
+        "fun_fact": "The Very Hungry Caterpillar by Eric Carle has been translated into more than 60 languages."
+      }
+    ],
+    "versus_candidates": [
+      "Illustrator",
+      "Librarian",
+      "Animator"
     ]
   }
 ]

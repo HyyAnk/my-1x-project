@@ -50,12 +50,12 @@ describe("Quiz Integration Audit Suite", () => {
       {
         id: "q-fact",
         number: 3,
-        format: "true_false",
+        format: "yes_no",
         difficulty: 1,
         question: "Do octopuses have three hearts?",
         choices: [
-          { id: "c-true", text: "True" },
-          { id: "c-false", text: "False" },
+          { id: "c-true", text: "Yes" },
+          { id: "c-false", text: "No" },
         ],
         correct_choice_id: "c-true",
         explanation: "Octopuses have three hearts and blue blood.",
@@ -120,11 +120,11 @@ describe("Quiz Integration Audit Suite", () => {
           },
           {
             question_id: "q-fact",
-            archetype: "true_false",
+            archetype: "yes_no",
             energy: "triumphant",
             visual_density: "burst",
             palette_id: "sunny",
-            layout_id: "verdict_true_false",
+            layout_id: "verdict_yes_no",
             motion_id: "enter.scale",
             transition_id: "lightning_brush",
             thinking_bar_style: "auto",
@@ -224,7 +224,7 @@ describe("Quiz Integration Audit Suite", () => {
 
       const factBeat = plan.beats.find((b) => b.question_id === "q-fact");
       expect(factBeat).toBeDefined();
-      expect(factBeat?.layout_id).toBe("verdict_true_false");
+      expect(factBeat?.layout_id).toBe("verdict_yes_no");
     });
   });
 

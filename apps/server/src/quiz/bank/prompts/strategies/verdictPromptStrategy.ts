@@ -12,20 +12,24 @@ import {
   formatTargetEntitiesBlock,
 } from "./promptCommonBlocks.js";
 
+const VERDICT_ARCHETYPE_ID = "verdict_yes_no";
+
 const SPECIALIZED_YES_NO_DIRECTIVE: string[] = [
-  "=== SPECIALIZED YES / NO ARCHETYPE DIRECTIVE ===",
-  'CRITICAL RULE: Standardized exclusively to "Yes" and "No" binary format.',
-  '1. QUESTION HOOK: Formulate a punchy, natural direct question or assertion ending with "... Yes or No?" (e.g. "Can penguins fly? Yes or No?", "Are blue whales bigger than dinosaurs? Yes or No?").',
-  '2. CHOICES: Exactly 2 choices with text strictly "Yes" and "No".',
-  "3. VERDICT BALANCE: Enforce a strict ~50/50 distribution across questions (roughly half Yes, half No as correct choice).",
-  '4. ANCHORING: Map [TRUE] claims from the target entity to correct choice "Yes", and [FALSE] claims to correct choice "No".',
+  "=== SPECIALIZED YES / NO ARCHETYPE DIRECTIVE (KIDS & FAMILY) ===",
+  'CRITICAL RULE: This is the only verdict format. Choices are always exactly "Yes" and "No" (never True / False, Fact / Myth).',
+  '1. NATURAL QUESTION: Write a real question a child would ask, opening with Is / Are / Do / Does / Can / Did / Was / Were / Has / Have / Will, and ending with " Yes or No?" (e.g. "Can penguins fly? Yes or No?", "Do octopuses have three hearts? Yes or No?").',
+  '2. NEVER A STATEMENT: Never write a declarative claim to be judged (NEVER "Blue whales are bigger than any dinosaur. Yes or No?"). Never write "Is it true that...".',
+  "3. ONE CLEAR ANSWER: The answer must be unambiguous and verifiable. Avoid double negatives (\"Isn't it...\"), opinions, trick wording, and sweeping absolutes (always / never / only) unless they are exactly true.",
+  "4. KID-FRIENDLY WORDING: Use simple everyday words a 7-year-old understands; keep one idea per question.",
+  "5. VERDICT BALANCE: Exactly half of the questions (rounded) must have \"No\" as the correct answer; surprising \"No\" answers that bust a common belief are encouraged.",
+  '6. ANCHORING: Map [TRUE] claims from the target entity to correct choice "Yes", and [FALSE] claims to correct choice "No".',
 ];
 
 export const verdictPromptStrategy: ArchetypePromptStrategy = {
-  archetypeId: ["verdict_yes_no", "verdict_true_false", "verdict_fact_myth"],
+  archetypeId: VERDICT_ARCHETYPE_ID,
 
   buildBatchPrompt(options: BuildBatchPromptOptions): string {
-    const effectiveArchetype = options.archetypeId || "verdict_yes_no";
+    const effectiveArchetype = VERDICT_ARCHETYPE_ID;
     const lang = options.language || "en";
     const diff = options.difficulty ?? 2;
     const ageBand = options.ageBand || "family";
@@ -46,11 +50,11 @@ export const verdictPromptStrategy: ArchetypePromptStrategy = {
       `- Choice Count: 2 ("Yes" and "No")`,
       `- Thinking Duration: 5 seconds`,
       `- Core Rules:`,
-      `  * Yes or No format. Punchy, single-clause question or statement strictly 60 to 80 characters (never exceed 80 chars).`,
-      `  * Format: Direct question or assertion ending in 'Yes or No?'`,
+      `  * Yes or No format. Punchy, natural single-clause question strictly 60 to 80 characters (never exceed 80 chars).`,
+      `  * Format: Direct question (Is / Are / Do / Does / Can / Did ...) ending in 'Yes or No?'. Never a statement.`,
       `  * Exactly 2 choices: 'Yes' and 'No'.`,
       `  * Verdict Balance: Maintain a strict ~50/50 balance between Yes and No as the correct choice.`,
-      `  * Provide a clear explanation along with a scientific/real-world fun fact.`,
+      `  * Provide a short, simple explanation along with a surprising real-world fun fact a child can understand.`,
       ``,
       ...SPECIALIZED_YES_NO_DIRECTIVE,
       ``,
@@ -60,7 +64,7 @@ export const verdictPromptStrategy: ArchetypePromptStrategy = {
       ``,
       `=== MOBILE VIDEO SHORTS LENGTH & PACING RULES (STRICT) ===`,
       `1. QUESTION LENGTH: Strictly 60 to 80 characters (never exceed 80 chars).`,
-      `2. Keep the statement punchy and readable under 2 seconds.`,
+      `2. Keep the question punchy and readable under 2 seconds.`,
       ``,
       ...COMMON_BATCH_CONTENT_POLICY_LINES,
       formatExistingSamplesBlock(options.existingQuestionSamples),
@@ -71,15 +75,15 @@ export const verdictPromptStrategy: ArchetypePromptStrategy = {
       `    "archetype_id": "${effectiveArchetype}",`,
       `    "domain_id": "${options.domainId}",`,
       `    "subtopic_id": "${options.subtopicId}",`,
-      `    "question": "Are blue whales bigger than any dinosaur? Yes or No?",`,
+      `    "question": "Can a goldfish remember things for months? Yes or No?",`,
       `    "format": "yes_no",`,
       `    "choices": [`,
       `      { "id": "A", "text": "Yes", "is_correct": true },`,
       `      { "id": "B", "text": "No", "is_correct": false }`,
       `    ],`,
       `    "correct_choice_id": "A",`,
-      `    "explanation": "At up to 30 meters and 200 tons, the blue whale is the largest animal ever known.",`,
-      `    "fun_fact": "A blue whale's tongue alone can weigh as much as an entire adult elephant.",`,
+      `    "explanation": "Goldfish can learn tricks and remember them for months, not just 3 seconds.",`,
+      `    "fun_fact": "Scientists have trained goldfish to push levers for food at certain times.",`,
       `    "visual_spec": {`,
       `      "intent": "question_illustration",`,
       `      "prompt": "Colossal blue whale swimming gracefully through deep azure ocean with sun rays penetrating the surface",`,
@@ -95,7 +99,7 @@ export const verdictPromptStrategy: ArchetypePromptStrategy = {
   },
 
   buildReversePrompt(options: BuildReverseBatchPromptOptions): string {
-    const effectiveArchetype = options.archetypeId || "verdict_yes_no";
+    const effectiveArchetype = VERDICT_ARCHETYPE_ID;
     const lang = options.language || "en";
     const diff = options.difficulty ?? 2;
     const ageBand = options.ageBand || "family";
@@ -127,7 +131,7 @@ export const verdictPromptStrategy: ArchetypePromptStrategy = {
       `2. ENTITY ANCHOR: For each question, set "entity_id" to the corresponding Entity ID.`,
       `3. TRUTH & ACCURACY: Map [TRUE] claims from the target entity to 'Yes', and [FALSE] claims to 'No'.`,
       `4. CHOICES: Exactly 2 choices with text strictly 'Yes' and 'No'.`,
-      `5. CONCISE HOOK: Question statement ending with '... Yes or No?' strictly 60 to 80 characters (never exceed 80 chars).`,
+      `5. CONCISE HOOK: Natural question ending with '... Yes or No?' strictly 60 to 80 characters (never exceed 80 chars).`,
       ``,
       ...COMMON_REVERSE_CONTENT_POLICY_LINES,
       formatExistingSamplesBlock(options.existingQuestionSamples),
@@ -139,14 +143,14 @@ export const verdictPromptStrategy: ArchetypePromptStrategy = {
       `    "archetype_id": "${effectiveArchetype}",`,
       `    "domain_id": "<target domain>",`,
       `    "subtopic_id": "<target subtopic>",`,
-      `    "question": "Punchy question ending with Yes or No?",`,
+      `    "question": "Natural kid-friendly question ending with Yes or No?",`,
       `    "format": "yes_no",`,
       `    "choices": [`,
       `      { "id": "A", "text": "Yes", "is_correct": true },`,
       `      { "id": "B", "text": "No", "is_correct": false }`,
       `    ],`,
-      `    "correct_choice_id": "A",`,
-      `    "explanation": "Clear explanation of the verdict.",`,
+      `    "correct_choice_id": "A (Yes) or B (No), whichever is factually correct",`,
+      `    "explanation": "Clear, kid-friendly explanation of the verdict.",`,
       `    "fun_fact": "Surprising related fact.",`,
       `    "visual_spec": {`,
       `      "intent": "question_illustration",`,

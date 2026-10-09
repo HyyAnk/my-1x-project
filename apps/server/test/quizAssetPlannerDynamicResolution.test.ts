@@ -106,17 +106,17 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     expect(compiled.prompt).toContain("The image will be displayed in a landscape hero card on the left side of the quiz frame.");
   });
 
-  it("plans aspect_ratio: '4:3' for hero question image when layout is verdict_true_false", () => {
+  it("plans aspect_ratio: '4:3' for hero question image when layout is verdict_yes_no", () => {
     const quiz = buildTestQuiz([
       {
         id: "q-verdict-tf",
         number: 1,
-        format: "true_false",
+        format: "yes_no",
         difficulty: 1,
         question: "Lightning never strikes the same place twice.",
         choices: [
-          { id: "c-1", text: "True" },
-          { id: "c-2", text: "False" },
+          { id: "c-1", text: "Yes" },
+          { id: "c-2", text: "No" },
         ],
         correct_choice_id: "c-2",
         explanation: "Lightning frequently strikes tall buildings multiple times.",
@@ -130,8 +130,8 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     const director = buildTestDirectorPlan([
       {
         question_id: "q-verdict-tf",
-        archetype: "true_false",
-        layout_id: "verdict_true_false",
+        archetype: "yes_no",
+        layout_id: "verdict_yes_no",
         energy: "excited",
         visual_density: "lively",
         palette_id: "aqua",
@@ -282,7 +282,7 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
 
   it("correctly resolves aspect ratio with resolveQuizLayoutAssetAspectRatio helper directly", () => {
     expect(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "hero_question_image")).toBe("4:3");
-    expect(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image")).toBe("4:3");
+    expect(resolveQuizLayoutAssetAspectRatio("verdict_yes_no", "hero_question_image")).toBe("4:3");
     expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "hero_question_image")).toBe("4:3");
     expect(resolveQuizLayoutAssetAspectRatio("mystery_reveal", "hero_question_image")).toBe("16:9");
     expect(resolveQuizLayoutAssetAspectRatio("baseline", "hero_question_image")).toBe("16:9");

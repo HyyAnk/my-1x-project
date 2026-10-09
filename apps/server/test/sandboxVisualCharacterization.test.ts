@@ -2,6 +2,20 @@ import { describe, expect, it } from "vitest";
 import type { MascotProfile, QuizAnswerCardStyle, QuizPreviewLayoutId } from "@studio/shared";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 
+// Static-mode question clips omit a mascot that has no dedicated still action, so the fixture
+// ships still sprites for the question states it is rendered in.
+function staticMascotAction(action: "thinking" | "celebrate") {
+  return {
+    action,
+    sprite_url: `/phase-01-mascot-${action}.png`,
+    frames_count: 1,
+    fps: 8,
+    loop: true,
+    frame_width: 512,
+    frame_height: 512,
+  };
+}
+
 const mascot: MascotProfile = {
   id: "phase-01-mascot",
   name: "Baseline Mascot",
@@ -10,7 +24,10 @@ const mascot: MascotProfile = {
   master_prompt: "A friendly mascot",
   master_image_url: "/phase-01-mascot.png",
   color_theme: "#06b6d4",
-  actions: {},
+  actions: {
+    thinking: staticMascotAction("thinking"),
+    celebrate: staticMascotAction("celebrate"),
+  },
   assigned_channel_ids: [],
   created_at: "2026-08-31T00:00:00.000Z",
   updated_at: "2026-08-31T00:00:00.000Z",

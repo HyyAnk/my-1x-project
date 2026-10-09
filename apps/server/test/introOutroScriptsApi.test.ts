@@ -24,19 +24,7 @@ import { registerSinglePassScriptCases } from "./fixtures/singlePassScriptCases.
 import { registerAutomaticIdentityCases } from "./fixtures/automaticIdentityCases.js";
 import { registerIndependentScriptCases } from "./fixtures/independentScriptCases.js";
 import { registerCreativeScriptCases } from "./fixtures/creativeScriptCases.js";
-
-async function waitForJob(app: StudioApp, channelId: string, jobId: string): Promise<IntroOutroScriptJob> {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    const response = await app.server.inject({
-      method: "GET",
-      url: `/api/channels/${channelId}/intro-outro-script-jobs/${jobId}`,
-    });
-    const job = response.json<{ job: IntroOutroScriptJob }>().job;
-    if (!["queued", "running"].includes(job.status)) return job;
-    await new Promise((resolve) => setTimeout(resolve, 15));
-  }
-  throw new Error("Script job did not reach a terminal state");
-}
+import { waitForScriptJob as waitForJob } from "./fixtures/scriptJobPolling.js";
 
 describe("Intro/Outro Script Studio API", () => {
   let app: StudioApp;

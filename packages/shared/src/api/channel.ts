@@ -17,6 +17,7 @@ import {
   QUIZ_MAX_QUESTION_COUNT,
   QUIZ_MIN_QUESTION_COUNT,
   QuestionHistorySettingsSchema,
+  QuizConfigFormatSchema,
 } from "../schemas.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { EpisodeSchema } from "../schemas/episode.js";
@@ -133,7 +134,7 @@ export type ConfirmTopicResponse = z.infer<typeof ConfirmTopicResponseSchema>;
 export const EpisodeSettingsInputSchema = z.object({
   target_duration_minutes: z.number().min(3).max(60).optional(),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).optional(),
-  quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "yes_no", "true_false", "odd_one_out"]).optional(),
+  quiz_format: QuizConfigFormatSchema.optional(),
   age_band: z.enum(["4-6", "7-9", "10-12", "family"]).optional(),
   answer_mode: z.enum(["voice_and_reveal", "voice_only"]).optional(),
   visual_theme: QuizVisualThemeSchema.optional(),

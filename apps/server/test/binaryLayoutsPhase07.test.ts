@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.js";
-import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
-import { SPLIT_VERSUS_TWO_GEOMETRY, VERDICT_TRUE_FALSE_GEOMETRY } from "@studio/shared";
+import { verdictYesNoLayout } from "../src/quiz/render/layouts/verdictYesNo.js";
+import { SPLIT_VERSUS_TWO_GEOMETRY, VERDICT_YES_NO_GEOMETRY } from "@studio/shared";
 import { resolveChoiceDecorationVariant } from "../src/quiz/render/choices/choiceSurfaceMarkup.js";
 
-describe("Phase 07: Binary Layouts (Split Versus and Verdict True/False)", () => {
+describe("Phase 07: Binary Layouts (Split Versus and Verdict Yes/No)", () => {
   describe("Split Versus Two (split_versus_two)", () => {
     it("exports layout with correct id and render functions", () => {
       expect(splitVersusTwoLayout.id).toBe("split_versus_two");
@@ -99,15 +99,15 @@ describe("Phase 07: Binary Layouts (Split Versus and Verdict True/False)", () =>
     });
   });
 
-  describe("Verdict True/False (verdict_true_false)", () => {
+  describe("Verdict Yes/No (verdict_yes_no)", () => {
     it("exports layout with correct id and render functions", () => {
-      expect(verdictTrueFalseLayout.id).toBe("verdict_true_false");
-      expect(typeof verdictTrueFalseLayout.renderBody).toBe("function");
-      expect(typeof verdictTrueFalseLayout.css).toBe("function");
+      expect(verdictYesNoLayout.id).toBe("verdict_yes_no");
+      expect(typeof verdictYesNoLayout.renderBody).toBe("function");
+      expect(typeof verdictYesNoLayout.css).toBe("function");
     });
 
     it("matches canonical shared geometry specification", () => {
-      const geom = VERDICT_TRUE_FALSE_GEOMETRY;
+      const geom = VERDICT_YES_NO_GEOMETRY;
       expect(geom.arena.width).toBe(1420);
       expect(geom.arena.height).toBe(565);
 
@@ -140,7 +140,7 @@ describe("Phase 07: Binary Layouts (Split Versus and Verdict True/False)", () =>
     });
 
     it("generates CSS with hero 820x565 and vertically centered 560x164 choice buttons", () => {
-      const css = verdictTrueFalseLayout.css();
+      const css = verdictYesNoLayout.css();
       expect(css).toContain("--slot-hero-width, 820px");
       expect(css).toContain("--slot-hero-height, 565px");
       expect(css).toContain("width: 560px;");
@@ -150,14 +150,14 @@ describe("Phase 07: Binary Layouts (Split Versus and Verdict True/False)", () =>
     });
 
     it("removes check/cross pseudo elements and letter badges from CSS", () => {
-      const css = verdictTrueFalseLayout.css();
+      const css = verdictYesNoLayout.css();
       expect(css).not.toContain('content: " ✓"');
       expect(css).not.toContain('content: " ✕"');
       expect(css).not.toContain("choice-label");
     });
 
     it("uses text_only choice decoration variant (no letter badges)", () => {
-      expect(resolveChoiceDecorationVariant("verdict_true_false")).toBe("text_only");
+      expect(resolveChoiceDecorationVariant("verdict_yes_no")).toBe("text_only");
     });
   });
 });

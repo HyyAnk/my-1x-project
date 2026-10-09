@@ -75,10 +75,12 @@ function computeQuestionTimingBounds(
   const timerHideAt = timerHideEvent?.at_seconds ?? revealStart;
   const rewardStart = eventAt(questionId, "reward.play", revealStart + 0.8);
   const transition = events.find((event) => event.question_id === questionId && event.type === "transition.start");
-  const end = Math.min(
-    duration,
-    nextQuestionId ? eventAt(nextQuestionId, "question.enter", duration) : (transition?.at_seconds ?? outroStart ?? duration),
-  );
+  const nextSceneStart = nextQuestionId ? eventAt(nextQuestionId, "question.enter", duration) : (transition?.at_seconds ?? outroStart ?? duration);
+  // A mid-roll CTA between this question and the next one takes over the stage when it starts.
+  const interstitialStart = events.find(
+    (event) => event.type === "bridge.cta.enter" && event.at_seconds > start && event.at_seconds < nextSceneStart,
+  )?.at_seconds;
+  const end = Math.min(duration, interstitialStart ?? nextSceneStart);
 
   return {
     start,

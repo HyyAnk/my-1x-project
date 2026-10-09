@@ -19,6 +19,7 @@ import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 import { styleAttributes } from "../src/quiz/render/candyArcade/candyArcadeClips.js";
+import { toZeroBasedOffset } from "../src/quiz/render/candyArcade/candyArcadeTiming.js";
 
 const sampleQuiz = QuizV2Schema.parse({
   schema_version: 2,
@@ -191,8 +192,10 @@ describe("Thinking Bar Element Suite", () => {
       const director = createDefaultDirectorPlan(sampleQuiz);
       director.beats[0].thinking_bar_style = style;
       const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
-      const questionEnter =
-        timeline.events.find((event) => event.type === "question.enter" && event.question_id === "tb-q1")?.at_seconds ?? 0;
+      const eventAt = (type: string) =>
+        timeline.events.find((event) => event.type === type && event.question_id === "tb-q1")?.at_seconds ?? 0;
+      const questionEnter = eventAt("question.enter");
+      const answerReveal = eventAt("answer.reveal");
       const bundle = buildCandyArcadeCompositionBundle({
         quiz: sampleQuiz,
         director,
@@ -205,7 +208,10 @@ describe("Thinking Bar Element Suite", () => {
       const fullOutput = [bundle.html, ...Object.values(bundle.files)].join("\n");
       expect(fullOutput).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);
       expect(questionEnter).toBeTypeOf("number");
-      expect(fullOutput).toContain(`--timer-start:${questionEnter.toFixed(3)}s`);
+      // Question clips use zero-based (clip-local) timing: the timer starts at the clip root,
+      // which is mounted at question appearance, and drains until the reveal.
+      expect(fullOutput).toContain("--timer-start:0.000s");
+      expect(fullOutput).toContain(`--timer-duration:${toZeroBasedOffset(answerReveal, questionEnter).toFixed(3)}s`);
     }
   });
 
@@ -229,7 +235,6 @@ describe("Thinking Bar Element Suite", () => {
   });
 
   it("guarantees 100% markup and CSS variable parity between sandbox rehearsal and video clips", () => {
-    const timeline = computeSandboxPhaseTimeline();
     const rehearsal = buildSandboxComposition({
       mode: "rehearsal",
       aspect_ratio: "16:9",
@@ -239,8 +244,12 @@ describe("Thinking Bar Element Suite", () => {
       correct_choice_index: 0,
       fact_card_text: "Explanation text",
     });
+    // Rehearsal is driven by the production gameplay timeline, not the fixed baseline phase timestamps.
+    const timeline = rehearsal.timeline!;
 
     const expectedTiming = calculateThinkingBarTiming({
+      countdownSeconds: timeline.countdownSeconds,
+      timerHideAt: timeline.timerHideAt,
       clipStart: 0,
       revealStart: timeline.revealStart,
       thinkingStart: timeline.thinkingStart,
@@ -284,8 +293,10 @@ describe("Thinking Bar Element Suite", () => {
       timeline.choicesStart,
       timeline.thinkingStart,
       timeline.revealStart,
-      timeline.revealStart + 0.8,
+      timeline.rewardStart ?? timeline.revealStart + 0.8,
       timeline.totalDuration,
+      timeline.timerHideAt,
+      timeline.countdownSeconds,
     );
 
     expect(videoSectionStyle).toContain(`--timer-start:0.000s;`);
@@ -327,13 +338,6 @@ describe("Thinking Bar Element Suite", () => {
   });
 
   it("verifies all 6 thinking bar variants render consistent countdown elements and timing attributes", () => {
-    const timeline = computeSandboxPhaseTimeline();
-    const expectedTiming = calculateThinkingBarTiming({
-      clipStart: 0,
-      revealStart: timeline.revealStart,
-      thinkingStart: timeline.thinkingStart,
-    });
-
     for (const style of ALL_THINKING_BAR_STYLES) {
       if (style === "auto") continue;
       const rehearsal = buildSandboxComposition({
@@ -344,6 +348,14 @@ describe("Thinking Bar Element Suite", () => {
         choices: ["Option 1", "Option 2", "Option 3"],
         correct_choice_index: 1,
         fact_card_text: "Variant explanation",
+      });
+      const timeline = rehearsal.timeline!;
+      const expectedTiming = calculateThinkingBarTiming({
+        countdownSeconds: timeline.countdownSeconds,
+        timerHideAt: timeline.timerHideAt,
+        clipStart: 0,
+        revealStart: timeline.revealStart,
+        thinkingStart: timeline.thinkingStart,
       });
 
       expect(rehearsal.html).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);

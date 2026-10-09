@@ -8,7 +8,6 @@ export const nlLocale: ThumbnailLocalization = {
     odd_one_out: "ZOEK DE FOUT!",
     difficulty_tier: "KAN JIJ LEVEL 4 AAN?",
     yes_no: "JA OF NEE?",
-    true_false: "WAAR OF NIET WAAR?",
   },
   badgeTemplate: {
     mega_grid: (count) => `${count > 0 ? count : 100} VRAGEN`,
@@ -17,6 +16,5 @@ export const nlLocale: ThumbnailLocalization = {
     odd_one_out: () => "10 SECONDEN! ⏱️",
     difficulty_tier: () => "ALLEEN IQ 140+ 🔥",
     yes_no: () => "JA OF NEE? ⚡",
-    true_false: () => "WAAR OF NIET WAAR? ⚡",
   },
 };

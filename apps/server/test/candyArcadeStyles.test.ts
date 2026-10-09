@@ -12,7 +12,7 @@ import { fullStackListLayout } from "../src/quiz/render/layouts/fullStackList.js
 import { mediaLeftChoicesRightLayout } from "../src/quiz/render/layouts/mediaLeftChoicesRight.js";
 import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoicesThree.js";
 import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.js";
-import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
+import { verdictYesNoLayout } from "../src/quiz/render/layouts/verdictYesNo.js";
 import { mysteryRevealLayout } from "../src/quiz/render/layouts/mysteryReveal.js";
 import { visualChoicesThreePureLayout } from "../src/quiz/render/layouts/visualChoicesThreePure.js";
 import { baselineLayout } from "../src/quiz/render/layouts/baseline.js";
@@ -203,7 +203,7 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(vc3916).toContain("--choice-label-min-height: 74px;");
 
     const sv2 = splitVersusTwoLayout.css("16:9");
-    const vtf = verdictTrueFalseLayout.css("16:9");
+    const vtf = verdictYesNoLayout.css("16:9");
 
     expect(sv2).toContain("--choice-card-min-height: 500px;");
     expect(sv2).toContain("--choice-card-height: 500px;");
@@ -305,8 +305,8 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(mr).toContain("correct-card-reveal");
 
     // 6. Verdict True False
-    const vtf = verdictTrueFalseLayout.css("16:9");
-    expect(vtf).toContain(".layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
+    const vtf = verdictYesNoLayout.css("16:9");
+    expect(vtf).toContain(".layout-verdict_yes_no.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
     expect(vtf).toContain("verdict-correct-pop");
 
     // 7. Visual Choices Three

@@ -47,7 +47,7 @@ void nodeTest("QuizQuestionSchema validates questions with uppercase choice IDs 
   assert.equal(parsed.correct_choice_id, "A");
 });
 
-void nodeTest("QuizQuestionSchema validates true_false questions with 2 choices (A, B or True, False)", () => {
+void nodeTest("QuizQuestionSchema reads a retired true_false question as yes_no", () => {
   const question = {
     id: "q_tf_1",
     number: 1,
@@ -72,6 +72,7 @@ void nodeTest("QuizQuestionSchema validates true_false questions with 2 choices 
 
   const parsed = QuizQuestionSchema.parse(question);
   assert.equal(parsed.id, "q_tf_1");
+  assert.equal(parsed.format, "yes_no");
   assert.equal(parsed.choices.length, 2);
   assert.equal(parsed.choices[0].id, "A");
   assert.equal(parsed.choices[1].id, "B");

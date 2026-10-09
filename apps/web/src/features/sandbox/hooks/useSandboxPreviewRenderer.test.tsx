@@ -250,7 +250,7 @@ describe("useSandboxPreviewRenderer", () => {
     );
   });
 
-  it("infers question_format accurately across verdict_true_false, visual_choices_three_pure, and split_versus_two", async () => {
+  it("infers question_format accurately across verdict_yes_no, visual_choices_three_pure, and split_versus_two", async () => {
     const previewSpy = vi.spyOn(api, "previewSandboxComposition").mockResolvedValue({
       html: "<section>Sandbox Preview</section>",
       css: "",
@@ -282,13 +282,6 @@ describe("useSandboxPreviewRenderer", () => {
     await vi.waitFor(() =>
       expect(previewSpy).toHaveBeenLastCalledWith(
         expect.objectContaining({ layout_id: "verdict_yes_no", question_format: "yes_no" }),
-      ),
-    );
-
-    rerender({ layoutId: "verdict_true_false", choices: ["True", "False"] });
-    await vi.waitFor(() =>
-      expect(previewSpy).toHaveBeenLastCalledWith(
-        expect.objectContaining({ layout_id: "verdict_true_false", question_format: "true_false" }),
       ),
     );
 

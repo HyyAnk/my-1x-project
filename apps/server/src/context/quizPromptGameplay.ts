@@ -13,7 +13,6 @@ export function resolveQuizPromptGameplay(config?: QuizConfig) {
     !isMystery &&
     !isVersus &&
     (config?.quiz_format === "yes_no" || archetype === "verdict_yes_no" || layout === "verdict_yes_no");
-  const isTrueFalse = !isMystery && !isVersus && !isYesNo && config?.quiz_format === "true_false";
   const questionFormat = isMystery
     ? "image_guess"
     : isVersus
@@ -23,5 +22,5 @@ export function resolveQuizPromptGameplay(config?: QuizConfig) {
         : config?.quiz_format === "knowledge"
           ? "multiple_choice"
           : (config?.quiz_format ?? "multiple_choice");
-  return { isVersus, isMystery, isYesNo, isTrueFalse, questionFormat };
+  return { isVersus, isMystery, isYesNo, questionFormat };
 }

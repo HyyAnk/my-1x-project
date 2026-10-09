@@ -1,0 +1,2032 @@
+[
+  {
+    "id": "ENT-PET-001",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Golden Retriever",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Golden",
+      "Goldie"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A fluffy golden retriever puppy sitting on green grass with its tongue out and a red ball at its paws, soft afternoon sunlight, 9:16 vertical shot.",
+    "core_traits": [
+      "Friendly medium-large dog with a thick golden coat",
+      "Loves fetching balls and splashing in water",
+      "Often trained as a guide dog or therapy dog",
+      "First bred in the Scottish Highlands in the 1800s"
+    ],
+    "distractor_pool": [
+      "Labrador Retriever",
+      "Irish Setter",
+      "Cocker Spaniel",
+      "Rough Collie",
+      "Poodle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Golden retrievers have water-repellent fur.",
+        "verdict": "fact",
+        "explanation": "Their thick outer coat sheds water, which helped them fetch from lakes and rivers.",
+        "fun_fact": "A golden retriever named Augie once held five tennis balls in its mouth at the same time."
+      },
+      {
+        "claim": "Golden retrievers make fierce guard dogs that scare away strangers.",
+        "verdict": "myth",
+        "explanation": "Golden retrievers are so friendly that they usually greet strangers with a wagging tail.",
+        "fun_fact": "Their soft mouth can carry an egg without cracking it."
+      }
+    ],
+    "versus_candidates": [
+      "Labrador Retriever",
+      "German Shepherd",
+      "Siberian Husky"
+    ]
+  },
+  {
+    "id": "ENT-PET-002",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Labrador Retriever",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Lab",
+      "Labrador"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A happy chocolate-brown Labrador retriever splashing out of a sparkling blue lake with a stick in its mouth, bright sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Popular family dog with a short, thick coat",
+      "Comes in black, yellow or chocolate colors",
+      "Has a thick 'otter tail' and webbed toes for swimming",
+      "Its ancestors came from Newfoundland in Canada"
+    ],
+    "distractor_pool": [
+      "Golden Retriever",
+      "Chesapeake Bay Retriever",
+      "Weimaraner",
+      "Pointer",
+      "Rottweiler"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Labradors have webbed toes that help them swim.",
+        "verdict": "fact",
+        "explanation": "Skin between their toes works like a paddle, making Labs strong, happy swimmers.",
+        "fun_fact": "For over 30 years in a row, Labs were the most registered dog breed in America."
+      },
+      {
+        "claim": "Chocolate Labs and yellow Labs are different dog breeds.",
+        "verdict": "myth",
+        "explanation": "They are the same breed. Black, yellow and chocolate are just different coat colors.",
+        "fun_fact": "A Lab's thick tail works like a boat rudder to help it steer while swimming."
+      }
+    ],
+    "versus_candidates": [
+      "Golden Retriever",
+      "Beagle",
+      "Poodle"
+    ]
+  },
+  {
+    "id": "ENT-PET-003",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "German Shepherd",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Alsatian",
+      "German Shepherd Dog"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A proud black-and-tan German shepherd with tall pointy ears sitting alertly on a grassy hill under a clear blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Large, smart dog with a black and tan coat",
+      "Has tall, pointy ears that stand straight up",
+      "Often works with police and search-and-rescue teams",
+      "First bred in Germany in 1899 to herd sheep"
+    ],
+    "distractor_pool": [
+      "Belgian Malinois",
+      "Siberian Husky",
+      "Doberman Pinscher",
+      "Rottweiler",
+      "Akita"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "German shepherds often help police and rescue teams.",
+        "verdict": "fact",
+        "explanation": "Their sharp noses, smarts and focus make them great at finding lost people and sniffing out clues.",
+        "fun_fact": "Buddy, the first guide dog trained in America, was a German shepherd."
+      },
+      {
+        "claim": "German shepherds were first bred to be police dogs.",
+        "verdict": "myth",
+        "explanation": "They were first bred to herd and protect sheep on German farms, which is how they got their name.",
+        "fun_fact": "A German shepherd named Rin Tin Tin became a famous movie star in the 1920s."
+      }
+    ],
+    "versus_candidates": [
+      "Siberian Husky",
+      "Golden Retriever",
+      "Belgian Malinois"
+    ]
+  },
+  {
+    "id": "ENT-PET-004",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Dalmatian",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Carriage Dog",
+      "Firehouse Dog"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A playful white Dalmatian covered in black spots running beside a shiny red fire truck on a sunny street, 9:16 vertical shot.",
+    "core_traits": [
+      "White dog covered in black or brown spots",
+      "Stars in the movie 101 Dalmatians",
+      "A classic mascot of firehouses",
+      "Once ran beside horse-drawn carriages and fire wagons"
+    ],
+    "distractor_pool": [
+      "Pointer",
+      "Great Dane",
+      "English Setter",
+      "Beagle",
+      "Boxer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dalmatian puppies are born completely white.",
+        "verdict": "fact",
+        "explanation": "Their spots start to appear when they are about two weeks old and keep filling in as they grow.",
+        "fun_fact": "Dalmatians can even have spots inside their mouths."
+      },
+      {
+        "claim": "Every Dalmatian has exactly the same spot pattern.",
+        "verdict": "myth",
+        "explanation": "Each Dalmatian's spots are different, so no two dogs look exactly alike.",
+        "fun_fact": "Dalmatians once ran ahead of horse-drawn fire wagons to help clear the way."
+      }
+    ],
+    "versus_candidates": [
+      "Beagle",
+      "Poodle",
+      "Siberian Husky"
+    ]
+  },
+  {
+    "id": "ENT-PET-005",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Poodle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "French Poodle"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An elegant white standard poodle with a fluffy curly coat prancing across a flower garden full of pink blossoms, 9:16 vertical shot.",
+    "core_traits": [
+      "Dog with a thick, curly, fluffy coat",
+      "Comes in toy, miniature and standard sizes",
+      "Famous for fancy pom-pom haircuts at dog shows",
+      "First bred in Germany to fetch ducks from water"
+    ],
+    "distractor_pool": [
+      "Bichon Frise",
+      "Maltese",
+      "Portuguese Water Dog",
+      "Shih Tzu",
+      "Labradoodle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Poodles were first bred to fetch things from water.",
+        "verdict": "fact",
+        "explanation": "Poodles are excellent swimmers, and their name comes from an old German word for splashing.",
+        "fun_fact": "Poodles are often ranked the second smartest dog breed, right after Border Collies."
+      },
+      {
+        "claim": "Poodles were first bred in France.",
+        "verdict": "myth",
+        "explanation": "Poodles were developed in Germany, even though they later became hugely popular in France.",
+        "fun_fact": "Even though poodles came from Germany, the poodle is the national dog of France."
+      }
+    ],
+    "versus_candidates": [
+      "Chihuahua",
+      "Pug",
+      "Labrador Retriever"
+    ]
+  },
+  {
+    "id": "ENT-PET-006",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Beagle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful tri-color beagle with long floppy ears sniffing colorful autumn leaves in a park, tail held high, 9:16 vertical shot.",
+    "core_traits": [
+      "Small hound with long floppy ears and a white-tipped tail",
+      "Usually has a brown, black and white coat",
+      "Has an amazing nose and loves to follow scents",
+      "Snoopy from the Peanuts comics is one"
+    ],
+    "distractor_pool": [
+      "Basset Hound",
+      "Foxhound",
+      "Harrier",
+      "Jack Russell Terrier",
+      "Dachshund"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some beagles work at airports sniffing luggage.",
+        "verdict": "fact",
+        "explanation": "Their super noses help officers find fruits, plants and foods that should not be brought into a country.",
+        "fun_fact": "In America, this team of airport sniffer dogs is called the Beagle Brigade."
+      },
+      {
+        "claim": "Beagles are quiet dogs that hardly make any noise.",
+        "verdict": "myth",
+        "explanation": "Beagles are famous for loud barks and a long howl called baying.",
+        "fun_fact": "Snoopy, the famous cartoon dog from Peanuts, is a beagle."
+      }
+    ],
+    "versus_candidates": [
+      "Dachshund",
+      "Pembroke Welsh Corgi",
+      "Pug"
+    ]
+  },
+  {
+    "id": "ENT-PET-007",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Chihuahua",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A tiny tan Chihuahua with huge pointy ears and big shiny eyes peeking out of a cozy pink blanket on a sofa, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny dog that can fit in a handbag",
+      "Has very big ears and large round eyes",
+      "Often called the smallest dog breed in the world",
+      "Named after a state in Mexico"
+    ],
+    "distractor_pool": [
+      "Pomeranian",
+      "Yorkshire Terrier",
+      "Papillon",
+      "Toy Poodle",
+      "Miniature Pinscher"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Chihuahua is named after a place in Mexico.",
+        "verdict": "fact",
+        "explanation": "The breed takes its name from the Mexican state of Chihuahua.",
+        "fun_fact": "Some Chihuahua puppies are born with a soft spot on top of their head, like human babies."
+      },
+      {
+        "claim": "Tiny dogs like Chihuahuas do not need walks.",
+        "verdict": "myth",
+        "explanation": "Even tiny dogs need daily walks and playtime to stay healthy and happy.",
+        "fun_fact": "Chihuahuas often love burrowing under blankets to stay cozy."
+      }
+    ],
+    "versus_candidates": [
+      "Pug",
+      "Pomeranian",
+      "Poodle"
+    ]
+  },
+  {
+    "id": "ENT-PET-008",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Pembroke Welsh Corgi",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Corgi",
+      "Pembroke"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling orange-and-white corgi with short stubby legs and big upright ears trotting across a green meadow, 9:16 vertical shot.",
+    "core_traits": [
+      "Low dog with very short legs and a long body",
+      "Has a fox-like face and big upright ears",
+      "Was a favorite pet of Queen Elizabeth II",
+      "Bred in Wales to herd cattle"
+    ],
+    "distractor_pool": [
+      "Cardigan Welsh Corgi",
+      "Shetland Sheepdog",
+      "Dachshund",
+      "Shiba Inu",
+      "Basset Hound"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Queen Elizabeth II owned more than 30 corgis.",
+        "verdict": "fact",
+        "explanation": "She loved Pembroke corgis and kept them throughout her long reign.",
+        "fun_fact": "The word corgi is often said to mean 'dwarf dog' in Welsh."
+      },
+      {
+        "claim": "Corgis' short legs make them useless for farm work.",
+        "verdict": "myth",
+        "explanation": "Corgis were skilled cattle herders, and being low helped them duck under kicking hooves.",
+        "fun_fact": "Corgis herded cattle by gently nipping at their heels to keep them moving."
+      }
+    ],
+    "versus_candidates": [
+      "Dachshund",
+      "Shiba Inu",
+      "Beagle"
+    ]
+  },
+  {
+    "id": "ENT-PET-009",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Siberian Husky",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Husky",
+      "Sibe"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A fluffy gray-and-white Siberian husky with bright blue eyes pulling a small sled through sparkling snow, 9:16 vertical shot.",
+    "core_traits": [
+      "Fluffy, wolf-like dog that loves snow",
+      "Often has striking blue eyes",
+      "Famous for pulling sleds in teams",
+      "First bred by the Chukchi people of Siberia"
+    ],
+    "distractor_pool": [
+      "Alaskan Malamute",
+      "Samoyed",
+      "Akita",
+      "German Shepherd",
+      "Alaskan Klee Kai"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some huskies have one blue eye and one brown eye.",
+        "verdict": "fact",
+        "explanation": "Huskies often have eyes of two different colors. It is natural and does not affect their sight.",
+        "fun_fact": "Husky sled teams helped carry medicine to Nome, Alaska, in 1925."
+      },
+      {
+        "claim": "Siberian huskies are part wolf.",
+        "verdict": "myth",
+        "explanation": "Huskies only look wolf-like. They are fully domestic dogs bred to pull sleds.",
+        "fun_fact": "Huskies often 'talk' with howls and woo-woo sounds instead of barking much."
+      }
+    ],
+    "versus_candidates": [
+      "German Shepherd",
+      "Golden Retriever",
+      "Alaskan Malamute"
+    ]
+  },
+  {
+    "id": "ENT-PET-010",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Bulldog",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "English Bulldog",
+      "British Bulldog"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A chubby white-and-fawn bulldog with a wrinkly face lying happily on a soft green cushion in a sunny living room, 9:16 vertical shot.",
+    "core_traits": [
+      "Stocky dog with a wrinkly face",
+      "Has a short, pushed-in nose and droopy cheeks",
+      "Often snores loudly while napping",
+      "A popular mascot for sports teams and universities"
+    ],
+    "distractor_pool": [
+      "French Bulldog",
+      "Boxer",
+      "Pug",
+      "Boston Terrier",
+      "Shar Pei"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Most bulldogs are not good swimmers.",
+        "verdict": "fact",
+        "explanation": "Their heavy chest and short legs make swimming hard, so they need a dog life jacket near water.",
+        "fun_fact": "Yale University's mascot, Handsome Dan, is a bulldog."
+      },
+      {
+        "claim": "Bulldogs are grumpy because they look grumpy.",
+        "verdict": "myth",
+        "explanation": "Despite their frowning faces, bulldogs are usually gentle, calm and very loving.",
+        "fun_fact": "Bulldogs often snore loudly because of their short, flat noses."
+      }
+    ],
+    "versus_candidates": [
+      "Pug",
+      "Boxer",
+      "French Bulldog"
+    ]
+  },
+  {
+    "id": "ENT-PET-011",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Shiba Inu",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Shiba"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A fox-like red-orange Shiba Inu with a curly tail standing on a wooden path under pink cherry blossoms, 9:16 vertical shot.",
+    "core_traits": [
+      "Small dog that looks a lot like a fox",
+      "Has a tail that curls up over its back",
+      "Known for its very independent, cat-like attitude",
+      "One of the oldest dog breeds from Japan"
+    ],
+    "distractor_pool": [
+      "Akita",
+      "Pomeranian",
+      "Pembroke Welsh Corgi",
+      "Finnish Spitz",
+      "Alaskan Klee Kai"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Shiba Inu is one of Japan's oldest dog breeds.",
+        "verdict": "fact",
+        "explanation": "Shibas have lived in Japan's mountains for a very long time and were once used to flush birds from bushes.",
+        "fun_fact": "The famous 'Doge' meme shows a Shiba Inu named Kabosu."
+      },
+      {
+        "claim": "Shiba Inus are just baby Akitas.",
+        "verdict": "myth",
+        "explanation": "They look alike, but the Shiba Inu is its own separate, smaller breed.",
+        "fun_fact": "When upset, Shibas can make a loud, dramatic noise nicknamed the 'Shiba scream'."
+      }
+    ],
+    "versus_candidates": [
+      "Pembroke Welsh Corgi",
+      "Akita",
+      "Siberian Husky"
+    ]
+  },
+  {
+    "id": "ENT-PET-012",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Pug",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A cute fawn pug with a black wrinkly face and curly tail tilting its head on a cozy rug next to a toy, 9:16 vertical shot.",
+    "core_traits": [
+      "Small dog with a wrinkly, squashed face",
+      "Has a black face mask and a curly tail",
+      "Makes funny snorting and snuffling sounds",
+      "Was a favorite pet of ancient Chinese emperors"
+    ],
+    "distractor_pool": [
+      "French Bulldog",
+      "Boston Terrier",
+      "Shih Tzu",
+      "Pekingese",
+      "Bulldog"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pugs first came from ancient China.",
+        "verdict": "fact",
+        "explanation": "Pugs were treasured by Chinese emperors long ago, then later became popular in Europe.",
+        "fun_fact": "A group of pugs is sometimes jokingly called a 'grumble'."
+      },
+      {
+        "claim": "Pugs are great at running long distances in hot weather.",
+        "verdict": "myth",
+        "explanation": "Their flat faces make breathing hard in heat, so pugs need short walks and shady rest.",
+        "fun_fact": "Pugs were once a favorite pet of the Dutch royal family."
+      }
+    ],
+    "versus_candidates": [
+      "Bulldog",
+      "Chihuahua",
+      "French Bulldog"
+    ]
+  },
+  {
+    "id": "ENT-PET-013",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Dachshund",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Wiener Dog",
+      "Sausage Dog",
+      "Doxie"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A long, low red-brown dachshund with short legs and floppy ears trotting happily along a garden path, 9:16 vertical shot.",
+    "core_traits": [
+      "Dog with a very long body and tiny short legs",
+      "Nicknamed after a long, skinny food",
+      "Comes in smooth, long-haired and wire-haired coats",
+      "Bred in Germany to dig into badger burrows"
+    ],
+    "distractor_pool": [
+      "Basset Hound",
+      "Pembroke Welsh Corgi",
+      "Beagle",
+      "Scottish Terrier",
+      "Miniature Pinscher"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The name Dachshund means 'badger dog' in German.",
+        "verdict": "fact",
+        "explanation": "They were bred to wiggle into badger tunnels thanks to their long, low bodies.",
+        "fun_fact": "A dachshund named Waldi was the first official Olympic mascot, in 1972."
+      },
+      {
+        "claim": "Dachshunds should be lifted carefully, supporting their long backs.",
+        "verdict": "fact",
+        "explanation": "Their long backs can get hurt easily, so support the chest and back end. Ask an adult to help.",
+        "fun_fact": "Dachshunds have a surprisingly loud bark for such a small dog."
+      }
+    ],
+    "versus_candidates": [
+      "Pembroke Welsh Corgi",
+      "Beagle",
+      "Chihuahua"
+    ]
+  },
+  {
+    "id": "ENT-PET-014",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Persian Cat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Persian",
+      "Persian Longhair"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A fluffy white Persian cat with a flat face and big copper eyes lounging on a velvet purple cushion, 9:16 vertical shot.",
+    "core_traits": [
+      "Cat with a very long, fluffy coat",
+      "Has a round, flat face and a short nose",
+      "Calm and quiet, loves lounging on cushions",
+      "Named after the old name of Iran"
+    ],
+    "distractor_pool": [
+      "Himalayan Cat",
+      "Exotic Shorthair",
+      "Maine Coon",
+      "Ragdoll Cat",
+      "Turkish Angora"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Persian cats need their long fur brushed every day.",
+        "verdict": "fact",
+        "explanation": "Their thick, long coat tangles easily, so daily brushing keeps it smooth and knot-free.",
+        "fun_fact": "Persian cats are named after Persia, the old name for Iran."
+      },
+      {
+        "claim": "Long-haired cats like Persians never shed.",
+        "verdict": "myth",
+        "explanation": "Persians shed a lot of fur, especially as seasons change.",
+        "fun_fact": "Persians are known as one of the calmest, quietest cat breeds."
+      }
+    ],
+    "versus_candidates": [
+      "Siamese Cat",
+      "Maine Coon",
+      "Ragdoll Cat"
+    ]
+  },
+  {
+    "id": "ENT-PET-015",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Siamese Cat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Siamese"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A sleek cream-colored Siamese cat with dark brown ears, face and paws and bright blue eyes sitting on a sunny windowsill, 9:16 vertical shot.",
+    "core_traits": [
+      "Slim cat with a cream-colored body",
+      "Has darker ears, face, paws and tail",
+      "Has bright blue eyes and loves to 'talk' loudly",
+      "Comes from Thailand, once called Siam"
+    ],
+    "distractor_pool": [
+      "Balinese Cat",
+      "Birman",
+      "Himalayan Cat",
+      "Tonkinese Cat",
+      "Oriental Shorthair"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Siamese kittens are born almost completely white.",
+        "verdict": "fact",
+        "explanation": "Their darker points appear as they grow, on the cooler parts of the body like ears and paws.",
+        "fun_fact": "Body heat keeps a Siamese cat's middle light, while cooler ears and paws turn darker."
+      },
+      {
+        "claim": "Siamese cats are very quiet and rarely meow.",
+        "verdict": "myth",
+        "explanation": "Siamese cats are famous chatterboxes that meow loudly to get attention.",
+        "fun_fact": "Siam is the old name for Thailand, where these cats come from."
+      }
+    ],
+    "versus_candidates": [
+      "Persian Cat",
+      "British Shorthair",
+      "Maine Coon"
+    ]
+  },
+  {
+    "id": "ENT-PET-016",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Maine Coon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Maine Coon Cat",
+      "Gentle Giant"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A huge fluffy brown tabby Maine Coon cat with tufted ears and a bushy tail sitting on a snowy wooden porch, 9:16 vertical shot.",
+    "core_traits": [
+      "Very large, shaggy pet cat",
+      "Has tufted ears and a big, bushy tail",
+      "Has wide paws that work like snowshoes",
+      "The official state cat of Maine in the USA"
+    ],
+    "distractor_pool": [
+      "Norwegian Forest Cat",
+      "Siberian Cat",
+      "Ragdoll Cat",
+      "Persian Cat",
+      "Bengal Cat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Maine Coons are one of the largest pet cat breeds.",
+        "verdict": "fact",
+        "explanation": "Maine Coons are much bigger than most house cats and grow slowly for several years.",
+        "fun_fact": "The Maine Coon is the official state cat of Maine."
+      },
+      {
+        "claim": "Maine Coons are part raccoon.",
+        "verdict": "myth",
+        "explanation": "Cats and raccoons cannot have babies together. The bushy tail just looks raccoon-like.",
+        "fun_fact": "Many Maine Coons enjoy playing with water, unlike most cats."
+      }
+    ],
+    "versus_candidates": [
+      "Ragdoll Cat",
+      "Persian Cat",
+      "Norwegian Forest Cat"
+    ]
+  },
+  {
+    "id": "ENT-PET-017",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "British Shorthair",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "British Blue"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A round-faced, chubby blue-gray British Shorthair cat with big copper eyes sitting on a cozy knitted blanket, 9:16 vertical shot.",
+    "core_traits": [
+      "Sturdy cat with a round, chubby face",
+      "Has a thick, plush coat like a teddy bear",
+      "Most famous in a blue-gray color with copper eyes",
+      "One of the oldest cat breeds from Britain"
+    ],
+    "distractor_pool": [
+      "Russian Blue",
+      "Chartreux",
+      "Scottish Fold",
+      "Exotic Shorthair",
+      "American Shorthair"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The most famous British Shorthair color is a blue-gray.",
+        "verdict": "fact",
+        "explanation": "This soft gray color is so well known that the breed is often called the British Blue.",
+        "fun_fact": "Their dense coat feels like soft plush, which is why they look like teddy bears."
+      },
+      {
+        "claim": "All British Shorthairs are blue-gray.",
+        "verdict": "myth",
+        "explanation": "They also come in black, white, cream, cinnamon and many other colors and patterns.",
+        "fun_fact": "British Shorthairs are known for being calm cats that enjoy staying on the ground."
+      }
+    ],
+    "versus_candidates": [
+      "Russian Blue",
+      "Siamese Cat",
+      "Scottish Fold"
+    ]
+  },
+  {
+    "id": "ENT-PET-018",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "dogs_cats",
+    "name": "Ragdoll Cat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Ragdoll"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A big fluffy cream-and-brown Ragdoll cat with bright blue eyes relaxing in a child's gentle arms in a sunny room, 9:16 vertical shot.",
+    "core_traits": [
+      "Large, fluffy cat with bright blue eyes",
+      "Has a light body with darker ears, face and tail",
+      "Often goes floppy and relaxed when picked up",
+      "Developed in California in the 1960s"
+    ],
+    "distractor_pool": [
+      "Birman",
+      "Himalayan Cat",
+      "Maine Coon",
+      "Persian Cat",
+      "Siberian Cat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ragdoll cats often go floppy when someone picks them up.",
+        "verdict": "fact",
+        "explanation": "They relax like a soft toy, which is how the breed got its name.",
+        "fun_fact": "Ragdolls are sometimes called 'puppy cats' because they follow their people around."
+      },
+      {
+        "claim": "Ragdoll kittens are born with their full adult colors.",
+        "verdict": "myth",
+        "explanation": "Ragdoll kittens are born mostly white, and their colors slowly darken as they grow.",
+        "fun_fact": "Ragdolls can take three to four years to become fully grown."
+      }
+    ],
+    "versus_candidates": [
+      "Maine Coon",
+      "Persian Cat",
+      "British Shorthair"
+    ]
+  },
+  {
+    "id": "ENT-PET-019",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Hamster",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Syrian Hamster",
+      "Golden Hamster"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A chubby golden hamster with puffed-out cheeks full of seeds sitting in soft wood shavings beside a little wheel, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, round, fluffy pet rodent",
+      "Runs on a wheel, often at night",
+      "Stuffs food into stretchy cheek pouches",
+      "Syrian ones prefer to live alone in their cage"
+    ],
+    "distractor_pool": [
+      "Gerbil",
+      "Guinea Pig",
+      "Mouse",
+      "Dwarf Hamster",
+      "Degu"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hamsters carry food in stretchy pouches inside their cheeks.",
+        "verdict": "fact",
+        "explanation": "They fill their cheeks with food, then carry it to a hidden spot to store for later.",
+        "fun_fact": "The word hamster comes from a German word meaning 'to hoard'."
+      },
+      {
+        "claim": "Hamsters are most active during the daytime.",
+        "verdict": "myth",
+        "explanation": "Hamsters mostly sleep in the day and wake up to play in the evening and night.",
+        "fun_fact": "A hamster's front teeth never stop growing, so it needs safe things to chew."
+      }
+    ],
+    "versus_candidates": [
+      "Gerbil",
+      "Guinea Pig",
+      "Chinchilla"
+    ]
+  },
+  {
+    "id": "ENT-PET-020",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Guinea Pig",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Cavy"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A round brown-and-white guinea pig with a tuft of fur munching a green lettuce leaf on a bed of fresh hay, 9:16 vertical shot.",
+    "core_traits": [
+      "Chubby pet rodent with no tail",
+      "Makes squeaky 'wheek wheek' sounds",
+      "Needs fresh veggies with vitamin C every day",
+      "First kept as pets in the Andes of South America"
+    ],
+    "distractor_pool": [
+      "Hamster",
+      "Chinchilla",
+      "Pet Rabbit",
+      "Gerbil",
+      "Capybara"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Guinea pigs need vitamin C from their food every day.",
+        "verdict": "fact",
+        "explanation": "Like people, their bodies cannot make vitamin C, so they need veggies like bell peppers.",
+        "fun_fact": "Happy guinea pigs sometimes jump and twist in the air, which is called popcorning."
+      },
+      {
+        "claim": "Guinea pigs are a kind of pig from Guinea.",
+        "verdict": "myth",
+        "explanation": "Guinea pigs are rodents, not pigs, and they come from South America, not Guinea.",
+        "fun_fact": "Guinea pigs often squeal 'wheek' when they hear the fridge open, hoping for treats."
+      }
+    ],
+    "versus_candidates": [
+      "Hamster",
+      "Pet Rabbit",
+      "Chinchilla"
+    ]
+  },
+  {
+    "id": "ENT-PET-021",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Pet Rabbit",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Bunny",
+      "Domestic Rabbit"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A fluffy white pet rabbit with long pink-lined ears nibbling hay on a soft blanket beside a small wooden hutch, 9:16 vertical shot.",
+    "core_traits": [
+      "Fluffy pet with long ears and a cotton tail",
+      "Hops around and twitches its nose",
+      "Munches mostly on hay all day",
+      "Thumps its back feet to warn of danger"
+    ],
+    "distractor_pool": [
+      "Guinea Pig",
+      "Hamster",
+      "Chinchilla",
+      "Hare",
+      "Ferret"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A rabbit's teeth keep growing its whole life.",
+        "verdict": "fact",
+        "explanation": "Chewing lots of hay wears their teeth down and keeps them the right length.",
+        "fun_fact": "Happy rabbits sometimes leap and twist in the air, a move called a binky."
+      },
+      {
+        "claim": "Rabbits should mostly eat carrots.",
+        "verdict": "myth",
+        "explanation": "Rabbits should mostly eat hay. Carrots are sugary, so they are only an occasional treat.",
+        "fun_fact": "Rabbits thump their back feet loudly to warn other rabbits."
+      }
+    ],
+    "versus_candidates": [
+      "Guinea Pig",
+      "Hamster",
+      "Ferret"
+    ]
+  },
+  {
+    "id": "ENT-PET-022",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Goldfish",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A bright orange goldfish with flowing fins swimming among green plants and smooth pebbles in a clean, sparkling aquarium, 9:16 vertical shot.",
+    "core_traits": [
+      "Shiny orange pet fish",
+      "Often kept in tanks and garden ponds",
+      "A small cousin of the carp",
+      "First kept as pets in ancient China"
+    ],
+    "distractor_pool": [
+      "Koi",
+      "Betta Fish",
+      "Guppy",
+      "Neon Tetra",
+      "Angelfish"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Goldfish were first kept as pets in ancient China.",
+        "verdict": "fact",
+        "explanation": "People in China bred wild carp for their gold color over a thousand years ago.",
+        "fun_fact": "With good care, pet goldfish can live for more than ten years."
+      },
+      {
+        "claim": "Goldfish only have a three-second memory.",
+        "verdict": "myth",
+        "explanation": "Goldfish can remember things for months and can even learn to recognize feeding times.",
+        "fun_fact": "Goldfish can be trained to swim toward a sound when it is time to eat."
+      }
+    ],
+    "versus_candidates": [
+      "Betta Fish",
+      "Koi",
+      "Guppy"
+    ]
+  },
+  {
+    "id": "ENT-PET-023",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Betta Fish",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Betta",
+      "Siamese Fighting Fish"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A dazzling blue-and-red betta fish with long flowing fins gliding past green plants in a clear, glowing aquarium, 9:16 vertical shot.",
+    "core_traits": [
+      "Small fish with long, flowing, colorful fins",
+      "Males build floating nests out of bubbles",
+      "Can gulp air from the surface of the water",
+      "Comes from shallow rice paddies in Thailand"
+    ],
+    "distractor_pool": [
+      "Goldfish",
+      "Guppy",
+      "Gourami",
+      "Angelfish",
+      "Neon Tetra"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Betta fish can breathe air from the water's surface.",
+        "verdict": "fact",
+        "explanation": "A special organ lets them gulp air, which helped them live in shallow, still water.",
+        "fun_fact": "Male bettas build floating nests made of tiny bubbles."
+      },
+      {
+        "claim": "Bettas are happiest living in a tiny bowl or vase.",
+        "verdict": "myth",
+        "explanation": "Bettas need a heated tank with clean, filtered water to stay healthy.",
+        "fun_fact": "Two male bettas should never share a tank because they do not get along."
+      }
+    ],
+    "versus_candidates": [
+      "Goldfish",
+      "Guppy",
+      "Ocellaris Clownfish"
+    ]
+  },
+  {
+    "id": "ENT-PET-024",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Red-Eared Slider",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Pet Turtle",
+      "Slider Turtle"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A green red-eared slider turtle basking on a sunny rock beside clear water, with a bright red stripe behind its eye, 9:16 vertical shot.",
+    "core_traits": [
+      "Popular pet turtle with a green shell",
+      "Loves sunbathing on rocks and logs",
+      "Has a red stripe behind each eye",
+      "Comes from rivers and ponds of the southern United States"
+    ],
+    "distractor_pool": [
+      "Painted Turtle",
+      "Common Box Turtle",
+      "Map Turtle",
+      "Russian Tortoise",
+      "Musk Turtle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Red-eared sliders get their name from red patches near their ears.",
+        "verdict": "fact",
+        "explanation": "They have a red stripe behind each eye and quickly slide off rocks into water.",
+        "fun_fact": "With good care, red-eared sliders can live for more than 20 years."
+      },
+      {
+        "claim": "A pet turtle stays small if kept in a small tank.",
+        "verdict": "myth",
+        "explanation": "Turtles keep growing and need a big tank. Always wash your hands after touching one.",
+        "fun_fact": "Red-eared sliders love to bask under a lamp, just like sunbathing on a rock."
+      }
+    ],
+    "versus_candidates": [
+      "Goldfish",
+      "Common Box Turtle",
+      "Leopard Tortoise"
+    ]
+  },
+  {
+    "id": "ENT-PET-025",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Ferret",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A playful cream-and-brown ferret with a masked face poking its head out of a colorful fabric play tunnel, 9:16 vertical shot.",
+    "core_traits": [
+      "Long, slinky pet with a masked face",
+      "Loves crawling through tunnels and tubes",
+      "Sleeps for many hours each day",
+      "A close cousin of weasels and otters"
+    ],
+    "distractor_pool": [
+      "Weasel",
+      "Mink",
+      "Stoat",
+      "Polecat",
+      "Mongoose"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ferrets sleep for many hours each day.",
+        "verdict": "fact",
+        "explanation": "Ferrets often sleep 14 hours or more, then have bursts of very playful energy.",
+        "fun_fact": "A group of ferrets is called a business."
+      },
+      {
+        "claim": "Ferrets are rodents, like hamsters and mice.",
+        "verdict": "myth",
+        "explanation": "Ferrets are not rodents. They belong to the weasel family, along with otters and badgers.",
+        "fun_fact": "Baby ferrets are called kits."
+      }
+    ],
+    "versus_candidates": [
+      "Pet Rabbit",
+      "Chinchilla",
+      "Guinea Pig"
+    ]
+  },
+  {
+    "id": "ENT-PET-026",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Chinchilla",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A super soft gray chinchilla with big round ears and a bushy tail rolling happily in a bowl of fine sand, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, super soft gray pet rodent",
+      "Has big round ears and a bushy tail",
+      "Cleans itself by rolling in fine dust",
+      "Comes from the high Andes Mountains"
+    ],
+    "distractor_pool": [
+      "Degu",
+      "Guinea Pig",
+      "Hamster",
+      "Gerbil",
+      "Pet Rabbit"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Chinchillas have some of the thickest fur of any land animal.",
+        "verdict": "fact",
+        "explanation": "Many hairs grow from each tiny spot on their skin, making their fur incredibly soft and dense.",
+        "fun_fact": "A single chinchilla hair root can grow dozens of hairs at once."
+      },
+      {
+        "claim": "Chinchillas need water baths to stay clean.",
+        "verdict": "myth",
+        "explanation": "Their thick fur stays damp too long. Chinchillas clean themselves by rolling in special dust instead.",
+        "fun_fact": "Chinchillas come from the high Andes Mountains in South America."
+      }
+    ],
+    "versus_candidates": [
+      "Hamster",
+      "Guinea Pig",
+      "Gerbil"
+    ]
+  },
+  {
+    "id": "ENT-PET-027",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Gerbil",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Mongolian Gerbil"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Two sandy-brown gerbils with long furry tails standing up on their back legs beside a cardboard tunnel in deep bedding, 9:16 vertical shot.",
+    "core_traits": [
+      "Small pet rodent with a long, furry tail",
+      "Loves digging tunnels in deep bedding",
+      "Happier living with a gerbil buddy",
+      "Comes from the dry deserts of Mongolia"
+    ],
+    "distractor_pool": [
+      "Hamster",
+      "Mouse",
+      "Jerboa",
+      "Degu",
+      "Rat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Gerbils come from deserts and drink very little water.",
+        "verdict": "fact",
+        "explanation": "Desert life taught gerbils to save water, so they need only small sips each day.",
+        "fun_fact": "Gerbils thump their back feet on the ground when they are excited or alarmed."
+      },
+      {
+        "claim": "It is fine to pick up a gerbil by its tail.",
+        "verdict": "myth",
+        "explanation": "A gerbil's tail is delicate and can get hurt. Scoop gerbils up gently with both hands.",
+        "fun_fact": "Gerbils are social animals and are happiest living in pairs or small groups."
+      }
+    ],
+    "versus_candidates": [
+      "Hamster",
+      "Chinchilla",
+      "Guinea Pig"
+    ]
+  },
+  {
+    "id": "ENT-PET-028",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "small_pets",
+    "name": "Cockatiel",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Quarrion"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A gray cockatiel with a tall yellow head crest and round orange cheek patches perched on a wooden swing in a bright room, 9:16 vertical shot.",
+    "core_traits": [
+      "Small gray pet parrot with a pointy head crest",
+      "Has a yellow face and round orange cheek patches",
+      "Loves whistling tunes",
+      "Comes from Australia"
+    ],
+    "distractor_pool": [
+      "Budgerigar",
+      "Peach-Faced Lovebird",
+      "Sulphur-Crested Cockatoo",
+      "Canary",
+      "African Grey Parrot"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cockatiels raise or lower their head crest to show their mood.",
+        "verdict": "fact",
+        "explanation": "A straight-up crest often means curious or surprised, while a relaxed crest means calm.",
+        "fun_fact": "Many male cockatiels can learn to whistle whole tunes."
+      },
+      {
+        "claim": "Cockatiels are just a big kind of budgie.",
+        "verdict": "myth",
+        "explanation": "Cockatiels belong to the cockatoo family, not the budgie family.",
+        "fun_fact": "Cockatiels are the smallest members of the cockatoo family."
+      }
+    ],
+    "versus_candidates": [
+      "Budgerigar",
+      "Canary",
+      "Peach-Faced Lovebird"
+    ]
+  },
+  {
+    "id": "ENT-PET-029",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Dairy Cow",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Milk Cow",
+      "Milking Cow"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A friendly black-and-white dairy cow with a pink nose munching grass in a sunny green meadow beside a red barn, 9:16 vertical shot.",
+    "core_traits": [
+      "Big farm animal that says 'moo'",
+      "Often has black and white patches",
+      "Gives us milk for cheese, butter and yogurt",
+      "Chews cud and has a stomach with four parts"
+    ],
+    "distractor_pool": [
+      "Domestic Goat",
+      "Water Buffalo",
+      "Highland Cattle",
+      "Sheep",
+      "Ox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A cow has one stomach divided into four parts.",
+        "verdict": "fact",
+        "explanation": "The four parts help cows break down tough grass, which they bring back up to chew again.",
+        "fun_fact": "Cows spend many hours each day chewing their cud."
+      },
+      {
+        "claim": "Brown cows give chocolate milk.",
+        "verdict": "myth",
+        "explanation": "All cows give white milk. Chocolate milk is made by adding cocoa and sugar.",
+        "fun_fact": "Every black-and-white cow has its own unique spot pattern, a bit like a fingerprint."
+      }
+    ],
+    "versus_candidates": [
+      "Domestic Goat",
+      "Water Buffalo",
+      "Highland Cattle"
+    ]
+  },
+  {
+    "id": "ENT-PET-030",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Horse",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Domestic Horse"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A glossy chestnut horse with a flowing mane galloping across a green field under a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Large animal that people ride",
+      "Has hooves, a long mane and a swishy tail",
+      "Neighs, trots and gallops",
+      "Its height is measured in 'hands'"
+    ],
+    "distractor_pool": [
+      "Shetland Pony",
+      "Domestic Donkey",
+      "Mule",
+      "Zebra",
+      "Clydesdale Horse"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Horses can sleep while standing up.",
+        "verdict": "fact",
+        "explanation": "Special joints lock their legs in place so they can doze standing, though they lie down for deep sleep.",
+        "fun_fact": "Horses have some of the largest eyes of any land mammal."
+      },
+      {
+        "claim": "Horses can see directly behind themselves.",
+        "verdict": "myth",
+        "explanation": "Horses have a blind spot right behind them, so never walk close behind a horse.",
+        "fun_fact": "One 'hand' used to measure a horse equals four inches."
+      }
+    ],
+    "versus_candidates": [
+      "Domestic Donkey",
+      "Zebra",
+      "Mule"
+    ]
+  },
+  {
+    "id": "ENT-PET-031",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Shetland Pony",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Shetland"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A small, shaggy brown Shetland pony with a thick fluffy mane standing on a windy green island hillside, 9:16 vertical shot.",
+    "core_traits": [
+      "Very small, sturdy pony",
+      "Has a thick, shaggy coat and bushy mane",
+      "Surprisingly strong for its size",
+      "Comes from islands off the north of Scotland"
+    ],
+    "distractor_pool": [
+      "Welsh Pony",
+      "Miniature Horse",
+      "Connemara Pony",
+      "Horse",
+      "Domestic Donkey"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Shetland ponies are very strong for their small size.",
+        "verdict": "fact",
+        "explanation": "These tough little ponies were used to carry heavy loads and pull carts.",
+        "fun_fact": "Shetland ponies once worked in coal mines, pulling carts through narrow tunnels."
+      },
+      {
+        "claim": "A pony is just a baby horse.",
+        "verdict": "myth",
+        "explanation": "Ponies are fully grown small horses. A baby horse or pony is called a foal.",
+        "fun_fact": "Their thick winter coat keeps them cozy on cold, windy islands."
+      }
+    ],
+    "versus_candidates": [
+      "Horse",
+      "Domestic Donkey",
+      "Clydesdale Horse"
+    ]
+  },
+  {
+    "id": "ENT-PET-032",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Domestic Donkey",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Burro"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A gentle gray donkey with long fuzzy ears and a white nose standing in a sunny farmyard beside a wooden fence, 9:16 vertical shot.",
+    "core_traits": [
+      "Gray or brown farm animal with very long ears",
+      "Makes a loud 'hee-haw' sound",
+      "Carries heavy packs on its back",
+      "Often has a dark cross-shaped stripe over its shoulders"
+    ],
+    "distractor_pool": [
+      "Mule",
+      "Horse",
+      "Shetland Pony",
+      "Zebra",
+      "Domestic Goat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Donkeys make a loud 'hee-haw' sound called a bray.",
+        "verdict": "fact",
+        "explanation": "A donkey's bray is loud and can be heard from far away.",
+        "fun_fact": "Many donkeys have a dark cross-shaped stripe on their back and shoulders."
+      },
+      {
+        "claim": "Donkeys are lazy and stubborn.",
+        "verdict": "myth",
+        "explanation": "Donkeys are careful. They stop to think when something looks unsafe instead of rushing ahead.",
+        "fun_fact": "Donkeys love having a donkey buddy and can get lonely on their own."
+      }
+    ],
+    "versus_candidates": [
+      "Horse",
+      "Mule",
+      "Shetland Pony"
+    ]
+  },
+  {
+    "id": "ENT-PET-033",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Domestic Pig",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Hog"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A happy pink pig with a curly tail and floppy ears rolling in a cool mud puddle on a sunny farm, 9:16 vertical shot.",
+    "core_traits": [
+      "Pink farm animal with a curly tail",
+      "Says 'oink' and sniffs with a flat snout",
+      "Rolls in mud on hot days",
+      "One of the smartest animals on the farm"
+    ],
+    "distractor_pool": [
+      "Wild Boar",
+      "Warthog",
+      "Sheep",
+      "Domestic Goat",
+      "Capybara"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pigs roll in mud to stay cool.",
+        "verdict": "fact",
+        "explanation": "Pigs cannot sweat much, so cool mud helps them beat the heat and protects their skin from sunburn.",
+        "fun_fact": "A pig's snout is so sensitive it can sniff out truffles hidden underground."
+      },
+      {
+        "claim": "Pigs are dirty animals that love being messy.",
+        "verdict": "myth",
+        "explanation": "Pigs are actually tidy and like to keep their sleeping area clean.",
+        "fun_fact": "Pigs are very smart and can learn tricks, like coming when their name is called."
+      }
+    ],
+    "versus_candidates": [
+      "Sheep",
+      "Domestic Goat",
+      "Wild Boar"
+    ]
+  },
+  {
+    "id": "ENT-PET-034",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Sheep",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Domestic Sheep"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A fluffy white sheep with a soft woolly coat and a little lamb beside it grazing on a green hillside under puffy clouds, 9:16 vertical shot.",
+    "core_traits": [
+      "Fluffy farm animal that says 'baa'",
+      "Its babies are called lambs",
+      "Gives us wool for sweaters and blankets",
+      "Likes to stay close to its flock"
+    ],
+    "distractor_pool": [
+      "Domestic Goat",
+      "Alpaca",
+      "Llama",
+      "Dairy Cow",
+      "Domestic Pig"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Many sheep need a woolly haircut every year.",
+        "verdict": "fact",
+        "explanation": "Their wool keeps growing, so farmers shear them, usually once a year, to keep them comfy.",
+        "fun_fact": "Sheep can remember and recognize the faces of other sheep and people."
+      },
+      {
+        "claim": "Shearing a sheep hurts it.",
+        "verdict": "myth",
+        "explanation": "Shearing is like a haircut. Done gently, it does not hurt and keeps sheep cool in summer.",
+        "fun_fact": "Sheep have rectangular pupils that help them see almost all the way around."
+      }
+    ],
+    "versus_candidates": [
+      "Domestic Goat",
+      "Alpaca",
+      "Llama"
+    ]
+  },
+  {
+    "id": "ENT-PET-035",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Domestic Goat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Goat"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A playful white goat with small horns and a little beard climbing on a rock in a sunny farmyard, 9:16 vertical shot.",
+    "core_traits": [
+      "Farm animal that bleats and often has a beard",
+      "Loves to climb on rocks and fences",
+      "Gives milk used to make tasty cheese",
+      "Has rectangular, sideways pupils"
+    ],
+    "distractor_pool": [
+      "Sheep",
+      "Alpine Ibex",
+      "Mountain Goat",
+      "Dairy Cow",
+      "Domestic Donkey"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Goats have rectangular pupils.",
+        "verdict": "fact",
+        "explanation": "Their sideways pupils give goats a wide view to spot things around them.",
+        "fun_fact": "Baby goats are called kids."
+      },
+      {
+        "claim": "Goats eat tin cans.",
+        "verdict": "myth",
+        "explanation": "Goats nibble things to explore, but they eat plants, leaves and hay, not cans.",
+        "fun_fact": "In Morocco, some goats climb argan trees to nibble the leaves and fruit."
+      }
+    ],
+    "versus_candidates": [
+      "Sheep",
+      "Domestic Pig",
+      "Dairy Cow"
+    ]
+  },
+  {
+    "id": "ENT-PET-036",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Hen",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Chicken",
+      "Laying Hen"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A plump reddish-brown hen sitting on a straw nest with a few eggs while fluffy yellow chicks peek out beside her, 9:16 vertical shot.",
+    "core_traits": [
+      "Farm bird that clucks and pecks at seeds",
+      "Lays eggs in a cozy nest",
+      "Has a small red comb on its head",
+      "A mother of fluffy chicks"
+    ],
+    "distractor_pool": [
+      "Rooster",
+      "Domestic Duck",
+      "Domestic Turkey",
+      "Domestic Goose",
+      "Quail"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A hen can lay eggs without a rooster.",
+        "verdict": "fact",
+        "explanation": "Hens lay eggs on their own. A rooster is only needed for eggs that hatch into chicks.",
+        "fun_fact": "Some chicken breeds lay blue or green eggs."
+      },
+      {
+        "claim": "Brown eggs are healthier than white eggs.",
+        "verdict": "myth",
+        "explanation": "Shell color depends on the hen's breed. Inside, brown and white eggs are basically the same.",
+        "fun_fact": "Mother hens cluck to their chicks even before the chicks hatch."
+      }
+    ],
+    "versus_candidates": [
+      "Rooster",
+      "Domestic Duck",
+      "Domestic Goose"
+    ]
+  },
+  {
+    "id": "ENT-PET-037",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Rooster",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Cockerel"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A proud rooster with a big red comb and shiny green-and-orange tail feathers crowing on a fence post at sunrise, 9:16 vertical shot.",
+    "core_traits": [
+      "Male chicken with colorful feathers",
+      "Has a big red comb and wattles",
+      "Crows 'cock-a-doodle-doo'",
+      "One of the 12 animals of the Chinese zodiac"
+    ],
+    "distractor_pool": [
+      "Hen",
+      "Domestic Turkey",
+      "Peacock",
+      "Pheasant",
+      "Domestic Duck"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Roosters only crow at sunrise.",
+        "verdict": "myth",
+        "explanation": "Roosters crow most in the morning, but they can crow at any time of day.",
+        "fun_fact": "Roosters do a clucking 'food dance' to call hens over to tasty snacks they find."
+      },
+      {
+        "claim": "The rooster is one of the animals of the Chinese zodiac.",
+        "verdict": "fact",
+        "explanation": "The rooster is the tenth of the 12 zodiac animals in the Chinese calendar.",
+        "fun_fact": "The rooster is a famous national symbol of France."
+      }
+    ],
+    "versus_candidates": [
+      "Hen",
+      "Domestic Turkey",
+      "Domestic Duck"
+    ]
+  },
+  {
+    "id": "ENT-PET-038",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Domestic Duck",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Farm Duck"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A white farm duck with a bright orange bill leading a line of fluffy yellow ducklings to a sparkling farm pond, 9:16 vertical shot.",
+    "core_traits": [
+      "Farm bird that quacks and waddles",
+      "Has webbed feet and a flat orange bill",
+      "Its fluffy babies follow it in a line",
+      "Most are descended from wild mallards"
+    ],
+    "distractor_pool": [
+      "Mallard Duck",
+      "Domestic Goose",
+      "Hen",
+      "Mute Swan",
+      "Mandarin Duck"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ducklings follow the first moving thing they see after hatching.",
+        "verdict": "fact",
+        "explanation": "This is called imprinting. Ducklings usually follow their mother to stay safe.",
+        "fun_fact": "Most farm ducks are descended from wild mallard ducks."
+      },
+      {
+        "claim": "A duck's quack does not echo.",
+        "verdict": "myth",
+        "explanation": "Scientists tested it, and a duck's quack does echo. It is just hard to hear outdoors.",
+        "fun_fact": "Ducks spread oil from a gland near their tail to keep feathers waterproof."
+      }
+    ],
+    "versus_candidates": [
+      "Domestic Goose",
+      "Hen",
+      "Mallard Duck"
+    ]
+  },
+  {
+    "id": "ENT-PET-039",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Domestic Turkey",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Farm Turkey"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A big turkey with a fanned-out bronze tail and red wattle strutting proudly through autumn leaves on a farm, 9:16 vertical shot.",
+    "core_traits": [
+      "Large farm bird that spreads its tail like a fan",
+      "Males make a funny 'gobble' sound",
+      "Has a red, fleshy flap hanging over its beak",
+      "Its wild ancestors come from North America"
+    ],
+    "distractor_pool": [
+      "Peacock",
+      "Rooster",
+      "Domestic Goose",
+      "Pheasant",
+      "Guineafowl"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Male turkeys make a loud 'gobble' sound.",
+        "verdict": "fact",
+        "explanation": "Male turkeys gobble to talk to other turkeys, and they can be heard far away.",
+        "fun_fact": "The fleshy flap that hangs over a turkey's beak is called a snood."
+      },
+      {
+        "claim": "Turkeys come from the country of Turkey.",
+        "verdict": "myth",
+        "explanation": "Turkeys come from North America. Their name came from a mix-up with another bird long ago.",
+        "fun_fact": "The skin on a turkey's head can change color when it gets excited."
+      }
+    ],
+    "versus_candidates": [
+      "Rooster",
+      "Domestic Goose",
+      "Peacock"
+    ]
+  },
+  {
+    "id": "ENT-PET-040",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Water Buffalo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Carabao",
+      "Domestic Water Buffalo"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A calm dark-gray water buffalo with big curved horns resting in a shallow pond beside bright green rice fields, 9:16 vertical shot.",
+    "core_traits": [
+      "Big dark-gray animal with wide curved horns",
+      "Loves to soak in mud and water",
+      "Helps farmers plow rice fields in Asia",
+      "Its milk is used to make mozzarella cheese"
+    ],
+    "distractor_pool": [
+      "African Buffalo",
+      "American Bison",
+      "Dairy Cow",
+      "Ox",
+      "Wild Yak"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Water buffalo help farmers plow wet rice fields.",
+        "verdict": "fact",
+        "explanation": "Their wide hooves and strong bodies help them walk through muddy rice paddies in Asia.",
+        "fun_fact": "Real Italian mozzarella is often made from water buffalo milk."
+      },
+      {
+        "claim": "Water buffalo are the same animal as the American bison.",
+        "verdict": "myth",
+        "explanation": "Water buffalo come from Asia. American bison are a different animal from North America.",
+        "fun_fact": "The carabao, a type of water buffalo, is a beloved symbol of the Philippines."
+      }
+    ],
+    "versus_candidates": [
+      "Dairy Cow",
+      "Ox",
+      "African Buffalo"
+    ]
+  },
+  {
+    "id": "ENT-PET-041",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Highland Cattle",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Highland Cow",
+      "Hairy Coo"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A shaggy reddish-orange Highland cow with long curved horns and fluffy bangs over its eyes standing in a misty Scottish glen, 9:16 vertical shot.",
+    "core_traits": [
+      "Shaggy cattle with long, fluffy hair",
+      "Has long curved horns and bangs over its eyes",
+      "Often reddish-orange in color",
+      "Comes from the Highlands of Scotland"
+    ],
+    "distractor_pool": [
+      "Dairy Cow",
+      "Wild Yak",
+      "American Bison",
+      "Water Buffalo",
+      "Musk Ox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Highland cattle have two layers of hair.",
+        "verdict": "fact",
+        "explanation": "A soft under layer and a long, oily outer layer keep them cozy in cold, rainy weather.",
+        "fun_fact": "A group of Highland cattle is called a fold instead of a herd."
+      },
+      {
+        "claim": "Highland cattle cannot see through their long bangs.",
+        "verdict": "myth",
+        "explanation": "They can see fine. Their bangs protect their eyes from wind, rain and flies.",
+        "fun_fact": "Highland cattle come in red, black, yellow, white and other colors."
+      }
+    ],
+    "versus_candidates": [
+      "Dairy Cow",
+      "Wild Yak",
+      "Water Buffalo"
+    ]
+  },
+  {
+    "id": "ENT-PET-042",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Domestic Goose",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Farm Goose"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A big white farm goose with an orange beak and long neck honking beside a little pond, fluffy goslings nearby, 9:16 vertical shot.",
+    "core_traits": [
+      "Large farm bird with a long neck",
+      "Honks loudly when strangers come near",
+      "Its babies are called goslings",
+      "Its soft down fills cozy pillows and jackets"
+    ],
+    "distractor_pool": [
+      "Domestic Duck",
+      "Canada Goose",
+      "Mute Swan",
+      "Domestic Turkey",
+      "Hen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some farms keep geese as noisy guards.",
+        "verdict": "fact",
+        "explanation": "Geese honk loudly at strangers, warning farmers that someone is coming.",
+        "fun_fact": "A baby goose is called a gosling."
+      },
+      {
+        "claim": "Geese have real teeth in their beaks.",
+        "verdict": "myth",
+        "explanation": "Geese have no real teeth. Their beaks have tooth-like ridges for gripping grass.",
+        "fun_fact": "Geese can even have tooth-like ridges on their tongues."
+      }
+    ],
+    "versus_candidates": [
+      "Domestic Duck",
+      "Domestic Turkey",
+      "Canada Goose"
+    ]
+  },
+  {
+    "id": "ENT-PET-043",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Ox",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Bullock"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Two strong brown oxen joined by a wooden yoke pulling a cart along a dirt road past golden fields, 9:16 vertical shot.",
+    "core_traits": [
+      "Big, strong cattle trained to do farm work",
+      "Pulls carts and plows, often in pairs",
+      "Works with a wooden bar called a yoke",
+      "The second animal of the Chinese zodiac"
+    ],
+    "distractor_pool": [
+      "Water Buffalo",
+      "Dairy Cow",
+      "Wild Yak",
+      "Highland Cattle",
+      "Mule"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Oxen often work in pairs, joined by a wooden yoke.",
+        "verdict": "fact",
+        "explanation": "The yoke links two oxen so they can pull a heavy plow or cart together.",
+        "fun_fact": "The plural of ox is oxen, not oxes."
+      },
+      {
+        "claim": "An ox is a totally different species from a cow.",
+        "verdict": "myth",
+        "explanation": "Oxen are cattle, the same species as cows, that are trained to pull and work.",
+        "fun_fact": "The Ox is the second animal in the Chinese zodiac."
+      }
+    ],
+    "versus_candidates": [
+      "Water Buffalo",
+      "Clydesdale Horse",
+      "Mule"
+    ]
+  },
+  {
+    "id": "ENT-PET-044",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Clydesdale Horse",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Clydesdale"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A huge bay Clydesdale horse with a white face stripe and fluffy white hair around its hooves trotting in a sunny paddock, 9:16 vertical shot.",
+    "core_traits": [
+      "Giant, gentle farm horse",
+      "Has fluffy white hair around its lower legs",
+      "Often bay-brown with a white face stripe",
+      "Named after a river valley in Scotland"
+    ],
+    "distractor_pool": [
+      "Shire Horse",
+      "Percheron",
+      "Belgian Draft Horse",
+      "Friesian Horse",
+      "Horse"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Clydesdales have long, silky hair on their lower legs called feathers.",
+        "verdict": "fact",
+        "explanation": "This fluffy leg hair is one of the easiest ways to recognize a Clydesdale.",
+        "fun_fact": "Clydesdales are named after the River Clyde area in Scotland."
+      },
+      {
+        "claim": "Clydesdales are too big to be gentle.",
+        "verdict": "myth",
+        "explanation": "Clydesdales are famous for being calm and friendly, earning the nickname gentle giants.",
+        "fun_fact": "A Clydesdale's horseshoe is much bigger than a regular riding horse's shoe."
+      }
+    ],
+    "versus_candidates": [
+      "Shetland Pony",
+      "Horse",
+      "Ox"
+    ]
+  },
+  {
+    "id": "ENT-PET-045",
+    "domain_id": "pets_farm_animals",
+    "subtopic_id": "farm_animals",
+    "name": "Mule",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A sturdy brown mule with long ears carrying colorful packs along a sunny canyon trail with red rock cliffs, 9:16 vertical shot.",
+    "core_traits": [
+      "Farm animal with long ears and a horse-like body",
+      "Carries heavy packs on steep mountain trails",
+      "Very sure-footed on rocky paths",
+      "Has a horse mom and a donkey dad"
+    ],
+    "distractor_pool": [
+      "Domestic Donkey",
+      "Horse",
+      "Shetland Pony",
+      "Zebra",
+      "Llama"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A mule's mom is a horse and its dad is a donkey.",
+        "verdict": "fact",
+        "explanation": "Mules mix the strength of horses with the careful, tough nature of donkeys.",
+        "fun_fact": "Mules carry visitors and supplies down the steep trails of the Grand Canyon."
+      },
+      {
+        "claim": "Mules are just stubborn donkeys.",
+        "verdict": "myth",
+        "explanation": "Mules are a horse-donkey mix, and they are smart and careful, not simply stubborn.",
+        "fun_fact": "A mule's long ears come from its donkey dad."
+      }
+    ],
+    "versus_candidates": [
+      "Domestic Donkey",
+      "Horse",
+      "Llama"
+    ]
+  }
+]

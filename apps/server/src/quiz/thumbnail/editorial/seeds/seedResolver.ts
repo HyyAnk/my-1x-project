@@ -1,8 +1,16 @@
-import type { QuizSubjectAnchor, ResolveThumbnailInput } from "../thumbnailTypes.js";
-import type { EditorialThumbnailDesign } from "./editorialTypes.js";
+import type { QuizSubjectAnchor, ResolveThumbnailInput } from "../../thumbnailTypes.js";
+import type { EditorialThumbnailDesign } from "../editorialTypes.js";
 import { EDITORIAL_CHALLENGE_ARCHETYPES } from "./archetypeSeeds.js";
 import { EDITORIAL_DOMAIN_SEEDS } from "./index.js";
 import type { EditorialMascotPose, EditorialSubjectSeed } from "./seedTypes.js";
+import { containsAnyKeyword, containsKeyword } from "../../utils/keywordMatch.js";
+import { isVerdictChoicePair, isVerdictFormat } from "../../utils/verdictChoices.js";
+
+/** A comparison thumbnail needs two real candidates, not a True/False or Yes/No answer pair. */
+function hasTwoPicturedCandidates(input: ResolveThumbnailInput): boolean {
+  const choices = input.questions?.[0]?.choices;
+  return choices?.length === 2 && !isVerdictFormat(input.questionFormat) && !isVerdictChoicePair(choices);
+}
 
 /**
  * Resolves the optimal editorial seed based on the episode topic, questions, and layout constraints.
@@ -13,7 +21,7 @@ export function resolveEditorialSeed(input: ResolveThumbnailInput): {
   subjectAnchors: QuizSubjectAnchor[];
   mascotPose: EditorialMascotPose;
 } {
-  const comparison = input.layoutOverride === "split_vs" || (!input.layoutOverride && input.questions?.[0]?.choices?.length === 2);
+  const comparison = input.layoutOverride === "split_vs" || (!input.layoutOverride && hasTwoPicturedCandidates(input));
   const odd = input.layoutOverride === "odd_one_out";
   const mystery = input.layoutOverride === "mystery_silhouette";
 
@@ -89,7 +97,7 @@ export function resolveEditorialSeed(input: ResolveThumbnailInput): {
         version: 1,
         template: matchedDomain.preferredTemplate,
         background: specificSubject.background || matchedDomain.background,
-        candidateCount: matchedDomain.preferredTemplate === "comparison" ? 2 : 1,
+        candidateCount: matchedDomain.preferredTemplate === "comparison" ? 2 : 0,
         backgroundAtmosphere: specificSubject.backgroundAtmosphere || matchedDomain.backgroundAtmosphere,
         spatialComposition: specificSubject.spatialComposition,
       },
@@ -159,12 +167,12 @@ function resolveHighestScoringDomain(title: string, summary: string, context: st
  */
 function findBestMatchingSubject(subjects: EditorialSubjectSeed[], context: string): EditorialSubjectSeed {
   for (const subject of subjects) {
-    if (subject.keywords?.some((keyword) => context.includes(keyword.toLowerCase()))) {
+    if (subject.keywords && containsAnyKeyword(context, subject.keywords)) {
       return subject;
     }
   }
   for (const subject of subjects) {
-    if (context.includes(subject.label.toLowerCase())) {
+    if (containsKeyword(context, subject.label)) {
       return subject;
     }
   }

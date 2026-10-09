@@ -2,6 +2,7 @@ import { expect, it, vi } from "vitest";
 import type { IntroOutroScriptJob, IntroOutroScriptProject } from "@studio/shared";
 import type { StudioApp } from "../../src/app.js";
 import type { FakeGeminiFlashClient } from "./introOutroScriptClient.js";
+import { SCRIPT_JOB_WAIT_OPTIONS } from "./scriptJobPolling.js";
 
 type Context = { app: StudioApp; channelId: string; client: FakeGeminiFlashClient };
 type Wait = (app: StudioApp, channelId: string, jobId: string) => Promise<IntroOutroScriptJob>;
@@ -21,6 +22,7 @@ export function registerIndependentScriptCases(getContext: () => Context, waitFo
       release = resolve;
     });
     const entered: string[] = [];
+    const callsBefore = client.generationPrompts.length;
     client.generationGate = async (prompt) => {
       const clips = JSON.parse(prompt.split("STRUCTURE AND SEED MATRIX\n")[1].split("\n\nCHANNEL")[0]) as Array<{ kind: string }>;
       expect(clips).toHaveLength(1);
@@ -39,12 +41,12 @@ export function registerIndependentScriptCases(getContext: () => Context, waitFo
       });
       const job = started.json<{ job: IntroOutroScriptJob }>().job;
       const jobUrl = `/api/channels/${channelId}/intro-outro-script-jobs/${job.job_id}`;
-      await vi.waitFor(() => expect(entered.sort()).toEqual(["intro", "outro"]));
+      await vi.waitFor(() => expect(entered.sort()).toEqual(["intro", "outro"]), SCRIPT_JOB_WAIT_OPTIONS);
       await vi.waitFor(async () => {
         const running = (await app.server.inject({ method: "GET", url: jobUrl })).json<{ job: IntroOutroScriptJob }>().job;
         expect(running.status).toBe("running");
         expect(running.result_revision_ids).toHaveLength(1);
-      });
+      }, SCRIPT_JOB_WAIT_OPTIONS);
       const partial = (await app.server.inject({ method: "GET", url: `${base}/${project.project_id}` })).json<{
         project: IntroOutroScriptProject;
       }>().project;
@@ -57,6 +59,8 @@ export function registerIndependentScriptCases(getContext: () => Context, waitFo
       release();
       const terminal = await waitForJob(app, channelId, job.job_id);
       expect(terminal.status).toBe(operation === "cancel" ? "cancelled" : "succeeded");
+      // A cancelled job's released provider call finishes in the background; let it land so it cannot leak into later cases.
+      await vi.waitFor(() => expect(client.generationPrompts.length - callsBefore).toBe(2), SCRIPT_JOB_WAIT_OPTIONS);
       const final = (await app.server.inject({ method: "GET", url: `${base}/${project.project_id}` })).json<{
         project: IntroOutroScriptProject;
       }>().project;

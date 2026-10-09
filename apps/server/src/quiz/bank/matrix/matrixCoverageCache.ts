@@ -1,6 +1,12 @@
-import type { BankGameplayArchetypeId, BankIndex, BankQuestion, MatrixCoverageStats } from "@studio/shared";
+import {
+  normalizeLegacyVerdictIdentifier,
+  type BankGameplayArchetypeId,
+  type BankIndex,
+  type BankQuestion,
+  type MatrixCoverageStats,
+} from "@studio/shared";
 import { ALL_MATRIX_ARCHETYPES } from "./matrixCoverageCalculator.js";
-import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../knowledgeBaseLoader.js";
+import { loadAllKnowledgeEntities, resolveCanonicalEntityId, type KnowledgeEntity } from "../knowledgeBaseLoader.js";
 import type {
   IMatrixCoverageCache,
   MatrixArchetypeAccumulator,
@@ -25,6 +31,7 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
   private readonly entityDomainMap = new Map<string, string>();
   private readonly domainAggregators = new Map<string, MatrixDomainAccumulator>();
   private readonly archetypeAggregators = new Map<string, MatrixArchetypeAccumulator>();
+  private readonly knowledgeBaseDir?: string;
 
   private totalCombos = 0;
   private coveredCombos = 0;
@@ -33,6 +40,7 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
   private updatedAt = new Date().toISOString();
 
   constructor(options?: MatrixCoverageCacheOptions) {
+    this.knowledgeBaseDir = options?.baseDir;
     if (options?.targetTotal && options.targetTotal >= 20000) {
       this.targetTotal = options.targetTotal;
     }
@@ -73,7 +81,11 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
       });
       this.byArchetype[arch] = 0;
     }
-    this.byArchetype.verdict_fact_myth = 0;
+  }
+
+  /** Questions written for a since-merged duplicate entity count toward the canonical entity. */
+  private canonicalEntityId(entityId: string): string {
+    return resolveCanonicalEntityId(entityId, { baseDir: this.knowledgeBaseDir });
   }
 
   public isWarmed(): boolean {
@@ -87,36 +99,33 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
       const count = Number(row.count || 0);
       if (count <= 0) continue;
 
-      const arch =
-        row.archetype_id === "verdict_fact_myth" || row.archetype_id === "verdict_true_false"
-          ? "verdict_yes_no"
-          : row.archetype_id;
+      const arch = normalizeLegacyVerdictIdentifier(row.archetype_id);
       this.currentTotal += count;
       this.byArchetype[arch] = (this.byArchetype[arch] || 0) + count;
-      if (arch === "verdict_yes_no") {
-        this.byArchetype.verdict_true_false = (this.byArchetype.verdict_true_false || 0) + count;
-        this.byArchetype.verdict_fact_myth = (this.byArchetype.verdict_fact_myth || 0) + count;
-      }
       this.byDomain[row.domain_id] = (this.byDomain[row.domain_id] || 0) + count;
 
       if (row.entity_id) {
-        const key = `${arch}:${row.entity_id}`;
-        this.comboMap.set(key, count);
+        const entityId = this.canonicalEntityId(row.entity_id);
+        const key = `${arch}:${entityId}`;
+        // Several rows can fold into one combo (merged duplicates, legacy verdict archetypes), so counts accumulate.
+        const previousCount = this.comboMap.get(key) ?? 0;
+        this.comboMap.set(key, previousCount + count);
+        const newlyCovered = previousCount === 0 ? 1 : 0;
 
-        const entityDomain = this.entityDomainMap.get(row.entity_id);
+        const entityDomain = this.entityDomainMap.get(entityId);
         if (entityDomain) {
-          this.coveredCombos += 1;
+          this.coveredCombos += newlyCovered;
           this.totalVariants += count;
 
           const domAgg = this.domainAggregators.get(entityDomain);
           if (domAgg) {
-            domAgg.covered_combos += 1;
+            domAgg.covered_combos += newlyCovered;
             domAgg.total_variants += count;
           }
 
           const archAgg = this.archetypeAggregators.get(arch);
           if (archAgg) {
-            archAgg.covered_combos += 1;
+            archAgg.covered_combos += newlyCovered;
             archAgg.total_variants += count;
           }
         }
@@ -185,8 +194,7 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
   }
 
   public getComboVariantCount(archetypeId: BankGameplayArchetypeId | (string & {}), entityId: string): number {
-    const arch = archetypeId === "verdict_fact_myth" ? "verdict_true_false" : archetypeId;
-    return this.comboMap.get(`${arch}:${entityId}`) || 0;
+    return this.comboMap.get(`${normalizeLegacyVerdictIdentifier(archetypeId)}:${entityId}`) || 0;
   }
 
   public getComboMap(): ReadonlyMap<string, number> {
@@ -228,22 +236,16 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
   private applyDelta(meta: QuestionMutationMeta, sign: 1 | -1): void {
     if (meta.status && meta.status !== "approved") return;
 
-    const arch =
-      meta.archetype_id === "verdict_fact_myth" || meta.archetype_id === "verdict_true_false"
-        ? "verdict_yes_no"
-        : meta.archetype_id;
+    const arch = normalizeLegacyVerdictIdentifier(meta.archetype_id);
     this.currentTotal = Math.max(0, this.currentTotal + sign);
 
     this.byArchetype[arch] = Math.max(0, (this.byArchetype[arch] || 0) + sign);
-    if (arch === "verdict_yes_no") {
-      this.byArchetype.verdict_true_false = Math.max(0, (this.byArchetype.verdict_true_false || 0) + sign);
-      this.byArchetype.verdict_fact_myth = Math.max(0, (this.byArchetype.verdict_fact_myth || 0) + sign);
-    }
 
     this.byDomain[meta.domain_id] = Math.max(0, (this.byDomain[meta.domain_id] || 0) + sign);
 
     if (meta.entity_id) {
-      const key = `${arch}:${meta.entity_id}`;
+      const entityId = this.canonicalEntityId(meta.entity_id);
+      const key = `${arch}:${entityId}`;
       const oldCount = this.comboMap.get(key) || 0;
       const newCount = Math.max(0, oldCount + sign);
 
@@ -253,7 +255,7 @@ export class MatrixCoverageCache implements IMatrixCoverageCache {
         this.comboMap.set(key, newCount);
       }
 
-      const entityDomain = this.entityDomainMap.get(meta.entity_id);
+      const entityDomain = this.entityDomainMap.get(entityId);
       if (entityDomain) {
         const domAgg = this.domainAggregators.get(entityDomain);
         const archAgg = this.archetypeAggregators.get(arch);

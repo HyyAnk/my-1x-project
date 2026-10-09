@@ -6,7 +6,7 @@ import { buildOutputContract } from "../src/context/taskInstructions.js";
 import { buildQuizSceneParts } from "../src/quiz/render/scene/buildQuizSceneParts.js";
 import { renderStableQuizSceneParts } from "../src/quiz/render/scene/renderQuizSceneParts.js";
 
-function makeMockEpisode(format: "multiple_choice" | "true_false" = "multiple_choice"): Episode {
+function makeMockEpisode(format: "multiple_choice" | "yes_no" = "multiple_choice"): Episode {
   return {
     episode_id: "ep_stage4_001",
     quiz_config: {
@@ -19,7 +19,7 @@ function makeMockEpisode(format: "multiple_choice" | "true_false" = "multiple_ch
   } as unknown as Episode;
 }
 
-function makeMockSceneModel(questionText: string, format: "multiple_choice" | "true_false" = "true_false"): QuizSceneRenderModel {
+function makeMockSceneModel(questionText: string, format: "multiple_choice" | "yes_no" = "yes_no"): QuizSceneRenderModel {
   return {
     id: "question-01",
     question: {
@@ -43,7 +43,7 @@ function makeMockSceneModel(questionText: string, format: "multiple_choice" | "t
       capability: {
         id: "media_left_choices_right",
         name: "Media Left Choices Right",
-        supportedFormats: ["multiple_choice", "true_false"],
+        supportedFormats: ["multiple_choice", "yes_no"],
         supportedAspectRatios: ["16:9"],
         choiceCapacities: [2, 3],
         description: "Standard layout",
@@ -104,37 +104,37 @@ describe("normalizeQuestionPunctuation", () => {
 
   describe("true/false normalization", () => {
     it("converts a declarative period ending to a clean question mark", () => {
-      expect(normalizeQuestionPunctuation("Classic arcade light guns shoot real laser beams.", "true_false")).toBe(
+      expect(normalizeQuestionPunctuation("Classic arcade light guns shoot real laser beams.", "yes_no")).toBe(
         "Classic arcade light guns shoot real laser beams?",
       );
-      expect(normalizeQuestionPunctuation("Player two could steer the ducks in Duck Hunt.", "true_false")).toBe(
+      expect(normalizeQuestionPunctuation("Player two could steer the ducks in Duck Hunt.", "yes_no")).toBe(
         "Player two could steer the ducks in Duck Hunt?",
       );
     });
 
     it("ensures ? on flat statements without terminal period", () => {
-      expect(normalizeQuestionPunctuation("Pac-Man was inspired by a pizza missing one slice", "true_false")).toBe(
+      expect(normalizeQuestionPunctuation("Pac-Man was inspired by a pizza missing one slice", "yes_no")).toBe(
         "Pac-Man was inspired by a pizza missing one slice?",
       );
     });
 
     it("preserves interrogative challenges", () => {
-      expect(normalizeQuestionPunctuation("Did player two steer the ducks in Duck Hunt?", "true_false")).toBe(
+      expect(normalizeQuestionPunctuation("Did player two steer the ducks in Duck Hunt?", "yes_no")).toBe(
         "Did player two steer the ducks in Duck Hunt?",
       );
-      expect(normalizeQuestionPunctuation("Do classic arcade light guns shoot real laser beams?", "true_false")).toBe(
+      expect(normalizeQuestionPunctuation("Do classic arcade light guns shoot real laser beams?", "yes_no")).toBe(
         "Do classic arcade light guns shoot real laser beams?",
       );
     });
 
     it("preserves engaging True/False question prompts", () => {
-      expect(normalizeQuestionPunctuation("Is it true that player two could steer the ducks in Duck Hunt?", "true_false")).toBe(
+      expect(normalizeQuestionPunctuation("Is it true that player two could steer the ducks in Duck Hunt?", "yes_no")).toBe(
         "Is it true that player two could steer the ducks in Duck Hunt?",
       );
     });
 
     it("handles True or False prefix statements", () => {
-      expect(normalizeQuestionPunctuation("True or False: Sharks are mammals.", "true_false")).toBe("True or False: Sharks are mammals?");
+      expect(normalizeQuestionPunctuation("True or False: Sharks are mammals.", "yes_no")).toBe("True or False: Sharks are mammals?");
     });
   });
 
@@ -173,32 +173,31 @@ describe("Prompt Builder Hardening Contract Tests", () => {
     expect(contract).toContain("Ultra-concise child-friendly question ending with '?'");
   });
 
-  it("buildDirectQuizOutputContract enforces ? and interrogative challenge for true_false", () => {
+  it("buildDirectQuizOutputContract enforces natural Yes/No questions for yes_no", () => {
     const contract = buildDirectQuizOutputContract({
       taskType: "GENERATE_QUIZ",
-      episode: makeMockEpisode("true_false"),
+      episode: makeMockEpisode("yes_no"),
       quizQuestionCount: 5,
       quizLastClaimId: "C05",
       quizSourceMinimum: 3,
     });
 
-    expect(contract).toContain("Question phrasing & punctuation: Every question MUST end with a question mark '?'");
-    expect(contract).toContain("Never write a flat declarative statement ending with a period");
-    expect(contract).toContain("interrogative challenge");
-    expect(contract).toContain("Did player two steer the ducks in Duck Hunt?");
-    expect(contract).toContain("Is it true that...?");
+    expect(contract).toContain("Question phrasing & punctuation: Every question MUST be a natural, kid-friendly direct question");
+    expect(contract).toContain("ending with ' Yes or No?'");
+    expect(contract).toContain("Never write a flat statement to be judged true or false.");
+    expect(contract).not.toContain("Is it true that...?");
   });
 
   it("buildOutputContract enforces ? phrasing in GENERATE_TREATMENT, GENERATE_SCRIPT, GENERATE_SCENES", () => {
     const treatmentPrompt = buildOutputContract({
       taskType: "GENERATE_TREATMENT",
-      episode: makeMockEpisode("true_false"),
+      episode: makeMockEpisode("yes_no"),
       quizQuestionCount: 5,
       quizLastClaimId: "C05",
       quizSourceMinimum: 3,
     });
-    expect(treatmentPrompt).toContain("Questions must end with a question mark '?'");
-    expect(treatmentPrompt).toContain("never a flat statement ending in a period");
+    expect(treatmentPrompt).toContain("Questions must be natural kid-friendly direct questions ending with ' Yes or No?'");
+    expect(treatmentPrompt).toContain("never a flat statement to be judged true or false");
 
     const scriptPrompt = buildOutputContract({
       taskType: "GENERATE_SCRIPT",
@@ -211,18 +210,18 @@ describe("Prompt Builder Hardening Contract Tests", () => {
 
     const scenesPrompt = buildOutputContract({
       taskType: "GENERATE_SCENES",
-      episode: makeMockEpisode("true_false"),
+      episode: makeMockEpisode("yes_no"),
       quizQuestionCount: 5,
       quizLastClaimId: "C05",
       quizSourceMinimum: 3,
     });
-    expect(scenesPrompt).toContain("Questions must end with a question mark '?'");
+    expect(scenesPrompt).toContain("Questions must be natural kid-friendly direct questions ending with ' Yes or No?'");
   });
 });
 
 describe("Rendering Layer Integration", () => {
   it("guarantees question text in scene parts ends with ? even when model text ends in a period", () => {
-    const model = makeMockSceneModel("Classic arcade light guns shoot real laser beams.", "true_false");
+    const model = makeMockSceneModel("Classic arcade light guns shoot real laser beams.", "yes_no");
     const parts = buildQuizSceneParts(model);
 
     expect(parts.question.text).toBe("Classic arcade light guns shoot real laser beams?");
@@ -231,7 +230,7 @@ describe("Rendering Layer Integration", () => {
   });
 
   it("renders question box HTML with ? and no trailing period", () => {
-    const model = makeMockSceneModel("Pac-Man was inspired by a pizza missing one slice.", "true_false");
+    const model = makeMockSceneModel("Pac-Man was inspired by a pizza missing one slice.", "yes_no");
     const parts = buildQuizSceneParts(model);
     const rendered = renderStableQuizSceneParts(parts);
 

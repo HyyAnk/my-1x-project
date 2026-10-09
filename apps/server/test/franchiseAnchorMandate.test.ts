@@ -23,7 +23,7 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
         "1. NEVER formulate a question around an isolated, naked character name (e.g. NEVER ask 'Whose hand clap swaps positions?' or 'Who is Tenko Shimura?').",
       );
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
-        "2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Jujutsu Kaisen...', 'In Dragon Ball Z...', 'In Demon Slayer...', 'In Naruto...').",
+        "2. ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name in the question prompt (e.g. 'In Spider-Man...', 'In Lord of the Rings...', 'In Star Wars...', 'In Pokemon...', 'In Dragon Ball Z...', 'In SpongeBob...', 'In Naruto...').",
       );
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
         "3. SHORT UMBRELLA FRANCHISE NAMES ONLY: STRICTLY FORBIDDEN to include lengthy movie subtitles, arc names, book subtitles, or Roman numerals",
@@ -31,10 +31,11 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
         "4. For franchise-level entities (e.g. Dragon Ball, One Piece, Pokemon, Doraemon), ask about world-famous hallmarks, legendary objects, iconic catchphrases, or universal symbols that anyone on social media recognizes immediately.",
       );
+      expect(FRANCHISE_ANCHOR_MANDATE).toContain("5. ZERO STEM-ANSWER LEAKAGE (EPONYMOUS FRANCHISE RULE)");
       expect(FRANCHISE_ANCHOR_MANDATE).toContain(
-        "5. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage or text clipping on mobile screens.",
+        "6. This ensures 100% immediate context and instant engagement for casual viewers and families while preventing font shrinkage, text clipping, and spoiler leaks.",
       );
-      expect(FRANCHISE_ANCHOR_MANDATE_LINES.length).toBe(7);
+      expect(FRANCHISE_ANCHOR_MANDATE_LINES.length).toBe(11);
     });
 
     it("exports VISUAL_ANCHOR_MANDATE with all canonical visual spec rules", () => {
@@ -49,10 +50,10 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
       const deepTriviaIns = ARCHETYPE_GUIDELINES.deep_trivia.instructions.join(" ");
       expect(deepTriviaIns).toContain("FRANCHISE ANCHOR MANDATE");
       expect(deepTriviaIns).toContain("In Dragon Ball Z, whose signature energy wave is the Kamehameha?");
-      expect(deepTriviaIns).toContain("In One Piece, what straw accessory was given to Luffy by Shanks?");
+      expect(deepTriviaIns).toContain("In One Piece, what promise token did Shanks give Luffy?");
       expect(deepTriviaIns).toContain("In Pokemon, which electric mouse is Ash Ketchum's loyal partner?");
       expect(deepTriviaIns).toContain("In Naruto, which swirling blue sphere technique did Minato invent?");
-      expect(deepTriviaIns).toContain("In Detective Conan, what gadget lets Conan mimic Kogoro's voice?");
+      expect(deepTriviaIns).toContain("In Detective Conan, what gadget lets Conan speak as Kogoro?");
       expect(deepTriviaIns).toContain("ANTI-OBSCURITY NEGATIVE CONSTRAINTS");
 
       const versusIns = ARCHETYPE_GUIDELINES.versus_faceoff.instructions.join(" ");
@@ -77,7 +78,7 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
       expect(prompt).toContain(
         "ALWAYS explicitly anchor the parent franchise or show title using its short, canonical umbrella name",
       );
-      expect(prompt).toContain("'In Jujutsu Kaisen...'");
+      expect(prompt).toContain("'In Pokemon...'");
     });
 
     it("uses franchise-anchored examples in Golden Deep Trivia Paradigms", () => {
@@ -92,10 +93,10 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
 
       expect(prompt).toContain("=== GOLDEN DEEP TRIVIA PARADIGMS (PUNCHY & DIVERSE HOOKS) ===");
       expect(prompt).toContain('1. Feat / Signature Action: "In Dragon Ball Z, whose signature energy wave is the Kamehameha?"');
-      expect(prompt).toContain('2. Iconic Relic / Hallmarks: "In One Piece, what straw accessory was given to Luffy by Shanks?"');
+      expect(prompt).toContain('2. Iconic Relic / Hallmarks: "In One Piece, what promise token did Shanks give Luffy?"');
       expect(prompt).toContain('3. Universal Mascot / Partner: "In Pokemon, which electric mouse is Ash Ketchum\'s loyal partner?"');
       expect(prompt).toContain('4. Signature Jutsu / Technique: "In Naruto, which swirling blue sphere technique did Minato invent?"');
-      expect(prompt).toContain('5. Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan mimic Kogoro\'s voice?"');
+      expect(prompt).toContain('5. Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan speak as Kogoro?"');
       expect(prompt).toContain("ANTI-OBSCURITY NEGATIVE CONSTRAINTS:");
       expect(prompt).toContain("NEVER test obscure manga chapter numbers, release dates, or background animator names.");
     });
@@ -145,10 +146,10 @@ describe("Phase 3: Franchise-Anchored Question Phrasing Directives", () => {
       });
 
       expect(prompt).toContain("In Dragon Ball Z, whose signature energy wave is the Kamehameha?");
-      expect(prompt).toContain("In One Piece, what straw accessory was given to Luffy by Shanks?");
+      expect(prompt).toContain("In One Piece, what promise token did Shanks give Luffy?");
       expect(prompt).toContain("In Pokemon, which electric mouse is Ash Ketchum's loyal partner?");
       expect(prompt).toContain("In Naruto, which swirling blue sphere technique did Minato invent?");
-      expect(prompt).toContain("In Detective Conan, what gadget lets Conan mimic Kogoro's voice?");
+      expect(prompt).toContain("In Detective Conan, what gadget lets Conan speak as Kogoro?");
       expect(prompt).toContain("ANTI-OBSCURITY CONSTRAINTS");
       expect(prompt).toContain("NEVER test secondary character family lineages, blood types, or obscure minor jutsu/spells.");
     });

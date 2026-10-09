@@ -10,7 +10,7 @@
 
 ## Key Features
 
-- **Multi-Format Quiz Gameplay:** Built-in archetypes including Deep Trivia, True or False, Split Versus 1v1, Odd One Out, Visual Identification, Speed Blitz, and Mystery Reveal.
+- **Multi-Format Quiz Gameplay:** Built-in archetypes including Deep Trivia, Yes or No, Split Versus 1v1, Odd One Out, Visual Identification, Speed Blitz, and Mystery Reveal.
 - **Reusable Question Bank:** Curated source question repository with deficit-aware matrix planning, entity mapping, and automated localization while preserving English source identity.
 - **Channel DNA & Style Presets:** Define channel identity, target age bands (4–6, 7–9, 10–12, family), visual styles, voice pacing, and mascot character styling across episodes.
 - **Quiz Engine V2:** Modern, quiz-native production pipeline that generates and validates canonical artifacts (`quiz-v2.json`, `director-plan.json`, `asset-plan.json`, `voice-plan.json`, `timeline.json`) before rendering.
@@ -40,7 +40,7 @@ Run the startup batch script in the project root:
 "run dashboard.bat"
 ```
 
-This launcher verifies required dependencies (Node.js, Python, pnpm), initializes the Python virtual environment, starts the Chatterbox Turbo TTS service, and launches the web dashboard at `http://127.0.0.1:2244`.
+This launcher verifies required dependencies (Node.js, Python, pnpm), initializes the Python virtual environment, starts the Chatterbox Turbo TTS service, and launches the web dashboard at `http://127.0.0.1:7743`.
 
 To cleanly stop all local services:
 

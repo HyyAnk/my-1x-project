@@ -4,6 +4,7 @@ import type {
   BuildReverseBatchPromptOptions,
 } from "./promptStrategy.types.js";
 import {
+  ANSWER_INTEGRITY_MANDATE_LINES,
   COMMON_BATCH_CONTENT_POLICY_LINES,
   COMMON_REVERSE_CONTENT_POLICY_LINES,
   FRANCHISE_ANCHOR_MANDATE_LINES,
@@ -19,7 +20,7 @@ const GOLDEN_MYSTERY_REVEAL_PARADIGMS: string[] = [
   '1. Stat riddle: "Sees 16 sunrises every day — what orbiting lab is this?" -> [A: International Space Station (Correct)]',
   '2. Scanner teaser: "Behind the scan: Name the rover vaporizing Martian rocks!" -> [A: Curiosity Rover (Correct)]',
   '3. Deep space milestone: "What robotic explorer carried Earth\'s Golden Record?" -> [A: Voyager 1 (Correct)]',
-  '4. Silhouette outline: "Can you identify this lunar buggy with wire mesh wheels?" -> [A: Apollo Lunar Rover (Correct)]',
+  '4. Silhouette outline: "Can you identify this moon buggy with wire mesh wheels?" -> [A: Apollo Lunar Rover (Correct)]',
 ];
 
 const SPECIALIZED_MYSTERY_REVEAL_DIRECTIVE: string[] = [
@@ -61,6 +62,8 @@ export const mysteryRevealPromptStrategy: ArchetypePromptStrategy = {
       `- Thinking Duration: 6 seconds`,
       ``,
       ...GOLDEN_MYSTERY_REVEAL_PARADIGMS,
+      ``,
+      ...ANSWER_INTEGRITY_MANDATE_LINES,
       ``,
       ...FRANCHISE_ANCHOR_MANDATE_LINES,
       ``,
@@ -125,6 +128,8 @@ export const mysteryRevealPromptStrategy: ArchetypePromptStrategy = {
       formatTargetEntitiesBlock(options.targets),
       ``,
       ...SPECIALIZED_MYSTERY_REVEAL_DIRECTIVE,
+      ``,
+      ...ANSWER_INTEGRITY_MANDATE_LINES,
       ``,
       ...FRANCHISE_ANCHOR_MANDATE_LINES,
       ``,

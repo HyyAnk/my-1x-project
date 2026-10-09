@@ -49,6 +49,8 @@ import { createMascotAnimationRenderSnapshot, type MascotAnimationRenderSnapshot
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 import { resolveCandyArcadeIntroClip, resolveCandyArcadeOutroClip } from "./candyArcade/candyArcadeTransitionResolver.js";
 import { buildCandyArcadeQuestionTimeline } from "./candyArcade/candyArcadeQuestionTimeline.js";
+import { resolveQuestionPaletteAfter } from "./candyArcade/bridgeScenePalette.js";
+import { isBridgeBrandStingerEvent, isBridgeCtaToQuestionEvent } from "../bridge/bridgeTransitionIds.js";
 import { assembleCandyArcadeDocument } from "./candyArcade/candyArcadeAssetBundler.js";
 import type { ResolvedChannelBrandIdentity } from "../brand/channelBrandAssetResolver.js";
 
@@ -181,7 +183,9 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
 
   const bridgeTopicEvent = events.find((event) => event.type === "bridge.topic.enter");
   const bridgeCtaEvent = events.find((event) => event.type === "bridge.cta.enter");
-  const introEnd = bridgeTopicEvent?.at_seconds ?? bridgeCtaEvent?.at_seconds ?? firstStart;
+  // Legacy timelines placed the CTA before question 1; current ones play it mid-roll.
+  const isLeadingBridgeCta = Boolean(bridgeCtaEvent && bridgeCtaEvent.at_seconds <= firstStart);
+  const introEnd = bridgeTopicEvent?.at_seconds ?? (isLeadingBridgeCta ? bridgeCtaEvent?.at_seconds : undefined) ?? firstStart;
 
   const topicPayload = bridgeTopicEvent?.payload?.topic as string | undefined;
   const resolvedTopic =
@@ -294,15 +298,9 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     );
   }
 
-  const bridgeStingerEvent = events.find(
-    (event) =>
-      event.type === "transition.start" &&
-      (event.payload?.instance_id === "bridge_topic_to_cta" ||
-        event.payload?.transition_id === "brand_logo_stinger" ||
-        event.event_id === "transition_bridge_topic_to_cta"),
-  );
+  const bridgeStingerEvent = events.find(isBridgeBrandStingerEvent);
 
-  const shouldRenderBridgeStinger = Boolean(bridgeStingerEvent || (bridgeTopicEvent && bridgeCtaEvent));
+  const shouldRenderBridgeStinger = Boolean(bridgeStingerEvent || (bridgeTopicEvent && isLeadingBridgeCta));
 
   if (shouldRenderBridgeStinger) {
     const channelName =
@@ -409,13 +407,10 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     );
   }
 
-  const bridgeCtaToQuestionEvent = events.find(
-    (event) =>
-      event.type === "transition.start" &&
-      (event.payload?.instance_id === "bridge_cta_to_question" ||
-        event.payload?.transition_id === "energy_whip" ||
-        event.event_id === "transition_bridge_cta_to_question"),
-  );
+  const bridgeCtaToQuestionEvent = events.find(isBridgeCtaToQuestionEvent);
+  const questionAfterCtaPalette = bridgeCtaEvent
+    ? resolveQuestionPaletteAfter(events, resolvedQuestions, bridgeCtaEvent.at_seconds) ?? firstQuestionPalette
+    : firstQuestionPalette;
 
   const shouldRenderCtaToQuestionStinger = Boolean(
     bridgeCtaToQuestionEvent || (bridgeCtaEvent && resolvedQuestions.length > 0),
@@ -464,9 +459,9 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         duration: ctaToQuestionDuration,
         aspectRatio,
         instanceId: (bridgeCtaToQuestionEvent?.payload?.instance_id as string) ?? "bridge_cta_to_question",
-        fromColor: firstQuestionPalette?.backgroundPrimary,
-        toColor: firstQuestionPalette?.backgroundSecondary,
-        accentColor: firstQuestionPalette?.accent,
+        fromColor: questionAfterCtaPalette?.backgroundPrimary,
+        toColor: questionAfterCtaPalette?.backgroundSecondary,
+        accentColor: questionAfterCtaPalette?.accent,
       }),
     );
   }

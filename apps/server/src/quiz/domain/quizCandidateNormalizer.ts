@@ -50,14 +50,9 @@ function resolveChoiceText(choice: RawChoiceObject, index: number, format: unkno
   }
 
   const idLower = choiceId.toLowerCase();
-  if (idLower.includes("true")) return "True";
-  if (idLower.includes("false")) return "False";
-  if (idLower.includes("yes")) return "Yes";
-  if (idLower.includes("no")) return "No";
+  if (idLower.includes("yes") || idLower.includes("true")) return "Yes";
+  if (idLower.includes("no") || idLower.includes("false")) return "No";
 
-  if (format === "true_false") {
-    return index === 0 ? "True" : "False";
-  }
   if (format === "yes_no") {
     return index === 0 ? "Yes" : "No";
   }

@@ -4,7 +4,6 @@ import type { BankGameplayArchetypeId, BankTaxonomy } from "../../types/question
 
 export const ARCHETYPE_OPTIONS: Array<{ id: BankGameplayArchetypeId; label: string; icon: string }> = [
   { id: "verdict_yes_no", label: "Yes or No", icon: "✨" },
-  { id: "verdict_true_false", label: "True or False", icon: "⚖️" },
   { id: "speed_blitz", label: "Speed Blitz", icon: "⚡" },
   { id: "deep_trivia", label: "Deep Trivia", icon: "🧠" },
   { id: "versus_faceoff", label: "1v1 Faceoff", icon: "⚔️" },

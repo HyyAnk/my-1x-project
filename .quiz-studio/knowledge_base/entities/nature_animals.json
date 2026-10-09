@@ -5,6 +5,7 @@
     "subtopic_id": "mammals",
     "name": "Lion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panthera leo",
       "King of the Jungle"
@@ -50,6 +51,7 @@
     "subtopic_id": "mammals",
     "name": "Tiger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panthera tigris",
       "Lord of the Forest"
@@ -95,6 +97,7 @@
     "subtopic_id": "marine_life",
     "name": "Blue Whale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Balaenoptera musculus",
       "Sulphur bottom whale"
@@ -140,6 +143,7 @@
     "subtopic_id": "mammals",
     "name": "African Elephant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Loxodonta africana"
     ],
@@ -184,6 +188,7 @@
     "subtopic_id": "mammals",
     "name": "Giant Panda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ailuropoda melanoleuca",
       "Bamboo Bear"
@@ -229,6 +234,7 @@
     "subtopic_id": "mammals",
     "name": "Cheetah",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Acinonyx jubatus"
     ],
@@ -273,6 +279,7 @@
     "subtopic_id": "birds",
     "name": "Emperor Penguin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aptenodytes forsteri"
     ],
@@ -299,7 +306,7 @@
         "fun_fact": "They are separated by thousands of miles of tropical oceans and never encounter each other in the wild."
       },
       {
-        "claim": "Male emperor penguins fast for over two continuous months during the dead of Antarctic winter.",
+        "claim": "Male emperor penguins go without food for over two months during the dark Antarctic winter.",
         "verdict": "fact",
         "explanation": "While keeping the egg warm on their feet against -40°C blizzard winds, males eat nothing until mothers return from feeding at sea.",
         "fun_fact": "They lose up to 40% of their body weight during incubation."
@@ -317,6 +324,7 @@
     "subtopic_id": "marine_life",
     "name": "Great White Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Carcharodon carcharias",
       "White pointer"
@@ -341,13 +349,13 @@
         "claim": "Great white sharks must swim continuously to keep breathing, or they will drown.",
         "verdict": "fact",
         "explanation": "As obligate ram ventilators, they must keep moving forward with mouths open to force oxygenated water over their gills.",
-        "fun_fact": "If they stop swimming forward, they suffocate and sink."
+        "fun_fact": "Some other sharks, like nurse sharks, can rest on the seafloor and pump water over their gills."
       },
       {
         "claim": "Sharks intentionally hunt humans as a primary food source.",
         "verdict": "myth",
-        "explanation": "Humans are too bony and lack the rich blubber sharks crave; most attacks are exploratory test bites mistaking surfers for seals.",
-        "fun_fact": "You are statistically far more likely to be struck by lightning or killed by a falling coconut than bitten by a shark."
+        "explanation": "Humans are too bony and lack the rich blubber sharks crave; most bites are curious test bites mistaking surfers for seals.",
+        "fun_fact": "Shark bites are very rare; you are more likely to be struck by lightning."
       }
     ],
     "versus_candidates": [
@@ -362,6 +370,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Chameleon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chamaeleonidae"
     ],
@@ -406,6 +415,7 @@
     "subtopic_id": "mammals",
     "name": "Kangaroo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Macropodidae",
       "Red Kangaroo"
@@ -451,6 +461,7 @@
     "subtopic_id": "mammals",
     "name": "Grizzly Bear",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "North American Brown Bear",
       "Silvertip Bear"
@@ -496,6 +507,7 @@
     "subtopic_id": "mammals",
     "name": "Polar Bear",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sea Bear",
       "White Bear"
@@ -541,6 +553,7 @@
     "subtopic_id": "mammals",
     "name": "Gray Wolf",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Timber Wolf",
       "Canis lupus"
@@ -586,6 +599,7 @@
     "subtopic_id": "mammals",
     "name": "Red Fox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vulpes vulpes"
     ],
@@ -630,6 +644,7 @@
     "subtopic_id": "mammals",
     "name": "Giraffe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giraffa camelopardalis"
     ],
@@ -674,6 +689,7 @@
     "subtopic_id": "mammals",
     "name": "Hippopotamus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hippo",
       "River Horse"
@@ -719,6 +735,7 @@
     "subtopic_id": "mammals",
     "name": "Rhinoceros",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rhino",
       "White Rhino / Black Rhino"
@@ -764,6 +781,7 @@
     "subtopic_id": "mammals",
     "name": "Plains Zebra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zebra",
       "Equus quagga"
@@ -809,6 +827,7 @@
     "subtopic_id": "mammals",
     "name": "Mountain Gorilla",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gorilla",
       "Silverback Gorilla"
@@ -830,7 +849,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Gorillas are bloodthirsty, aggressive predators that hunt jungle animals for meat.",
+        "claim": "Gorillas are fierce hunters that chase jungle animals for meat.",
         "verdict": "myth",
         "explanation": "Gorillas are gentle giants with an almost 100% vegetarian diet composed of bamboo shoots, leaves, celery, and fruit.",
         "fun_fact": "Chest-beating is primarily an acoustic display to communicate territory and avoid physical conflict."
@@ -854,6 +873,7 @@
     "subtopic_id": "mammals",
     "name": "Chimpanzee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chimp",
       "Pan troglodytes"
@@ -899,6 +919,7 @@
     "subtopic_id": "mammals",
     "name": "Koala",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Koala Bear",
       "Phascolarctos cinereus"
@@ -944,6 +965,7 @@
     "subtopic_id": "mammals",
     "name": "Three-Toed Sloth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sloth",
       "Bradypus"
@@ -989,6 +1011,7 @@
     "subtopic_id": "mammals",
     "name": "North American Beaver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Beaver",
       "Castor canadensis"
@@ -1034,6 +1057,7 @@
     "subtopic_id": "mammals",
     "name": "Sea Otter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Enhydra lutris"
     ],
@@ -1078,6 +1102,7 @@
     "subtopic_id": "birds",
     "name": "Bald Eagle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "American Eagle",
       "Haliaeetus leucocephalus"
@@ -1123,6 +1148,7 @@
     "subtopic_id": "birds",
     "name": "Barn Owl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ghost Owl",
       "Tyto alba"
@@ -1168,6 +1194,7 @@
     "subtopic_id": "birds",
     "name": "Peregrine Falcon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Duck Hawk",
       "Falco peregrinus"
@@ -1197,7 +1224,7 @@
       {
         "claim": "Peregrine falcons strike prey in mid-air with clenched talons like a boxing glove.",
         "verdict": "fact",
-        "explanation": "The impact from the high-speed dive is usually enough to stun or kill prey instantly before it hits the ground.",
+        "explanation": "The force of the high-speed dive usually stuns the prey, so the falcon can catch it easily in mid-air.",
         "fun_fact": "They have a transparent third eyelid (nictitating membrane) that acts like safety goggles."
       }
     ],
@@ -1213,6 +1240,7 @@
     "subtopic_id": "birds",
     "name": "Greater Flamingo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Flamingo",
       "Phoenicopterus roseus"
@@ -1258,6 +1286,7 @@
     "subtopic_id": "birds",
     "name": "Indian Peacock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Peafowl",
       "Pavo cristatus"
@@ -1303,6 +1332,7 @@
     "subtopic_id": "birds",
     "name": "Ruby-Throated Hummingbird",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hummingbird",
       "Archilochus colubris"
@@ -1348,6 +1378,7 @@
     "subtopic_id": "birds",
     "name": "Common Ostrich",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ostrich",
       "Struthio camelus"
@@ -1393,6 +1424,7 @@
     "subtopic_id": "birds",
     "name": "Toco Toucan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Toucan",
       "Ramphastos toco"
@@ -1438,6 +1470,7 @@
     "subtopic_id": "birds",
     "name": "Scarlet Macaw",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Macaw",
       "Ara macao"
@@ -1483,6 +1516,7 @@
     "subtopic_id": "birds",
     "name": "Rock Dove",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "City Pigeon",
       "Homing Pigeon"
@@ -1528,6 +1562,7 @@
     "subtopic_id": "marine_life",
     "name": "Killer Whale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Orca",
       "Orcinus orca"
@@ -1549,16 +1584,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Killer whales are true biological whales from the baleen whale family.",
+        "claim": "Orcas are true whales from the baleen whale family.",
         "verdict": "myth",
         "explanation": "Orcas are toothed whales belonging to the dolphin family (Delphinidae), making them the world's largest dolphins.",
-        "fun_fact": "Sailors historically called them 'whale killers' after seeing them hunt giant baleen whales."
+        "fun_fact": "Orcas hunt in family teams called pods, working together like a wolf pack."
       },
       {
-        "claim": "There is zero record of a wild orca ever killing a human being in recorded history.",
+        "claim": "Different orca families have their own special calls, like a family accent.",
         "verdict": "fact",
-        "explanation": "While captive orcas have had fatal incidents due to extreme confinement stress, wild orcas have never killed a human in documented history.",
-        "fun_fact": "They routinely pass up human swimmers and surfers after close inspection."
+        "explanation": "Scientists found each orca pod uses its own set of calls, called a dialect, that young orcas learn from their family.",
+        "fun_fact": "Orca pods are often led by an older grandmother who remembers the best places to find food."
       }
     ],
     "versus_candidates": [
@@ -1573,6 +1608,7 @@
     "subtopic_id": "marine_life",
     "name": "Bottlenose Dolphin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dolphin",
       "Tursiops truncatus"
@@ -1618,6 +1654,7 @@
     "subtopic_id": "marine_life",
     "name": "Humpback Whale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Megaptera novaeangliae"
     ],
@@ -1644,7 +1681,7 @@
         "fun_fact": "Songs can last up to 30 minutes and can be heard thousands of miles across the ocean basin."
       },
       {
-        "claim": "Humpback whales have been documented intentionally protecting other animals from killer whale attacks.",
+        "claim": "Humpback whales have been seen protecting other animals from hunting orcas.",
         "verdict": "fact",
         "explanation": "Marine biologists have recorded over 115 instances where humpbacks actively shielded seals, sea lions, and gray whale calves from orcas.",
         "fun_fact": "They will swim miles towards distress calls to disrupt orca hunts."
@@ -1662,6 +1699,7 @@
     "subtopic_id": "marine_life",
     "name": "Great Hammerhead Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hammerhead",
       "Sphyrna mokarran"
@@ -1707,6 +1745,7 @@
     "subtopic_id": "marine_life",
     "name": "Common Octopus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Octopus",
       "Octopus vulgaris"
@@ -1752,6 +1791,7 @@
     "subtopic_id": "marine_life",
     "name": "Giant Squid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Kraken",
       "Architeuthis dux"
@@ -1797,6 +1837,7 @@
     "subtopic_id": "marine_life",
     "name": "Green Sea Turtle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sea Turtle",
       "Chelonia mydas"
@@ -1842,6 +1883,7 @@
     "subtopic_id": "marine_life",
     "name": "Ocellaris Clownfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Clown Anemonefish",
       "Nemo"
@@ -1887,12 +1929,12 @@
     "subtopic_id": "marine_life",
     "name": "Giant Manta Ray",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Manta birostris",
-      "Devil Ray"
+      "Manta birostris"
     ],
     "difficulty": 1,
-    "visual_anchor": "A gigantic manta ray with a 7-meter wingspan gliding like an underwater stealth bomber through tropical blue water.",
+    "visual_anchor": "A gigantic manta ray with a 7-meter wingspan gliding like a giant underwater kite through tropical blue water.",
     "core_traits": [
       "Largest ray species in the world, with wingspans exceeding 7 meters",
       "Harmless filter feeder equipped with two horn-like cephalic fins directing krill into its wide mouth",
@@ -1908,9 +1950,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Giant manta rays have a lethal venomous stinger on their tail that killed Steve Irwin.",
+        "claim": "Giant manta rays have a dangerous venomous stinger on their tail.",
         "verdict": "myth",
-        "explanation": "Manta rays have completely lost their tail stingers over evolutionary time and are 100% harmless; Steve Irwin was stung by a bull ray, a different stingray species.",
+        "explanation": "Unlike many stingrays, manta rays have no working tail stinger and are harmless to people.",
         "fun_fact": "Manta rays are known for their gentle curiosity towards human scuba divers."
       },
       {
@@ -1932,6 +1974,7 @@
     "subtopic_id": "marine_life",
     "name": "Spotted Seahorse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seahorse",
       "Hippocampus"
@@ -1977,6 +2020,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Saltwater Crocodile",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salty",
       "Crocodylus porosus"
@@ -1987,7 +2031,7 @@
       "Largest living reptile and crocodilian on Earth, reaching over 6 meters and 1,000 kg",
       "Capable of thriving in brackish mangrove estuaries and swimming hundreds of miles of open sea",
       "Generates the highest confirmed bite force of any living animal (over 3,700 psi)",
-      "Performs the signature 'death roll' maneuver to submerge and dismember large prey"
+      "Spins in a powerful underwater roll to help break large meals into bite-size pieces"
     ],
     "distractor_pool": [
       "American Alligator",
@@ -2022,6 +2066,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "American Alligator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alligator",
       "Gator"
@@ -2067,6 +2112,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Komodo Dragon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Komodo Monitor",
       "Varanus komodoensis"
@@ -2088,15 +2134,15 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Komodo dragons kill prey solely with septic rotting bacteria infesting their dirty saliva.",
+        "claim": "Komodo dragons catch prey using only germs from their dirty saliva.",
         "verdict": "myth",
-        "explanation": "2009 MRI scans revealed true venom glands in their lower jaw that inject venom causing shock and preventing blood clotting.",
-        "fun_fact": "Their mouths are no dirtier than typical carnivore mouths; venom is their true weapon."
+        "explanation": "In 2009, scientists found real venom glands in their lower jaw; the venom stops blood from clotting and weakens prey.",
+        "fun_fact": "Their mouths are no dirtier than other meat-eaters' mouths; venom is their real secret tool."
       },
       {
-        "claim": "Female Komodo dragons can lay fertile eggs without mating with a male.",
+        "claim": "Female Komodo dragons can lay eggs that hatch without any father.",
         "verdict": "fact",
-        "explanation": "They can reproduce via parthenogenesis (virgin birth), producing all-male offspring when isolated from males.",
+        "explanation": "This rare ability is called parthenogenesis, and the babies that hatch this way are always male.",
         "fun_fact": "This evolutionary adaptation allows a lone female swimming to a new island to establish an entire colony."
       }
     ],
@@ -2112,6 +2158,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "King Cobra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ophiophagus hannah"
     ],
@@ -2132,10 +2179,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A single bite from a king cobra can deliver enough venom to kill an adult Asian elephant.",
+        "claim": "A king cobra's bite carries so much venom that it is dangerous even to an elephant.",
         "verdict": "fact",
-        "explanation": "While not the most toxic venom drop-for-drop, a king cobra injects massive volumes (up to 7 ml), enough to kill an elephant in 3 hours.",
-        "fun_fact": "A single bite contains enough neurotoxin to kill 20 grown men."
+        "explanation": "Its venom is not the strongest drop-for-drop, but it injects a large amount, up to about 7 ml in one bite.",
+        "fun_fact": "King cobras are the world's longest venomous snakes, growing over 5 meters long."
       },
       {
         "claim": "Cobras dance and sway because they love the melodious tunes of snake charmer flutes.",
@@ -2156,6 +2203,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Green Anaconda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giant Anaconda",
       "Eunectes murinus"
@@ -2165,7 +2213,7 @@
     "core_traits": [
       "Heaviest and most massive snake species on Earth, weighing up to 250 kg",
       "Semi-aquatic giant boa constrictor native to the tropical Amazon and Orinoco basins",
-      "Kills prey through constriction by cutting off circulatory blood flow rather than crushing bones",
+      "Squeezes its prey tightly to stop its blood flow, rather than crushing its bones",
       "Possesses stretchy jaw ligaments allowing it to swallow capybaras, caimans, and deer whole"
     ],
     "distractor_pool": [
@@ -2177,9 +2225,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Constricting snakes kill prey by crushing every bone in the victim body to powder.",
+        "claim": "Snakes like anacondas squeeze so hard that they crush every bone in their prey.",
         "verdict": "myth",
-        "explanation": "Constriction cuts off circulatory blood flow and oxygen to the brain within seconds, inducing cardiac arrest without crushing bones.",
+        "explanation": "Squeezing actually stops blood flow and oxygen; the prey's bones usually stay unbroken.",
         "fun_fact": "X-rays of animals swallowed by anacondas show intact skeletal frames."
       },
       {
@@ -2201,6 +2249,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Golden Poison Frog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phyllobates terribilis",
       "Poison Dart Frog"
@@ -2222,13 +2271,13 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A single two-inch golden poison frog carries enough venom in its skin to kill 10 adult humans.",
+        "claim": "One tiny golden poison frog carries enough skin poison to be dangerous to about ten people.",
         "verdict": "fact",
-        "explanation": "One frog contains roughly 1 milligram of lethal batrachotoxin, enough to kill up to 10 to 20 humans or two African bull elephants.",
-        "fun_fact": "Merely touching its skin with an open cut can cause fatal paralysis."
+        "explanation": "Its skin contains batrachotoxin, one of nature's strongest poisons, so we admire this bright frog from far away.",
+        "fun_fact": "Its bright golden color is a warning sign that tells predators, 'Do not eat me!'"
       },
       {
-        "claim": "Poison dart frogs bred in zoo captivity are just as deadly poisonous as wild jungle frogs.",
+        "claim": "Poison dart frogs raised in zoos are just as poisonous as wild jungle frogs.",
         "verdict": "myth",
         "explanation": "Captive-bred poison frogs are completely harmless; they synthesize batrachotoxins only by eating specific wild rainforest beetles and ants.",
         "fun_fact": "When raised on fruit flies in terrariums, they produce zero poison."
@@ -2246,6 +2295,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Galapagos Giant Tortoise",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giant Tortoise",
       "Chelonoidis niger"
@@ -2291,6 +2341,7 @@
     "subtopic_id": "insects",
     "name": "Western Honey Bee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Honeybee",
       "Apis mellifera"
@@ -2318,10 +2369,10 @@
         "fun_fact": "Archaeologists excavating King Tut's tomb tasted ancient honey and found it still sweet."
       },
       {
-        "claim": "All bees die immediately whenever they sting any animal.",
+        "claim": "Every bee loses its stinger every time it stings.",
         "verdict": "myth",
-        "explanation": "Honeybees die only when stinging elastic human skin that catches their barbed stinger; when stinging other insects, they pull it out safely.",
-        "fun_fact": "Queen honeybees have smooth stingers and can sting multiple times without dying."
+        "explanation": "Only honeybee workers lose their barbed stinger, and mostly when stinging stretchy skin like ours; many bees can sting again.",
+        "fun_fact": "Queen honeybees have smooth stingers and can sting more than once."
       }
     ],
     "versus_candidates": [
@@ -2336,6 +2387,7 @@
     "subtopic_id": "insects",
     "name": "Monarch Butterfly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Monarch",
       "Danaus plexippus"
@@ -2381,6 +2433,7 @@
     "subtopic_id": "insects",
     "name": "European Praying Mantis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Praying Mantis",
       "Mantis religiosa"
@@ -2391,7 +2444,7 @@
       "Carnivorous predatory insect named for folded front legs resembling hands in prayer",
       "Raptorial front legs lined with spikes snap shut in milliseconds to pin insect prey",
       "Triangular head can swivel 180 degrees to visually scan surroundings",
-      "Famous for occasional sexual cannibalism where females consume males after mating"
+      "Green or brown body camouflages it among leaves and stems while it waits for prey"
     ],
     "distractor_pool": [
       "Grasshopper",
@@ -2402,10 +2455,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Female praying mantises always bite the heads off male partners in 100% of all matings.",
+        "claim": "Praying mantises are actually praying when they fold their front legs.",
         "verdict": "myth",
-        "explanation": "In the wild, sexual cannibalism occurs in only about 15% to 25% of encounters, primarily when the female is severely starved.",
-        "fun_fact": "The myth was exaggerated by early laboratory studies where stressed mantises in small cages had nowhere to escape."
+        "explanation": "The folded legs are hunting tools; the mantis holds them ready to snap out and grab insects that come close.",
+        "fun_fact": "Some mantises sway gently back and forth to look like leaves moving in the breeze."
       },
       {
         "claim": "Praying mantises are the only insects capable of swiveling their heads from side to side.",
@@ -2426,6 +2479,7 @@
     "subtopic_id": "insects",
     "name": "Firefly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lightning Bug",
       "Lampyridae"
@@ -2471,6 +2525,7 @@
     "subtopic_id": "insects",
     "name": "Emperor Scorpion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pandinus imperator"
     ],
@@ -2515,6 +2570,7 @@
     "subtopic_id": "insects",
     "name": "Black Widow Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Latrodectus",
       "Hourglass Spider"
@@ -2525,7 +2581,7 @@
       "Highly venomous cobweb spider famous for its iconic red hourglass markings",
       "Produces latrotoxin venom roughly 15 times stronger than rattlesnake venom",
       "Spins tangled, irregular, three-dimensional webs of immense tensile strength",
-      "Females are significantly larger than males and occasionally cannibalize them"
+      "Females are much larger than males, which are small and have lighter markings"
     ],
     "distractor_pool": [
       "Tarantula",
@@ -2536,10 +2592,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Female black widow spiders always eat the male immediately after every mating encounter.",
+        "claim": "Black widow spiders chase people to bite them.",
         "verdict": "myth",
-        "explanation": "While it occurs occasionally, males usually escape unharmed in nature; cannibalism is more common in confined laboratory enclosures.",
-        "fun_fact": "In some widow species, males actively choose well-fed females to reduce the risk of being eaten."
+        "explanation": "Black widows are shy and stay in their webs; they usually bite only if pressed or trapped against skin.",
+        "fun_fact": "The bright red hourglass on the female's belly is a warning sign to predators."
       },
       {
         "claim": "Spider silk is pound-for-pound five times stronger than structural high-grade steel.",
@@ -2560,6 +2616,7 @@
     "subtopic_id": "mammals",
     "name": "Duck-Billed Platypus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Platypus",
       "Ornithorhynchus anatinus"
@@ -2605,6 +2662,7 @@
     "subtopic_id": "mammals",
     "name": "Spotted Hyena",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Laughing Hyena",
       "Crocuta crocuta"
@@ -2628,7 +2686,7 @@
       {
         "claim": "Spotted hyenas are cowardly scavengers that steal meals exclusively from lions.",
         "verdict": "myth",
-        "explanation": "Field studies show hyenas kill up to 75% to 95% of their own food; in fact, lions steal kills from hyenas far more frequently.",
+        "explanation": "Field studies show hyenas catch most of their own food; in fact, lions take meals from hyenas more often than hyenas take from lions.",
         "fun_fact": "Hyena clans have complex social hierarchies that rival baboon societies in intelligence."
       },
       {
@@ -2650,6 +2708,7 @@
     "subtopic_id": "mammals",
     "name": "Alaskan Moose",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moose",
       "Alces alces gigas"
@@ -2674,12 +2733,12 @@
         "claim": "Moose can dive deep underwater and hold their breath to graze on lake-bottom weeds.",
         "verdict": "fact",
         "explanation": "Moose can dive more than 5 meters deep and stay submerged for 30 to 50 seconds to feed on sodium-rich aquatic plants.",
-        "fun_fact": "Because they dive in coastal waters, killer whales (orcas) are documented predators of swimming moose."
+        "fun_fact": "Moose are strong swimmers and can swim several kilometers without stopping."
       },
       {
         "claim": "Bull moose keep their giant antlers permanently attached to their skull throughout their entire lives.",
         "verdict": "myth",
-        "explanation": "Like all deer, moose shed their heavy antlers every winter after the mating season and regrow an entirely new pair in spring.",
+        "explanation": "Like all deer, moose shed their heavy antlers every winter and regrow an entirely new pair in spring.",
         "fun_fact": "Regrowing antlers is one of the fastest rates of bone growth in the animal kingdom, growing up to an inch per day."
       }
     ],
@@ -2695,6 +2754,7 @@
     "subtopic_id": "mammals",
     "name": "Leopard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panthera pardus",
       "African Leopard"
@@ -2740,6 +2800,7 @@
     "subtopic_id": "mammals",
     "name": "Jaguar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panthera onca",
       "El Tigre"
@@ -2761,10 +2822,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Jaguars kill prey by biting directly through the temporal bones of the skull.",
+        "claim": "Jaguars have one of the strongest bites of any big cat for their size.",
         "verdict": "fact",
-        "explanation": "Unlike most big cats that suffocate prey with a throat bite, the jaguar utilizes immense jaw pressure to pierce the braincase directly.",
-        "fun_fact": "The name jaguar comes from the indigenous word yaguar, meaning 'he who kills with one leap'."
+        "explanation": "Their powerful jaws can even crack open turtle shells, something most big cats cannot do.",
+        "fun_fact": "The name 'jaguar' comes from 'yaguara', a word from Indigenous South American languages."
       },
       {
         "claim": "Jaguars avoid entering rivers and lakes because cats dislike water.",
@@ -2785,6 +2846,7 @@
     "subtopic_id": "mammals",
     "name": "Cougar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mountain Lion",
       "Puma",
@@ -2832,6 +2894,7 @@
     "subtopic_id": "mammals",
     "name": "Snow Leopard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panthera uncia",
       "Ghost of the Mountains"
@@ -2877,6 +2940,7 @@
     "subtopic_id": "mammals",
     "name": "Eurasian Lynx",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lynx lynx",
       "Northern Lynx"
@@ -2922,6 +2986,7 @@
     "subtopic_id": "mammals",
     "name": "Bobcat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lynx rufus",
       "Red Lynx"
@@ -2967,6 +3032,7 @@
     "subtopic_id": "mammals",
     "name": "Red Panda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lesser Panda",
       "Ailurus fulgens",
@@ -3013,6 +3079,7 @@
     "subtopic_id": "mammals",
     "name": "Raccoon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Procyon lotor",
       "Common Raccoon",
@@ -3059,6 +3126,7 @@
     "subtopic_id": "mammals",
     "name": "Honey Badger",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ratel",
       "Mellivora capensis"
@@ -3104,6 +3172,7 @@
     "subtopic_id": "mammals",
     "name": "Striped Skunk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mephitis mephitis"
     ],
@@ -3148,6 +3217,7 @@
     "subtopic_id": "mammals",
     "name": "Wolverine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gulo gulo",
       "Glutton",
@@ -3171,16 +3241,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Wolverines are fierce enough to kill adult moose trapped in deep winter snow.",
+        "claim": "Wolverines are strong enough to catch animals much bigger than themselves in deep snow.",
         "verdict": "fact",
-        "explanation": "Using broad paws that act like snowshoes, wolverines run effortlessly across crusty deep snow and bring down ungulates bogged down in drifts.",
+        "explanation": "Their broad paws work like snowshoes, so wolverines run across deep snow and catch large animals stuck in the drifts.",
         "fun_fact": "A wolverine can travel over 40 kilometers across freezing alpine terrain in a single day."
       },
       {
         "claim": "Wolverines are closely related to small wolves and belong to the canine family.",
         "verdict": "myth",
         "explanation": "Despite the name 'wolverine', it is a mustelid, closely related to otters, ferrets, and badgers, not canines.",
-        "fun_fact": "Wolverines emit a pungent musk from anal glands, earning them the nickname 'skunk bear'."
+        "fun_fact": "Wolverines give off a strong, stinky smell, earning them the nickname 'skunk bear'."
       }
     ],
     "versus_candidates": [
@@ -3195,6 +3265,7 @@
     "subtopic_id": "mammals",
     "name": "Capybara",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hydrochoerus hydrochaeris",
       "Water Pig"
@@ -3240,6 +3311,7 @@
     "subtopic_id": "mammals",
     "name": "Meerkat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Suricata suricatta",
       "Suricate"
@@ -3285,6 +3357,7 @@
     "subtopic_id": "mammals",
     "name": "Ring-Tailed Lemur",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lemur catta",
       "Maki"
@@ -3330,6 +3403,7 @@
     "subtopic_id": "mammals",
     "name": "Olive Baboon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anubis Baboon",
       "Papio anubis"
@@ -3375,13 +3449,14 @@
     "subtopic_id": "mammals",
     "name": "Mandrill",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mandrillus sphinx"
     ],
     "difficulty": 1,
     "visual_anchor": "A massive male mandrill displaying a vivid crimson and cobalt-blue ridged snout and golden beard in a Central African rainforest.",
     "core_traits": [
-      "World's largest monkey species, exhibiting extreme sexual dimorphism",
+      "World's largest monkey species, with males much bigger and more colorful than females",
       "Spectacular facial coloration featuring bright red bridge and bright blue ribbed flanks",
       "Possesses vivid blue, purple, and scarlet rump coloration that aids group cohesion",
       "Adult males develop enormous yellow beards and massive muscular shoulders"
@@ -3419,6 +3494,7 @@
     "subtopic_id": "mammals",
     "name": "Bornean Orangutan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pongo pygmaeus",
       "Red Ape",
@@ -3465,6 +3541,7 @@
     "subtopic_id": "mammals",
     "name": "Dromedary Camel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arabian Camel",
       "Camelus dromedarius",
@@ -3493,9 +3570,9 @@
         "fun_fact": "When starved of food, a camel's hump shrinks and droops over to one side."
       },
       {
-        "claim": "Camels can withstand losing up to 30% of their body weight in water without dying.",
+        "claim": "Camels can lose up to 30% of their body's water weight and still recover.",
         "verdict": "fact",
-        "explanation": "Most mammals succumb to heart failure at 12-14% water loss, but camels endure 30% loss thanks to unique oval red blood cells.",
+        "explanation": "Most mammals get very sick after losing 12 to 14% of their water, but camels' oval red blood cells help them cope.",
         "fun_fact": "Camels have broad padded feet that spread out to prevent sinking into soft sand."
       }
     ],
@@ -3511,6 +3588,7 @@
     "subtopic_id": "mammals",
     "name": "Llama",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lama glama"
     ],
@@ -3555,6 +3633,7 @@
     "subtopic_id": "mammals",
     "name": "Alpaca",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vicugna pacos"
     ],
@@ -3599,6 +3678,7 @@
     "subtopic_id": "mammals",
     "name": "American Bison",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bison bison",
       "American Buffalo"
@@ -3644,10 +3724,10 @@
     "subtopic_id": "mammals",
     "name": "African Buffalo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cape Buffalo",
-      "Syncerus caffer",
-      "The Black Death"
+      "Syncerus caffer"
     ],
     "difficulty": 1,
     "visual_anchor": "A formidable Cape buffalo bull with fused boss horns glaring sternly across an African waterhole.",
@@ -3666,16 +3746,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Cape buffaloes actively mob and kill lion cubs to protect their herd.",
+        "claim": "African buffalo herds work together to chase away lions.",
         "verdict": "fact",
-        "explanation": "Buffaloes demonstrate proactive defense; herds will deliberately seek out and trample lion prides and kill young cubs to reduce future predator threats.",
-        "fun_fact": "The Cape buffalo's fused horn base is so dense that it can deflect high-caliber hunting rifle bullets."
+        "explanation": "Buffaloes protect their herd as a team, forming a circle around calves and charging at lions to drive them off.",
+        "fun_fact": "The thick, joined base of a male's horns is called a 'boss' and works like a helmet."
       },
       {
         "claim": "African buffaloes are easily herded and domesticated by local pastoralists.",
         "verdict": "myth",
         "explanation": "Unlike Asian water buffaloes, African buffaloes have an extremely aggressive, erratic temperament and have resisted all domestication attempts.",
-        "fun_fact": "Hunters dubbed the Cape buffalo 'The Black Death' and 'Widowmaker' due to its habit of ambushing pursuers."
+        "fun_fact": "Oxpecker birds ride on buffaloes' backs and eat ticks and bugs off their skin."
       }
     ],
     "versus_candidates": [
@@ -3690,6 +3770,7 @@
     "subtopic_id": "mammals",
     "name": "Wild Yak",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bos mutus",
       "Tibetan Yak"
@@ -3735,6 +3816,7 @@
     "subtopic_id": "mammals",
     "name": "Blackbuck Antelope",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Indian Antelope",
       "Antilope cervicapra"
@@ -3758,7 +3840,7 @@
       {
         "claim": "Female blackbucks grow the same long corkscrew horns as males.",
         "verdict": "myth",
-        "explanation": "Blackbucks display strong sexual dimorphism; females are light fawn-colored and almost always hornless, while males develop long spiraled horns.",
+        "explanation": "Only males grow the long spiral horns and dark coats; females are light fawn-colored and almost always hornless.",
         "fun_fact": "A blackbuck's spiral horns can have three to five turns and reach up to 70 centimeters in length."
       },
       {
@@ -3780,6 +3862,7 @@
     "subtopic_id": "mammals",
     "name": "Thomson's Gazelle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eudorcas thomsonii",
       "Tommie"
@@ -3825,6 +3908,7 @@
     "subtopic_id": "mammals",
     "name": "Impala",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aepyceros melampus"
     ],
@@ -3869,6 +3953,7 @@
     "subtopic_id": "mammals",
     "name": "Blue Wildebeest",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Connochaetes taurinus",
       "Brindled Gnu",
@@ -3915,6 +4000,7 @@
     "subtopic_id": "mammals",
     "name": "Common Warthog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phacochoerus africanus"
     ],
@@ -3959,6 +4045,7 @@
     "subtopic_id": "mammals",
     "name": "Wild Boar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sus scrofa",
       "Eurasian Wild Boar"
@@ -4004,6 +4091,7 @@
     "subtopic_id": "mammals",
     "name": "European Hedgehog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Erinaceus europaeus",
       "Common Hedgehog"
@@ -4049,6 +4137,7 @@
     "subtopic_id": "mammals",
     "name": "North American Porcupine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Erethizon dorsatum",
       "Canadian Porcupine"
@@ -4094,6 +4183,7 @@
     "subtopic_id": "mammals",
     "name": "Nine-Banded Armadillo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dasypus novemcinctus",
       "Poor Man's Pork"
@@ -4139,6 +4229,7 @@
     "subtopic_id": "mammals",
     "name": "Giant Anteater",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Myrmecophaga tridactyla",
       "Ant Bear"
@@ -4184,6 +4275,7 @@
     "subtopic_id": "mammals",
     "name": "Fruit Bat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Flying Fox",
       "Megabat",
@@ -4230,6 +4322,7 @@
     "subtopic_id": "mammals",
     "name": "Common Vampire Bat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Desmodus rotundus"
     ],
@@ -4274,6 +4367,7 @@
     "subtopic_id": "mammals",
     "name": "Northern Flying Squirrel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glaucomys sabrinus"
     ],
@@ -4318,6 +4412,7 @@
     "subtopic_id": "mammals",
     "name": "Walrus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Odobenus rosmarus",
       "Tooth Walker"
@@ -4363,6 +4458,7 @@
     "subtopic_id": "mammals",
     "name": "California Sea Lion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zalophus californianus"
     ],
@@ -4407,6 +4503,7 @@
     "subtopic_id": "mammals",
     "name": "Harbor Seal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Common Seal",
       "Phoca vitulina"
@@ -4452,6 +4549,7 @@
     "subtopic_id": "mammals",
     "name": "Southern Elephant Seal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mirounga leonina"
     ],
@@ -4475,7 +4573,7 @@
         "claim": "Southern elephant seals can dive continuously for two hours without returning to the surface.",
         "verdict": "fact",
         "explanation": "They have massive blood volumes loaded with hemoglobin and myoglobin, allowing recorded dives of over 120 minutes down to 2,388 meters.",
-        "fun_fact": "Male elephant seals can weigh up to eight times more than adult females, showing the highest sexual dimorphism among mammals."
+        "fun_fact": "Male elephant seals can weigh up to eight times more than females, a bigger gap than almost any other mammal."
       },
       {
         "claim": "An elephant seal's trunk-like proboscis is used for breathing underwater like a snorkel.",
@@ -4496,6 +4594,7 @@
     "subtopic_id": "mammals",
     "name": "Beluga Whale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "White Whale",
       "Sea Canary",
@@ -4542,6 +4641,7 @@
     "subtopic_id": "mammals",
     "name": "Narwhal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Unicorn of the Sea",
       "Monodon monoceros"
@@ -4587,6 +4687,7 @@
     "subtopic_id": "mammals",
     "name": "Bowhead Whale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Balaena mysticetus",
       "Greenland Right Whale",
@@ -4633,6 +4734,7 @@
     "subtopic_id": "mammals",
     "name": "Sperm Whale",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Physeter macrocephalus",
       "Cachalot"
@@ -4678,6 +4780,7 @@
     "subtopic_id": "mammals",
     "name": "Leopard Seal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hydrurga leptonyx",
       "Sea Leopard"
@@ -4723,6 +4826,7 @@
     "subtopic_id": "mammals",
     "name": "Coyote",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Canis latrans",
       "Prairie Wolf",
@@ -4769,6 +4873,7 @@
     "subtopic_id": "mammals",
     "name": "Dingo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Canis familiaris dingo",
       "Australian Wild Dog"
@@ -4814,6 +4919,7 @@
     "subtopic_id": "mammals",
     "name": "Fennec Fox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vulpes zerda",
       "Desert Fox"
@@ -4859,6 +4965,7 @@
     "subtopic_id": "mammals",
     "name": "Arctic Fox",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vulpes lagopus",
       "White Fox",
@@ -4906,16 +5013,17 @@
     "subtopic_id": "mammals",
     "name": "Tasmanian Devil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sarcophilus harrisii"
     ],
     "difficulty": 1,
-    "visual_anchor": "A stocky black Tasmanian devil with a white chest crescent baring its pink mouth in a loud guttural screech.",
+    "visual_anchor": "A stocky black Tasmanian devil with a white chest stripe, opening its pink mouth wide in a loud screech.",
     "core_traits": [
       "World's largest surviving carnivorous marsupial, endemic exclusively to the island of Tasmania",
       "Possesses the strongest bite force relative to body mass of any living mammalian land carnivore",
-      "Emits blood-curdling screeches and coughs that earned it the name 'devil' from early settlers",
-      "Devours entire carcasses including bones, teeth, and fur with heavy crush-resistant jaws"
+      "Known for its loud, scratchy screeches and growls, especially at feeding time",
+      "Eats almost every part of its meal, even bones and fur, with super-strong jaws"
     ],
     "distractor_pool": [
       "Honey Badger",
@@ -4928,7 +5036,7 @@
       {
         "claim": "Tasmanian devils store excess energy and body fat in their tails.",
         "verdict": "fact",
-        "explanation": "A thick, plump tail indicates a well-nourished, healthy devil, while a thin tail is a sign of starvation or disease.",
+        "explanation": "A thick, plump tail shows the animal is healthy and well-fed, while a thin tail can mean it is hungry or sick.",
         "fun_fact": "A Tasmanian devil can consume up to 40% of its body weight in meat in just thirty minutes."
       },
       {
@@ -4950,6 +5058,7 @@
     "subtopic_id": "marine_life",
     "name": "Shortfin Mako Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Isurus oxyrinchus",
       "Mako Shark",
@@ -4996,6 +5105,7 @@
     "subtopic_id": "marine_life",
     "name": "Tiger Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Galeocerdo cuvier",
       "Sea Tiger",
@@ -5042,6 +5152,7 @@
     "subtopic_id": "marine_life",
     "name": "Bull Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Carcharhinus leucas",
       "Zambezi Shark"
@@ -5087,6 +5198,7 @@
     "subtopic_id": "marine_life",
     "name": "Basking Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cetorhinus maximus",
       "Bone Shark"
@@ -5132,6 +5244,7 @@
     "subtopic_id": "marine_life",
     "name": "Whale Shark",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rhincodon typus"
     ],
@@ -5176,6 +5289,7 @@
     "subtopic_id": "marine_life",
     "name": "Smalltooth Sawfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pristis pectinata",
       "Carpenter Shark"
@@ -5221,6 +5335,7 @@
     "subtopic_id": "marine_life",
     "name": "Green Moray Eel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gymnothorax funebris"
     ],
@@ -5265,6 +5380,7 @@
     "subtopic_id": "marine_life",
     "name": "Electric Eel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Electrophorus electricus"
     ],
@@ -5309,6 +5425,7 @@
     "subtopic_id": "marine_life",
     "name": "Red-Bellied Piranha",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pygocentrus nattereri"
     ],
@@ -5329,9 +5446,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A school of piranhas will regularly strip a live human adult to a clean skeleton in seconds.",
+        "claim": "Piranhas are always dangerous to anyone who swims near them.",
         "verdict": "myth",
-        "explanation": "Hollywood exaggeration; piranhas are shy, opportunistic omnivores and scavengers that feed mostly on fin clippings, insects, and dead fish.",
+        "explanation": "Movies exaggerate; piranhas are mostly shy fish that eat insects, plants, small fish, and leftover scraps.",
         "fun_fact": "Indigenous Amazonian peoples historically used dried piranha jaws and teeth as scissors and arrow-sharpening tools."
       },
       {
@@ -5353,6 +5470,7 @@
     "subtopic_id": "marine_life",
     "name": "Great Barracuda",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sphyraena barracuda"
     ],
@@ -5397,6 +5515,7 @@
     "subtopic_id": "marine_life",
     "name": "Swordfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Xiphias gladius",
       "Broadbill"
@@ -5442,6 +5561,7 @@
     "subtopic_id": "marine_life",
     "name": "Blue Marlin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Makaira nigricans",
       "Atlantic Blue Marlin"
@@ -5487,6 +5607,7 @@
     "subtopic_id": "marine_life",
     "name": "Sailfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Istiophorus platypterus"
     ],
@@ -5531,6 +5652,7 @@
     "subtopic_id": "marine_life",
     "name": "Pufferfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Blowfish",
       "Tetraodontidae",
@@ -5556,13 +5678,13 @@
         "claim": "Pufferfish inflate their bodies primarily by gulping large volumes of air.",
         "verdict": "myth",
         "explanation": "Under natural conditions underwater, they rapidly pump water into their specialized highly elastic stomach; they swallow air only if pulled out of the sea.",
-        "fun_fact": "A single pufferfish contains enough tetrodotoxin in its liver and ovaries to kill 30 adult humans."
+        "fun_fact": "Many pufferfish carry a powerful toxin called tetrodotoxin, which makes them unsafe for predators to eat."
       },
       {
-        "claim": "Male white-spotted pufferfish create intricate symmetrical geometric sand circles on the seabed to attract mates.",
+        "claim": "Male white-spotted pufferfish draw beautiful round patterns in the sand on the seafloor.",
         "verdict": "fact",
         "explanation": "Small 12-centimeter males spend over a week tirelessly carving 2-meter wide 'underwater crop circles' in sandy ocean beds using their fins.",
-        "fun_fact": "Dolphins have been observed gently chewing and passing pufferfish around, seemingly entering a trance-like state from low toxin doses."
+        "fun_fact": "When a pufferfish puffs up, it can grow to several times its normal size."
       }
     ],
     "versus_candidates": [
@@ -5577,6 +5699,7 @@
     "subtopic_id": "marine_life",
     "name": "Deep Sea Anglerfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Humpback Anglerfish",
       "Melanocetus johnsonii",
@@ -5588,7 +5711,7 @@
       "Bizarre deep-sea predator inhabiting the bathypelagic abyss in perpetual darkness",
       "Bears a modified dorsal spine called an ilicium tipped with a bioluminescent glowing lure (esca)",
       "Enormous expandable jaws lined with long, translucent needle-like teeth angled inward",
-      "Extreme sexual parasitism where tiny dwarf males fuse permanently onto the female's body"
+      "Females are many times bigger than the tiny, very different-looking males"
     ],
     "distractor_pool": [
       "Gulper Eel",
@@ -5623,6 +5746,7 @@
     "subtopic_id": "marine_life",
     "name": "Red Lionfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pterois volitans",
       "Zebrafish",
@@ -5669,6 +5793,7 @@
     "subtopic_id": "marine_life",
     "name": "Southern Stingray",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hypanus americanus"
     ],
@@ -5691,14 +5816,14 @@
       {
         "claim": "Stingrays use their venomous tail barbs to attack and stun swimming fish while hunting.",
         "verdict": "myth",
-        "explanation": "The tail barb is strictly a defensive weapon used when stepped on or grabbed by sharks; they hunt bottom invertebrates using suction and crushing jaws.",
+        "explanation": "The tail barb is only used for defense, like when a shark grabs it; stingrays hunt buried shellfish with crushing jaws.",
         "fun_fact": "The 'stingray shuffle' - sliding feet along sandy shallows - warns buried stingrays to swim away, preventing painful stings."
       },
       {
         "claim": "Stingrays locate buried prey on the ocean floor using electrical sensors called ampullae of Lorenzini.",
         "verdict": "fact",
         "explanation": "Because their eyes are on top of their head and mouth is underneath, they rely entirely on electroreception and smell to find food in the sand.",
-        "fun_fact": "A stingray's tail barb is serrated like a hunting knife and continuously replaced throughout life."
+        "fun_fact": "A stingray's tail barb has jagged edges like a saw and regrows if it breaks off."
       }
     ],
     "versus_candidates": [
@@ -5713,6 +5838,7 @@
     "subtopic_id": "marine_life",
     "name": "Moon Jellyfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aurelia aurita",
       "Common Jellyfish",
@@ -5759,6 +5885,7 @@
     "subtopic_id": "marine_life",
     "name": "Box Jellyfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chironex fleckeri",
       "Sea Wasp",
@@ -5805,6 +5932,7 @@
     "subtopic_id": "marine_life",
     "name": "Sea Anemone",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Actiniaria",
       "Windflower of the Sea"
@@ -5850,6 +5978,7 @@
     "subtopic_id": "marine_life",
     "name": "Coral",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stony Coral",
       "Anthozoa",
@@ -5896,6 +6025,7 @@
     "subtopic_id": "marine_life",
     "name": "Common Starfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sea Star",
       "Asterias rubens"
@@ -5941,6 +6071,7 @@
     "subtopic_id": "marine_life",
     "name": "Red Sea Urchin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mesocentrotus franciscanus"
     ],
@@ -5985,6 +6116,7 @@
     "subtopic_id": "marine_life",
     "name": "American Lobster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Homarus americanus",
       "Maine Lobster",
@@ -6031,6 +6163,7 @@
     "subtopic_id": "marine_life",
     "name": "Blue Crab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Callinectes sapidus",
       "Chesapeake Blue Crab",
@@ -6077,6 +6210,7 @@
     "subtopic_id": "marine_life",
     "name": "Hermit Crab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paguroidea"
     ],
@@ -6103,9 +6237,9 @@
         "fun_fact": "If a hermit crab cannot find a snail shell, it will adopt bottle caps, plastic containers, or hollow bamboo pieces."
       },
       {
-        "claim": "Hermit crabs kill living snails specifically to steal their shells.",
+        "claim": "Hermit crabs usually force living snails out of their shells to move in.",
         "verdict": "myth",
-        "explanation": "Hermit crabs are scavengers that almost exclusively occupy shells of snails that have already died naturally, rarely killing healthy mollusks.",
+        "explanation": "Hermit crabs almost always move into empty shells left behind by snails, and rarely bother healthy snails.",
         "fun_fact": "The giant coconut crab is an evolutionary hermit crab that abandoned shells to grow armor as an adult."
       }
     ],
@@ -6121,6 +6255,7 @@
     "subtopic_id": "marine_life",
     "name": "Red King Crab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paralithodes camtschaticus",
       "Kamchatka Crab",
@@ -6167,6 +6302,7 @@
     "subtopic_id": "marine_life",
     "name": "Tiger Shrimp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giant Tiger Prawn",
       "Penaeus monodon",
@@ -6213,6 +6349,7 @@
     "subtopic_id": "marine_life",
     "name": "Acorn Barnacle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Balanus glandula",
       "Rock Barnacle"
@@ -6258,6 +6395,7 @@
     "subtopic_id": "marine_life",
     "name": "Giant Clam",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tridacna gigas"
     ],
@@ -6302,6 +6440,7 @@
     "subtopic_id": "marine_life",
     "name": "Pearl Oyster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pinctada margaritifera",
       "Black-Lip Oyster"
@@ -6347,6 +6486,7 @@
     "subtopic_id": "marine_life",
     "name": "Chambered Nautilus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nautilus pompilius",
       "Living Fossil"
@@ -6392,6 +6532,7 @@
     "subtopic_id": "marine_life",
     "name": "Common Cuttlefish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sepia officinalis",
       "Chameleon of the Sea"
@@ -6437,16 +6578,17 @@
     "subtopic_id": "marine_life",
     "name": "Blue-Ringed Octopus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hapalochlaena lunulata"
     ],
     "difficulty": 1,
     "visual_anchor": "A golf-ball-sized octopus glowing with iridescent electric-blue rings pulsating across its yellow skin on an Australian tide pool rock.",
     "core_traits": [
-      "Tiny venomous cephalopod measuring only 12 to 20 centimeters, yet among the world's deadliest animals",
+      "Tiny venomous octopus measuring only 12 to 20 centimeters, yet one of the ocean's most dangerous animals",
       "Flashes approximately 50 to 60 iridescent electric-blue rings as an urgent aposematic warning",
-      "Salivary glands harbor symbiotic bacteria producing lethal tetrodotoxin neurotoxin",
-      "A single painless bite carries enough neurotoxin to paralyze and kill up to 26 adult humans"
+      "Its saliva holds helpful bacteria that make a powerful toxin called tetrodotoxin",
+      "Its bite is painless but very dangerous to people, so divers admire it from far away"
     ],
     "distractor_pool": [
       "Common Octopus",
@@ -6481,6 +6623,7 @@
     "subtopic_id": "marine_life",
     "name": "Ocean Sunfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mola mola",
       "Common Mola"
@@ -6526,6 +6669,7 @@
     "subtopic_id": "marine_life",
     "name": "Bluefin Tuna",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Thunnus thynnus",
       "Atlantic Bluefin Tuna"
@@ -6571,6 +6715,7 @@
     "subtopic_id": "marine_life",
     "name": "Atlantic Salmon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salmo salar",
       "King of Fish"
@@ -6616,6 +6761,7 @@
     "subtopic_id": "marine_life",
     "name": "Flying Fish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Exocoetidae"
     ],
@@ -6660,6 +6806,7 @@
     "subtopic_id": "marine_life",
     "name": "Leafy Seadragon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phycodurus eques"
     ],
@@ -6704,6 +6851,7 @@
     "subtopic_id": "marine_life",
     "name": "Stonefish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Synanceia verrucosa",
       "Reef Stonefish"
@@ -6714,7 +6862,7 @@
       "Widely recognized as the most venomous fish species in the world",
       "Master of camouflage, flawlessly mimicking a jagged mossy rock or coral rubble on the seabed",
       "Armed with 13 stout dorsal spine needles capable of piercing through rubber shoe soles",
-      "Neurotoxic venom causes excruciating agony, shock, tissue necrosis, and possible death"
+      "Its venom causes intense pain and is very dangerous, so people watch their step in its waters"
     ],
     "distractor_pool": [
       "Red Lionfish",
@@ -6749,6 +6897,7 @@
     "subtopic_id": "marine_life",
     "name": "Giant Pacific Octopus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Enteroctopus dofleini"
     ],
@@ -6777,8 +6926,8 @@
       {
         "claim": "The Giant Pacific Octopus lives for decades like other large, intelligent marine animals.",
         "verdict": "myth",
-        "explanation": "Despite its immense size and intelligence, it lives only 3 to 5 years, dying of programmed senescence shortly after breeding.",
-        "fun_fact": "Female giant Pacific octopuses guard their 100,000 eggs for up to six months without eating, dying after they hatch."
+        "explanation": "Despite its large size and big brain, it usually lives only 3 to 5 years.",
+        "fun_fact": "A mother giant Pacific octopus guards up to 100,000 eggs for about six months without eating."
       }
     ],
     "versus_candidates": [
@@ -6793,6 +6942,7 @@
     "subtopic_id": "marine_life",
     "name": "Colossal Squid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mesonychoteuthis hamiltoni",
       "Antarctic Cranch Squid"
@@ -6838,6 +6988,7 @@
     "subtopic_id": "marine_life",
     "name": "Remora",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sharksucker",
       "Remora remora",
@@ -6884,6 +7035,7 @@
     "subtopic_id": "marine_life",
     "name": "Cleaner Wrasse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bluestreak Cleaner Wrasse",
       "Labroides dimidiatus"
@@ -6893,7 +7045,7 @@
     "core_traits": [
       "Small coral reef fish that operates dedicated marine 'cleaning stations' visited by large client predators",
       "Bold blue and black longitudinal stripe that advertises its professional cleaning service",
-      "Picks ectoparasites, dead scales, and mucus from the skin, gills, and mouths of apex predators",
+      "Picks tiny parasites, old scales, and mucus from the skin, gills, and mouths of big predators",
       "Demonstrates complex social intelligence, tactical deception, and passing of the mirror self-recognition test"
     ],
     "distractor_pool": [
@@ -6929,6 +7081,7 @@
     "subtopic_id": "marine_life",
     "name": "Blue Tang",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Regal Tang",
       "Palette Surgeonfish",
@@ -6976,6 +7129,7 @@
     "subtopic_id": "marine_life",
     "name": "Yellow Tang",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zebrasoma flavescens",
       "Lemon Sailfin"
@@ -7021,6 +7175,7 @@
     "subtopic_id": "marine_life",
     "name": "Coelacanth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Latimeria chalumnae",
       "Dinosaur Fish",
@@ -7067,6 +7222,7 @@
     "subtopic_id": "marine_life",
     "name": "Sea Cucumber",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Holothuroidea",
       "Trepan"
@@ -7112,6 +7268,7 @@
     "subtopic_id": "marine_life",
     "name": "Horseshoe Crab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Limulus polyphemus",
       "Living Fossil"
@@ -7157,6 +7314,7 @@
     "subtopic_id": "marine_life",
     "name": "Portuguese Man o' War",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Physalia physalis",
       "Bluebottle",
@@ -7185,7 +7343,7 @@
         "fun_fact": "The gas bladder acts like a sail angled to catch trade winds, drifting either left-handed or right-handed to disperse the population."
       },
       {
-        "claim": "Tentacles from a dead, beached Portuguese Man o' War can still deliver a severe venomous sting days later.",
+        "claim": "Tentacles of a Man o' War washed up on the beach can still sting days later.",
         "verdict": "fact",
         "explanation": "The nematocyst stinging cells are mechanical and do not require the animal to be alive; moisture can trigger venom discharge for weeks.",
         "fun_fact": "The blue sea slug (Glaucus atlanticus) eats Man o' War tentacles and concentrates the unfired stinging cells in its own skin for defense."
@@ -7203,6 +7361,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Green Iguana",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Iguana iguana",
       "American Iguana"
@@ -7248,6 +7407,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Tokay Gecko",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gekko gecko"
     ],
@@ -7292,6 +7452,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Central Bearded Dragon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pogona vitticeps",
       "Beardie"
@@ -7337,6 +7498,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Gila Monster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Heloderma suspectum"
     ],
@@ -7381,6 +7543,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Asian Water Monitor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Varanus salvator",
       "Common Water Monitor"
@@ -7426,6 +7589,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Texas Horned Lizard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phrynosoma cornutum",
       "Horny Toad",
@@ -7472,6 +7636,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Black Caiman",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Melanosuchus niger"
     ],
@@ -7516,6 +7681,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Gharial",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gavialis gangeticus",
       "Fish-Eating Crocodile",
@@ -7562,6 +7728,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Burmese Python",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Python bivittatus"
     ],
@@ -7606,6 +7773,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Boa Constrictor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Red-Tailed Boa",
       "Boa constrictor"
@@ -7627,16 +7795,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Constrictor snakes kill prey by breaking all the bones in their victim's body.",
+        "claim": "Constrictor snakes catch prey by breaking all of its bones.",
         "verdict": "myth",
-        "explanation": "Constriction cuts off blood flow and cardiac circulation, causing rapid cerebral ischemia (oxygen starvation to the brain) within seconds.",
+        "explanation": "A boa's tight squeeze stops its prey's blood flow; it does not need to break any bones.",
         "fun_fact": "Boa Constrictor is both the common English name and the exact binomial scientific name of the species."
       },
       {
         "claim": "Mother boa constrictors give birth to fully formed live wriggling baby snakes.",
         "verdict": "fact",
         "explanation": "Unlike pythons which lay clutches of eggs, boas retain eggs internally until hatching, giving birth to up to 60 live young.",
-        "fun_fact": "Boas can feel the heartbeat of their suffocating prey through their coils and only relax when the heart stops beating."
+        "fun_fact": "Newborn boas are independent from birth and can hunt on their own right away."
       }
     ],
     "versus_candidates": [
@@ -7651,17 +7819,17 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Black Mamba",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Dendroaspis polylepis",
-      "Shadow of Death"
+      "Dendroaspis polylepis"
     ],
     "difficulty": 1,
     "visual_anchor": "A long, slender gunmetal-gray black mamba rearing its head high and spreading a narrow hood, displaying an inky black open mouth.",
     "core_traits": [
       "Longest venomous snake in Africa and second-longest in the world, growing up to 4.5 meters",
-      "Named not for its brownish-gray skin, but for the terrifying inky-black interior of its gaping mouth",
+      "Named not for its brownish-gray skin, but for the inky-black inside of its mouth",
       "Fastest land snake on Earth, capable of slithering at speeds up to 19 km/h",
-      "Possesses lethal neurotoxic venom that can kill a human in 20 minutes without antivenom"
+      "Has very strong venom, so it is dangerous to people and best admired from far away"
     ],
     "distractor_pool": [
       "King Cobra",
@@ -7674,14 +7842,14 @@
       {
         "claim": "The black mamba is covered in jet-black scales from head to tail.",
         "verdict": "myth",
-        "explanation": "Its skin is actually olive-brown, khaki, or metallic gunmetal gray; it is named purely for the pitch-black lining inside its mouth bared in warning.",
-        "fun_fact": "Before the development of modern polyvalent antivenom, a black mamba bite carried a 100% human mortality rate."
+        "explanation": "Its skin is actually olive-brown, khaki, or metallic gray; it is named for the pitch-black lining inside its mouth, shown as a warning.",
+        "fun_fact": "Black mambas usually try to escape from people and only strike when they feel cornered."
       },
       {
         "claim": "A black mamba can lift up to one-third of its body vertically off the ground while striking.",
         "verdict": "fact",
-        "explanation": "With a 3-to-4 meter body, it can lift its head over a meter in the air, allowing it to strike attackers in the chest or face.",
-        "fun_fact": "A single black mamba bite contains enough dendrotoxin to kill between 10 and 20 adult humans."
+        "explanation": "With a 3-to-4 meter body, it can lift its head over a meter in the air to warn off threats.",
+        "fun_fact": "Black mambas often return to the same home burrow or hollow tree for years."
       }
     ],
     "versus_candidates": [
@@ -7696,6 +7864,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Western Diamondback Rattlesnake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crotalus atrox"
     ],
@@ -7722,10 +7891,10 @@
         "fun_fact": "Rattlesnake rattle shaker muscles are among the fastest moving muscles in the entire animal kingdom."
       },
       {
-        "claim": "A severed rattlesnake head can still reflexively bite and inject venom for over an hour after decapitation.",
+        "claim": "A rattlesnake's rattle is made of keratin, the same material as your fingernails.",
         "verdict": "fact",
-        "explanation": "Because cold-blooded reptiles have slow metabolic rates, neural strike reflexes remain functional for hours after death.",
-        "fun_fact": "Their hemotoxic venom contains enzymes that digest muscle tissue from the inside out before the snake even swallows."
+        "explanation": "Each rattle segment is a hollow keratin piece; when they shake, the loose pieces click together to make the buzz.",
+        "fun_fact": "Rattlesnakes have heat-sensing pits on their faces that help them find warm prey in the dark."
       }
     ],
     "versus_candidates": [
@@ -7740,6 +7909,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Copperhead",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Agkistrodon contortrix",
       "Highland Moccasin"
@@ -7748,7 +7918,7 @@
     "visual_anchor": "A camouflaged copperhead snake coiled invisibly amidst dry copper-colored oak leaf litter in an eastern deciduous forest.",
     "core_traits": [
       "Venomous North American pit viper recognized by a coppery-red head and hourglass dorsal crossbands",
-      "Crossbands are narrow at the spine and wide at the base, creating flawless camouflage in dead leaves",
+      "Crossbands are narrow at the spine and wide at the base, creating perfect camouflage in fallen leaves",
       "Juveniles possess a bright sulfur-yellow or lime-green tail tip used as a lure (caudal luring)",
       "Freezes in place rather than slithering away when approached by humans"
     ],
@@ -7785,6 +7955,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Cottonmouth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Water Moccasin",
       "Agkistrodon piscivorus",
@@ -7831,6 +8002,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Eastern Coral Snake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Micrurus fulvius",
       "Cobra of North America"
@@ -7839,7 +8011,7 @@
     "visual_anchor": "A slender eastern coral snake with brilliant red, yellow, and black rings gliding through palmetto scrub in Florida.",
     "core_traits": [
       "Highly venomous elapid snake recognized by brilliant alternating rings of red, yellow, and black",
-      "Remembered by the famous mnemonic rhyme: 'Red touch yellow, kill a fellow; red touch black, friend of Jack'",
+      "Remembered with a famous color rhyme that helps people tell it apart from harmless look-alike snakes",
       "Possesses short, fixed front fangs and potent neurotoxic venom related to cobras and mambas",
       "Secretive fossorial burrower that feeds primarily on other smaller snakes and lizards"
     ],
@@ -7876,6 +8048,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Gaboon Viper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bitis gabonica",
       "Forest Viper",
@@ -7922,6 +8095,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Yellow-Bellied Sea Snake",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hydrophis platurus",
       "Pelagic Sea Snake"
@@ -7967,16 +8141,17 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "American Bullfrog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lithobates catesbeianus"
     ],
     "difficulty": 1,
-    "visual_anchor": "A massive green American bullfrog resting on a floating lily pad, emitting a deep foghorn-like 'jug-o-rum' bellow.",
+    "visual_anchor": "A massive green American bullfrog resting on a floating lily pad, its throat puffed out in a deep, booming bellow.",
     "core_traits": [
       "Largest true frog native to North America, weighing up to 1 kilogram",
       "Olive-green head and body with a massive circular eardrum (tympanum) behind each eye",
       "Voracious apex amphibian predator that eats anything it can fit into its mouth",
-      "Males produce a booming, resonant croak that sounds like a bellowing bull or 'jug-o-rum'"
+      "Males produce a booming, deep croak that sounds like a bellowing bull"
     ],
     "distractor_pool": [
       "Red-Eyed Tree Frog",
@@ -8011,6 +8186,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Red-Eyed Tree Frog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Agalychnis callidryas"
     ],
@@ -8031,7 +8207,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The red-eyed tree frog is highly poisonous and its skin secretions can kill humans.",
+        "claim": "The red-eyed tree frog is highly poisonous and dangerous to touch.",
         "verdict": "myth",
         "explanation": "Unlike poison dart frogs, red-eyed tree frogs are completely non-toxic; their bright colors are purely a visual bluff called startle coloration.",
         "fun_fact": "Red-eyed tree frog eggs can detect vibrations from predatory snakes and hatch prematurely within seconds to drop into the water below."
@@ -8055,6 +8231,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Cane Toad",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Giant Toad",
       "Marine Toad",
@@ -8101,6 +8278,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "European Fire Salamander",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Salamandra salamandra"
     ],
@@ -8145,6 +8323,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Eastern Newt",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Red-Spotted Newt",
       "Notophthalmus viridescens"
@@ -8169,7 +8348,7 @@
         "claim": "The terrestrial bright red 'eft' and the olive-green aquatic newt are two completely different species.",
         "verdict": "myth",
         "explanation": "They are the exact same species at different life stages; the red eft is a temporary terrestrial wandering phase lasting two to seven years.",
-        "fun_fact": "A single red eft contains enough tetrodotoxin in its skin to kill up to 250 mice."
+        "fun_fact": "The eft's bright red color warns predators that its skin is toxic and tastes bad."
       },
       {
         "claim": "Eastern newts can regenerate not only lost limbs, but also heart muscle and eye lenses.",
@@ -8190,6 +8369,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Axolotl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Mexican Walking Fish",
       "Ambystoma mexicanum"
@@ -8235,6 +8415,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Leatherback Sea Turtle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dermochelys coriacea",
       "Lute Turtle"
@@ -8280,6 +8461,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Alligator Snapping Turtle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Macrochelys temminckii",
       "Dinosaur of the Turtle World"
@@ -8325,6 +8507,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Common Box Turtle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eastern Box Turtle",
       "Terrapene carolina"
@@ -8370,6 +8553,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Leopard Tortoise",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stigmochelys pardalis"
     ],
@@ -8414,6 +8598,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Marine Iguana",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Amblyrhynchus cristatus",
       "Galapagos Marine Iguana"
@@ -8459,6 +8644,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Frilled Lizard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Frill-Necked Lizard",
       "Chlamydosaurus kingii",
@@ -8505,6 +8691,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Thorny Devil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Moloch horridus",
       "Mountain Devil",
@@ -8551,6 +8738,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Basilisk Lizard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Jesus Christ Lizard",
       "Common Basilisk",
@@ -8597,6 +8785,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Slow Worm",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anguis fragilis",
       "Blindworm",
@@ -8644,6 +8833,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Reticulated Python",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Malayopython reticulatus"
     ],
@@ -8688,12 +8878,13 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Green Tree Python",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Morelia viridis",
       "Chondro"
     ],
     "difficulty": 1,
-    "visual_anchor": "A brilliant emerald-green tree python coiled in an immaculate saddle loop over a horizontal branch, head resting dead center.",
+    "visual_anchor": "A brilliant emerald-green tree python coiled in an immaculate saddle loop over a horizontal branch, head resting right in the center.",
     "core_traits": [
       "Striking arboreal python native to the rainforests of New Guinea and northern Australia",
       "Iconic resting posture: coils its body in neat saddle loops draped over a branch, resting its head on top",
@@ -8733,6 +8924,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Inland Taipan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oxyuranus microlepidotus",
       "Fierce Snake",
@@ -8741,8 +8933,8 @@
     "difficulty": 1,
     "visual_anchor": "A dark brown inland taipan slithering across the cracked clay soil of the remote Channel Country in central Australia.",
     "core_traits": [
-      "Officially recognized as the most venomous snake in the world based on median lethal dose (LD50)",
-      "A single bite contains enough paradoxin neurotoxin to kill approximately 100 adult human beings",
+      "Known as the most venomous snake in the world, based on scientific venom-strength tests",
+      "Its venom is strong enough to be very dangerous to people, so scientists handle it with great care",
       "Changes skin color seasonally, shifting from dark glossy brown in winter to light olive-tan in summer",
       "Shy, reclusive inhabitant of deep soil cracks in the remote arid Australian outback"
     ],
@@ -8757,13 +8949,13 @@
       {
         "claim": "The inland taipan's nickname 'Fierce Snake' was given because it aggressively hunts and attacks humans.",
         "verdict": "myth",
-        "explanation": "The name refers purely to the terrifying potency of its venom; in nature, the snake is remarkably shy, placid, and avoids all human contact.",
-        "fun_fact": "There has never been a documented human fatality from an inland taipan bite since the creation of specific antivenom."
+        "explanation": "The name refers to its extremely strong venom; in nature, the snake is remarkably shy, calm, and avoids people.",
+        "fun_fact": "Thanks to antivenom and the snake's shy nature, bites to people are extremely rare."
       },
       {
-        "claim": "A single drop of inland taipan venom can kill over 100 adult men.",
+        "claim": "The inland taipan has the strongest venom of any land snake.",
         "verdict": "fact",
-        "explanation": "Its venom has a subcutaneous murine LD50 of 0.025 mg/kg, packed with paradoxin neurotoxins that paralyze the nervous system and dissolve muscle tissue.",
+        "explanation": "Scientists tested venom strength in the lab and found the inland taipan's venom is the most powerful of all land snakes.",
         "fun_fact": "The inland taipan adapts to seasonal temperature changes by producing darker melanin in winter to absorb solar heat."
       }
     ],
@@ -8779,6 +8971,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Russell's Viper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Daboia russelii",
       "Chain Viper"
@@ -8786,10 +8979,10 @@
     "difficulty": 1,
     "visual_anchor": "A thick, heavily coiled Russell's viper hissing like a high-pressure steam cooker in an Indian agricultural field.",
     "core_traits": [
-      "Member of the infamous 'Big Four' venomous snakes responsible for the vast majority of snakebite deaths in South Asia",
+      "Member of South Asia's famous 'Big Four' group of venomous snakes that people watch out for",
       "Bold chain-like pattern of three longitudinal rows of dark brown spots bordered in white and black",
       "Emits the loudest defensive hiss of any snake in the world, sounding like a screaming pressure cooker",
-      "Highly toxic hemotoxin causing severe internal bleeding, acute kidney failure, and tissue necrosis"
+      "Has very strong venom that is dangerous to people, so it is best admired from far away"
     ],
     "distractor_pool": [
       "King Cobra",
@@ -8824,6 +9017,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Saw-Scaled Viper",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Echis carinatus",
       "Carpet Viper"
@@ -8845,10 +9039,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The saw-scaled viper creates its famous sizzling warning sound using its vocal vocal cords in its throat.",
+        "claim": "The saw-scaled viper creates its famous sizzling warning sound using vocal cords in its throat.",
         "verdict": "myth",
         "explanation": "It produces no vocal hiss; it rubs serrated lateral scales together in figure-eight loops, creating friction noise like a saw blade cutting wood.",
-        "fun_fact": "Despite rarely exceeding 60 centimeters (2 feet) in length, it causes more human deaths than the king cobra, black mamba, and taipan combined."
+        "fun_fact": "Despite rarely growing longer than 60 centimeters, it is one of the most dangerous snakes in the world."
       },
       {
         "claim": "Saw-scaled vipers can move across loose desert sand without burning their bellies using sidewinding.",
@@ -8869,6 +9063,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Boomslang",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dispholidus typus",
       "Tree Snake"
@@ -8892,13 +9087,13 @@
       {
         "claim": "Rear-fanged snakes like the boomslang are universally harmless to humans.",
         "verdict": "myth",
-        "explanation": "While most rear-fanged snakes are harmless, the boomslang's hemotoxin is lethal; famed herpetologist Karl Schmidt died after being bitten by a juvenile in 1957.",
+        "explanation": "Most rear-fanged snakes are harmless to people, but the boomslang's venom is very dangerous, so we admire it from far away.",
         "fun_fact": "The name 'boomslang' is Afrikaans and Dutch for 'tree snake' (boom = tree, slang = snake)."
       },
       {
         "claim": "A boomslang can open its jaws nearly 170 degrees to bring its rear fangs to bear on prey.",
         "verdict": "fact",
-        "explanation": "To utilize its rear fangs effectively, the boomslang opens its mouth wider than almost any other snake, stabbing its rear fangs directly into flat surfaces.",
+        "explanation": "The boomslang can open its mouth wider than almost any other snake, so its rear fangs can reach its prey.",
         "fun_fact": "When threatened, it inflates its neck and throat with air like a balloon, revealing dark skin between bright scales."
       }
     ],
@@ -8914,6 +9109,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Sidewinder",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crotalus cerastes",
       "Horned Rattlesnake"
@@ -8959,6 +9155,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Goliath Frog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Conraua goliath"
     ],
@@ -9003,6 +9200,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Dyeing Poison Dart Frog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dendrobates tinctorius",
       "Poison Arrow Frog"
@@ -9048,6 +9246,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Glass Frog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Centrolenidae"
     ],
@@ -9092,6 +9291,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "African Bullfrog",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pyxicephalus adspersus",
       "Pixie Frog"
@@ -9137,6 +9337,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Japanese Giant Salamander",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Andrias japonicus",
       "Giant Pepper Fish",
@@ -9183,6 +9384,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Nile Crocodile",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Crocodylus niloticus",
       "African Crocodile"
@@ -9193,7 +9395,7 @@
       "Second-largest living crocodilian in the world after the saltwater crocodile, exceeding 5.5 meters",
       "Legendary apex predator of African freshwater lakes, rivers, and marshlands",
       "Possesses a bone-cracking bite force of over 5,000 pounds per square inch (PSI)",
-      "Famous for executing the dismembering 'death roll' to tear large mammalian prey apart"
+      "Famous for its spinning underwater roll that helps it break up large meals"
     ],
     "distractor_pool": [
       "Saltwater Crocodile",
@@ -9228,6 +9430,7 @@
     "subtopic_id": "reptiles_amphibians",
     "name": "Chinese Alligator",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Alligator sinensis",
       "Mud Dragon"
@@ -9273,6 +9476,7 @@
     "subtopic_id": "birds",
     "name": "Golden Eagle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aquila chrysaetos",
       "King of Birds"
@@ -9318,6 +9522,7 @@
     "subtopic_id": "birds",
     "name": "Harpy Eagle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Harpia harpyja",
       "Royal Hawk"
@@ -9363,6 +9568,7 @@
     "subtopic_id": "birds",
     "name": "Western Osprey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pandion haliaetus",
       "Fish Eagle",
@@ -9410,6 +9616,7 @@
     "subtopic_id": "birds",
     "name": "American Kestrel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Falco sparverius",
       "Sparrow Hawk"
@@ -9455,6 +9662,7 @@
     "subtopic_id": "birds",
     "name": "Red-Tailed Hawk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Buteo jamaicensis",
       "Chickenhawk"
@@ -9500,6 +9708,7 @@
     "subtopic_id": "birds",
     "name": "Common Buzzard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Buteo buteo",
       "Eurasian Buzzard"
@@ -9545,6 +9754,7 @@
     "subtopic_id": "birds",
     "name": "Red Kite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Milvus milvus"
     ],
@@ -9571,7 +9781,7 @@
         "fun_fact": "Red kites decorate their nests with colorful rubbish, including plastic bags, gloves, socks, and crisp packets."
       },
       {
-        "claim": "Red kites hunt and kill large adult sheep and livestock in pastures.",
+        "claim": "Red kites hunt large adult sheep and farm animals in pastures.",
         "verdict": "myth",
         "explanation": "Red kites have relatively weak talons adapted for eating carrion, earthworms, roadkill, and small rodents, incapable of harming livestock.",
         "fun_fact": "A landmark reintroduction program in the UK transformed red kites from near-extinction into one of the country's most common raptors."
@@ -9589,6 +9799,7 @@
     "subtopic_id": "birds",
     "name": "Turkey Vulture",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cathartes aura",
       "Buzzard",
@@ -9599,8 +9810,8 @@
     "core_traits": [
       "Most widespread scavenger raptor across the Americas, recognized by a featherless bright red head",
       "Soars in a distinctive shallow 'V' wing shape (dihedral), teetering unsteadily from side to side in thermals",
-      "Unusually keen sense of smell capable of detecting ethyl mercaptan gas from dead carrion miles away",
-      "Crucial environmental sanitation worker that disposes of carcasses without contracting diseases"
+      "Unusually keen sense of smell that lets it find food hidden under forest trees",
+      "Nature's clean-up crew that helps stop diseases from spreading by clearing away leftovers"
     ],
     "distractor_pool": [
       "Andean Condor",
@@ -9617,10 +9828,10 @@
         "fun_fact": "Turkey vultures urinate on their own scaly legs (urohidrosis) to cool down and sterilize bacteria with antiseptic uric acid."
       },
       {
-        "claim": "Turkey vultures circle over living animals to wait for them to die.",
+        "claim": "Turkey vultures circle in the sky because they are waiting to attack animals below.",
         "verdict": "myth",
-        "explanation": "Circling simply indicates they are riding a thermal updraft to gain altitude; they do not stalk living animals and feed strictly on already-dead carrion.",
-        "fun_fact": "Their stomach acid has a pH near zero (more acidic than battery acid), killing rabies, anthrax, and botulism."
+        "explanation": "Circling just means they are riding warm rising air to soar higher; they eat leftovers and do not hunt live animals.",
+        "fun_fact": "Their super-strong stomach acid destroys harmful germs, so they rarely get sick from their meals."
       }
     ],
     "versus_candidates": [
@@ -9635,6 +9846,7 @@
     "subtopic_id": "birds",
     "name": "Andean Condor",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vultur gryphus"
     ],
@@ -9679,6 +9891,7 @@
     "subtopic_id": "birds",
     "name": "Snowy Owl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bubo scandiacus",
       "Arctic Owl",
@@ -9725,12 +9938,13 @@
     "subtopic_id": "birds",
     "name": "Great Horned Owl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bubo virginianus",
       "Tiger of the Air"
     ],
     "difficulty": 1,
-    "visual_anchor": "A fierce great horned owl with piercing amber eyes and prominent feathered ear tufts perched silently on a dead oak branch at dusk.",
+    "visual_anchor": "A fierce great horned owl with piercing amber eyes and prominent feathered ear tufts perched silently on a bare oak branch at dusk.",
     "core_traits": [
       "Fierce, widespread apex nocturnal raptor across the Americas, nicknamed the 'Tiger of the Air'",
       "Distinguished by prominent feathered tufts of plumage on its head resembling horns or ears",
@@ -9770,6 +9984,7 @@
     "subtopic_id": "birds",
     "name": "Eastern Screech Owl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Megascops asio"
     ],
@@ -9814,6 +10029,7 @@
     "subtopic_id": "birds",
     "name": "Mute Swan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cygnus olor",
       "Royal Swan"
@@ -9859,6 +10075,7 @@
     "subtopic_id": "birds",
     "name": "Canada Goose",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Branta canadensis",
       "Honker"
@@ -9904,6 +10121,7 @@
     "subtopic_id": "birds",
     "name": "Mallard Duck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anas platyrhynchos",
       "Greenhead",
@@ -9950,6 +10168,7 @@
     "subtopic_id": "birds",
     "name": "Mandarin Duck",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aix galericulata"
     ],
@@ -9994,6 +10213,7 @@
     "subtopic_id": "birds",
     "name": "Brown Pelican",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pelecanus occidentalis"
     ],
@@ -10038,6 +10258,7 @@
     "subtopic_id": "birds",
     "name": "Great Blue Heron",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ardea herodias",
       "Blue Crane"
@@ -10083,6 +10304,7 @@
     "subtopic_id": "birds",
     "name": "Great Egret",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ardea alba",
       "Common Egret",
@@ -10108,8 +10330,8 @@
       {
         "claim": "The near-extinction of the great egret led directly to the birth of the modern wildlife conservation movement.",
         "verdict": "fact",
-        "explanation": "In the late 19th century, millions were slaughtered for women's hat plumes; outrage sparked the creation of the National Audubon Society, adopting the egret as its logo.",
-        "fun_fact": "During mating season, the bare patch of skin on an egret's face around the eye turns brilliant neon lime-green."
+        "explanation": "In the late 1800s, so many egrets were hunted for hat feathers that bird lovers formed Audubon societies to protect them.",
+        "fun_fact": "During breeding season, the bare patch of skin around an egret's eye turns brilliant neon lime-green."
       },
       {
         "claim": "Great egrets dive underwater and swim using webbed feet to catch fish.",
@@ -10130,6 +10352,7 @@
     "subtopic_id": "birds",
     "name": "White Stork",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ciconia ciconia"
     ],
@@ -10174,6 +10397,7 @@
     "subtopic_id": "birds",
     "name": "Whooping Crane",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Grus americana"
     ],
@@ -10218,6 +10442,7 @@
     "subtopic_id": "birds",
     "name": "Scarlet Ibis",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eudocimus ruber"
     ],
@@ -10262,6 +10487,7 @@
     "subtopic_id": "birds",
     "name": "Roseate Spoonbill",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Platalea ajaja"
     ],
@@ -10306,6 +10532,7 @@
     "subtopic_id": "birds",
     "name": "Wandering Albatross",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diomedea exulans",
       "Snowy Albatross",
@@ -10337,7 +10564,7 @@
         "claim": "Albatrosses must land on beaches every night to sleep and rest.",
         "verdict": "myth",
         "explanation": "Albatrosses spend over five consecutive years at sea before returning to land to breed, sleeping either floating on waves or during sustained gliding.",
-        "fun_fact": "Sailors historically believed that killing an albatross brought catastrophic bad luck, immortalized in The Rime of the Ancient Mariner."
+        "fun_fact": "Old sailors believed that seeing an albatross at sea was a sign of good luck."
       }
     ],
     "versus_candidates": [
@@ -10352,6 +10579,7 @@
     "subtopic_id": "birds",
     "name": "Northern Fulmar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fulmarus glacialis",
       "Foul Gull"
@@ -10397,6 +10625,7 @@
     "subtopic_id": "birds",
     "name": "Herring Gull",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Larus argentatus",
       "Seagull",
@@ -10443,6 +10672,7 @@
     "subtopic_id": "birds",
     "name": "Arctic Tern",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sterna paradisaea",
       "Champion of Migration"
@@ -10473,7 +10703,7 @@
         "claim": "Arctic terns migrate in a direct straight line over continental landmasses.",
         "verdict": "myth",
         "explanation": "Geolocator tracking reveals terns follow massive, winding S-shaped routes across oceans to ride prevailing global wind patterns and feed continuously.",
-        "fun_fact": "Arctic terns fiercely dive-bomb humans and polar bears that approach their ground nests, pecking skulls bloodily."
+        "fun_fact": "Arctic terns bravely swoop down and peck at people or animals that get too close to their nests."
       }
     ],
     "versus_candidates": [
@@ -10488,6 +10718,7 @@
     "subtopic_id": "birds",
     "name": "Atlantic Puffin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Fratercula arctica",
       "Clown of the Sea",
@@ -10534,6 +10765,7 @@
     "subtopic_id": "birds",
     "name": "King Penguin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aptenodytes patagonicus"
     ],
@@ -10578,6 +10810,7 @@
     "subtopic_id": "birds",
     "name": "Gentoo Penguin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pygoscelis papua"
     ],
@@ -10622,6 +10855,7 @@
     "subtopic_id": "birds",
     "name": "Macaroni Penguin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eudyptes chrysolophus",
       "Crested Penguin"
@@ -10667,6 +10901,7 @@
     "subtopic_id": "birds",
     "name": "Emu",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dromaius novaehollandiae"
     ],
@@ -10687,9 +10922,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The Australian military fought an official war against emus in 1932 and lost.",
+        "claim": "Emus are the second-tallest birds in the world, after the ostrich.",
         "verdict": "fact",
-        "explanation": "In the famous 'Great Emu War', soldiers armed with Lewis machine guns failed to curb 20,000 crop-raiding emus, who scattered into small tactical groups.",
+        "explanation": "Emus can stand up to about 1.9 meters tall, making them Australia's tallest native bird.",
         "fun_fact": "Male emus sit on nests for 56 days without food or water, losing one-third of their body weight while caring for chicks."
       },
       {
@@ -10711,6 +10946,7 @@
     "subtopic_id": "birds",
     "name": "Southern Cassowary",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Casuarius casuarius",
       "Double-Wattled Cassowary",
@@ -10757,6 +10993,7 @@
     "subtopic_id": "birds",
     "name": "Greater Rhea",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rhea americana",
       "Nandu",
@@ -10803,6 +11040,7 @@
     "subtopic_id": "birds",
     "name": "Brown Kiwi",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apteryx mantelli",
       "North Island Brown Kiwi"
@@ -10848,10 +11086,10 @@
     "subtopic_id": "birds",
     "name": "Greater Roadrunner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Geococcyx californianus",
-      "Chaparral Cock",
-      "Snake Killer"
+      "Chaparral Cock"
     ],
     "difficulty": 1,
     "visual_anchor": "A sleek, crested roadrunner sprinting across desert gravel with a captured rattlesnake clamped in its sturdy bill.",
@@ -10859,7 +11097,7 @@
       "Fast-running ground cuckoo native to the arid deserts and scrublands of the American Southwest and Mexico",
       "Capable of sprinting on foot at speeds exceeding 32 to 42 km/h (20 to 26 mph)",
       "Long, graduated rudder tail that raises and lowers to balance and steer sharp turns while running",
-      "Famous for killing and eating venomous rattlesnakes by smashing them repeatedly against rocks"
+      "Fast enough to catch lizards, insects, and even rattlesnakes for its meals"
     ],
     "distractor_pool": [
       "American Kestrel",
@@ -10894,6 +11132,7 @@
     "subtopic_id": "birds",
     "name": "Common Cuckoo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cuculus canorus"
     ],
@@ -10914,9 +11153,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "A newly hatched blind cuckoo chick will shove all host bird eggs out of the nest to fall to their death.",
+        "claim": "Cuckoos lay their eggs in other birds' nests so other birds raise their chicks.",
         "verdict": "fact",
-        "explanation": "Hours after hatching, the naked chick uses a hollow depression in its back to push host eggs and siblings over the rim so it monopolizes food.",
+        "explanation": "This is called brood parasitism; the host parents feed the cuckoo chick as if it were their own.",
         "fun_fact": "A single female cuckoo can lay up to 25 eggs per season, each deposited in a different host bird nest in under ten seconds."
       },
       {
@@ -10938,6 +11177,7 @@
     "subtopic_id": "birds",
     "name": "Common Swift",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Apus apus"
     ],
@@ -10982,6 +11222,7 @@
     "subtopic_id": "birds",
     "name": "Common Kingfisher",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eurasian Kingfisher",
       "Alcedo atthis",
@@ -11028,6 +11269,7 @@
     "subtopic_id": "birds",
     "name": "Pileated Woodpecker",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dryocopus pileatus",
       "Lord God Bird"
@@ -11036,7 +11278,7 @@
     "visual_anchor": "A crow-sized pileated woodpecker with a flaming red crest jackhammering rectangular cavities into a giant hemlock trunk.",
     "core_traits": [
       "Largest common woodpecker species in North America, crow-sized with a prominent flaming red pointed crest",
-      "Chisels massive rectangular excavation holes into dead trees to extract carpenter ants and beetle larvae",
+      "Chisels big rectangular holes into old trees to dig out carpenter ants and beetle larvae",
       "Head structure absorbs massive G-forces with spongy bone, shock-absorbing skull joints, and a wrap-around hyoid tongue",
       "Inspiration for the famous cartoon character Woody Woodpecker"
     ],
@@ -11052,7 +11294,7 @@
         "claim": "A woodpecker's long tongue wraps all the way around its brain inside the skull like a seatbelt.",
         "verdict": "fact",
         "explanation": "Its elongated hyoid bone branches into two horns that wrap over the skull and around the brain, cushioning the brain from 1,200 Gs of impact.",
-        "fun_fact": "Pileated woodpecker holes are distinctly rectangular rather than round, often large enough to cause smaller dead trees to snap in storms."
+        "fun_fact": "Pileated woodpecker holes are rectangular rather than round, sometimes big enough to make small old trees snap in storms."
       },
       {
         "claim": "Woodpeckers suffer frequent concussions and brain damage from pecking wood.",
@@ -11073,6 +11315,7 @@
     "subtopic_id": "birds",
     "name": "Great Hornbill",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Buceros bicornis",
       "Concave-Casqued Hornbill",
@@ -11119,6 +11362,7 @@
     "subtopic_id": "birds",
     "name": "Sulphur-Crested Cockatoo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cacatua galerita"
     ],
@@ -11163,6 +11407,7 @@
     "subtopic_id": "birds",
     "name": "Budgerigar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Budgie",
       "Melopsittacus undulatus",
@@ -11209,6 +11454,7 @@
     "subtopic_id": "birds",
     "name": "Peach-Faced Lovebird",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Rosy-Faced Lovebird",
       "Agapornis roseicollis"
@@ -11254,6 +11500,7 @@
     "subtopic_id": "birds",
     "name": "Mourning Dove",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zenaida macroura",
       "Rain Dove",
@@ -11300,6 +11547,7 @@
     "subtopic_id": "birds",
     "name": "Common Raven",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Corvus corax",
       "Northern Raven"
@@ -11345,6 +11593,7 @@
     "subtopic_id": "birds",
     "name": "Eurasian Magpie",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pica pica",
       "Common Magpie"
@@ -11390,6 +11639,7 @@
     "subtopic_id": "birds",
     "name": "Blue Jay",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cyanocitta cristata"
     ],
@@ -11434,6 +11684,7 @@
     "subtopic_id": "birds",
     "name": "Northern Cardinal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cardinalis cardinalis",
       "Redbird"
@@ -11479,6 +11730,7 @@
     "subtopic_id": "birds",
     "name": "American Robin",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Turdus migratorius",
       "Robin Redbreast"
@@ -11506,9 +11758,9 @@
         "fun_fact": "The vibrant blue color of a robin's egg is caused by biliverdin, a bile pigment deposited by the mother onto the shell."
       },
       {
-        "claim": "American robins can become noticeably intoxicated from eating fermented honeysuckle berries.",
+        "claim": "The American robin is the official state bird of three U.S. states.",
         "verdict": "fact",
-        "explanation": "In late winter and spring, robins gorge on fermented berries whose sugars have turned to alcohol, causing them to stumble and lose flight coordination.",
+        "explanation": "Connecticut, Michigan, and Wisconsin all chose the American robin as their state bird.",
         "fun_fact": "Early European settlers named it 'robin' after the European robin because of its red breast, though the two birds belong to different families."
       }
     ],
@@ -11524,6 +11776,7 @@
     "subtopic_id": "insects",
     "name": "Bumblebee",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bombus terrestris",
       "Buff-Tailed Bumblebee",
@@ -11552,9 +11805,9 @@
         "fun_fact": "Bumblebees can buzz-pollinate tomatoes and blueberries by vibrating at 400 Hz, dislodging pollen other bees cannot reach."
       },
       {
-        "claim": "Female bumblebees can sting multiple times without losing their stinger or dying.",
+        "claim": "Female bumblebees can sting more than once without losing their stinger.",
         "verdict": "fact",
-        "explanation": "Unlike honey bees which have barbed stingers that tear out their abdomen, bumblebees have smooth stingers and can sting repeatedly.",
+        "explanation": "Honeybee workers have barbed stingers that can get stuck, but bumblebees have smooth stingers that slide right out.",
         "fun_fact": "Queen bumblebees are the sole survivors of winter, hibernating underground until spring."
       }
     ],
@@ -11570,6 +11823,7 @@
     "subtopic_id": "insects",
     "name": "European Hornet",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vespa crabro"
     ],
@@ -11585,15 +11839,15 @@
       "Yellowjacket Wasp",
       "Bumblebee",
       "Western Honey Bee",
-      "Cicada Killer",
+      "Paper Wasp",
       "Tarantula Hawk Wasp"
     ],
     "facts_and_myths": [
       {
-        "claim": "Three stings from a European hornet can kill an adult human, and seven can kill a horse.",
+        "claim": "European hornets are much more dangerous than honey bees.",
         "verdict": "myth",
-        "explanation": "Ancient European folklore; its venom is actually less toxic than honey bee venom, though it contains acetylcholine causing intense burning pain.",
-        "fun_fact": "European hornets build papery nests out of chewed dead wood mixed with saliva inside hollow tree trunks."
+        "explanation": "Its venom is actually less toxic than honey bee venom, though its sting causes intense burning pain.",
+        "fun_fact": "European hornets build papery nests out of chewed wood mixed with saliva inside hollow tree trunks."
       },
       {
         "claim": "European hornets routinely fly and hunt other insects in complete pitch-black darkness.",
@@ -11614,6 +11868,7 @@
     "subtopic_id": "insects",
     "name": "Yellowjacket Wasp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vespula vulgaris",
       "Common Wasp"
@@ -11659,6 +11914,7 @@
     "subtopic_id": "insects",
     "name": "Black Carpenter Ant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Camponotus pennsylvanicus"
     ],
@@ -11703,6 +11959,7 @@
     "subtopic_id": "insects",
     "name": "Army Ant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Eciton burchellii",
       "Legionary Ant"
@@ -11748,6 +12005,7 @@
     "subtopic_id": "insects",
     "name": "Red Imported Fire Ant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Solenopsis invicta",
       "RIFA",
@@ -11794,6 +12052,7 @@
     "subtopic_id": "insects",
     "name": "Bullet Ant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Paraponera clavata",
       "24-Hour Ant",
@@ -11840,6 +12099,7 @@
     "subtopic_id": "insects",
     "name": "Subterranean Termite",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Reticulitermes flavipes",
       "White Ant"
@@ -11848,7 +12108,7 @@
     "visual_anchor": "A subterranean termite worker with translucent creamy body building protective mud tubes up a concrete foundation.",
     "core_traits": [
       "Eusocial wood-destroying insect living in massive underground colonies of up to two million members",
-      "Possesses symbiotic gut protozoa and bacteria that allow it to digest tough cellulose from dead wood",
+      "Possesses symbiotic gut protozoa and bacteria that allow it to digest tough cellulose from old wood",
       "Builds shelter mud tubes over exposed foundations to travel between soil moisture and wooden structures",
       "Queen can lay thousands of eggs per day and can live for several decades"
     ],
@@ -11885,6 +12145,7 @@
     "subtopic_id": "insects",
     "name": "Eastern Tiger Swallowtail",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Papilio glaucus"
     ],
@@ -11929,6 +12190,7 @@
     "subtopic_id": "insects",
     "name": "Blue Morpho Butterfly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Morpho peleides",
       "Emperor Butterfly"
@@ -11974,6 +12236,7 @@
     "subtopic_id": "insects",
     "name": "Atlas Moth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Attacus atlas",
       "Snake's Head Moth"
@@ -12004,7 +12267,7 @@
         "claim": "Adult Atlas moths consume large quantities of tree leaves and flower nectar during their lives.",
         "verdict": "myth",
         "explanation": "Adults have vestigial mouthparts and cannot feed at all; they live for only one to two weeks purely on energy stored during their caterpillar stage.",
-        "fun_fact": "Female Atlas moths release potent sexual pheromones that males can detect from several kilometers away using feathery antennae."
+        "fun_fact": "With wings up to about 25 centimeters across, the Atlas moth is one of the world's largest moths."
       }
     ],
     "versus_candidates": [
@@ -12019,6 +12282,7 @@
     "subtopic_id": "insects",
     "name": "Luna Moth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Actias luna",
       "American Moon Moth"
@@ -12064,6 +12328,7 @@
     "subtopic_id": "insects",
     "name": "Domestic Silk Moth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bombyx mori",
       "Silkworm"
@@ -12109,6 +12374,7 @@
     "subtopic_id": "insects",
     "name": "Giant Walkingstick",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Megaphasma denticrus",
       "Stick Insect",
@@ -12155,6 +12421,7 @@
     "subtopic_id": "insects",
     "name": "Malayan Leaf Insect",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phyllium bioculatum",
       "Walking Leaf"
@@ -12200,6 +12467,7 @@
     "subtopic_id": "insects",
     "name": "Migratory Locust",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Locusta migratoria",
       "Desert Locust Phase"
@@ -12245,6 +12513,7 @@
     "subtopic_id": "insects",
     "name": "House Cricket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Acheta domesticus"
     ],
@@ -12289,6 +12558,7 @@
     "subtopic_id": "insects",
     "name": "True Katydid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pterophylla camellifolia",
       "Bush Cricket",
@@ -12335,6 +12605,7 @@
     "subtopic_id": "insects",
     "name": "Periodic Cicada",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "17-Year Cicada",
       "Magicicada septendecim",
@@ -12381,6 +12652,7 @@
     "subtopic_id": "insects",
     "name": "Common Green Darner",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anax junius",
       "Darning Needle"
@@ -12408,10 +12680,10 @@
         "fun_fact": "A dragonfly's eyes contain up to 30,000 lenses (ommatidia), providing nearly 360-degree spherical vision."
       },
       {
-        "claim": "Dragonflies can sting humans and sew their eyelids shut while sleeping ('devil's darning needle').",
+        "claim": "Dragonflies can sting people and sew their eyelids shut, as old folk tales say.",
         "verdict": "myth",
         "explanation": "Old folklore; dragonflies have zero stingers and cannot sew anything; they are completely harmless to humans and devour thousands of mosquitoes.",
-        "fun_fact": "Dragonfly nymphs live underwater for years, equipped with a terrifying hinged extendable jaw mask that shoots forward to grab fish."
+        "fun_fact": "Dragonfly babies, called nymphs, live underwater and shoot out a hinged jaw to grab food."
       }
     ],
     "versus_candidates": [
@@ -12426,6 +12698,7 @@
     "subtopic_id": "insects",
     "name": "Ebony Jewelwing",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Calopteryx maculata",
       "Black-Winged Damselfly"
@@ -12471,6 +12744,7 @@
     "subtopic_id": "insects",
     "name": "Burrowing Mayfly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hexagenia limbata",
       "Fishfly",
@@ -12517,6 +12791,7 @@
     "subtopic_id": "insects",
     "name": "Seven-Spotted Ladybug",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coccinella septempunctata",
       "Ladybird Beetle"
@@ -12562,6 +12837,7 @@
     "subtopic_id": "insects",
     "name": "Dung Beetle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scarabaeus sacer",
       "Sacred Scarab",
@@ -12608,6 +12884,7 @@
     "subtopic_id": "insects",
     "name": "Japanese Rhinoceros Beetle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Allomyrina dichotoma",
       "Kabutomushi",
@@ -12654,6 +12931,7 @@
     "subtopic_id": "insects",
     "name": "Hercules Beetle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dynastes hercules"
     ],
@@ -12698,6 +12976,7 @@
     "subtopic_id": "insects",
     "name": "European Stag Beetle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lucanus cervus"
     ],
@@ -12742,6 +13021,7 @@
     "subtopic_id": "insects",
     "name": "Sacred Scarab Beetle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scarabaeus semipunctatus",
       "Egyptian Scarab"
@@ -12769,9 +13049,9 @@
         "fun_fact": "Heart scarab amulets carved from green jasper were buried on the chests of Egyptian mummies to ensure passage into the afterlife."
       },
       {
-        "claim": "Scarab beetles consume blood and flesh by burrowing under human skin like in horror movies.",
+        "claim": "Scarab beetles burrow under people's skin, just like in adventure movies.",
         "verdict": "myth",
-        "explanation": "Popularized by Hollywood films like The Mummy; real scarab beetles are harmless coprophages that eat only animal manure and plant juices.",
+        "explanation": "That idea comes from movies; real scarab beetles are harmless and eat only animal dung.",
         "fun_fact": "The front legs of scarab beetles lack tarsal claws, modified entirely into broad serrated rakes for digging."
       }
     ],
@@ -12787,6 +13067,7 @@
     "subtopic_id": "insects",
     "name": "Boll Weevil",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Anthonomus grandis",
       "Cotton Bandit"
@@ -12832,6 +13113,7 @@
     "subtopic_id": "insects",
     "name": "Housefly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Musca domestica",
       "Common Housefly"
@@ -12859,7 +13141,7 @@
         "fun_fact": "Houseflies constantly rub their front legs together to clean sensory hairs on their feet so they can taste and fly properly."
       },
       {
-        "claim": "Houseflies live for only 24 hours as adults before dying.",
+        "claim": "Houseflies live for only 24 hours as adults.",
         "verdict": "myth",
         "explanation": "Houseflies live for approximately 15 to 30 days under normal summer conditions, laying up to 500 eggs in batches.",
         "fun_fact": "Because flies process visual stimuli at 250 Hz (compared to humans at 60 Hz), human swatters appear to move toward them in slow motion."
@@ -12877,6 +13159,7 @@
     "subtopic_id": "insects",
     "name": "Horsefly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tabanidae",
       "Greenhead",
@@ -12923,6 +13206,7 @@
     "subtopic_id": "insects",
     "name": "Common Fruit Fly",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Drosophila melanogaster",
       "Vinegar Fly"
@@ -12968,6 +13252,7 @@
     "subtopic_id": "insects",
     "name": "Green Peach Aphid",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Myzus persicae",
       "Greenfly",
@@ -13014,6 +13299,7 @@
     "subtopic_id": "insects",
     "name": "Brown Marmorated Stink Bug",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Halyomorpha halys",
       "BMSB",
@@ -13060,6 +13346,7 @@
     "subtopic_id": "insects",
     "name": "Common Water Strider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aquarius remigis",
       "Jesus Bug",
@@ -13107,6 +13394,7 @@
     "subtopic_id": "insects",
     "name": "Arizona Bark Scorpion",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Centruroides sculpturatus"
     ],
@@ -13151,6 +13439,7 @@
     "subtopic_id": "insects",
     "name": "Giant Vinegaroon",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Whip Scorpion",
       "Mastigoproctus giganteus",
@@ -13197,6 +13486,7 @@
     "subtopic_id": "insects",
     "name": "Camel Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Wind Scorpion",
       "Solifugae",
@@ -13208,7 +13498,7 @@
       "Fascinating desert arachnid famous for massive, formidable chelicerae (jaws) making up one-third of its body",
       "Neither a true spider nor a true scorpion; belongs to its own distinct arachnid order Solifugae",
       "Capable of sprinting across desert terrain at high speeds up to 16 km/h (10 mph)",
-      "Completely non-venomous; kills prey purely through powerful mechanical crushing with its shear-like jaws"
+      "Completely non-venomous; catches prey using its powerful, scissor-like jaws"
     ],
     "distractor_pool": [
       "Arizona Bark Scorpion",
@@ -13243,6 +13533,7 @@
     "subtopic_id": "insects",
     "name": "Goliath Birdeater Tarantula",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Theraphosa blondi",
       "Goliath Tarantula"
@@ -13288,6 +13579,7 @@
     "subtopic_id": "insects",
     "name": "Brown Recluse Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Loxosceles reclusa",
       "Fiddleback Spider",
@@ -13334,6 +13626,7 @@
     "subtopic_id": "insects",
     "name": "Carolina Wolf Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hogna carolinensis"
     ],
@@ -13378,6 +13671,7 @@
     "subtopic_id": "insects",
     "name": "Bold Jumping Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phidippus audax",
       "Daring Jumping Spider"
@@ -13423,6 +13717,7 @@
     "subtopic_id": "insects",
     "name": "California Trapdoor Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bothriocyrtum californicum"
     ],
@@ -13467,6 +13762,7 @@
     "subtopic_id": "insects",
     "name": "Golden Silk Orb Weaver",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Banana Spider",
       "Trichonephila clavipes",
@@ -13478,7 +13774,7 @@
       "Large, striking orb-weaving spider renowned for spinning enormous webs made of luminous golden-yellow silk",
       "Webs can span over one meter across with support cables reaching several meters between trees",
       "Golden silk is stronger than steel and Kevlar by weight, possessing incredible elasticity and tensile strength",
-      "Extreme sexual dimorphism: tiny dwarf males are less than one-fifth the size of the giant female"
+      "Females are giants compared to the tiny males, which are less than one-fifth their size"
     ],
     "distractor_pool": [
       "Black Widow Spider",
@@ -13513,6 +13809,7 @@
     "subtopic_id": "insects",
     "name": "Flower Crab Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Misumena vatia",
       "Goldenrod Crab Spider"
@@ -13558,6 +13855,7 @@
     "subtopic_id": "insects",
     "name": "Daddy Longlegs",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Harvestman",
       "Opiliones",
@@ -13604,6 +13902,7 @@
     "subtopic_id": "insects",
     "name": "Giant Desert Centipede",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scolopendra heros",
       "Giant Redheaded Centipede",
@@ -13650,6 +13949,7 @@
     "subtopic_id": "insects",
     "name": "Giant African Millipede",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "African Giant Millipede",
       "Archispirostreptus gigas"
@@ -13695,6 +13995,7 @@
     "subtopic_id": "insects",
     "name": "Trap-Jaw Ant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Odontomachus",
       "Snapping Ant"
@@ -13716,7 +14017,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Trap-jaw ants use their jaw snap exclusively for killing prey.",
+        "claim": "Trap-jaw ants use their jaw snap only for catching food.",
         "verdict": "myth",
         "explanation": "They also snap their jaws against hard ground to catapult themselves meters away from attacking predators.",
         "fun_fact": "Their jaws close at speeds exceeding 140 miles per hour, generating forces 300 times their body weight."
@@ -13740,6 +14041,7 @@
     "subtopic_id": "insects",
     "name": "Leafcutter Ant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atta",
       "Parasol Ant"
@@ -13785,6 +14087,7 @@
     "subtopic_id": "insects",
     "name": "Tarantula Hawk Wasp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pepsis Wasp",
       "Tarantula Hawk"
@@ -13830,6 +14133,7 @@
     "subtopic_id": "insects",
     "name": "Bombardier Beetle",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brachinus",
       "Artillery Beetle"
@@ -13875,6 +14179,7 @@
     "subtopic_id": "insects",
     "name": "Paper Wasp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Polistes",
       "Umbrella Wasp"
@@ -13920,6 +14225,7 @@
     "subtopic_id": "insects",
     "name": "House Centipede",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Scutigera coleoptrata",
       "Long-Legged Centipede"
@@ -13965,6 +14271,7 @@
     "subtopic_id": "insects",
     "name": "Sydney Funnel-Web Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Atrax robustus",
       "Australian Funnel-Web"
@@ -13986,16 +14293,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Sydney funnel-web spider venom is equally deadly to all mammal species.",
+        "claim": "Sydney funnel-web spider venom affects all mammals in the same way.",
         "verdict": "myth",
         "explanation": "Interestingly, cats, dogs, and most mammals are immune, while primates and humans are uniquely susceptible.",
-        "fun_fact": "Since the introduction of a specific antivenom in 1981, zero human deaths have occurred from funnel-web bites."
+        "fun_fact": "A special antivenom made in 1981 has made funnel-web bites much safer to treat."
       },
       {
         "claim": "Male Sydney funnel-web spiders are significantly more venomous than females.",
         "verdict": "fact",
         "explanation": "The male's venom contains roughly six times the toxic potency of the female's due to high delta-atracotoxin concentrations.",
-        "fun_fact": "Males wander extensively through gardens and homes during humid summer nights searching for mates."
+        "fun_fact": "Males often wander into gardens and homes on warm, humid summer nights."
       }
     ],
     "versus_candidates": [
@@ -14010,6 +14317,7 @@
     "subtopic_id": "insects",
     "name": "Brazilian Wandering Spider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Phoneutria",
       "Banana Spider",
@@ -14032,16 +14340,16 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Every bite from a Brazilian wandering spider injects a lethal dose of venom.",
+        "claim": "Every bite from a Brazilian wandering spider is a dangerous one.",
         "verdict": "myth",
         "explanation": "Most defensive bites are dry bites or inject minor amounts of venom, with severe envenomation occurring in fewer than 2 percent of cases.",
-        "fun_fact": "A component of their venom is actively researched as a treatment for human erectile dysfunction."
+        "fun_fact": "Scientists study its venom to learn how it might help create new medicines."
       },
       {
-        "claim": "Its scientific name 'Phoneutria' literally translates to 'murderess'.",
+        "claim": "Brazilian wandering spiders hunt at night instead of catching prey in webs.",
         "verdict": "fact",
-        "explanation": "Derived from ancient Greek 'phoneutria', meaning murderess, referencing its potent neurotoxic venom.",
-        "fun_fact": "Unlike most spiders, they do not hide in burrows; they roam rainforest canopies and forest floors all night."
+        "explanation": "They roam the forest floor after dark, searching for insects and other small animals to catch.",
+        "fun_fact": "When threatened, they raise their front legs high in the air as a warning."
       }
     ],
     "versus_candidates": [
@@ -14056,6 +14364,7 @@
     "subtopic_id": "insects",
     "name": "Wheel Bug",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Arilus cristatus",
       "Cog-Wheel Bug"
@@ -14101,6 +14410,7 @@
     "subtopic_id": "birds",
     "name": "House Sparrow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Passer domesticus",
       "English Sparrow"
@@ -14146,6 +14456,7 @@
     "subtopic_id": "birds",
     "name": "European Starling",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Common Starling",
       "Sturnus vulgaris"
@@ -14191,6 +14502,7 @@
     "subtopic_id": "birds",
     "name": "Barn Swallow",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Hirundo rustica",
       "Fork-Tailed Swallow"
@@ -14236,6 +14548,7 @@
     "subtopic_id": "birds",
     "name": "Goldfinch",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Carduelis carduelis",
       "European Goldfinch"
@@ -14281,6 +14594,7 @@
     "subtopic_id": "birds",
     "name": "Canary",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Domestic Canary",
       "Serinus canaria"
@@ -14326,6 +14640,7 @@
     "subtopic_id": "birds",
     "name": "Laughing Kookaburra",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Dacelo novaeguineae",
       "Bushman's Clock"
@@ -14350,7 +14665,7 @@
         "claim": "Laughing kookaburras catch primarily fish from forest waterways.",
         "verdict": "myth",
         "explanation": "Despite being kingfishers, they are dry woodland carnivores preying on snakes, lizards, insects, and small rodents.",
-        "fun_fact": "They kill venomous snakes by grabbing them behind the head and bashing them against tree branches."
+        "fun_fact": "Kookaburras are brave enough to catch snakes, gripping them behind the head with their strong beaks."
       },
       {
         "claim": "Hollywood jungle sound effects frequently use kookaburra vocalizations.",
@@ -14371,6 +14686,7 @@
     "subtopic_id": "birds",
     "name": "Shoebill",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Balaeniceps rex",
       "Whalehead",
@@ -14382,7 +14698,7 @@
       "Massive shoe-shaped bill ending in a sharp hooked nail",
       "Towering stature standing up to five feet tall in African swamps",
       "Statuesque stillness waiting motionless for hours to ambush lungfish",
-      "Produces machine-gun-like bill clattering displays"
+      "Clatters its bill loudly, making a rapid sound like a drumroll"
     ],
     "distractor_pool": [
       "Storks",
@@ -14399,9 +14715,9 @@
         "fun_fact": "Its bill can reach 9 inches long and nearly 5 inches wide, the third-longest bird beak in the world."
       },
       {
-        "claim": "Shoebills make acoustic sounds resembling rapid gunfire.",
+        "claim": "Shoebills make loud, rapid clattering sounds with their bills.",
         "verdict": "fact",
-        "explanation": "Adults clatter their upper and lower mandibles together loudly during courtship, creating explosive sounds like automatic rifle fire.",
+        "explanation": "Adults clap their upper and lower bill together loudly to greet each other at the nest, making a sound like a fast drumroll.",
         "fun_fact": "They can remain completely motionless for hours without blinking to ambush passing lungfish."
       }
     ],
@@ -14417,6 +14733,7 @@
     "subtopic_id": "birds",
     "name": "Secretarybird",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Sagittarius serpentarius",
       "Secretary Bird"
@@ -14425,7 +14742,7 @@
     "visual_anchor": "A vertical savannah view of a tall crane-legged raptor with grey plumage, black flight feathers, and a crest of quill-like head plumes walking through tall dry grass.",
     "core_traits": [
       "Tall terrestrial bird of prey with crane-like legs",
-      "Kills venomous snakes by delivering lightning-fast lethal kicks",
+      "Catches snakes with lightning-fast, powerful kicks",
       "Prominent quill-like black crest plumes projecting behind the head",
       "Inhabits open grasslands and savannas of sub-Saharan Africa"
     ],
@@ -14438,7 +14755,7 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "Secretarybirds kill their prey by swooping from the sky like typical eagles.",
+        "claim": "Secretarybirds catch their prey by swooping from the sky like typical eagles.",
         "verdict": "myth",
         "explanation": "They are terrestrial hunters that walk up to 20 miles a day, stomping prey on the ground with their powerful clawed feet.",
         "fun_fact": "A kick from a secretarybird lands in just 15 milliseconds with a force five times its body weight."
@@ -14462,6 +14779,7 @@
     "subtopic_id": "birds",
     "name": "Black Swan",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cygnus atratus"
     ],
@@ -14506,6 +14824,7 @@
     "subtopic_id": "birds",
     "name": "Helmeted Guineafowl",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Guineafowl",
       "Numida meleagris"
@@ -14551,6 +14870,7 @@
     "subtopic_id": "marine_life",
     "name": "Spotted Eagle Ray",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aetobatus narinari",
       "Bonnet Skate"
@@ -14596,6 +14916,7 @@
     "subtopic_id": "marine_life",
     "name": "Japanese Spider Crab",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Macrocheira kaempferi",
       "Giant Spider Crab"
@@ -14619,7 +14940,7 @@
       {
         "claim": "Japanese spider crabs are aggressive predators that hunt scuba divers.",
         "verdict": "myth",
-        "explanation": "They are placid, slow-moving bottom scavengers living hundreds of meters deep, feeding on dead fish and rotting debris.",
+        "explanation": "They are calm, slow-moving bottom scavengers living hundreds of meters deep, eating leftover fish and ocean scraps.",
         "fun_fact": "Young crabs decorate their carapaces with sponges and kelp to camouflage from predators."
       },
       {
@@ -14641,6 +14962,7 @@
     "subtopic_id": "marine_life",
     "name": "Peacock Mantis Shrimp",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Odontodactylus scyllarus",
       "Harlequin Mantis Shrimp"
@@ -14654,7 +14976,7 @@
       "Creates superheated cavitation bubbles with each high-speed strike"
     ],
     "distractor_pool": [
-      "Pistol Shrimp",
+      "Snapping Shrimp",
       "Lobsters",
       "Crabs",
       "Hermit Crabs",
@@ -14686,6 +15008,7 @@
     "subtopic_id": "marine_life",
     "name": "Spiny Lobster",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Panulirus argus",
       "Rock Lobster",
@@ -14732,6 +15055,7 @@
     "subtopic_id": "marine_life",
     "name": "Blobfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Psychrolutes marcidus",
       "Smooth-Head Blobfish"
@@ -14777,6 +15101,7 @@
     "subtopic_id": "marine_life",
     "name": "Blue Dragon Sea Slug",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glaucus atlanticus",
       "Blue Glaucus",
@@ -14823,6 +15148,7 @@
     "subtopic_id": "marine_life",
     "name": "Giant Isopod",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bathynomus giganteus",
       "Sea Pillbug"
@@ -14833,7 +15159,7 @@
       "Deep-sea gigantism example of the common pill bug family",
       "Heavy segmented chitinous exoskeleton that can roll into a defensive ball",
       "Large compound eyes containing nearly 4,000 individual facets",
-      "Benthic scavenger surviving on abyssal food falls like dead whales"
+      "Deep-sea cleanup crew that feeds on leftover food sinking down to the ocean floor"
     ],
     "distractor_pool": [
       "Crabs",
@@ -14846,7 +15172,7 @@
       {
         "claim": "Giant isopods are active deep-sea hunters that chase swimming fish.",
         "verdict": "myth",
-        "explanation": "They are slow-moving benthic scavengers that gorge on dead animal carcasses sinking to the seafloor from above.",
+        "explanation": "They are slow-moving seafloor scavengers that feast on leftover food sinking down from the ocean above.",
         "fun_fact": "In aquariums, giant isopods have survived for up to five years without eating a single bite of food."
       },
       {
@@ -14868,6 +15194,7 @@
     "subtopic_id": "marine_life",
     "name": "Dumbo Octopus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Grimpoteuthis",
       "Flapjack Octopus"
@@ -14913,6 +15240,7 @@
     "subtopic_id": "marine_life",
     "name": "Gulper Eel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pelican Eel",
       "Eurypharynx pelecanoides"
@@ -14958,6 +15286,7 @@
     "subtopic_id": "marine_life",
     "name": "Giant Oarfish",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Regalecus glesne",
       "King of Herrings",
@@ -15004,6 +15333,7 @@
     "subtopic_id": "mammals",
     "name": "Common Wombat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vombatus ursinus",
       "Bare-Nosed Wombat"
@@ -15049,6 +15379,7 @@
     "subtopic_id": "mammals",
     "name": "Quokka",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Setonix brachyurus",
       "Short-Tailed Pademelon"
@@ -15094,6 +15425,7 @@
     "subtopic_id": "mammals",
     "name": "Sugar Glider",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Petaurus breviceps",
       "Sugar Squirrel"
@@ -15139,6 +15471,7 @@
     "subtopic_id": "mammals",
     "name": "Thylacine",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Tasmanian Tiger",
       "Tasmanian Wolf",
@@ -15164,12 +15497,12 @@
         "claim": "The thylacine was a true wild canine closely related to grey wolves.",
         "verdict": "myth",
         "explanation": "It was a marsupial with a pouch; its wolf-like appearance is one of the most famous examples of convergent evolution in history.",
-        "fun_fact": "Both male and female thylacines had abdominal pouches; males used theirs to protect reproductive organs while running."
+        "fun_fact": "Both male and female thylacines had pouches, which is rare among marsupials."
       },
       {
-        "claim": "The last known living thylacine died in a Hobart zoo in 1936.",
+        "claim": "The last known thylacine lived in a zoo in Hobart, Tasmania, until 1936.",
         "verdict": "fact",
-        "explanation": "The last captive individual, named Benjamin, died of suspected exposure on September 7, 1936, at Beaumaris Zoo.",
+        "explanation": "The last one, often called Benjamin, lived at Beaumaris Zoo until September 7, 1936; the species is now extinct.",
         "fun_fact": "September 7 is commemorated annually in Australia as National Threatened Species Day."
       }
     ],
@@ -15185,6 +15518,7 @@
     "subtopic_id": "mammals",
     "name": "Red Kangaroo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Osphranter rufus",
       "Big Red"
@@ -15230,6 +15564,7 @@
     "subtopic_id": "mammals",
     "name": "Common Spotted Cuscus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Spilocuscus maculatus",
       "Spotted Cuscus"
@@ -15238,7 +15573,7 @@
     "visual_anchor": "A vertical canopy view of a slow-moving arboreal marsupial with dense creamy-white fur blotched with chocolate spots, gripping a branch with its bare tail tip.",
     "core_traits": [
       "Creamy white coat covered in irregular brown blotches in males",
-      "Strong prehensile tail with a naked, scaly gripping tip",
+      "Strong prehensile tail with a bare, scaly gripping tip",
       "Round face with tiny ears, bright yellow eyes, and vertical pupils",
       "Arboreal nocturnal marsupial native to New Guinea and northern Australia"
     ],
@@ -15275,6 +15610,7 @@
     "subtopic_id": "mammals",
     "name": "Proboscis Monkey",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Nasalis larvatus",
       "Long-Nosed Monkey"
@@ -15320,6 +15656,7 @@
     "subtopic_id": "mammals",
     "name": "Aye-Aye",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Daubentonia madagascariensis"
     ],
@@ -15364,6 +15701,7 @@
     "subtopic_id": "mammals",
     "name": "Sloth Bear",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Melursus ursinus",
       "Labiated Bear"
@@ -15409,6 +15747,7 @@
     "subtopic_id": "mammals",
     "name": "Sun Bear",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Helarctos malayanus",
       "Malayan Sun Bear",

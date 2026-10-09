@@ -51,7 +51,7 @@ export function framingRules(
     ].join("\n");
   }
 
-  if (layoutId === "verdict_true_false") {
+  if (layoutId === "verdict_yes_no") {
     return [
       "Output aspect ratio: 4:3.",
       "Create one large, clearly recognizable subject with a complete silhouette.",

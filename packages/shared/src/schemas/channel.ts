@@ -10,6 +10,7 @@ import {
   QuizThinkingBarStyleSchema,
   QuizVisualThemeSchema,
   QuizLayoutIdSchema,
+  acceptLegacyVerdictAliases,
 } from "../enums.js";
 import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./common.js";
 import { ChannelMascotConfigSchema } from "./mascot.js";
@@ -18,6 +19,10 @@ import { TopicSourceBindingSetSchema } from "./topicSourceBinding.js";
 import { QuizGameplayIdSchema } from "../quizGameplaySchema.js";
 import { BridgeSceneConfigSchema } from "./quiz/bridgeScenes.js";
 import { MotionTemplateOptionsSchema } from "../motionTemplates/index.js";
+
+export const QUIZ_CONFIG_FORMATS = ["knowledge", "image_guess", "multiple_choice", "yes_no", "odd_one_out"] as const;
+export const QuizConfigFormatSchema = acceptLegacyVerdictAliases(z.enum(QUIZ_CONFIG_FORMATS));
+export type QuizConfigFormat = z.infer<typeof QuizConfigFormatSchema>;
 
 export const ChannelSchema = z
   .object({
@@ -80,7 +85,7 @@ const TopicCandidateBaseSchema = z.object({
 
 export const EpisodeTopicCandidateSchema = TopicCandidateBaseSchema.extend({
   content_kind: z.literal("episode"),
-  quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "yes_no", "true_false", "odd_one_out"]).default("knowledge"),
+  quiz_format: QuizConfigFormatSchema.default("knowledge"),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).default(8),
   age_band: z.enum(["4-6", "7-9", "10-12", "family"]).default("7-9"),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).default("mixed"),
@@ -94,7 +99,7 @@ export const ShortReelTopicCandidateSchema = TopicCandidateBaseSchema.extend({
   content_kind: z.literal("short_reel"),
   question_count: z.literal(1).default(1),
   aspect_ratio: z.literal("9:16").default("9:16"),
-  archetype: z.enum(["versus_faceoff", "deep_trivia", "verdict_yes_no", "verdict_true_false"]),
+  archetype: acceptLegacyVerdictAliases(z.enum(["versus_faceoff", "deep_trivia", "verdict_yes_no"])),
 });
 
 export type ShortReelTopicCandidate = z.infer<typeof ShortReelTopicCandidateSchema>;
@@ -153,7 +158,7 @@ export type MascotStyleSelection = z.infer<typeof MascotStyleSelectionSchema>;
 
 export const QuizConfigSchema = z.object({
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).default(8),
-  quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "yes_no", "true_false", "odd_one_out"]).default("knowledge"),
+  quiz_format: QuizConfigFormatSchema.default("knowledge"),
   age_band: z.enum(["4-6", "7-9", "10-12", "family"]).default("7-9"),
   answer_mode: z.enum(["voice_and_reveal", "voice_only"]).default("voice_and_reveal"),
   visual_theme: QuizVisualThemeSchema.default("candy_arcade"),

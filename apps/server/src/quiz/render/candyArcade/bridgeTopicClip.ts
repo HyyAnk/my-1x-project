@@ -69,11 +69,8 @@ function renderShowcaseItemsHtml(
       ? `<img src="${esc(rawSrc)}" alt="${esc(item.subject)}" loading="eager" />`
       : `<span class="bridge-item-placeholder" aria-label="${esc(item.subject)}">${esc(item.subject)}</span>`;
 
-    const captionHtml = item.caption
-      ? `<span class="bridge-item-caption">${esc(item.caption)}</span>`
-      : "";
-
-    return `<div class="bridge-showcase-item item-${itemIndex}" data-asset-id="${esc(item.asset_id)}">${imgTag}${captionHtml}</div>`;
+    // item.caption is an internal asset-planning category (e.g. "Artifact", "Creature") and must never reach viewers.
+    return `<div class="bridge-showcase-item item-${itemIndex}" data-asset-id="${esc(item.asset_id)}">${imgTag}</div>`;
   }).join("");
 
   return `<div class="bridge-showcase-row" data-count="${Math.min(items.length, 4)}">${itemsHtml}</div>`;

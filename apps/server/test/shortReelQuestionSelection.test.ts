@@ -89,7 +89,7 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
           why_it_fits: "Educational debunking",
           hook: "Is space completely silent?",
           estimated_potential: "High",
-          archetype: "verdict_true_false",
+          archetype: "verdict_yes_no",
           domain_id: "space_earth",
         },
         {
@@ -125,7 +125,7 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
           why_it_fits: "Fast debunking",
           hook: "Does the moon have gravity?",
           estimated_potential: "Viral",
-          archetype: "verdict_true_false",
+          archetype: "verdict_yes_no",
           domain_id: "space_earth",
         },
         {
@@ -184,7 +184,7 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
         expect(parsedReel.data.content_kind).toBe("short_reel");
         expect(parsedReel.data.aspect_ratio).toBe("9:16");
         expect(parsedReel.data.question_count).toBe(1);
-        expect(["versus_faceoff", "deep_trivia", "verdict_true_false"]).toContain(parsedReel.data.archetype);
+        expect(["versus_faceoff", "deep_trivia", "verdict_yes_no"]).toContain(parsedReel.data.archetype);
       }
     }
   });
@@ -197,11 +197,11 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
       candidates: [
         { title: "Topic 1", premise: "P1", why_it_fits: "W1", hook: "H1", archetype: "deep_trivia", estimated_potential: "High" },
         { title: "Topic 2", premise: "P2", why_it_fits: "W2", hook: "H2", archetype: "mystery_reveal", estimated_potential: "High" },
-        { title: "Topic 3", premise: "P3", why_it_fits: "W3", hook: "H3", archetype: "verdict_true_false", estimated_potential: "High" },
+        { title: "Topic 3", premise: "P3", why_it_fits: "W3", hook: "H3", archetype: "verdict_yes_no", estimated_potential: "High" },
         { title: "Topic 4", premise: "P4", why_it_fits: "W4", hook: "H4", archetype: "speed_blitz", estimated_potential: "High" },
         { title: "Topic 5", premise: "P5", why_it_fits: "W5", hook: "H5", archetype: "versus_faceoff", estimated_potential: "High" },
         { title: "Topic 6", premise: "P6", why_it_fits: "W6", hook: "H6", archetype: "deep_trivia", estimated_potential: "High" },
-        { title: "Topic 7", premise: "P7", why_it_fits: "W7", hook: "H7", archetype: "verdict_true_false", estimated_potential: "High" },
+        { title: "Topic 7", premise: "P7", why_it_fits: "W7", hook: "H7", archetype: "verdict_yes_no", estimated_potential: "High" },
         { title: "Topic 8", premise: "P8", why_it_fits: "W8", hook: "H8", archetype: "versus_faceoff", estimated_potential: "High" },
       ],
     });

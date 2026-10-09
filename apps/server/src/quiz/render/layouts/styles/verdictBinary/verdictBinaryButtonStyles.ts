@@ -1,9 +1,9 @@
 /**
- * Skin-aware binary verdict button styling and typography for Verdict layouts (Yes/No and True/False).
+ * Skin-aware binary verdict button styling and typography for Verdict layouts (Yes/No).
  * Preserves 100% backward-compatible 3D arcade styling for glossy_arcade while
  * providing distinct, rich visual identities for all other answer card skins.
  */
-export function verdictBinaryButtonStyles(layoutClass = "layout-verdict_true_false"): string {
+export function verdictBinaryButtonStyles(layoutClass = "layout-verdict_yes_no"): string {
   return `
 /* Oversized Pill Button Capsule Geometry */
 .${layoutClass} .choice-card,

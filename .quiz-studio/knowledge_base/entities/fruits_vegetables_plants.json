@@ -1,0 +1,2476 @@
+[
+  {
+    "id": "ENT-PLT-001",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Apple (Fruit)",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Red Apple",
+      "Green Apple"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shiny red apple with a green leaf on its stem, resting on a wooden table beside a basket of more apples, bright morning light, 9:16 vertical shot.",
+    "core_traits": [
+      "Round, crunchy fruit that can be red, green or yellow",
+      "Grows on trees in orchards and is picked in autumn",
+      "Has a core with small brown seeds in the middle",
+      "Belongs to the rose family of plants"
+    ],
+    "distractor_pool": [
+      "Pear",
+      "Peach",
+      "Plum",
+      "Quince",
+      "Nectarine"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Apples float in water.",
+        "verdict": "fact",
+        "explanation": "About a quarter of an apple is air, which makes it light enough to float.",
+        "fun_fact": "There are more than 7,500 different kinds of apples grown around the world."
+      },
+      {
+        "claim": "Swallowing an apple seed makes an apple tree grow in your tummy.",
+        "verdict": "myth",
+        "explanation": "Seeds need soil, sunlight and time to sprout. A swallowed seed simply passes through your body.",
+        "fun_fact": "Apple trees grow from seeds, but farmers usually grow new ones by joining branches onto roots."
+      }
+    ],
+    "versus_candidates": [
+      "Banana",
+      "Orange",
+      "Pear"
+    ]
+  },
+  {
+    "id": "ENT-PLT-002",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Banana",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A bright yellow bunch of bananas hanging from a big green banana plant in a sunny tropical garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Long, curved yellow fruit that you peel before eating",
+      "Grows in big hanging bunches called hands",
+      "Turns from green to yellow to brown-speckled as it ripens",
+      "Botanists actually call it a berry"
+    ],
+    "distractor_pool": [
+      "Plantain",
+      "Mango",
+      "Papaya",
+      "Pineapple",
+      "Jackfruit"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A banana is a kind of berry.",
+        "verdict": "fact",
+        "explanation": "Botanists call a fruit a berry when it grows from one flower and has seeds inside. Bananas fit that rule.",
+        "fun_fact": "Bananas curve because they grow upward toward the sunlight."
+      },
+      {
+        "claim": "Bananas grow on tall wooden trees.",
+        "verdict": "myth",
+        "explanation": "The banana plant is a giant herb. Its trunk is made of tightly rolled leaves, not wood.",
+        "fun_fact": "A banana plant can grow taller than a grown-up in less than a year."
+      }
+    ],
+    "versus_candidates": [
+      "Apple (Fruit)",
+      "Mango",
+      "Plantain"
+    ]
+  },
+  {
+    "id": "ENT-PLT-003",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Strawberry",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Plump red strawberries with green leafy tops growing on a low plant in a sunny garden patch, close-up, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, sweet, heart-shaped red fruit",
+      "Has a leafy green cap on top",
+      "Tiny yellow seeds dot its outside",
+      "Grows on low plants that send out runners"
+    ],
+    "distractor_pool": [
+      "Raspberry",
+      "Cherry",
+      "Blackberry",
+      "Cranberry",
+      "Red Currant"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "One strawberry carries about 200 tiny seeds on its outside.",
+        "verdict": "fact",
+        "explanation": "Those little yellow specks on the skin are the seeds, and an average strawberry has around 200.",
+        "fun_fact": "Strawberry plants spread by sending out runners that grow brand-new baby plants."
+      },
+      {
+        "claim": "Strawberries are true berries.",
+        "verdict": "myth",
+        "explanation": "Botanists do not count strawberries as berries, because their seeds sit on the outside.",
+        "fun_fact": "Each little seed on a strawberry is actually a tiny fruit of its own."
+      }
+    ],
+    "versus_candidates": [
+      "Blueberry",
+      "Cherry",
+      "Raspberry"
+    ]
+  },
+  {
+    "id": "ENT-PLT-004",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Watermelon",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A big striped green watermelon cut open to show its juicy red inside and black seeds, on a picnic blanket in summer sunshine, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge fruit with a green striped rind",
+      "Juicy red or pink inside with black seeds",
+      "A favorite cool snack on hot summer days",
+      "Belongs to the same plant family as cucumbers and pumpkins"
+    ],
+    "distractor_pool": [
+      "Cantaloupe",
+      "Honeydew Melon",
+      "Pumpkin",
+      "Papaya",
+      "Pomelo"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A watermelon is about 92 percent water.",
+        "verdict": "fact",
+        "explanation": "Most of a watermelon is water, which is why it tastes so juicy and refreshing.",
+        "fun_fact": "In Japan, some farmers grow cube-shaped watermelons inside square boxes."
+      },
+      {
+        "claim": "Swallowing watermelon seeds makes a watermelon grow in your stomach.",
+        "verdict": "myth",
+        "explanation": "Seeds cannot sprout inside your body. They just pass through without growing.",
+        "fun_fact": "Some watermelons have yellow flesh instead of red."
+      }
+    ],
+    "versus_candidates": [
+      "Pumpkin",
+      "Cantaloupe",
+      "Pineapple"
+    ]
+  },
+  {
+    "id": "ENT-PLT-005",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Mango",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Ripe mangoes glowing yellow, orange and red hanging from a leafy mango tree in a sunny tropical orchard, 9:16 vertical shot.",
+    "core_traits": [
+      "Sweet tropical fruit with juicy orange-yellow flesh",
+      "Has one big flat seed in the middle",
+      "Grows on tall evergreen trees in warm countries",
+      "The national fruit of India"
+    ],
+    "distractor_pool": [
+      "Papaya",
+      "Peach",
+      "Apricot",
+      "Passion Fruit",
+      "Guava"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mangoes are related to cashews and pistachios.",
+        "verdict": "fact",
+        "explanation": "All three come from plants in the same family, called the cashew family.",
+        "fun_fact": "Mango trees can keep growing fruit for more than 100 years."
+      },
+      {
+        "claim": "A ripe mango always has red skin.",
+        "verdict": "myth",
+        "explanation": "Many ripe mangoes stay green or yellow. A gentle squeeze and a sweet smell show ripeness better.",
+        "fun_fact": "There are hundreds of kinds of mangoes grown around the world."
+      }
+    ],
+    "versus_candidates": [
+      "Pineapple",
+      "Papaya",
+      "Banana"
+    ]
+  },
+  {
+    "id": "ENT-PLT-006",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Pineapple",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Ananas"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A golden pineapple with a spiky green crown growing in the middle of a low leafy plant on a sunny farm, 9:16 vertical shot.",
+    "core_traits": [
+      "Tropical fruit with rough, scaly golden skin",
+      "Wears a spiky crown of green leaves",
+      "Grows from the middle of a low plant on the ground",
+      "Is really many small fruits joined together"
+    ],
+    "distractor_pool": [
+      "Mango",
+      "Papaya",
+      "Jackfruit",
+      "Durian",
+      "Coconut"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A pineapple takes about two years to grow.",
+        "verdict": "fact",
+        "explanation": "A pineapple plant usually needs around 18 months to two years to grow one fruit.",
+        "fun_fact": "You can grow a new pineapple plant from the leafy top of one."
+      },
+      {
+        "claim": "Pineapples grow high up on trees.",
+        "verdict": "myth",
+        "explanation": "Each pineapple grows from the center of a short, spiky plant close to the ground.",
+        "fun_fact": "Pineapple has a natural helper called bromelain that can make your tongue tingle."
+      }
+    ],
+    "versus_candidates": [
+      "Coconut",
+      "Mango",
+      "Watermelon"
+    ]
+  },
+  {
+    "id": "ENT-PLT-007",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Orange",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sweet Orange"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Bright round oranges hanging among glossy green leaves and white blossoms on an orange tree, sunny blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Round citrus fruit with a bumpy, peelable skin",
+      "Inside is split into juicy segments",
+      "Famous for vitamin C and fresh juice",
+      "Shares its name with a color"
+    ],
+    "distractor_pool": [
+      "Tangerine",
+      "Grapefruit",
+      "Lemon",
+      "Lime",
+      "Pomelo"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The color orange was named after the fruit.",
+        "verdict": "fact",
+        "explanation": "People named the fruit first. Later, the word was also used for its bright color.",
+        "fun_fact": "Orange trees can have sweet-smelling flowers and ripe fruit at the same time."
+      },
+      {
+        "claim": "A ripe orange always has orange skin.",
+        "verdict": "myth",
+        "explanation": "In warm tropical places, ripe oranges often stay green because cool nights help the orange color appear.",
+        "fun_fact": "Most oranges have about ten segments inside."
+      }
+    ],
+    "versus_candidates": [
+      "Apple (Fruit)",
+      "Lemon",
+      "Grapefruit"
+    ]
+  },
+  {
+    "id": "ENT-PLT-008",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Grapes",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Grape"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Clusters of plump purple and green grapes hanging from a leafy vine in a sunny countryside vineyard, 9:16 vertical shot.",
+    "core_traits": [
+      "Small round fruits that grow in bunches",
+      "Can be green, red or dark purple",
+      "Grow on climbing vines",
+      "Become raisins when they are dried"
+    ],
+    "distractor_pool": [
+      "Blueberry",
+      "Cherry",
+      "Gooseberry",
+      "Olive",
+      "Lychee"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Raisins are dried grapes.",
+        "verdict": "fact",
+        "explanation": "When grapes dry in the sun or in machines, they shrink and turn into sweet, chewy raisins.",
+        "fun_fact": "Grapevines climb by wrapping curly tendrils around anything they can reach."
+      },
+      {
+        "claim": "Grapes are a healthy snack for dogs.",
+        "verdict": "myth",
+        "explanation": "Grapes and raisins can make dogs very sick. Keep them away from pets and ask an adult about pet treats.",
+        "fun_fact": "Some grapes are grown to be seedless, so you can eat them whole."
+      }
+    ],
+    "versus_candidates": [
+      "Blueberry",
+      "Cherry",
+      "Strawberry"
+    ]
+  },
+  {
+    "id": "ENT-PLT-009",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Cherry",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sweet Cherry"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Pairs of glossy dark red cherries on long green stems hanging from a leafy branch in a sunny orchard, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, round, shiny red fruit",
+      "Often hangs in pairs on long thin stems",
+      "Has one hard stone in the middle that you should not eat",
+      "A stone fruit related to plums and peaches"
+    ],
+    "distractor_pool": [
+      "Plum",
+      "Cranberry",
+      "Lychee",
+      "Red Currant",
+      "Grapes"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cherries are closely related to plums and peaches.",
+        "verdict": "fact",
+        "explanation": "They are all stone fruits, with soft flesh around one hard pit, and grow on related trees.",
+        "fun_fact": "Traverse City in Michigan calls itself the Cherry Capital of the World."
+      },
+      {
+        "claim": "Every cherry blossom tree grows tasty cherries.",
+        "verdict": "myth",
+        "explanation": "Many cherry blossom trees are grown just for flowers and make tiny sour fruit or none at all.",
+        "fun_fact": "Sweet cherries and sour cherries come from two different kinds of cherry trees."
+      }
+    ],
+    "versus_candidates": [
+      "Strawberry",
+      "Grapes",
+      "Blueberry"
+    ]
+  },
+  {
+    "id": "ENT-PLT-010",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Kiwi Fruit",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Kiwifruit",
+      "Chinese Gooseberry"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A fuzzy brown kiwi fruit cut in half showing bright green flesh, a ring of tiny black seeds and a pale center, on a white plate, 9:16 vertical shot.",
+    "core_traits": [
+      "Small oval fruit with fuzzy brown skin",
+      "Bright green inside with tiny black seeds",
+      "Grows on climbing woody vines",
+      "Shares its name with a famous New Zealand bird"
+    ],
+    "distractor_pool": [
+      "Passion Fruit",
+      "Guava",
+      "Feijoa",
+      "Gooseberry",
+      "Lime"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "This fruit was named after the kiwi bird.",
+        "verdict": "fact",
+        "explanation": "Farmers in New Zealand gave it the name because its small, fuzzy brown shape looks like the bird.",
+        "fun_fact": "The fuzzy skin of a kiwi fruit is safe to eat after it is washed."
+      },
+      {
+        "claim": "Kiwi fruit first came from New Zealand.",
+        "verdict": "myth",
+        "explanation": "The fruit is originally from China. New Zealand made it famous around the world.",
+        "fun_fact": "Golden kiwi fruits have smooth skin and yellow flesh."
+      }
+    ],
+    "versus_candidates": [
+      "Dragon Fruit",
+      "Lychee",
+      "Strawberry"
+    ]
+  },
+  {
+    "id": "ENT-PLT-011",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Dragon Fruit",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Pitaya",
+      "Pitahaya"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A bright pink dragon fruit with green-tipped scales, cut open to show white flesh with tiny black seeds, on a sunny tropical market table, 9:16 vertical shot.",
+    "core_traits": [
+      "Hot pink fruit with green flame-like scales",
+      "White or red inside with many tiny black seeds",
+      "Grows on a climbing cactus",
+      "Its large flowers bloom only at night"
+    ],
+    "distractor_pool": [
+      "Lychee",
+      "Rambutan",
+      "Passion Fruit",
+      "Star Fruit",
+      "Pomegranate"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dragon fruit grows on a cactus.",
+        "verdict": "fact",
+        "explanation": "It comes from a climbing cactus that clings to walls, posts and trees.",
+        "fun_fact": "Dragon fruit flowers open at night and usually close by the next morning."
+      },
+      {
+        "claim": "Dragon fruit first came from Asia.",
+        "verdict": "myth",
+        "explanation": "It is native to Central and South America. Today it is also widely grown in Southeast Asia.",
+        "fun_fact": "Some dragon fruits have bright magenta flesh instead of white."
+      }
+    ],
+    "versus_candidates": [
+      "Kiwi Fruit",
+      "Pomegranate",
+      "Lychee"
+    ]
+  },
+  {
+    "id": "ENT-PLT-012",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Durian",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "King of Fruits"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A large spiky green-brown durian split open to show creamy yellow pods inside, on a colorful Southeast Asian fruit stall, 9:16 vertical shot.",
+    "core_traits": [
+      "Big fruit covered in sharp, thorny spikes",
+      "Creamy yellow flesh inside",
+      "Famous for its very strong smell",
+      "Called the King of Fruits in Southeast Asia"
+    ],
+    "distractor_pool": [
+      "Jackfruit",
+      "Breadfruit",
+      "Soursop",
+      "Pineapple",
+      "Rambutan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Durian is not allowed on Singapore's trains because of its smell.",
+        "verdict": "fact",
+        "explanation": "Its smell is so strong that signs on Singapore's trains show durian is not allowed.",
+        "fun_fact": "Some people say durian smells stinky but tastes like sweet custard."
+      },
+      {
+        "claim": "Durian and jackfruit are the same fruit.",
+        "verdict": "myth",
+        "explanation": "They look a bit alike, but they grow on different trees from different plant families.",
+        "fun_fact": "Durian spikes are so sharp that people often wear gloves to carry one."
+      }
+    ],
+    "versus_candidates": [
+      "Pineapple",
+      "Coconut",
+      "Watermelon"
+    ]
+  },
+  {
+    "id": "ENT-PLT-013",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Coconut",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Green coconuts clustered high up in a tall palm tree against a blue sky over a sandy tropical beach, 9:16 vertical shot.",
+    "core_traits": [
+      "Big round fruit with a hard, hairy brown shell",
+      "Has white flesh and clear water inside",
+      "Grows high up on palm trees near beaches",
+      "Can float across the ocean to new islands"
+    ],
+    "distractor_pool": [
+      "Walnut",
+      "Brazil Nut",
+      "Durian",
+      "Breadfruit",
+      "Macadamia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Coconuts can float across the ocean and grow on new islands.",
+        "verdict": "fact",
+        "explanation": "Their thick, airy husk keeps them afloat, so waves can carry them to faraway beaches.",
+        "fun_fact": "A coconut has three little round eyes at one end."
+      },
+      {
+        "claim": "Coconut water and coconut milk are the same thing.",
+        "verdict": "myth",
+        "explanation": "Coconut water is the clear liquid inside. Coconut milk is made by squeezing grated white flesh with water.",
+        "fun_fact": "Despite its name, a coconut is not a true nut."
+      }
+    ],
+    "versus_candidates": [
+      "Pineapple",
+      "Durian",
+      "Mango"
+    ]
+  },
+  {
+    "id": "ENT-PLT-014",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Lychee",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Litchi"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A bunch of bumpy pinkish-red lychees, one peeled to show pearly white flesh, on a bamboo tray in soft daylight, 9:16 vertical shot.",
+    "core_traits": [
+      "Small round fruit with bumpy pink-red skin",
+      "Pearly white, juicy flesh inside",
+      "Has one shiny brown seed in the middle",
+      "Originally grown in southern China"
+    ],
+    "distractor_pool": [
+      "Rambutan",
+      "Longan",
+      "Mangosteen",
+      "Grapes",
+      "Cherry"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Lychees are related to rambutans and longans.",
+        "verdict": "fact",
+        "explanation": "All three belong to the same plant family and have sweet white flesh around one seed.",
+        "fun_fact": "In ancient China, fresh lychees were treasured as a special treat for royalty."
+      },
+      {
+        "claim": "You should eat the bumpy red skin of a lychee.",
+        "verdict": "myth",
+        "explanation": "Peel off the skin and spit out the seed. Only the white flesh is eaten.",
+        "fun_fact": "Lychee trees can grow taller than a two-story house."
+      }
+    ],
+    "versus_candidates": [
+      "Grapes",
+      "Dragon Fruit",
+      "Cherry"
+    ]
+  },
+  {
+    "id": "ENT-PLT-015",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Blueberry",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Clusters of dusty blue blueberries on a green bush with soft morning dew, close-up in a sunny garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Tiny round fruit with deep blue skin",
+      "Grows in clusters on small bushes",
+      "Has a little crown shape on its top",
+      "Covered in a powdery coating called bloom"
+    ],
+    "distractor_pool": [
+      "Blackberry",
+      "Grapes",
+      "Cranberry",
+      "Blackcurrant",
+      "Huckleberry"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Blueberries have a powdery coating that protects them.",
+        "verdict": "fact",
+        "explanation": "The whitish dust, called bloom, is natural and helps keep the berry fresh.",
+        "fun_fact": "Blueberries are one of the few fruits native to North America."
+      },
+      {
+        "claim": "Store-bought blueberries are bright blue on the inside.",
+        "verdict": "myth",
+        "explanation": "Most farmed blueberries are pale green inside. Only some wild blueberries are blue all the way through.",
+        "fun_fact": "Blueberries start out green and slowly turn blue as they ripen."
+      }
+    ],
+    "versus_candidates": [
+      "Strawberry",
+      "Grapes",
+      "Cherry"
+    ]
+  },
+  {
+    "id": "ENT-PLT-016",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Pomegranate",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A round red pomegranate broken open to show hundreds of shiny ruby-red seeds, on a wooden board in warm light, 9:16 vertical shot.",
+    "core_traits": [
+      "Round red fruit with a tough, leathery skin",
+      "Has a little crown on one end",
+      "Packed with hundreds of juicy red seeds",
+      "Its name means seeded apple"
+    ],
+    "distractor_pool": [
+      "Red Apple",
+      "Persimmon",
+      "Passion Fruit",
+      "Fig",
+      "Guava"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The name pomegranate means seeded apple.",
+        "verdict": "fact",
+        "explanation": "The name comes from old Latin words meaning apple and seeds.",
+        "fun_fact": "The juicy, jewel-like seeds of a pomegranate are called arils."
+      },
+      {
+        "claim": "Every pomegranate has exactly the same number of seeds.",
+        "verdict": "myth",
+        "explanation": "The number changes from fruit to fruit, from a few hundred to more than a thousand.",
+        "fun_fact": "Pomegranate juice can stain clothes a deep red."
+      }
+    ],
+    "versus_candidates": [
+      "Dragon Fruit",
+      "Apple (Fruit)",
+      "Grapes"
+    ]
+  },
+  {
+    "id": "ENT-PLT-017",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Papaya",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Pawpaw"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A ripe papaya cut in half lengthwise showing orange flesh and a center of shiny black seeds, beside a green papaya plant in sunshine, 9:16 vertical shot.",
+    "core_traits": [
+      "Long tropical fruit with soft orange flesh",
+      "Has a hollow center full of round black seeds",
+      "Grows in clusters under the leaves of a tall, slim plant",
+      "Contains a natural helper that softens meat"
+    ],
+    "distractor_pool": [
+      "Mango",
+      "Cantaloupe",
+      "Melon",
+      "Guava",
+      "Jackfruit"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Papaya contains something that can make meat tender.",
+        "verdict": "fact",
+        "explanation": "Papaya has a natural helper called papain that breaks down tough meat.",
+        "fun_fact": "Green, unripe papaya is shredded to make crunchy salads in Southeast Asia."
+      },
+      {
+        "claim": "Papaya plants take many years before they grow fruit.",
+        "verdict": "myth",
+        "explanation": "Papaya plants grow fast and can make fruit within about a year.",
+        "fun_fact": "A papaya plant looks like a tree, but its stem is soft and not really woody."
+      }
+    ],
+    "versus_candidates": [
+      "Mango",
+      "Watermelon",
+      "Pineapple"
+    ]
+  },
+  {
+    "id": "ENT-PLT-018",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "fruits",
+    "name": "Avocado",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Alligator Pear"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "An avocado cut in half showing creamy green flesh and a big round brown seed, on a cutting board in a bright kitchen, 9:16 vertical shot.",
+    "core_traits": [
+      "Pear-shaped fruit with bumpy dark green skin",
+      "Creamy, buttery green flesh inside",
+      "Has one big round seed in the middle",
+      "The main ingredient in guacamole"
+    ],
+    "distractor_pool": [
+      "Pear",
+      "Mango",
+      "Papaya",
+      "Olive",
+      "Lime"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Avocados only ripen after they are picked from the tree.",
+        "verdict": "fact",
+        "explanation": "An avocado stays hard on the tree and softens a few days after it is picked.",
+        "fun_fact": "Avocados were once nicknamed alligator pears because of their bumpy green skin."
+      },
+      {
+        "claim": "An avocado is a vegetable.",
+        "verdict": "myth",
+        "explanation": "Avocados grow from flowers and hold a seed, so they are fruits.",
+        "fun_fact": "Botanists call an avocado a large berry with a single seed."
+      }
+    ],
+    "versus_candidates": [
+      "Mango",
+      "Banana",
+      "Coconut"
+    ]
+  },
+  {
+    "id": "ENT-PLT-019",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Carrot",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Bright orange carrots with feathery green tops freshly pulled from rich brown garden soil, sunny afternoon, 9:16 vertical shot.",
+    "core_traits": [
+      "Long, crunchy orange vegetable",
+      "Has feathery green leaves on top",
+      "Grows under the ground as a root",
+      "A favorite snack for rabbits in cartoons"
+    ],
+    "distractor_pool": [
+      "Parsnip",
+      "Radish",
+      "Sweet Potato",
+      "Beetroot",
+      "Turnip"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The first farmed carrots were purple or yellow, not orange.",
+        "verdict": "fact",
+        "explanation": "Orange carrots became popular later, after farmers in the Netherlands grew them in the 1600s.",
+        "fun_fact": "Carrot tops are leafy greens that can be cooked and eaten too."
+      },
+      {
+        "claim": "Eating carrots lets you see in the dark.",
+        "verdict": "myth",
+        "explanation": "Carrots have vitamin A, which helps keep eyes healthy, but they cannot give you night vision.",
+        "fun_fact": "Carrots also come in white, red and purple today."
+      }
+    ],
+    "versus_candidates": [
+      "Potato",
+      "Broccoli",
+      "Sweet Potato"
+    ]
+  },
+  {
+    "id": "ENT-PLT-020",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Broccoli",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A fresh green head of broccoli with tiny tree-like florets on a wooden kitchen counter, bright and cheerful, 9:16 vertical shot.",
+    "core_traits": [
+      "Green vegetable that looks like a tiny tree",
+      "Has a thick stalk and bumpy green tops called florets",
+      "The tops are actually lots of tiny flower buds",
+      "Comes from the same wild plant as cabbage and kale"
+    ],
+    "distractor_pool": [
+      "Cauliflower",
+      "Brussels Sprouts",
+      "Kale",
+      "Asparagus",
+      "Cabbage"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The part of broccoli we eat is made of flower buds.",
+        "verdict": "fact",
+        "explanation": "Each bumpy green floret is a cluster of buds that has not opened yet.",
+        "fun_fact": "If broccoli is left to grow, it opens into little yellow flowers."
+      },
+      {
+        "claim": "Broccoli is a baby tree.",
+        "verdict": "myth",
+        "explanation": "It only looks like a tiny tree. Broccoli is a leafy plant in the cabbage family.",
+        "fun_fact": "Broccoli, cabbage, cauliflower and kale were all bred from one wild plant."
+      }
+    ],
+    "versus_candidates": [
+      "Carrot",
+      "Spinach",
+      "Cabbage"
+    ]
+  },
+  {
+    "id": "ENT-PLT-021",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Tomato",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Juicy red tomatoes hanging in clusters on a leafy green vine in a sunny backyard garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Round, juicy red food used in salads and sauces",
+      "Grows on leafy vines in gardens",
+      "The main ingredient in ketchup",
+      "Scientists call it a fruit, but cooks call it a vegetable"
+    ],
+    "distractor_pool": [
+      "Red Bell Pepper",
+      "Cherry",
+      "Strawberry",
+      "Radish",
+      "Eggplant"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Scientists call a tomato a fruit because it holds seeds.",
+        "verdict": "fact",
+        "explanation": "A fruit grows from a flower and carries seeds. Tomatoes do both, even though we cook them like vegetables.",
+        "fun_fact": "At the La Tomatina festival in Spain, people throw squashed tomatoes at each other for fun."
+      },
+      {
+        "claim": "Tomatoes first came from Italy.",
+        "verdict": "myth",
+        "explanation": "Tomatoes come from South America. They reached Italy only about 500 years ago.",
+        "fun_fact": "Tomatoes also come in yellow, orange, green and even purple."
+      }
+    ],
+    "versus_candidates": [
+      "Potato",
+      "Cucumber",
+      "Bell Pepper"
+    ]
+  },
+  {
+    "id": "ENT-PLT-022",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Potato",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Spud"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pile of round brown potatoes freshly dug from dark garden soil, with a little garden trowel nearby, warm sunlight, 9:16 vertical shot.",
+    "core_traits": [
+      "Lumpy brown vegetable that grows underground",
+      "Used to make fries, chips and mashed dishes",
+      "Has little eyes that can sprout new shoots",
+      "First grown by farmers in the Andes of South America"
+    ],
+    "distractor_pool": [
+      "Sweet Potato",
+      "Yam",
+      "Taro",
+      "Turnip",
+      "Cassava"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Potatoes were the first vegetable grown in space.",
+        "verdict": "fact",
+        "explanation": "In 1995, potato plants were grown on a NASA space shuttle as an experiment.",
+        "fun_fact": "Green patches on potato skin are not safe to eat, so ask an adult to cut them away."
+      },
+      {
+        "claim": "A potato is a root.",
+        "verdict": "myth",
+        "explanation": "A potato is a tuber, which is a swollen underground stem that stores food for the plant.",
+        "fun_fact": "There are thousands of potato varieties grown in Peru alone."
+      }
+    ],
+    "versus_candidates": [
+      "Sweet Potato",
+      "Carrot",
+      "Corn"
+    ]
+  },
+  {
+    "id": "ENT-PLT-023",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Corn",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Maize",
+      "Sweet Corn"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A golden ear of corn with its green husk peeled back, standing in a tall sunny cornfield, 9:16 vertical shot.",
+    "core_traits": [
+      "Rows of yellow kernels on a cob",
+      "Wrapped in green husks with silky threads on top",
+      "Grows on very tall stalks in big fields",
+      "One type pops into a fluffy movie snack"
+    ],
+    "distractor_pool": [
+      "Wheat",
+      "Rice",
+      "Barley",
+      "Sorghum",
+      "Oats"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An ear of corn almost always has an even number of rows.",
+        "verdict": "fact",
+        "explanation": "Kernel rows form in pairs as the cob grows, so the total is usually even.",
+        "fun_fact": "Each silky thread on an ear of corn connects to one kernel."
+      },
+      {
+        "claim": "Corn kernels are always yellow.",
+        "verdict": "myth",
+        "explanation": "Corn can be white, red, blue, purple or even multicolored.",
+        "fun_fact": "Popcorn pops because the water inside each kernel turns to steam."
+      }
+    ],
+    "versus_candidates": [
+      "Potato",
+      "Peas",
+      "Carrot"
+    ]
+  },
+  {
+    "id": "ENT-PLT-024",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Pumpkin",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Big round orange pumpkins with curly green vines sitting in a sunny autumn pumpkin patch, 9:16 vertical shot.",
+    "core_traits": [
+      "Big round orange squash with a thick stem",
+      "Grows on long, spreading vines",
+      "Carved into smiling jack-o'-lanterns for Halloween",
+      "Used to make a famous autumn pie"
+    ],
+    "distractor_pool": [
+      "Butternut Squash",
+      "Watermelon",
+      "Zucchini",
+      "Cantaloupe",
+      "Gourd"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Prize-winning giant pumpkins can weigh over 1,000 kilograms.",
+        "verdict": "fact",
+        "explanation": "Growers raise special giant pumpkins for contests, and the biggest weigh more than a small car.",
+        "fun_fact": "Pumpkin flowers are bright yellow and can be cooked and eaten."
+      },
+      {
+        "claim": "All pumpkins are orange.",
+        "verdict": "myth",
+        "explanation": "Some pumpkins are white, green, blue-gray or even striped.",
+        "fun_fact": "Pumpkins are in the same plant family as cucumbers and watermelons."
+      }
+    ],
+    "versus_candidates": [
+      "Watermelon",
+      "Sweet Potato",
+      "Carrot"
+    ]
+  },
+  {
+    "id": "ENT-PLT-025",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Cucumber",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Long green cucumbers hanging from a climbing vine with yellow flowers in a sunny garden, one sliced into cool round pieces, 9:16 vertical shot.",
+    "core_traits": [
+      "Long green vegetable with a cool, crunchy bite",
+      "Pale green inside with soft seeds",
+      "Grows on climbing vines with yellow flowers",
+      "Becomes a pickle when soaked in salty or sour liquid"
+    ],
+    "distractor_pool": [
+      "Zucchini",
+      "Celery",
+      "Green Bell Pepper",
+      "Okra",
+      "Green Beans"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A cucumber is about 95 percent water.",
+        "verdict": "fact",
+        "explanation": "Cucumbers are mostly water, which is why they feel so cool and crisp.",
+        "fun_fact": "Cucumbers belong to the same plant family as watermelons and pumpkins."
+      },
+      {
+        "claim": "Pickles grow on their own special pickle plant.",
+        "verdict": "myth",
+        "explanation": "Most pickles are cucumbers that have been soaked in salty water or vinegar.",
+        "fun_fact": "Because they hold seeds, cucumbers are fruits to a botanist."
+      }
+    ],
+    "versus_candidates": [
+      "Tomato",
+      "Carrot",
+      "Bell Pepper"
+    ]
+  },
+  {
+    "id": "ENT-PLT-026",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Onion",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Golden-brown and purple onions on a wooden kitchen counter, one cut in half to show its rings of layers, bright daylight, 9:16 vertical shot.",
+    "core_traits": [
+      "Round vegetable with papery brown, red or white skin",
+      "Made of many layers inside",
+      "Cutting it can make your eyes water",
+      "A close cousin of garlic and leeks"
+    ],
+    "distractor_pool": [
+      "Shallot",
+      "Leek",
+      "Scallion",
+      "Radish",
+      "Turnip"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cutting an onion releases a gas that makes eyes water.",
+        "verdict": "fact",
+        "explanation": "Slicing an onion breaks its cells and lets out a gas that stings your eyes.",
+        "fun_fact": "The layers of an onion are actually special leaves that store food."
+      },
+      {
+        "claim": "Onions are a safe treat for dogs and cats.",
+        "verdict": "myth",
+        "explanation": "Onions can make dogs and cats very sick. Always ask an adult before feeding pets people food.",
+        "fun_fact": "People in ancient Egypt grew and ate onions thousands of years ago."
+      }
+    ],
+    "versus_candidates": [
+      "Potato",
+      "Carrot",
+      "Cabbage"
+    ]
+  },
+  {
+    "id": "ENT-PLT-027",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Bell Pepper",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sweet Pepper",
+      "Capsicum"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Shiny red, yellow, orange and green bell peppers lined up on a bright kitchen counter, colorful and cheerful, 9:16 vertical shot.",
+    "core_traits": [
+      "Crunchy, hollow vegetable shaped a bit like a bell",
+      "Comes in green, yellow, orange and red",
+      "Has seeds clustered inside near the stem",
+      "A pepper with no spicy heat at all"
+    ],
+    "distractor_pool": [
+      "Chili Pepper",
+      "Jalapeno",
+      "Tomato",
+      "Eggplant",
+      "Zucchini"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Red bell peppers have more vitamin C than oranges.",
+        "verdict": "fact",
+        "explanation": "Weight for weight, a ripe red bell pepper holds more vitamin C than an orange.",
+        "fun_fact": "Bell peppers are not spicy because they lack capsaicin, which makes chili peppers hot."
+      },
+      {
+        "claim": "Green and red bell peppers always come from different plants.",
+        "verdict": "myth",
+        "explanation": "Many red peppers are green peppers left on the plant longer to ripen and change color.",
+        "fun_fact": "Green bell peppers taste less sweet because they are picked before ripening."
+      }
+    ],
+    "versus_candidates": [
+      "Tomato",
+      "Cucumber",
+      "Eggplant"
+    ]
+  },
+  {
+    "id": "ENT-PLT-028",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Eggplant",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Aubergine",
+      "Brinjal"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Glossy deep purple eggplants with green caps hanging from a leafy plant with lilac flowers in a sunny garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Shiny, deep purple vegetable with a green cap",
+      "Soft, spongy pale flesh inside",
+      "Called aubergine in Britain",
+      "Named for early kinds that looked like white eggs"
+    ],
+    "distractor_pool": [
+      "Zucchini",
+      "Bell Pepper",
+      "Cucumber",
+      "Squash",
+      "Okra"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Eggplants got their name from looking like eggs.",
+        "verdict": "fact",
+        "explanation": "Early eggplants grown in Europe were small, white and egg-shaped.",
+        "fun_fact": "Eggplants are in the same plant family as tomatoes and potatoes."
+      },
+      {
+        "claim": "Eggplants are always purple.",
+        "verdict": "myth",
+        "explanation": "Eggplants can be white, green, orange or striped, as well as purple.",
+        "fun_fact": "To a botanist, an eggplant is actually a berry."
+      }
+    ],
+    "versus_candidates": [
+      "Bell Pepper",
+      "Tomato",
+      "Pumpkin"
+    ]
+  },
+  {
+    "id": "ENT-PLT-029",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Cabbage",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A round green cabbage and a purple-red cabbage sitting in a sunny vegetable garden with dewy leaves, 9:16 vertical shot.",
+    "core_traits": [
+      "Round, leafy vegetable shaped like a ball",
+      "Leaves wrap tightly around each other",
+      "Comes in green, red-purple and napa varieties",
+      "Used to make sauerkraut and kimchi"
+    ],
+    "distractor_pool": [
+      "Lettuce",
+      "Brussels Sprouts",
+      "Cauliflower",
+      "Kale",
+      "Bok Choy"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Red cabbage juice changes color when mixed with lemon juice.",
+        "verdict": "fact",
+        "explanation": "Its natural purple coloring turns pink with sour liquids and blue-green with baking soda. Ask an adult to help.",
+        "fun_fact": "Kimchi, a famous Korean side dish, is often made with napa cabbage."
+      },
+      {
+        "claim": "Cabbage and lettuce are the same kind of vegetable.",
+        "verdict": "myth",
+        "explanation": "Cabbage belongs to the mustard family with broccoli. Lettuce belongs to the daisy family.",
+        "fun_fact": "Brussels sprouts look like tiny cabbages and are close relatives."
+      }
+    ],
+    "versus_candidates": [
+      "Broccoli",
+      "Spinach",
+      "Onion"
+    ]
+  },
+  {
+    "id": "ENT-PLT-030",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Peas",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Green Peas",
+      "Garden Peas"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An open green pea pod showing a neat row of round bright green peas, on a climbing pea plant in a sunny garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, round, bright green vegetables",
+      "Grow lined up inside long green pods",
+      "Pea plants climb with thin curly tendrils",
+      "Helped a scientist discover how traits are passed down"
+    ],
+    "distractor_pool": [
+      "Edamame",
+      "Green Beans",
+      "Chickpeas",
+      "Lentils",
+      "Broad Beans"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Gregor Mendel used pea plants to learn how traits pass to offspring.",
+        "verdict": "fact",
+        "explanation": "By growing thousands of pea plants, he found patterns in how color and shape are inherited.",
+        "fun_fact": "Pea plants climb by wrapping thin curly tendrils around sticks and strings."
+      },
+      {
+        "claim": "Frozen peas are always much less healthy than fresh ones.",
+        "verdict": "myth",
+        "explanation": "Peas are often frozen soon after picking, which helps them keep many of their nutrients.",
+        "fun_fact": "Peas are legumes, part of the same plant family as beans and peanuts."
+      }
+    ],
+    "versus_candidates": [
+      "Corn",
+      "Carrot",
+      "Broccoli"
+    ]
+  },
+  {
+    "id": "ENT-PLT-031",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Sweet Potato",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "Reddish-brown sweet potatoes on a rustic table, one cut open to show bright orange flesh, warm autumn light, 9:16 vertical shot.",
+    "core_traits": [
+      "Long root vegetable with reddish-brown skin",
+      "Usually bright orange and sweet inside",
+      "Grows underground from a trailing vine",
+      "Related to morning glory flowers"
+    ],
+    "distractor_pool": [
+      "Potato",
+      "Yam",
+      "Carrot",
+      "Cassava",
+      "Taro"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Sweet potatoes are related to morning glory flowers.",
+        "verdict": "fact",
+        "explanation": "Sweet potatoes belong to the morning glory family, not the potato family.",
+        "fun_fact": "Sweet potato leaves are cooked and eaten as greens in many countries."
+      },
+      {
+        "claim": "Sweet potatoes and yams are the same vegetable.",
+        "verdict": "myth",
+        "explanation": "Real yams are a different plant with rough, bark-like skin, grown mostly in Africa and Asia.",
+        "fun_fact": "Some sweet potatoes have purple or white flesh instead of orange."
+      }
+    ],
+    "versus_candidates": [
+      "Potato",
+      "Carrot",
+      "Pumpkin"
+    ]
+  },
+  {
+    "id": "ENT-PLT-032",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "vegetables",
+    "name": "Spinach",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A big bunch of fresh dark green spinach leaves in a garden basket under bright sunshine, 9:16 vertical shot.",
+    "core_traits": [
+      "Leafy, dark green vegetable",
+      "Eaten raw in salads or cooked until soft",
+      "Shrinks a lot when it is cooked",
+      "Made famous by a cartoon sailor who gets super strong"
+    ],
+    "distractor_pool": [
+      "Kale",
+      "Lettuce",
+      "Swiss Chard",
+      "Arugula",
+      "Bok Choy"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Spinach shrinks a lot when it is cooked.",
+        "verdict": "fact",
+        "explanation": "Heat lets water escape from the leaves, so a big pile shrinks to a small bowl.",
+        "fun_fact": "Crystal City, Texas, has a statue of Popeye and calls itself the Spinach Capital of the World."
+      },
+      {
+        "claim": "Eating spinach makes you super strong instantly, like Popeye.",
+        "verdict": "myth",
+        "explanation": "Spinach is full of vitamins and minerals, but no food gives instant super strength.",
+        "fun_fact": "Spinach grows best in cool weather, like spring and autumn."
+      }
+    ],
+    "versus_candidates": [
+      "Broccoli",
+      "Cabbage",
+      "Carrot"
+    ]
+  },
+  {
+    "id": "ENT-PLT-033",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Sunflower",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Tall sunflowers with bright yellow petals and big brown centers standing in a field under a clear blue summer sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Very tall flower with bright yellow petals",
+      "Has a huge brown center full of seeds",
+      "Young buds turn to follow the sun across the sky",
+      "Its seeds are a popular snack and bird food"
+    ],
+    "distractor_pool": [
+      "Marigold",
+      "Daffodil",
+      "Black-Eyed Susan",
+      "Dandelion",
+      "Chrysanthemum"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A sunflower head is made of hundreds of tiny flowers.",
+        "verdict": "fact",
+        "explanation": "The big brown center is packed with tiny flowers, and each one can become a seed.",
+        "fun_fact": "Sunflower seeds are arranged in neat spirals that follow a famous number pattern."
+      },
+      {
+        "claim": "Fully grown sunflowers turn to follow the sun all day.",
+        "verdict": "myth",
+        "explanation": "Only young sunflowers track the sun. Grown-up sunflowers mostly stay facing east.",
+        "fun_fact": "The sunflower is the state flower of Kansas."
+      }
+    ],
+    "versus_candidates": [
+      "Rose",
+      "Tulip",
+      "Dandelion"
+    ]
+  },
+  {
+    "id": "ENT-PLT-034",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Rose",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A bright red rose in full bloom with soft layered petals and green leaves in a sunny garden, gentle dewdrops, 9:16 vertical shot.",
+    "core_traits": [
+      "Popular garden flower with soft, layered petals",
+      "Comes in red, pink, white, yellow and more",
+      "Has sharp prickles on its stem",
+      "Gives its family name to apples and strawberries"
+    ],
+    "distractor_pool": [
+      "Tulip",
+      "Peony",
+      "Camellia",
+      "Carnation",
+      "Hibiscus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Apples and strawberries are in the rose family.",
+        "verdict": "fact",
+        "explanation": "Roses, apples, strawberries, cherries and pears are all members of the same plant family.",
+        "fun_fact": "No rose in nature is truly blue."
+      },
+      {
+        "claim": "The sharp points on rose stems are true thorns.",
+        "verdict": "myth",
+        "explanation": "Botanists call them prickles, because they grow from the stem's outer skin, not from the wood.",
+        "fun_fact": "The round fruits of rose plants are called rose hips."
+      }
+    ],
+    "versus_candidates": [
+      "Tulip",
+      "Sunflower",
+      "Orchid"
+    ]
+  },
+  {
+    "id": "ENT-PLT-035",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Tulip",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "Rows of red, yellow and pink tulips blooming in a colorful spring field with a windmill far away, 9:16 vertical shot.",
+    "core_traits": [
+      "Spring flower shaped like a cup",
+      "Grows from a bulb planted in autumn",
+      "Comes in almost every color",
+      "Famous for colorful fields in the Netherlands"
+    ],
+    "distractor_pool": [
+      "Daffodil",
+      "Lily",
+      "Crocus",
+      "Hyacinth",
+      "Iris"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Tulips keep growing in a vase after they are cut.",
+        "verdict": "fact",
+        "explanation": "Cut tulip stems can keep stretching taller and bending toward the light.",
+        "fun_fact": "The Keukenhof garden in the Netherlands plants about seven million flower bulbs each year."
+      },
+      {
+        "claim": "Tulips first came from the Netherlands.",
+        "verdict": "myth",
+        "explanation": "Wild tulips come from Central Asia. They were brought to Europe through Turkey.",
+        "fun_fact": "Tulip petals close up at night and open again in the sunshine."
+      }
+    ],
+    "versus_candidates": [
+      "Rose",
+      "Sunflower",
+      "Lavender"
+    ]
+  },
+  {
+    "id": "ENT-PLT-036",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Lotus Flower",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sacred Lotus",
+      "Indian Lotus"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A pink lotus flower rising above a calm pond on a tall stem, surrounded by big round green leaves, soft morning light, 9:16 vertical shot.",
+    "core_traits": [
+      "Pink or white flower growing in ponds",
+      "Rises on a tall stem high above the water",
+      "Big round leaves that water rolls right off",
+      "The national flower of India"
+    ],
+    "distractor_pool": [
+      "Water Lily",
+      "Orchid",
+      "Magnolia",
+      "Peony",
+      "Hibiscus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Lotus leaves stay clean because water and dirt roll right off.",
+        "verdict": "fact",
+        "explanation": "Tiny bumps on the leaves make water bead up and carry away dirt. Scientists call this the lotus effect.",
+        "fun_fact": "Scientists once sprouted a lotus seed that was more than 1,000 years old."
+      },
+      {
+        "claim": "A lotus and a water lily are the same plant.",
+        "verdict": "myth",
+        "explanation": "They are different plants. Water lilies float on the water, while lotus flowers rise high above it.",
+        "fun_fact": "Lotus seed pods look like showerheads full of little holes."
+      }
+    ],
+    "versus_candidates": [
+      "Rose",
+      "Orchid",
+      "Cherry Blossom"
+    ]
+  },
+  {
+    "id": "ENT-PLT-037",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Cherry Blossom",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sakura"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A tree covered in fluffy pale pink cherry blossoms with petals drifting down over a park path in spring sunshine, 9:16 vertical shot.",
+    "core_traits": [
+      "Soft pink or white flowers that cover whole trees",
+      "Blooms in early spring for only a short time",
+      "Petals fall like gentle pink snow",
+      "A famous symbol of spring in Japan"
+    ],
+    "distractor_pool": [
+      "Plum Blossom",
+      "Apple Blossom",
+      "Peach Blossom",
+      "Magnolia",
+      "Almond Blossom"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "In 1912, Tokyo gave Washington, D.C. thousands of cherry trees.",
+        "verdict": "fact",
+        "explanation": "More than 3,000 trees were sent as a gift of friendship, and they still bloom every spring.",
+        "fun_fact": "In Japan, families enjoy flower-viewing picnics called hanami under the blossoms."
+      },
+      {
+        "claim": "Cherry blossoms stay on the trees for many months.",
+        "verdict": "myth",
+        "explanation": "The blossoms usually last only about one or two weeks before the petals fall.",
+        "fun_fact": "Weather experts in Japan forecast when the cherry blossoms will bloom."
+      }
+    ],
+    "versus_candidates": [
+      "Lotus Flower",
+      "Tulip",
+      "Sunflower"
+    ]
+  },
+  {
+    "id": "ENT-PLT-038",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Common Daisy",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "English Daisy",
+      "Lawn Daisy"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Little white daisies with sunny yellow centers dotting a green lawn on a bright spring morning, close-up, 9:16 vertical shot.",
+    "core_traits": [
+      "Small flower with white petals and a yellow center",
+      "Pops up in lawns and meadows",
+      "Closes at night and opens in the morning",
+      "Its name comes from the words day's eye"
+    ],
+    "distractor_pool": [
+      "Chamomile",
+      "Oxeye Daisy",
+      "Aster",
+      "Cosmos",
+      "Buttercup"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The name daisy comes from the words day's eye.",
+        "verdict": "fact",
+        "explanation": "Daisies open in the morning and close at night, like an eye opening for the day.",
+        "fun_fact": "The common daisy is a close relative of sunflowers."
+      },
+      {
+        "claim": "A daisy is just one single flower.",
+        "verdict": "myth",
+        "explanation": "Each daisy head is many tiny flowers packed together, both in the white ring and the yellow center.",
+        "fun_fact": "Children often weave daisies together into flower chains."
+      }
+    ],
+    "versus_candidates": [
+      "Dandelion",
+      "Sunflower",
+      "Marigold"
+    ]
+  },
+  {
+    "id": "ENT-PLT-039",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Orchid",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "Elegant purple and white orchid flowers on a long arching stem in a pot by a sunny window, 9:16 vertical shot.",
+    "core_traits": [
+      "Elegant flower with fancy, unusual petal shapes",
+      "Often grown as a houseplant in pots",
+      "Many wild kinds cling to tree branches",
+      "One kind gives us the vanilla flavor"
+    ],
+    "distractor_pool": [
+      "Lily",
+      "Iris",
+      "Hibiscus",
+      "Bird of Paradise",
+      "Magnolia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Vanilla comes from a kind of orchid.",
+        "verdict": "fact",
+        "explanation": "Vanilla flavor comes from the seed pods of a climbing orchid plant.",
+        "fun_fact": "Orchid seeds are so tiny that they look like dust."
+      },
+      {
+        "claim": "Orchids only grow in hot tropical jungles.",
+        "verdict": "myth",
+        "explanation": "Orchids grow on every continent except Antarctica, including cool forests and meadows.",
+        "fun_fact": "The orchid family is one of the largest flower families, with tens of thousands of kinds."
+      }
+    ],
+    "versus_candidates": [
+      "Rose",
+      "Lotus Flower",
+      "Hibiscus"
+    ]
+  },
+  {
+    "id": "ENT-PLT-040",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Lavender",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "Long rows of purple lavender stretching across a sunny countryside field with bees buzzing around the blossoms, 9:16 vertical shot.",
+    "core_traits": [
+      "Thin stalks topped with tiny purple flowers",
+      "Has a sweet, calming smell",
+      "Used in soaps, lotions and scented bags",
+      "Grows in famous purple fields in southern France"
+    ],
+    "distractor_pool": [
+      "Lilac",
+      "Heather",
+      "Sage",
+      "Catmint",
+      "Hyacinth"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bees love visiting lavender flowers.",
+        "verdict": "fact",
+        "explanation": "Lavender is full of sweet nectar, so bees and butterflies visit it all summer.",
+        "fun_fact": "Lavender belongs to the mint family, along with basil and rosemary."
+      },
+      {
+        "claim": "Lavender only comes in purple.",
+        "verdict": "myth",
+        "explanation": "Most lavender is purple, but some kinds have white or pink flowers.",
+        "fun_fact": "The color lavender, a pale purple, is named after this plant."
+      }
+    ],
+    "versus_candidates": [
+      "Rose",
+      "Sunflower",
+      "Tulip"
+    ]
+  },
+  {
+    "id": "ENT-PLT-041",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Dandelion",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A fluffy white dandelion seed head with tiny seeds floating away on the breeze, beside a bright yellow dandelion flower on green grass, 9:16 vertical shot.",
+    "core_traits": [
+      "Small, bright yellow flower found in lawns",
+      "Turns into a fluffy white ball of seeds",
+      "Children blow on it to send the seeds flying",
+      "Its name means lion's tooth"
+    ],
+    "distractor_pool": [
+      "Buttercup",
+      "Common Daisy",
+      "Marigold",
+      "Clover",
+      "Goldenrod"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Each dandelion seed has its own tiny parachute.",
+        "verdict": "fact",
+        "explanation": "Fluffy white hairs on every seed catch the wind and carry it far away.",
+        "fun_fact": "The name dandelion comes from French words meaning lion's tooth, after its jagged leaves."
+      },
+      {
+        "claim": "Blowing a dandelion puffball tells you the real time.",
+        "verdict": "myth",
+        "explanation": "Counting puffs is just a fun game. The seeds are simply floating away to grow somewhere new.",
+        "fun_fact": "Bees visit dandelions early in spring when few other flowers are open."
+      }
+    ],
+    "versus_candidates": [
+      "Sunflower",
+      "Common Daisy",
+      "Marigold"
+    ]
+  },
+  {
+    "id": "ENT-PLT-042",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Venus Flytrap",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful green Venus flytrap with open red-lined traps and little spiky edges, in a pot on a sunny windowsill, 9:16 vertical shot.",
+    "core_traits": [
+      "Small plant with leaves shaped like open jaws",
+      "Its traps snap shut when touched in the right way",
+      "Catches insects and spiders for extra food",
+      "Grows in the wild only in North and South Carolina"
+    ],
+    "distractor_pool": [
+      "Pitcher Plant",
+      "Sundew",
+      "Bladderwort",
+      "Butterwort",
+      "Cobra Lily"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The trap closes only when tiny hairs inside are touched twice quickly.",
+        "verdict": "fact",
+        "explanation": "Needing two touches helps the plant avoid closing on raindrops or falling bits.",
+        "fun_fact": "In the wild, Venus flytraps grow only in a small area of the Carolinas."
+      },
+      {
+        "claim": "Venus flytraps can catch and eat big animals like mice.",
+        "verdict": "myth",
+        "explanation": "The traps are small and mostly catch insects and spiders. The plant also makes food from sunlight.",
+        "fun_fact": "A Venus flytrap trap can snap shut in less than a second."
+      }
+    ],
+    "versus_candidates": [
+      "Sunflower",
+      "Rafflesia",
+      "Saguaro Cactus"
+    ]
+  },
+  {
+    "id": "ENT-PLT-043",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Hibiscus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A large bright red hibiscus flower with a long center stalk, surrounded by glossy green leaves in a sunny tropical garden, 9:16 vertical shot.",
+    "core_traits": [
+      "Large, colorful trumpet-shaped tropical flower",
+      "Has a long stalk poking out of its center",
+      "Often tucked behind the ear in Hawaii",
+      "The national flower of Malaysia"
+    ],
+    "distractor_pool": [
+      "Rose",
+      "Plumeria",
+      "Bougainvillea",
+      "Morning Glory",
+      "Lily"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A yellow hibiscus is the state flower of Hawaii.",
+        "verdict": "fact",
+        "explanation": "Hawaii chose a native yellow hibiscus as its official state flower.",
+        "fun_fact": "Some hibiscus petals are used to make a bright red, tangy tea."
+      },
+      {
+        "claim": "A single hibiscus flower stays open for weeks.",
+        "verdict": "myth",
+        "explanation": "Most hibiscus blooms last only about a day, but the plant keeps making new ones.",
+        "fun_fact": "Hibiscus is the national flower of Malaysia."
+      }
+    ],
+    "versus_candidates": [
+      "Rose",
+      "Orchid",
+      "Lotus Flower"
+    ]
+  },
+  {
+    "id": "ENT-PLT-044",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "flowers",
+    "name": "Marigold",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "Bright orange and golden marigold flowers with ruffled petals growing in a sunny vegetable garden bed, 9:16 vertical shot.",
+    "core_traits": [
+      "Ruffled flower in bright orange and golden yellow",
+      "Has a strong, spicy smell",
+      "Strung into colorful garlands for festivals in India",
+      "Gardeners plant it near vegetables to help keep pests away"
+    ],
+    "distractor_pool": [
+      "Chrysanthemum",
+      "Zinnia",
+      "Sunflower",
+      "Dahlia",
+      "Calendula"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Gardeners plant marigolds near vegetables to help keep some pests away.",
+        "verdict": "fact",
+        "explanation": "Marigolds have a strong smell, and many gardeners grow them as helper plants beside vegetables.",
+        "fun_fact": "French and African marigolds actually first came from Mexico and Central America."
+      },
+      {
+        "claim": "Pot marigolds and French marigolds are the same plant.",
+        "verdict": "myth",
+        "explanation": "They share a name but are different plants. Pot marigold is also called calendula.",
+        "fun_fact": "Marigold garlands brighten many Diwali celebrations in India."
+      }
+    ],
+    "versus_candidates": [
+      "Sunflower",
+      "Common Daisy",
+      "Dandelion"
+    ]
+  },
+  {
+    "id": "ENT-PLT-045",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Baobab Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Baobab",
+      "Upside-Down Tree"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A giant baobab tree with a thick bottle-shaped trunk and short root-like branches standing on a golden African savanna at sunset, 9:16 vertical shot.",
+    "core_traits": [
+      "Huge tree with a very wide, bottle-shaped trunk",
+      "Its bare branches look like roots in the air",
+      "Stores lots of water inside its trunk",
+      "Grows in Africa, Madagascar and Australia"
+    ],
+    "distractor_pool": [
+      "Giant Sequoia",
+      "Banyan Tree",
+      "Acacia Tree",
+      "Kapok Tree",
+      "Bottle Tree"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A baobab tree stores water inside its giant trunk.",
+        "verdict": "fact",
+        "explanation": "Its spongy trunk soaks up water in the rainy season to survive long dry months.",
+        "fun_fact": "Baobab trees appear in the famous story The Little Prince."
+      },
+      {
+        "claim": "Baobab trees really grow upside down.",
+        "verdict": "myth",
+        "explanation": "They only look upside down because their bare branches resemble roots. Their real roots are underground.",
+        "fun_fact": "Some baobab trees are more than 1,000 years old."
+      }
+    ],
+    "versus_candidates": [
+      "Giant Sequoia",
+      "Banyan Tree",
+      "Oak Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-046",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Giant Sequoia",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Sierra Redwood"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "Enormous reddish-brown giant sequoia trunks towering over a sunny forest trail in California with tiny hikers looking up in wonder, 9:16 vertical shot.",
+    "core_traits": [
+      "Enormous tree with thick reddish-brown bark",
+      "Grows in the mountains of California",
+      "Can live for thousands of years",
+      "The biggest tree on Earth by total size"
+    ],
+    "distractor_pool": [
+      "Coast Redwood",
+      "Douglas Fir",
+      "Baobab Tree",
+      "Pine Tree",
+      "Kauri Tree"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A giant sequoia named General Sherman is the world's largest tree by volume.",
+        "verdict": "fact",
+        "explanation": "It grows in Sequoia National Park and has more wood than any other single tree.",
+        "fun_fact": "Giant sequoia bark can be thick and spongy, which helps protect it from forest fires."
+      },
+      {
+        "claim": "The giant sequoia is the world's tallest tree.",
+        "verdict": "myth",
+        "explanation": "It is the biggest overall, but the tallest trees are coast redwoods, its close cousins.",
+        "fun_fact": "Giant sequoia cones are surprisingly small, about the size of a chicken egg."
+      }
+    ],
+    "versus_candidates": [
+      "Baobab Tree",
+      "Oak Tree",
+      "Pine Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-047",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Oak Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Oak"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A wide, leafy oak tree with a sturdy trunk in a sunny meadow, with a squirrel holding an acorn on a low branch, 9:16 vertical shot.",
+    "core_traits": [
+      "Large, strong tree with wavy-edged leaves",
+      "Grows nuts called acorns with little caps",
+      "Squirrels love to collect its nuts",
+      "Its hard wood is used for furniture and barrels"
+    ],
+    "distractor_pool": [
+      "Maple Tree",
+      "Beech Tree",
+      "Chestnut Tree",
+      "Elm Tree",
+      "Walnut Tree"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Squirrels help plant new oak trees.",
+        "verdict": "fact",
+        "explanation": "Squirrels bury acorns to eat later, and the ones they forget can sprout into new oaks.",
+        "fun_fact": "A big oak tree can make thousands of acorns in a good year."
+      },
+      {
+        "claim": "Young oak trees grow acorns in their very first year.",
+        "verdict": "myth",
+        "explanation": "Most oak trees need about 20 years or more before they start making acorns.",
+        "fun_fact": "Some oak trees live for hundreds of years."
+      }
+    ],
+    "versus_candidates": [
+      "Maple Tree",
+      "Pine Tree",
+      "Baobab Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-048",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Bamboo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A tall green bamboo forest with smooth jointed stalks reaching toward soft sunlight, a peaceful path winding between them, 9:16 vertical shot.",
+    "core_traits": [
+      "Tall green stalks with rings called joints",
+      "Hollow inside like a tube",
+      "The favorite food of giant pandas",
+      "Actually a giant grass, not a tree"
+    ],
+    "distractor_pool": [
+      "Sugarcane",
+      "Reed",
+      "Palm Tree",
+      "Rattan",
+      "Papyrus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some bamboo can grow almost a meter in one day.",
+        "verdict": "fact",
+        "explanation": "Certain kinds of bamboo are among the fastest-growing plants in the world.",
+        "fun_fact": "Some bamboo kinds flower all at the same time only once every few decades."
+      },
+      {
+        "claim": "Bamboo is a kind of tree.",
+        "verdict": "myth",
+        "explanation": "Bamboo looks like a tree, but it is really a giant member of the grass family.",
+        "fun_fact": "Bamboo is strong enough to build houses, bridges and bicycles."
+      }
+    ],
+    "versus_candidates": [
+      "Oak Tree",
+      "Palm Tree",
+      "Pine Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-049",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Saguaro Cactus",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Saguaro"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A tall green saguaro cactus with raised arms standing in a sunny desert with orange rocks and a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Tall desert cactus with arms that point upward",
+      "Covered in sharp spines",
+      "Swells up to store rainwater",
+      "Grows in the Sonoran Desert of Arizona and Mexico"
+    ],
+    "distractor_pool": [
+      "Prickly Pear Cactus",
+      "Barrel Cactus",
+      "Joshua Tree",
+      "Organ Pipe Cactus",
+      "Aloe Vera"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Woodpeckers make nest holes inside saguaro cactuses.",
+        "verdict": "fact",
+        "explanation": "Gila woodpeckers peck holes in the cactus, and later other birds like owls move in.",
+        "fun_fact": "A saguaro may take around 50 years or more to grow its first arm."
+      },
+      {
+        "claim": "You can drink water straight from a saguaro cactus.",
+        "verdict": "myth",
+        "explanation": "The juice inside is not safe to drink and can make you sick. In the desert, carry your own water.",
+        "fun_fact": "The saguaro's white flower is the state wildflower of Arizona."
+      }
+    ],
+    "versus_candidates": [
+      "Aloe Vera",
+      "Baobab Tree",
+      "Palm Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-050",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Maple Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Maple"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A maple tree glowing with bright red and orange autumn leaves, with leaves drifting onto a grassy park, 9:16 vertical shot.",
+    "core_traits": [
+      "Tree with pointy, hand-shaped leaves",
+      "Leaves turn brilliant red and orange in autumn",
+      "Its seeds spin like little helicopters",
+      "Its leaf appears on the flag of Canada"
+    ],
+    "distractor_pool": [
+      "Oak Tree",
+      "Birch Tree",
+      "Sycamore Tree",
+      "Sweetgum Tree",
+      "Elm Tree"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "About 40 liters of maple sap make just 1 liter of syrup.",
+        "verdict": "fact",
+        "explanation": "Maple sap is very watery, so it is boiled for a long time to make thick syrup.",
+        "fun_fact": "Maple seeds have wings that spin like helicopter blades as they fall."
+      },
+      {
+        "claim": "Maple syrup comes from the tree's leaves.",
+        "verdict": "myth",
+        "explanation": "Syrup is made from sap collected from the trunk in late winter and early spring.",
+        "fun_fact": "A red maple leaf is the symbol in the middle of Canada's flag."
+      }
+    ],
+    "versus_candidates": [
+      "Oak Tree",
+      "Pine Tree",
+      "Palm Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-051",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Palm Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Palm"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Tall palm trees with feathery green fronds swaying over a white sandy beach and turquoise sea on a sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Tall, thin trunk with no branches",
+      "Big feathery or fan-shaped leaves at the very top",
+      "Grows on sunny beaches and in deserts",
+      "Some kinds give us coconuts and dates"
+    ],
+    "distractor_pool": [
+      "Banana Plant",
+      "Bamboo",
+      "Pine Tree",
+      "Cycad",
+      "Tree Fern"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The big leaves of a palm tree are called fronds.",
+        "verdict": "fact",
+        "explanation": "Palm leaves are called fronds, and they grow from the top of the trunk.",
+        "fun_fact": "In Dubai, people built islands shaped like a giant palm tree."
+      },
+      {
+        "claim": "Palm trees are woody trees just like oaks.",
+        "verdict": "myth",
+        "explanation": "Palms are more closely related to grasses. Their trunks do not grow rings of wood like oaks.",
+        "fun_fact": "Date palms have been grown for their sweet fruit for thousands of years."
+      }
+    ],
+    "versus_candidates": [
+      "Pine Tree",
+      "Bamboo",
+      "Oak Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-052",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Banyan Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Banyan"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A huge banyan tree with many hanging roots that have grown into pillar-like trunks, shading a sunny village square, 9:16 vertical shot.",
+    "core_traits": [
+      "Giant shady tree with roots hanging from its branches",
+      "Its hanging roots grow down into new trunks",
+      "One tree can spread out like a small forest",
+      "The national tree of India"
+    ],
+    "distractor_pool": [
+      "Mangrove",
+      "Baobab Tree",
+      "Weeping Willow",
+      "Strangler Fig",
+      "Rubber Tree"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The banyan is the national tree of India.",
+        "verdict": "fact",
+        "explanation": "India chose the banyan because it is huge, long-living and gives lots of shade.",
+        "fun_fact": "The Great Banyan in Kolkata, India, looks like a whole forest but is one tree."
+      },
+      {
+        "claim": "A banyan tree has only one trunk.",
+        "verdict": "myth",
+        "explanation": "Roots grow down from its branches, reach the ground and become many extra trunks.",
+        "fun_fact": "The banyan is a kind of fig tree."
+      }
+    ],
+    "versus_candidates": [
+      "Baobab Tree",
+      "Oak Tree",
+      "Giant Sequoia"
+    ]
+  },
+  {
+    "id": "ENT-PLT-053",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Pine Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Pine"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A tall evergreen pine tree with long green needles and brown pine cones on a snowy mountainside under a bright blue sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Evergreen tree with long, thin needles",
+      "Makes woody cones that hold its seeds",
+      "Has a fresh, sticky sap",
+      "Some kinds live for thousands of years"
+    ],
+    "distractor_pool": [
+      "Spruce Tree",
+      "Fir Tree",
+      "Cedar Tree",
+      "Cypress Tree",
+      "Juniper"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pine cones open when dry and close when wet.",
+        "verdict": "fact",
+        "explanation": "The scales close up in damp weather to protect the seeds, then open when it is dry.",
+        "fun_fact": "Some bristlecone pine trees are more than 4,000 years old."
+      },
+      {
+        "claim": "Pine trees lose all their needles every winter.",
+        "verdict": "myth",
+        "explanation": "Pines are evergreens. They drop old needles a few at a time and stay green all year.",
+        "fun_fact": "Pine needles usually grow in little bundles of two, three or five."
+      }
+    ],
+    "versus_candidates": [
+      "Oak Tree",
+      "Palm Tree",
+      "Maple Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-054",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Fern",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "Lush green ferns with feathery fronds and a curled-up young fiddlehead growing on a shady forest floor with soft sunbeams, 9:16 vertical shot.",
+    "core_traits": [
+      "Leafy green plant with feathery fronds",
+      "Loves shady, damp forests",
+      "New leaves unroll from tight curls called fiddleheads",
+      "Makes tiny spores instead of flowers or seeds"
+    ],
+    "distractor_pool": [
+      "Moss",
+      "Horsetail",
+      "Palm Tree",
+      "Ivy",
+      "Cycad"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ferns were growing on Earth before the dinosaurs.",
+        "verdict": "fact",
+        "explanation": "Fossils show ferns lived hundreds of millions of years ago, long before the first dinosaurs.",
+        "fun_fact": "Young fern leaves unroll from curls that look like the top of a violin."
+      },
+      {
+        "claim": "Ferns grow from seeds like flowers do.",
+        "verdict": "myth",
+        "explanation": "Ferns never make flowers or seeds. They spread with tiny spores found under their leaves.",
+        "fun_fact": "Some tree ferns can grow as tall as a house."
+      }
+    ],
+    "versus_candidates": [
+      "Bamboo",
+      "Aloe Vera",
+      "Palm Tree"
+    ]
+  },
+  {
+    "id": "ENT-PLT-055",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Aloe Vera",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Aloe"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A healthy aloe vera plant with thick, spiky green leaves growing in a clay pot on a sunny windowsill, 9:16 vertical shot.",
+    "core_traits": [
+      "Succulent plant with thick, pointed green leaves",
+      "Has little soft spikes along its leaf edges",
+      "Its leaves are filled with a clear, slippery gel",
+      "The gel is often used to soothe sunburned skin"
+    ],
+    "distractor_pool": [
+      "Agave",
+      "Jade Plant",
+      "Snake Plant",
+      "Haworthia",
+      "Prickly Pear Cactus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Aloe vera gel is often used to soothe sunburns.",
+        "verdict": "fact",
+        "explanation": "The cool gel from its leaves is used in many skin lotions. Ask an adult before using the plant itself.",
+        "fun_fact": "Aloe vera stores water in its thick leaves, so it survives long dry spells."
+      },
+      {
+        "claim": "Aloe vera is a type of cactus.",
+        "verdict": "myth",
+        "explanation": "It is a succulent, but not a cactus. It belongs to a different plant family.",
+        "fun_fact": "Aloe vera plants grow tall spikes of yellow or orange flowers."
+      }
+    ],
+    "versus_candidates": [
+      "Saguaro Cactus",
+      "Fern",
+      "Bamboo"
+    ]
+  },
+  {
+    "id": "ENT-PLT-056",
+    "domain_id": "fruits_vegetables_plants",
+    "subtopic_id": "trees_and_plants",
+    "name": "Rafflesia",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 4,
+    "visual_anchor": "A giant reddish-orange rafflesia flower with five thick spotted petals resting on a mossy rainforest floor, lush green jungle around it, 9:16 vertical shot.",
+    "core_traits": [
+      "Enormous red flower with big spotted petals",
+      "Grows in rainforests of Southeast Asia",
+      "Has no leaves, stems or roots of its own",
+      "The largest single flower in the world"
+    ],
+    "distractor_pool": [
+      "Titan Arum",
+      "Lotus Flower",
+      "Hibiscus",
+      "Giant Water Lily",
+      "Orchid"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rafflesia makes the largest single flower in the world.",
+        "verdict": "fact",
+        "explanation": "One rafflesia flower can grow about as wide as a car tire.",
+        "fun_fact": "Rafflesia gives off a stinky smell like rotten meat to attract flies."
+      },
+      {
+        "claim": "Rafflesia has big green leaves to make food from sunlight.",
+        "verdict": "myth",
+        "explanation": "It has no leaves at all. It takes all its food from a jungle vine it lives on.",
+        "fun_fact": "A rafflesia bloom lasts only about a week before fading."
+      }
+    ],
+    "versus_candidates": [
+      "Venus Flytrap",
+      "Lotus Flower",
+      "Sunflower"
+    ]
+  }
+]

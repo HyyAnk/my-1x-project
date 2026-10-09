@@ -13,6 +13,7 @@ import type { TaskManager } from "../../../tasks.js";
 import type { LLMClient } from "../../../utils/promptSanitizer.js";
 import { localizeProductContent, normalizeTargetLanguage } from "../localization/productLocalization.js";
 import { convertBankQuestionToQuizQuestionLossless } from "./bankQuestionConverter.js";
+import { applyStableChoiceOrder } from "../choiceOrder/index.js";
 import { buildSingleQuestionDirectorPlan } from "./bankDirectorPlanFactory.js";
 import { buildEpisodeRecord, resolveEpisodeVisualStyles, resolveRenderAspect, triggerPipelineTask } from "./bootstrapperHelpers.js";
 import { stageAndPublishSingleQuestionEpisodeFiles } from "./episodeStagingPublisher.js";
@@ -82,7 +83,7 @@ export async function createEpisodeFromQuestionBank(deps: {
   const bankQuestion = validateQuestionAvailability(rawQuestion, input.question_id, channelId, input.force);
 
   const targetLanguage = normalizeTargetLanguage(input.target_language || channel.language || "en");
-  const baseQuizQuestion = convertBankQuestionToQuizQuestionLossless(bankQuestion);
+  const baseQuizQuestion = applyStableChoiceOrder(convertBankQuestionToQuizQuestionLossless(bankQuestion));
   baseQuizQuestion.number = 1;
   baseQuizQuestion.source_ids = Array.from(new Set(["C01", ...(baseQuizQuestion.source_ids || []), bankQuestion.id].filter(Boolean)));
   baseQuizQuestion.validation.source_coverage = true;

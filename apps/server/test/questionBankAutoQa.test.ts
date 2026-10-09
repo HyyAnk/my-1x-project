@@ -196,12 +196,12 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
 
   it("Prompt Engine: builds compliant prompt and parses markdown JSON output", () => {
     const prompt = buildBatchGenerationPrompt({
-      archetypeId: "verdict_fact_myth",
+      archetypeId: "verdict_yes_no",
       domainId: "nature_animals",
       subtopicId: "ocean_giants",
       count: 3,
     });
-    expect(prompt).toContain("verdict_fact_myth");
+    expect(prompt).toContain("verdict_yes_no");
     expect(prompt).toContain("ocean_giants");
     expect(prompt).toContain("yes_no");
     expect(prompt).toContain("STRICT CONTENT POLICY");
@@ -226,11 +226,11 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
       explanation: "Mercury is the closest planet to the Sun.",
       subtopic_id: "ocean_giants",
       domain_id: "nature_animals",
-      archetype_id: "verdict_fact_myth",
-      format: "true_false",
+      archetype_id: "verdict_yes_no",
+      format: "yes_no",
       choices: [
-        { id: "A", text: "True (Mercury)", is_correct: true },
-        { id: "B", text: "False", is_correct: false },
+        { id: "A", text: "Yes", is_correct: true },
+        { id: "B", text: "No", is_correct: false },
       ],
       correct_choice_id: "A",
     };
@@ -242,7 +242,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     };
 
     const result = await generateQuestionBankBatch(app.repository, {
-      archetypeId: "verdict_fact_myth",
+      archetypeId: "verdict_yes_no",
       domainId: "nature_animals",
       subtopicId: "ocean_giants",
       rawCandidatesOverride: [cleanQ, badQ],
@@ -271,12 +271,12 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
       id: testApiId,
       subtopic_id: "ocean_giants",
       domain_id: "nature_animals",
-      archetype_id: "verdict_fact_myth",
+      archetype_id: "verdict_yes_no",
       question: `Are blue whales the largest animals on Earth? (${testApiId})`,
-      format: "true_false",
+      format: "yes_no",
       choices: [
-        { id: "A", text: "True", is_correct: true },
-        { id: "B", text: "False", is_correct: false },
+        { id: "A", text: "Yes", is_correct: true },
+        { id: "B", text: "No", is_correct: false },
       ],
       correct_choice_id: "A",
     };
@@ -285,7 +285,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
       method: "POST",
       url: "/api/question-bank/generate-batch",
       payload: {
-        archetype_id: "verdict_fact_myth",
+        archetype_id: "verdict_yes_no",
         domain_id: "nature_animals",
         subtopic_id: "ocean_giants",
         candidates: [mockQuestion],
@@ -333,11 +333,11 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
       explanation: "Light travels at approximately 300,000 km/s while sound travels at 343 m/s in air.",
       subtopic_id: "ocean_giants",
       domain_id: "nature_animals",
-      archetype_id: "verdict_fact_myth",
-      format: "true_false",
+      archetype_id: "verdict_yes_no",
+      format: "yes_no",
       choices: [
-        { id: "A", text: "True", is_correct: true },
-        { id: "B", text: "False", is_correct: false },
+        { id: "A", text: "Yes", is_correct: true },
+        { id: "B", text: "No", is_correct: false },
       ],
       correct_choice_id: "A",
     };
@@ -364,7 +364,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     }) as unknown as LLMClient;
 
     const result = await generateQuestionBankBatch(app.repository, {
-      archetypeId: "verdict_fact_myth",
+      archetypeId: "verdict_yes_no",
       domainId: "nature_animals",
       subtopicId: "ocean_giants",
       count: 1,

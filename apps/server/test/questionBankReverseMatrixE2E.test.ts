@@ -32,6 +32,9 @@ import {
 } from "../src/quiz/bank/batchGeneratorPrompt.js";
 import { generateQuestionBankBatch, type QuestionBankChunkProgress } from "../src/quiz/bank/questionBankBatchService.js";
 import type { BankQuestion } from "@studio/shared";
+import { readKidsAudienceExpectations } from "./fixtures/knowledgeBaseExpectations.js";
+
+const kb = readKidsAudienceExpectations();
 
 describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   let app: StudioApp;
@@ -77,17 +80,17 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   // ============================================================================
   // Suite 1: Knowledge Base Integrity, Completeness & English-Only Sanitization
   // ============================================================================
-  describe("1. Knowledge Base Integrity (2,759 Entities across 18 Domains)", () => {
-    it("loads all 18 entity files totaling exactly 2,759 entities", () => {
+  describe("1. Knowledge Base Integrity (kids-rated entities across all domains)", () => {
+    it("loads every entity file and admits exactly the kids-rated entities", () => {
       const baseDir = path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
       const stats = getKnowledgeBaseStats({ baseDir });
-      expect(stats.totalEntities).toBe(2759);
+      expect(stats.totalEntities).toBe(kb.entityCount);
 
       const files = readdirSync(baseDir).filter((f) => f.endsWith(".json"));
-      expect(files.length).toBe(18);
+      expect(files.length).toBe(kb.fileCount);
     });
 
-    it("ensures all 2,759 entity IDs are strictly unique", () => {
+    it("ensures all loaded entity IDs are strictly unique", () => {
       const baseDir = path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
       const all = loadAllKnowledgeEntities({ baseDir });
       const idSet = new Set<string>();
@@ -95,7 +98,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
         expect(idSet.has(ent.id)).toBe(false);
         idSet.add(ent.id);
       }
-      expect(idSet.size).toBe(2759);
+      expect(idSet.size).toBe(kb.entityCount);
     });
 
     it("verifies every entity contains required traits, facts, and distractor pool", () => {
@@ -147,9 +150,8 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       const tempTestFile = path.join(entityDir, "zz_dynamic_test_entity.json");
 
       try {
-        // Initial baseline is 2,759 entities and 19,313 combos
         const before = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(before.total_combos).toBe(19313);
+        expect(before.total_combos).toBe(kb.comboCount);
 
         // Dynamically add a new entity file to the knowledge base
         const newEntity = [
@@ -169,7 +171,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
 
         // The very next call to calculateMatrixCoverageStats immediately recognizes the addition
         const after = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(after.total_combos).toBe(19320); // 2,760 * 7 = 19,320 (+7 combos automatically!)
+        expect(after.total_combos).toBe(kb.comboCount + 7); // one new entity adds 7 combos automatically
 
         const dynamicEntity = getEntityById("ENT-DYN-001", { baseDir: entityDir });
         expect(dynamicEntity).toBeDefined();
@@ -178,9 +180,9 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
         if (existsSync(tempTestFile)) {
           unlinkSync(tempTestFile);
         }
-        // Cache automatically detects removal and reverts back to 19,313
+        // Cache automatically detects removal and reverts to the baseline
         const reverted = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(reverted.total_combos).toBe(19313);
+        expect(reverted.total_combos).toBe(kb.comboCount);
       }
     });
   });
@@ -191,13 +193,13 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   describe("2. Matrix Coverage Service & Least-Variant-First Priority Queue", () => {
     const baseDir = () => path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
 
-    it("computes exactly 19,313 total combos with 0% coverage on empty question bank", () => {
+    it("computes every entity x archetype combo with 0% coverage on empty question bank", () => {
       const coverage = calculateMatrixCoverageStats([], { baseDir: baseDir() });
-      expect(coverage.total_combos).toBe(19313);
+      expect(coverage.total_combos).toBe(kb.comboCount);
       expect(coverage.covered_combos).toBe(0);
       expect(coverage.coverage_percent).toBe(0);
       expect(Object.keys(coverage.by_archetype).length).toBe(7);
-      expect(Object.keys(coverage.by_domain).length).toBe(18);
+      expect(Object.keys(coverage.by_domain).length).toBe(kb.domainCount);
     });
 
     it("accurately tracks coverage when questions with and without entity_id coexist", () => {
@@ -242,7 +244,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       ];
 
       const coverage = calculateMatrixCoverageStats(questions, { baseDir: baseDir() });
-      expect(coverage.total_combos).toBe(19313);
+      expect(coverage.total_combos).toBe(kb.comboCount);
       expect(coverage.covered_combos).toBe(1);
       expect(coverage.total_variants).toBe(1);
     });
@@ -386,7 +388,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(prompt).toContain("Core Traits / Clues");
       expect(prompt).toContain("Distractor Pool");
       expect(prompt).toContain("True / False Claims");
-      expect(prompt).toContain("verdict_fact_myth");
+      expect(prompt).toContain("verdict_yes_no");
     });
 
     it("buildReverseGenerationPrompt injects specialized cognitive reflex trap directive for Speed Blitz", () => {
@@ -584,7 +586,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
 
       expect(parsed.length).toBe(1);
       expect(parsed[0].entity_id).toBe("ENT-ANI-001");
-      expect(parsed[0].archetype_id).toBe("verdict_fact_myth");
+      expect(parsed[0].archetype_id).toBe("verdict_yes_no");
       expect(parsed[0].domain_id).toBe("nature_animals");
       expect(parsed[0].status).toBe("approved");
     });
@@ -694,7 +696,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(result.approvedCount).toBe(5);
       expect(result.rejectedCount).toBe(0);
       expect(result.matrixCoverage).toBeDefined();
-      expect(result.matrixCoverage?.total_combos).toBe(19313);
+      expect(result.matrixCoverage?.total_combos).toBe(kb.comboCount);
 
       expect(progressCalls.length).toBeGreaterThan(0);
       const lastProgress = progressCalls[progressCalls.length - 1];
@@ -753,12 +755,12 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(res.statusCode).toBe(200);
       const body = res.json<ReverseCoverageBody>();
       expect(body.coverage).toBeDefined();
-      expect(body.coverage.total_combos).toBe(19313);
+      expect(body.coverage.total_combos).toBe(kb.comboCount);
       expect(body.coverage.total_variants).toBeGreaterThanOrEqual(0);
       expect(body.coverage.covered_combos).toBeGreaterThanOrEqual(0);
       expect(typeof body.coverage.coverage_percent).toBe("number");
       expect(Object.keys(body.coverage.by_archetype).length).toBe(7);
-      expect(Object.keys(body.coverage.by_domain).length).toBe(18);
+      expect(Object.keys(body.coverage.by_domain).length).toBe(kb.domainCount);
     });
 
     it("POST /api/question-bank/generate-batch returns 503 when AI client is unavailable and no candidates provided", async () => {
@@ -821,7 +823,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(body.success).toBe(true);
       expect(body.approvedCount).toBe(1);
       expect(body.matrixCoverage).toBeDefined();
-      expect(body.matrixCoverage.total_combos).toBe(19313);
+      expect(body.matrixCoverage.total_combos).toBe(kb.comboCount);
     });
   });
 });

@@ -6,6 +6,9 @@ import crypto from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
 import { removeKnowledgePolicyFields } from "../../../scripts/migrations/knowledge-policy-removal/transform.js";
 import { planMigration, applyMigration, rollbackMigration } from "../../../scripts/migrations/knowledge-policy-removal/files.js";
+import { readKidsAudienceExpectations } from "./fixtures/knowledgeBaseExpectations.js";
+
+const kb = readKidsAudienceExpectations();
 
 const roots: string[] = [];
 
@@ -257,7 +260,7 @@ describe("P4: Knowledge Policy Metadata Migration", () => {
         .filter((file) => file.endsWith(".json"))
         .sort();
 
-      expect(jsonFiles.length).toBe(18);
+      expect(jsonFiles.length).toBe(kb.fileCount);
 
       const forbiddenKeys = ["copyright_risk", "is_trademark_ip", "forbidden_visual_keywords", "safe_visual_proxy"];
       let totalEntitiesChecked = 0;

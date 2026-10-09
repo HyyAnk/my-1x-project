@@ -49,7 +49,7 @@ function createTestQuiz(layoutId: string, format: QuizQuestionFormat, choiceText
 function renderClipHtml(layoutId: QuizPreviewLayoutId, format: QuizQuestionFormat, _isFinal: boolean = false): string {
   const isMystery = layoutId === "mystery_reveal";
   const choices = isMystery ? ["Hidden Answer"] : ["Option A", "Option B", "Option C"];
-  const effectiveChoices = format === "true_false" ? choices.slice(0, 2) : choices;
+  const effectiveChoices = format === "yes_no" ? choices.slice(0, 2) : choices;
   const quiz = createTestQuiz(layoutId, format, effectiveChoices);
   const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
   director.beats[0].layout_id = layoutId;
@@ -60,8 +60,8 @@ function renderClipHtml(layoutId: QuizPreviewLayoutId, format: QuizQuestionForma
   } else if (layoutId.startsWith("visual_")) {
     director.beats[0].archetype = "visual_multiple_choice";
     director.beats[0].asset_intents = ["choice_illustration"];
-  } else if (format === "true_false") {
-    director.beats[0].archetype = "true_false";
+  } else if (format === "yes_no") {
+    director.beats[0].archetype = "yes_no";
     director.beats[0].asset_intents = ["question_illustration"];
   } else {
     director.beats[0].archetype = "text_multiple_choice";
@@ -121,8 +121,9 @@ describe("Stage 5: Explanation & Reward FX Lifecycle Parity", () => {
         fact_card_text: "Scientific explanation fact.",
       });
 
+      // Rehearsal uses the production gameplay timeline, so --reward-at follows its compiled reward start.
       // Fact card in rehearsal stage uses CSS animation holding opacity 0 before --reward-at
-      expect(rehearsal.html).toContain(`--reward-at: ${rewardAtExpected.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(`--reward-at: ${rehearsal.timeline!.rewardStart!.toFixed(3)}s;`);
       expect(rehearsal.html).toContain('class="fact-card sandbox-explain-card"');
       expect(rehearsal.css).toContain("opacity: 0;");
 
@@ -270,16 +271,16 @@ describe("Stage 5: Explanation & Reward FX Lifecycle Parity", () => {
   });
 
   describe("3. Parity between Unified Frames and Standard Frames", () => {
-    it("ensures all 8 active landscape layouts use unified quiz frame with identical fact anchor", () => {
+    it("ensures all active landscape layouts use unified quiz frame with identical fact anchor", () => {
       for (const layoutId of QUIZ_LANDSCAPE_LAYOUT_IDS) {
         expect(isUnifiedQuizFrame(layoutId, "16:9")).toBe(true);
 
-        const is2Choice = layoutId === "split_versus_two" || layoutId === "verdict_true_false";
+        const is2Choice = layoutId === "split_versus_two" || layoutId === "verdict_yes_no";
         const isMystery = layoutId === "mystery_reveal";
         const format: QuizQuestionFormat = isMystery
           ? "image_guess"
           : is2Choice
-            ? "true_false"
+            ? "yes_no"
             : layoutId === "visual_choices_three_pure"
               ? "odd_one_out"
               : "multiple_choice";

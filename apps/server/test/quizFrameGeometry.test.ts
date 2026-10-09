@@ -46,7 +46,6 @@ describe("landscapeFrameGeometry", () => {
     expect(LAYOUT_ARENA_GEOMETRY.visual_choices_three.height).toBe(586);
     expect(LAYOUT_ARENA_GEOMETRY.visual_choices_three_pure.height).toBe(608);
     expect(LAYOUT_ARENA_GEOMETRY.split_versus_two.height).toBe(578);
-    expect(LAYOUT_ARENA_GEOMETRY.verdict_true_false.height).toBe(565);
     expect(LAYOUT_ARENA_GEOMETRY.full_stack_list.height).toBe(528);
     expect(LAYOUT_ARENA_GEOMETRY.mystery_reveal.height).toBe(757);
   });

@@ -1,6 +1,13 @@
-import { hashBankQuestionSource, type BankQuestion, type BankQuestionWithCooldown, type TopicRunCandidate } from "@studio/shared";
+import {
+  hashBankQuestionSource,
+  isLegacyVerdictIdentifier,
+  type BankQuestion,
+  type BankQuestionWithCooldown,
+  type TopicRunCandidate,
+} from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../../repository.js";
 import { evaluateEpisodeQuestionEligibility, evaluateShortReelQuestionEligibility } from "../bankEligibility.js";
+import { detectStemAnswerLeak } from "../autoQa/stemLeakDetector.js";
 
 export interface ResolveBoundTopicSourcesInput {
   repository: RepositoryService;
@@ -21,13 +28,20 @@ export interface ResolvedBoundTopicSources {
   snapshotToken?: string;
 }
 
+/** New topic suggestions never bind leaked questions; sources bound before screening are kept but reported. */
+function warnGrandfatheredStemLeak(bankQuestion: BankQuestionWithCooldown): void {
+  const leak = detectStemAnswerLeak(bankQuestion);
+  if (leak) console.warn(`[BoundSourceResolver] Bound source "${bankQuestion.id}" predates answer-leak screening: ${leak.message}`);
+}
+
 function checkShortReelEligibility(candidate: TopicRunCandidate, bankQuestion: BankQuestionWithCooldown, force: boolean): void {
   const targetArchetype: "versus_faceoff" | "deep_trivia" =
     candidate.archetype === "versus_faceoff" || candidate.archetype === "deep_trivia"
       ? candidate.archetype
       : (bankQuestion.archetype_id as "versus_faceoff" | "deep_trivia");
   const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
-  const eligibility = evaluateShortReelQuestionEligibility(evalQuestion, { targetArchetype });
+  warnGrandfatheredStemLeak(bankQuestion);
+  const eligibility = evaluateShortReelQuestionEligibility(evalQuestion, { targetArchetype, allowStemLeak: true });
   if (!eligibility.eligible) {
     if (!force && bankQuestion.channel_cooldown?.is_cooldown) {
       const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
@@ -59,14 +73,16 @@ function checkEpisodeEligibility(candidate: TopicRunCandidate, bankQuestion: Ban
   const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
   const candQuizFormat = (candidate as { quiz_format?: string; format?: string }).quiz_format ?? (candidate as { format?: string }).format;
   const expectedFormat =
-    candQuizFormat === "yes_no" || candQuizFormat === "true_false"
+    candQuizFormat === "yes_no" || isLegacyVerdictIdentifier(candQuizFormat)
       ? "yes_no"
       : candQuizFormat === "multiple_choice" || candQuizFormat === "knowledge"
         ? "multiple_choice"
         : undefined;
+  warnGrandfatheredStemLeak(bankQuestion);
   const eligibility = evaluateEpisodeQuestionEligibility(evalQuestion, {
     targetLanguage: "en",
     expectedFormat,
+    allowStemLeak: true,
   });
   if (!eligibility.eligible) {
     if (!force && bankQuestion.channel_cooldown?.is_cooldown) {

@@ -1,7 +1,7 @@
 import type { MascotRenderAspectRatio } from "@studio/shared";
 
 /**
- * 3-row grid, hero image viewport, choice group geometry, dimensional tokens, and portrait fallback for Binary Verdict layouts (Yes/No and True/False).
+ * 3-row grid, hero image viewport, choice group geometry, dimensional tokens, and portrait fallback for Binary Verdict layouts (Yes/No).
  * Canonical geometry per specs/GEOMETRY.md:
  * - Hero: (380, 253, 820, 565), border = 10, viewport 800x545.
  * - Group: left 860, top 0, width 560, height 565, gap 44, centered vertically.
@@ -9,7 +9,7 @@ import type { MascotRenderAspectRatio } from "@studio/shared";
  * - Arena height = 565.
  */
 export function verdictBinaryBaseStyles(
-  layoutClass = "layout-verdict_true_false",
+  layoutClass = "layout-verdict_yes_no",
   aspectRatio?: MascotRenderAspectRatio,
 ): string {
   return `

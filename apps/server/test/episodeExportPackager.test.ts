@@ -138,6 +138,29 @@ describe("Episode Export Packaging", () => {
         };
         await app.repository.writeVideoDescription(channel.channel_id, episode.episode_id, videoDesc);
 
+        // Mock compiled timeline (12 s intro, three questions, results outro)
+        const timelineEvent = (index: number, type: "question.enter" | "pre_outro.enter", at: number, questionId: string | null) => ({
+          event_id: `event-${index}`,
+          type,
+          at_seconds: at,
+          duration_seconds: 0,
+          question_id: questionId,
+          choice_id: null,
+          segment_id: null,
+          payload: {},
+        });
+        await app.repository.writeQuizTimeline(channel.channel_id, episode.episode_id, {
+          schema_version: 2,
+          episode_id: episode.episode_id,
+          duration_seconds: 120.5,
+          events: [
+            timelineEvent(1, "question.enter", 12, "q-1"),
+            timelineEvent(2, "question.enter", 40, "q-2"),
+            timelineEvent(3, "question.enter", 68, "q-3"),
+            timelineEvent(4, "pre_outro.enter", 96, null),
+          ],
+        });
+
         // Execute export packager
         const result = await packageEpisodeExport({
           repository: app.repository,
@@ -164,6 +187,9 @@ describe("Episode Export Packaging", () => {
         expect(descContent).toContain("[TITLE]\nExport Episode 1");
         expect(descContent).toContain("Put your knowledge to the test!");
         expect(descContent).toContain("#Arcade");
+        expect(descContent).toContain("⏱️ CHAPTERS:\n0:00 Intro\n0:12 Question 1\n0:40 Question 2\n1:08 Question 3\n1:36 Final Score");
+        expect(result.metadata.chapters.map((chapter) => chapter.timestamp)).toEqual(["0:00", "0:12", "0:40", "1:08", "1:36"]);
+        expect(result.metadata.made_for_kids).toBe(true);
 
         const metaPath = path.join(result.exportDirectory, "metadata.json");
         const metaRaw = JSON.parse(await readFile(metaPath, "utf8"));

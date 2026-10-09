@@ -42,8 +42,6 @@ export const questionBankEn = {
     archetypes: {
       all: "All Archetypes",
       verdict_yes_no: "Yes or No",
-      verdict_true_false: "True or False",
-      verdict_fact_myth: "True or False",
       speed_blitz: "Speed Blitz",
       deep_trivia: "Deep Trivia",
       versus_faceoff: "Versus Faceoff",
@@ -166,7 +164,6 @@ export const questionBankEn = {
       formatLabel: "Question Format:",
       formatMultipleChoice: "Multiple Choice",
       formatYesNo: "Yes / No",
-      formatTrueFalse: "True / False",
       questionTextLabel: "Question Content:",
       questionTextPlaceholder: "Enter question content...",
       choicesLabel: "Answer Choices (Min 2):",

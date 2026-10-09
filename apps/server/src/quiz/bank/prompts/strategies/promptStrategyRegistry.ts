@@ -1,4 +1,4 @@
-import type { BankGameplayArchetypeId } from "@studio/shared";
+import { normalizeLegacyVerdictIdentifier, type BankGameplayArchetypeId } from "@studio/shared";
 import type { ArchetypePromptStrategy } from "./promptStrategy.types.js";
 import { speedBlitzPromptStrategy } from "./speedBlitzPromptStrategy.js";
 import { deepTriviaPromptStrategy } from "./deepTriviaPromptStrategy.js";
@@ -30,7 +30,7 @@ registerStrategy(verdictPromptStrategy);
  * Falls back safely to speed_blitz strategy if an unrecognized archetype is requested.
  */
 export function resolvePromptStrategy(archetypeId: BankGameplayArchetypeId): ArchetypePromptStrategy {
-  return STRATEGY_MAP.get(archetypeId) ?? speedBlitzPromptStrategy;
+  return STRATEGY_MAP.get(normalizeLegacyVerdictIdentifier(archetypeId) as BankGameplayArchetypeId) ?? speedBlitzPromptStrategy;
 }
 
 export {

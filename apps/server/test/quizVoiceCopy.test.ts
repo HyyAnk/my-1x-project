@@ -107,10 +107,17 @@ describe("Quiz Voice Copy & Tone Engine (Stage 2)", () => {
       assert.equal(kickoffPhrase?.pause_after, "none");
     });
 
-    it("includes kickoff callout in template subscribe CTA copy", () => {
+    it("includes a back-to-the-quiz callout in template mid-roll subscribe CTA copy", () => {
       const copy = resolveQuizVoiceCopy("en", "ep_seed_cta");
       const cta = copy.subscribeCta("Felix Quiz");
-      assert.match(cta, /(?:Let's go!|Here we go!|Let's do this!|Ready\? Let's go!)$/);
+      assert.match(cta, /(?:Now, back to the quiz!|Let's keep going!|On to the next question!|Ready\? Let's go!)$/);
+    });
+
+    it("never frames the mid-roll subscribe CTA as the start of the quiz", () => {
+      for (const seed of ["ep_a", "ep_b", "ep_c", "ep_d", "ep_e", "ep_f"]) {
+        const cta = resolveQuizVoiceCopy("en", seed).subscribeCta("Felix Quiz");
+        assert.doesNotMatch(cta, /before question one|are you ready to play/i);
+      }
     });
   });
 });

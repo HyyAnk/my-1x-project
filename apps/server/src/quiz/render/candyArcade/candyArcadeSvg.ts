@@ -1,3 +1,5 @@
+import { expandKeywordToTitleSpan, findHighlightKeywordIndex, tokenizeQuestionWords } from "./questionKeywordSpan.js";
+
 export const QUESTION_KEYWORD_STOP_WORDS = new Set([
   "about",
   "animal",
@@ -37,16 +39,16 @@ export function escAttr(value: string): string {
 }
 
 export function highlightQuestionMarkup(question: string, visualOpportunity: string): string {
-  const opportunityTokens = new Set(
-    [...visualOpportunity.matchAll(/[\p{L}\p{N}]+/gu)]
-      .map((match) => match[0].toLocaleLowerCase())
-      .filter((token) => token.length >= 4 && !QUESTION_KEYWORD_STOP_WORDS.has(token)),
-  );
-  const questionTokens = [...question.matchAll(/[\p{L}\p{N}]+/gu)];
-  const match = questionTokens.find((token) => opportunityTokens.has(token[0].toLocaleLowerCase()));
-  if (!match || match.index === undefined) return esc(question);
-  const end = match.index + match[0].length;
-  return `${esc(question.slice(0, match.index))}<strong class="keyword-highlight">${esc(question.slice(match.index, end))}</strong>${esc(question.slice(end))}`;
+  const opportunityWords = tokenizeQuestionWords(visualOpportunity)
+    .map((match) => match[0].toLocaleLowerCase())
+    .filter((token) => !QUESTION_KEYWORD_STOP_WORDS.has(token));
+  const properNounCandidates = new Set(opportunityWords.filter((token) => token.length >= 2));
+  const keywordCandidates = new Set(opportunityWords.filter((token) => token.length >= 4));
+  const questionTokens = tokenizeQuestionWords(question);
+  const matchedIndex = findHighlightKeywordIndex(questionTokens, properNounCandidates, keywordCandidates);
+  if (matchedIndex < 0) return esc(question);
+  const { start, end } = expandKeywordToTitleSpan(question, questionTokens, matchedIndex);
+  return `${esc(question.slice(0, start))}<strong class="keyword-highlight">${esc(question.slice(start, end))}</strong>${esc(question.slice(end))}`;
 }
 
 export function illustrationDataUri(subject: string, seed: number): string {

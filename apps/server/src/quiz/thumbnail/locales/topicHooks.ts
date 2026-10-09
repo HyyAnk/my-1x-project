@@ -1,4 +1,5 @@
 import type { SupportedLanguage } from "./types.js";
+import { containsAnyKeyword } from "../utils/keywordMatch.js";
 
 const SPACE_HOOKS: Record<SupportedLanguage, string> = {
   en: "SOLAR SYSTEM QUIZ",
@@ -306,6 +307,8 @@ const ANIMAL_KEYWORDS = ["animal", "wildlife", "creature", "safari", "mammal", "
 const FLAG_KEYWORDS = ["flag", "country", "geography", "capital", "nations", "国旗", "国家", "地理"];
 const COOKIE_KEYWORDS = [
   "bake",
+  "baking",
+  "baker",
   "cookie",
   "biscuit",
   "pastry",
@@ -606,7 +609,7 @@ const GREEK_KEYWORDS = [
 ];
 
 function matchesAny(text: string, keywords: readonly string[]): boolean {
-  return keywords.some((kw) => text.includes(kw));
+  return containsAnyKeyword(text, keywords);
 }
 
 /**

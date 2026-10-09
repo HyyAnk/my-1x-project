@@ -1,5 +1,10 @@
-import type { BankGameplayArchetypeId, BankQuestion, MatrixCoverageStats } from "@studio/shared";
-import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../knowledgeBaseLoader.js";
+import {
+  normalizeLegacyVerdictIdentifier,
+  type BankGameplayArchetypeId,
+  type BankQuestion,
+  type MatrixCoverageStats,
+} from "@studio/shared";
+import { loadAllKnowledgeEntities, resolveCanonicalEntityId, type KnowledgeEntity } from "../knowledgeBaseLoader.js";
 
 export const ALL_MATRIX_ARCHETYPES: readonly BankGameplayArchetypeId[] = [
   "verdict_yes_no",
@@ -18,16 +23,17 @@ export interface MatrixCoverageServiceOptions {
 
 /**
  * Builds a fast lookup map of (archetype_id + entity_id) -> variant count from existing bank questions.
+ * `resolveEntityId` maps ids of merged duplicate entities onto their canonical entity.
  */
-export function buildMatrixCoverageMap(questions: BankQuestion[]): Map<string, number> {
+export function buildMatrixCoverageMap(
+  questions: BankQuestion[],
+  resolveEntityId: (id: string) => string = (id) => id,
+): Map<string, number> {
   const map = new Map<string, number>();
   for (const q of questions) {
     if (q.entity_id && q.archetype_id) {
-      const archId =
-        q.archetype_id === "verdict_fact_myth" || q.archetype_id === "verdict_true_false"
-          ? "verdict_yes_no"
-          : q.archetype_id;
-      const key = `${archId}:${q.entity_id}`;
+      const archId = normalizeLegacyVerdictIdentifier(q.archetype_id);
+      const key = `${archId}:${resolveEntityId(q.entity_id)}`;
       map.set(key, (map.get(key) || 0) + 1);
     }
   }
@@ -39,7 +45,7 @@ export function buildMatrixCoverageMap(questions: BankQuestion[]): Map<string, n
  */
 export function calculateMatrixCoverageStats(questions: BankQuestion[], options?: MatrixCoverageServiceOptions): MatrixCoverageStats {
   const entities = options?.entities || loadAllKnowledgeEntities({ baseDir: options?.baseDir });
-  const coverageMap = buildMatrixCoverageMap(questions);
+  const coverageMap = buildMatrixCoverageMap(questions, (id) => resolveCanonicalEntityId(id, { baseDir: options?.baseDir }));
 
   const totalEntities = entities.length;
   const totalCombos = totalEntities * ALL_MATRIX_ARCHETYPES.length;

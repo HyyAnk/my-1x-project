@@ -90,7 +90,7 @@ export function ThumbnailControlsDeck(props: ThumbnailControlsDeckProps) {
           value={customHook}
           disabled={generating}
           onChange={(event) => setCustomHook(event.target.value)}
-          placeholder="Auto from script"
+          placeholder={manifest?.hook_text ? `Auto (current: ${manifest.hook_text})` : "Auto from script"}
           maxLength={60}
         />
         {customHook.length > 30 && <span role="status">Keep the headline under 30 characters to avoid shortening</span>}

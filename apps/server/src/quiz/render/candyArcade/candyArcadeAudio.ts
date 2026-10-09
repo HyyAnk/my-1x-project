@@ -4,6 +4,7 @@ import { defaultBgmRegistry, type ResolveBgmOptions } from "../../audio/bgmRegis
 import { DEFAULT_SFX_MAP } from "../../audio/sfxRegistry.js";
 import { buildLocalizedArtifactFilename, parseAnimationArtifactUrl } from "../../../tasks/video/mascotAnimationResolver.js";
 import { escAttr } from "./candyArcadeSvg.js";
+import { isBridgeStingerTransition } from "../../bridge/bridgeTransitionIds.js";
 
 export type SfxRawClip = {
   id: string;
@@ -212,14 +213,7 @@ function createSfxRawClip(event: QuizTimeline["events"][number], assets?: Record
   }
 
   if (event.type === "transition.start") {
-    if (
-      event.payload?.instance_id === "bridge_topic_to_cta" ||
-      event.payload?.transition_id === "brand_logo_stinger" ||
-      event.event_id === "transition_bridge_topic_to_cta" ||
-      event.payload?.instance_id === "bridge_cta_to_question" ||
-      event.payload?.transition_id === "energy_whip" ||
-      event.event_id === "transition_bridge_cta_to_question"
-    ) {
+    if (isBridgeStingerTransition(event)) {
       return null;
     }
     const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";

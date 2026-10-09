@@ -1,4 +1,4 @@
-import type { BankQuestion } from "@studio/shared";
+import { normalizeLegacyVerdictIdentifier, type BankQuestion } from "@studio/shared";
 import type { RepositoryService } from "../../repository/service.js";
 import { runBatchAutoQa } from "./questionBankAutoQa.js";
 import { remediateLeakedQuestionsBatch } from "./remediation/index.js";
@@ -50,7 +50,15 @@ export function validateBankRawCandidateLanguages(candidates: readonly unknown[]
  * - 3-layer Auto-QA verification
  * - Real-time persistence and chunk progress reporting
  */
-export async function generateQuestionBankBatch(repository: RepositoryService, input: GenerateBatchInput): Promise<BatchGenerationResult> {
+export async function generateQuestionBankBatch(
+  repository: RepositoryService,
+  rawInput: GenerateBatchInput,
+): Promise<BatchGenerationResult> {
+  // Callers holding a retired True/False archetype id generate into the Yes/No pipeline.
+  const input: GenerateBatchInput = {
+    ...rawInput,
+    archetypeId: normalizeLegacyVerdictIdentifier(rawInput.archetypeId) as GenerateBatchInput["archetypeId"],
+  };
   const targetCount = Math.max(1, input.count || 20);
   const mode = input.mode || (input.domainId || input.archetypeId ? "manual" : "auto");
   const persist = input.persist !== false;

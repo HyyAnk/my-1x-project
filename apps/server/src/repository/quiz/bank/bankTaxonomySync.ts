@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { BankTaxonomySchema, CANONICAL_DOMAIN_META, type BankDomainMeta, type BankTaxonomy } from "@studio/shared";
+import { CHANNEL_KNOWLEDGE_AUDIENCE } from "../../../quiz/bank/knowledgeBase/knowledgeAudience.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath } from "./bankPathResolver.js";
 import { withBankRead } from "./bankSerializationBoundary.js";
@@ -66,7 +67,9 @@ export async function syncTaxonomyFromKnowledgeBase(runtime: RepositoryRuntime):
 
       for (const rawEnt of content) {
         if (!rawEnt || typeof rawEnt !== "object") continue;
-        const ent = rawEnt as { domain_id?: unknown; subtopic_id?: unknown };
+        const ent = rawEnt as { domain_id?: unknown; subtopic_id?: unknown; audience_rating?: unknown };
+        // Subjects curated as teen or mature never reach the channel, so their subtopics are not offered.
+        if (ent.audience_rating !== undefined && ent.audience_rating !== CHANNEL_KNOWLEDGE_AUDIENCE) continue;
         const domainId = typeof ent.domain_id === "string" && ent.domain_id.trim() ? ent.domain_id.trim() : defaultDomainId;
         if (!domainMap.has(domainId)) {
           const canonical = CANONICAL_DOMAIN_META[domainId];
@@ -132,25 +135,19 @@ export async function readQuestionBankTaxonomyUnlocked(this: RepositoryRuntime):
     for (const fileDom of fileTaxonomy.domains) {
       if (mergedDomainsMap.has(fileDom.id)) {
         const existing = mergedDomainsMap.get(fileDom.id)!;
-        const subMap = new Map(existing.subtopics.map((s) => [s.id, s]));
-        for (const s of fileDom.subtopics) {
-          if (!subMap.has(s.id)) {
-            subMap.set(s.id, s);
-          } else {
-            const currSub = subMap.get(s.id)!;
-            subMap.set(s.id, {
-              id: s.id,
-              title: currSub.title || s.title,
-              description: s.description || currSub.description,
-            });
-          }
-        }
+        // The Knowledge Base is the source of truth for which subtopics exist; the stored file only adds descriptions.
+        const fileSubtopics = new Map(fileDom.subtopics.map((s) => [s.id, s]));
+        const subtopics = existing.subtopics.map((sub) => ({
+          ...sub,
+          description: fileSubtopics.get(sub.id)?.description || sub.description,
+        }));
+        const canonical = CANONICAL_DOMAIN_META[fileDom.id];
         mergedDomainsMap.set(fileDom.id, {
           id: fileDom.id,
-          title: fileDom.title || existing.title,
-          description: fileDom.description || existing.description,
-          icon: fileDom.icon || existing.icon,
-          subtopics: Array.from(subMap.values()),
+          title: canonical ? existing.title : fileDom.title || existing.title,
+          description: canonical ? existing.description : fileDom.description || existing.description,
+          icon: canonical ? existing.icon : fileDom.icon || existing.icon,
+          subtopics,
         });
       } else if (dynamicDomains.length === 0) {
         mergedDomainsMap.set(fileDom.id, fileDom);

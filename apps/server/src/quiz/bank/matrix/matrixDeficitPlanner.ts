@@ -1,4 +1,5 @@
 import type { BankQuestion } from "@studio/shared";
+import { resolveCanonicalEntityId } from "../knowledgeBaseLoader.js";
 import { buildMatrixCoverageMap } from "./matrixCoverageCalculator.js";
 import { selectAutoCandidates, selectMatrixCandidatesAuto } from "./selectors/matrixAutoSelector.js";
 import { selectManualCandidates, selectMatrixCandidatesManual } from "./selectors/matrixManualSelector.js";
@@ -42,7 +43,8 @@ export function getDynamicDeficitChunk(questions: BankQuestion[] = [], options: 
 
   let coverageMap = options.coverageMap;
   if (!coverageMap && options.coverageCache) coverageMap = options.coverageCache.getComboMap();
-  if (!coverageMap && questions.length > 0) coverageMap = buildMatrixCoverageMap(questions);
+  if (!coverageMap && questions.length > 0)
+    coverageMap = buildMatrixCoverageMap(questions, (id) => resolveCanonicalEntityId(id, { baseDir: options.baseDir }));
 
   const selectorOpts = {
     count: chunkSize,

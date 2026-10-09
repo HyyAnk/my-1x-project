@@ -17,9 +17,6 @@ function formatArchetypeLabel(archetypeId: string): string {
       return "Visual Spotting";
     case "verdict_yes_no":
       return "Yes or No";
-    case "verdict_true_false":
-    case "verdict_fact_myth":
-      return "True or False";
     case "fact_chain":
       return "Fact Chain";
     case "odd_one_out":

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { QuizTimeline } from "@studio/shared";
 import { DEFAULT_SFX_MAP } from "./sfxRegistry.js";
+import { isBridgeStingerTransition } from "../bridge/bridgeTransitionIds.js";
 
 export interface SfxScheduleItem {
   id: string;
@@ -71,14 +72,7 @@ function resolveEventSfxConfig(event: QuizTimeline["events"][number]) {
     };
   }
   if (event.type === "transition.start") {
-    if (
-      event.payload?.instance_id === "bridge_topic_to_cta" ||
-      event.payload?.transition_id === "brand_logo_stinger" ||
-      event.event_id === "transition_bridge_topic_to_cta" ||
-      event.payload?.instance_id === "bridge_cta_to_question" ||
-      event.payload?.transition_id === "energy_whip" ||
-      event.event_id === "transition_bridge_cta_to_question"
-    ) {
+    if (isBridgeStingerTransition(event)) {
       return null;
     }
     const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";

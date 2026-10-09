@@ -1,0 +1,1636 @@
+[
+  {
+    "id": "ENT-FES-001",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Lunar New Year",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Chinese New Year",
+      "Spring Festival"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A happy family in bright red clothes hanging red paper lanterns and gold decorations outside their home, a cheerful lion dancer in the street behind them, warm festive glow, 9:16 vertical shot.",
+    "core_traits": [
+      "A big celebration that usually falls in late January or February",
+      "Homes fill with red decorations, dumplings and family reunions",
+      "Each year is linked to one of twelve zodiac animals",
+      "In China it is also called the Spring Festival"
+    ],
+    "distractor_pool": [
+      "Diwali",
+      "Songkran",
+      "Mid-Autumn Festival",
+      "Dragon Boat Festival",
+      "Hanami"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Each Lunar New Year is matched with one of 12 zodiac animals.",
+        "verdict": "fact",
+        "explanation": "The Chinese zodiac cycles through 12 animals, from the Rat to the Pig, one for each year.",
+        "fun_fact": "Many families clean their homes before the new year to sweep away last year's bad luck."
+      },
+      {
+        "claim": "Lunar New Year falls on the same calendar date every year.",
+        "verdict": "myth",
+        "explanation": "It follows the Moon, so the date moves around between late January and mid-February.",
+        "fun_fact": "The holiday travel rush in China is often called the largest yearly human migration on Earth."
+      }
+    ],
+    "versus_candidates": [
+      "Christmas",
+      "Diwali",
+      "Thanksgiving"
+    ]
+  },
+  {
+    "id": "ENT-FES-002",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Tet",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Vietnamese New Year",
+      "Vietnamese Lunar New Year"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling Vietnamese family gathered beside a blooming pink peach blossom branch and a little kumquat tree full of orange fruit, square green rice cakes on the table, 9:16 vertical shot.",
+    "core_traits": [
+      "The biggest and most important holiday of the year in Vietnam",
+      "Children receive lucky money in little red envelopes",
+      "Families wrap square sticky rice cakes in green leaves",
+      "Peach blossoms decorate homes in the north and yellow apricot blossoms in the south"
+    ],
+    "distractor_pool": [
+      "Songkran",
+      "Diwali",
+      "Mid-Autumn Festival",
+      "Hanami",
+      "Holi"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Families make square sticky rice cakes called banh chung for Tet.",
+        "verdict": "fact",
+        "explanation": "Banh chung is filled with mung beans and pork, then wrapped in leaves and boiled for hours.",
+        "fun_fact": "Traditionally, many Vietnamese people counted themselves one year older at Tet instead of on birthdays."
+      },
+      {
+        "claim": "Tet is celebrated in just one single day.",
+        "verdict": "myth",
+        "explanation": "Tet celebrations last several days, with the biggest family visits during the first three days.",
+        "fun_fact": "Little kumquat trees covered in orange fruit are a popular Tet decoration for good luck."
+      }
+    ],
+    "versus_candidates": [
+      "Songkran",
+      "Christmas",
+      "Diwali"
+    ]
+  },
+  {
+    "id": "ENT-FES-003",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Mid-Autumn Festival",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Moon Festival",
+      "Mooncake Festival"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Children carrying glowing star-shaped and rabbit-shaped lanterns under a huge golden full moon, a plate of mooncakes on a garden table nearby, 9:16 vertical shot.",
+    "core_traits": [
+      "An autumn celebration held on a bright full moon night",
+      "Families share round pastries and admire the Moon together",
+      "Children parade with glowing lanterns, often shaped like stars or rabbits",
+      "Held on the 15th day of the 8th month of the lunar calendar"
+    ],
+    "distractor_pool": [
+      "Lantern Festival",
+      "Lunar New Year",
+      "Dragon Boat Festival",
+      "Diwali",
+      "Hanami"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Mid-Autumn Festival takes place on a full moon night.",
+        "verdict": "fact",
+        "explanation": "It falls on the 15th day of the 8th lunar month, when the Moon is full and bright.",
+        "fun_fact": "In Vietnam, Mid-Autumn is especially a children's festival, with lion dances and star lanterns."
+      },
+      {
+        "claim": "The Mid-Autumn Festival is always on the same September date.",
+        "verdict": "myth",
+        "explanation": "It follows the lunar calendar, so it moves between mid-September and early October.",
+        "fun_fact": "A famous legend tells of Chang'e, a lady who lives on the Moon with a jade rabbit."
+      }
+    ],
+    "versus_candidates": [
+      "Lantern Festival",
+      "Thanksgiving",
+      "Diwali"
+    ]
+  },
+  {
+    "id": "ENT-FES-004",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Lantern Festival",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Yuanxiao Festival"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A night street hung with hundreds of glowing red and gold lanterns, children pointing up at a lantern shaped like a fish, bowls of round sweet rice balls on a stall, 9:16 vertical shot.",
+    "core_traits": [
+      "A night festival filled with glowing lanterns of every shape",
+      "People try to solve riddles written on lanterns",
+      "Families eat sweet round rice balls in warm soup",
+      "Marks the end of the Lunar New Year season on the first full moon"
+    ],
+    "distractor_pool": [
+      "Mid-Autumn Festival",
+      "Lunar New Year",
+      "Diwali",
+      "Dragon Boat Festival",
+      "Songkran"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "People solve riddles written on lanterns during the Lantern Festival.",
+        "verdict": "fact",
+        "explanation": "Guessing lantern riddles is a classic tradition, and good guessers sometimes win small prizes.",
+        "fun_fact": "Sweet sticky rice balls called tangyuan are the favorite treat of the Lantern Festival."
+      },
+      {
+        "claim": "The Lantern Festival happens on the first day of Lunar New Year.",
+        "verdict": "myth",
+        "explanation": "It is held on the 15th day of the first lunar month, closing the New Year celebrations.",
+        "fun_fact": "It falls on the very first full moon of the lunar year."
+      }
+    ],
+    "versus_candidates": [
+      "Mid-Autumn Festival",
+      "Diwali",
+      "Hanami"
+    ]
+  },
+  {
+    "id": "ENT-FES-005",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Diwali",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Deepavali",
+      "Festival of Lights"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A doorway glowing with rows of small clay oil lamps, a bright flower-shaped rangoli pattern in pink, orange and yellow on the floor, a smiling child holding a plate of sweets, 9:16 vertical shot.",
+    "core_traits": [
+      "A joyful autumn celebration full of lights, sweets and new clothes",
+      "Families light rows of small clay lamps around their homes",
+      "Colorful patterns are drawn at doorways to welcome guests",
+      "Widely celebrated in India, usually in October or November"
+    ],
+    "distractor_pool": [
+      "Holi",
+      "Lantern Festival",
+      "Mid-Autumn Festival",
+      "Songkran",
+      "Lunar New Year"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Diwali is often called the Festival of Lights.",
+        "verdict": "fact",
+        "explanation": "Homes, streets and shops sparkle with lamps, candles and string lights during the celebration.",
+        "fun_fact": "The small clay oil lamps lit for Diwali are called diyas."
+      },
+      {
+        "claim": "Diwali is celebrated for only one evening.",
+        "verdict": "myth",
+        "explanation": "Diwali celebrations usually stretch over five days, with the main night in the middle.",
+        "fun_fact": "Families often swap boxes of sweets with neighbors and friends during Diwali."
+      }
+    ],
+    "versus_candidates": [
+      "Holi",
+      "Christmas",
+      "Lunar New Year"
+    ]
+  },
+  {
+    "id": "ENT-FES-006",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Holi",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Festival of Colors",
+      "Festival of Colours"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Laughing children tossing clouds of pink, yellow, green and blue powder into the sunny spring air, their white clothes splashed with rainbow colors, 9:16 vertical shot.",
+    "core_traits": [
+      "A cheerful spring celebration that gets everyone very messy",
+      "People toss bright colored powder and splash colored water",
+      "White clothes end up covered in every color of the rainbow",
+      "Held on a full moon, usually in March, in India and Nepal"
+    ],
+    "distractor_pool": [
+      "Diwali",
+      "Songkran",
+      "La Tomatina",
+      "Carnival of Rio de Janeiro",
+      "Lantern Festival"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "During Holi, people throw bright colored powder at each other.",
+        "verdict": "fact",
+        "explanation": "Friends and family chase each other with colored powder and water to welcome spring.",
+        "fun_fact": "Many people wear white on purpose so the colors show up brightly."
+      },
+      {
+        "claim": "Holi is celebrated only in India.",
+        "verdict": "myth",
+        "explanation": "Holi is also a major holiday in Nepal, and communities around the world join the fun.",
+        "fun_fact": "Holi marks the arrival of spring and the end of winter."
+      }
+    ],
+    "versus_candidates": [
+      "Diwali",
+      "Songkran",
+      "La Tomatina"
+    ]
+  },
+  {
+    "id": "ENT-FES-007",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Christmas",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Xmas",
+      "Christmas Day"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cozy living room with a sparkling decorated tree, wrapped presents with red bows underneath, stockings by the fireplace and snow falling outside the window, 9:16 vertical shot.",
+    "core_traits": [
+      "A winter holiday famous for presents and family dinners",
+      "Homes are decorated with lights and evergreen trees",
+      "Kids hang stockings and wait for Santa Claus",
+      "Celebrated on December 25 in most countries"
+    ],
+    "distractor_pool": [
+      "Thanksgiving",
+      "Halloween",
+      "Lunar New Year",
+      "Diwali",
+      "Hanami"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Christmas is celebrated on December 25 in most countries.",
+        "verdict": "fact",
+        "explanation": "December 25 is the main Christmas Day for most families around the world.",
+        "fun_fact": "In Australia, Christmas falls in summer, so many families enjoy beach picnics."
+      },
+      {
+        "claim": "A soda company invented Santa Claus's red suit.",
+        "verdict": "myth",
+        "explanation": "Santa was drawn in red in many illustrations long before the famous 1930s soda ads.",
+        "fun_fact": "The tradition of decorating Christmas trees at home is credited to Germany."
+      }
+    ],
+    "versus_candidates": [
+      "Thanksgiving",
+      "Lunar New Year",
+      "Halloween"
+    ]
+  },
+  {
+    "id": "ENT-FES-008",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Halloween",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Hallowe'en"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Smiling kids dressed as a friendly pumpkin, a superhero and a bumblebee holding candy buckets on a porch lined with cheerful carved pumpkins, orange autumn leaves all around, 9:16 vertical shot.",
+    "core_traits": [
+      "A fun autumn night when kids dress up in costumes",
+      "Children go door to door saying \"trick or treat\" for candy",
+      "Carved pumpkins with glowing faces sit on porches",
+      "Celebrated every year on October 31"
+    ],
+    "distractor_pool": [
+      "Thanksgiving",
+      "Christmas",
+      "Carnival of Rio de Janeiro",
+      "Holi",
+      "Mid-Autumn Festival"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Kids go trick-or-treating for candy on Halloween.",
+        "verdict": "fact",
+        "explanation": "Children in costumes visit neighbors' doors and collect treats, ideally with an adult nearby.",
+        "fun_fact": "Pumpkins are actually fruits, because they grow from flowers and hold seeds."
+      },
+      {
+        "claim": "Dressing up in costumes for Halloween started in the United States.",
+        "verdict": "myth",
+        "explanation": "Costumed door-to-door visiting, called guising, came from Scotland and Ireland before spreading to America.",
+        "fun_fact": "Halloween is celebrated on the same date every year: October 31."
+      }
+    ],
+    "versus_candidates": [
+      "Thanksgiving",
+      "Christmas",
+      "Carnival of Rio de Janeiro"
+    ]
+  },
+  {
+    "id": "ENT-FES-009",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Thanksgiving",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Thanksgiving Day",
+      "Turkey Day"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A big family smiling around a long dinner table with a golden roast turkey, mashed potatoes, corn and pumpkin pie, autumn leaves decorating the room, 9:16 vertical shot.",
+    "core_traits": [
+      "An autumn holiday about being grateful and sharing a big meal",
+      "Roast turkey and pumpkin pie are the classic foods",
+      "A parade with giant character balloons marches through New York City",
+      "In the United States it falls on the fourth Thursday of November"
+    ],
+    "distractor_pool": [
+      "Christmas",
+      "Halloween",
+      "Mid-Autumn Festival",
+      "Lunar New Year",
+      "Diwali"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "US Thanksgiving is on the fourth Thursday of November.",
+        "verdict": "fact",
+        "explanation": "The date changes each year, but it is always the fourth Thursday of November.",
+        "fun_fact": "Each year the US president pardons a turkey, which then lives happily on a farm."
+      },
+      {
+        "claim": "Canada celebrates Thanksgiving on the same day as the United States.",
+        "verdict": "myth",
+        "explanation": "Canadian Thanksgiving is earlier, on the second Monday of October.",
+        "fun_fact": "Giant balloons in the New York parade can be taller than a five-story building."
+      }
+    ],
+    "versus_candidates": [
+      "Christmas",
+      "Mid-Autumn Festival",
+      "Halloween"
+    ]
+  },
+  {
+    "id": "ENT-FES-010",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Songkran",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Thai New Year",
+      "Thai Water Festival"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Smiling children in colorful flower-print shirts splashing water from bowls and buckets on a sunny street in Thailand, sparkling droplets flying everywhere, 9:16 vertical shot.",
+    "core_traits": [
+      "A giant splashy street party in hot weather",
+      "People soak each other with buckets and water sprayers",
+      "Younger people gently pour water over elders' hands to show respect",
+      "The traditional New Year of Thailand, held in mid-April"
+    ],
+    "distractor_pool": [
+      "Holi",
+      "Tet",
+      "Lunar New Year",
+      "Dragon Boat Festival",
+      "La Tomatina"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "During Songkran, people splash water on each other in the streets.",
+        "verdict": "fact",
+        "explanation": "Water stands for washing away the old year and starting fresh and cool.",
+        "fun_fact": "Songkran happens in mid-April, one of the hottest times of the year in Thailand."
+      },
+      {
+        "claim": "Songkran is a New Year party held on January 1.",
+        "verdict": "myth",
+        "explanation": "Songkran is the traditional Thai New Year and is celebrated in mid-April.",
+        "fun_fact": "Gently pouring scented water over elders' hands is a way to show respect and ask for blessings."
+      }
+    ],
+    "versus_candidates": [
+      "Holi",
+      "La Tomatina",
+      "Tet"
+    ]
+  },
+  {
+    "id": "ENT-FES-011",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Carnival of Rio de Janeiro",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Rio Carnival",
+      "Brazilian Carnival"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A dazzling parade float shaped like a giant colorful parrot, dancers in sparkly feathered costumes in green, yellow and blue, bright stadium lights at night, 9:16 vertical shot.",
+    "core_traits": [
+      "A huge, colorful street party full of music and dancing",
+      "Dancers wear sparkling costumes with giant feathers",
+      "Samba schools compete with enormous parade floats",
+      "Held each year in February or early March in a famous Brazilian city"
+    ],
+    "distractor_pool": [
+      "Holi",
+      "La Tomatina",
+      "Songkran",
+      "Halloween",
+      "Lantern Festival"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Samba schools parade in a special stadium called the Sambadrome.",
+        "verdict": "fact",
+        "explanation": "The Sambadrome is a long parade avenue with grandstands where samba schools perform and compete.",
+        "fun_fact": "Samba schools spend almost a whole year building their floats and costumes."
+      },
+      {
+        "claim": "Rio's Carnival takes place every year in December.",
+        "verdict": "myth",
+        "explanation": "Rio's Carnival is held in February or early March, and the exact dates change each year.",
+        "fun_fact": "Brazil is in the Southern Hemisphere, so Carnival happens during summer."
+      }
+    ],
+    "versus_candidates": [
+      "Holi",
+      "La Tomatina",
+      "Songkran"
+    ]
+  },
+  {
+    "id": "ENT-FES-012",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Hanami",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Cherry Blossom Viewing",
+      "Cherry Blossom Festival"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A family having a picnic on a blue blanket under blooming pink cherry trees in a Japanese park, soft petals drifting through the sunny air, 9:16 vertical shot.",
+    "core_traits": [
+      "A springtime custom of enjoying pretty flowering trees",
+      "Friends and families picnic in parks under pink blossoms",
+      "News reports follow the blossoms as they bloom from south to north",
+      "Its name means 'flower viewing' in Japanese"
+    ],
+    "distractor_pool": [
+      "Lantern Festival",
+      "Mid-Autumn Festival",
+      "Songkran",
+      "Holi",
+      "Dragon Boat Festival"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hanami means 'flower viewing' in Japanese.",
+        "verdict": "fact",
+        "explanation": "Hana means flower and mi means looking, and today it mostly means admiring cherry blossoms.",
+        "fun_fact": "Japan has a cherry blossom forecast that tracks the blooms moving north across the country."
+      },
+      {
+        "claim": "Cherry blossoms stay on the trees for most of the summer.",
+        "verdict": "myth",
+        "explanation": "Full bloom lasts only about one to two weeks before the petals fall.",
+        "fun_fact": "Viewing cherry blossoms lit up at night has its own name: yozakura."
+      }
+    ],
+    "versus_candidates": [
+      "Mid-Autumn Festival",
+      "Lantern Festival",
+      "Holi"
+    ]
+  },
+  {
+    "id": "ENT-FES-013",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "Dragon Boat Festival",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Duanwu Festival",
+      "Double Fifth Festival"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Long colorful boats with carved dragon heads racing across a sparkling river, teams paddling together while a drummer keeps the beat, cheering crowds on the shore, 9:16 vertical shot.",
+    "core_traits": [
+      "An early-summer festival full of exciting races on the water",
+      "Teams paddle long boats decorated with dragon heads and tails",
+      "People eat sticky rice parcels wrapped in bamboo leaves",
+      "Held on the 5th day of the 5th lunar month"
+    ],
+    "distractor_pool": [
+      "Mid-Autumn Festival",
+      "Lantern Festival",
+      "Songkran",
+      "Hanami",
+      "Lunar New Year"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "People eat zongzi, sticky rice wrapped in leaves, at this festival.",
+        "verdict": "fact",
+        "explanation": "Zongzi are pyramid-shaped rice parcels with sweet or savory fillings, steamed or boiled in leaves.",
+        "fun_fact": "A drummer sits at the front of each boat to keep all the paddlers in rhythm."
+      },
+      {
+        "claim": "Dragon boat racing only happens in China.",
+        "verdict": "myth",
+        "explanation": "Dragon boat racing is now an international sport, with teams in many countries around the world.",
+        "fun_fact": "A steersperson stands at the back of the boat to steer it straight."
+      }
+    ],
+    "versus_candidates": [
+      "Mid-Autumn Festival",
+      "Songkran",
+      "Carnival of Rio de Janeiro"
+    ]
+  },
+  {
+    "id": "ENT-FES-014",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "world_festivals",
+    "name": "La Tomatina",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Tomato Festival",
+      "Tomato Fight Festival"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "A cheerful crowd wearing goggles and white t-shirts splattered with red tomato pulp in a narrow sunny Spanish street, squishy tomatoes flying through the air, 9:16 vertical shot.",
+    "core_traits": [
+      "A summer festival that turns into a giant food fight",
+      "Everyone throws squishy ripe tomatoes at each other",
+      "The streets turn red and get washed down afterward",
+      "Held on the last Wednesday of August in the Spanish town of Buñol"
+    ],
+    "distractor_pool": [
+      "Holi",
+      "Songkran",
+      "Carnival of Rio de Janeiro",
+      "Hanami",
+      "Dragon Boat Festival"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "At La Tomatina, people throw squashed tomatoes at each other for fun.",
+        "verdict": "fact",
+        "explanation": "Trucks bring piles of overripe tomatoes, and everyone joins a big, messy tomato fight.",
+        "fun_fact": "Players must squash tomatoes before throwing them so nobody gets hurt."
+      },
+      {
+        "claim": "La Tomatina takes place in Italy.",
+        "verdict": "myth",
+        "explanation": "La Tomatina is held in Buñol, a small town near Valencia in Spain.",
+        "fun_fact": "Fire trucks hose down the streets afterward to wash away the tomato mess."
+      }
+    ],
+    "versus_candidates": [
+      "Holi",
+      "Songkran",
+      "Carnival of Rio de Janeiro"
+    ]
+  },
+  {
+    "id": "ENT-FES-015",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Ao Dai",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Vietnamese Long Dress"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling young woman in a flowing pale blue silk tunic with long side panels over white trousers, holding a conical hat beside a lotus pond, soft morning light, 9:16 vertical shot.",
+    "core_traits": [
+      "An elegant outfit with a long, flowing tunic",
+      "The tunic has high side slits and is worn over loose trousers",
+      "Many high school girls wear a white version as a uniform",
+      "The national traditional dress of Vietnam"
+    ],
+    "distractor_pool": [
+      "Qipao",
+      "Kimono",
+      "Hanbok",
+      "Sari",
+      "Salwar Kameez"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The ao dai is a long tunic worn over loose trousers.",
+        "verdict": "fact",
+        "explanation": "Its long front and back panels flow freely thanks to slits up both sides.",
+        "fun_fact": "In Vietnam, many high school girls wear white ao dai as their school uniform."
+      },
+      {
+        "claim": "Only women ever wear the ao dai.",
+        "verdict": "myth",
+        "explanation": "Men wear ao dai too, especially for weddings, Tet and other special occasions.",
+        "fun_fact": "The name ao dai means 'long shirt' in Vietnamese."
+      }
+    ],
+    "versus_candidates": [
+      "Qipao",
+      "Kimono",
+      "Hanbok"
+    ]
+  },
+  {
+    "id": "ENT-FES-016",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Kimono",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A smiling girl in a bright red kimono with white crane patterns and a wide gold sash, standing on a wooden bridge in a Japanese garden, 9:16 vertical shot.",
+    "core_traits": [
+      "A long robe with wide, flowing sleeves",
+      "It is shaped like the letter T when laid flat",
+      "A wide sash called an obi is tied around the waist",
+      "The traditional clothing of Japan"
+    ],
+    "distractor_pool": [
+      "Hanbok",
+      "Qipao",
+      "Ao Dai",
+      "Yukata",
+      "Sari"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A kimono is tied at the waist with a wide sash called an obi.",
+        "verdict": "fact",
+        "explanation": "The obi holds the kimono closed and is often tied in a decorative knot at the back.",
+        "fun_fact": "A light cotton summer kimono, popular at festivals, is called a yukata."
+      },
+      {
+        "claim": "Kimonos are only worn by women.",
+        "verdict": "myth",
+        "explanation": "Men wear kimonos too, usually in darker colors with simpler patterns.",
+        "fun_fact": "The word kimono simply means 'thing to wear' in Japanese."
+      }
+    ],
+    "versus_candidates": [
+      "Hanbok",
+      "Qipao",
+      "Ao Dai"
+    ]
+  },
+  {
+    "id": "ENT-FES-017",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Hanbok",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Korean Traditional Dress"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cheerful girl in a short pink jacket with rainbow-striped sleeves and a full, bell-shaped green skirt, standing in front of a colorful Korean palace gate, 9:16 vertical shot.",
+    "core_traits": [
+      "A bright, colorful outfit worn on special holidays",
+      "Women wear a short jacket with a long, full skirt",
+      "Men wear a jacket with roomy trousers",
+      "The traditional clothing of Korea"
+    ],
+    "distractor_pool": [
+      "Kimono",
+      "Qipao",
+      "Ao Dai",
+      "Sari",
+      "Dirndl"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A woman's hanbok has a short jacket and a long, full skirt.",
+        "verdict": "fact",
+        "explanation": "The short jacket is called a jeogori and the wide, flowing skirt is called a chima.",
+        "fun_fact": "Visitors wearing hanbok can enter Seoul's royal palaces for free."
+      },
+      {
+        "claim": "The hanbok is the traditional clothing of Japan.",
+        "verdict": "myth",
+        "explanation": "The hanbok comes from Korea; Japan's traditional robe is the kimono.",
+        "fun_fact": "Many Korean families wear hanbok for Lunar New Year and the autumn harvest festival Chuseok."
+      }
+    ],
+    "versus_candidates": [
+      "Kimono",
+      "Qipao",
+      "Ao Dai"
+    ]
+  },
+  {
+    "id": "ENT-FES-018",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Sari",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Saree"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling woman in a shimmering orange and magenta draped garment with a golden border, one end flowing over her shoulder, standing in a sunny marigold garden, 9:16 vertical shot.",
+    "core_traits": [
+      "A long, colorful garment that is wrapped instead of sewn",
+      "One end is draped gracefully over the shoulder",
+      "It is worn with a short fitted blouse",
+      "Commonly worn in India, Nepal, Bangladesh and Sri Lanka"
+    ],
+    "distractor_pool": [
+      "Salwar Kameez",
+      "Kimono",
+      "Ao Dai",
+      "Hanbok",
+      "Kente Cloth"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A sari is one long piece of cloth wrapped without any sewing.",
+        "verdict": "fact",
+        "explanation": "The unstitched cloth is pleated, wrapped around the waist and draped over the shoulder.",
+        "fun_fact": "A sari is usually about five to nine yards long."
+      },
+      {
+        "claim": "Saris are worn only in India.",
+        "verdict": "myth",
+        "explanation": "Saris are also widely worn in Bangladesh, Nepal and Sri Lanka.",
+        "fun_fact": "There are dozens of different regional styles for draping a sari."
+      }
+    ],
+    "versus_candidates": [
+      "Kimono",
+      "Ao Dai",
+      "Hanbok"
+    ]
+  },
+  {
+    "id": "ENT-FES-019",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Kilt",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Highland Kilt"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smiling bagpiper in a red and green checkered knee-length pleated garment and knee socks, standing on a misty green Scottish hillside, 9:16 vertical shot.",
+    "core_traits": [
+      "A knee-length pleated garment wrapped around the waist",
+      "Usually made from cloth with a crisscross checkered pattern",
+      "Often worn by bagpipers with a small pouch on the front",
+      "Traditional menswear of the Scottish Highlands"
+    ],
+    "distractor_pool": [
+      "Dirndl",
+      "Poncho",
+      "Sarong",
+      "Hula Skirt",
+      "Lederhosen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Kilts are often made of tartan, a cloth with crisscross stripes.",
+        "verdict": "fact",
+        "explanation": "Tartan is woven with colored stripes that cross each other to make a checkered pattern.",
+        "fun_fact": "Many Scottish family clans have their very own tartan pattern."
+      },
+      {
+        "claim": "Kilts are skirts made only for women.",
+        "verdict": "myth",
+        "explanation": "The kilt is traditional clothing for men in Scotland, worn at weddings, parades and Highland games.",
+        "fun_fact": "Kilts have no pockets, so a pouch called a sporran is worn on the front."
+      }
+    ],
+    "versus_candidates": [
+      "Dirndl",
+      "Poncho",
+      "Sombrero"
+    ]
+  },
+  {
+    "id": "ENT-FES-020",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Sombrero",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Mexican Hat"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smiling mariachi musician holding a guitar and wearing a huge round hat with an extra-wide brim and colorful embroidery, under a bright blue Mexican sky, 9:16 vertical shot.",
+    "core_traits": [
+      "A hat with an extra-wide, round brim",
+      "Made to shade the head, neck and shoulders from strong sun",
+      "Mariachi musicians often wear fancy decorated versions",
+      "A famous traditional hat from Mexico"
+    ],
+    "distractor_pool": [
+      "Cowboy Hat",
+      "Panama Hat",
+      "Vietnamese Conical Hat",
+      "Straw Boater",
+      "Fedora"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The name sombrero comes from the Spanish word for shade.",
+        "verdict": "fact",
+        "explanation": "Sombra means shade in Spanish, and the wide brim keeps the wearer in shade.",
+        "fun_fact": "A galaxy far away is named the Sombrero Galaxy because it looks like this hat."
+      },
+      {
+        "claim": "Sombreros were first invented as silly party costume hats.",
+        "verdict": "myth",
+        "explanation": "They began as practical work hats for farmers and horse riders under the hot sun.",
+        "fun_fact": "The Mexican Hat Dance is a famous folk dance performed around a sombrero."
+      }
+    ],
+    "versus_candidates": [
+      "Vietnamese Conical Hat",
+      "Poncho",
+      "Kilt"
+    ]
+  },
+  {
+    "id": "ENT-FES-021",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Poncho",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 1,
+    "visual_anchor": "A smiling child in a striped red, orange and blue woolen cloak with a hole for the head, standing beside a fluffy white alpaca in the Andes mountains, 9:16 vertical shot.",
+    "core_traits": [
+      "A cozy outer garment you pull on over your head",
+      "Basically a big piece of cloth with a hole in the middle",
+      "Traditional versions are woven from alpaca or llama wool",
+      "Comes from the Andes mountains of South America"
+    ],
+    "distractor_pool": [
+      "Serape",
+      "Cape",
+      "Shawl",
+      "Kilt",
+      "Kimono"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A poncho is a blanket-like cloth with a hole for the head.",
+        "verdict": "fact",
+        "explanation": "You slip your head through the opening and the cloth hangs down to keep you warm.",
+        "fun_fact": "Traditional Andean ponchos are often woven from soft alpaca or llama wool."
+      },
+      {
+        "claim": "Ponchos were first made as plastic rain gear.",
+        "verdict": "myth",
+        "explanation": "People in South America wove woolen ponchos for warmth for centuries before plastic existed.",
+        "fun_fact": "Gauchos, the cowboys of Argentina, wore ponchos while riding across the grassy plains."
+      }
+    ],
+    "versus_candidates": [
+      "Kilt",
+      "Sombrero",
+      "Kimono"
+    ]
+  },
+  {
+    "id": "ENT-FES-022",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Dirndl",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 3,
+    "visual_anchor": "A smiling girl in a dress with a fitted green top, white puffy-sleeved blouse, full red skirt and blue apron, standing in a flowery Alpine meadow with snowy mountains behind, 9:16 vertical shot.",
+    "core_traits": [
+      "A cheerful dress worn with a white blouse",
+      "It has a fitted top, a full skirt and an apron",
+      "Began as everyday work clothing in mountain villages",
+      "Traditional dress of Bavaria in Germany and of Austria"
+    ],
+    "distractor_pool": [
+      "Lederhosen",
+      "Kilt",
+      "Hanbok",
+      "Sari",
+      "Qipao"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A dirndl has a fitted top, a full skirt and an apron.",
+        "verdict": "fact",
+        "explanation": "The dress is worn over a short white blouse, with a colorful apron tied on top.",
+        "fun_fact": "The dirndl started as simple work clothing for women in the Alps."
+      },
+      {
+        "claim": "The dirndl comes from France.",
+        "verdict": "myth",
+        "explanation": "The dirndl comes from the Alpine regions of Bavaria in Germany and of Austria.",
+        "fun_fact": "In the same region, men traditionally wear leather shorts called lederhosen."
+      }
+    ],
+    "versus_candidates": [
+      "Kilt",
+      "Hanbok",
+      "Sari"
+    ]
+  },
+  {
+    "id": "ENT-FES-023",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Qipao",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Cheongsam",
+      "Mandarin Gown"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A smiling woman in a fitted red silk dress with gold flower embroidery, a high standing collar and knotted cloth buttons, standing beside red paper lanterns, 9:16 vertical shot.",
+    "core_traits": [
+      "A fitted, elegant one-piece dress often made of silk",
+      "It has a high standing collar and knotted cloth buttons",
+      "Became very fashionable in Shanghai in the 1920s and 1930s",
+      "A famous traditional dress from China"
+    ],
+    "distractor_pool": [
+      "Ao Dai",
+      "Kimono",
+      "Hanbok",
+      "Sari",
+      "Dirndl"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A qipao has a high standing collar called a mandarin collar.",
+        "verdict": "fact",
+        "explanation": "The short upright collar wraps neatly around the neck and is a key feature of the dress.",
+        "fun_fact": "Its knotted cloth fasteners are called frog buttons."
+      },
+      {
+        "claim": "The qipao and the cheongsam are two completely different dresses.",
+        "verdict": "myth",
+        "explanation": "They are the same dress; cheongsam is simply the Cantonese name for it.",
+        "fun_fact": "The qipao became a fashion hit in 1920s Shanghai."
+      }
+    ],
+    "versus_candidates": [
+      "Ao Dai",
+      "Kimono",
+      "Hanbok"
+    ]
+  },
+  {
+    "id": "ENT-FES-024",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "traditional_clothing",
+    "name": "Vietnamese Conical Hat",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Non La",
+      "Leaf Hat",
+      "Asian Conical Hat"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smiling farmer wearing a pale straw-colored cone-shaped hat with a ribbon chin strap, standing in a bright green rice paddy under a sunny sky, 9:16 vertical shot.",
+    "core_traits": [
+      "A hat shaped like a pointy cone",
+      "Protects from both hot sun and pouring rain",
+      "Woven from palm leaves over thin bamboo rings",
+      "An iconic symbol of Vietnam, often worn with an ao dai"
+    ],
+    "distractor_pool": [
+      "Sombrero",
+      "Straw Boater",
+      "Panama Hat",
+      "Cowboy Hat",
+      "Beret"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "This hat is woven from palm leaves stretched over bamboo rings.",
+        "verdict": "fact",
+        "explanation": "Thin bamboo rings make the cone frame, and layers of dried palm leaves are stitched on top.",
+        "fun_fact": "Special hats from Hue hide poems or pictures that appear when held up to sunlight."
+      },
+      {
+        "claim": "Conical hats are worn only in Vietnam.",
+        "verdict": "myth",
+        "explanation": "Similar cone-shaped hats are worn across Asia, including in China, Cambodia and the Philippines.",
+        "fun_fact": "The steep cone shape lets rain run off quickly, like a tiny roof."
+      }
+    ],
+    "versus_candidates": [
+      "Sombrero",
+      "Kimono",
+      "Poncho"
+    ]
+  },
+  {
+    "id": "ENT-FES-025",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Mooncake",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Moon Cake"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A round golden-brown pastry with a pretty flower pattern pressed on top, one cut open to show sweet filling and a bright yellow yolk center, on a plate under a full moon, 9:16 vertical shot.",
+    "core_traits": [
+      "A small, rich pastry usually shaped like a circle",
+      "Its top has a pretty pattern pressed in by a mold",
+      "Often filled with sweet lotus seed or red bean paste",
+      "The star treat of the Mid-Autumn Festival"
+    ],
+    "distractor_pool": [
+      "Dorayaki",
+      "Mochi",
+      "Pineapple Cake",
+      "Egg Tart",
+      "Tangyuan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Some mooncakes hide a salted egg yolk that looks like a full moon.",
+        "verdict": "fact",
+        "explanation": "A round, golden salted egg yolk sits in the middle of the sweet filling.",
+        "fun_fact": "The patterns on top are pressed in using carved wooden or plastic molds."
+      },
+      {
+        "claim": "Mooncakes are always round.",
+        "verdict": "myth",
+        "explanation": "Most are round like the full moon, but square mooncakes are common too, especially in Vietnam.",
+        "fun_fact": "Snow skin mooncakes are a no-bake kind with a soft, chewy outer layer."
+      }
+    ],
+    "versus_candidates": [
+      "Banh Chung",
+      "Gingerbread House",
+      "Mochi"
+    ]
+  },
+  {
+    "id": "ENT-FES-026",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Banh Chung",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Chung Cake",
+      "Square Sticky Rice Cake"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A neat square cake wrapped in bright green leaves and tied with thin bamboo strings, one slice cut to show green-tinted sticky rice and yellow bean filling, on a wooden table, 9:16 vertical shot.",
+    "core_traits": [
+      "A square, savory cake wrapped in green leaves",
+      "Made from sticky rice, mung beans and pork",
+      "Boiled for many hours, often through the night",
+      "A must-have food for Vietnamese New Year"
+    ],
+    "distractor_pool": [
+      "Zongzi",
+      "Banh Tet",
+      "Tamale",
+      "Onigiri",
+      "Mooncake"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Banh chung is boiled for many hours, often through the whole night.",
+        "verdict": "fact",
+        "explanation": "Families take turns watching the pot while the thick rice cake cooks slowly all the way through.",
+        "fun_fact": "A legend says its square shape stands for the Earth."
+      },
+      {
+        "claim": "Banh chung is a sweet dessert like a sponge cake.",
+        "verdict": "myth",
+        "explanation": "It is savory, filled with mung beans and pork inside sticky rice.",
+        "fun_fact": "The leaves wrapped around it turn the outside of the rice green."
+      }
+    ],
+    "versus_candidates": [
+      "Mooncake",
+      "Gingerbread House",
+      "Red Envelope"
+    ]
+  },
+  {
+    "id": "ENT-FES-027",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Red Envelope",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Lucky Money",
+      "Red Packet",
+      "Hongbao"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A grandmother smiling as she hands a shiny red envelope with golden flower patterns to a happy child in festive clothes, warm red decorations behind them, 9:16 vertical shot.",
+    "core_traits": [
+      "A small, bright red paper gift",
+      "Usually decorated with shiny gold patterns",
+      "Elders give them to children with money tucked inside",
+      "A favorite tradition of Lunar New Year and Tet"
+    ],
+    "distractor_pool": [
+      "Christmas Stocking",
+      "Greeting Card",
+      "Piggy Bank",
+      "Fortune Cookie",
+      "Gift Box"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Red envelopes with money are given to children at Lunar New Year.",
+        "verdict": "fact",
+        "explanation": "Parents, grandparents and relatives give them to wish kids luck and good health in the new year.",
+        "fun_fact": "Red is chosen because it stands for good luck and happiness."
+      },
+      {
+        "claim": "Red envelopes are given only in China.",
+        "verdict": "myth",
+        "explanation": "Families in Vietnam, Singapore, Malaysia and many other places share red envelopes too.",
+        "fun_fact": "Many people use crisp, brand-new banknotes to make the gift feel fresh."
+      }
+    ],
+    "versus_candidates": [
+      "Christmas Stocking",
+      "Pinata",
+      "Paper Lantern"
+    ]
+  },
+  {
+    "id": "ENT-FES-028",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Paper Lantern",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Chinese Lantern"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Rows of round red, yellow and orange glowing lanterns with golden tassels hanging over a cozy evening street, warm soft light everywhere, 9:16 vertical shot.",
+    "core_traits": [
+      "A glowing decoration that hangs up high",
+      "Made of thin paper stretched over a light frame",
+      "Round red ones often have golden tassels at the bottom",
+      "A classic sight at Lunar New Year and the Mid-Autumn Festival"
+    ],
+    "distractor_pool": [
+      "Jack-o'-Lantern",
+      "Sky Lantern",
+      "Fairy Lights",
+      "Candle",
+      "Oil Lamp"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Paper lanterns are made of thin paper stretched over bamboo or wire.",
+        "verdict": "fact",
+        "explanation": "The light frame gives the lantern its shape, and the thin paper lets the light glow through.",
+        "fun_fact": "The old town of Hoi An in Vietnam glows with colorful lanterns on full-moon nights."
+      },
+      {
+        "claim": "Real candles are the safest way to light paper lanterns.",
+        "verdict": "myth",
+        "explanation": "Paper can catch fire easily, so battery LED lights are much safer. Ask an adult to help.",
+        "fun_fact": "Lanterns can be shaped like stars, fish, rabbits and even dragons."
+      }
+    ],
+    "versus_candidates": [
+      "Jack-o'-Lantern",
+      "Fireworks",
+      "Christmas Tree"
+    ]
+  },
+  {
+    "id": "ENT-FES-029",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Lion Dance",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Lion Dancing"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A bright red and gold lion costume with big blinking eyes and a fluffy mane leaping playfully in a festive street, drummers and cheering children nearby, 9:16 vertical shot.",
+    "core_traits": [
+      "A lively street performance full of jumps and loud drums",
+      "Two dancers share one big, colorful costume",
+      "The creature blinks, shakes its head and nibbles lettuce",
+      "Performed for good luck at Lunar New Year and grand openings"
+    ],
+    "distractor_pool": [
+      "Dragon Dance",
+      "Water Puppetry",
+      "Samba Parade",
+      "Hula Dance",
+      "Shadow Puppetry"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "One lion costume is usually worked by two dancers, the head and tail.",
+        "verdict": "fact",
+        "explanation": "One dancer moves the head and the other bends low as the back legs and tail.",
+        "fun_fact": "The lion often 'eats' lettuce hung up high, then tosses the leaves out for good luck."
+      },
+      {
+        "claim": "The lion dance and the dragon dance are the same thing.",
+        "verdict": "myth",
+        "explanation": "A lion uses two dancers, while a long dragon is carried on poles by a whole team.",
+        "fun_fact": "Drums, gongs and cymbals set the beat for every move the lion makes."
+      }
+    ],
+    "versus_candidates": [
+      "Water Puppetry",
+      "Fireworks",
+      "Pinata"
+    ]
+  },
+  {
+    "id": "ENT-FES-030",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Jack-o'-Lantern",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Carved Pumpkin",
+      "Halloween Pumpkin"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A big orange pumpkin with a friendly carved smiling face glowing warmly from inside, sitting on a porch step beside autumn leaves and smaller pumpkins, 9:16 vertical shot.",
+    "core_traits": [
+      "A round orange decoration that glows at night",
+      "A face is carved into it and a light is placed inside",
+      "Its insides are scooped out, seeds and all",
+      "The best-known decoration of Halloween"
+    ],
+    "distractor_pool": [
+      "Paper Lantern",
+      "Scarecrow",
+      "Gourd",
+      "Candy Corn",
+      "Corn Maze"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Before pumpkins, people in Ireland carved faces into turnips.",
+        "verdict": "fact",
+        "explanation": "Irish and Scottish families carved turnips and potatoes; pumpkins became popular later in America.",
+        "fun_fact": "Pumpkins are about 90 percent water."
+      },
+      {
+        "claim": "A jack-o'-lantern needs a real candle inside to glow.",
+        "verdict": "myth",
+        "explanation": "Battery LED lights glow just as nicely and are safer. Always ask an adult to do the carving.",
+        "fun_fact": "The seeds scooped out of a pumpkin can be roasted into a crunchy snack."
+      }
+    ],
+    "versus_candidates": [
+      "Paper Lantern",
+      "Christmas Tree",
+      "Gingerbread House"
+    ]
+  },
+  {
+    "id": "ENT-FES-031",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Christmas Tree",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Xmas Tree",
+      "Holiday Tree"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A tall green fir tree sparkling with colorful lights, shiny round ornaments and a golden star on top, wrapped gifts underneath in a cozy room, 9:16 vertical shot.",
+    "core_traits": [
+      "A tall green tree brought indoors in winter",
+      "Decorated with lights, shiny balls and tinsel",
+      "Often topped with a star or an angel",
+      "Presents are placed underneath it for December 25"
+    ],
+    "distractor_pool": [
+      "Christmas Wreath",
+      "Advent Calendar",
+      "Nutcracker",
+      "Poinsettia",
+      "Christmas Stocking"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "London's Trafalgar Square gets a Christmas tree from Norway every year.",
+        "verdict": "fact",
+        "explanation": "Norway sends a giant tree each year as a thank-you gift to the people of Britain.",
+        "fun_fact": "Norway has sent this tree every year since 1947."
+      },
+      {
+        "claim": "Christmas trees always had electric lights.",
+        "verdict": "myth",
+        "explanation": "Early trees used small candles; electric string lights first appeared in the 1880s.",
+        "fun_fact": "The first tinsel was made from very thin strips of real silver."
+      }
+    ],
+    "versus_candidates": [
+      "Jack-o'-Lantern",
+      "Gingerbread House",
+      "Paper Lantern"
+    ]
+  },
+  {
+    "id": "ENT-FES-032",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Gingerbread House",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Gingerbread Cottage"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A cute little brown cookie house with white icing snow on the roof, colorful gumdrops, candy canes and peppermint candies on the walls, on a snowy table, 9:16 vertical shot.",
+    "core_traits": [
+      "A tiny house you can actually nibble",
+      "Its walls and roof are made of spiced cookies",
+      "White icing works as glue and as pretend snow",
+      "Built and decorated with candy at Christmastime"
+    ],
+    "distractor_pool": [
+      "Christmas Tree",
+      "Mooncake",
+      "Candy Cane",
+      "Yule Log Cake",
+      "Fruitcake"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Icing works like glue to hold gingerbread house walls together.",
+        "verdict": "fact",
+        "explanation": "Thick royal icing dries hard, so it sticks the cookie walls and roof firmly in place.",
+        "fun_fact": "Gingerbread houses became popular in Germany around the time 'Hansel and Gretel' was published."
+      },
+      {
+        "claim": "Gingerbread houses are only for looking at and can't be eaten.",
+        "verdict": "myth",
+        "explanation": "They are made of real cookies and candy, so they are edible, though they get hard over time.",
+        "fun_fact": "Bergen, Norway builds a whole miniature gingerbread town every holiday season."
+      }
+    ],
+    "versus_candidates": [
+      "Mooncake",
+      "Christmas Tree",
+      "Jack-o'-Lantern"
+    ]
+  },
+  {
+    "id": "ENT-FES-033",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Pinata",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Piñata"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright star-shaped paper party decoration with colorful tissue-paper points and streamers hanging from a tree at a sunny backyard party, excited kids gathered safely to the side, 9:16 vertical shot.",
+    "core_traits": [
+      "A colorful party decoration hung up high",
+      "It is filled with candy and small toys",
+      "Kids take turns swinging a stick to break it open",
+      "A favorite tradition at Mexican celebrations and birthday parties"
+    ],
+    "distractor_pool": [
+      "Red Envelope",
+      "Party Popper",
+      "Goody Bag",
+      "Gift Box",
+      "Easter Basket"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pinatas are filled with candy and small toys.",
+        "verdict": "fact",
+        "explanation": "When it breaks open, the treats spill out. Everyone else should stand well back while someone swings.",
+        "fun_fact": "The name comes from the Italian word pignatta, meaning clay pot."
+      },
+      {
+        "claim": "Pinatas are always shaped like donkeys.",
+        "verdict": "myth",
+        "explanation": "Pinatas come in many shapes, and the classic Mexican pinata is a star with seven points.",
+        "fun_fact": "Traditional pinatas were made from clay pots covered in colorful paper."
+      }
+    ],
+    "versus_candidates": [
+      "Red Envelope",
+      "Gingerbread House",
+      "Lion Dance"
+    ]
+  },
+  {
+    "id": "ENT-FES-034",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Rangoli",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [],
+    "difficulty": 2,
+    "visual_anchor": "A big round flower-shaped floor design made of bright pink, orange, yellow and blue powder and marigold petals at a doorway, tiny clay lamps glowing around it, 9:16 vertical shot.",
+    "core_traits": [
+      "Colorful art made right on the floor",
+      "Created with colored powder, rice flour or flower petals",
+      "Often drawn at the doorway to welcome guests",
+      "A beloved Diwali decoration from India"
+    ],
+    "distractor_pool": [
+      "Mandala",
+      "Sand Painting",
+      "Mosaic",
+      "Chalk Art",
+      "Henna Art"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rangoli patterns are made on the floor with colored powder or rice flour.",
+        "verdict": "fact",
+        "explanation": "Artists sprinkle powder, rice flour or petals by hand to form bright patterns on the ground.",
+        "fun_fact": "In South India, a similar rice flour floor design is called kolam."
+      },
+      {
+        "claim": "Rangoli designs are made to last for years.",
+        "verdict": "myth",
+        "explanation": "Rangoli is temporary art, swept away after the celebration and made fresh again next time.",
+        "fun_fact": "Many rangoli designs are symmetrical, with matching sides like a snowflake."
+      }
+    ],
+    "versus_candidates": [
+      "Paper Lantern",
+      "Christmas Tree",
+      "Fireworks"
+    ]
+  },
+  {
+    "id": "ENT-FES-035",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Fireworks",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Firework Display",
+      "Pyrotechnics"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A family wrapped in blankets watching from a faraway grassy hill as giant red, gold and blue sparkling bursts light up the night sky over a city river, 9:16 vertical shot.",
+    "core_traits": [
+      "Bright bursts of color that light up the night sky",
+      "They make loud booms, crackles and whistles",
+      "Big shows mark New Year's Eve and national holidays",
+      "First made in ancient China"
+    ],
+    "distractor_pool": [
+      "Sparklers",
+      "Paper Lantern",
+      "Sky Lantern",
+      "Laser Light Show",
+      "Drone Light Show"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Different metals give fireworks their colors, like copper for blue.",
+        "verdict": "fact",
+        "explanation": "Tiny bits of metal make each color: strontium glows red, barium green and copper blue.",
+        "fun_fact": "Blue is one of the hardest firework colors to make bright."
+      },
+      {
+        "claim": "It is fine for kids to light fireworks by themselves.",
+        "verdict": "myth",
+        "explanation": "Fireworks are only safe in trained adults' hands. Kids should watch from a safe distance.",
+        "fun_fact": "Fireworks were first made in ancient China more than a thousand years ago."
+      }
+    ],
+    "versus_candidates": [
+      "Paper Lantern",
+      "Lion Dance",
+      "Christmas Tree"
+    ]
+  },
+  {
+    "id": "ENT-FES-036",
+    "domain_id": "festivals_cultures",
+    "subtopic_id": "cultural_symbols_and_treats",
+    "name": "Water Puppetry",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Vietnamese Water Puppets",
+      "Water Puppet Show"
+    ],
+    "difficulty": 3,
+    "visual_anchor": "Shiny painted wooden puppets of smiling farmers, ducks and a golden dragon gliding across a pond stage in front of a red and gold pagoda-style screen, ripples sparkling, 9:16 vertical shot.",
+    "core_traits": [
+      "A puppet show where the stage is a pool of water",
+      "Painted wooden puppets glide, splash and dance on the surface",
+      "Puppeteers hide behind a screen, standing in water",
+      "A folk art from the rice fields of northern Vietnam"
+    ],
+    "distractor_pool": [
+      "Shadow Puppetry",
+      "Bunraku",
+      "Marionette Show",
+      "Hand Puppet Show",
+      "Lion Dance"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Water puppeteers hide behind a screen while standing in waist-deep water.",
+        "verdict": "fact",
+        "explanation": "They stay hidden behind a bamboo screen and move the puppets from underwater.",
+        "fun_fact": "This art began in the flooded rice fields of northern Vietnam about a thousand years ago."
+      },
+      {
+        "claim": "Water puppets float freely and move all on their own.",
+        "verdict": "myth",
+        "explanation": "Puppeteers control them with long poles and strings hidden under the water.",
+        "fun_fact": "The puppets are carved from light fig wood and coated with shiny waterproof lacquer."
+      }
+    ],
+    "versus_candidates": [
+      "Lion Dance",
+      "Fireworks",
+      "Paper Lantern"
+    ]
+  }
+]

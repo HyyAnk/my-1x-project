@@ -61,7 +61,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
     it("handles completely empty choices array by synthesizing valid options", () => {
       const bankQ: BankQuestion = {
         id: "EDGE-EMPTY-CHOICES",
-        archetype_id: "quick_fire_trivia",
+        archetype_id: "speed_blitz",
         domain_id: "general_knowledge",
         subtopic_id: "curious_facts",
         question: "What is the capital of France?",
@@ -84,7 +84,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
     it("handles single choice by auto-padding required distracters", () => {
       const bankQ: BankQuestion = {
         id: "EDGE-SINGLE-CHOICE",
-        archetype_id: "deep_dive_curiosity",
+        archetype_id: "deep_trivia",
         domain_id: "science_tech",
         subtopic_id: "space_universe",
         question: "Which planet is closest to the Sun?",
@@ -106,7 +106,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
     it("de-duplicates identical or case-insensitive duplicate choice texts", () => {
       const bankQ: BankQuestion = {
         id: "EDGE-DUPLICATES",
-        archetype_id: "quick_fire_trivia",
+        archetype_id: "speed_blitz",
         domain_id: "general_knowledge",
         subtopic_id: "curious_facts",
         question: "Which of these is a national capital?",
@@ -133,7 +133,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       const longText = "A".repeat(1000);
       const bankQ: BankQuestion = {
         id: "EDGE-EXTREME-LENGTH",
-        archetype_id: "quick_fire_trivia",
+        archetype_id: "speed_blitz",
         domain_id: "general_knowledge",
         subtopic_id: "curious_facts",
         question: longText,
@@ -159,24 +159,24 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       expect(quizQ.difficulty).toBe(5);
     });
 
-    it("handles true_false with single choice or flipped distracter order cleanly", () => {
+    it("handles a Yes/No question with a single choice by padding to exactly two choices", () => {
       const bankQ: BankQuestion = {
-        id: "EDGE-TF-SINGLE",
-        archetype_id: "myth_busters",
+        id: "EDGE-YN-SINGLE",
+        archetype_id: "verdict_yes_no",
         domain_id: "nature_animals",
         subtopic_id: "ocean_giants",
-        question: "Cá mập không có xương?",
-        format: "true_false",
-        choices: [{ id: "c1", text: "Đúng", is_correct: true }],
+        question: "Do sharks have bones? Yes or No?",
+        format: "yes_no",
+        choices: [{ id: "c1", text: "No", is_correct: true }],
         correct_choice_id: "c1",
-        explanation: "Cá mập chỉ có khung sụn.",
+        explanation: "Sharks have a skeleton made of cartilage, not bone.",
         difficulty: 1,
         status: "approved",
         tags: [],
       };
 
       const quizQ = convertBankQuestionToQuizQuestion(bankQ);
-      expect(quizQ.format).toBe("true_false");
+      expect(quizQ.format).toBe("yes_no");
       expect(quizQ.choices).toHaveLength(2);
       expect(quizQ.choices.map((c) => c.id)).toEqual(["a", "b"]);
     });
@@ -266,7 +266,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
     });
   });
 
-  describe("3. Archetype-to-Pipeline Compatibility across ALL 8 Archetypes", () => {
+  describe("3. Archetype-to-Pipeline Compatibility across all gameplay archetypes", () => {
     it.each(QUIZ_GAMEPLAY_ARCHETYPES)("synthesizes valid Episode, Quiz and DirectorPlan for $id", async (archetypeMeta) => {
       const q: BankQuestion = {
         id: `ARCH-${archetypeMeta.id.toUpperCase()}`,
@@ -279,7 +279,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
         choices:
           archetypeMeta.id === "mystery_reveal"
             ? [{ id: "a", text: "Option 1", is_correct: true }]
-            : archetypeMeta.defaultFormat === "true_false" || archetypeMeta.id === "versus_faceoff"
+            : archetypeMeta.defaultFormat === "yes_no" || archetypeMeta.id === "versus_faceoff"
               ? [
                   { id: "a", text: "Option 1", is_correct: true },
                   { id: "b", text: "Option 2", is_correct: false },

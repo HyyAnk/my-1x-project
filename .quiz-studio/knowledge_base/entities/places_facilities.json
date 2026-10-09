@@ -5,6 +5,7 @@
     "subtopic_id": "public_civic",
     "name": "Hospital",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Medical Center",
       "Infirmary",
@@ -52,6 +53,7 @@
     "subtopic_id": "public_civic",
     "name": "Police Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Police Precinct",
       "Station House",
@@ -99,6 +101,7 @@
     "subtopic_id": "public_civic",
     "name": "Fire Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Firehouse",
       "Fire Hall",
@@ -145,6 +148,7 @@
     "subtopic_id": "public_civic",
     "name": "Post Office",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Postal Branch",
       "Mail Center",
@@ -191,6 +195,7 @@
     "subtopic_id": "public_civic",
     "name": "City Hall",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Municipal Building",
       "Town Hall",
@@ -238,6 +243,7 @@
     "subtopic_id": "public_civic",
     "name": "Courthouse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Court of Law",
       "Palace of Justice",
@@ -284,6 +290,7 @@
     "subtopic_id": "public_civic",
     "name": "Embassy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Diplomatic Mission",
       "Chancery",
@@ -330,6 +337,7 @@
     "subtopic_id": "public_civic",
     "name": "Military Base",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Army Garrison",
       "Naval Base",
@@ -377,6 +385,7 @@
     "subtopic_id": "public_civic",
     "name": "Public Library",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Municipal Library",
       "Athenaeum",
@@ -424,6 +433,7 @@
     "subtopic_id": "public_civic",
     "name": "Town Square",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Piazza",
       "City Plaza",
@@ -471,6 +481,7 @@
     "subtopic_id": "public_civic",
     "name": "Community Center",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Neighborhood Center",
       "Civic Recreation Center",
@@ -517,6 +528,7 @@
     "subtopic_id": "public_civic",
     "name": "Parliament Building",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Capitol",
       "National Assembly",
@@ -564,6 +576,7 @@
     "subtopic_id": "public_civic",
     "name": "High School",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Secondary School",
       "Gymnasium Academy",
@@ -610,6 +623,7 @@
     "subtopic_id": "public_civic",
     "name": "University Campus",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "College Campus",
       "Higher Education Institute",
@@ -656,6 +670,7 @@
     "subtopic_id": "public_civic",
     "name": "Public Park",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "City Park",
       "Municipal Garden",
@@ -703,6 +718,7 @@
     "subtopic_id": "public_civic",
     "name": "Cemetery",
     "language": "en",
+    "audience_rating": "teen",
     "aliases": [
       "Graveyard",
       "Necropolis",
@@ -750,6 +766,7 @@
     "subtopic_id": "public_civic",
     "name": "Recycling Center",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Materials Recovery Facility",
       "Recycling Depot",
@@ -796,6 +813,7 @@
     "subtopic_id": "public_civic",
     "name": "Power Plant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Power Station",
       "Electricity Generating Station",
@@ -842,6 +860,7 @@
     "subtopic_id": "public_civic",
     "name": "Weather Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Meteorological Station",
       "Weather Observatory",
@@ -888,6 +907,7 @@
     "subtopic_id": "public_civic",
     "name": "Astronomical Observatory",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Star Observatory",
       "Telescope Dome",
@@ -934,10 +954,11 @@
     "subtopic_id": "public_civic",
     "name": "Blood Donation Center",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
-      "Blood Bank",
       "Plasma Center",
-      "Donor Clinic"
+      "Donor Clinic",
+      "Blood Bank"
     ],
     "difficulty": 2,
     "visual_anchor": "Bright sterile clinical donor room with comfortable reclining vinyl donor chairs, gentle rhythmic whir of blood bag rocking scales, tube sealers, and volunteer refreshments table with juice and biscuits.",
@@ -980,6 +1001,7 @@
     "subtopic_id": "public_civic",
     "name": "Public Archive",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "National Archives",
       "Records Repository",
@@ -1026,6 +1048,7 @@
     "subtopic_id": "public_civic",
     "name": "Municipal Water Tower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Elevated Water Tank",
       "Water Standpipe",
@@ -1072,6 +1095,7 @@
     "subtopic_id": "public_civic",
     "name": "Botanical Conservatory",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Glasshouse",
       "Palm House",
@@ -1119,6 +1143,7 @@
     "subtopic_id": "public_civic",
     "name": "Supreme Court",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Highest Court",
       "Court of Final Appeal",
@@ -1166,6 +1191,7 @@
     "subtopic_id": "public_civic",
     "name": "Presidential Palace",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Executive Mansion",
       "Head of State Residence",
@@ -1175,8 +1201,8 @@
     "visual_anchor": "Gilded neoclassical presidential mansion surrounded by wrought-iron perimeter gates, pristine gravel motorcade driveway, fluttering national standard, and illuminated formal reception chandeliers.",
     "core_traits": [
       "Functions as the official working office and ceremonial residence of the national head of state or government",
-      "Contains executive offices, the cabinet war room, formal banquet state dining rooms, and diplomatic reception halls",
-      "Protected by round-the-clock ceremonial elite guard sentries, perimeter snipers, and high-tech security rings",
+      "Contains executive offices, cabinet meeting rooms, formal state dining rooms, and diplomatic reception halls",
+      "Protected around the clock by ceremonial guards and high-tech security systems",
       "Hosts visiting heads of foreign nations, ambassador credential ceremonies, and state treaty banquets"
     ],
     "distractor_pool": [
@@ -1188,10 +1214,10 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The White House in Washington, DC, was set ablaze by British troops during the War of 1812 and had to be extensively reconstructed.",
+        "claim": "The White House in Washington, DC, has 132 rooms and 35 bathrooms.",
         "verdict": "fact",
-        "explanation": "In August 1814, British forces burned the mansion; only the exterior stone walls survived, which were later whitewashed and rebuilt.",
-        "fun_fact": "First Lady Dolley Madison famously saved a full-length portrait of George Washington before fleeing the burning mansion."
+        "explanation": "Besides offices and family living spaces, it even has a bowling lane, a movie theater, and a flower shop.",
+        "fun_fact": "The White House was first coated with white lime paint to protect its sandstone walls from freezing water."
       },
       {
         "claim": "A presidential palace belongs as personal private real estate to whichever president is currently in office.",
@@ -1212,6 +1238,7 @@
     "subtopic_id": "public_civic",
     "name": "Coast Guard Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lifeboat Station",
       "Maritime Rescue Base",
@@ -1258,6 +1285,7 @@
     "subtopic_id": "public_civic",
     "name": "Animal Shelter",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pet Rescue Center",
       "Humane Society Shelter",
@@ -1286,10 +1314,10 @@
         "fun_fact": "The ID number links to a registered database containing the owner's phone number and address."
       },
       {
-        "claim": "All animal shelters are gloomy pounds where pets are automatically euthanized within three days.",
+        "claim": "All animal shelters are gloomy places where pets never find new homes.",
         "verdict": "myth",
-        "explanation": "The global animal welfare movement has established widespread 'no-kill' shelters and extensive foster volunteer networks prioritizing lifelong placement.",
-        "fun_fact": "Many shelters achieve live-release rates exceeding 90% through community foster networks."
+        "explanation": "Many shelters work with foster volunteers and adoption events, so most pets find loving, lifelong families.",
+        "fun_fact": "Adopting from a shelter gives a pet a second chance and frees up space for another animal."
       }
     ],
     "versus_candidates": [
@@ -1304,6 +1332,7 @@
     "subtopic_id": "public_civic",
     "name": "Central Bank",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Reserve Bank",
       "National Monetary Authority",
@@ -1350,6 +1379,7 @@
     "subtopic_id": "public_civic",
     "name": "Public Fountain Plaza",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Water Fountain Square",
       "Civic Water Plaza",
@@ -1396,6 +1426,7 @@
     "subtopic_id": "transit_urban",
     "name": "International Airport",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Air Terminal",
       "International Aerodrome",
@@ -1442,6 +1473,7 @@
     "subtopic_id": "transit_urban",
     "name": "Train Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Railway Terminal",
       "Rail Station",
@@ -1488,6 +1520,7 @@
     "subtopic_id": "transit_urban",
     "name": "Subway Metro Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Underground Station",
       "Metro Stop",
@@ -1534,6 +1567,7 @@
     "subtopic_id": "transit_urban",
     "name": "Bus Terminal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Coach Station",
       "Bus Interchange",
@@ -1580,6 +1614,7 @@
     "subtopic_id": "transit_urban",
     "name": "Harbor Seaport",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Commercial Port",
       "Maritime Seaport",
@@ -1626,6 +1661,7 @@
     "subtopic_id": "transit_urban",
     "name": "Lighthouse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Pharos",
       "Coastal Beacon",
@@ -1672,6 +1708,7 @@
     "subtopic_id": "transit_urban",
     "name": "Gas Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Petrol Station",
       "Service Station",
@@ -1719,6 +1756,7 @@
     "subtopic_id": "transit_urban",
     "name": "Multi-Story Parking Garage",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Parking Deck",
       "Car Park",
@@ -1766,6 +1804,7 @@
     "subtopic_id": "transit_urban",
     "name": "Suspension Bridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cable-Suspension Span",
       "Hanging Bridge",
@@ -1812,6 +1851,7 @@
     "subtopic_id": "transit_urban",
     "name": "Ferry Terminal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ferry Slip",
       "Passenger Ferry Pier",
@@ -1858,6 +1898,7 @@
     "subtopic_id": "transit_urban",
     "name": "Canal Lock",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Navigation Lock",
       "Water Staircase",
@@ -1904,6 +1945,7 @@
     "subtopic_id": "transit_urban",
     "name": "Helicopter Pad",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Helipad",
       "Heliport",
@@ -1951,6 +1993,7 @@
     "subtopic_id": "transit_urban",
     "name": "Highway Toll Booth",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Toll Plaza",
       "Toll Gate",
@@ -1998,6 +2041,7 @@
     "subtopic_id": "transit_urban",
     "name": "Air Traffic Control Tower",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "ATC Tower",
       "Control Cab",
@@ -2044,6 +2088,7 @@
     "subtopic_id": "transit_urban",
     "name": "Cable Car Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gondola Lift Station",
       "Aerial Tramway Terminal",
@@ -2091,6 +2136,7 @@
     "subtopic_id": "transit_urban",
     "name": "Cruise Ship Terminal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ocean Cruise Passenger Terminal",
       "Cruise Port Pier",
@@ -2137,6 +2183,7 @@
     "subtopic_id": "transit_urban",
     "name": "Highway Rest Stop",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Service Plaza",
       "Motorway Service Area",
@@ -2184,6 +2231,7 @@
     "subtopic_id": "transit_urban",
     "name": "Railway Freight Depot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Freight Yard",
       "Rail Marshalling Yard",
@@ -2231,6 +2279,7 @@
     "subtopic_id": "transit_urban",
     "name": "Container Port Terminal",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Container Wharf",
       "Maritime Intermodal Terminal",
@@ -2277,6 +2326,7 @@
     "subtopic_id": "transit_urban",
     "name": "Dry Dock Shipyard",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Graving Dock",
       "Floating Drydock",
@@ -2323,6 +2373,7 @@
     "subtopic_id": "transit_urban",
     "name": "Bascule Drawbridge",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Movable Bridge",
       "Bascule Bridge",
@@ -2370,6 +2421,7 @@
     "subtopic_id": "transit_urban",
     "name": "Highway Interchange",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Stack Interchange",
       "Cloverleaf Junction",
@@ -2417,6 +2469,7 @@
     "subtopic_id": "transit_urban",
     "name": "Pedestrian Overpass",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Footbridge",
       "Pedestrian Skywalk",
@@ -2464,6 +2517,7 @@
     "subtopic_id": "transit_urban",
     "name": "Monorail Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Straddle Monorail Stop",
       "Elevated Transit Station",
@@ -2510,6 +2564,7 @@
     "subtopic_id": "transit_urban",
     "name": "Underground Road Tunnel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Vehicular Tunnel",
       "Highway Tunnel",
@@ -2556,6 +2611,7 @@
     "subtopic_id": "transit_urban",
     "name": "Electric Tram Depot",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Streetcar Barn",
       "Trolley Barn",
@@ -2602,6 +2658,7 @@
     "subtopic_id": "transit_urban",
     "name": "Marina Boardwalk",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Yacht Basin Promenade",
       "Harbor Boardwalk",
@@ -2648,6 +2705,7 @@
     "subtopic_id": "transit_urban",
     "name": "Bicycle Sharing Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bike Share Dock",
       "Public Bike Terminal",
@@ -2694,6 +2752,7 @@
     "subtopic_id": "transit_urban",
     "name": "Electric Vehicle Charging Hub",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "EV Supercharger Hub",
       "Fast Charging Station",
@@ -2740,6 +2799,7 @@
     "subtopic_id": "transit_urban",
     "name": "Mountain Pass Highway",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Switchback Mountain Road",
       "Alpine Highway",
@@ -2786,6 +2846,7 @@
     "subtopic_id": "transit_urban",
     "name": "Riverboat Pier",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "River Landing",
       "Steamboat Wharf",
@@ -2832,6 +2893,7 @@
     "subtopic_id": "transit_urban",
     "name": "Funicular Railway Station",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cliff Railway Station",
       "Incline Railway Terminal",
@@ -2878,6 +2940,7 @@
     "subtopic_id": "transit_urban",
     "name": "Aviation Hangar",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aircraft Hangar",
       "Airplane Maintenance Bay",
@@ -2924,6 +2987,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Supermarket",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Grocery Store",
       "Food Market",
@@ -2970,6 +3034,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Shopping Mall",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Shopping Center",
       "Retail Plaza",
@@ -3016,6 +3081,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Movie Cinema",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Movie Theater",
       "Film Theater",
@@ -3063,6 +3129,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Art Museum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Art Gallery",
       "Fine Arts Museum",
@@ -3109,6 +3176,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "History Museum",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Natural History Museum",
       "Historical Heritage Museum",
@@ -3118,7 +3186,7 @@
     "visual_anchor": "Cavernous monumental museum hall crowned with Roman arches, featuring a mounted towering dinosaur skeleton cast soaring above glass display vitrines filled with ancient Egyptian sarcophagi and bronze armor.",
     "core_traits": [
       "Preserves, interprets, and exhibits historical antiquities, archaeological artifacts, and natural history specimens",
-      "Showcases fossil skeletons, ancient stone tools, historical textiles, medieval weaponry, and cultural relics",
+      "Showcases fossil skeletons, ancient stone tools, historical textiles, medieval suits of armor, and cultural relics",
       "Provides interactive educational interpretive plaques, dioramas, and digital historical reconstruction displays",
       "Employs professional paleontologists, archaeological conservators, and academic curators"
     ],
@@ -3155,6 +3223,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "City Zoo",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Zoological Garden",
       "Zoological Park",
@@ -3201,6 +3270,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Public Aquarium",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Oceanarium",
       "Marine Life Center",
@@ -3247,6 +3317,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Amusement Theme Park",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Theme Park",
       "Funfair",
@@ -3294,6 +3365,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Circus Big Top",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Circus Tent",
       "Big Top Arena",
@@ -3340,6 +3412,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Traditional Bakery",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Boulangerie",
       "Artisan Bakehouse",
@@ -3351,7 +3424,7 @@
     "core_traits": [
       "Mixes, proofs, bakes, and sells fresh breads, viennoiserie pastries, and artisanal baked goods daily",
       "Centered around commercial deck ovens, spiral dough mixers, proving proofers, and wooden peels",
-      "Filled with the intoxicating scent of caramelizing crusts, roasted yeast, melted butter, and fresh cinnamon",
+      "Filled with the irresistible scent of caramelizing crusts, warm yeast, melted butter, and fresh cinnamon",
       "Displays crusty sourdough loaves, croissants, brioches, and tarts behind gleaming glass pastry cases"
     ],
     "distractor_pool": [
@@ -3387,17 +3460,18 @@
     "subtopic_id": "commerce_leisure",
     "name": "Fine Dining Restaurant",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Gourmet Restaurant",
       "Haute Cuisine Bistro",
       "Michelin-Starred Restaurant"
     ],
     "difficulty": 1,
-    "visual_anchor": "Sophisticated candlelit dining room with crisp white linen tablecloths, sparkling crystal wine glasses, polished silver cutlery, an open pass kitchen where chefs in tall toques plate delicate gastronomic courses.",
+    "visual_anchor": "Sophisticated candlelit dining room with crisp white linen tablecloths, sparkling crystal water glasses, polished silver cutlery, an open pass kitchen where chefs in tall toques plate delicate gastronomic courses.",
     "core_traits": [
-      "Offers high-end multi-course gourmet culinary experiences paired with curated vintage wines",
+      "Offers high-end multi-course gourmet meals, each course carefully planned and beautifully served",
       "Features impeccable table settings with silver flatware, fine porcelain, and crystal stemware",
-      "Operates under the strict culinary brigade system led by an executive chef, sous chefs, and sommelier",
+      "Operates under the strict culinary brigade system led by an executive chef, sous chefs, and pastry chefs",
       "Emphasizes exquisite plate presentation, sensory flavor profiles, and attentive white-glove service"
     ],
     "distractor_pool": [
@@ -3405,7 +3479,7 @@
       "Traditional Bakery",
       "Luxury Grand Hotel",
       "Farmers Market",
-      "Nightclub Dance Hall"
+      "Food Court"
     ],
     "facts_and_myths": [
       {
@@ -3433,6 +3507,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Coffeehouse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Cafe",
       "Espresso Bar",
@@ -3480,6 +3555,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Luxury Grand Hotel",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Five-Star Hotel",
       "Palace Hotel",
@@ -3495,7 +3571,7 @@
     ],
     "distractor_pool": [
       "Fine Dining Restaurant",
-      "Casino Resort",
+      "Youth Hostel",
       "Presidential Palace",
       "Shopping Mall",
       "Cruise Ship Terminal"
@@ -3511,11 +3587,11 @@
         "claim": "Hotels skip numbering the 13th floor because international architectural building codes prohibit it.",
         "verdict": "myth",
         "explanation": "Omitting the 13th floor is purely a commercial superstition (triskaidekaphobia) intended to prevent superstitious guests from avoiding rooms on that floor.",
-        "fun_fact": "In East Asian hotels, the 4th floor is frequently skipped instead because the word for 'four' sounds like 'death'."
+        "fun_fact": "In some East Asian hotels, the 4th floor is skipped instead because 'four' sounds like an unlucky word."
       }
     ],
     "versus_candidates": [
-      "Casino Resort",
+      "Shopping Mall",
       "Fine Dining Restaurant",
       "Cruise Ship Terminal"
     ]
@@ -3526,6 +3602,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Fitness Gymnasium",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Health Club",
       "Gym",
@@ -3549,9 +3626,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The word 'gymnasium' derives from the ancient Greek word 'gymnos', meaning naked.",
+        "claim": "The word 'gymnasium' comes from ancient Greek.",
         "verdict": "fact",
-        "explanation": "In ancient Greece, male athletes exercised, wrestled, and competed in physical contests completely in the nude to promote functional bodily aesthetics.",
+        "explanation": "Ancient Greek gymnasia were training grounds where young athletes practiced running, jumping, throwing, and wrestling.",
         "fun_fact": "Ancient Greek gymnasia were also centers for philosophical discourse and mathematical teaching."
       },
       {
@@ -3573,6 +3650,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Underground Bank Vault",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Safety Deposit Vault",
       "Bullion Vault",
@@ -3589,7 +3667,7 @@
     "distractor_pool": [
       "Central Bank",
       "Civil Defense Bunker",
-      "Casino Resort",
+      "Jewelry Store",
       "Prison",
       "Post Office"
     ],
@@ -3610,7 +3688,7 @@
     "versus_candidates": [
       "Central Bank",
       "Civil Defense Bunker",
-      "Casino Resort"
+      "Jewelry Store"
     ]
   },
   {
@@ -3619,6 +3697,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Community Pharmacy",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Chemist Shop",
       "Drugstore",
@@ -3629,7 +3708,7 @@
     "visual_anchor": "Clean brightly lit retail pharmacy with shelves of amber medicine bottles, mortar and pestle emblem on the wall, certified pharmacist dispensing prescription tablets at the elevated consultation counter.",
     "core_traits": [
       "Prepares, dispenses, and reviews prescription medications and over-the-counter medical remedies",
-      "Features an elevated dispensing counter, pill counting trays, automated pill robotics, and locked narcotics safes",
+      "Features an elevated dispensing counter, pill counting trays, automated pill robotics, and locked medicine safes",
       "Staffed by licensed doctorate pharmacists advising patients on drug interactions and health management",
       "Offers seasonal influenza vaccinations, blood pressure monitoring kiosks, and personal hygiene products"
     ],
@@ -3666,6 +3745,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Botanical Garden",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Public Arboreum",
       "Herbarium Grounds",
@@ -3713,6 +3793,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Water Park",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aquatic Theme Park",
       "Water Adventure Park",
@@ -3759,6 +3840,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Bowling Alley",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bowling Center",
       "Tenpin Bowling Lounge",
@@ -3805,6 +3887,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Ice Skating Rink",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Ice Arena",
       "Skating Oval",
@@ -3851,6 +3934,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Flea Market",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Brocante",
       "Swap Meet",
@@ -3898,6 +3982,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Laundromat",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Launderette",
       "Coin Laundry",
@@ -3944,13 +4029,14 @@
     "subtopic_id": "commerce_leisure",
     "name": "Barber Shop",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Barbershop",
       "Traditional Grooming Parlor",
       "Men's Barber"
     ],
     "difficulty": 1,
-    "visual_anchor": "Classic grooming parlor with spinning red-white-and-blue spiral barber pole, heavy vintage hydraulic leather chairs facing mirrored stations, jars of blue disinfectant combs, and scent of bay rum aftershave.",
+    "visual_anchor": "Classic grooming parlor with spinning red-white-and-blue spiral barber pole, heavy vintage hydraulic leather chairs facing mirrored stations, jars of blue disinfectant combs, and the fresh scent of aftershave.",
     "core_traits": [
       "Provides haircutting, beard trimming, hair styling, and traditional hot-towel straight-razor shaves",
       "Furnished with reclining hydraulic leather barber chairs, mirrored stations, clipper racks, and lather warmers",
@@ -3966,9 +4052,9 @@
     ],
     "facts_and_myths": [
       {
-        "claim": "The classic red and white stripes of the barber pole represent blood and white bandages from when barbers performed surgery and tooth extractions.",
+        "claim": "The red and white barber pole dates back to when barbers also worked as surgeons.",
         "verdict": "fact",
-        "explanation": "In medieval Europe, 'barber-surgeons' performed bloodletting, bone setting, and dental work; bloody bandages washed and hung on poles to dry spiraled in the wind.",
+        "explanation": "In medieval Europe, barber-surgeons also set broken bones and pulled teeth; the red and white stripes recall their bandages.",
         "fun_fact": "Blue was later added to the pole in the United States, likely echoing the national flag colors."
       },
       {
@@ -3990,6 +4076,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Sports Stadium Arena",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Athletic Stadium",
       "Sports Coliseum",
@@ -4037,6 +4124,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Opera House",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Lyric Theater",
       "Grand Opera Theater",
@@ -4083,6 +4171,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Symphony Concert Hall",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Philharmonic Hall",
       "Orchestra Hall",
@@ -4129,6 +4218,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Arcade Game Center",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Amusement Arcade",
       "Video Arcade",
@@ -4145,7 +4235,7 @@
     ],
     "distractor_pool": [
       "Bowling Alley",
-      "Casino Resort",
+      "Trampoline Park",
       "Amusement Theme Park",
       "Movie Cinema",
       "Ice Skating Rink"
@@ -4166,7 +4256,7 @@
     ],
     "versus_candidates": [
       "Bowling Alley",
-      "Casino Resort",
+      "Movie Cinema",
       "Amusement Theme Park"
     ]
   },
@@ -4176,6 +4266,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Bookshop Cafe",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Bookstore Cafe",
       "Literary Cafe",
@@ -4222,6 +4313,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Farmers Market",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Greenmarket",
       "Farm Produce Market",
@@ -4268,6 +4360,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Golf Clubhouse",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Country Club Clubhouse",
       "Golf Club Pavilion",
@@ -4314,6 +4407,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Public Swimming Pool",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Aquatic Center",
       "Municipal Pool",
@@ -4361,6 +4455,7 @@
     "subtopic_id": "commerce_leisure",
     "name": "Wholesale Fish Market",
     "language": "en",
+    "audience_rating": "kids",
     "aliases": [
       "Seafood Auction Market",
       "Port Fish Market",
@@ -4399,6 +4494,550 @@
       "Farmers Market",
       "Harbor Seaport",
       "Flea Market"
+    ]
+  },
+  {
+    "id": "ENT-PLA-096",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Elementary School",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Primary School",
+      "Grade School"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful elementary school building with a red brick front and colorful windows as kids with backpacks arrive on a sunny morning, 9:16 vertical shot.",
+    "core_traits": [
+      "Place where young children learn every weekday",
+      "Has classrooms, a playground and a lunchroom",
+      "Students learn reading, writing and math",
+      "Usually covers the first five or six grades"
+    ],
+    "distractor_pool": [
+      "High School",
+      "Kindergarten",
+      "University Campus",
+      "Public Library",
+      "Community Center"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Many schools ring a bell to mark the start and end of class.",
+        "verdict": "fact",
+        "explanation": "Bells help everyone know when it is time to switch classes, eat or go home.",
+        "fun_fact": "American school buses are painted a special color called National School Bus Glossy Yellow."
+      },
+      {
+        "claim": "Recess is a waste of school time.",
+        "verdict": "myth",
+        "explanation": "Studies show playtime helps kids focus, move their bodies and make friends.",
+        "fun_fact": "In Finland, kids usually start primary school at age seven."
+      }
+    ],
+    "versus_candidates": [
+      "High School",
+      "Kindergarten",
+      "Public Library"
+    ]
+  },
+  {
+    "id": "ENT-PLA-097",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Kindergarten",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Kinder"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright kindergarten classroom with tiny chairs, a colorful round rug, kids' paintings on the walls and building blocks on the floor, 9:16 vertical shot.",
+    "core_traits": [
+      "First classroom for many young children",
+      "Lots of play, songs and crafts",
+      "Kids learn letters, numbers and sharing",
+      "Its name comes from German words meaning 'children's garden'"
+    ],
+    "distractor_pool": [
+      "Elementary School",
+      "Daycare",
+      "Preschool",
+      "Playground",
+      "Public Library"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Kindergarten was invented by Friedrich Froebel in Germany.",
+        "verdict": "fact",
+        "explanation": "Froebel started his first kindergarten in 1837, believing children learn best through play.",
+        "fun_fact": "Froebel's wooden block toys inspired famous architect Frank Lloyd Wright as a child."
+      },
+      {
+        "claim": "The word kindergarten means 'children's garden.'",
+        "verdict": "fact",
+        "explanation": "Froebel imagined children growing like plants, with care, just like in a garden.",
+        "fun_fact": "Many kindergarten classes have a daily circle time for songs and stories."
+      }
+    ],
+    "versus_candidates": [
+      "Elementary School",
+      "Preschool",
+      "Daycare"
+    ]
+  },
+  {
+    "id": "ENT-PLA-098",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Toy Store",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Toy Shop"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A colorful toy store with shelves full of teddy bears, building blocks, toy trains and balloons in bright cheerful lighting, 9:16 vertical shot.",
+    "core_traits": [
+      "Shop full of games and playthings",
+      "Shelves of stuffed animals, puzzles and building sets",
+      "Extra busy before birthdays and holidays",
+      "Some famous ones have giant floor pianos you can play with your feet"
+    ],
+    "distractor_pool": [
+      "Bookstore",
+      "Supermarket",
+      "Candy Store",
+      "Shopping Mall",
+      "Arcade Game Center"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hamleys in London is one of the oldest toy stores in the world.",
+        "verdict": "fact",
+        "explanation": "Hamleys first opened in London in 1760 and still sells toys today.",
+        "fun_fact": "FAO Schwarz in New York has a giant floor piano you play with your feet."
+      },
+      {
+        "claim": "Toy stores sell things only for little kids.",
+        "verdict": "myth",
+        "explanation": "Many also sell games, puzzles and collectibles enjoyed by teens and adults.",
+        "fun_fact": "LEGO stores have walls of bricks you can pick out by color."
+      }
+    ],
+    "versus_candidates": [
+      "Bookstore",
+      "Candy Store",
+      "Arcade Game Center"
+    ]
+  },
+  {
+    "id": "ENT-PLA-099",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Family Farm",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Small Farm"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful red barn with a green tractor, fluffy sheep and chickens while a family picks vegetables on a sunny family farm, 9:16 vertical shot.",
+    "core_traits": [
+      "Countryside place where a family grows food",
+      "Has fields, a barn and farm animals",
+      "Starts early with feeding animals and collecting eggs",
+      "Most farms in the world are this kind"
+    ],
+    "distractor_pool": [
+      "Farmers Market",
+      "Botanical Garden",
+      "Ranch",
+      "Orchard",
+      "Petting Zoo"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Most of the world's farms are run by families.",
+        "verdict": "fact",
+        "explanation": "Family farms make up most farms on Earth and grow much of the world's food.",
+        "fun_fact": "A healthy hen can lay nearly one egg a day."
+      },
+      {
+        "claim": "Brown eggs are healthier than white eggs.",
+        "verdict": "myth",
+        "explanation": "Egg color depends on the hen's breed; brown and white eggs are equally healthy.",
+        "fun_fact": "Cows have a stomach with four parts to help digest grass."
+      }
+    ],
+    "versus_candidates": [
+      "Petting Zoo",
+      "Farmers Market",
+      "Botanical Garden"
+    ]
+  },
+  {
+    "id": "ENT-PLA-100",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Sandy Beach",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Beach"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sunny sandy beach with gentle turquoise waves, a colorful umbrella, a bucket and spade and a sandcastle by the shore, 9:16 vertical shot.",
+    "core_traits": [
+      "Strip of sand beside the sea",
+      "Great for building sandcastles",
+      "Has waves that roll in and out",
+      "Its sand is made of tiny bits of rock and shells"
+    ],
+    "distractor_pool": [
+      "Lake Shore",
+      "Desert",
+      "Marina Boardwalk",
+      "Public Swimming Pool",
+      "Water Park"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Beach sand is made of tiny pieces of rock and shells.",
+        "verdict": "fact",
+        "explanation": "Waves and weather slowly break rocks and shells into tiny grains over many years.",
+        "fun_fact": "Some beaches in Bermuda have pink sand from tiny red-shelled sea creatures."
+      },
+      {
+        "claim": "Swimming near a lifeguard is the safest choice at the beach.",
+        "verdict": "fact",
+        "explanation": "Lifeguards watch for strong currents, and kids should always swim with an adult nearby.",
+        "fun_fact": "Some beaches in Hawaii have black sand made from crushed volcanic rock."
+      }
+    ],
+    "versus_candidates": [
+      "Water Park",
+      "Public Swimming Pool",
+      "Lake Shore"
+    ]
+  },
+  {
+    "id": "ENT-PLA-101",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Campsite",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Campground",
+      "Camping Site"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cozy campsite with a bright orange tent, a small glowing campfire with marshmallows on sticks and tall pine trees under a starry sky, 9:16 vertical shot.",
+    "core_traits": [
+      "Outdoor spot where people sleep in tents",
+      "Often near forests, lakes or mountains",
+      "Good place to toast marshmallows",
+      "Many have fire rings and picnic tables"
+    ],
+    "distractor_pool": [
+      "Public Park",
+      "Treehouse",
+      "Mountain Lodge",
+      "Log Cabin",
+      "Picnic Area"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Campers should always put their campfire out completely.",
+        "verdict": "fact",
+        "explanation": "Pour on water and stir until it is cool, and let an adult check it.",
+        "fun_fact": "A s'more is a toasted marshmallow and chocolate squished between two crackers."
+      },
+      {
+        "claim": "Many campsites ask campers to store food away from wild animals.",
+        "verdict": "fact",
+        "explanation": "Locking food in cars or special bear boxes keeps curious animals away from tents.",
+        "fun_fact": "On clear nights at a campsite, you can see far more stars than in a city."
+      }
+    ],
+    "versus_candidates": [
+      "Public Park",
+      "Mountain Lodge",
+      "Sandy Beach"
+    ]
+  },
+  {
+    "id": "ENT-PLA-102",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Science Museum",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Science Center"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright science museum hall with giant hanging planet models, a shiny robot exhibit and kids pressing buttons on interactive displays, 9:16 vertical shot.",
+    "core_traits": [
+      "Museum about how things work",
+      "Has hands-on exhibits you can touch",
+      "Shows experiments, machines and space models",
+      "Often has a planetarium or a giant movie screen"
+    ],
+    "distractor_pool": [
+      "Art Museum",
+      "History Museum",
+      "Planetarium",
+      "Public Library",
+      "Public Aquarium"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Many science museums let you touch and try the exhibits.",
+        "verdict": "fact",
+        "explanation": "Hands-on exhibits help kids learn by building, pushing buttons and experimenting.",
+        "fun_fact": "The Exploratorium in San Francisco helped make hands-on science museums popular in 1969."
+      },
+      {
+        "claim": "Some science museums display real spacecraft.",
+        "verdict": "fact",
+        "explanation": "London's Science Museum, for example, displays the real Apollo 10 command module.",
+        "fun_fact": "The Apollo 10 capsule once flew around the Moon with three astronauts inside."
+      }
+    ],
+    "versus_candidates": [
+      "Art Museum",
+      "History Museum",
+      "Planetarium"
+    ]
+  },
+  {
+    "id": "ENT-PLA-103",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Planetarium",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Star Theater"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Kids leaning back in comfy seats under a huge glowing dome filled with stars, colorful planets and a swirling galaxy, 9:16 vertical shot.",
+    "core_traits": [
+      "Theater with a round domed ceiling",
+      "Shows the night sky indoors",
+      "Uses projectors to display stars and planets",
+      "Lets you see stars even in the daytime"
+    ],
+    "distractor_pool": [
+      "Astronomical Observatory",
+      "Science Museum",
+      "Movie Cinema",
+      "Weather Station",
+      "Public Aquarium"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A planetarium uses telescopes to show real stars.",
+        "verdict": "myth",
+        "explanation": "It projects images of the sky onto a dome; observatories use telescopes for real stars.",
+        "fun_fact": "The first modern planetarium projector was built by the Zeiss company in Germany in 1923."
+      },
+      {
+        "claim": "Planetarium shows can display the sky from other times and places.",
+        "verdict": "fact",
+        "explanation": "Projectors can show the sky long ago, in the future, or from the other side of Earth.",
+        "fun_fact": "Planetarium seats often lean back so visitors can look up comfortably."
+      }
+    ],
+    "versus_candidates": [
+      "Astronomical Observatory",
+      "Science Museum",
+      "Movie Cinema"
+    ]
+  },
+  {
+    "id": "ENT-PLA-104",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Ice Cream Parlor",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Ice Cream Shop",
+      "Creamery"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cheerful pastel ice cream parlor with a glass counter full of colorful ice cream tubs, waffle cones and a striped awning, 9:16 vertical shot.",
+    "core_traits": [
+      "Sweet shop that sells frozen treats",
+      "Glass counter full of colorful flavors",
+      "Serves cones, cups and sundaes",
+      "Some let you taste a flavor with a tiny spoon"
+    ],
+    "distractor_pool": [
+      "Traditional Bakery",
+      "Candy Store",
+      "Coffeehouse",
+      "Supermarket",
+      "Juice Bar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The ice cream sundae was invented in the United States.",
+        "verdict": "fact",
+        "explanation": "Several American towns say they created the first sundae in the late 1800s.",
+        "fun_fact": "Baskin-Robbins became famous for 31 flavors, one for each day of a month."
+      },
+      {
+        "claim": "Eating ice cream too fast can cause brain freeze.",
+        "verdict": "fact",
+        "explanation": "Cold touching the roof of your mouth can trigger a quick, short headache.",
+        "fun_fact": "Pressing your tongue to the roof of your mouth can help brain freeze fade."
+      }
+    ],
+    "versus_candidates": [
+      "Traditional Bakery",
+      "Candy Store",
+      "Coffeehouse"
+    ]
+  },
+  {
+    "id": "ENT-PLA-105",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Petting Zoo",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Children's Farm"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Happy children gently petting fluffy goats, sheep and a pony inside a sunny wooden fence at a petting zoo, 9:16 vertical shot.",
+    "core_traits": [
+      "Place where kids can touch gentle animals",
+      "Often has goats, sheep, rabbits and ponies",
+      "Visitors may feed animals special pellets",
+      "Has handwashing stations near the exit"
+    ],
+    "distractor_pool": [
+      "City Zoo",
+      "Family Farm",
+      "Animal Shelter",
+      "Public Aquarium",
+      "Safari Park"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "You should always wash your hands after visiting a petting zoo.",
+        "verdict": "fact",
+        "explanation": "Animals can carry germs, so washing with soap and water keeps you healthy.",
+        "fun_fact": "Goats have rectangle-shaped pupils that help them see almost all around them."
+      },
+      {
+        "claim": "Petting zoos usually have gentle farm animals instead of wild ones.",
+        "verdict": "fact",
+        "explanation": "Calm animals like goats, sheep and rabbits are used to people and gentle hands.",
+        "fun_fact": "Sheep can remember dozens of faces, including human faces."
+      }
+    ],
+    "versus_candidates": [
+      "City Zoo",
+      "Family Farm",
+      "Animal Shelter"
+    ]
+  },
+  {
+    "id": "ENT-PLA-106",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Skate Park",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Skatepark"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A colorful skate park with smooth concrete ramps and bowls where kids in helmets ride skateboards and scooters on a sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Outdoor place with ramps and rails",
+      "Used by skateboards, scooters and BMX bikes",
+      "Has curved bowls and half-pipes",
+      "Riders should wear helmets and pads"
+    ],
+    "distractor_pool": [
+      "Playground",
+      "Ice Skating Rink",
+      "Public Park",
+      "Roller Rink",
+      "Sports Stadium Arena"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Riders at skate parks should always wear a helmet.",
+        "verdict": "fact",
+        "explanation": "Helmets, knee pads and wrist guards protect riders from bumps and falls.",
+        "fun_fact": "Skateboarding became an Olympic sport at the Tokyo 2020 Games."
+      },
+      {
+        "claim": "Skateboarding began with surfers in California.",
+        "verdict": "fact",
+        "explanation": "In the 1950s, surfers rode boards on streets when ocean waves were flat.",
+        "fun_fact": "Empty backyard swimming pools inspired the curved bowls in many skate parks."
+      }
+    ],
+    "versus_candidates": [
+      "Playground",
+      "Ice Skating Rink",
+      "Roller Rink"
+    ]
+  },
+  {
+    "id": "ENT-PLA-107",
+    "domain_id": "places_facilities",
+    "subtopic_id": "kids_places",
+    "name": "Playground",
+    "language": "en",
+    "audience_rating": "kids",
+    "aliases": [
+      "Play Area",
+      "Play Park"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright playground with a red slide, blue swings, a climbing frame and soft rubber ground while kids play on a sunny day, 9:16 vertical shot.",
+    "core_traits": [
+      "Outdoor place built for kids to play",
+      "Has slides, swings and climbing frames",
+      "Often has soft ground like sand or rubber",
+      "Found in parks and schoolyards"
+    ],
+    "distractor_pool": [
+      "Skate Park",
+      "Public Park",
+      "Water Park",
+      "Amusement Theme Park",
+      "Sandy Beach"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Playgrounds often have soft ground to cushion falls.",
+        "verdict": "fact",
+        "explanation": "Rubber, wood chips or sand help keep kids safer when they tumble.",
+        "fun_fact": "A swing moves like a pendulum, an important idea in physics."
+      },
+      {
+        "claim": "Playing on playgrounds helps kids build strong muscles.",
+        "verdict": "fact",
+        "explanation": "Climbing, swinging and running help kids get stronger and improve their balance.",
+        "fun_fact": "One of the first public playgrounds in the US opened in San Francisco in 1887."
+      }
+    ],
+    "versus_candidates": [
+      "Skate Park",
+      "Public Park",
+      "Water Park"
     ]
   }
 ]
