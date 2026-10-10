@@ -45,9 +45,10 @@ export const PORTRAIT_FRAME_GEOMETRY: QuizPortraitFrameGeometry = Object.freeze(
   arena: Object.freeze({ x: GUTTER, y: 530, width: 936, height: 968 }),
   countdown: Object.freeze({ x: 858, y: 430, width: 150, height: 150 }),
   // The reveal card stops short of the mascot column so the two never overlap.
-  reveal: Object.freeze({ x: GUTTER, y: 1380, width: 648, height: 118 }),
-  mascot: Object.freeze({ x: 744, y: 1216, width: 264, height: 264 }),
-  cta: Object.freeze({ x: GUTTER, y: 640, width: 936, height: 640 }),
+  reveal: Object.freeze({ x: GUTTER, y: 1352, width: 468, height: 146 }),
+  // The mascot may dip below the safe area: platform captions sit bottom-left, not bottom-right.
+  mascot: Object.freeze({ x: 568, y: 1180, width: 440, height: 440 }),
+  cta: Object.freeze({ x: GUTTER, y: 540, width: 936, height: 580 }),
 });
 
 export const PORTRAIT_MIN_QUESTION_FONT_PX = 56;

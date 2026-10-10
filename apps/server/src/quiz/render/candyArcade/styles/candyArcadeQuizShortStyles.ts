@@ -1,3 +1,4 @@
+import { portraitMascotAnchorCss } from "../../frame/portraitMascotAnchor.js";
 import { PORTRAIT_FRAME } from "../../frame/portraitFrameGeometry.js";
 import { SHORT_RING_CIRCUMFERENCE, SHORT_RING_TIMER_CLASS } from "../shortRingTimer.js";
 
@@ -26,7 +27,7 @@ ${digits}
 }
 
 function bookendCardCss(): string {
-  const { cta, reservedBottom, reservedRight } = PORTRAIT_FRAME;
+  const { cta, reservedRight } = PORTRAIT_FRAME;
   const card = `left: ${cta.x}px; top: ${cta.y}px; width: ${cta.width}px; height: ${cta.height}px;`;
   return `
 ${STAGE} .candy-kickoff-scene, ${STAGE} .candy-score-cta-scene { padding: 0; background: linear-gradient(180deg, var(--bg-primary, #F6B83D) 0%, var(--bg-secondary, #FF8A5B) 100%); color: #172A59; }
@@ -36,7 +37,7 @@ ${STAGE} .kickoff-badge { display: inline-flex; padding: 14px 30px; border-radiu
 ${STAGE} .kickoff-count, ${STAGE} .score-cta-headline { margin: 0; font-family: ${HEADLINE_FONT}; font-size: 96px; font-weight: 900; line-height: 1.04; letter-spacing: -2px; color: #342245; text-wrap: balance; }
 ${STAGE} .kickoff-ready, ${STAGE} .score-cta-prompt { margin: 0; font-family: ${HEADLINE_FONT}; font-size: 56px; font-weight: 900; line-height: 1.12; color: #047857; }
 ${STAGE} .score-cta-sparkles { color: #FFC436; font-size: 44px; }
-${STAGE} .candy-score-cta-scene .candy-mascot-container.mascot-v2-container { bottom: ${reservedBottom}px; }
+${portraitMascotAnchorCss(`${STAGE} .candy-score-cta-scene.candy-scene.clip`)}
 ${STAGE} .candy-score-cta-scene .candy-mascot-container.mascot-v2-container.anchor-bottom_right { right: ${reservedRight}px; }
 ${STAGE} .candy-score-cta-scene .candy-mascot-container.mascot-v2-container.anchor-bottom_left { left: ${cta.x}px; }
 @keyframes short-pop-in { from { opacity: 0; transform: translateY(40px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }

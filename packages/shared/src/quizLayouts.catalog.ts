@@ -157,7 +157,7 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedPortraitAspectRatios,
     metrics: {
-      render: { width: 640, height: 480, itemCount: 1 },
+      render: { width: 520, height: 390, itemCount: 1 },
       assets: { question: { maxWidth: 1120, maxHeight: 840, aspectRatio: "4:3" } },
     },
   },
@@ -170,7 +170,7 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["choice"], required: ["choice"] },
     supportedAspectRatios: supportedPortraitAspectRatios,
     metrics: {
-      render: { width: 444, height: 592, itemCount: 2 },
+      render: { width: 400, height: 534, itemCount: 2 },
       assets: { choice: { maxWidth: 648, maxHeight: 864, aspectRatio: "3:4" } },
     },
   },
@@ -183,7 +183,7 @@ export const QUIZ_LAYOUT_CATALOG = {
     media: { supported: ["question"], required: ["question"] },
     supportedAspectRatios: supportedPortraitAspectRatios,
     metrics: {
-      render: { width: 800, height: 600, itemCount: 1 },
+      render: { width: 640, height: 480, itemCount: 1 },
       assets: { question: { maxWidth: 1216, maxHeight: 912, aspectRatio: "4:3" } },
     },
   },
