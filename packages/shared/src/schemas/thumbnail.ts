@@ -15,6 +15,14 @@ export type ThumbnailAspectRatio = z.infer<typeof ThumbnailAspectRatioSchema>;
 export const ThumbnailDesignTemplateSchema = z.enum(["big_object", "reaction", "comparison"]);
 export type ThumbnailDesignTemplate = z.infer<typeof ThumbnailDesignTemplateSchema>;
 
+/**
+ * Where the mascot, hero subject and headline sit in a single-subject editorial thumbnail.
+ * Rotated across a channel's episodes so the video grid does not repeat one layout.
+ */
+export const THUMBNAIL_COMPOSITIONS = ["mascot_left", "mascot_right", "hero_center", "reaction_closeup"] as const;
+export const ThumbnailCompositionSchema = z.enum(THUMBNAIL_COMPOSITIONS);
+export type ThumbnailComposition = z.infer<typeof ThumbnailCompositionSchema>;
+
 export const ThumbnailRatioModeSchema = z.enum(["auto", "16:9", "9:16", "both"]).default("auto");
 
 export type ThumbnailRatioMode = z.infer<typeof ThumbnailRatioModeSchema>;
@@ -33,6 +41,7 @@ export type ThumbnailGenerationRequest = z.infer<typeof ThumbnailGenerationReque
 
 export const ThumbnailHistoryItemSchema = z.object({
   design_template: ThumbnailDesignTemplateSchema.optional(),
+  composition: ThumbnailCompositionSchema.optional(),
   id: z.string(),
   aspect_ratio: ThumbnailAspectRatioSchema,
   layout: ThumbnailLayoutTypeSchema,
@@ -48,6 +57,7 @@ export type ThumbnailHistoryItem = z.infer<typeof ThumbnailHistoryItemSchema>;
 
 export const ThumbnailManifestSchema = z.object({
   design_template: ThumbnailDesignTemplateSchema.optional(),
+  composition: ThumbnailCompositionSchema.optional(),
   episode_id: z.string().min(1),
   channel_id: z.string().default(""),
   layout: ThumbnailLayoutTypeSchema,

@@ -1,6 +1,12 @@
 import type { ThumbnailAspectRatio } from "@studio/shared";
 import type { QuizThumbnailPlan } from "../thumbnailTypes.js";
 import { editorialGeometry } from "./editorialGeometry.js";
+import {
+  compositionHeadlinePlacement,
+  compositionLayoutPrompt,
+  compositionMascotFraming,
+  LEGACY_COMPOSITION,
+} from "./composition/compositionCatalog.js";
 
 export function compileEditorialPrompt(plan: QuizThumbnailPlan, ratio: ThumbnailAspectRatio, mascot: string): string {
   const design = plan.editorial!;
@@ -20,9 +26,8 @@ export function compileEditorialPrompt(plan: QuizThumbnailPlan, ratio: Thumbnail
       ? design.candidateCount === 4
         ? "BALANCED THREE-BLOCK COMPOSITION: Bottom row (y=50% to 95%) contains 4 distinct candidates arranged evenly in a clean horizontal row on a pristine bright surface; Top-left features headline typography; Upper-right features mascot leaning down in keen scrutiny."
         : `BALANCED TWO-BLOCK COMPOSITION: Left half (~60% width) contains two large equally lit candidates (${subjects}) on a clean illuminated surface; Right half (~35% width) features mascot in thinker pose gazing left at the choices; Top-left features headline typography.`
-      : landscape
-        ? `BALANCED TWO-BLOCK COMPOSITION: Left block (~35-40% width) features expressive mascot staged on middle-to-lower left with headline typography positioned prominently above it; Right block (~60-65% width) features ONE oversized hero subject (${subjects}) filling the vertical frame with extreme macro scale and tactile fidelity.`
-        : `BALANCED TWO-BLOCK COMPOSITION: Upper area features headline typography and ONE oversized hero subject (${subjects}), with expressive mascot positioned beside it, all essential action above y=1440.`);
+      : compositionLayoutPrompt(design.composition ?? LEGACY_COMPOSITION, ratio, subjects));
+  const headlinePlacement = design.composition ? compositionHeadlinePlacement(design.composition, ratio) : "In the top-left area";
 
   const atmosphere =
     design.backgroundAtmosphere ||
@@ -40,16 +45,18 @@ export function compileEditorialPrompt(plan: QuizThumbnailPlan, ratio: Thumbnail
   return [
     `EDITORIAL THUMBNAIL ART PLATE v1. ${ratio}, target ${geometry.width}x${geometry.height}. Single full-bleed image, not a collage of thumbnails.`,
     `INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS:
-In the top-left area, prominently render the exact headline text: "${plan.hookText}".
+${headlinePlacement}, prominently render the exact headline text: "${plan.hookText}".
 Typography & Banner Style:
 - Dynamic two-tier textured paint brush stroke background banners with authentic dry-brush bristle edges and subtle splatters.
 - Top banner: bold, rugged black acrylic paint brush stroke featuring clean, bold white uppercase lettering.
 - Bottom banner: energetic bright neon-yellow/golden paint brush stroke featuring bold, high-contrast lettering (with key emphasis words or question marks optionally highlighted in vibrant red or yellow).
-- Lettering must be bold, clean, modern sans-serif block typography with high visual contrast, crisp edges, and flawless spelling: "${plan.hookText}".`,
+- Lettering must be bold, clean, modern sans-serif block typography with high visual contrast, crisp edges, and flawless spelling: "${plan.hookText}".
+- The headline banners stay fully unobstructed: no subject, mascot, ear, hair or prop may overlap or touch any letter.`,
     candidateLabels,
     blockLayout,
     `Mascot identity and performance: ${mascot.replace(/Clean bright luminous rim lighting[^.]*\./g, "Crisp directional key lighting with sharp subject separation.")}`,
     "The mascot is emotionally immersed in the puzzle with exaggerated curiosity or astonishment, eyes locked directly onto the hero subject. Dynamic, engaging staging; never a passive standing presenter. The mascot uses natural expressive body language matching the challenge (e.g. hand under chin for pondering comparisons, blissful closed eyes for smelling, enthusiastic anticipation for tasting, headphones for audio, magnifying glass ONLY for micro-visual detail searches). Avoid unnecessary handheld tools; NO scanners or holographic interfaces.",
+    design.composition ? compositionMascotFraming(design.composition, ratio) : "",
     `VIBRANT CONTEXTUAL LIGHTING & ENVIRONMENT: ${atmosphere}. STRICT PROHIBITION: DO NOT use a flat, dull, dark, or gloomy monochrome navy/black background unless specifically depicting midnight space or neon void. Background must possess rich tonal depth, natural ambient warmth, and cheerful luminosity (e.g. sunny citrus warmth for food, airy daylight garden bokeh for floral scents, sunlit natural wood for comparisons, high-key pristine white for pattern spotting, glowing colorful neon for puzzle doors). Focused directional key lighting with crisp optical depth of field, vibrant saturated colors, and high visual contrast.`,
     `CLEAN MINIMALIST BACKGROUND & SHALLOW DEPTH OF FIELD (HIGH SIGNAL-TO-NOISE RATIO):
 The background MUST BE SIMPLE, SOFT-FOCUS, AND UNCLUTTERED so the viewer's attention locks instantly onto the hero subject and mascot.

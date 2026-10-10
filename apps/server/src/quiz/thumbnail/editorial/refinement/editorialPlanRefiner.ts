@@ -31,6 +31,7 @@ function buildHeadlineContext(plan: QuizThumbnailPlan, input: RefineEditorialPla
     questionFormat: input.questionFormat,
     layout: plan.layout,
     languageCode: resolveThumbnailLanguage(input),
+    recentHeadlines: input.recentHeadlines,
   };
 }
 

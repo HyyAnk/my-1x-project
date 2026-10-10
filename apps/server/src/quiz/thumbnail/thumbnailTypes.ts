@@ -67,6 +67,8 @@ export type ResolveThumbnailInput = {
   rng?: () => number;
   /** Compositions used recently by this episode and its channel, newest first. */
   recentCompositions?: ThumbnailComposition[];
+  /** Headlines used recently by this episode and its channel, newest first. */
+  recentHeadlines?: string[];
 };
 
 export type CompiledThumbnailPrompts = {

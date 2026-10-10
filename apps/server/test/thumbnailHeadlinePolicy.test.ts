@@ -71,7 +71,9 @@ describe("editorial headline policy", () => {
 
   it("allows yes/no headlines only for the matching format and never allows invented scores", () => {
     expect(assessEditorialHeadline("YES OR NO?", visionContext).issues.map((issue) => issue.code)).toContain("unsupported_claim");
-    expect(assessEditorialHeadline("YES OR NO?", { ...visionContext, questionFormat: "yes_no" }).issues).toEqual([]);
+    // A yes/no quiz may promise a verdict, but "YES OR NO?" alone still names nothing.
+    expect(assessEditorialHeadline("YES OR NO?", { ...visionContext, questionFormat: "yes_no" }).issues.map((issue) => issue.code)).toEqual(["generic_only"]);
+    expect(assessEditorialHeadline("EYES: YES OR NO?", { ...visionContext, questionFormat: "yes_no" }).issues).toEqual([]);
     expect(assessEditorialHeadline("TRUE OR FALSE: EYES", { ...visionContext, questionFormat: "true_false" }).issues).toEqual([]);
     expect(assessEditorialHeadline("ONLY 1% KNOW EYES", visionContext).issues.map((issue) => issue.code)).toContain("unsupported_claim");
     expect(assessEditorialHeadline("IQ TEST: EYES", visionContext).issues.map((issue) => issue.code)).toContain("unsupported_claim");
@@ -209,5 +211,37 @@ describe("pictured subject grounding", () => {
     await planThumbnailWithAI({ ...inventions, questions, llmClient: llm });
     expect(llm.prompts[0]).toContain("Question number 12 about inventions?");
     expect(llm.prompts[0]).not.toContain("Question number 13 about inventions?");
+  });
+});
+
+describe("channel headline variety", () => {
+  const context: EditorialHeadlineContext = {
+    topicTitle: "Norse Legends & Heroes Quiz",
+    questions: [{ question: "In Norse myth, who wields a magic hammer?", choices: ["Thor", "Loki"] }],
+    languageCode: "en",
+    recentHeadlines: ["CRACK THIS CLOCK", "OUTSMART YOUR PUPIL!", "WHO RIDES CATS?"],
+  };
+
+  it("flags a reused opening word or sentence pattern as a soft issue", () => {
+    expect(assessEditorialHeadline("CRACK THE HAMMER CODE", context).issues).toEqual([expect.objectContaining({ code: "repeats_recent_pattern", severity: "soft" })]);
+    expect(assessEditorialHeadline("PULL THIS HAMMER?", context).issues.map((issue) => issue.code)).toEqual(["repeats_recent_pattern"]);
+    expect(assessEditorialHeadline("THOR'S HAMMER OR LOKI'S?", context).issues).toEqual([]);
+  });
+
+  it("only checks opening words outside English", () => {
+    const spanish = { ...context, languageCode: "es" as const, recentHeadlines: ["ROMPE ESTE RELOJ"] };
+    expect(assessEditorialHeadline("TIRA ESTE MARTILLO", spanish).issues).toEqual([]);
+    expect(assessEditorialHeadline("ROMPE EL MARTILLO", spanish).issues.map((issue) => issue.code)).toEqual(["repeats_recent_pattern"]);
+  });
+
+  it("shows the planner the channel's recent headlines and rewrites a repeated pattern", async () => {
+    const llm = createSequencedLlm([
+      { hook_text: "PULL THIS HAMMER?", layout: "mega_grid", subject_anchors: [{ label: "magic hammer", visualPrompt: "Mjolnir" }] },
+      { hook_text: "THOR'S HAMMER OR LOKI'S?" },
+    ]);
+    const plan = await planThumbnailWithAI({ ...context, language: "English", editorial: true, llmClient: llm });
+    expect(llm.prompts[0]).toContain('Headlines already used on this channel: ["CRACK THIS CLOCK"');
+    expect(llm.prompts[1]).toContain("same sentence pattern");
+    expect(plan.hookText).toBe("THOR'S HAMMER OR LOKI'S?");
   });
 });

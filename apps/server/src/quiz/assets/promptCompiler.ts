@@ -1,5 +1,10 @@
 import type { AssetConsistencyGroup, QuizAssetRequirement, QuizImageStyle } from "@studio/shared";
 import { framingRules, purposeRules } from "./promptFramingRules.js";
+import {
+  BRIDGE_SHOWCASE_BACKGROUND,
+  BRIDGE_SHOWCASE_CACHE_SUFFIX,
+  BRIDGE_SHOWCASE_CONTRACT,
+} from "./bridgeShowcasePromptContract.js";
 
 export type CompiledAssetPrompt = {
   prompt: string;
@@ -97,13 +102,16 @@ export function compileQuizAssetPrompt(
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const rules = purposeRules(request.purpose);
   const cleanSubject = request.subject.trim();
-  const isGraphicIdentity = isGraphicIdentitySubject(cleanSubject);
+  const isBridgeItem = request.purpose === "bridge_topic_item";
+  const isGraphicIdentity = !isBridgeItem && isGraphicIdentitySubject(cleanSubject);
 
-  const backgroundGuidance = request.transparent_background || isGraphicIdentity
-    ? "Background: isolated centered subject on a pure solid white studio backdrop, crystal clear silhouette boundaries, high edge contrast, zero background clutter, zero shadows on backdrop, perfectly suited for clean background matting."
-    : request.purpose === "hero_question_image" || request.purpose === "question_illustration"
-      ? `Background: ${contract.heroBackground}.`
-      : `Background: ${contract.optionBackground}.`;
+  const backgroundGuidance = isBridgeItem
+    ? BRIDGE_SHOWCASE_BACKGROUND
+    : request.transparent_background || isGraphicIdentity
+      ? "Background: isolated centered subject on a pure solid white studio backdrop, crystal clear silhouette boundaries, high edge contrast, zero background clutter, zero shadows on backdrop, perfectly suited for clean background matting."
+      : request.purpose === "hero_question_image" || request.purpose === "question_illustration"
+        ? `Background: ${contract.heroBackground}.`
+        : `Background: ${contract.optionBackground}.`;
 
   const visualStyleLine = isGraphicIdentity
     ? "Visual Style: Crisp 2D Flat Vector Graphic Emblem, high-contrast iconic symbol, minimalist clean silhouette, sharp vector geometry, centered on solid background."
@@ -133,14 +141,7 @@ export function compileQuizAssetPrompt(
         : "Use facial features only when naturally present in the subject; living creatures, dinosaurs, and animals must have complete clear eyes with pupils, while inanimate objects have no cartoon faces.",
   ] : [];
 
-  const isBridgeItem = request.purpose === "bridge_topic_item";
-  const bridgeContract = isBridgeItem
-    ? [
-        request.transparent_background
-          ? "Bridge showcase sticker contract: Render as a vibrant die-cut sticker illustration with a distinct, clean, well-defined silhouette boundary, isolated in the dead center on a pure solid white studio backdrop with zero background elements, zero floor shadows, and zero gradients, specially primed for clean background matting."
-          : "Bridge showcase card vignette contract: Render as an evocative, high-production card illustration with rich atmospheric background, cinematic depth, and a compelling centered focal point.",
-      ]
-    : [];
+  const bridgeContract = isBridgeItem ? [BRIDGE_SHOWCASE_CONTRACT] : [];
 
   const framing = framingRules(request.aspect_ratio, request.purpose, { layoutId });
   const negativeGuidance = isGraphicIdentity
@@ -165,7 +166,7 @@ export function compileQuizAssetPrompt(
 
   const prompt = rawPrompt.replace(/\s{2,}/g, " ").trim();
   const cacheVersion = isBridgeItem
-    ? `${contract.id}-v1-bridge-showcase`
+    ? `${contract.id}-${BRIDGE_SHOWCASE_CACHE_SUFFIX}`
     : isGraphicIdentity
       ? `${contract.id}-v7-graphic-emblem`
       : `${contract.id}-v6-clean-framing`;

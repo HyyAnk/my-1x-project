@@ -1,4 +1,7 @@
+import type { ThumbnailLayoutType } from "@studio/shared";
 import type { QuizThumbnailPlan, ResolveThumbnailInput } from "../thumbnailTypes.js";
+import type { EditorialThumbnailDesign } from "./editorialTypes.js";
+import { selectThumbnailComposition } from "./composition/compositionSelector.js";
 import { sanitizeThumbnailHook } from "../thumbnailHookGuardrail.js";
 import {
   EDITORIAL_CHALLENGE_ARCHETYPES,
@@ -19,6 +22,15 @@ export {
   type EditorialMascotPose,
   type EditorialSubjectSeed,
 };
+
+/**
+ * Single-subject designs get a rotated composition; it replaces seed staging, which mostly fixed the mascot on the left.
+ * Comparison and mystery-silhouette designs keep their dedicated layouts.
+ */
+function applyComposition(design: EditorialThumbnailDesign, layout: ThumbnailLayoutType, input: ResolveThumbnailInput): EditorialThumbnailDesign {
+  if (design.template === "comparison" || layout === "mystery_silhouette") return design;
+  return { ...design, composition: selectThumbnailComposition(input.recentCompositions ?? [], input.rng), spatialComposition: undefined };
+}
 
 /**
  * Applies editorial design principles and diversified domain/archetype seeds to a thumbnail plan.
@@ -50,9 +62,10 @@ export function applyEditorialDesign(plan: QuizThumbnailPlan, input: ResolveThum
         spatialComposition: undefined,
       };
 
+  const layout = input.layoutOverride || (isOdd ? "odd_one_out" : isComparison ? "split_vs" : plan.layout);
   return {
     ...plan,
-    layout: input.layoutOverride || (isOdd ? "odd_one_out" : isComparison ? "split_vs" : plan.layout),
+    layout,
     hookText: sanitizeThumbnailHook(defaultHook),
     badgeText: input.badgeOverride && input.badgeOverride !== "auto" ? plan.badgeText : "",
     subjectAnchors: subjectsToUse.slice(0, isComparison ? 2 : 1).map(({ label, visualPrompt }) => ({ label, visualPrompt })),
@@ -62,6 +75,6 @@ export function applyEditorialDesign(plan: QuizThumbnailPlan, input: ResolveThum
       expression: resolvedExpression || "curious",
       poseDescription: resolvedPose || "looking toward the puzzle",
     },
-    editorial: editorialDesign,
+    editorial: applyComposition(editorialDesign, layout, input),
   };
 }

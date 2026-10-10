@@ -1,5 +1,5 @@
 import type { ResolveThumbnailInput } from "../thumbnailTypes.js";
-import { MAX_GROUNDING_QUESTIONS } from "./refinement/planRewritePrompt.js";
+import { MAX_GROUNDING_QUESTIONS, recentHeadlineRule } from "./refinement/planRewritePrompt.js";
 
 export function buildEditorialPlannerPrompt(input: ResolveThumbnailInput): string {
   return [
@@ -11,6 +11,7 @@ export function buildEditorialPlannerPrompt(input: ResolveThumbnailInput): strin
     "Frame it as an active personal test or puzzle, NEVER a passive label, academic exam, or classroom homework (STRICTLY FORBIDDEN: 'NAME THIS PART', 'ANATOMY QUIZ', 'IDENTIFY THE OBJECT', 'TEST YOUR KNOWLEDGE', 'EYE ANATOMY').",
     "Include one concrete word that names the topic or the pictured subject (the creature, object, character type, or place). Headlines made only of generic quiz words are rejected.",
     "The topic title is the video title shown beside the thumbnail: the headline must complement it, never repeat it.",
+    ...recentHeadlineRule(input.recentHeadlines),
     "Never promise a hearing test, hidden detail, real/fake comparison, timed challenge, or odd item unless the episode contains it.",
     "No invented failure percentages, IQ scores, difficulty claims, answer reveals, checkmarks, or unrelated subject collages.",
     "The headline is integrated into the final thumbnail prompt. Do not put text, signs, badges, numbers, or labels inside subject descriptions.",

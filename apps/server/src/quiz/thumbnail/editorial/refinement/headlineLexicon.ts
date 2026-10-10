@@ -18,6 +18,8 @@ export const GENERIC_HEADLINE_WORDS: ReadonlySet<string> = new Set([
   "crack", "identify", "figure", "get", "try", "play", "win", "think",
   "quiz", "trivia", "test", "challenge", "question", "answer", "game", "puzzle", "level",
   "general", "knowledge", "right", "correct", "wrong", "thing", "stuff",
+  // Verdict words: "YES OR NO?" is a valid promise for a yes/no quiz but still names nothing.
+  "yes", "no", "true", "false",
   // Hype words
   "secret", "mystery", "mysterie", "hidden", "ultimate", "epic", "amazing", "awesome", "cool", "wow",
   "master", "expert", "smart", "brain",

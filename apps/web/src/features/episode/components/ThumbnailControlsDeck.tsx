@@ -4,9 +4,17 @@ import {
   CURIOSITY_BADGE_PRESETS,
   THUMBNAIL_LAYOUT_CATALOG,
   type CuriosityBadgeId,
+  type ThumbnailComposition,
   type ThumbnailLayoutType,
   type ThumbnailManifest,
 } from "@studio/shared";
+
+const COMPOSITION_LABELS: Record<ThumbnailComposition, string> = {
+  mascot_left: "Mascot left",
+  mascot_right: "Mascot right",
+  hero_center: "Hero center",
+  reaction_closeup: "Reaction close-up",
+};
 
 type ThumbnailControlsDeckProps = {
   selectedLayout: ThumbnailLayoutType | "auto";
@@ -40,7 +48,9 @@ export function ThumbnailControlsDeck(props: ThumbnailControlsDeckProps) {
   const editorialLabel = manifest?.design_template
     ? { big_object: "Big Object", reaction: "Reaction", comparison: "Comparison" }[manifest.design_template]
     : null;
-  const activeName = editorialLabel || (manifest ? THUMBNAIL_LAYOUT_CATALOG[manifest.layout].name : null);
+  const compositionLabel = manifest?.composition ? COMPOSITION_LABELS[manifest.composition] : null;
+  const editorialName = editorialLabel && compositionLabel ? `${editorialLabel} · ${compositionLabel}` : editorialLabel;
+  const activeName = editorialName || (manifest ? THUMBNAIL_LAYOUT_CATALOG[manifest.layout].name : null);
 
   return (
     <div className="thumbnail-controls-deck">

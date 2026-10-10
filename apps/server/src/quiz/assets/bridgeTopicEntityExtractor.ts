@@ -145,7 +145,7 @@ export function extractBridgeShowcaseItems(
       subject: symbolSubject,
       presentation: "die_cut_sticker",
       rotation_deg: -2,
-      transparent_background: true,
+      transparent_background: false,
       caption: clues.symbols.includes(symbolSubject) ? "Symbol" : "Artifact",
     },
     {
@@ -169,7 +169,7 @@ export function extractBridgeShowcaseItems(
       subject: avatarSubject,
       presentation: "die_cut_sticker",
       rotation_deg: 2.5,
-      transparent_background: true,
+      transparent_background: false,
       caption: isCreature ? "Creature" : isAvatar ? "Avatar" : "Creature",
     },
   ];
@@ -200,11 +200,12 @@ export function buildBridgeShowcaseLlmPrompt(quiz: QuizV2): string {
     questionSummaries,
     ``,
     `Requirements (CRITICAL DIVERSITY RULE: All 4 items MUST represent 4 COMPLETELY DIFFERENT entity categories. Absolutely NO duplicate characters or near-identical subjects):`,
-    `- Item 1: Emblem or Iconic Symbol / Sacred Artifact (An inanimate magical object, relic, crest, or weapon; NOT a person or character) (presentation: "die_cut_sticker", transparent_background: true, rotation_deg: -2, caption: "Artifact" or "Symbol")`,
+    `- Item 1: Emblem or Iconic Symbol / Sacred Artifact (An inanimate magical object, relic, crest, or weapon; NOT a person or character) (presentation: "die_cut_sticker", transparent_background: false, rotation_deg: -2, caption: "Artifact" or "Symbol")`,
     `- Item 2: Hero Character Portrait (The primary protagonist or key central figure) (presentation: "photo_card", transparent_background: false, rotation_deg: 1.5, caption: "Portrait")`,
     `- Item 3: Narrative Scene, Majestic Realm, or Landmark (Panoramic landscape, castle, architecture, or setting with NO close-up characters) (presentation: "photo_card", transparent_background: false, rotation_deg: -3, caption: "Scene")`,
-    `- Item 4: Mythical Creature, Magical Beast, or Distinct Companion (Strictly a non-human animal, mythical beast, or creature; DO NOT repeat the hero or any character from Item 2) (presentation: "die_cut_sticker", transparent_background: true, rotation_deg: 2.5, caption: "Creature" or "Avatar")`,
+    `- Item 4: Mythical Creature, Magical Beast, or Distinct Companion (Strictly a non-human animal, mythical beast, or creature; DO NOT repeat the hero or any character from Item 2) (presentation: "die_cut_sticker", transparent_background: false, rotation_deg: 2.5, caption: "Creature" or "Avatar")`,
     ``,
+    `BACKGROUND RULE: Every item has a simple, softly blurred backdrop matching its theme (never plain white), and the main subject must clearly stand out.`,
     `DIVERSITY RULE: All 4 items must be visually and conceptually unique. Absolutely DO NOT generate multiple items of the same character, student, or person.`,
     ``,
     `Return ONLY a valid JSON array of 4 objects matching this schema with NO markdown wrapping:`,
@@ -214,7 +215,7 @@ export function buildBridgeShowcaseLlmPrompt(quiz: QuizV2): string {
     `    "subject": "Clear 1-sentence prompt describing the inanimate emblem or artifact with distinctive attributes",`,
     `    "presentation": "die_cut_sticker",`,
     `    "rotation_deg": -2,`,
-    `    "transparent_background": true,`,
+    `    "transparent_background": false,`,
     `    "caption": "Symbol"`,
     `  },`,
     `  ...`,
@@ -246,6 +247,7 @@ export function parseBridgeShowcaseLlmOutput(
       const candidate = parsed[i];
       const result = BridgeShowcaseItemSchema.safeParse({
         ...candidate,
+        transparent_background: false,
         asset_id: `asset-bridge-item-${i + 1}`,
       });
       if (!result.success) {

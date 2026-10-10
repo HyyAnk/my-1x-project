@@ -18,6 +18,13 @@ export interface PlanRewrite {
   subjects: QuizSubjectAnchor[] | null;
 }
 
+export function recentHeadlineRule(recentHeadlines: readonly string[] | undefined): string[] {
+  if (!recentHeadlines?.length) return [];
+  return [
+    `Headlines already used on this channel: ${JSON.stringify(recentHeadlines)}. Use a different opening word and a different sentence pattern from every one of them.`,
+  ];
+}
+
 function describeSubjects(subjects: readonly QuizSubjectAnchor[]): string {
   if (subjects.length === 0) return "not specified";
   return subjects.map((subject) => `${subject.label}: ${subject.visualPrompt.slice(0, MAX_SUBJECT_PROMPT_CHARS)}`).join("; ");
@@ -48,6 +55,7 @@ export function buildPlanRewritePrompt(request: PlanRewriteRequest): string {
     "The video title is shown next to the thumbnail: complement it, do not repeat it.",
     "Only promise a taste, sound, smell, real-or-fake, odd-one-out, timed, or yes/no challenge if the episode contains it.",
     "No percentages, IQ scores, difficulty claims, or answer reveals.",
+    ...recentHeadlineRule(context.recentHeadlines),
     ...subjectRules(request),
     JSON.stringify({
       video_title: context.topicTitle,

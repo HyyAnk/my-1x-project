@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ThumbnailManifestSchema } from "@studio/shared";
 import { ThumbnailControlsDeck } from "./ThumbnailControlsDeck";
 
-function setup(generating = false, hookText = "") {
+function setup(generating = false, hookText = "", composition?: string) {
   const onGenerateThumbnail = vi.fn();
   const setSelectedLayout = vi.fn();
   render(
@@ -19,6 +19,7 @@ function setup(generating = false, hookText = "") {
         layout: "mega_grid",
         design_template: "big_object",
         hook_text: hookText,
+        composition,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })}
@@ -57,5 +58,9 @@ describe("thumbnail controls", () => {
     const input = screen.getByRole("textbox", { name: "Headline" }) as HTMLInputElement;
     expect(input.value).toBe("");
     expect(input.placeholder).toBe("Auto (current: WHO RIDES CATS?)");
+  });
+  it("names the composition of the active editorial thumbnail", () => {
+    setup(false, "", "mascot_right");
+    expect(screen.getByText("Editorial / Big Object · Mascot right")).toBeTruthy();
   });
 });

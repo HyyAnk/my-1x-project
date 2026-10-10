@@ -22,6 +22,7 @@ import { validateThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { resolveTargetThumbnailRatio } from "./thumbnailRatio.js";
 import { queueThumbnailOperation } from "./thumbnailOperationQueue.js";
 import { createThumbnailFreshnessGuard } from "./thumbnailFreshness.js";
+import { loadRecentThumbnailHistory, type RecentThumbnailHistory } from "./editorial/recentThumbnailHistory.js";
 
 export type { GenerateEpisodeThumbnailOptions } from "./thumbnailManifestManager.js";
 export {
@@ -42,10 +43,11 @@ async function createThumbnailPlan(params: {
   mascotProfile: MascotProfile | null;
   localization: Awaited<ReturnType<typeof loadProductLocalizationArtifact>>;
   targetLanguage?: string;
+  recentHistory: RecentThumbnailHistory;
   options: GenerateEpisodeThumbnailOptions;
   logger?: StudioLogger;
 }): Promise<QuizThumbnailPlan> {
-  const { episode, channel, questions, mascotProfile, localization, targetLanguage, options, logger } = params;
+  const { episode, channel, questions, mascotProfile, localization, targetLanguage, recentHistory, options, logger } = params;
   const isApplied = localization?.status === "applied";
   const localizedHook = isApplied ? localization.thumbnail_text : undefined;
   const manualHook = options.customHookText?.trim();
@@ -64,6 +66,8 @@ async function createThumbnailPlan(params: {
     colorTheme: mascotProfile?.color_theme,
     layoutOverride: options.layoutOverride,
     customHookText: effectiveCustomHook,
+    recentCompositions: recentHistory.compositions,
+    recentHeadlines: recentHistory.headlines,
     badgeOverride: options.badgeOverride || "auto",
     mascotProfile,
     llmClient:
@@ -141,7 +145,8 @@ async function generateThumbnail(repository: RepositoryService, options: Generat
   const visualAnchor = await loadChannelMascotVisualAnchor(repository, channelId, episodeId, channel.mascot_id, logger);
   const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
   const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
-  const plan = await createThumbnailPlan({ episode, channel, questions, mascotProfile, localization, targetLanguage, options, logger });
+  const recentHistory = await loadRecentThumbnailHistory(repository, channelId, episodeId);
+  const plan = await createThumbnailPlan({ episode, channel, questions, mascotProfile, localization, targetLanguage, recentHistory, options, logger });
   options.signal?.throwIfAborted();
 
   const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);

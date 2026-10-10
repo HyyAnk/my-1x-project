@@ -274,6 +274,7 @@ function buildVariantResult(params: BuildVariantResultParams): VariantGeneration
       aspect_ratio: ratio,
       layout: plan.layout,
       design_template: plan.editorial?.template,
+      composition: plan.editorial?.composition,
       hook_text: plan.hookText,
       badge_text: plan.badgeText,
       prompt,

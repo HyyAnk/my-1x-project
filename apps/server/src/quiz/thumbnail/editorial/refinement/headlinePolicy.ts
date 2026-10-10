@@ -1,21 +1,13 @@
 import { sanitizeThumbnailHook } from "../../thumbnailHookGuardrail.js";
 import { GENERIC_HEADLINE_WORDS, HEADLINE_CLAIM_FAMILIES } from "./headlineLexicon.js";
+import { describeRecentRepetition } from "./headlinePattern.js";
+import { stemHeadlineToken, tokenizeHeadlineText } from "./headlineTokens.js";
 import type { EditorialHeadlineContext, HeadlineAssessment, HeadlineClaimFamily, HeadlineIssue } from "./headlineTypes.js";
 
-const WORD_SEGMENTER = new Intl.Segmenter(undefined, { granularity: "word" });
+export { stemHeadlineToken, tokenizeHeadlineText };
+
 const TITLE_ECHO_MIN_TOKENS = 2;
 const TITLE_ECHO_OVERLAP_RATIO = 0.8;
-
-/** Lowercases and strips a simple plural/possessive so "SECRETS" and "secret's" compare equal to "secret". */
-export function stemHeadlineToken(token: string): string {
-  const lower = token.toLowerCase().replace(/['’]s$/, "");
-  if (lower.length > 3 && lower.endsWith("s") && !/(ss|us|is)$/.test(lower)) return lower.slice(0, -1);
-  return lower;
-}
-
-export function tokenizeHeadlineText(text: string): string[] {
-  return [...WORD_SEGMENTER.segment(text)].filter((segment) => segment.isWordLike).map((segment) => stemHeadlineToken(segment.segment));
-}
 
 /** True when the headline shares at least one non-generic word with the reference text (e.g. the video title). */
 export function sharesTopicWord(headline: string, referenceText: string): boolean {
@@ -78,6 +70,8 @@ export function assessEditorialHeadline(headline: string, context: EditorialHead
   if (echoesTitle(tokens, context.topicTitle)) {
     issues.push({ code: "echoes_title", severity: "soft", detail: "Repeats the video title instead of complementing it." });
   }
+  const repetition = describeRecentRepetition(headline, context.recentHeadlines ?? [], context.languageCode);
+  if (repetition) issues.push({ code: "repeats_recent_pattern", severity: "soft", detail: repetition });
   return { headline, issues };
 }
 

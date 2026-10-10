@@ -1,6 +1,6 @@
 import type { QuizSubjectAnchor } from "../../thumbnailTypes.js";
 import { GENERIC_HEADLINE_WORDS } from "./headlineLexicon.js";
-import { tokenizeHeadlineText } from "./headlinePolicy.js";
+import { tokenizeHeadlineText } from "./headlineTokens.js";
 import type { EditorialHeadlineContext, HeadlineIssue } from "./headlineTypes.js";
 
 function questionTokens(context: EditorialHeadlineContext): Set<string> {
