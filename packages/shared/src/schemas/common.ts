@@ -17,3 +17,12 @@ export const QUIZ_STANDARD_CHOICES_PER_QUESTION = 3;
 export const QUIZ_YES_NO_CHOICES_PER_QUESTION = 2;
 
 export const QUIZ_MAX_CHOICES_PER_QUESTION = 3;
+
+// Quiz Short is a portrait product with a tight duration budget (45 to 60 seconds).
+export const QUIZ_SHORT_MIN_QUESTION_COUNT = 3;
+
+export const QUIZ_SHORT_MAX_QUESTION_COUNT = 7;
+
+export const QUIZ_SHORT_DEFAULT_QUESTION_COUNT = 5;
+
+export const QUIZ_SHORT_SECONDS_PER_QUESTION = 10;

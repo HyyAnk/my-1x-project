@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { IsoDate } from "./common.js";
 
+/** Every product a topic candidate can be confirmed into, in the order the Topics tab lists them. */
+export const TopicContentKindSchema = z.enum(["episode", "quiz_short", "short_reel"]);
+export type TopicContentKind = z.infer<typeof TopicContentKindSchema>;
+
 export const TopicSourceHashVersionSchema = z.literal(1);
 export type TopicSourceHashVersion = z.infer<typeof TopicSourceHashVersionSchema>;
 
@@ -97,7 +101,7 @@ export type TopicShortageReasonCode = z.infer<typeof TopicShortageReasonCodeSche
 
 export const TopicSourceShortageSchema = z
   .object({
-    content_kind: z.enum(["episode", "short_reel"]),
+    content_kind: TopicContentKindSchema,
     slot_id: z.string().trim().min(1),
     requested_count: z.number().int().nonnegative(),
     available_count: z.number().int().nonnegative(),
@@ -121,7 +125,7 @@ export type TopicAvailabilityReasonCode = z.infer<typeof TopicAvailabilityReason
 export const TopicAvailabilitySchema = z
   .object({
     topic_id: z.string().trim().min(1),
-    content_kind: z.enum(["episode", "short_reel"]),
+    content_kind: TopicContentKindSchema,
     can_confirm: z.boolean(),
     reason_code: TopicAvailabilityReasonCodeSchema,
     retryable: z.boolean(),

@@ -11,6 +11,7 @@ import { buildQuizSceneRenderModel } from "./buildQuizSceneRenderModel.js";
 import { productionSceneStateAt } from "./productionSceneStateAdapter.js";
 import { resolveQuizSceneElementStyles } from "./quizSceneStyles.js";
 import type { QuizSceneMascotOccupancy, QuizSceneRenderModel, QuizSceneTiming } from "./quizScene.types.js";
+import { assertRenderableLayoutId } from "../layouts/renderableLayoutId.js";
 
 type SuccessfulLayoutResolution = Extract<QuizLayoutResolutionResult<ResolvedQuizLayoutId>, { ok: true }>;
 
@@ -49,9 +50,9 @@ export function adaptProductionQuizScene(input: ProductionSceneAdapterInput): Qu
     totalQuestions: input.totalQuestions,
     state: productionSceneStateAt(input.timing, input.atSeconds ?? input.timing.start),
     layout: {
-      id: input.layoutResolution.layoutId,
+      id: assertRenderableLayoutId(input.layoutResolution.layoutId),
       source: input.layoutResolution.source,
-      capability: input.layoutResolution.capability,
+      capability: input.layoutResolution.capability as QuizSceneRenderModel["layout"]["capability"],
       presentation: quizChoicePresentationFor(input.archetype, input.question.format),
     },
     aspectRatio: input.aspectRatio,

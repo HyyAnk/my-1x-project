@@ -1,14 +1,12 @@
 import type { FrameRect } from "../frame/quizFrame.types.js";
-import { QUIZ_LAYOUT_GEOMETRY, type ResolvedQuizLayoutId } from "@studio/shared";
+import { QUIZ_LAYOUT_GEOMETRY, type QuizLandscapeLayoutId, type QuizLayoutGeometry } from "@studio/shared";
 
 export type LayoutContentGeometry = Readonly<{
   hero: FrameRect | null;
   answers: Readonly<Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>>>;
 }>;
 
-function mapAnswers(
-  variants: (typeof QUIZ_LAYOUT_GEOMETRY)[ResolvedQuizLayoutId]["answerVariants"],
-): Readonly<Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>>> {
+function mapAnswers(variants: QuizLayoutGeometry["answerVariants"]): Readonly<Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>>> {
   const result: Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>> = {};
   for (const [key, variant] of Object.entries(variants)) {
     const count = Number(key) as 0 | 1 | 2 | 3;
@@ -19,7 +17,7 @@ function mapAnswers(
   return Object.freeze(result);
 }
 
-export const LAYOUT_CONTENT_GEOMETRY: Readonly<Record<ResolvedQuizLayoutId, LayoutContentGeometry>> = Object.freeze({
+export const LAYOUT_CONTENT_GEOMETRY: Readonly<Record<QuizLandscapeLayoutId, LayoutContentGeometry>> = Object.freeze({
   media_left_choices_right: Object.freeze({
     hero: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.hero,
     answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.answerVariants),

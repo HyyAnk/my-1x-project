@@ -40,6 +40,10 @@ export const QUIZ_LAYOUT_IDS = [
   "verdict_yes_no",
   "full_stack_list",
   "mystery_reveal",
+  "short_stack_list",
+  "short_media_top_choices",
+  "short_versus_two",
+  "short_verdict_yes_no",
 ] as const;
 export const QuizLayoutIdValuesSchema = z.enum(QUIZ_LAYOUT_IDS);
 export const QuizLayoutIdSchema = acceptLegacyVerdictAliases(QuizLayoutIdValuesSchema);

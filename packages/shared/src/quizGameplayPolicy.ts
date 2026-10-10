@@ -2,7 +2,17 @@ import { normalizeLegacyVerdictIdentifier, type QuizAgeBand, type QuizLayoutId, 
 import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import { timingPolicyForAgeBand, type QuizTimingPolicy } from "./timing.js";
 
-export const QUIZ_GAMEPLAY_POLICY_VERSION = 1;
+export const QUIZ_GAMEPLAY_POLICY_VERSION = 2;
+
+/**
+ * "standard" is the Episode rhythm. "short" is the Quiz Short rhythm: choices are never
+ * narrated, thinking windows are tight and every hold is trimmed so five questions fit in
+ * roughly 45 to 60 seconds.
+ */
+import type { QuizPacingProfile } from "./schemas/quizShort.js";
+
+export const SHORT_PACING_THINKING_SECONDS: readonly [number, number] = [3, 4];
+
 export type GameplayPolicy = {
   id: QuizGameplayArchetypeId;
   choiceCount: number;
@@ -111,7 +121,57 @@ export function resolveGameplayPolicy(input: {
   return QUIZ_GAMEPLAY_POLICIES[id];
 }
 
-export function gameplayTimingPolicy(policy: GameplayPolicy, ageBand: QuizAgeBand, difficulty = 1): QuizTimingPolicy {
+/** Returns the policy as a Quiz Short would play it: no choice narration, tight thinking window. */
+export function applyPacingProfile(policy: GameplayPolicy, pacingProfile: QuizPacingProfile): GameplayPolicy {
+  if (pacingProfile !== "short") return policy;
+  return {
+    ...policy,
+    readChoices: false,
+    thinkingPrompt: false,
+    thinking: SHORT_PACING_THINKING_SECONDS,
+    countdown: 3,
+  };
+}
+
+function shortPacingTimingPolicy(policy: GameplayPolicy, ageBand: QuizAgeBand, difficulty: number): QuizTimingPolicy {
+  const base = timingPolicyForAgeBand(ageBand);
+  const ageBuffer = ageBand === "4-6" ? 1 : ageBand === "7-9" ? 0.5 : 0;
+  const [thinkingMin, thinkingMax] = SHORT_PACING_THINKING_SECONDS;
+  const minimum = thinkingMin + ageBuffer;
+  const maximum = thinkingMax + ageBuffer;
+  return {
+    ...base,
+    intro_minimum_seconds: 0,
+    question_entrance_seconds: 0.6,
+    question_narration_lead_seconds: 0.35,
+    choices_enter_delay_seconds: 0.3,
+    choice_entrance_seconds: 0.4,
+    choice_stagger_seconds: policy.id === "versus_faceoff" ? 0 : 0.1,
+    choice_settle_seconds: 0.05,
+    question_to_choices_pause_seconds: 0.15,
+    thinking_settle_seconds: 0.05,
+    post_prompt_thinking_seconds: 0,
+    reveal_hold_seconds: 0.2,
+    explanation_lead_seconds: 0.05,
+    explanation_hold_seconds: 0.4,
+    fact_hold_seconds: 0,
+    transition_seconds: 0.3,
+    outro_hold_seconds: 3,
+    minimum_thinking_seconds: Math.min(maximum, minimum + Math.max(0, difficulty - 1) * 0.25),
+    maximum_thinking_seconds: maximum,
+    countdown_seconds: 3,
+  };
+}
+
+export function gameplayTimingPolicy(
+  policy: GameplayPolicy,
+  ageBand: QuizAgeBand,
+  difficulty = 1,
+  pacingProfile: QuizPacingProfile = "standard",
+): QuizTimingPolicy {
+  if (pacingProfile === "short") {
+    return shortPacingTimingPolicy(policy, ageBand, difficulty);
+  }
   const base = timingPolicyForAgeBand(ageBand);
   const ageBuffer = ageBand === "4-6" ? 2 : ageBand === "7-9" ? 1 : ageBand === "family" ? 0.5 : 0;
   const minimum = policy.thinking[0] + ageBuffer;

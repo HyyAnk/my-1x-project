@@ -20,7 +20,7 @@ export function assertConfirmableCandidate(candidate: TopicCandidate): void {
     if (
       candidate.archetype ||
       (candidate as { slot_id?: string }).slot_id ||
-      candidate.suggested_layout ||
+      (candidate.content_kind === "episode" && candidate.suggested_layout) ||
       candidate.topic_id.toLowerCase().includes("unbound") ||
       candidate.topic_id.toLowerCase().includes("legacy")
     ) {

@@ -4,6 +4,7 @@ import {
   getQuizPreviewLayoutCapability,
   QUIZ_LAYOUT_CATALOG,
   QUIZ_LAYOUTS,
+  QUIZ_PORTRAIT_LAYOUTS,
   QuizLayoutIdSchema,
   QuizPreviewLayoutIdSchema,
   QuizV2Schema,
@@ -23,16 +24,16 @@ import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 describe("Phase 2 layout capability catalog", () => {
   it("P2-CAT-01, P2-CAT-04, and P2-MIG-01 keep persisted IDs exhaustive and capabilities complete", () => {
     expect(Object.keys(QUIZ_LAYOUT_CATALOG).sort()).toEqual([...RESOLVED_QUIZ_LAYOUT_IDS].sort());
-    expect(QUIZ_LAYOUTS.map((layout) => layout.id).sort()).toEqual([...RESOLVED_QUIZ_LAYOUT_IDS].sort());
+    expect([...QUIZ_LAYOUTS, ...QUIZ_PORTRAIT_LAYOUTS].map((layout) => layout.id).sort()).toEqual([...RESOLVED_QUIZ_LAYOUT_IDS].sort());
     expect(QuizLayoutIdSchema.parse("auto")).toBe("auto");
 
-    for (const layout of QUIZ_LAYOUTS) {
+    for (const layout of [...QUIZ_LAYOUTS, ...QUIZ_PORTRAIT_LAYOUTS]) {
       expect(layout.supportedPresentations.length).toBeGreaterThan(0);
       expect(layout.supportedChoiceCounts.length).toBeGreaterThan(0);
       expect(layout.supportedFormats.length).toBeGreaterThan(0);
       expect(layout.recommendedFormats.every((format) => layout.supportedFormats.includes(format))).toBe(true);
       expect(layout.media.required.every((media) => layout.media.supported.includes(media))).toBe(true);
-      expect(layout.supportedAspectRatios).toEqual(layout.id.startsWith("portrait_") ? ["9:16"] : ["16:9"]);
+      expect(layout.supportedAspectRatios).toEqual(layout.id.startsWith("short_") ? ["9:16"] : ["16:9"]);
       expect(layout.metrics.render.width).toBeGreaterThan(0);
       expect(layout.metrics.render.height).toBeGreaterThan(0);
       expect(layout.metrics.render.itemCount).toBeGreaterThan(0);

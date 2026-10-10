@@ -32,8 +32,8 @@ export async function findAndValidateTopicCandidate(
   if (!topic) {
     throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
   }
-  if (topic.content_kind === "short_reel") {
-    throw new RepositoryError("Cannot create episode from short-reel topic candidate", "INVALID_TOPIC_KIND");
+  if (topic.content_kind !== "episode") {
+    throw new RepositoryError(`Cannot create episode from ${topic.content_kind} topic candidate`, "INVALID_TOPIC_KIND");
   }
   if (!topic.source_bindings || topic.source_bindings.length === 0) {
     throw new RepositoryError(

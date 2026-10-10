@@ -3,20 +3,24 @@ import type { AllocatedSlot } from "./bankTopicAllocation.types.js";
 
 export interface TopicRunTargetCounts {
   episode: number;
+  quizShort: number;
   shortReel: number;
+}
+
+function countKind(items: ReadonlyArray<string>, kind: string): number {
+  return items.filter((item) => item === kind).length;
 }
 
 export function resolveTopicRunTargetCounts(
   allocatedSlots: ReadonlyArray<Pick<AllocatedSlot, "contentKind">>,
   shortages: ReadonlyArray<Pick<TopicSourceShortage, "content_kind">>,
 ): TopicRunTargetCounts {
-  const episode = allocatedSlots.filter((slot) => slot.contentKind === "episode").length;
-  const shortReel = allocatedSlots.length - episode;
-  const missingEpisodes = shortages.filter((shortage) => shortage.content_kind === "episode").length;
-  const missingShortReels = shortages.length - missingEpisodes;
+  const slotKinds = allocatedSlots.map((slot) => slot.contentKind);
+  const shortageKinds = shortages.map((shortage) => shortage.content_kind);
 
   return {
-    episode: episode + missingEpisodes,
-    shortReel: shortReel + missingShortReels,
+    episode: countKind(slotKinds, "episode") + countKind(shortageKinds, "episode"),
+    quizShort: countKind(slotKinds, "quiz_short") + countKind(shortageKinds, "quiz_short"),
+    shortReel: countKind(slotKinds, "short_reel") + countKind(shortageKinds, "short_reel"),
   };
 }

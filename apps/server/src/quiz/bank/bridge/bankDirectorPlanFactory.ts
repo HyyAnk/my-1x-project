@@ -64,13 +64,14 @@ export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: 
         return "media_left_choices_right";
     }
   }
-  if (topic.quiz_format === "yes_no") {
+  const quizFormat = topic.content_kind === "episode" ? topic.quiz_format : undefined;
+  if (quizFormat === "yes_no") {
     return "verdict_yes_no";
   }
-  if (topic.quiz_format === "odd_one_out") {
+  if (quizFormat === "odd_one_out") {
     return "visual_choices_three_pure";
   }
-  if (topic.quiz_format === "image_guess") {
+  if (quizFormat === "image_guess") {
     return "mystery_reveal";
   }
   return "media_left_choices_right";

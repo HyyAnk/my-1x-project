@@ -3,13 +3,14 @@ import {
   QUIZ_LANDSCAPE_LAYOUT_IDS,
   filterQuizLayoutsByAspectRatio,
   getCompatibleQuizLayout,
+  type QuizLandscapeLayoutId,
   type ResolvedQuizLayoutId,
 } from "@studio/shared";
 
 export { getCompatibleQuizLayout, filterQuizLayoutsByAspectRatio, QUIZ_LANDSCAPE_LAYOUT_IDS };
 
 export type QuizLayoutUiDefinition = {
-  id: ResolvedQuizLayoutId;
+  id: QuizLandscapeLayoutId;
   labelKey: string;
   descriptionKey: string;
   sandboxLabelKey: string;
@@ -82,15 +83,16 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     preview: "mystery-reveal",
     icon: "visual",
   },
-} as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutUiDefinition>;
+} as const satisfies Record<QuizLandscapeLayoutId, QuizLayoutUiDefinition>;
 
 export const QUIZ_LAYOUT_UI_DEFINITIONS = QUIZ_LAYOUTS.map((layout) => QUIZ_LAYOUT_UI_BY_ID[layout.id]);
 
+/** Portrait layouts have no sandbox UI entry yet; they resolve to their landscape counterpart. */
 export function getQuizLayoutUiDefinition(layoutId: ResolvedQuizLayoutId): QuizLayoutUiDefinition {
-  return QUIZ_LAYOUT_UI_BY_ID[layoutId];
+  return QUIZ_LAYOUT_UI_BY_ID[getCompatibleQuizLayout(layoutId, "16:9")];
 }
 
 export function getQuizLayoutUiDefinitions(aspectRatio?: "16:9" | "9:16"): QuizLayoutUiDefinition[] {
-  const allowedIds = filterQuizLayoutsByAspectRatio(aspectRatio);
+  const allowedIds: readonly ResolvedQuizLayoutId[] = filterQuizLayoutsByAspectRatio(aspectRatio);
   return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) => allowedIds.includes(layout.id));
 }

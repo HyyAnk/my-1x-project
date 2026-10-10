@@ -13,12 +13,25 @@ export const RESOLVED_QUIZ_LAYOUT_IDS = ResolvedQuizLayoutIdValuesSchema.options
 export const ResolvedQuizLayoutIdSchema = acceptLegacyVerdictAliases(ResolvedQuizLayoutIdValuesSchema);
 export type { ResolvedQuizLayoutId };
 
-export { QUIZ_LANDSCAPE_LAYOUT_IDS, type QuizLandscapeLayoutId } from "./quizLayoutGeometry/index.js";
+export {
+  QUIZ_LANDSCAPE_LAYOUT_IDS,
+  QUIZ_PORTRAIT_LAYOUT_IDS,
+  isQuizLandscapeLayoutId,
+  isQuizPortraitLayoutId,
+  type QuizLandscapeLayoutId,
+  type QuizPortraitLayoutId,
+} from "./quizLayoutGeometry/index.js";
+import { QUIZ_LANDSCAPE_LAYOUT_IDS as LANDSCAPE_IDS, QUIZ_PORTRAIT_LAYOUT_IDS as PORTRAIT_IDS } from "./quizLayoutGeometry/index.js";
 
-export const QuizPreviewLayoutIdSchema = acceptLegacyVerdictAliases(z.union([ResolvedQuizLayoutIdValuesSchema, z.literal("baseline")]));
+/**
+ * Layout ids that have a production HTML renderer today. Portrait layouts join this
+ * union once their renderers land; until then preview and render stay landscape-only.
+ */
+export const QuizPreviewLayoutIdSchema = acceptLegacyVerdictAliases(z.union([z.enum(LANDSCAPE_IDS), z.literal("baseline")]));
 export type QuizPreviewLayoutId = z.infer<typeof QuizPreviewLayoutIdSchema>;
 
 const supportedLandscapeAspectRatios = ["16:9"] as const;
+const supportedPortraitAspectRatios = ["9:16"] as const;
 export const QUIZ_DEFAULT_CHOICE_ASSET_METRICS = {
   maxWidth: 640,
   maxHeight: 640,
@@ -120,9 +133,69 @@ export const QUIZ_LAYOUT_CATALOG = {
       assets: { question: { maxWidth: 1408, maxHeight: 792, aspectRatio: "16:9" } },
     },
   },
+  short_stack_list: {
+    id: "short_stack_list",
+    supportedPresentations: ["text"],
+    supportedChoiceCounts: [2, 3],
+    supportedFormats: ["multiple_choice", "yes_no"],
+    recommendedFormats: ["multiple_choice"],
+    media: { supported: [], required: [] },
+    supportedAspectRatios: supportedPortraitAspectRatios,
+    metrics: {
+      render: { width: 936, height: 600, itemCount: 1 },
+      assets: {},
+    },
+  },
+  short_media_top_choices: {
+    id: "short_media_top_choices",
+    supportedPresentations: ["text"],
+    supportedChoiceCounts: [2, 3],
+    supportedFormats: ["multiple_choice", "image_guess", "yes_no"],
+    recommendedFormats: ["multiple_choice", "image_guess"],
+    media: { supported: ["question"], required: ["question"] },
+    supportedAspectRatios: supportedPortraitAspectRatios,
+    metrics: {
+      render: { width: 720, height: 540, itemCount: 1 },
+      assets: { question: { maxWidth: 1120, maxHeight: 840, aspectRatio: "4:3" } },
+    },
+  },
+  short_versus_two: {
+    id: "short_versus_two",
+    supportedPresentations: ["visual", "text"],
+    supportedChoiceCounts: [2],
+    supportedFormats: ["multiple_choice", "image_guess", "odd_one_out"],
+    recommendedFormats: ["multiple_choice", "image_guess"],
+    media: { supported: ["choice"], required: ["choice"] },
+    supportedAspectRatios: supportedPortraitAspectRatios,
+    metrics: {
+      render: { width: 444, height: 592, itemCount: 2 },
+      assets: { choice: { maxWidth: 648, maxHeight: 864, aspectRatio: "3:4" } },
+    },
+  },
+  short_verdict_yes_no: {
+    id: "short_verdict_yes_no",
+    supportedPresentations: ["text"],
+    supportedChoiceCounts: [2],
+    supportedFormats: ["yes_no"],
+    recommendedFormats: ["yes_no"],
+    media: { supported: ["question"], required: ["question"] },
+    supportedAspectRatios: supportedPortraitAspectRatios,
+    metrics: {
+      render: { width: 936, height: 702, itemCount: 1 },
+      assets: { question: { maxWidth: 1216, maxHeight: 912, aspectRatio: "4:3" } },
+    },
+  },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutCapability<ResolvedQuizLayoutId>>;
 
-export const QUIZ_LAYOUTS = Object.values(QUIZ_LAYOUT_CATALOG);
+/** Landscape production layouts (the Episode catalog). */
+export const QUIZ_LAYOUTS = LANDSCAPE_IDS.map((id) => QUIZ_LAYOUT_CATALOG[id]);
+
+/** Portrait production layouts (the Quiz Short catalog). */
+export const QUIZ_PORTRAIT_LAYOUTS = PORTRAIT_IDS.map((id) => QUIZ_LAYOUT_CATALOG[id]);
+
+export function quizLayoutsForAspectRatio(aspectRatio: "16:9" | "9:16") {
+  return aspectRatio === "9:16" ? QUIZ_PORTRAIT_LAYOUTS : QUIZ_LAYOUTS;
+}
 
 export const QUIZ_PREVIEW_BASELINE_CAPABILITY = {
   id: "baseline",
@@ -177,7 +250,7 @@ export function resolveQuizLayoutAssetAspectRatio(
       purpose: normalizedPurpose,
       presentation,
       choiceCount,
-      canvasAspectRatio: "16:9",
+      canvasAspectRatio: QUIZ_LAYOUT_CATALOG[layoutId].supportedAspectRatios[0] ?? "16:9",
     });
 
     if (geometry) {

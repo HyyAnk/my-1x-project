@@ -2,6 +2,7 @@ import {
   BUILT_IN_PRESETS,
   QuizPaletteIdSchema,
   type QuizPreviewLayoutId,
+  getCompatibleQuizLayout,
   type VisualPresetItem,
 } from "@studio/shared";
 import type { SandboxDesignState } from "../hooks/useSandboxDesignState";
@@ -173,10 +174,11 @@ export function applyPresetToStudio({
   design.setBackgroundStyle(preset.background_style || "candy_rays");
   const targetLayout = preset.preview_layout_id ?? preset.layout_id;
   if (targetLayout && targetLayout !== "baseline") {
+    const sandboxLayout = getCompatibleQuizLayout(targetLayout, "16:9");
     if (onLayoutChange) {
-      onLayoutChange(targetLayout);
+      onLayoutChange(sandboxLayout);
     } else {
-      design.setLayoutId(targetLayout);
+      design.setLayoutId(sandboxLayout);
     }
   }
   if (preset.mascot_id !== undefined) mascot.setMascotId(preset.mascot_id || "none");

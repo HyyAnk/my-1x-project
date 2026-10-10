@@ -156,8 +156,8 @@ async function executeTopicConfirmation(
   const channel = await repo.getChannel(channelId);
   const candidate = (await repo.listTopics(channelId)).find((topic) => topic.topic_id === topicId);
   if (!candidate) throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
-  if (candidate.content_kind === "short_reel") {
-    throw new RepositoryError("Cannot confirm Short-Reel topic candidate as Episode", "INVALID_TOPIC_KIND");
+  if (candidate.content_kind !== "episode") {
+    throw new RepositoryError(`Cannot confirm ${candidate.content_kind} topic candidate as Episode`, "INVALID_TOPIC_KIND");
   }
 
   assertConfirmableCandidate(candidate);

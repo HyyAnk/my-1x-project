@@ -12,7 +12,15 @@ import {
   QuizLayoutIdSchema,
   acceptLegacyVerdictAliases,
 } from "../enums.js";
-import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./common.js";
+import {
+  IsoDate,
+  QUIZ_MAX_QUESTION_COUNT,
+  QUIZ_MIN_QUESTION_COUNT,
+  QUIZ_SHORT_DEFAULT_QUESTION_COUNT,
+  QUIZ_SHORT_MAX_QUESTION_COUNT,
+  QUIZ_SHORT_MIN_QUESTION_COUNT,
+} from "./common.js";
+import { QUIZ_PORTRAIT_LAYOUT_IDS } from "../quizLayoutGeometry/types.js";
 import { ChannelMascotConfigSchema } from "./mascot.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { TopicSourceBindingSetSchema } from "./topicSourceBinding.js";
@@ -106,7 +114,35 @@ export const ShortReelTopicCandidateSchema = TopicCandidateBaseSchema.extend({
 
 export type ShortReelTopicCandidate = z.infer<typeof ShortReelTopicCandidateSchema>;
 
-export const TopicCandidateSchema = z.discriminatedUnion("content_kind", [EpisodeTopicCandidateSchema, ShortReelTopicCandidateSchema]);
+export const QUIZ_SHORT_TOPIC_ARCHETYPES = ["deep_trivia", "verdict_yes_no", "versus_faceoff", "visual_identification"] as const;
+export const QuizShortTopicArchetypeSchema = acceptLegacyVerdictAliases(z.enum(QUIZ_SHORT_TOPIC_ARCHETYPES));
+export type QuizShortTopicArchetype = z.infer<typeof QuizShortTopicArchetypeSchema>;
+
+const QuizShortTopicLayoutPairSchema = z
+  .object({ primary: z.enum(QUIZ_PORTRAIT_LAYOUT_IDS), secondary: z.enum(QUIZ_PORTRAIT_LAYOUT_IDS) })
+  .strict();
+
+export const QuizShortTopicCandidateSchema = TopicCandidateBaseSchema.extend({
+  content_kind: z.literal("quiz_short"),
+  question_count: z
+    .number()
+    .int()
+    .min(QUIZ_SHORT_MIN_QUESTION_COUNT)
+    .max(QUIZ_SHORT_MAX_QUESTION_COUNT)
+    .default(QUIZ_SHORT_DEFAULT_QUESTION_COUNT),
+  aspect_ratio: z.literal("9:16").default("9:16"),
+  age_band: z.enum(["4-6", "7-9", "10-12", "family"]).default("7-9"),
+  archetype: QuizShortTopicArchetypeSchema.optional(),
+  layout_pair: QuizShortTopicLayoutPairSchema.optional(),
+});
+
+export type QuizShortTopicCandidate = z.infer<typeof QuizShortTopicCandidateSchema>;
+
+export const TopicCandidateSchema = z.discriminatedUnion("content_kind", [
+  EpisodeTopicCandidateSchema,
+  QuizShortTopicCandidateSchema,
+  ShortReelTopicCandidateSchema,
+]);
 
 export type TopicCandidate = z.infer<typeof TopicCandidateSchema>;
 

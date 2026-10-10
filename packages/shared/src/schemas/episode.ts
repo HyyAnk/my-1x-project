@@ -3,6 +3,7 @@ import { EpisodeStageSchema, QuizQuestionFormatSchema } from "../enums.js";
 import { QuizGameplayIdSchema } from "../quizGameplaySchema.js";
 import { IsoDate, QUIZ_MAX_CHOICES_PER_QUESTION } from "./common.js";
 import { EpisodeTopicSchema, QuizConfigSchema } from "./channel.js";
+import { QuizProductMediaFieldsSchema } from "./quizProduct.js";
 
 export const EditorialOverlaySchema = z
   .object({
@@ -68,7 +69,7 @@ export const SceneSchema = z.object({
 
 export type Scene = z.infer<typeof SceneSchema>;
 
-export const EpisodeSchema = z.object({
+export const EpisodeSchema = QuizProductMediaFieldsSchema.extend({
   episode_id: z.string().min(1),
   channel_id: z.string().min(1),
   slug: z.string().min(1),
@@ -83,17 +84,7 @@ export const EpisodeSchema = z.object({
   video_prompts_path: z.string().min(1),
   target_duration_minutes: z.number().min(3).max(60).default(8),
   target_word_count: z.number().int().positive().default(1050),
-  narration_asset_path: z.string().nullable().default(null),
-  narration_generated_at: IsoDate.nullable().default(null),
-  narration_duration_seconds: z.number().positive().nullable().default(null),
-  narration_segment_count: z.number().int().nonnegative().default(0),
-  measured_narration_words_per_second: z.number().positive().nullable().default(null),
   quiz_config: QuizConfigSchema.default({}),
-  video_asset_path: z.string().nullable().default(null),
-  video_generated_at: IsoDate.nullable().default(null),
-  video_duration_seconds: z.number().positive().nullable().default(null),
-  render_manifest_path: z.string().nullable().default(null),
-  render_stale: z.boolean().default(false),
   thumbnail_asset_path_16_9: z.string().nullable().default(null),
   thumbnail_asset_path_9_16: z.string().nullable().default(null),
   created_at: IsoDate,

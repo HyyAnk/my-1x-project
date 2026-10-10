@@ -172,6 +172,14 @@ export function useChannelDetail({
         await load();
         await onRefresh();
         window.location.hash = `#/channels/${encodeURIComponent(channel.channel_id)}/short-reels/${encodeURIComponent(result.short_reel.reel_id)}`;
+      } else if (result.content_kind === "quiz_short") {
+        if (result.task) onTaskSubmitted(result.task);
+        onNotice({
+          tone: "good",
+          message: `Quiz Short created: ${result.quiz_short.topic.title} with ${result.quiz_short.quiz_config.question_count} questions`,
+        });
+        await load();
+        await onRefresh();
       } else {
         if (result.task) {
           onTaskSubmitted(result.task);

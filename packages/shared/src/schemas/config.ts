@@ -129,15 +129,22 @@ export const QuestionHistorySettingsSchema = z.object({
 
 export type QuestionHistorySettings = z.infer<typeof QuestionHistorySettingsSchema>;
 
-export const QuestionContentTypeSchema = z.enum(["episode", "short_reel"]);
+export const QuestionContentTypeSchema = z.enum(["episode", "quiz_short", "short_reel"]);
 export type QuestionContentType = z.infer<typeof QuestionContentTypeSchema>;
 
+export const QUIZ_SHORT_ID_PREFIX = "qshort_";
+export const SHORT_REEL_ID_PREFIX = "sreel_";
+
 export function inferQuestionHistoryContentType(entry: { episode_id?: string; content_type?: string | null }): QuestionContentType {
-  if (entry.content_type === "episode" || entry.content_type === "short_reel") {
-    return entry.content_type;
+  const parsed = QuestionContentTypeSchema.safeParse(entry.content_type);
+  if (parsed.success) {
+    return parsed.data;
   }
-  if (entry.episode_id?.startsWith("sreel_")) {
+  if (entry.episode_id?.startsWith(SHORT_REEL_ID_PREFIX)) {
     return "short_reel";
+  }
+  if (entry.episode_id?.startsWith(QUIZ_SHORT_ID_PREFIX)) {
+    return "quiz_short";
   }
   return "episode";
 }

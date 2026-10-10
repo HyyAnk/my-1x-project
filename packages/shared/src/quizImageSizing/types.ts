@@ -30,5 +30,5 @@ export interface GetQuizImageSlotGeometryInput {
   purpose: ImageSlotPurpose;
   presentation: QuizChoicePresentation;
   choiceCount: number;
-  canvasAspectRatio: "16:9";
+  canvasAspectRatio: "16:9" | "9:16";
 }

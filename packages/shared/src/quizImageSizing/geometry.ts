@@ -1,4 +1,4 @@
-import { QUIZ_LAYOUT_GEOMETRY } from "../quizLayoutGeometry/index.js";
+import { QUIZ_LAYOUT_GEOMETRY, QUIZ_PORTRAIT_LAYOUT_GEOMETRY, isQuizPortraitLayoutId } from "../quizLayoutGeometry/index.js";
 import type { GetQuizImageSlotGeometryInput, ImageSlotGeometry, ImageSlotViewport } from "./types.js";
 
 export const CANONICAL_IMAGE_SLOT_DEFINITIONS = Object.freeze({
@@ -52,8 +52,33 @@ function serializeGeometryKey(
   return `${layoutId}:${purpose}:${canvas.width}x${canvas.height}:${vpParts}`;
 }
 
+const PORTRAIT_HERO_LAYOUTS: readonly string[] = ["short_media_top_choices", "short_verdict_yes_no"];
+const PORTRAIT_CHOICE_LAYOUTS: readonly string[] = ["short_versus_two"];
+
+function getPortraitImageSlotGeometry(input: GetQuizImageSlotGeometryInput): ImageSlotGeometry | null {
+  if (!isQuizPortraitLayoutId(input.layoutId)) return null;
+  const slot = QUIZ_PORTRAIT_LAYOUT_GEOMETRY[input.layoutId].imageSlot;
+  if (!slot) return null;
+  const matches =
+    (input.purpose === "hero_question_image" && PORTRAIT_HERO_LAYOUTS.includes(input.layoutId)) ||
+    (input.purpose === "answer_option" && PORTRAIT_CHOICE_LAYOUTS.includes(input.layoutId));
+  if (!matches) return null;
+  const canvas = { width: 1080, height: 1920 };
+  const viewports = [slot.viewport];
+  return {
+    layoutId: input.layoutId,
+    purpose: input.purpose,
+    canvas,
+    viewports,
+    geometryKey: serializeGeometryKey(input.layoutId, input.purpose, canvas, viewports),
+  };
+}
+
 export function getQuizImageSlotGeometry(input: GetQuizImageSlotGeometryInput): ImageSlotGeometry | null {
-  if (input.canvasAspectRatio !== "16:9") {
+  if (input.canvasAspectRatio === "9:16") {
+    return getPortraitImageSlotGeometry(input);
+  }
+  if (input.canvasAspectRatio !== "16:9" || isQuizPortraitLayoutId(input.layoutId)) {
     return null;
   }
   const canvas = { width: 1920, height: 1080 };

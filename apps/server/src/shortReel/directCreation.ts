@@ -78,6 +78,7 @@ export async function createDirectShortReelCandidate(input: CreateDirectShortRee
   const runResult: TopicRunResult = {
     run_id: makeId("run_direct"),
     target_episode_count: 0,
+    target_quiz_short_count: 0,
     target_short_reel_count: 1,
     candidates: [candidate],
     shortages: [],

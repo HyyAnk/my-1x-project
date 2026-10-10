@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import nodeTest from "node:test";
 import {
   QUIZ_LANDSCAPE_LAYOUT_IDS,
+  QUIZ_PORTRAIT_LAYOUT_IDS,
   QUIZ_LAYOUTS,
   filterQuizLayoutsByAspectRatio,
   getCompatibleQuizLayout,
@@ -20,11 +21,13 @@ test("the production quiz catalog contains landscape layouts only", () => {
     [...QUIZ_LANDSCAPE_LAYOUT_IDS],
   );
   assert.deepEqual(filterQuizLayoutsByAspectRatio("16:9"), QUIZ_LANDSCAPE_LAYOUT_IDS);
-  assert.deepEqual(filterQuizLayoutsByAspectRatio("9:16"), []);
+  assert.deepEqual(filterQuizLayoutsByAspectRatio("9:16"), QUIZ_PORTRAIT_LAYOUT_IDS);
 });
 
-test("portrait quiz compatibility requests are explicitly rejected", () => {
-  assert.throws(() => getCompatibleQuizLayout("media_left_choices_right", "9:16"), /16:9 landscape only/);
+test("crossing the aspect ratio boundary maps onto the sibling catalog", () => {
+  assert.equal(getCompatibleQuizLayout("media_left_choices_right", "9:16"), "short_media_top_choices");
+  assert.equal(getCompatibleQuizLayout("short_verdict_yes_no", "16:9"), "verdict_yes_no");
+  assert.equal(getCompatibleQuizLayout("full_stack_list", "16:9"), "full_stack_list");
 });
 
 test("landscape automatic layout resolution remains available", () => {

@@ -3,9 +3,13 @@ import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import type { MascotRenderAspectRatio } from "./mascot/renderTypes.js";
 import {
   QUIZ_LAYOUT_CATALOG,
-  QUIZ_LAYOUTS,
   QUIZ_LANDSCAPE_LAYOUT_IDS,
+  QUIZ_PORTRAIT_LAYOUT_IDS,
+  isQuizPortraitLayoutId,
   isResolvedQuizLayoutId,
+  quizLayoutsForAspectRatio,
+  type QuizLandscapeLayoutId,
+  type QuizPortraitLayoutId,
   type ResolvedQuizLayoutId,
 } from "./quizLayouts.catalog.js";
 import type {
@@ -89,16 +93,41 @@ export function evaluateQuizLayoutCompatibility(
 }
 
 export const LANDSCAPE_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = QUIZ_LANDSCAPE_LAYOUT_IDS;
+export const PORTRAIT_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = QUIZ_PORTRAIT_LAYOUT_IDS;
 
+/**
+ * Landscape and portrait layouts are distinct catalogs, so crossing the aspect ratio
+ * boundary always maps onto the closest layout of the target catalog.
+ */
+const LANDSCAPE_TO_PORTRAIT: Record<QuizLandscapeLayoutId, QuizPortraitLayoutId> = {
+  media_left_choices_right: "short_media_top_choices",
+  visual_choices_three: "short_versus_two",
+  visual_choices_three_pure: "short_versus_two",
+  split_versus_two: "short_versus_two",
+  verdict_yes_no: "short_verdict_yes_no",
+  full_stack_list: "short_stack_list",
+  mystery_reveal: "short_media_top_choices",
+};
+
+const PORTRAIT_TO_LANDSCAPE: Record<QuizPortraitLayoutId, QuizLandscapeLayoutId> = {
+  short_stack_list: "full_stack_list",
+  short_media_top_choices: "media_left_choices_right",
+  short_versus_two: "split_versus_two",
+  short_verdict_yes_no: "verdict_yes_no",
+};
+
+export function getCompatibleQuizLayout(currentLayoutId: ResolvedQuizLayoutId, targetAspectRatio: "16:9"): QuizLandscapeLayoutId;
+export function getCompatibleQuizLayout(currentLayoutId: ResolvedQuizLayoutId, targetAspectRatio: "9:16"): QuizPortraitLayoutId;
+export function getCompatibleQuizLayout(currentLayoutId: ResolvedQuizLayoutId, targetAspectRatio: "16:9" | "9:16"): ResolvedQuizLayoutId;
 export function getCompatibleQuizLayout(currentLayoutId: ResolvedQuizLayoutId, targetAspectRatio: "16:9" | "9:16"): ResolvedQuizLayoutId {
-  if (targetAspectRatio !== "16:9") {
-    throw new Error("Quiz layouts support 16:9 landscape only");
+  if (isQuizPortraitLayoutId(currentLayoutId)) {
+    return targetAspectRatio === "9:16" ? currentLayoutId : PORTRAIT_TO_LANDSCAPE[currentLayoutId];
   }
-  return currentLayoutId;
+  return targetAspectRatio === "9:16" ? LANDSCAPE_TO_PORTRAIT[currentLayoutId] : currentLayoutId;
 }
 
 export function filterQuizLayoutsByAspectRatio(aspectRatio?: "16:9" | "9:16"): readonly ResolvedQuizLayoutId[] {
-  if (aspectRatio === "9:16") return [];
+  if (aspectRatio === "9:16") return QUIZ_PORTRAIT_LAYOUT_IDS;
   return QUIZ_LANDSCAPE_LAYOUT_IDS;
 }
 
@@ -135,7 +164,7 @@ export function resolveQuizLayout(rawInput: QuizLayoutResolutionInput): QuizLayo
             "layout_no_compatible_candidate",
             "layout",
             input.requestedLayout,
-            QUIZ_LAYOUTS.map((layout) => layout.id),
+            quizLayoutsForAspectRatio(aspectRatio).map((layout) => layout.id),
             `Layout ${String(input.requestedLayout)} is not active in the current layout catalog.`,
             "Choose an active production layout or configure layout capabilities.",
           ),
@@ -185,7 +214,7 @@ export function resolveQuizLayout(rawInput: QuizLayoutResolutionInput): QuizLayo
       : { ok: false, requestedLayout: input.requestedLayout, source: "explicit", issues: compatibility.issues };
   }
 
-  const autoCandidates = LANDSCAPE_QUIZ_AUTO_CANDIDATES;
+  const autoCandidates = aspectRatio === "9:16" ? PORTRAIT_QUIZ_AUTO_CANDIDATES : LANDSCAPE_QUIZ_AUTO_CANDIDATES;
   const preferred = preferredAutoLayout(input.archetype, input.questionFormat, {
     aspectRatio,
     choiceCount: input.choiceCount,
@@ -207,7 +236,7 @@ export function resolveQuizLayout(rawInput: QuizLayoutResolutionInput): QuizLayo
         "layout_no_compatible_candidate",
         "layout",
         "auto",
-        QUIZ_LAYOUTS.map((layout) => layout.id),
+        quizLayoutsForAspectRatio(aspectRatio).map((layout) => layout.id),
         "No production quiz layout is compatible with the requested question capabilities.",
         "Change the question capabilities or add support through a separately approved layout migration.",
       ),
@@ -265,6 +294,10 @@ export function preferredAutoLayout(
 
   const archetypeStr = String(archetype);
 
+  if (options?.aspectRatio === "9:16") {
+    return preferredPortraitAutoLayout(archetypeStr, questionFormat, options);
+  }
+
   if (options?.answerMode === "single_reveal" || options?.choiceCount === 1) {
     return "mystery_reveal";
   }
@@ -287,6 +320,40 @@ export function preferredAutoLayout(
     return "mystery_reveal";
   }
   return "media_left_choices_right";
+}
+
+function preferredPortraitAutoLayout(
+  archetypeStr: string,
+  questionFormat: QuizQuestionFormat,
+  options: PreferredAutoLayoutOptions,
+): ResolvedQuizLayoutId {
+  if (
+    questionFormat === "yes_no" ||
+    archetypeStr === "yes_no" ||
+    archetypeStr === "verdict_yes_no" ||
+    isLegacyVerdictIdentifier(archetypeStr)
+  ) {
+    return "short_verdict_yes_no";
+  }
+  const wantsChoiceMedia = options.media?.includes("choice") ?? false;
+  if (
+    wantsChoiceMedia ||
+    archetypeStr === "versus_faceoff" ||
+    archetypeStr === "visual_multiple_choice" ||
+    questionFormat === "odd_one_out"
+  ) {
+    return "short_versus_two";
+  }
+  const wantsQuestionMedia = options.media?.includes("question") ?? false;
+  if (
+    wantsQuestionMedia ||
+    questionFormat === "image_guess" ||
+    archetypeStr === "deep_trivia" ||
+    archetypeStr === "visual_identification"
+  ) {
+    return "short_media_top_choices";
+  }
+  return "short_stack_list";
 }
 
 function addUnsupportedIssue<T extends string | number>(

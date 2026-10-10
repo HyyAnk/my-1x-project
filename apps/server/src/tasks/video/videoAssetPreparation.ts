@@ -14,6 +14,7 @@ import { RepositoryError } from "../../repository.js";
 import { resolveQuizAssets } from "../../quiz/assets/resolveQuizAssets.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { optimizeRenderImage } from "./imageOptimizer.js";
+import { isRenderableLayoutId } from "../../quiz/render/layouts/renderableLayoutId.js";
 
 export interface PrepareVideoAssetsOptions {
   runtime: TaskManagerRuntime;
@@ -150,5 +151,5 @@ function resolveAssetLayout(
     choiceCount: question.choices.length,
     aspectRatio,
   });
-  return resolution.ok ? resolution.layoutId : undefined;
+  return resolution.ok && isRenderableLayoutId(resolution.layoutId) ? resolution.layoutId : undefined;
 }

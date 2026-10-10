@@ -24,6 +24,7 @@ import { ChannelPublishingProfileSchema } from "../schemas/channelPublishing.js"
 import { EpisodeSchema } from "../schemas/episode.js";
 import { TaskSchema } from "../events.js";
 import { ShortReelRecordSchema } from "../shortReel/shortReel.schema.js";
+import { QuizShortLayoutPairSchema, QuizShortQuestionCountSchema, QuizShortSchema } from "../schemas/quizShort.js";
 import { QuizV2Schema } from "../schemas/quiz/quizQuestions.js";
 import { DirectorPlanSchema } from "../schemas/quiz/quizDirector.js";
 
@@ -102,7 +103,23 @@ export const ShortReelTopicConfirmInputSchema = z.object({
 });
 export type ShortReelTopicConfirmInput = z.infer<typeof ShortReelTopicConfirmInputSchema>;
 
-export const TopicConfirmInputSchema = z.union([EpisodeTopicConfirmInputSchema, ShortReelTopicConfirmInputSchema]);
+export const QuizShortTopicConfirmInputSchema = z.object({
+  topic_id: z.string().min(1).optional(),
+  question_count: QuizShortQuestionCountSchema.optional(),
+  target_language: z.string().trim().min(2).max(20).optional(),
+  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
+  auto_start_pipeline: z.boolean().optional(),
+  render_aspect_ratio: z.literal("9:16").optional(),
+  layout_pair: QuizShortLayoutPairSchema.optional(),
+  request_id: z.string().trim().min(1).optional(),
+});
+export type QuizShortTopicConfirmInput = z.infer<typeof QuizShortTopicConfirmInputSchema>;
+
+export const TopicConfirmInputSchema = z.union([
+  EpisodeTopicConfirmInputSchema,
+  QuizShortTopicConfirmInputSchema,
+  ShortReelTopicConfirmInputSchema,
+]);
 
 export type TopicConfirmInput = z.infer<typeof TopicConfirmInputSchema>;
 
@@ -127,8 +144,20 @@ export const ConfirmShortReelTopicResponseSchema = z.object({
 });
 export type ConfirmShortReelTopicResponse = z.infer<typeof ConfirmShortReelTopicResponseSchema>;
 
+export const ConfirmQuizShortTopicResponseSchema = z.object({
+  content_kind: z.literal("quiz_short"),
+  quiz_short: QuizShortSchema,
+  task: TaskSchema.nullable().optional(),
+  quiz: QuizV2Schema.optional(),
+  director_plan: DirectorPlanSchema.optional(),
+  question_ids: z.array(z.string()).optional(),
+  cooldown_recorded: z.boolean().optional(),
+});
+export type ConfirmQuizShortTopicResponse = z.infer<typeof ConfirmQuizShortTopicResponseSchema>;
+
 export const ConfirmTopicResponseSchema = z.discriminatedUnion("content_kind", [
   ConfirmEpisodeTopicResponseSchema,
+  ConfirmQuizShortTopicResponseSchema,
   ConfirmShortReelTopicResponseSchema,
 ]);
 export type ConfirmTopicResponse = z.infer<typeof ConfirmTopicResponseSchema>;
@@ -164,6 +193,28 @@ export const EpisodeSettingsInputSchema = z.object({
 });
 
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;
+
+export const QuizShortSettingsInputSchema = z.object({
+  question_count: QuizShortQuestionCountSchema.optional(),
+  age_band: z.enum(["4-6", "7-9", "10-12", "family"]).optional(),
+  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
+  resolved_visual_style: QuizImageStyleSchema.optional(),
+  thinking_bar_style: QuizThinkingBarStyleSchema.optional(),
+  question_counter_style: QuizQuestionCounterStyleSchema.optional(),
+  question_box_style: QuizQuestionBoxStyleSchema.optional(),
+  answer_card_style: QuizAnswerCardStyleSchema.optional(),
+  background_style: QuizBackgroundStyleSchema.optional(),
+  palette_id: QuizPaletteIdSchema.optional(),
+  style_preset_id: z.string().optional(),
+  style_catalog_revision: z.string().trim().min(1).optional(),
+  style_preset_revision: z.number().int().positive().optional(),
+  channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
+  mascot_style_selection: MascotStyleSelectionSchema.optional(),
+  layout_pair: QuizShortLayoutPairSchema.optional(),
+  outro_cta_enabled: z.boolean().optional(),
+  fast_render_mode: z.boolean().optional(),
+});
+export type QuizShortSettingsInput = z.infer<typeof QuizShortSettingsInputSchema>;
 
 export const SceneUpdateInputSchema = z.object({
   scene_number: z.number().int().positive(),

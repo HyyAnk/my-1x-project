@@ -91,6 +91,7 @@ export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
         const emptyRun: TopicRunResult = {
           run_id: randomUUID(),
           target_episode_count: targets.episode,
+          target_quiz_short_count: targets.quizShort,
           target_short_reel_count: targets.shortReel,
           candidates: [],
           shortages: allocation.shortages,

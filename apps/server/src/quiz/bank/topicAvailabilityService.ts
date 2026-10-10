@@ -60,7 +60,7 @@ function evaluateCandidateSources(
           })
         : evaluateEpisodeQuestionEligibility(question, {
             targetLanguage: "en",
-            expectedFormat: candidate.quiz_format,
+            expectedFormat: candidate.content_kind === "episode" ? candidate.quiz_format : undefined,
             targetArchetype: candidate.archetype,
           });
 

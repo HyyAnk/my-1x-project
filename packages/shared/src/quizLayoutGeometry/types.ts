@@ -10,7 +10,24 @@ export const QUIZ_LANDSCAPE_LAYOUT_IDS = [
   "mystery_reveal",
 ] as const;
 
-export type QuizLandscapeLayoutId = Exclude<QuizLayoutId, "auto">;
+export const QUIZ_PORTRAIT_LAYOUT_IDS = [
+  "short_stack_list",
+  "short_media_top_choices",
+  "short_versus_two",
+  "short_verdict_yes_no",
+] as const;
+
+export type QuizLandscapeLayoutId = (typeof QUIZ_LANDSCAPE_LAYOUT_IDS)[number];
+
+export type QuizPortraitLayoutId = (typeof QUIZ_PORTRAIT_LAYOUT_IDS)[number];
+
+export function isQuizPortraitLayoutId(layoutId: string): layoutId is QuizPortraitLayoutId {
+  return (QUIZ_PORTRAIT_LAYOUT_IDS as readonly string[]).includes(layoutId);
+}
+
+export function isQuizLandscapeLayoutId(layoutId: string): layoutId is QuizLandscapeLayoutId {
+  return (QUIZ_LANDSCAPE_LAYOUT_IDS as readonly string[]).includes(layoutId);
+}
 
 export type QuizRect = Readonly<{
   x: number;
@@ -43,7 +60,7 @@ export type QuizChoiceVariantGeometry = Readonly<{
 }>;
 
 export type QuizLayoutGeometry = Readonly<{
-  layoutId: QuizLandscapeLayoutId;
+  layoutId: Exclude<QuizLayoutId, "auto">;
   arena: QuizRect;
   hero: QuizRect | null;
   imageSlot: QuizImageSlotSpec | null;
