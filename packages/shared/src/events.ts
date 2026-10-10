@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { type EngineId, ShortReelGenerationTargetSchema, TaskStatusSchema, TaskTypeSchema } from "./enums.js";
 import { ReelProgressPayloadSchema } from "./shortReel/shortReelProgress.schema.js";
+import { QuizProductKindSchema } from "./schemas/quizProduct.js";
 
 const IsoDate = z.string().datetime({ offset: true });
 
@@ -85,6 +86,8 @@ export const TaskSchema = z.object({
   task_type: TaskTypeSchema,
   channel_id: z.string().min(1),
   episode_id: z.string().nullable(),
+  /** Which quiz product `episode_id` names. Absent means an Episode, so older task records keep working. */
+  product_kind: QuizProductKindSchema.optional(),
   episode_title: z.string().nullable().optional(),
   reel_id: z.string().nullable().optional(),
   short_reel_request: z

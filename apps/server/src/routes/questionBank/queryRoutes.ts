@@ -7,11 +7,11 @@ function parseCooldownScope(rawScope: unknown): { scope?: BankCooldownScope; err
   if (rawScope === undefined || rawScope === null || rawScope === "") {
     return { scope: undefined };
   }
-  if (rawScope === "all" || rawScope === "episode" || rawScope === "short_reel") {
+  if (rawScope === "all" || rawScope === "episode" || rawScope === "quiz_short" || rawScope === "short_reel") {
     return { scope: rawScope };
   }
   const scopeStr = typeof rawScope === "string" ? rawScope : JSON.stringify(rawScope);
-  return { error: `Invalid scope "${scopeStr}". Expected "all", "episode", or "short_reel".` };
+  return { error: `Invalid scope "${scopeStr}". Expected "all", "episode", "quiz_short", or "short_reel".` };
 }
 
 /**

@@ -13,6 +13,8 @@ import {
   resolveAssets,
 } from "../../quiz/pipeline/orchestrator.js";
 import type { TaskManagerRuntime } from "../runtime.js";
+import { loadQuizProductView } from "../../quiz/pipeline/quizProductView.js";
+import { productRefFromTask } from "../taskProductRef.js";
 import { createQuizPipelineTimingsRecorder } from "./quizPipelineTimings.js";
 import {
   createQuizPipelineInput,
@@ -25,14 +27,16 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
   let isParallelMode = false;
   const input = createQuizPipelineInput(this, task, () => isParallelMode);
   let artifacts = await readQuizArtifacts(input);
-  const episode = await this.repository.getEpisode(task.channel_id, task.episode_id!);
+  const product = await loadQuizProductView(this.repository, productRefFromTask(task));
   const { recordStageTiming, recordParallelTiming } = await createQuizPipelineTimingsRecorder(
     this.repository,
     task.channel_id,
     task.episode_id!,
   );
 
-  const directorNeedsRefresh = !artifacts.director_plan || !matchesEpisodeLayout(artifacts.director_plan, episode.quiz_config);
+  // Quiz Short director plans are built at confirmation; only Episodes re-check the requested layout.
+  const directorNeedsRefresh =
+    !artifacts.director_plan || (product.episode !== null && !matchesEpisodeLayout(artifacts.director_plan, product.episode.quiz_config));
   if (!artifacts.quiz || directorNeedsRefresh) {
     const quizContentStart = Date.now();
     if (!artifacts.quiz) {
@@ -105,7 +109,7 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
         : undefined,
     }));
 
-  const needsVoice = await shouldRegenerateQuizVoice(this, task, episode.narration_asset_path, artifacts);
+  const needsVoice = await shouldRegenerateQuizVoice(this, task, product.media.narration_asset_path, artifacts);
 
   if (needsAssets && needsVoice) {
     isParallelMode = true;

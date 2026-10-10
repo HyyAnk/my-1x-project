@@ -83,7 +83,7 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
       expect(items).toHaveLength(4);
       expect(items[0].asset_id).toBe("asset-bridge-item-1");
       expect(items[0].presentation).toBe("die_cut_sticker");
-      expect(items[0].transparent_background).toBe(true);
+      expect(items[0].transparent_background).toBe(false);
       expect(items[0].subject).toContain("Golden cross");
 
       expect(items[1].asset_id).toBe("asset-bridge-item-2");
@@ -98,16 +98,40 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
 
       expect(items[3].asset_id).toBe("asset-bridge-item-4");
       expect(items[3].presentation).toBe("die_cut_sticker");
-      expect(items[3].transparent_background).toBe(true);
+      expect(items[3].transparent_background).toBe(false);
       expect(items[3].subject).toContain("avatar");
     });
 
     it("respects existing showcaseItems from bridgeConfig", () => {
       const customItems = [
-        { asset_id: "asset-custom-1", subject: "Custom 1", presentation: "die_cut_sticker" as const, rotation_deg: 0, transparent_background: true },
-        { asset_id: "asset-custom-2", subject: "Custom 2", presentation: "photo_card" as const, rotation_deg: 1, transparent_background: false },
-        { asset_id: "asset-custom-3", subject: "Custom 3", presentation: "photo_card" as const, rotation_deg: -1, transparent_background: false },
-        { asset_id: "asset-custom-4", subject: "Custom 4", presentation: "die_cut_sticker" as const, rotation_deg: 2, transparent_background: true },
+        {
+          asset_id: "asset-custom-1",
+          subject: "Custom 1",
+          presentation: "die_cut_sticker" as const,
+          rotation_deg: 0,
+          transparent_background: true,
+        },
+        {
+          asset_id: "asset-custom-2",
+          subject: "Custom 2",
+          presentation: "photo_card" as const,
+          rotation_deg: 1,
+          transparent_background: false,
+        },
+        {
+          asset_id: "asset-custom-3",
+          subject: "Custom 3",
+          presentation: "photo_card" as const,
+          rotation_deg: -1,
+          transparent_background: false,
+        },
+        {
+          asset_id: "asset-custom-4",
+          subject: "Custom 4",
+          presentation: "die_cut_sticker" as const,
+          rotation_deg: 2,
+          transparent_background: true,
+        },
       ];
 
       const items = extractBridgeShowcaseItems(mockQuiz, {
@@ -116,7 +140,13 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
           enableTopicScene: true,
           enableCtaScene: true,
           enablePreOutroScene: true,
-          timing: { topicPauseSeconds: 0.5, ctaPauseSeconds: 0.5, preOutroPauseSeconds: 0.5, transitionType: "brand_logo_stinger", stingerDurationSeconds: 1.3 },
+          timing: {
+            topicPauseSeconds: 0.5,
+            ctaPauseSeconds: 0.5,
+            preOutroPauseSeconds: 0.5,
+            transitionType: "brand_logo_stinger",
+            stingerDurationSeconds: 1.3,
+          },
           showcaseItems: customItems,
         },
       });
@@ -129,7 +159,16 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
         episode_id: "ep_minimal",
         topic: { title: "Ocean Explorers", category: "nature", target_age: "7-9" },
         questions: [
-          { id: "mq1", number: 1, format: "multiple_choice", difficulty: 1, question: "Which animal is the largest?", choices: [{ id: "c1", text: "Whale" }], correct_answer: "c1", explanation: "Blue Whale." },
+          {
+            id: "mq1",
+            number: 1,
+            format: "multiple_choice",
+            difficulty: 1,
+            question: "Which animal is the largest?",
+            choices: [{ id: "c1", text: "Whale" }],
+            correct_answer: "c1",
+            explanation: "Blue Whale.",
+          },
         ],
       };
 
@@ -171,12 +210,15 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
     });
 
     it("handles markdown code fence wrapping cleanly", () => {
-      const wrapped = "```json\n" + JSON.stringify([
-        { subject: "Crown of Thorns", presentation: "die_cut_sticker", rotation_deg: -2, transparent_background: true },
-        { subject: "Jerusalem at Dusk", presentation: "photo_card", rotation_deg: 1, transparent_background: false },
-        { subject: "Garden of Gethsemane", presentation: "photo_card", rotation_deg: -3, transparent_background: false },
-        { subject: "Angel Gabriel Avatar", presentation: "die_cut_sticker", rotation_deg: 2, transparent_background: true },
-      ]) + "\n```";
+      const wrapped =
+        "```json\n" +
+        JSON.stringify([
+          { subject: "Crown of Thorns", presentation: "die_cut_sticker", rotation_deg: -2, transparent_background: true },
+          { subject: "Jerusalem at Dusk", presentation: "photo_card", rotation_deg: 1, transparent_background: false },
+          { subject: "Garden of Gethsemane", presentation: "photo_card", rotation_deg: -3, transparent_background: false },
+          { subject: "Angel Gabriel Avatar", presentation: "die_cut_sticker", rotation_deg: 2, transparent_background: true },
+        ]) +
+        "\n```";
 
       const items = parseBridgeShowcaseLlmOutput(wrapped, fallback);
       expect(items[0].subject).toBe("Crown of Thorns");
@@ -196,7 +238,7 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
   });
 
   describe("compileQuizAssetPrompt for bridge_topic_item", () => {
-    it("compiles sticker prompt with white studio backdrop and matting guidance", () => {
+    it("compiles a simple themed backdrop instead of a white matting backdrop", () => {
       const result = compileQuizAssetPrompt({
         asset_id: "asset-bridge-item-1",
         question_id: null,
@@ -209,13 +251,15 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
         semantic_key: "bridge:showcase:1",
       });
 
-      expect(result.prompt).toContain("Bridge showcase sticker contract");
-      expect(result.prompt).toContain("pure solid white studio backdrop");
-      expect(result.prompt).toContain("clean background matting");
-      expect(result.cacheVersion).toContain("-v1-bridge-showcase");
+      expect(result.prompt).toContain("Bridge showcase card contract");
+      expect(result.prompt).toContain("softly blurred backdrop that matches the subject");
+      expect(result.prompt).toContain("subject clearly pops");
+      expect(result.prompt).not.toContain("pure solid white studio backdrop");
+      expect(result.prompt).not.toContain("background matting");
+      expect(result.cacheVersion).toContain("-v2-bridge-showcase-backdrop");
     });
 
-    it("compiles card vignette prompt with scenic depth", () => {
+    it("uses the same simple backdrop contract for card items", () => {
       const result = compileQuizAssetPrompt({
         asset_id: "asset-bridge-item-2",
         question_id: null,
@@ -228,9 +272,9 @@ describe("Bridge Topic Entity Extractor & Prompt Compiler (Phase 2)", () => {
         semantic_key: "bridge:showcase:2",
       });
 
-      expect(result.prompt).toContain("Bridge showcase card vignette contract");
-      expect(result.prompt).toContain("rich atmospheric background");
-      expect(result.cacheVersion).toContain("-v1-bridge-showcase");
+      expect(result.prompt).toContain("Bridge showcase card contract");
+      expect(result.prompt).toContain("low-detail");
+      expect(result.cacheVersion).toContain("-v2-bridge-showcase-backdrop");
     });
   });
 });

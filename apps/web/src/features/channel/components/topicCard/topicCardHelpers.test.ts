@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "@studio/shared";
+import {
+  QUIZ_MAX_QUESTION_COUNT,
+  QUIZ_MIN_QUESTION_COUNT,
+  QUIZ_SHORT_MAX_QUESTION_COUNT,
+  QUIZ_SHORT_MIN_QUESTION_COUNT,
+} from "@studio/shared";
 import {
   calculateEstimatedDurationMinutes,
   calculateMaxAllowedQuestions,
   formatDomain,
   formatDurationHint,
+  formatQuizShortDurationHint,
+  resolveMinQuestionCount,
   validateQuestionCount,
 } from "./topicCardHelpers";
 
@@ -52,6 +59,13 @@ describe("topicCardHelpers", () => {
       expect(calculateMaxAllowedQuestions("episode", 1, true)).toBe(QUIZ_MIN_QUESTION_COUNT);
       expect(calculateMaxAllowedQuestions("episode", 60, true)).toBe(QUIZ_MAX_QUESTION_COUNT);
     });
+
+    it("caps quiz_short by the portrait budget and the bound source count", () => {
+      expect(calculateMaxAllowedQuestions("quiz_short", 5, true)).toBe(5);
+      expect(calculateMaxAllowedQuestions("quiz_short", 1, true)).toBe(QUIZ_SHORT_MIN_QUESTION_COUNT);
+      expect(calculateMaxAllowedQuestions("quiz_short", 60, true)).toBe(QUIZ_SHORT_MAX_QUESTION_COUNT);
+      expect(calculateMaxAllowedQuestions("quiz_short", 60, false)).toBe(QUIZ_SHORT_MAX_QUESTION_COUNT);
+    });
   });
 
   describe("validateQuestionCount", () => {
@@ -70,6 +84,21 @@ describe("topicCardHelpers", () => {
     it("checks against source capacity when provided", () => {
       expect(validateQuestionCount(6, 8, false, 5)).toBe(false);
       expect(validateQuestionCount(5, 8, false, 5)).toBe(true);
+    });
+
+    it("accepts the quiz_short minimum when the kind-specific floor is supplied", () => {
+      expect(validateQuestionCount(3, 5, false, 5, QUIZ_SHORT_MIN_QUESTION_COUNT)).toBe(true);
+      expect(validateQuestionCount(2, 5, false, 5, QUIZ_SHORT_MIN_QUESTION_COUNT)).toBe(false);
+      expect(resolveMinQuestionCount("quiz_short")).toBe(QUIZ_SHORT_MIN_QUESTION_COUNT);
+      expect(resolveMinQuestionCount("episode")).toBe(QUIZ_MIN_QUESTION_COUNT);
+      expect(resolveMinQuestionCount("short_reel")).toBe(1);
+    });
+  });
+
+  describe("formatQuizShortDurationHint", () => {
+    it("reports seconds for a valid count and the portrait range otherwise", () => {
+      expect(formatQuizShortDurationHint(5, true, 5)).toBe("About 50 s");
+      expect(formatQuizShortDurationHint(8, false, 5)).toBe("Choose 3-5");
     });
   });
 });

@@ -3,6 +3,7 @@ export * from "./channelRepository.contract.js";
 export * from "./episodeRepository.contract.js";
 export * from "./mascotRepository.contract.js";
 export * from "./quizArtifactRepository.contract.js";
+export * from "./quizShortRepository.contract.js";
 export * from "./questionBankRepository.contract.js";
 export * from "./shortReelRepository.contract.js";
 export * from "./mediaRepository.contract.js";

@@ -1,16 +1,32 @@
 import {
   DirectorPlanSchema,
-  gameplayTimingPolicy,
-  resolveGameplayPolicy,
   type DirectorPlan,
+  type MascotRenderAspectRatio,
   type QuizIssue,
+  type QuizPacingProfile,
   type QuizV2,
 } from "@studio/shared";
-import { layoutResolutionIssues, resolveQuestionLayout } from "../layoutCompatibility.js";
+import { directorBeatIssues } from "./validateDirectorBeats.js";
+import { hasPortraitDirectorBeats, portraitDirectorPlanIssues } from "./portraitPlanRules.js";
 
-const minimumThinkingSeconds: Record<QuizV2["age_band"], number> = { "4-6": 7.2, "7-9": 6.8, "10-12": 6.5, family: 6.8 };
+export type DirectorPlanValidationOptions = {
+  /** Defaults to "short" when the plan carries portrait beats, otherwise "standard". */
+  pacingProfile?: QuizPacingProfile;
+  /** Defaults to the layout family of each beat. */
+  aspectRatio?: MascotRenderAspectRatio;
+};
 
-export function validateDirectorPlan(quiz: QuizV2, value: unknown): { plan: DirectorPlan | null; issues: QuizIssue[] } {
+function resolveValidationContext(plan: DirectorPlan, options?: DirectorPlanValidationOptions) {
+  const portrait = options?.aspectRatio === "9:16" || options?.pacingProfile === "short" || hasPortraitDirectorBeats(plan);
+  const pacingProfile: QuizPacingProfile = options?.pacingProfile ?? (portrait ? "short" : "standard");
+  return { portrait, pacingProfile };
+}
+
+export function validateDirectorPlan(
+  quiz: QuizV2,
+  value: unknown,
+  options?: DirectorPlanValidationOptions,
+): { plan: DirectorPlan | null; issues: QuizIssue[] } {
   const parsed = DirectorPlanSchema.safeParse(value);
   if (!parsed.success) {
     return {
@@ -114,47 +130,14 @@ export function validateDirectorPlan(quiz: QuizV2, value: unknown): { plan: Dire
       question_ids: [],
       stage: "director",
     });
-  for (const beat of plan.beats) {
-    const question = quiz.questions.find((candidate) => candidate.id === beat.question_id);
-    if (!question) continue;
-    const layoutResolution = resolveQuestionLayout(question, beat);
-    if (!layoutResolution.ok) issues.push(...layoutResolutionIssues(layoutResolution, question.id, "director", "director"));
-    const minimum = plan.gameplay_policy_version
-      ? gameplayTimingPolicy(resolveGameplayPolicy(beat), quiz.age_band, question.difficulty).minimum_thinking_seconds
-      : minimumThinkingSeconds[quiz.age_band];
-    if (beat.thinking_seconds < minimum)
-      issues.push({
-        code: "director_thinking_too_short",
-        severity: "blocker",
-        message: "Question " + question.number + " has " + beat.thinking_seconds + "s of thinking time for age band " + quiz.age_band + ".",
-        next_action: "Increase thinking time to at least " + minimum + " seconds.",
-        question_ids: [question.id],
-        stage: "director",
-      });
-    if (beat.thinking_seconds > 20)
-      issues.push({
-        code: "director_thinking_too_long",
-        severity: "warning",
-        message: "Question " + question.number + " has " + beat.thinking_seconds + "s of thinking time.",
-        next_action: "Shorten the thinking beat unless the question needs a deliberate pause.",
-        question_ids: [question.id],
-        stage: "director",
-      });
-    if (!beat.beat_intents.includes("answer_reveal"))
-      issues.push({
-        code: "director_reveal_missing",
-        severity: "blocker",
-        message: "Question " + question.number + " has no answer reveal intent.",
-        next_action: "Add an answer_reveal beat intent before rendering.",
-        question_ids: [question.id],
-        stage: "director",
-      });
-  }
+  const context = resolveValidationContext(plan, options);
+  if (context.portrait) issues.push(...portraitDirectorPlanIssues(plan));
+  issues.push(...directorBeatIssues(quiz, plan, context.pacingProfile, options?.aspectRatio));
   return { plan, issues };
 }
 
-export function assertDirectorPlanValid(quiz: QuizV2, value: unknown): DirectorPlan {
-  const result = validateDirectorPlan(quiz, value);
+export function assertDirectorPlanValid(quiz: QuizV2, value: unknown, options?: DirectorPlanValidationOptions): DirectorPlan {
+  const result = validateDirectorPlan(quiz, value, options);
   const blockers = result.issues.filter((issue) => issue.severity === "blocker");
   if (!result.plan || blockers.length) throw new Error(blockers.map((issue) => issue.message).join(" "));
   return result.plan;

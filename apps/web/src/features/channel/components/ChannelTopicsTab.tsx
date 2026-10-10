@@ -4,7 +4,7 @@ import type { Channel, QuizImageStyle, Task, TopicAvailability, TopicCandidate, 
 import { EmptyState } from "../../../components/EmptyState";
 import { TopicProgress } from "../../../components/TaskProgressPanel";
 import { useTopicAvailability } from "../hooks/useTopicAvailability";
-import { TopicCard } from "./TopicCard";
+import { TOPIC_FORMAT_SECTIONS, TopicFormatSection } from "./TopicFormatSection";
 import { TopicHistorySection } from "./TopicHistorySection";
 
 type ChannelTopicsTabProps = {
@@ -26,6 +26,37 @@ type ChannelTopicsTabProps = {
   clearingTopicHistory?: boolean;
   availabilityMap?: Map<string, TopicAvailability>;
 };
+
+interface LatestRunSplit {
+  latestRunTopics: TopicCandidate[];
+  historyTopics: TopicCandidate[];
+  hasEmptyLatestRunShortages: boolean;
+}
+
+/** Groups by authoritative run identity; partial or empty runs are never filled with historical results. */
+function splitLatestRun(topics: TopicCandidate[], latestRun?: TopicRun | null): LatestRunSplit {
+  if (latestRun) {
+    const runId = latestRun.run_id;
+    const latest = topics.filter((t) => Boolean(t.run_id && t.run_id === runId));
+    const history = topics.filter((t) => !t.run_id || t.run_id !== runId);
+    const hasEmptyLatestRunShortages = latest.length === 0 && (latestRun.shortages?.length ?? 0) > 0;
+    return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages };
+  }
+
+  if (topics.length === 0) {
+    return { latestRunTopics: [], historyTopics: [], hasEmptyLatestRunShortages: false };
+  }
+
+  const firstRunId = topics[0]?.run_id;
+  if (firstRunId) {
+    const latest = topics.filter((t) => Boolean(t.run_id && t.run_id === firstRunId));
+    const history = topics.filter((t) => !t.run_id || t.run_id !== firstRunId);
+    return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages: false };
+  }
+
+  // Unassigned legacy candidates without run_id belong in history, never inferred into a latest run
+  return { latestRunTopics: [], historyTopics: topics, hasEmptyLatestRunShortages: false };
+}
 
 export function ChannelTopicsTab({
   channel,
@@ -52,37 +83,18 @@ export function ChannelTopicsTab({
   });
   const availabilityMap = externalAvailabilityMap ?? internalAvailability.availabilityMap;
 
-  // Group latest run by authoritative run identity; do not fill partial/empty runs with historical results
-  const { latestRunTopics, historyTopics, hasEmptyLatestRunShortages } = useMemo(() => {
-    if (latestRun) {
-      const runId = latestRun.run_id;
-      const latest = topics.filter((t) => Boolean(t.run_id && t.run_id === runId));
-      const history = topics.filter((t) => !t.run_id || t.run_id !== runId);
-      const hasEmptyLatestRunShortages = latest.length === 0 && (latestRun.shortages?.length ?? 0) > 0;
-      return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages };
-    }
+  const { latestRunTopics, historyTopics, hasEmptyLatestRunShortages } = useMemo(
+    () => splitLatestRun(topics, latestRun),
+    [topics, latestRun],
+  );
 
-    if (topics.length === 0) {
-      return { latestRunTopics: [], historyTopics: [], hasEmptyLatestRunShortages: false };
-    }
-
-    const firstRunId = topics[0]?.run_id;
-    if (firstRunId) {
-      const latest = topics.filter((t) => Boolean(t.run_id && t.run_id === firstRunId));
-      const history = topics.filter((t) => !t.run_id || t.run_id !== firstRunId);
-      return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages: false };
-    }
-
-    // Unassigned legacy candidates without run_id belong in history, never inferred into a latest run
-    return { latestRunTopics: [], historyTopics: topics, hasEmptyLatestRunShortages: false };
-  }, [topics, latestRun]);
-
-  // Split latest run topics by content kind (16:9 Episodes vs 9:16 Short-Reels)
-  const { episodeTopics, shortReelTopics } = useMemo(() => {
-    const episodes = latestRunTopics.filter((t) => t.content_kind === "episode");
-    const shorts = latestRunTopics.filter((t) => t.content_kind === "short_reel");
-    return { episodeTopics: episodes, shortReelTopics: shorts };
-  }, [latestRunTopics]);
+  // Latest run grouped by content kind in Topics tab order: Episode, Quiz Short, Short Reel
+  const sectionTopics = useMemo(
+    () => TOPIC_FORMAT_SECTIONS.map((section) => latestRunTopics.filter((t) => t.content_kind === section.kind)),
+    [latestRunTopics],
+  );
+  const firstVisibleSectionIndex = sectionTopics.findIndex((group) => group.length > 0);
+  const suggestDisabled = busy === "topics" || topicTaskActive || channel.status === "ARCHIVED";
 
   return (
     <div>
@@ -99,17 +111,13 @@ export function ChannelTopicsTab({
             value={topicHint}
             onChange={(event) => setTopicHint(event.target.value)}
             onKeyDown={(event) => {
-              if (event.key === "Enter" && !topicTaskActive && busy !== "topics" && channel.status !== "ARCHIVED") {
+              if (event.key === "Enter" && !suggestDisabled) {
                 void onSuggest();
               }
             }}
-            disabled={busy === "topics" || topicTaskActive || channel.status === "ARCHIVED"}
+            disabled={suggestDisabled}
           />
-          <button
-            className="primary-button"
-            disabled={busy === "topics" || topicTaskActive || channel.status === "ARCHIVED"}
-            onClick={() => void onSuggest()}
-          >
+          <button className="primary-button" disabled={suggestDisabled} onClick={() => void onSuggest()}>
             {busy === "topics" || topicTaskActive ? <CircleNotch className="spin" size={17} /> : <Sparkle size={17} />}
             <span>{topicTaskActive ? "Generating…" : "Suggest topics"}</span>
           </button>
@@ -159,55 +167,19 @@ export function ChannelTopicsTab({
         />
       ) : (
         <>
-          {episodeTopics.length > 0 ? (
-            <div className="topic-format-section">
-              <div className="topic-format-section-header">
-                <div className="topic-format-heading-left">
-                  <span className="topic-format-indicator is-landscape">16:9</span>
-                  <h3 className="topic-format-title">Long-form Episodes ({episodeTopics.length})</h3>
-                </div>
-                <span className="topic-format-subtitle">Landscape 16:9 Concepts</span>
-              </div>
-              <div className="topic-grid topic-grid-landscape">
-                {episodeTopics.map((topic) => (
-                  <TopicCard
-                    key={topic.topic_id}
-                    topic={topic}
-                    channelStyles={channel.selected_styles}
-                    availability={availabilityMap.get(topic.topic_id)}
-                    busy={confirmingTopicId === topic.topic_id}
-                    disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
-                    onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {shortReelTopics.length > 0 ? (
-            <div className="topic-format-section" style={{ marginTop: "28px" }}>
-              <div className="topic-format-section-header">
-                <div className="topic-format-heading-left">
-                  <span className="topic-format-indicator is-vertical">9:16</span>
-                  <h3 className="topic-format-title">Short-Reels ({shortReelTopics.length})</h3>
-                </div>
-                <span className="topic-format-subtitle">Vertical 9:16 Mobile Concepts</span>
-              </div>
-              <div className="topic-grid topic-grid-vertical">
-                {shortReelTopics.map((topic) => (
-                  <TopicCard
-                    key={topic.topic_id}
-                    topic={topic}
-                    channelStyles={channel.selected_styles}
-                    availability={availabilityMap.get(topic.topic_id)}
-                    busy={confirmingTopicId === topic.topic_id}
-                    disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
-                    onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
+          {TOPIC_FORMAT_SECTIONS.map((section, index) => (
+            <TopicFormatSection
+              key={section.kind}
+              section={section}
+              topics={sectionTopics[index]}
+              channelStyles={channel.selected_styles}
+              availabilityMap={availabilityMap}
+              confirmingTopicId={confirmingTopicId}
+              disabled={channel.status === "ARCHIVED"}
+              isFirst={index === firstVisibleSectionIndex}
+              onConfirmTopic={onConfirmTopic}
+            />
+          ))}
 
           {historyTopics.length > 0 ? (
             <TopicHistorySection

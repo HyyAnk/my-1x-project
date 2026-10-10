@@ -1,7 +1,6 @@
 import type {
   Channel,
   CreateStylePresetInput,
-  Episode,
   IntroOutroClipMeta,
   IntroOutroStyle,
   Scene,
@@ -10,6 +9,8 @@ import type {
   VoiceProfile,
 } from "@studio/shared";
 import type { BundleImageAsset, BundleImageMeta } from "../types.js";
+import type { QuizProductId } from "../quizProductPaths.js";
+import type { QuizProductRecord } from "../quizProductLocator.js";
 
 export interface IMediaRepository {
   // Voice Operations
@@ -73,45 +74,45 @@ export interface IMediaRepository {
   writeNarrationAudio(channelId: string, episodeId: string, content: Uint8Array, segmentNumber?: number): Promise<string>;
   writeQuizVoiceSegmentAudio(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     segmentNumber: number,
     content: Uint8Array,
     version?: string,
   ): Promise<string>;
-  writeQuizNarrationAudio(channelId: string, episodeId: string, content: Uint8Array): Promise<string>;
+  writeQuizNarrationAudio(channelId: string, product: QuizProductId, content: Uint8Array): Promise<string>;
   getQuizVoiceSegmentAudioFile(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     segmentNumber: number,
     version?: string,
   ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }>;
-  writeVideoArtifact(channelId: string, episodeId: string, content: Uint8Array, filename?: string): Promise<string>;
+  writeVideoArtifact(channelId: string, product: QuizProductId, content: Uint8Array, filename?: string): Promise<string>;
   getEpisodeVideoFile(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     filename?: string,
   ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }>;
-  writeRenderManifest(channelId: string, episodeId: string, content: string): Promise<string>;
+  writeRenderManifest(channelId: string, product: QuizProductId, content: string): Promise<string>;
   saveVideoMetadata(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     assetPath: string,
     durationSeconds: number,
     renderManifestPath: string,
-  ): Promise<Episode>;
+  ): Promise<QuizProductRecord>;
   getEpisodeAudioFile(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     filename: string,
   ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }>;
   saveNarrationMetadata(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     assetPath: string,
     durationSeconds: number,
     segmentCount: number,
     narrationWordCount: number,
-  ): Promise<Episode>;
+  ): Promise<QuizProductRecord>;
 
   // Dashboard-managed style presets
   listStylePresets(): Promise<StylePreset[]>;

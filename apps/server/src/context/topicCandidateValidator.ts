@@ -88,6 +88,7 @@ export function normalizeTopicRunResult(input: ValidateTopicResponseInput): Topi
   return TopicRunResultSchema.parse({
     run_id: runId || makeId("run"),
     target_episode_count: targets.episode,
+    target_quiz_short_count: targets.quizShort,
     target_short_reel_count: targets.shortReel,
     candidates,
     shortages,

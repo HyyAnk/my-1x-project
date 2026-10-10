@@ -6,6 +6,7 @@ import { generateVideoDescription } from "../../description/index.js";
 import { getEpisodeThumbnailManifest } from "../../thumbnail/index.js";
 import { generateVideoTitle, loadRecentChannelTitles } from "../../title/index.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
+import { resolvePipelineProductRef } from "../quizProductView.js";
 
 type MetadataStageOptions = { toneHint?: string; timeoutMs?: number };
 
@@ -27,6 +28,13 @@ function resolveMetadataTimeout(timeoutMs?: number): number {
 }
 
 async function loadMetadataContext(input: QuizOrchestratorInput, artifactLabel: string) {
+  if (resolvePipelineProductRef(input).kind === "quiz_short") {
+    // Quiz Short titles and descriptions use the portrait-aware generators that arrive in Phase 5.
+    throw new RepositoryError(
+      `Quiz Short video ${artifactLabel} generation is not implemented in this phase`,
+      "QUIZ_SHORT_METADATA_NOT_IMPLEMENTED",
+    );
+  }
   const [episode, channel, quiz] = await Promise.all([
     input.repository.getEpisode(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
@@ -75,7 +83,10 @@ async function ensureEpisodeTitle(input: QuizOrchestratorInput & GenerateEpisode
   try {
     return (await generateEpisodeTitle({ ...input, toneHint: undefined })).title;
   } catch (error) {
-    console.warn(`[videoMetadataStages] Title generation skipped for episode "${input.episodeId}":`, error instanceof Error ? error.message : error);
+    console.warn(
+      `[videoMetadataStages] Title generation skipped for episode "${input.episodeId}":`,
+      error instanceof Error ? error.message : error,
+    );
     return existing;
   }
 }

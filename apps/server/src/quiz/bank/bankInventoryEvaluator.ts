@@ -1,17 +1,28 @@
-import { hashBankQuestionSource, type BankQuestion, type BankQuestionWithCooldown, type QuizConfigFormat } from "@studio/shared";
+import {
+  hashBankQuestionSource,
+  QUIZ_SHORT_TOPIC_ARCHETYPES,
+  type BankQuestion,
+  type BankQuestionWithCooldown,
+  type QuizConfigFormat,
+  type QuizShortTopicArchetype,
+} from "@studio/shared";
 import {
   evaluateEpisodeQuestionEligibility,
+  evaluateQuizShortQuestionEligibility,
   evaluateShortReelQuestionEligibility,
   type BankQuestionEligibilityResult,
   type ShortReelEligibilityOptions,
 } from "./bankEligibility.js";
 
 const SHORT_REEL_ARCHETYPES: ReadonlySet<string> = new Set(["deep_trivia", "versus_faceoff", "verdict_yes_no"]);
+const QUIZ_SHORT_ARCHETYPES: ReadonlySet<string> = new Set(QUIZ_SHORT_TOPIC_ARCHETYPES);
 
 export interface BankInventoryEvaluator {
   readonly targetLanguage: string;
   readonly expectedFormat?: QuizConfigFormat;
   episode(question: BankQuestionWithCooldown): BankQuestionEligibilityResult;
+  /** Returns null when the question's archetype is not used by Quiz Shorts. */
+  quizShort(question: BankQuestionWithCooldown): BankQuestionEligibilityResult | null;
   /** Returns null when the question's archetype is not used by Short Reels. */
   shortReel(question: BankQuestionWithCooldown): BankQuestionEligibilityResult | null;
   sourceHash(question: BankQuestion): string;
@@ -38,6 +49,11 @@ export function createBankInventoryEvaluator(targetLanguage: string, expectedFor
     expectedFormat,
     episode: memoize((question: BankQuestionWithCooldown) =>
       evaluateEpisodeQuestionEligibility(question, { targetLanguage, expectedFormat }),
+    ),
+    quizShort: memoize((question: BankQuestionWithCooldown) =>
+      QUIZ_SHORT_ARCHETYPES.has(question.archetype_id)
+        ? evaluateQuizShortQuestionEligibility(question, { targetArchetype: question.archetype_id as QuizShortTopicArchetype })
+        : null,
     ),
     shortReel: memoize((question: BankQuestionWithCooldown) =>
       SHORT_REEL_ARCHETYPES.has(question.archetype_id)

@@ -7,11 +7,13 @@ import {
   type QuizAssessment,
   type QuizAssetPlan,
   type QuizIssue,
+  type QuizPacingProfile,
   type QuizTimeline,
   type QuizV2,
   type VoicePlan,
 } from "@studio/shared";
 import { validateDirectorPlan } from "../director/validateDirectorPlan.js";
+import { assessQuizShortQa } from "./stages/assessQuizShortQa.js";
 import { assessQuizVisualLayout } from "./visualQa.js";
 import { assessSemanticQa } from "./stages/assessSemanticQa.js";
 import { assessGameplayQa } from "./stages/assessGameplayQa.js";
@@ -42,11 +44,14 @@ export type QuizAssessmentInput = {
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
   hasMascot?: boolean;
+  /** "short" enables the Quiz Short checks (no choice narration, duration budget, portrait layouts). */
+  pacingProfile?: QuizPacingProfile;
 };
 
 export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
   const issues: QuizIssue[] = [];
   issues.push(...assessGameplayQa(input));
+  if (input.pacingProfile === "short") issues.push(...assessQuizShortQa(input));
   const hasQuestionMascot =
     input.hasMascot !== undefined
       ? input.hasMascot
@@ -59,7 +64,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
 
   // 2. Director Stage
   if (input.director) {
-    validateDirectorPlan(input.quiz, input.director).issues.forEach((issue) => issues.push(issue));
+    validateDirectorPlan(input.quiz, input.director, { pacingProfile: input.pacingProfile }).issues.forEach((issue) => issues.push(issue));
   }
 
   // 3. Visual Layout Stage
@@ -84,6 +89,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
     quiz: input.quiz,
     voicePlan: input.voicePlan,
     measuredAudio: input.measuredAudio,
+    pacingProfile: input.pacingProfile,
   }).forEach((issue) => issues.push(issue));
 
   // 6. Timeline & Motion Continuity Stage
@@ -92,6 +98,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
     quiz: input.quiz,
     timeline: input.timeline,
     staticIntervalThresholdSeconds: input.staticIntervalThresholdSeconds,
+    pacingProfile: input.pacingProfile,
   }).forEach((issue) => issues.push(issue));
 
   // 7. Render Integrity Verification

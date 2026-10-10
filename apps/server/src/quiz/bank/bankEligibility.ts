@@ -4,12 +4,15 @@ import {
   type BankQuestion,
   type BankQuestionWithCooldown,
   type QuizQuestionFormat,
+  type QuizShortTopicArchetype,
   type ReelArchetype,
   type TopicSourceExclusionReasonCode,
 } from "@studio/shared";
 import { detectStemAnswerLeak } from "./autoQa/stemLeakDetector.js";
 import { describeKidSafetyFinding, detectKidSafetyIssue } from "./kidSafety/kidSafetyDetector.js";
 import { isEntityRestrictedForChannel } from "./knowledgeBaseLoader.js";
+import { normalizeBankLanguage } from "./bankLanguageNormalizer.js";
+import { findQuizShortRuleViolation } from "./quizShortEligibilityRules.js";
 
 export interface EvaluatedBankQuestionCandidate {
   question: BankQuestion;
@@ -42,6 +45,12 @@ export interface ShortReelEligibilityOptions {
   allowStemLeak?: boolean;
 }
 
+export interface QuizShortEligibilityOptions {
+  targetArchetype?: QuizShortTopicArchetype;
+  targetLanguage?: string;
+  allowStemLeak?: boolean;
+}
+
 export interface EpisodeEligibilityOptions extends SharedEligibilityOptions {
   policy: "episode";
 }
@@ -51,80 +60,26 @@ export interface ShortReelBankEligibilityOptions extends SharedEligibilityOption
   targetArchetype: ShortReelEligibilityOptions["targetArchetype"];
 }
 
-export type BankEligibilityOptions = EpisodeEligibilityOptions | ShortReelBankEligibilityOptions;
-
-function normalizedLanguage(value: string | null | undefined): string | null {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim().toLowerCase();
-  if (!trimmed) return null;
-  const exact: Record<string, string> = {
-    en: "en",
-    eng: "en",
-    english: "en",
-    es: "es",
-    spa: "es",
-    spanish: "es",
-    ja: "ja",
-    jpn: "ja",
-    japanese: "ja",
-    de: "de",
-    deu: "de",
-    german: "de",
-    no: "no",
-    nor: "no",
-    norwegian: "no",
-    nl: "nl",
-    nld: "nl",
-    dut: "nl",
-    dutch: "nl",
-    da: "da",
-    dan: "da",
-    danish: "da",
-    sv: "sv",
-    swe: "sv",
-    swedish: "sv",
-    fi: "fi",
-    fin: "fi",
-    finnish: "fi",
-    fr: "fr",
-    fra: "fr",
-    french: "fr",
-    ko: "ko",
-    kor: "ko",
-    korean: "ko",
-    id: "id",
-    ind: "id",
-    indonesian: "id",
-    th: "th",
-    tha: "th",
-    thai: "th",
-    vi: "vi",
-    vie: "vi",
-    vietnamese: "vi",
-  };
-  const normalized = exact[trimmed.replaceAll("_", "-")];
-  if (normalized) return normalized;
-  const regionalMatch = trimmed.match(/^([a-z]{2,3})[-_][a-z]{2,4}$/);
-  return regionalMatch ? (exact[regionalMatch[1]] ?? null) : null;
+/** Quiz Short: portrait text budget, 2-3 choices, explanation optional. */
+export interface QuizShortBankEligibilityOptions extends SharedEligibilityOptions {
+  policy: "quiz_short";
+  targetArchetype?: QuizShortTopicArchetype;
 }
+
+export type BankEligibilityOptions = EpisodeEligibilityOptions | ShortReelBankEligibilityOptions | QuizShortBankEligibilityOptions;
 
 function reject(reason: TopicSourceExclusionReasonCode, detail: string): BankQuestionEligibilityResult {
   return { eligible: false, reason, detail };
 }
 
-function validateStructure(question: BankQuestionWithCooldown, options: BankEligibilityOptions): BankQuestionEligibilityResult | null {
-  if (question.status !== "approved") return reject("NOT_APPROVED", `Question status is '${question.status}', expected 'approved'`);
-  if (options.targetArchetype && question.archetype_id !== options.targetArchetype) {
-    return reject("ARCHETYPE_MISMATCH", `Question archetype '${question.archetype_id}' does not match '${options.targetArchetype}'`);
-  }
-  if (question.channel_cooldown?.is_cooldown) return reject("IN_COOLDOWN", "Question is currently in channel cooldown");
-  const expectedCount =
-    options.expectedChoiceCount ??
-    (options.targetArchetype
-      ? bankRequiredChoiceCountForArchetype(options.targetArchetype)
-      : question.format === "yes_no"
-        ? 2
-        : bankRequiredChoiceCountForArchetype(question.archetype_id));
+function resolveExpectedChoiceCount(question: BankQuestion, options: BankEligibilityOptions): number | undefined {
+  if (options.expectedChoiceCount !== undefined) return options.expectedChoiceCount;
+  if (options.targetArchetype) return bankRequiredChoiceCountForArchetype(options.targetArchetype);
+  return question.format === "yes_no" ? 2 : bankRequiredChoiceCountForArchetype(question.archetype_id);
+}
+
+function validateChoices(question: BankQuestion, options: BankEligibilityOptions): BankQuestionEligibilityResult | null {
+  const expectedCount = resolveExpectedChoiceCount(question, options);
   if (expectedCount !== undefined && question.choices.length !== expectedCount) {
     return reject("INVALID_CHOICE_COUNT", `Question has ${question.choices.length} choices, expected ${expectedCount}`);
   }
@@ -137,8 +92,21 @@ function validateStructure(question: BankQuestionWithCooldown, options: BankElig
   }
   const correct = question.choices.find((choice) => choice.id === question.correct_choice_id);
   if (!correct?.text.trim()) return reject("CORRECT_CHOICE_NOT_FOUND", "Correct choice is missing or empty");
-  if (!question.question.trim() || !question.explanation.trim())
+  return null;
+}
+
+function validateStructure(question: BankQuestionWithCooldown, options: BankEligibilityOptions): BankQuestionEligibilityResult | null {
+  if (question.status !== "approved") return reject("NOT_APPROVED", `Question status is '${question.status}', expected 'approved'`);
+  if (options.targetArchetype && question.archetype_id !== options.targetArchetype) {
+    return reject("ARCHETYPE_MISMATCH", `Question archetype '${question.archetype_id}' does not match '${options.targetArchetype}'`);
+  }
+  if (question.channel_cooldown?.is_cooldown) return reject("IN_COOLDOWN", "Question is currently in channel cooldown");
+  const choiceFailure = validateChoices(question, options);
+  if (choiceFailure) return choiceFailure;
+  const explanationRequired = options.policy !== "quiz_short";
+  if (!question.question.trim() || (explanationRequired && !question.explanation.trim())) {
     return reject("EMPTY_QUESTION_OR_EXPLANATION", "Question text or explanation is empty");
+  }
   if (
     options.expectedFormat &&
     (options.expectedFormat === "knowledge" ? question.format !== "multiple_choice" : question.format !== options.expectedFormat)
@@ -152,7 +120,7 @@ function validateStructure(question: BankQuestionWithCooldown, options: BankElig
 }
 
 function projectNative(question: BankQuestion): EvaluatedBankQuestionCandidate | null {
-  const resolvedLanguage = normalizedLanguage(question.language);
+  const resolvedLanguage = normalizeBankLanguage(question.language);
   if (resolvedLanguage !== "en") return null;
   const correct = question.choices.find((choice) => choice.id === question.correct_choice_id)!;
   return {
@@ -173,6 +141,18 @@ function projectNative(question: BankQuestion): EvaluatedBankQuestionCandidate |
   };
 }
 
+function validateKidSafety(question: BankQuestion): BankQuestionEligibilityResult | null {
+  const kidSafetyFinding = detectKidSafetyIssue(question);
+  if (kidSafetyFinding) return reject("KID_UNSAFE_CONTENT", describeKidSafetyFinding(kidSafetyFinding));
+  if (isEntityRestrictedForChannel(question.entity_id)) {
+    return reject(
+      "KID_UNSAFE_CONTENT",
+      `Subject ${question.entity_id} is curated as teen or mature and is not shown on the kids and family channel.`,
+    );
+  }
+  return null;
+}
+
 export function evaluateBankQuestionEligibility(
   question: BankQuestionWithCooldown,
   options: BankEligibilityOptions,
@@ -188,16 +168,14 @@ export function evaluateBankQuestionEligibility(
         : "Bank source is missing explicit English language metadata",
     );
   }
-  const kidSafetyFinding = detectKidSafetyIssue(question);
-  if (kidSafetyFinding) return reject("KID_UNSAFE_CONTENT", describeKidSafetyFinding(kidSafetyFinding));
-  if (isEntityRestrictedForChannel(question.entity_id)) {
-    return reject(
-      "KID_UNSAFE_CONTENT",
-      `Subject ${question.entity_id} is curated as teen or mature and is not shown on the kids and family channel.`,
-    );
-  }
+  const kidSafetyFailure = validateKidSafety(question);
+  if (kidSafetyFailure) return kidSafetyFailure;
   const stemLeak = options.allowStemLeak ? null : detectStemAnswerLeak(question);
   if (stemLeak) return reject("ANSWER_LEAKED_IN_STEM", stemLeak.message);
+  if (options.policy === "quiz_short") {
+    const violation = findQuizShortRuleViolation(question);
+    if (violation) return reject(violation.reason, violation.detail);
+  }
   return { eligible: true, candidate: native };
 }
 
@@ -208,6 +186,18 @@ export function evaluateShortReelQuestionEligibility(
   return evaluateBankQuestionEligibility(question, {
     policy: "short_reel",
     targetLanguage: "en",
+    targetArchetype: options.targetArchetype,
+    allowStemLeak: options.allowStemLeak,
+  });
+}
+
+export function evaluateQuizShortQuestionEligibility(
+  question: BankQuestionWithCooldown,
+  options: QuizShortEligibilityOptions = {},
+): BankQuestionEligibilityResult {
+  return evaluateBankQuestionEligibility(question, {
+    policy: "quiz_short",
+    targetLanguage: options.targetLanguage ?? "en",
     targetArchetype: options.targetArchetype,
     allowStemLeak: options.allowStemLeak,
   });

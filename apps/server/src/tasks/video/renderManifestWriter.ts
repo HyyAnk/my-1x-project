@@ -1,16 +1,25 @@
 import { readFile } from "node:fs/promises";
-import { nowIso, type Episode, type QuizAssetResolution, type ResolvedTransitionInstance } from "@studio/shared";
+import { nowIso, type QuizAssetResolution, type QuizProductRef, type ResolvedTransitionInstance } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import type { inspectRenderedVideo } from "../../quiz/qa/postRenderQa.js";
 import type { preflightQuizRender } from "../../quiz/qa/preflight.js";
 import type { RenderEngineSnapshot } from "./renderEngineSnapshot.js";
 import type { IntroOutroMediaResolution } from "./introOutroMediaResolver.js";
+import { toQuizProductRef } from "../../repository/quizProductPaths.js";
+
+/** The record fields the manifest reports; an Episode satisfies this directly, a Quiz Short through its product view. */
+export type RenderManifestProductSummary = {
+  episode_id: string;
+  quiz_config: { question_count: number; quiz_format: string };
+};
 
 export async function persistVideoRenderArtifacts(options: {
   repository: RepositoryService;
   channelId: string;
+  /** Product id; kept for Episode call sites. `product` carries the explicit kind when present. */
   episodeId: string;
-  episode: Episode;
+  product?: QuizProductRef;
+  episode: RenderManifestProductSummary;
   outputPath: string;
   html: string;
   sourceFingerprint: string;
@@ -33,6 +42,7 @@ export async function persistVideoRenderArtifacts(options: {
     repository,
     channelId,
     episodeId,
+    product = toQuizProductRef(channelId, episodeId),
     episode,
     outputPath,
     html,
@@ -61,7 +71,7 @@ export async function persistVideoRenderArtifacts(options: {
 
   const manifestPath = await repository.writeRenderManifest(
     channelId,
-    episodeId,
+    product,
     JSON.stringify({
       engine: "hyperframes",
       quiz_engine_version: 2,
@@ -113,8 +123,8 @@ export async function persistVideoRenderArtifacts(options: {
     }),
   );
 
-  const videoPath = await repository.writeVideoArtifact(channelId, episodeId, await readFile(outputPath));
-  await repository.saveVideoMetadata(channelId, episodeId, videoPath, Number(duration.toFixed(3)), manifestPath);
+  const videoPath = await repository.writeVideoArtifact(channelId, product, await readFile(outputPath));
+  await repository.saveVideoMetadata(channelId, product, videoPath, Number(duration.toFixed(3)), manifestPath);
 
   return { videoPath, manifestPath };
 }

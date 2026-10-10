@@ -1,30 +1,34 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { RepositoryError } from "./errors.js";
+import type { QuizProductId } from "./quizProductPaths.js";
 import type { QuizArtifactFilename, RepositoryRuntime } from "./runtime.js";
 
+/**
+ * Quiz artifacts live under `<product directory>/quiz/<filename>` for both Episodes and Quiz
+ * Shorts. See `quizProductPaths.ts` for how the `product` argument resolves its kind.
+ */
 export async function quizArtifactTarget(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   filename: QuizArtifactFilename,
 ): Promise<{ absolutePath: string; relativePath: string }> {
-  const episode = await this.getEpisode(channelId, episodeId);
-  const channel = await this.getChannel(channelId);
-  const episodeDirectory = this.resolvePath("channels", channel.slug, "episodes", episode.slug);
-  await this.assertRealPathInside(this.roots.channels, episodeDirectory);
-  const absolutePath = path.join(episodeDirectory, "quiz", filename);
-  return { absolutePath, relativePath: ["channels", channel.slug, "episodes", episode.slug, "quiz", filename].join("/") };
+  const location = await this.locateQuizProduct(channelId, product);
+  return {
+    absolutePath: path.join(location.directory, "quiz", filename),
+    relativePath: `${location.relativeDirectory}/quiz/${filename}`,
+  };
 }
 
 export async function readQuizArtifact<T>(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   filename: QuizArtifactFilename,
   schema: { parse(value: unknown): T },
 ): Promise<T | null> {
-  const target = await this.quizArtifactTarget(channelId, episodeId, filename);
+  const target = await this.quizArtifactTarget(channelId, product, filename);
   try {
     const raw = JSON.parse(await readFile(target.absolutePath, "utf8")) as unknown;
     return schema.parse(raw);
@@ -38,11 +42,11 @@ export async function readQuizArtifact<T>(
 export async function writeQuizArtifact<T>(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   filename: QuizArtifactFilename,
   value: T,
 ): Promise<string> {
-  const target = await this.quizArtifactTarget(channelId, episodeId, filename);
-  await this.queueEpisodeArtifactMutation(channelId, episodeId, () => this.writeJsonAtomic(target.absolutePath, value));
+  const target = await this.quizArtifactTarget(channelId, product, filename);
+  await this.queueEpisodeArtifactMutation(channelId, product, () => this.writeJsonAtomic(target.absolutePath, value));
   return target.relativePath;
 }

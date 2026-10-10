@@ -71,6 +71,12 @@ describe("topicHistoryHelpers", () => {
     it("accepts string content kind directly", () => {
       expect(getTopicFormatBadge("episode").format).toBe("16:9");
       expect(getTopicFormatBadge("short_reel").format).toBe("9:16");
+      expect(getTopicFormatBadge("quiz_short")).toMatchObject({
+        format: "9:16",
+        label: "Quiz Short",
+        kind: "quiz_short",
+        indicatorClass: "is-vertical",
+      });
     });
   });
 

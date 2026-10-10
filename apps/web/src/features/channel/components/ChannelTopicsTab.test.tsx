@@ -71,6 +71,107 @@ describe("ChannelTopicsTab", () => {
     run_id: runId,
   });
 
+  const createQuizShortTopic = (id: string, runId?: string, generatedAt = "2026-09-08T12:00:00.000Z"): TopicCandidate => ({
+    topic_id: id,
+    channel_id: mockChannel.channel_id,
+    content_kind: "quiz_short",
+    aspect_ratio: "9:16",
+    origin: "discovery",
+    age_band: "7-9",
+    archetype: "verdict_yes_no",
+    title: `Title for ${id}`,
+    premise: `Premise for ${id}`,
+    why_it_fits: "Good audience fit",
+    hook: `Hook for ${id}`,
+    estimated_potential: "High",
+    generated_at: generatedAt,
+    selected: false,
+    question_count: 5,
+    run_id: runId,
+  });
+
+  it("renders the latest run as Episode, Quiz Short and Short-Reel sections in that order", () => {
+    const latestRun: TopicRun = {
+      run_id: "run_three_kinds",
+      generated_at: "2026-09-08T12:00:00.000Z",
+      target_episode_count: 1,
+      target_quiz_short_count: 1,
+      target_short_reel_count: 1,
+      shortages: [],
+      candidates: [],
+    };
+
+    const { container, getByText } = render(
+      <ChannelTopicsTab
+        channel={mockChannel}
+        topics={[
+          createShortReelTopic("top_reel", "run_three_kinds"),
+          createQuizShortTopic("top_quiz_short", "run_three_kinds"),
+          createTopic("top_episode", "run_three_kinds"),
+        ]}
+        latestRun={latestRun}
+        topicTask={null}
+        topicClock={0}
+        topicHint=""
+        setTopicHint={vi.fn()}
+        topicTaskActive={false}
+        busy={null}
+        confirmingTopicId={null}
+        onSuggest={vi.fn()}
+        onConfirmTopic={vi.fn()}
+      />,
+    );
+
+    const sectionTitles = Array.from(container.querySelectorAll(".topic-format-section .topic-format-title")).map(
+      (node) => node.textContent,
+    );
+    expect(sectionTitles).toEqual(["Long-form Episodes (1)", "Quiz Shorts (1)", "Short-Reels (1)"]);
+    expect(getByText("Vertical 9:16 five-question quizzes")).toBeDefined();
+
+    const quizShortSection = container.querySelector(".topic-format-section-quiz_short");
+    expect(quizShortSection).not.toBeNull();
+    expect(quizShortSection?.querySelector(".topic-format-indicator.is-vertical")?.textContent).toBe("9:16");
+    expect(quizShortSection?.querySelector(".topic-grid-vertical")).not.toBeNull();
+    expect(quizShortSection?.textContent).toContain("Title for top_quiz_short");
+    expect(quizShortSection?.textContent).toContain("9:16 Quiz Short");
+    expect(quizShortSection?.textContent).toContain("Yes or No");
+    expect(quizShortSection?.textContent).toContain("Select Quiz Short");
+  });
+
+  it("confirms a Quiz Short with its default five questions and no visual style", () => {
+    const onConfirmTopic = vi.fn();
+    const latestRun: TopicRun = {
+      run_id: "run_quiz_short_only",
+      generated_at: "2026-09-08T12:00:00.000Z",
+      target_episode_count: 0,
+      target_quiz_short_count: 1,
+      target_short_reel_count: 0,
+      shortages: [],
+      candidates: [],
+    };
+    const topic = createQuizShortTopic("top_qs_confirm", "run_quiz_short_only");
+
+    const { getByRole } = render(
+      <ChannelTopicsTab
+        channel={mockChannel}
+        topics={[topic]}
+        latestRun={latestRun}
+        topicTask={null}
+        topicClock={0}
+        topicHint=""
+        setTopicHint={vi.fn()}
+        topicTaskActive={false}
+        busy={null}
+        confirmingTopicId={null}
+        onSuggest={vi.fn()}
+        onConfirmTopic={onConfirmTopic}
+      />,
+    );
+
+    fireEvent.click(getByRole("button", { name: /Select topic: Title for top_qs_confirm/i }));
+    expect(onConfirmTopic).toHaveBeenCalledWith(topic, 5, "mixed");
+  });
+
   it("groups candidates strictly by latestRun.run_id, placing older runs into history", () => {
     const latestRun: TopicRun = {
       run_id: "run_latest_abc",

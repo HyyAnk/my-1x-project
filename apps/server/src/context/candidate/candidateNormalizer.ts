@@ -16,9 +16,11 @@ import {
   ensureCandidateObject,
   extractCandidateTextFields,
   validateEpisodeCandidateSlot,
+  validateQuizShortCandidateSlot,
   validateShortReelCandidateSlot,
   type CandidateTextFields,
 } from "./candidateFieldValidator.js";
+import { buildQuizShortRunCandidate, buildQuizShortSlotCandidate } from "./quizShortCandidate.js";
 import { resolveCombinedAgeBand } from "../../quiz/bank/audience/audienceBand.js";
 import { deriveSlotSupportingCopy } from "./slotSupportingCopy.js";
 
@@ -124,6 +126,10 @@ export function buildCandidateFromSlot(
     const textFields = validateShortReelCandidateSlot(item, slotPlan, slotNumber);
     return buildShortReelSlotCandidate(item, slotPlan, textFields, channelId, origin, themeHint);
   }
+  if (slotPlan.contentKind === "quiz_short") {
+    const textFields = validateQuizShortCandidateSlot(item, slotPlan, slotNumber);
+    return buildQuizShortSlotCandidate(item, slotPlan, textFields, channelId, origin, themeHint);
+  }
 
   const { visualStyle, ageBand, ...textFields } = validateEpisodeCandidateSlot(item, slotPlan, slotNumber);
   return buildEpisodeSlotCandidate(item, slotPlan, textFields, channelId, origin, themeHint, visualStyle, ageBand);
@@ -214,6 +220,9 @@ export function buildCandidateFromItem(slot: AllocatedSlot, rawMatch: unknown, c
   const item = rawMatch as Record<string, unknown>;
   if (slot.contentKind === "short_reel") {
     return buildShortReelRunCandidate(slot, item, channelId);
+  }
+  if (slot.contentKind === "quiz_short") {
+    return buildQuizShortRunCandidate(slot, item, channelId);
   }
   return buildEpisodeRunCandidate(slot, item, channelId);
 }

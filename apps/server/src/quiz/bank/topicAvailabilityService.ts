@@ -6,12 +6,18 @@ import {
   type BankQuestionWithCooldown,
   type TopicAvailability,
   type TopicAvailabilityBatch,
+  type TopicAvailabilityReasonCode,
   type TopicCandidate,
   type TopicInventoryScanStatus,
   type TopicSourceBinding,
 } from "@studio/shared";
 import { scanBankInventory } from "./bankInventory.js";
-import { evaluateEpisodeQuestionEligibility, evaluateShortReelQuestionEligibility } from "./bankEligibility.js";
+import {
+  evaluateEpisodeQuestionEligibility,
+  evaluateQuizShortQuestionEligibility,
+  evaluateShortReelQuestionEligibility,
+  type BankQuestionEligibilityResult,
+} from "./bankEligibility.js";
 import type { RepositoryRuntime } from "../../repository/runtime.js";
 import type { RepositoryService } from "../../repository/service.js";
 
@@ -19,11 +25,15 @@ export type TopicAvailabilityBatchOptions = {
   overrides?: Record<string, { question_count?: number }>;
 };
 
+/** Short Reels bind one source; Quiz Shorts and Episodes bind their (possibly overridden) question count. */
 export function calculateRequiredSourceCount(candidate: TopicCandidate, options?: TopicAvailabilityBatchOptions): number {
   if (candidate.content_kind === "short_reel") {
     return 1;
   }
   const overrideCount = options?.overrides?.[candidate.topic_id]?.question_count;
+  if (candidate.content_kind === "quiz_short") {
+    return overrideCount ?? candidate.question_count;
+  }
   return overrideCount ?? candidate.question_count ?? candidate.source_bindings?.length ?? QUIZ_MIN_QUESTION_COUNT;
 }
 
@@ -35,6 +45,20 @@ interface SourceCapacityEvaluation {
   sourceCapacity: number;
   hasModified: boolean;
   hasCooldown: boolean;
+}
+
+function evaluateBoundSource(candidate: TopicCandidate, question: BankQuestionWithCooldown): BankQuestionEligibilityResult {
+  if (candidate.content_kind === "short_reel") {
+    return evaluateShortReelQuestionEligibility(question, { targetArchetype: candidate.archetype });
+  }
+  if (candidate.content_kind === "quiz_short") {
+    return evaluateQuizShortQuestionEligibility(question, { targetArchetype: candidate.archetype });
+  }
+  return evaluateEpisodeQuestionEligibility(question, {
+    targetLanguage: "en",
+    expectedFormat: candidate.quiz_format,
+    targetArchetype: candidate.archetype,
+  });
 }
 
 function evaluateCandidateSources(
@@ -53,17 +77,7 @@ function evaluateCandidateSources(
       break;
     }
 
-    const evalResult =
-      candidate.content_kind === "short_reel"
-        ? evaluateShortReelQuestionEligibility(question, {
-            targetArchetype: candidate.archetype,
-          })
-        : evaluateEpisodeQuestionEligibility(question, {
-            targetLanguage: "en",
-            expectedFormat: candidate.content_kind === "episode" ? candidate.quiz_format : undefined,
-            targetArchetype: candidate.archetype,
-          });
-
+    const evalResult = evaluateBoundSource(candidate, question);
     if (!evalResult.eligible) {
       if (question.channel_cooldown?.is_cooldown || evalResult.reason === "IN_COOLDOWN") {
         hasCooldown = true;
@@ -76,19 +90,28 @@ function evaluateCandidateSources(
   return { sourceCapacity, hasModified, hasCooldown };
 }
 
-function buildUnavailableScanAvailability(candidate: TopicCandidate, scanStatus: "unavailable" | "incomplete"): TopicAvailability {
-  const isUnavailable = scanStatus === "unavailable";
+function buildAvailability(
+  candidate: TopicCandidate,
+  reasonCode: TopicAvailabilityReasonCode,
+  recoveryAction: string,
+  sourceCapacity = 0,
+): TopicAvailability {
   return {
     topic_id: candidate.topic_id,
-    content_kind: candidate.content_kind === "short_reel" ? "short_reel" : "episode",
-    can_confirm: false,
-    reason_code: isUnavailable ? "UNAVAILABLE_SCAN" : "INCOMPLETE_SCAN",
-    retryable: true,
-    recovery_action: isUnavailable
-      ? "Bank inventory is currently unavailable. Try again later."
-      : "Bank inventory scan was incomplete. Re-scan or retry.",
-    source_capacity: 0,
+    content_kind: candidate.content_kind,
+    can_confirm: reasonCode === "AVAILABLE",
+    reason_code: reasonCode,
+    retryable: reasonCode !== "AVAILABLE",
+    recovery_action: recoveryAction,
+    source_capacity: sourceCapacity,
   };
+}
+
+function buildUnavailableScanAvailability(candidate: TopicCandidate, scanStatus: "unavailable" | "incomplete"): TopicAvailability {
+  if (scanStatus === "unavailable") {
+    return buildAvailability(candidate, "UNAVAILABLE_SCAN", "Bank inventory is currently unavailable. Try again later.");
+  }
+  return buildAvailability(candidate, "INCOMPLETE_SCAN", "Bank inventory scan was incomplete. Re-scan or retry.");
 }
 
 function assessSingleCandidateAvailability(
@@ -101,57 +124,29 @@ function assessSingleCandidateAvailability(
     return buildUnavailableScanAvailability(candidate, scanStatus);
   }
 
-  const contentKind = candidate.content_kind === "short_reel" ? "short_reel" : "episode";
   const bindings = (candidate as { source_bindings?: TopicSourceBinding[] }).source_bindings;
   if (!bindings || bindings.length === 0) {
-    return {
-      topic_id: candidate.topic_id,
-      content_kind: contentKind,
-      can_confirm: false,
-      reason_code: "UNBOUND_LEGACY_TOPIC",
-      retryable: true,
-      recovery_action: "Re-suggest topics to bind canonical sources.",
-      source_capacity: 0,
-    };
+    return buildAvailability(candidate, "UNBOUND_LEGACY_TOPIC", "Re-suggest topics to bind canonical sources.");
   }
 
   const { sourceCapacity, hasModified, hasCooldown } = evaluateCandidateSources(candidate, bindings, questionMap);
   if (hasModified) {
-    return {
-      topic_id: candidate.topic_id,
-      content_kind: contentKind,
-      can_confirm: false,
-      reason_code: "SOURCE_CHANGED",
-      retryable: true,
-      recovery_action: "Re-suggest topics to synchronize canonical content.",
-      source_capacity: 0,
-    };
+    return buildAvailability(candidate, "SOURCE_CHANGED", "Re-suggest topics to synchronize canonical content.");
   }
 
   const requiredCount = calculateRequiredSourceCount(candidate, options);
   if (sourceCapacity >= requiredCount) {
-    return {
-      topic_id: candidate.topic_id,
-      content_kind: contentKind,
-      can_confirm: true,
-      reason_code: "AVAILABLE",
-      retryable: false,
-      recovery_action: "Ready to confirm.",
-      source_capacity: sourceCapacity,
-    };
+    return buildAvailability(candidate, "AVAILABLE", "Ready to confirm.", sourceCapacity);
   }
 
-  return {
-    topic_id: candidate.topic_id,
-    content_kind: contentKind,
-    can_confirm: false,
-    reason_code: "NO_ELIGIBLE_SOURCES",
-    retryable: true,
-    recovery_action: hasCooldown
+  return buildAvailability(
+    candidate,
+    "NO_ELIGIBLE_SOURCES",
+    hasCooldown
       ? "Sources are currently in cooldown. Wait for cooldown expiry or re-suggest topics."
       : "Re-suggest topics to allocate fresh sources.",
-    source_capacity: sourceCapacity,
-  };
+    sourceCapacity,
+  );
 }
 
 function resolveBatchTarget(

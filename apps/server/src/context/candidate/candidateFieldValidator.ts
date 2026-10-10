@@ -1,4 +1,4 @@
-import type { EpisodeTopicCandidate } from "@studio/shared";
+import type { EpisodeTopicCandidate, TopicContentKind } from "@studio/shared";
 import type { TopicMatrixSlotPlan } from "../topicMatrixPlanner.js";
 import type { AllocatedSlot } from "../bankTopicAllocation.js";
 
@@ -9,6 +9,12 @@ export interface CandidateTextFields {
   hook: string;
   estimatedPotential: string;
 }
+
+const SLOT_KIND_LABELS: Record<TopicContentKind, string> = {
+  episode: "Episode",
+  quiz_short: "Quiz-Short",
+  short_reel: "Short-Reel",
+};
 
 export interface ValidatedEpisodeSlotFields extends CandidateTextFields {
   visualStyle: EpisodeTopicCandidate["visual_style"];
@@ -73,7 +79,7 @@ export function checkSlotKindAndArchetype(item: Record<string, unknown>, slotPla
       : undefined;
   if (!rawArchetype) throw new Error(`Slot ${slotNumber} candidate is missing required archetype`);
   if (rawArchetype !== slotPlan.archetype) {
-    const kindLabel = slotPlan.contentKind === "short_reel" ? "Short-Reel" : "Episode";
+    const kindLabel = SLOT_KIND_LABELS[slotPlan.contentKind];
     throw new Error(`Slot ${slotNumber} ${kindLabel} candidate has archetype "${rawArchetype}", expected assigned "${slotPlan.archetype}"`);
   }
   const rawDomain = typeof item.domain_id === "string" ? item.domain_id.trim() : "";
@@ -103,6 +109,18 @@ export function validateEpisodeCandidateSlot(
  * Validates a short-reel candidate slot against its plan and extracts validated text fields.
  */
 export function validateShortReelCandidateSlot(
+  item: Record<string, unknown>,
+  slotPlan: TopicMatrixSlotPlan,
+  slotNumber: number,
+): CandidateTextFields {
+  checkSlotKindAndArchetype(item, slotPlan, slotNumber);
+  return extractCandidateTextFields(item, slotNumber);
+}
+
+/**
+ * Validates a Quiz Short candidate slot against its plan and extracts validated text fields.
+ */
+export function validateQuizShortCandidateSlot(
   item: Record<string, unknown>,
   slotPlan: TopicMatrixSlotPlan,
   slotNumber: number,

@@ -1,84 +1,28 @@
-import {
-  QuizTimelineSchema,
-  gameplayTimingPolicy,
-  resolveGameplayPolicy,
-  type BridgeSceneConfig,
-  type DirectorPlan,
-  type QuizTimeline,
-  type QuizV2,
-  type VoicePlan,
-} from "@studio/shared";
-import { timingPolicyForAgeBand, type QuizTimingPolicy } from "./timingPolicy.js";
+import { QuizTimelineSchema, type QuizTimeline } from "@studio/shared";
 import { TimelineContext, round } from "./compilers/timelineContext.js";
-import { compileIntroStage } from "./compilers/introCompiler.js";
-import { compileQuestionBlock } from "./compilers/questionCompiler.js";
-import { compileMidRollCtaStage } from "./compilers/midRollCtaCompiler.js";
-import { resolveMidRollCtaAnchorIndex } from "../bridge/midRollCta.js";
-import { compilePreOutroStage } from "./compilers/preOutroCompiler.js";
-import { compileOutroStage } from "./compilers/outroCompiler.js";
+import { compileEpisodeStages } from "./compilers/episodeStages.js";
+import { compileQuizShortStages } from "./compilers/quizShortStages.js";
+import { baseTimingPolicy } from "./compilers/questionTimingPolicy.js";
+import { resolveTimelinePacingProfile } from "./quizShortTimelinePolicy.js";
+import type { TimelineCompileInput } from "./compileTimeline.types.js";
 
-export type TimelineCompileInput = {
-  quiz: QuizV2;
-  director: DirectorPlan;
-  voicePlan: VoicePlan;
-  audioDurations?: Record<string, number>;
-  timing?: Partial<QuizTimingPolicy>;
-  introDuration?: number;
-  outroDuration?: number;
-  channelName?: string;
-  topic?: string;
-  bridgeConfig?: BridgeSceneConfig;
-};
+export type { TimelineCompileInput } from "./compileTimeline.types.js";
+export {
+  QUIZ_SHORT_STAGE_SEGMENT_IDS,
+  SCORE_CTA_DURATION_SECONDS,
+  SCORE_CTA_ON_SCREEN_COPY,
+  type QuizTimelineProductKind,
+} from "./quizShortTimelinePolicy.js";
 
 export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
-  const policy = { ...timingPolicyForAgeBand(input.quiz.age_band), ...input.timing };
-  const ctx = new TimelineContext(policy, input.audioDurations);
+  const pacingProfile = resolveTimelinePacingProfile(input);
+  const basePolicy = baseTimingPolicy(input, pacingProfile);
+  const ctx = new TimelineContext(basePolicy, input.audioDurations);
 
-  // 1. Intro Stage
-  compileIntroStage(ctx, input.director, input.voicePlan, input.introDuration, {
-    bridgeConfig: input.bridgeConfig,
-    topic: input.topic,
-    questionCount: input.quiz.questions.length,
-  });
+  if (input.productKind === "quiz_short") compileQuizShortStages(ctx, input, basePolicy);
+  else compileEpisodeStages(ctx, input, basePolicy);
 
-  // 2. Question Blocks, with the subscribe CTA as a mid-roll interstitial after the anchor question
-  const questionCount = input.quiz.questions.length;
-  const ctaAnchorIndex = resolveMidRollCtaAnchorIndex(questionCount);
-  for (const [questionIndex, question] of input.quiz.questions.entries()) {
-    const beat = input.director.beats.find((item) => item.question_id === question.id);
-    ctx.policy =
-      input.director.gameplay_policy_version && beat
-        ? { ...gameplayTimingPolicy(resolveGameplayPolicy(beat), input.quiz.age_band, question.difficulty), ...input.timing }
-        : policy;
-    compileQuestionBlock(ctx, question, questionIndex, input.director, input.voicePlan);
-    if (questionIndex === ctaAnchorIndex) {
-      ctx.policy = policy;
-      compileMidRollCtaStage(ctx, input.voicePlan, {
-        bridgeConfig: input.bridgeConfig,
-        channelName: input.channelName,
-        hasNextQuestion: questionIndex < questionCount - 1,
-      });
-    }
-  }
-  ctx.policy = policy;
-
-  // 3. Pre-Outro Stage
-  const hasOutro =
-    (input.outroDuration !== undefined && input.outroDuration > 0) ||
-    input.voicePlan.segments.some((segment) => segment.role === "outro");
-  compilePreOutroStage(ctx, input.voicePlan, {
-    bridgeConfig: input.bridgeConfig,
-    hasNextOutro: hasOutro,
-  });
-
-  // 4. Outro Stage
-  compileOutroStage(ctx, input.voicePlan, input.outroDuration);
-
-  // 5. Validate All Voice Segments Were Scheduled
-  const missingNarration = input.voicePlan.segments.filter((segment) => !ctx.scheduled.has(segment.segment_id));
-  if (missingNarration.length) {
-    throw new Error("Timeline omitted voice segments: " + missingNarration.map((segment) => segment.segment_id).join(", "));
-  }
+  assertEveryVoiceSegmentScheduled(ctx, input);
 
   const sorted = ctx.events
     .map((event, index) => ({ event, index }))
@@ -95,4 +39,11 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
     duration_seconds: Math.max(0.1, round(ctx.cursor)),
     events: sorted,
   });
+}
+
+function assertEveryVoiceSegmentScheduled(ctx: TimelineContext, input: TimelineCompileInput): void {
+  const missingNarration = input.voicePlan.segments.filter((segment) => !ctx.scheduled.has(segment.segment_id));
+  if (missingNarration.length) {
+    throw new Error("Timeline omitted voice segments: " + missingNarration.map((segment) => segment.segment_id).join(", "));
+  }
 }

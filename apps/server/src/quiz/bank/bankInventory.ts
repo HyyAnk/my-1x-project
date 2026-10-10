@@ -3,10 +3,11 @@ import {
   sourceSha256Hex,
   type BankQuestionWithCooldown,
   type QuizConfigFormat,
+  type TopicContentKind,
   type TopicSourceExclusionReasonCode,
   type TopicInventoryScanStatus,
 } from "@studio/shared";
-import type { EvaluatedBankQuestionCandidate } from "./bankEligibility.js";
+import type { BankQuestionEligibilityResult, EvaluatedBankQuestionCandidate } from "./bankEligibility.js";
 import { createBankInventoryEvaluator, type BankInventoryEvaluator } from "./bankInventoryEvaluator.js";
 
 export interface BankInventoryReader {
@@ -36,9 +37,9 @@ export interface BankInventoryScan {
   snapshot_token: string;
   scanned_count: number;
   total_reported: number;
-  eligible_by_policy: { episode: number; short_reel: number };
+  eligible_by_policy: Record<TopicContentKind, number>;
   exclusion_counts: Partial<Record<TopicSourceExclusionReasonCode, number>>;
-  eligible_sources: Array<{ policy: "episode" | "short_reel"; candidate: EvaluatedBankQuestionCandidate; source_content_hash: string }>;
+  eligible_sources: Array<{ policy: TopicContentKind; candidate: EvaluatedBankQuestionCandidate; source_content_hash: string }>;
   scanned_questions: BankQuestionWithCooldown[];
   error_code?: "BANK_READ_FAILED" | "BANK_SCAN_TRUNCATED" | "BANK_SCAN_INCONSISTENT";
 }
@@ -54,8 +55,39 @@ function recordExclusions(
 ): void {
   const episode = evaluator.episode(question);
   if (!episode.eligible) increment(exclusions, episode.reason);
+  const quizShort = evaluator.quizShort(question);
+  if (quizShort && !quizShort.eligible) increment(exclusions, quizShort.reason);
   const shortReel = evaluator.shortReel(question);
   if (shortReel && !shortReel.eligible) increment(exclusions, shortReel.reason);
+}
+
+const SCAN_POLICIES: readonly TopicContentKind[] = ["episode", "quiz_short", "short_reel"];
+
+function evaluateByPolicy(
+  evaluator: BankInventoryEvaluator,
+  policy: TopicContentKind,
+  question: BankQuestionWithCooldown,
+): BankQuestionEligibilityResult | null {
+  if (policy === "episode") return evaluator.episode(question);
+  if (policy === "quiz_short") return evaluator.quizShort(question);
+  return evaluator.shortReel(question);
+}
+
+function collectEligibleSources(
+  scanned: BankQuestionWithCooldown[],
+  evaluator: BankInventoryEvaluator,
+): Pick<BankInventoryScan, "eligible_by_policy" | "eligible_sources"> {
+  const eligibleByPolicy: Record<TopicContentKind, number> = { episode: 0, quiz_short: 0, short_reel: 0 };
+  const eligibleSources: BankInventoryScan["eligible_sources"] = [];
+  for (const question of scanned) {
+    for (const policy of SCAN_POLICIES) {
+      const result = evaluateByPolicy(evaluator, policy, question);
+      if (!result?.eligible) continue;
+      eligibleByPolicy[policy] += 1;
+      eligibleSources.push({ policy, candidate: result.candidate, source_content_hash: evaluator.sourceHash(result.candidate.question) });
+    }
+  }
+  return { eligible_by_policy: eligibleByPolicy, eligible_sources: eligibleSources };
 }
 
 function classifyStatus(scanned: number, total: number): TopicInventoryScanStatus {
@@ -71,28 +103,7 @@ function createResult(
   evaluator: BankInventoryEvaluator,
   errorCode?: BankInventoryScan["error_code"],
 ): BankInventoryScan {
-  const eligibleByPolicy = { episode: 0, short_reel: 0 };
-  const eligibleSources: BankInventoryScan["eligible_sources"] = [];
-  for (const question of scanned) {
-    const episode = evaluator.episode(question);
-    if (episode.eligible) {
-      eligibleByPolicy.episode += 1;
-      eligibleSources.push({
-        policy: "episode",
-        candidate: episode.candidate,
-        source_content_hash: evaluator.sourceHash(episode.candidate.question),
-      });
-    }
-    const shortReel = evaluator.shortReel(question);
-    if (shortReel?.eligible) {
-      eligibleByPolicy.short_reel += 1;
-      eligibleSources.push({
-        policy: "short_reel",
-        candidate: shortReel.candidate,
-        source_content_hash: evaluator.sourceHash(shortReel.candidate.question),
-      });
-    }
-  }
+  const { eligible_by_policy: eligibleByPolicy, eligible_sources: eligibleSources } = collectEligibleSources(scanned, evaluator);
   const digest = sourceSha256Hex(
     sourceCanonicalJsonStringify({
       sources: scanned
@@ -101,7 +112,7 @@ function createResult(
       total,
       status,
       exclusions,
-      policies: ["episode", "short_reel"],
+      policies: SCAN_POLICIES,
       episode_expected_format: evaluator.expectedFormat ?? null,
     }),
   );

@@ -1,12 +1,14 @@
 import type { RepositoryRoots } from "./types.js";
 import type { EntityIdResolver } from "./cache/entityIdResolver.js";
 import type { ChannelCache } from "./cache/channelCache.js";
+import type { QuizShortSlugCache } from "./cache/quizShortSlugCache.js";
 import type {
   IStorageRepository,
   IChannelRepository,
   IEpisodeRepository,
   IMascotRepository,
   IQuizArtifactRepository,
+  IQuizShortRepository,
   IQuestionBankRepository,
   IShortReelRepository,
   IMediaRepository,
@@ -14,6 +16,8 @@ import type {
 } from "./contracts/index.js";
 
 export * from "./contracts/index.js";
+export type { QuizProductId } from "./quizProductPaths.js";
+export type { QuizProductLocation, QuizProductRecord, QuizProductRecordPatch } from "./quizProductLocator.js";
 
 export interface RepositoryRuntime
   extends
@@ -22,6 +26,7 @@ export interface RepositoryRuntime
     IEpisodeRepository,
     IMascotRepository,
     IQuizArtifactRepository,
+    IQuizShortRepository,
     IQuestionBankRepository,
     IShortReelRepository,
     IMediaRepository,
@@ -31,6 +36,7 @@ export interface RepositoryRuntime
   readonly storageRoot: string;
   readonly entityIdResolver: EntityIdResolver;
   readonly channelCache: ChannelCache;
+  readonly quizShortSlugCache: QuizShortSlugCache;
   roots: RepositoryRoots;
   questionHistoryWrites: Map<string, Promise<void>>;
   usageLedgerWrites: Map<string, Promise<void>>;

@@ -1,5 +1,6 @@
 import {
   getQuizLayoutCapability,
+  isQuizPortraitLayoutId,
   resolveQuizLayout,
   type DirectorBeat,
   type MascotRenderAspectRatio,
@@ -10,10 +11,19 @@ import {
   type ResolvedQuizLayoutId,
 } from "@studio/shared";
 
+/**
+ * Beats carry no aspect ratio of their own, so callers that do not know the product
+ * canvas infer it from the layout family: portrait ids resolve against 9:16, everything
+ * else (including "auto") keeps the landscape default.
+ */
+export function inferBeatAspectRatio(beat: Pick<DirectorBeat, "layout_id">): MascotRenderAspectRatio {
+  return isQuizPortraitLayoutId(beat.layout_id) ? "9:16" : "16:9";
+}
+
 export function resolveQuestionLayout(
   question: QuizQuestion,
   beat: DirectorBeat,
-  aspectRatio: MascotRenderAspectRatio = "16:9",
+  aspectRatio: MascotRenderAspectRatio = inferBeatAspectRatio(beat),
 ): QuizLayoutResolutionResult<ResolvedQuizLayoutId> {
   const rawMedia: readonly QuizLayoutMediaKind[] = Array.isArray(beat.asset_intents)
     ? beat.asset_intents.includes("choice_illustration")

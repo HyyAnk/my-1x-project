@@ -1,6 +1,7 @@
 import type { TopicAvailability, TopicCandidate } from "@studio/shared";
 import { TopicLayoutPreviewButton } from "../TopicLayoutPreviewButton";
 import { formatDomain } from "./topicCardHelpers";
+import { getTopicArchetypeLabel, getTopicKindPresentation } from "./topicKindPresentation";
 
 export interface TopicTopBarProps {
   topic: TopicCandidate;
@@ -10,28 +11,20 @@ export interface TopicTopBarProps {
 }
 
 export function TopicTopBar({ topic, availability, canConfirm, sourceCapacity }: TopicTopBarProps) {
-  const isShortReel = topic.content_kind === "short_reel";
+  const kind = getTopicKindPresentation(topic.content_kind);
 
   return (
     <div className="topic-card-top-bar">
       <div className="topic-card-top-row">
         <div className="topic-card-format-group">
-          <span className={`topic-format-badge ${isShortReel ? "is-vertical" : "is-landscape"}`}>
-            {isShortReel ? "9:16 Short-Reel" : "16:9 Episode"}
-          </span>
+          <span className={`topic-format-badge ${kind.isPortrait ? "is-vertical" : "is-landscape"}`}>{kind.badgeText}</span>
           <span className="topic-origin-badge">{topic.origin === "keyword" ? "Keyword" : "Discovery"}</span>
         </div>
         <div>
           {topic.content_kind === "episode" ? (
             <TopicLayoutPreviewButton quizFormat={topic.quiz_format} archetype={topic.archetype} layoutId={topic.suggested_layout} />
           ) : (
-            <span className="topic-archetype-tag">
-              {topic.archetype === "versus_faceoff"
-                ? "Versus Face-off"
-                : topic.archetype === "verdict_yes_no"
-                  ? "Yes or No"
-                  : "Deep Trivia"}
-            </span>
+            <span className="topic-archetype-tag">{getTopicArchetypeLabel(topic.archetype)}</span>
           )}
         </div>
       </div>

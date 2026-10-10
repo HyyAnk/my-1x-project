@@ -66,21 +66,21 @@ describe("Bridge Showcase Asset Planning Integration (Phase 3)", () => {
 
     expect(showcaseAssets[0].asset_id).toBe("asset-bridge-item-1");
     expect(showcaseAssets[0].aspect_ratio).toBe("1:1");
-    expect(showcaseAssets[0].transparent_background).toBe(true);
+    expect(showcaseAssets[0].transparent_background).toBe(false);
     expect(showcaseAssets[0].required).toBe(false);
     expect(showcaseAssets[0].semantic_key).toBe("bridge:showcase:asset-bridge-item-1");
 
     expect(showcaseAssets[1].asset_id).toBe("asset-bridge-item-2");
-    expect(showcaseAssets[1].aspect_ratio).toBe("4:3");
+    expect(showcaseAssets[1].aspect_ratio).toBe("1:1");
     expect(showcaseAssets[1].transparent_background).toBe(false);
 
     expect(showcaseAssets[2].asset_id).toBe("asset-bridge-item-3");
-    expect(showcaseAssets[2].aspect_ratio).toBe("4:3");
+    expect(showcaseAssets[2].aspect_ratio).toBe("1:1");
     expect(showcaseAssets[2].transparent_background).toBe(false);
 
     expect(showcaseAssets[3].asset_id).toBe("asset-bridge-item-4");
     expect(showcaseAssets[3].aspect_ratio).toBe("1:1");
-    expect(showcaseAssets[3].transparent_background).toBe(true);
+    expect(showcaseAssets[3].transparent_background).toBe(false);
   });
 
   it("plans 4 showcase items when bridgeConfig is provided and enabled", () => {
@@ -90,7 +90,13 @@ describe("Bridge Showcase Asset Planning Integration (Phase 3)", () => {
         enableTopicScene: true,
         enableCtaScene: true,
         enablePreOutroScene: true,
-        timing: { topicPauseSeconds: 0.5, ctaPauseSeconds: 0.5, preOutroPauseSeconds: 0.5, transitionType: "brand_logo_stinger", stingerDurationSeconds: 1.3 },
+        timing: {
+          topicPauseSeconds: 0.5,
+          ctaPauseSeconds: 0.5,
+          preOutroPauseSeconds: 0.5,
+          transitionType: "brand_logo_stinger",
+          stingerDurationSeconds: 1.3,
+        },
       },
     });
 
@@ -105,7 +111,13 @@ describe("Bridge Showcase Asset Planning Integration (Phase 3)", () => {
         enableTopicScene: false,
         enableCtaScene: true,
         enablePreOutroScene: true,
-        timing: { topicPauseSeconds: 0.5, ctaPauseSeconds: 0.5, preOutroPauseSeconds: 0.5, transitionType: "brand_logo_stinger", stingerDurationSeconds: 1.3 },
+        timing: {
+          topicPauseSeconds: 0.5,
+          ctaPauseSeconds: 0.5,
+          preOutroPauseSeconds: 0.5,
+          transitionType: "brand_logo_stinger",
+          stingerDurationSeconds: 1.3,
+        },
       },
     });
 

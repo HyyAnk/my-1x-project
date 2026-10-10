@@ -1,5 +1,6 @@
-import type { DirectorBeat, QuizQuestion, VoicePlan } from "@studio/shared";
+import type { DirectorBeat, QuizPacingProfile, QuizQuestion, VoicePlan } from "@studio/shared";
 import { type TimelineContext, round } from "../timelineContext.js";
+import { shouldCompileExplanationBeat } from "./explanationRule.js";
 
 function scheduleFactOrExplanation(
   ctx: TimelineContext,
@@ -42,6 +43,7 @@ export function compileExplanationBeat(
   questionStart: number,
   rewardAt: number,
   revealNarrationEnd: number,
+  pacingProfile: QuizPacingProfile = "standard",
 ): void {
   const policy = ctx.policy;
   let postReveal = Math.max(
@@ -50,7 +52,7 @@ export function compileExplanationBeat(
   );
 
   const explanationSegment = voicePlan.segments.find((segment) => segment.segment_id === question.id + ":explanation");
-  if (explanationSegment) {
+  if (explanationSegment && shouldCompileExplanationBeat(question, pacingProfile, policy)) {
     const duration = scheduleFactOrExplanation(
       ctx,
       question,

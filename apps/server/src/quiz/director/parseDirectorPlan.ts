@@ -18,8 +18,13 @@ export function parseDirectorPlanOutput(output: string, quiz: QuizV2): DirectorP
   return assertDirectorPlanValid(quiz, parsed);
 }
 
-export function createDefaultDirectorPlan(quiz: QuizV2, _aspectRatioOrTheme?: string, _paletteId?: string): DirectorPlan {
-  const aspectRatio: MascotRenderAspectRatio = "16:9";
+/** The second argument historically carried either a theme name or an aspect ratio; only "9:16" selects portrait. */
+export function resolveDirectorPlanAspectRatio(aspectRatioOrTheme?: string): MascotRenderAspectRatio {
+  return aspectRatioOrTheme === "9:16" ? "9:16" : "16:9";
+}
+
+export function createDefaultDirectorPlan(quiz: QuizV2, aspectRatioOrTheme?: string, _paletteId?: string): DirectorPlan {
+  const aspectRatio = resolveDirectorPlanAspectRatio(aspectRatioOrTheme);
   const minimumThinking: Record<QuizV2["age_band"], number> = { "4-6": 7.5, "7-9": 7, "10-12": 6.8, family: 7 };
   const beats: DirectorPlan["beats"] = quiz.questions.map((question, index): DirectorPlan["beats"][number] => {
     const archetype =

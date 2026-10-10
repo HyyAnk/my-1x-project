@@ -9,15 +9,16 @@ import { readQuizArtifacts } from "./quizGenerationStage.js";
 import type { QuizArtifacts, QuizOrchestratorInput } from "../orchestrator.js";
 import { resolveIntroOutroConfig } from "./assetsVoiceStages.js";
 import { resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
+import { loadPipelineProductView, resolvePipelineProductRef } from "../quizProductView.js";
 
 export async function compileTimeline(
   input: QuizOrchestratorInput,
 ): Promise<{ timeline: QuizTimeline; artifact_path: string; invalidated: string[] }> {
-  const [quiz, director_plan, voice_plan, episode, channel] = await Promise.all([
+  const [quiz, director_plan, voice_plan, view, channel] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
     input.repository.readVoicePlan(input.channelId, input.episodeId),
-    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
+    loadPipelineProductView(input).catch(() => null),
     input.repository.getChannel(input.channelId).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before compiling the timeline", "QUIZ_REQUIRED");
@@ -31,9 +32,10 @@ export async function compileTimeline(
   for (const segment of voice_plan.segments) {
     if (segment.duration_seconds !== null) audioDurations[segment.segment_id] = segment.duration_seconds;
   }
-  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, resolvePipelineProductRef(input));
   const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode?.quiz_config?.channel_brand_name);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, view?.quiz_config.channel_brand_name);
+  // Seam: the short pacing profile (view.quiz_config.pacing_profile) selects the bookend-free compiler in the next phase.
   const timeline = compileQuizTimeline({
     quiz,
     director: director_plan,
@@ -42,7 +44,7 @@ export async function compileTimeline(
     introDuration: introOutro.introDuration,
     outroDuration: introOutro.outroDuration,
     channelName,
-    topic: episode?.topic?.title,
+    topic: view?.topic?.title,
     bridgeConfig,
   });
   const artifact_path = await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
@@ -73,8 +75,8 @@ export async function runQa(input: QuizOrchestratorInput): Promise<{ assessment:
 export async function assertQuizRenderReady(
   input: QuizOrchestratorInput,
 ): Promise<{ artifacts: QuizArtifacts; assessment: QuizAssessment }> {
-  const [episode, channel, artifacts] = await Promise.all([
-    input.repository.getEpisode(input.channelId, input.episodeId),
+  const [view, channel, artifacts] = await Promise.all([
+    loadPipelineProductView(input),
     input.repository.getChannel(input.channelId),
     readQuizArtifacts(input),
   ]);
@@ -102,7 +104,7 @@ export async function assertQuizRenderReady(
     resolvedAssets: artifacts.asset_resolution?.assets ?? [],
     voicePlan: artifacts.voice_plan,
     timeline: artifacts.timeline,
-    measuredAudio: episode.narration_duration_seconds !== null,
+    measuredAudio: view.media.narration_duration_seconds !== null,
     mascot,
     mascotConfig: channel.mascot_config,
   });

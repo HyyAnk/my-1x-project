@@ -210,6 +210,83 @@ describe("Stage 5: Topic Batch Availability Route", () => {
     expect(srAvail?.source_capacity).toBe(1);
   });
 
+  it("requires exactly question_count eligible sources for Quiz Short candidates", async () => {
+    const bind = (question: BankQuestion) => ({
+      source_question_id: question.id,
+      source_hash_version: 1 as const,
+      source_content_hash: hashBankQuestionSource(question),
+      projection_provenance: {
+        source_variant: "native" as const,
+        resolved_language: "en" as const,
+        translation_key: null,
+        translation_provenance: "native" as const,
+      },
+    });
+    const extraApproved = makeBankQuestion("avail-qs-approved", { question: "How many legs does a spider have?" });
+    const extraDraft = makeBankQuestion("avail-qs-draft", { question: "Which bird cannot fly?", status: "draft" });
+    await app.repository.saveQuestionBankQuestion(extraApproved);
+    await app.repository.saveQuestionBankQuestion(extraDraft);
+    const quizShortRun: TopicRunResult = {
+      run_id: "run-avail-quiz-short",
+      target_episode_count: 0,
+      target_quiz_short_count: 2,
+      target_short_reel_count: 0,
+      shortages: [],
+      candidates: [
+        {
+          slot_id: "slot_5",
+          topic_id: "top-qs-ready",
+          channel_id: testChannelId,
+          title: "Three Animal Facts",
+          premise: "Three quick animal questions",
+          why_it_fits: "Snackable",
+          hook: "Ready?",
+          estimated_potential: "High",
+          generated_at: new Date().toISOString(),
+          selected: false,
+          origin: "discovery",
+          content_kind: "quiz_short",
+          question_count: 3,
+          aspect_ratio: "9:16",
+          age_band: "7-9",
+          archetype: "deep_trivia",
+          source_bindings: [bind(q1), bind(q2), bind(q3)],
+        },
+        {
+          slot_id: "slot_6",
+          topic_id: "top-qs-short",
+          channel_id: testChannelId,
+          title: "Five Animal Facts",
+          premise: "Five quick animal questions",
+          why_it_fits: "Snackable",
+          hook: "Ready?",
+          estimated_potential: "High",
+          generated_at: new Date().toISOString(),
+          selected: false,
+          origin: "discovery",
+          content_kind: "quiz_short",
+          question_count: 5,
+          aspect_ratio: "9:16",
+          age_band: "7-9",
+          archetype: "deep_trivia",
+          source_bindings: [bind(q1), bind(q2), bind(q3), bind(extraApproved), bind(extraDraft)],
+        },
+      ],
+    };
+
+    await app.repository.saveTopicRun(testChannelId, quizShortRun);
+
+    const res = await app.server.inject({ method: "GET", url: `/api/channels/${testChannelId}/topics/availability` });
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body) as TopicAvailabilityBatch;
+
+    const ready = body.topics.find((t: TopicAvailability) => t.topic_id === "top-qs-ready");
+    expect(ready).toMatchObject({ content_kind: "quiz_short", can_confirm: true, reason_code: "AVAILABLE", source_capacity: 3 });
+
+    const short = body.topics.find((t: TopicAvailability) => t.topic_id === "top-qs-short");
+    expect(short).toMatchObject({ content_kind: "quiz_short", can_confirm: false, reason_code: "NO_ELIGIBLE_SOURCES", source_capacity: 4 });
+  });
+
   it("identifies UNBOUND_LEGACY_TOPIC candidates correctly", async () => {
     const legacyCandidate: TopicCandidate = {
       topic_id: "top-legacy-unbound",

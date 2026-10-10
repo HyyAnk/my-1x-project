@@ -1,6 +1,7 @@
 import { ArrowRight, CircleNotch } from "@phosphor-icons/react";
 import type { QuizImageStyle, TopicAvailability, TopicCandidate } from "@studio/shared";
 import { TopicAvailabilityNotice, TopicTopBar, useTopicCardState } from "./topicCard/index";
+import { getTopicKindPresentation } from "./topicCard/topicKindPresentation";
 
 export interface TopicCardProps {
   topic: TopicCandidate;
@@ -11,24 +12,32 @@ export interface TopicCardProps {
   disabled: boolean;
 }
 
+function resolveConfirmQuestionCount(topic: TopicCandidate, minQuestionCount: number, maxAllowedQuestions: number): number {
+  if (topic.content_kind === "short_reel") return 1;
+  if (topic.content_kind === "quiz_short") return Math.max(minQuestionCount, Math.min(topic.question_count, maxAllowedQuestions));
+  return Math.max(1, Math.min(topic.question_count || 8, maxAllowedQuestions));
+}
+
 export function TopicCard({ topic, channelStyles, availability, onConfirm, busy, disabled }: TopicCardProps) {
-  const { isShortReel, canConfirm, sourceCapacity, maxAllowedQuestions, selectedStyle } = useTopicCardState({
+  const { isShortReel, canConfirm, sourceCapacity, maxAllowedQuestions, minQuestionCount, selectedStyle } = useTopicCardState({
     topic,
     availability,
     channelStyles,
   });
+  const kind = getTopicKindPresentation(topic.content_kind);
 
   const isClickable = !disabled && !busy && canConfirm;
 
   const handleSelect = () => {
     if (!isClickable) return;
-    const finalQuestionCount = isShortReel ? 1 : Math.max(1, Math.min(topic.question_count || 8, maxAllowedQuestions));
+    const finalQuestionCount = resolveConfirmQuestionCount(topic, minQuestionCount, maxAllowedQuestions);
     const finalStyle = topic.content_kind === "episode" ? (topic.visual_style ?? selectedStyle) : "mixed";
     onConfirm(finalQuestionCount, finalStyle);
   };
 
   const cardTitleTooltip =
     !canConfirm && availability?.recovery_action ? availability.recovery_action : `Click to select "${topic.title}" and start creation`;
+  const kindClass = isShortReel ? "topic-card-short-reel" : kind.isPortrait ? "topic-card-quiz-short" : "";
 
   return (
     <article
@@ -36,7 +45,7 @@ export function TopicCard({ topic, channelStyles, availability, onConfirm, busy,
       tabIndex={isClickable ? 0 : -1}
       aria-label={`Select topic: ${topic.title}`}
       aria-disabled={!isClickable}
-      className={`topic-card ${isShortReel ? "topic-card-short-reel" : ""} ${isClickable ? "is-clickable" : "is-disabled"} ${busy ? "is-busy" : ""}`}
+      className={`topic-card ${kindClass} ${isClickable ? "is-clickable" : "is-disabled"} ${busy ? "is-busy" : ""}`}
       onClick={handleSelect}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -56,11 +65,11 @@ export function TopicCard({ topic, channelStyles, availability, onConfirm, busy,
         {busy ? (
           <div className="topic-card-action-status is-busy">
             <CircleNotch className="spin" size={14} />
-            <span>{isShortReel ? "Creating Short-Reel…" : "Selecting Topic…"}</span>
+            <span>{kind.busyLabel}</span>
           </div>
         ) : canConfirm ? (
           <div className="topic-card-action-status is-ready">
-            <span>Select {isShortReel ? "Short-Reel" : "Topic"}</span>
+            <span>{kind.selectLabel}</span>
             <ArrowRight size={13} weight="bold" />
           </div>
         ) : (

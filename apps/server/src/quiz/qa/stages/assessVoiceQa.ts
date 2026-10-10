@@ -1,10 +1,11 @@
-import type { QuizIssue, QuizV2, VoicePlan } from "@studio/shared";
+import type { QuizIssue, QuizPacingProfile, QuizV2, VoicePlan } from "@studio/shared";
 import { quizVoiceTargetWordsPerSecond, quizVoiceWordsPerSecond } from "../../audio/voicePolicy.js";
 
 export interface AssessVoiceQaInput {
   quiz: QuizV2;
   voicePlan?: VoicePlan | null;
   measuredAudio?: boolean;
+  pacingProfile?: QuizPacingProfile;
 }
 
 export function assessVoiceQa(input: AssessVoiceQaInput): QuizIssue[] {
@@ -23,7 +24,7 @@ export function assessVoiceQa(input: AssessVoiceQaInput): QuizIssue[] {
 
   if (input.voicePlan && input.measuredAudio && input.voicePlan.segments.every((segment) => segment.duration_seconds !== null)) {
     const wordsPerSecond = quizVoiceWordsPerSecond(input.voicePlan);
-    const target = quizVoiceTargetWordsPerSecond(input.quiz.age_band);
+    const target = quizVoiceTargetWordsPerSecond(input.quiz.age_band, input.pacingProfile);
     if (wordsPerSecond > target + 0.45) {
       issues.push({
         code: "voice_pace_unsafe",

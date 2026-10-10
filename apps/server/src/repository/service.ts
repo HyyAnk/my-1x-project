@@ -15,6 +15,9 @@ import type { RepositoryRuntime } from "./runtime.js";
 import type { RepositoryRoots } from "./types.js";
 import { EntityIdResolver } from "./cache/entityIdResolver.js";
 import { ChannelCache } from "./cache/channelCache.js";
+import { QuizShortSlugCache } from "./cache/quizShortSlugCache.js";
+import { quizProductIdOf, type QuizProductId } from "./quizProductPaths.js";
+import { quizShortBindings } from "./bindings/quizShortBindings.js";
 import { channelBindings } from "./bindings/channelBindings.js";
 import { channelAssetBindings } from "./bindings/channelAssetBindings.js";
 import { topicBindings } from "./bindings/topicBindings.js";
@@ -51,6 +54,7 @@ export class RepositoryService {
   readonly serviceId: string;
   readonly entityIdResolver = new EntityIdResolver();
   readonly channelCache = new ChannelCache();
+  readonly quizShortSlugCache = new QuizShortSlugCache();
   roots: RepositoryRoots;
   readonly questionHistoryWrites = new Map<string, Promise<void>>();
   readonly usageLedgerWrites = new Map<string, Promise<void>>();
@@ -79,6 +83,7 @@ export class RepositoryService {
       this.roots = this.createRoots(storageRoot);
       this.entityIdResolver.clear();
       this.channelCache.clear();
+      this.quizShortSlugCache.clear();
     } finally {
       if (this.writerState === "switching") this.writerState = "open";
     }
@@ -175,12 +180,12 @@ export class RepositoryService {
   }
 
   /**
-   * Serializes quiz artifact mutations (writes + invalidations) per episode so
+   * Serializes quiz artifact mutations (writes + invalidations) per product so
    * concurrent pipeline stages (e.g. assets + voice) cannot interleave
-   * invalidate/write cycles on the same episode directory.
+   * invalidate/write cycles on the same product directory.
    */
-  queueEpisodeArtifactMutation<T>(channelId: string, episodeId: string, operation: () => Promise<T>): Promise<T> {
-    const key = `${channelId}/${episodeId}`;
+  queueEpisodeArtifactMutation<T>(channelId: string, product: QuizProductId, operation: () => Promise<T>): Promise<T> {
+    const key = `${channelId}/${quizProductIdOf(product)}`;
     const previous = this.artifactMutationQueues.get(key) ?? Promise.resolve();
     const current = previous.catch(() => undefined).then(operation);
     const tail: Promise<void> = current.then(
@@ -233,6 +238,7 @@ Object.assign(
   miscBindings,
   questionBankBindings,
   shortReelBindings,
+  quizShortBindings,
   { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset },
   {
     listChannelIntroOutroStyles,

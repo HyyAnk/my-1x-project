@@ -1,20 +1,30 @@
-import { gameplayTimingPolicy, resolveGameplayPolicy, type DirectorBeat, type QuizV2 } from "@studio/shared";
+import {
+  applyPacingProfile,
+  gameplayTimingPolicy,
+  resolveGameplayPolicy,
+  type DirectorBeat,
+  type QuizPacingProfile,
+  type QuizV2,
+} from "@studio/shared";
 
-export function applyGameplayDirectorPolicy(quiz: QuizV2, beat: DirectorBeat): DirectorBeat {
+export function applyGameplayDirectorPolicy(quiz: QuizV2, beat: DirectorBeat, pacingProfile: QuizPacingProfile = "standard"): DirectorBeat {
   const question = quiz.questions.find((item) => item.id === beat.question_id);
   if (!question) throw new Error(`Unknown director question ${beat.question_id}`);
-  const policy = resolveGameplayPolicy({
-    ...question,
-    layout_id: beat.layout_id,
-    gameplay_id:
-      beat.gameplay_id ??
-      question.gameplay_id ??
-      (question.format === "yes_no" && beat.layout_id !== "split_versus_two" ? "verdict_yes_no" : undefined),
-  });
+  const policy = applyPacingProfile(
+    resolveGameplayPolicy({
+      ...question,
+      layout_id: beat.layout_id,
+      gameplay_id:
+        beat.gameplay_id ??
+        question.gameplay_id ??
+        (question.format === "yes_no" && beat.layout_id !== "split_versus_two" ? "verdict_yes_no" : undefined),
+    }),
+    pacingProfile,
+  );
   if (question.choices.length !== policy.choiceCount) {
     throw new Error(`Gameplay ${policy.id} requires ${policy.choiceCount} choices for ${question.id}`);
   }
-  const timing = gameplayTimingPolicy(policy, quiz.age_band, question.difficulty);
+  const timing = gameplayTimingPolicy(policy, quiz.age_band, question.difficulty, pacingProfile);
   const noChoices = policy.id === "mystery_reveal";
   return {
     ...beat,

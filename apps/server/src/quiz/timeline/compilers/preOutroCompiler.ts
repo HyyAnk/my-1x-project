@@ -11,14 +11,8 @@ export interface CompilePreOutroOptions {
  * Features a high-energy celebratory screen with confetti, bubbles, "FANTASTIC JOB!" headline,
  * enthusiastic congratulatory voiceover, and a strict 0.5s pause after speech before transitioning to outro.
  */
-export function compilePreOutroStage(
-  ctx: TimelineContext,
-  voicePlan: VoicePlan,
-  options?: CompilePreOutroOptions,
-): void {
-  const preOutro = voicePlan.segments.find(
-    (segment) => segment.role === "pre_outro" || segment.segment_id === "pre_outro",
-  );
+export function compilePreOutroStage(ctx: TimelineContext, voicePlan: VoicePlan, options?: CompilePreOutroOptions): void {
+  const preOutro = voicePlan.segments.find((segment) => segment.role === "pre_outro" || segment.segment_id === "pre_outro");
   if (!preOutro) return;
 
   const preOutroStart = ctx.cursor;

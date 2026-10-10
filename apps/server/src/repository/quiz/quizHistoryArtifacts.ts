@@ -11,6 +11,7 @@ import {
   type QuizQuestion,
 } from "@studio/shared";
 import { pruneQuestionHistory, normalizeQuestionText } from "../../quiz/qa/questionHistory.js";
+import { quizProductIdOf, type QuizProductId } from "../quizProductPaths.js";
 import type { RepositoryRuntime } from "../runtime.js";
 
 export async function readQuestionHistory(this: RepositoryRuntime, channelId: string): Promise<QuestionHistoryEntry[]> {
@@ -28,15 +29,18 @@ export async function readQuestionHistory(this: RepositoryRuntime, channelId: st
 export async function appendQuestionHistory(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   questions: QuizQuestion[],
   ttlDays = 30,
   renderTaskId?: string,
   contentType?: QuestionContentType,
 ): Promise<void> {
   const channel = await this.getChannel(channelId);
-  const episode = await this.getEpisode(channelId, episodeId).catch(() => null);
-  const episodeTitle = episode?.topic?.title || episodeId;
+  const episodeId = quizProductIdOf(product);
+  const record = await this.locateQuizProduct(channelId, product)
+    .then((location) => location.record)
+    .catch(() => null);
+  const episodeTitle = record?.topic?.title || episodeId;
   const historyPath = this.resolvePath("channels", channel.slug, "question_history.json");
   const effectiveContentType = contentType ?? inferQuestionHistoryContentType({ episode_id: episodeId });
   await queueQuestionHistoryWrite.call(this, channelId, async () => {
@@ -110,14 +114,17 @@ export async function readBgmHistory(this: RepositoryRuntime, channelId: string)
 export async function appendBgmHistory(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   trackId: string,
   filename: string,
   ttlDays = 30,
 ): Promise<void> {
   const channel = await this.getChannel(channelId);
-  const episode = await this.getEpisode(channelId, episodeId).catch(() => null);
-  const episodeTitle = episode?.topic?.title || episodeId;
+  const episodeId = quizProductIdOf(product);
+  const record = await this.locateQuizProduct(channelId, product)
+    .then((location) => location.record)
+    .catch(() => null);
+  const episodeTitle = record?.topic?.title || episodeId;
   const historyPath = this.resolvePath("channels", channel.slug, "bgm_history.json");
   const existing = await this.readBgmHistory(channelId);
 

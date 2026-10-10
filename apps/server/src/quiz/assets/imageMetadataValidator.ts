@@ -3,8 +3,10 @@ import {
   type ImageSizingRecommendation,
   type ImageSlotPurpose,
   type QuizAssetRequirement,
+  type MascotRenderAspectRatio,
   type QuizLayoutAssetAspectRatio,
   getQuizImageSlotGeometry,
+  isQuizPortraitLayoutId,
   recommendImageSizing,
 } from "@studio/shared";
 
@@ -29,6 +31,11 @@ export interface ValidateQuizImageBytesInput {
   required: boolean;
 }
 
+const CANVAS_BY_ASPECT_RATIO: Record<MascotRenderAspectRatio, { width: number; height: number }> = {
+  "16:9": { width: 1920, height: 1080 },
+  "9:16": { width: 1080, height: 1920 },
+};
+
 const FALLBACK_DIMENSIONS_BY_RATIO: Record<string, { width: number; height: number }> = {
   "16:9": { width: 1280, height: 720 },
   "4:3": { width: 1120, height: 840 },
@@ -42,6 +49,7 @@ const FALLBACK_DIMENSIONS_BY_RATIO: Record<string, { width: number; height: numb
 export function resolveFallbackRecommendation(
   aspectRatio: QuizAssetRequirement["aspect_ratio"],
   purpose: QuizAssetRequirement["purpose"],
+  canvasAspectRatio: MascotRenderAspectRatio = "16:9",
 ): ImageSizingRecommendation {
   const supportedRatios: readonly QuizLayoutAssetAspectRatio[] = ["16:9", "4:3", "1:1", "3:4"];
   const normalizedRatio: QuizLayoutAssetAspectRatio = (supportedRatios as readonly string[]).includes(aspectRatio)
@@ -52,9 +60,9 @@ export function resolveFallbackRecommendation(
   return {
     policyVersion: 1,
     geometry: {
-      layoutId: "media_left_choices_right",
+      layoutId: canvasAspectRatio === "9:16" ? "short_media_top_choices" : "media_left_choices_right",
       purpose: slotPurpose,
-      canvas: { width: 1920, height: 1080 },
+      canvas: CANVAS_BY_ASPECT_RATIO[canvasAspectRatio],
       viewports: [{ width: fallbackDims.width / 1.5, height: fallbackDims.height / 1.5, fit: "cover" }],
       geometryKey: `fallback:${purpose}:${aspectRatio}`,
     },
@@ -65,9 +73,20 @@ export function resolveFallbackRecommendation(
   };
 }
 
+/** The persisted sizing names the layout, so the canvas follows its family unless the caller overrides it. */
+export function resolveAssetRequirementCanvas(
+  requirement: Pick<QuizAssetRequirement, "sizing">,
+  canvasAspectRatio?: MascotRenderAspectRatio,
+): MascotRenderAspectRatio {
+  if (canvasAspectRatio) return canvasAspectRatio;
+  return requirement.sizing && isQuizPortraitLayoutId(requirement.sizing.layout_id) ? "9:16" : "16:9";
+}
+
 export function getRecommendationForAssetRequirement(
   requirement: QuizAssetRequirement,
+  canvasAspectRatio?: MascotRenderAspectRatio,
 ): ImageSizingRecommendation {
+  const canvas = resolveAssetRequirementCanvas(requirement, canvasAspectRatio);
   const slotPurpose: ImageSlotPurpose = requirement.purpose === "answer_option" ? "answer_option" : "hero_question_image";
   const supportedRatios: readonly QuizLayoutAssetAspectRatio[] = ["16:9", "4:3", "1:1", "3:4"];
   const normalizedRatio: QuizLayoutAssetAspectRatio = (supportedRatios as readonly string[]).includes(requirement.aspect_ratio)
@@ -79,8 +98,8 @@ export function getRecommendationForAssetRequirement(
       layoutId: requirement.sizing.layout_id,
       purpose: slotPurpose,
       presentation: "visual",
-      choiceCount: 3,
-      canvasAspectRatio: "16:9",
+      choiceCount: canvas === "9:16" ? 2 : 3,
+      canvasAspectRatio: canvas,
     });
     if (geom) {
       const rec = recommendImageSizing(geom);
@@ -92,7 +111,7 @@ export function getRecommendationForAssetRequirement(
       geometry: {
         layoutId: requirement.sizing.layout_id,
         purpose: slotPurpose,
-        canvas: { width: 1920, height: 1080 },
+        canvas: CANVAS_BY_ASPECT_RATIO[canvas],
         viewports: [
           {
             width: requirement.sizing.recommended_width / 1.5,
@@ -112,7 +131,7 @@ export function getRecommendationForAssetRequirement(
     };
   }
 
-  return resolveFallbackRecommendation(requirement.aspect_ratio, requirement.purpose);
+  return resolveFallbackRecommendation(requirement.aspect_ratio, requirement.purpose, canvas);
 }
 
 /**

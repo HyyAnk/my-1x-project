@@ -6,7 +6,7 @@ import {
 } from "@studio/shared";
 import { QuestionSimilarityIndex } from "../../../quiz/qa/questionSimilarityIndex.js";
 
-export type BankCooldownScope = "all" | "episode" | "short_reel";
+export type BankCooldownScope = "all" | "episode" | "quiz_short" | "short_reel";
 
 export interface CooldownHistoryEntry {
   question_id: string;
@@ -35,7 +35,7 @@ interface PreparedHistory {
 }
 
 function filterHistoryByScope(entries: CooldownHistoryEntry[], scope?: BankCooldownScope): CooldownHistoryEntry[] {
-  if (scope === "episode" || scope === "short_reel") {
+  if (scope === "episode" || scope === "quiz_short" || scope === "short_reel") {
     return entries.filter((entry) => inferQuestionHistoryContentType(entry) === scope);
   }
   return entries;

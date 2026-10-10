@@ -465,7 +465,7 @@ describe("Mascot portrait canvas and storage migration", () => {
         narrationDurationSeconds: timeline.duration_seconds,
         aspectRatio: "9:16",
       }),
-    ).toThrow(/layout_aspect_ratio_unsupported/);
+    ).toThrow(/no production renderer/);
   });
 
   it("rejects retired portrait mascot composition CSS", () => {
@@ -507,7 +507,7 @@ describe("Mascot portrait canvas and storage migration", () => {
         narrationDurationSeconds: timeline.duration_seconds,
         aspectRatio: "9:16",
       }),
-    ).toThrow(/layout_aspect_ratio_unsupported/);
+    ).toThrow(/no production renderer/);
   });
 
   it("migrates V1 mascot manifests idempotently with a backup and restores the exact original on rollback", async () => {

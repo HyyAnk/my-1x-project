@@ -2,6 +2,7 @@ import type { Task, ThumbnailLayoutType } from "@studio/shared";
 import type { StudioLogger } from "../../logger.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import type { QuizVoicePacingClamp } from "../../quiz/audio/voiceSynthesis.js";
+import { productRefFromTask } from "../taskProductRef.js";
 
 export interface ProgressState {
   completed: number;
@@ -55,6 +56,7 @@ export function createQuizPipelineInput(
     },
     channelId: task.channel_id,
     episodeId: task.episode_id!,
+    product: productRefFromTask(task),
     activeEngine: runtime.activeEngine,
     antigravityClient: runtime.antigravity,
     customHookText: options?.customHookText,

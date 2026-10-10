@@ -4,4 +4,5 @@ export * from "./TopicTopBar";
 export * from "./TopicPickers";
 export * from "./TopicInsights";
 export * from "./TopicFooter";
+export * from "./topicKindPresentation";
 export * from "./TopicAvailabilityNotice";

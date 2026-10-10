@@ -1,4 +1,4 @@
-import type { QuizGameplayArchetypeId, QuizQuestionFormat, ResolvedQuizLayoutId } from "@studio/shared";
+import type { QuizGameplayArchetypeId, QuizQuestionFormat, ResolvedQuizLayoutId, TopicContentKind } from "@studio/shared";
 
 export type TopicMatrixSlotArchetype = QuizGameplayArchetypeId;
 
@@ -16,11 +16,17 @@ export interface TopicMatrixSlotPlan {
   quizFormat: TopicMatrixQuizFormat;
   description: string;
   isKeySteered: boolean;
-  contentKind: "episode" | "short_reel";
+  contentKind: TopicContentKind;
 }
 
 export interface TopicMatrixPlan {
   slots: TopicMatrixSlotPlan[];
   steeredKeyword?: string;
   aspectRatio?: "16:9";
+}
+
+export interface TopicMatrixDomainOption {
+  id: string;
+  title: string;
+  description?: string;
 }

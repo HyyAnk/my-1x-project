@@ -1,6 +1,13 @@
 import { QuizTimelineSchema, type QuizIssue, type QuizTimeline, type QuizV2 } from "@studio/shared";
+import { quizShortTimelineIssues } from "./quizShortTimelineRules.js";
+import type { QuizTimelineProductKind } from "./quizShortTimelinePolicy.js";
 
-export function validateQuizTimeline(quiz: QuizV2, timeline: unknown): QuizIssue[] {
+export type TimelineValidationOptions = {
+  /** Defaults to "episode"; "quiz_short" enables the duration budget and choice narration rules. */
+  productKind?: QuizTimelineProductKind;
+};
+
+export function validateQuizTimeline(quiz: QuizV2, timeline: unknown, options?: TimelineValidationOptions): QuizIssue[] {
   const parsed = QuizTimelineSchema.safeParse(timeline);
   if (!parsed.success)
     return [
@@ -99,11 +106,12 @@ export function validateQuizTimeline(quiz: QuizV2, timeline: unknown): QuizIssue
       question_ids: expected,
       stage: "timeline",
     });
+  if (options?.productKind === "quiz_short") issues.push(...quizShortTimelineIssues(value));
   return issues;
 }
 
-export function assertQuizTimelineValid(quiz: QuizV2, timeline: QuizTimeline): QuizTimeline {
-  const issues = validateQuizTimeline(quiz, timeline);
+export function assertQuizTimelineValid(quiz: QuizV2, timeline: QuizTimeline, options?: TimelineValidationOptions): QuizTimeline {
+  const issues = validateQuizTimeline(quiz, timeline, options);
   const blockers = issues.filter((issue) => issue.severity === "blocker");
   if (blockers.length) throw new Error(blockers.map((issue) => issue.message).join(" "));
   return timeline;

@@ -3,12 +3,12 @@ import path from "node:path";
 import { RepositoryError } from "../errors.js";
 import { isJpeg, isValidImageBuffer, isWebp } from "../helpers.js";
 import type { BundleImageMeta } from "../types.js";
-import type { RepositoryRuntime } from "../runtime.js";
+import type { QuizProductId, RepositoryRuntime } from "../runtime.js";
 
 export async function writeQuizImageAsset(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   assetId: string,
   fingerprint: string,
   content: Uint8Array,
@@ -17,9 +17,8 @@ export async function writeQuizImageAsset(
   if (!/^[a-z0-9][a-z0-9_-]{0,119}$/i.test(assetId)) throw new RepositoryError("Quiz asset ID is invalid", "INVALID_ASSET");
   if (!/^[a-f0-9]{64}$/i.test(fingerprint)) throw new RepositoryError("Quiz asset fingerprint is invalid", "INVALID_ASSET");
   if (!isValidImageBuffer(content)) throw new RepositoryError("Quiz image output is not a valid image file", "INVALID_IMAGE");
-  const episode = await this.getEpisode(channelId, episodeId);
-  const channel = await this.getChannel(channelId);
-  const directory = this.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets", "quiz-images");
+  const location = await this.locateQuizProduct(channelId, product);
+  const directory = path.join(location.directory, "assets", "quiz-images");
   await mkdir(directory, { recursive: true });
   const extension = isJpeg(content) ? ".jpg" : isWebp(content) ? ".webp" : ".png";
   const filename = `${assetId}-${fingerprint.slice(0, 12)}${extension}`;
@@ -29,24 +28,23 @@ export async function writeQuizImageAsset(
     const metaPath = path.join(directory, `${assetId}-${fingerprint.slice(0, 12)}.meta.json`);
     await this.writeJsonAtomic(metaPath, meta);
   }
-  return `channels/${channel.slug}/episodes/${episode.slug}/assets/quiz-images/${filename}`;
+  return `${location.relativeDirectory}/assets/quiz-images/${filename}`;
 }
 
 export async function resolveQuizAssetPath(
   this: RepositoryRuntime,
   channelId: string,
-  episodeId: string,
+  product: QuizProductId,
   assetPath: string,
 ): Promise<string> {
-  const episode = await this.getEpisode(channelId, episodeId);
-  const channel = await this.getChannel(channelId);
-  const expected = `channels/${channel.slug}/episodes/${episode.slug}/assets/quiz-images/`;
+  const location = await this.locateQuizProduct(channelId, product);
+  const expected = `${location.relativeDirectory}/assets/quiz-images/`;
   if (!assetPath.replaceAll("\\", "/").startsWith(expected))
-    throw new RepositoryError("Quiz asset path is outside this episode", "UNSAFE_PATH");
+    throw new RepositoryError("Quiz asset path is outside this product", "UNSAFE_PATH");
   const filename = path.basename(assetPath);
   if (!/^[a-z0-9][a-z0-9_-]{0,119}-[a-f0-9]{12}\.(png|jpe?g|webp)$/i.test(filename))
     throw new RepositoryError("Quiz asset filename is invalid", "UNSAFE_PATH");
-  const absolutePath = this.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets", "quiz-images", filename);
+  const absolutePath = path.join(location.directory, "assets", "quiz-images", filename);
   await access(absolutePath);
   return absolutePath;
 }

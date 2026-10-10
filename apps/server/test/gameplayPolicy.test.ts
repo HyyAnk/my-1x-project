@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { QUIZ_GAMEPLAY_ARCHETYPES, QuizQuestionSchema } from "@studio/shared";
+import {
+  QUIZ_GAMEPLAY_ARCHETYPES,
+  QUIZ_GAMEPLAY_POLICIES,
+  QUIZ_GAMEPLAY_POLICY_VERSION,
+  QuizQuestionSchema,
+  applyPacingProfile,
+  gameplayTimingPolicy,
+} from "@studio/shared";
 import { gameplayFixture } from "./fixtures/gameplayFixtures.js";
 import { validateQuizTimeline } from "../src/quiz/timeline/validateTimeline.js";
 import { validateDirectorPlan } from "../src/quiz/director/validateDirectorPlan.js";
@@ -42,6 +49,22 @@ describe("versioned gameplay policy", () => {
     const question = gameplayFixture("versus_faceoff").quiz.questions[0];
     expect(question.format).toBe("multiple_choice");
     expect(QuizQuestionSchema.safeParse({ ...question, gameplay_id: undefined }).success).toBe(false);
+  });
+  it("exposes the short pacing profile on policy version 2", () => {
+    expect(QUIZ_GAMEPLAY_POLICY_VERSION).toBe(2);
+    const short = applyPacingProfile(QUIZ_GAMEPLAY_POLICIES.deep_trivia, "short");
+    expect(short).toMatchObject({ readChoices: false, thinkingPrompt: false, thinking: [3, 4], countdown: 3 });
+    expect(applyPacingProfile(QUIZ_GAMEPLAY_POLICIES.deep_trivia, "standard")).toBe(QUIZ_GAMEPLAY_POLICIES.deep_trivia);
+    const timing = gameplayTimingPolicy(short, "7-9", 1, "short");
+    expect(timing).toMatchObject({
+      question_narration_lead_seconds: 0.35,
+      explanation_hold_seconds: 0.4,
+      transition_seconds: 0.3,
+      outro_hold_seconds: 3,
+    });
+    expect(timing.minimum_thinking_seconds).toBeLessThan(
+      gameplayTimingPolicy(QUIZ_GAMEPLAY_POLICIES.deep_trivia, "7-9").minimum_thinking_seconds,
+    );
   });
   it("blocks early answer narration and unexpected mystery choice narration", () => {
     const { quiz, director, timeline, voice } = gameplayFixture("mystery_reveal");

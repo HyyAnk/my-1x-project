@@ -7,6 +7,7 @@ import { RepositoryError } from "../../repository.js";
 import { hasValidNarrationAsset } from "./pipelineHelpers.js";
 import { resolveIntroOutroConfig } from "../../quiz/pipeline/stages/assetsVoiceStages.js";
 import { matchesBookendTiming } from "../../quiz/introOutro/renderTiming.js";
+import { productRefFromTask } from "../taskProductRef.js";
 
 export { handleVoicePacingClamp, createQuizPipelineInput } from "./voiceProgressTracker.js";
 
@@ -16,7 +17,7 @@ export async function shouldRegenerateQuizVoice(
   episodeNarrationAssetPath: string | null,
   artifacts: Awaited<ReturnType<typeof readQuizArtifacts>>,
 ): Promise<boolean> {
-  const media = await resolveIntroOutroConfig(runtime.repository, task.channel_id, task.episode_id!);
+  const media = await resolveIntroOutroConfig(runtime.repository, task.channel_id, productRefFromTask(task));
   const voicePaceNeedsRegeneration = artifacts.quiz
     ? quizVoicePlanNeedsRegeneration({
         voicePlan: artifacts.voice_plan,

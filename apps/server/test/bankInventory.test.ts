@@ -36,6 +36,8 @@ describe("bank inventory scan", () => {
     expect(result.scan_status).toBe("complete_nonempty");
     expect(result.scanned_count).toBe(2);
     expect(result.eligible_by_policy.short_reel).toBe(2);
+    expect(result.eligible_by_policy.quiz_short).toBe(2);
+    expect(result.eligible_sources.filter((source) => source.policy === "quiz_short")).toHaveLength(2);
     expect(result.eligible_sources.filter((source) => source.policy === "episode")).toHaveLength(2);
     expect(result.eligible_sources.filter((source) => source.policy === "short_reel")).toHaveLength(2);
     expect(
@@ -43,6 +45,27 @@ describe("bank inventory scan", () => {
         .size,
     ).toBe(2);
     expect(result.eligible_sources[0].source_content_hash).toMatch(/^[a-f0-9]{64}$/);
+  });
+
+  it("counts Quiz Short eligibility separately and records portrait text-budget exclusions", async () => {
+    const wordy: BankQuestionWithCooldown = {
+      ...q("wordy-1"),
+      choices: [
+        { id: "a", text: "A choice that is much too long to read on a phone" },
+        { id: "b", text: "B" },
+        { id: "c", text: "C" },
+      ],
+    };
+    const result = await scanBankInventory(
+      { queryQuestionBankQuestions: () => Promise.resolve({ questions: [q("1"), wordy], total: 2 }) },
+      { channelId: "channel-1", targetLanguage: "en" },
+    );
+
+    expect(result.eligible_by_policy).toEqual({ episode: 2, quiz_short: 1, short_reel: 2 });
+    expect(result.exclusion_counts.TEXT_TOO_LONG_FOR_SHORT).toBe(1);
+    expect(
+      result.eligible_sources.filter((source) => source.policy === "quiz_short").map((source) => source.candidate.question.id),
+    ).toEqual(["1"]);
   });
 
   it("keeps one-choice Mystery Reveal questions eligible for Episode allocation", async () => {

@@ -2,18 +2,20 @@ import type {
   BankQuestion,
   BankQuestionWithCooldown,
   BankTaxonomy,
+  TopicContentKind,
   TopicInventoryScanStatus,
   TopicSourceBinding,
   TopicSourceShortage,
 } from "@studio/shared";
 import type { EvaluatedBankQuestionCandidate } from "../quiz/bank/bankEligibility.js";
 import type { TopicMatrixQuizFormat, TopicMatrixSlotArchetype, TopicMatrixSuggestedLayout } from "./topicMatrixPlanner.js";
+import type { TopicSlotArchetypeDefinition } from "./topicMatrix.constants.js";
 
 export interface AllocatedSlot {
   slot: number;
   slotId: string;
   name: string;
-  contentKind: "episode" | "short_reel";
+  contentKind: TopicContentKind;
   archetype: TopicMatrixSlotArchetype;
   suggestedLayout: TopicMatrixSuggestedLayout;
   quizFormat: TopicMatrixQuizFormat;
@@ -33,7 +35,12 @@ export interface TopicAllocationResult {
   totalAllocatedQuestions: number;
 }
 
-import type { TopicSlotArchetypeDefinition } from "./topicMatrix.constants.js";
+/** Source questions required per slot, keyed by content kind. */
+export interface TopicSlotRequiredCounts {
+  episode: number;
+  quiz_short: number;
+  short_reel: number;
+}
 
 export interface AllocateTopicSlotsInput {
   questions: BankQuestion[] | BankQuestionWithCooldown[];
@@ -42,5 +49,7 @@ export interface AllocateTopicSlotsInput {
   topicHint?: string;
   taxonomy?: BankTaxonomy | null;
   episodeQuestionCount?: number;
+  /** Questions bound to each Quiz Short slot; defaults to QUIZ_SHORT_DEFAULT_QUESTION_COUNT. */
+  quizShortQuestionCount?: number;
   slotDefinitions?: ReadonlyArray<TopicSlotArchetypeDefinition & { slot: number }>;
 }

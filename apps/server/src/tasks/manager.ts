@@ -3,6 +3,7 @@ import {
   type AppConfig,
   type GenerateShortReelRequest,
   type GenerateShortReelTarget,
+  type QuizProductRef,
   type Task,
   type TaskEvent,
   type TaskStatus,
@@ -223,6 +224,25 @@ export class TaskManager extends TaskManagerLifecycleBase implements TaskManager
   ): Task {
     return this.registerSubmittedTask(
       submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint, reelId, undefined, parentTaskId),
+    );
+  }
+
+  /** Submits a build task for an Episode or a Quiz Short; the kind travels on the task as `product_kind`. */
+  submitForProduct(taskType: TaskType, product: QuizProductRef, parentTaskId?: string): Task {
+    return this.registerSubmittedTask(
+      submitTask(
+        this,
+        taskType,
+        product.channel_id,
+        product.product_id,
+        undefined,
+        undefined,
+        undefined,
+        null,
+        undefined,
+        parentTaskId,
+        product.kind,
+      ),
     );
   }
 

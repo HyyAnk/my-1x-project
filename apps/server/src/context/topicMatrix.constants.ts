@@ -1,15 +1,22 @@
-import type { QuizGameplayArchetypeId, QuizQuestionFormat, ResolvedQuizLayoutId } from "@studio/shared";
+import type { QuizGameplayArchetypeId, QuizQuestionFormat, ResolvedQuizLayoutId, TopicContentKind } from "@studio/shared";
+import { QUIZ_SHORT_ARCHETYPE_DEFINITIONS } from "./topicMatrix.quizShort.constants.js";
 
 export { CANONICAL_FALLBACK_DOMAINS, KEYWORD_SYNONYMS, type TopicDomainOption } from "./topicDomainCatalog.js";
+export { QUIZ_SHORT_ARCHETYPE_DEFINITIONS } from "./topicMatrix.quizShort.constants.js";
 
 export interface TopicSlotArchetypeDefinition {
   name: string;
   archetype: QuizGameplayArchetypeId;
   suggestedLayout: ResolvedQuizLayoutId;
   quizFormat: QuizQuestionFormat;
-  contentKind: "episode" | "short_reel";
+  contentKind: TopicContentKind;
   description: string;
 }
+
+export type TopicSlotDefinition = TopicSlotArchetypeDefinition & { slot: number };
+
+/** Slots per content kind in one suggestion run, in Topics tab order: Episode, Quiz Short, Short Reel. */
+export const TOPIC_SLOTS_PER_KIND = 4;
 
 export const EPISODE_ARCHETYPE_DEFINITIONS: readonly TopicSlotArchetypeDefinition[] = [
   {
@@ -97,6 +104,15 @@ export const SHORT_REEL_ARCHETYPE_DEFINITIONS: readonly TopicSlotArchetypeDefini
   },
 ] as const;
 
+const VERSUS_CLASH_SHORT_REEL_DEFINITION: TopicSlotArchetypeDefinition = {
+  name: "Versus Clash (Short-Reel)",
+  archetype: "versus_faceoff",
+  suggestedLayout: "split_versus_two",
+  quizFormat: "multiple_choice",
+  contentKind: "short_reel",
+  description: "High-stakes 1v1 Face-off Short-Reel (9:16 vertical, 1 question)",
+};
+
 export function shuffleArray<T>(array: readonly T[]): T[] {
   const result = [...array];
   for (let i = result.length - 1; i > 0; i--) {
@@ -106,95 +122,34 @@ export function shuffleArray<T>(array: readonly T[]): T[] {
   return result;
 }
 
-export function generateRandomSlotDefinitions(): Array<TopicSlotArchetypeDefinition & { slot: number }> {
-  const shuffledEpisodes = shuffleArray(EPISODE_ARCHETYPE_DEFINITIONS).slice(0, 4);
-  const shuffledShorts = shuffleArray(SHORT_REEL_ARCHETYPE_DEFINITIONS);
-  const extraShort = shuffledShorts[Math.floor(Math.random() * shuffledShorts.length)];
-  const fourShorts = [...shuffledShorts, extraShort];
-
-  return [
-    { ...shuffledEpisodes[0], slot: 1 },
-    { ...shuffledEpisodes[1], slot: 2 },
-    { ...shuffledEpisodes[2], slot: 3 },
-    { ...shuffledEpisodes[3], slot: 4 },
-    { ...fourShorts[0], slot: 5 },
-    { ...fourShorts[1], slot: 6 },
-    { ...fourShorts[2], slot: 7 },
-    { ...fourShorts[3], slot: 8 },
-  ];
+function numberSlots(definitions: readonly TopicSlotArchetypeDefinition[]): TopicSlotDefinition[] {
+  return definitions.map((definition, index) => ({ ...definition, slot: index + 1 }));
 }
 
-export const ARCHETYPE_SLOT_DEFINITIONS = [
-  {
-    slot: 1,
-    name: "Deep Trivia (Episode)",
-    archetype: "deep_trivia" as const,
-    suggestedLayout: "media_left_choices_right" as const,
-    quizFormat: "multiple_choice" as const,
-    contentKind: "episode" as const,
-    description: "Knowledge/story quiz with a single hero subject scene",
-  },
-  {
-    slot: 2,
-    name: "Silhouette / Mystery Reveal (Episode)",
-    archetype: "mystery_reveal" as const,
-    suggestedLayout: "mystery_reveal" as const,
-    quizFormat: "image_guess" as const,
-    contentKind: "episode" as const,
-    description: "Guess animal/object/food through shadow/silhouette or pixelated mosaic, revealed with laser scanner wipe",
-  },
-  {
-    slot: 3,
-    name: "Yes or No (Episode)",
-    archetype: "verdict_yes_no" as const,
-    suggestedLayout: "verdict_yes_no" as const,
-    quizFormat: "yes_no" as const,
-    contentKind: "episode" as const,
-    description: "Surprising truths and misconceptions as kid-friendly Yes/No questions",
-  },
-  {
-    slot: 4,
-    name: "Visual Identification (Episode)",
-    archetype: "visual_identification" as const,
-    suggestedLayout: "visual_choices_three" as const,
-    quizFormat: "multiple_choice" as const,
-    contentKind: "episode" as const,
-    description: "Visual recognition challenge across 3 labeled visual clue cards",
-  },
-  {
-    slot: 5,
-    name: "Versus Face-off (Short-Reel)",
-    archetype: "versus_faceoff" as const,
-    suggestedLayout: "split_versus_two" as const,
-    quizFormat: "multiple_choice" as const,
-    contentKind: "short_reel" as const,
-    description: "1v1 Face-off Short-Reel (9:16 vertical, 1 question)",
-  },
-  {
-    slot: 6,
-    name: "Deep Trivia (Short-Reel)",
-    archetype: "deep_trivia" as const,
-    suggestedLayout: "media_left_choices_right" as const,
-    quizFormat: "multiple_choice" as const,
-    contentKind: "short_reel" as const,
-    description: "Deep Trivia Short-Reel (9:16 vertical, 1 question)",
-  },
-  {
-    slot: 7,
-    name: "Yes or No (Short-Reel)",
-    archetype: "verdict_yes_no" as const,
-    suggestedLayout: "verdict_yes_no" as const,
-    quizFormat: "yes_no" as const,
-    contentKind: "short_reel" as const,
-    description: "Yes or No Short-Reel verdict showdown (9:16 vertical, 1 question)",
-  },
-  {
-    slot: 8,
-    name: "Versus Clash (Short-Reel)",
-    archetype: "versus_faceoff" as const,
-    suggestedLayout: "split_versus_two" as const,
-    quizFormat: "multiple_choice" as const,
-    contentKind: "short_reel" as const,
-    description: "High-stakes 1v1 Face-off Short-Reel (9:16 vertical, 1 question)",
-  },
-] as const;
+function pickRandomShortReelDefinitions(): TopicSlotArchetypeDefinition[] {
+  const shuffledShorts = shuffleArray(SHORT_REEL_ARCHETYPE_DEFINITIONS);
+  const extraShort = shuffledShorts[Math.floor(Math.random() * shuffledShorts.length)];
+  return [...shuffledShorts, extraShort];
+}
+
+/** Random slots: 1-4 Episode, 5-8 Quiz Short, 9-12 Short Reel. */
+export function generateRandomSlotDefinitions(): TopicSlotDefinition[] {
+  return numberSlots([
+    ...shuffleArray(EPISODE_ARCHETYPE_DEFINITIONS).slice(0, TOPIC_SLOTS_PER_KIND),
+    ...shuffleArray(QUIZ_SHORT_ARCHETYPE_DEFINITIONS).slice(0, TOPIC_SLOTS_PER_KIND),
+    ...pickRandomShortReelDefinitions(),
+  ]);
+}
+
+/** Deterministic slots: 1-4 Episode, 5-8 Quiz Short, 9-12 Short Reel. */
+export const ARCHETYPE_SLOT_DEFINITIONS: readonly TopicSlotDefinition[] = numberSlots([
+  EPISODE_ARCHETYPE_DEFINITIONS[0],
+  EPISODE_ARCHETYPE_DEFINITIONS[1],
+  EPISODE_ARCHETYPE_DEFINITIONS[2],
+  EPISODE_ARCHETYPE_DEFINITIONS[4],
+  ...QUIZ_SHORT_ARCHETYPE_DEFINITIONS,
+  SHORT_REEL_ARCHETYPE_DEFINITIONS[0],
+  SHORT_REEL_ARCHETYPE_DEFINITIONS[1],
+  SHORT_REEL_ARCHETYPE_DEFINITIONS[2],
+  VERSUS_CLASH_SHORT_REEL_DEFINITION,
+]);

@@ -1,4 +1,5 @@
 import type { RepositoryRoots } from "../types.js";
+import type { QuizProductId } from "../quizProductPaths.js";
 
 export interface IStorageRepository {
   // Writer admission lifecycle
@@ -18,7 +19,7 @@ export interface IStorageRepository {
   exists(target: string): Promise<boolean>;
   isInside(rootPath: string, targetPath: string): boolean;
   assertRealPathInside(rootPath: string, targetPath: string): Promise<void>;
-  queueEpisodeArtifactMutation<T>(channelId: string, episodeId: string, operation: () => Promise<T>): Promise<T>;
+  queueEpisodeArtifactMutation<T>(channelId: string, product: QuizProductId, operation: () => Promise<T>): Promise<T>;
   writeJsonAtomic(target: string, value: unknown): Promise<void>;
   writeTextAtomic(target: string, content: string): Promise<void>;
   writeBinaryAtomic(target: string, content: Uint8Array): Promise<void>;

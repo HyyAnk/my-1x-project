@@ -1,7 +1,7 @@
 import { mkdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import { sourceCanonicalJsonStringify } from "@studio/shared";
+import { sourceCanonicalJsonStringify, TopicContentKindSchema, type TopicContentKind } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import type { RepositoryService } from "./service.js";
 
@@ -23,7 +23,7 @@ export const TopicConfirmationReceiptSchema = z
     receipt_id: z.string().trim().min(1),
     channel_id: z.string().trim().min(1),
     topic_id: z.string().trim().min(1),
-    content_kind: z.enum(["episode", "short_reel"]),
+    content_kind: TopicContentKindSchema,
     product_id: z.string().trim().min(1),
     product_slug: z.string().trim().min(1).optional(),
     status: z.enum(["preparing", "completed"]).default("completed"),
@@ -103,7 +103,7 @@ export async function saveTopicConfirmationReceipt(
 export function assertConfirmationReplayOrConflict(
   existingReceipt: TopicConfirmationReceipt,
   incomingOptions: TopicConfirmationOptions,
-  expectedContentKind?: "episode" | "short_reel",
+  expectedContentKind?: TopicContentKind,
 ): { isReplay: true; receipt: TopicConfirmationReceipt } {
   if (expectedContentKind && existingReceipt.content_kind !== expectedContentKind) {
     throw new RepositoryError(

@@ -3,6 +3,7 @@ import { ALL_QUIZ_IMAGE_STYLES, type QuizImageStyle, type TopicAvailability, typ
 import { getTopicAvailabilityPresentation, getTopicFormatBadge } from "../../utils/topicHistoryHelpers";
 import { TopicLayoutPreviewButton } from "../TopicLayoutPreviewButton";
 import { formatDomain } from "../topicCard/topicCardHelpers";
+import { getTopicArchetypeLabel } from "../topicCard/topicKindPresentation";
 
 export interface TopicHistoryRowProps {
   topic: TopicCandidate;
@@ -36,8 +37,7 @@ export function TopicHistoryRow({
       ? availabilityInfo.tooltip
       : `Select this topic (${topic.question_count} questions${availability ? `, ${availability.source_capacity} available` : ""})`;
 
-  const shortReelArchetypeLabel =
-    topic.archetype === "versus_faceoff" ? "Versus Face-off" : topic.archetype === "verdict_yes_no" ? "Yes or No" : "Deep Trivia";
+  const portraitArchetypeLabel = getTopicArchetypeLabel(topic.archetype);
 
   return (
     <div className="topic-history-row">
@@ -79,7 +79,7 @@ export function TopicHistoryRow({
           />
         ) : (
           <span className="topic-archetype-tag" title={topic.archetype}>
-            {shortReelArchetypeLabel}
+            {portraitArchetypeLabel}
           </span>
         )}
       </div>

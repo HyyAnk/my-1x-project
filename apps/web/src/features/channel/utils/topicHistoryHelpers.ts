@@ -1,11 +1,21 @@
-import type { TopicAvailability, TopicCandidate } from "@studio/shared";
+import type { TopicAvailability, TopicCandidate, TopicContentKind } from "@studio/shared";
 import type { TopicAvailabilityPresentation, TopicFormatBadge, TopicHistoryFilter, TopicHistoryMetrics } from "../types/history.types";
 
 /**
  * Returns visual format descriptor for a topic candidate or content kind.
  */
-export function getTopicFormatBadge(topicOrKind: Pick<TopicCandidate, "content_kind"> | "episode" | "short_reel"): TopicFormatBadge {
+export function getTopicFormatBadge(topicOrKind: Pick<TopicCandidate, "content_kind"> | TopicContentKind): TopicFormatBadge {
   const kind = typeof topicOrKind === "string" ? topicOrKind : topicOrKind.content_kind;
+
+  if (kind === "quiz_short") {
+    return {
+      format: "9:16",
+      badgeText: "9:16",
+      label: "Quiz Short",
+      kind: "quiz_short",
+      indicatorClass: "is-vertical",
+    };
+  }
 
   if (kind === "short_reel") {
     return {

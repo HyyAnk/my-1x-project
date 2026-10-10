@@ -1,4 +1,4 @@
-import type { DirectorPlan, QuizQuestion, VoicePlan } from "@studio/shared";
+import type { DirectorPlan, QuizPacingProfile, QuizQuestion, VoicePlan } from "@studio/shared";
 import type { TimelineContext } from "./timelineContext.js";
 import {
   compileMidpointBeat,
@@ -15,6 +15,7 @@ export function compileQuestionBlock(
   questionIndex: number,
   director: DirectorPlan,
   voicePlan: VoicePlan,
+  pacingProfile: QuizPacingProfile = "standard",
 ): void {
   const beat = director.beats.find((candidate) => candidate.question_id === question.id);
   if (!beat) throw new Error("Question " + question.id + " has no Director beat");
@@ -29,5 +30,5 @@ export function compileQuestionBlock(
 
   const { rewardAt, revealNarrationEnd } = compileAnswerRevealBeat(ctx, question, beat, voicePlan, revealAt);
 
-  compileExplanationBeat(ctx, question, beat, voicePlan, questionStart, rewardAt, revealNarrationEnd);
+  compileExplanationBeat(ctx, question, beat, voicePlan, questionStart, rewardAt, revealNarrationEnd, pacingProfile);
 }

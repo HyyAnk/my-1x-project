@@ -34,7 +34,12 @@ function bankQuestion(id: string, question: string): BankQuestion {
   } as BankQuestion;
 }
 
-function historyEntry(questionId: string, text: string, daysAgo: number, contentType: "episode" | "short_reel"): CooldownHistoryEntry {
+function historyEntry(
+  questionId: string,
+  text: string,
+  daysAgo: number,
+  contentType: "episode" | "quiz_short" | "short_reel",
+): CooldownHistoryEntry {
   return {
     question_id: questionId,
     question_text: text,
@@ -123,5 +128,18 @@ describe("createBankCooldownCalculator", () => {
   it("reports no cooldown without history", () => {
     const apply = createBankCooldownCalculator([], { nowMs: NOW_MS, cooldownMs: COOLDOWN_MS });
     expect(apply(QUESTIONS[1]).channel_cooldown).toEqual({ is_cooldown: false, days_remaining: 0 });
+  });
+
+  it("scopes cooldown history to Quiz Short usage", () => {
+    const history = [historyEntry("q-qs", "Which planet has the most moons?", 2, "quiz_short")];
+    const question = bankQuestion("q-qs", "Which planet has the most moons?");
+    const scoped = (scope: BankCooldownScope) =>
+      createBankCooldownCalculator(history, { nowMs: NOW_MS, cooldownMs: COOLDOWN_MS, scope })(question);
+
+    expect(scoped("quiz_short").channel_cooldown.is_cooldown).toBe(true);
+    expect(scoped("quiz_short").channel_cooldown.content_type).toBe("quiz_short");
+    expect(scoped("all").channel_cooldown.is_cooldown).toBe(true);
+    expect(scoped("episode").channel_cooldown.is_cooldown).toBe(false);
+    expect(scoped("short_reel").channel_cooldown.is_cooldown).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import type { TopicCandidate } from "@studio/shared";
+import type { TopicCandidate, TopicContentKind } from "@studio/shared";
 
 /**
  * Filter mode for topic history: all, long-form episodes (16:9), or short-reels (9:16).
@@ -12,7 +12,7 @@ export interface TopicFormatBadge {
   format: "16:9" | "9:16";
   badgeText: string;
   label: string;
-  kind: "episode" | "short_reel";
+  kind: TopicContentKind;
   indicatorClass: "is-landscape" | "is-vertical";
 }
 

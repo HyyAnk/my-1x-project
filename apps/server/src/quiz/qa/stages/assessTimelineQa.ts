@@ -1,11 +1,21 @@
-import { resolveGameplayPolicy, type DirectorPlan, type QuizIssue, type QuizTimeline, type QuizV2 } from "@studio/shared";
+import {
+  resolveGameplayPolicy,
+  type DirectorPlan,
+  type QuizIssue,
+  type QuizPacingProfile,
+  type QuizTimeline,
+  type QuizV2,
+} from "@studio/shared";
 import { validateQuizTimeline } from "../../timeline/validateTimeline.js";
+import { QUIZ_SHORT_QUESTION_CYCLE_RANGE_SECONDS } from "./assessQuizShortQa.js";
 
 export interface AssessTimelineQaInput {
   quiz: QuizV2;
   director?: DirectorPlan | null;
   timeline?: QuizTimeline | null;
   staticIntervalThresholdSeconds?: number;
+  /** "short" replaces the per-gameplay cycle targets with the Quiz Short cycle range. */
+  pacingProfile?: QuizPacingProfile;
 }
 
 export function questionCycleRangeSeconds(ageBand: QuizV2["age_band"]): [number, number] {
@@ -35,7 +45,11 @@ export function assessTimelineQa(input: AssessTimelineQaInput): QuizIssue[] {
   const rushed = quiz.questions.flatMap((question, index) => {
     const beat = input.director?.beats.find((item) => item.question_id === question.id);
     const [minCycle, maxCycle] =
-      input.director?.gameplay_policy_version && beat ? resolveGameplayPolicy(beat).cycle : [minimumCycle, maximumCycle];
+      input.pacingProfile === "short"
+        ? QUIZ_SHORT_QUESTION_CYCLE_RANGE_SECONDS
+        : input.director?.gameplay_policy_version && beat
+          ? resolveGameplayPolicy(beat).cycle
+          : [minimumCycle, maximumCycle];
     const start = starts[index];
     const nextStart = starts[index + 1];
     const transition = timeline.events.find((event) => event.type === "transition.start" && event.question_id === question.id);

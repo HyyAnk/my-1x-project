@@ -1,5 +1,6 @@
 import { CheckCircle, CircleNotch } from "@phosphor-icons/react";
 import type { QuizImageStyle, TopicCandidate } from "@studio/shared";
+import { getTopicKindPresentation } from "./topicKindPresentation";
 
 export interface TopicFooterProps {
   topic: TopicCandidate;
@@ -27,6 +28,8 @@ export function TopicFooter({
   onConfirm,
 }: TopicFooterProps) {
   const isShortReel = topic.content_kind === "short_reel";
+  const kind = getTopicKindPresentation(topic.content_kind);
+  const actionLabel = isShortReel ? "Create Short-Reel" : kind.selectLabel;
 
   return (
     <div className="topic-footer">
@@ -45,9 +48,7 @@ export function TopicFooter({
         onClick={() => onConfirm(isShortReel ? 1 : questionCount, selectedStyle)}
       >
         {busy ? <CircleNotch className="spin" size={15} /> : <CheckCircle size={15} weight="bold" />}
-        <span>
-          {busy ? (isShortReel ? "Creating Short-Reel…" : "Selecting Topic…") : isShortReel ? "Create Short-Reel" : "Select Topic"}
-        </span>
+        <span>{busy ? kind.busyLabel : actionLabel}</span>
       </button>
     </div>
   );

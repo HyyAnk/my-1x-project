@@ -1,10 +1,17 @@
-import { TaskSchema, makeId, nowIso, type Task, type TaskType } from "@studio/shared";
+import { TaskSchema, makeId, nowIso, type QuizProductKind, type Task, type TaskType } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import { channelTaskTypes } from "./taskQueuePump.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 import type { GenerateShortReelRequest } from "@studio/shared";
 
 const activeStatuses = ["QUEUED", "RUNNING", "WAITING_APPROVAL"] as const;
+
+/** Children inherit their parent's product kind so a Quiz Short pipeline fans out Quiz Short video and thumbnail tasks. */
+function resolveProductKind(runtime: TaskManagerRuntime, requested: QuizProductKind | undefined, parentTaskId?: string): QuizProductKind {
+  if (requested) return requested;
+  const parent = parentTaskId ? runtime.list().find((item) => item.task_id === parentTaskId) : undefined;
+  return parent?.product_kind ?? "episode";
+}
 
 function resolveImageVariant(
   runtime: TaskManagerRuntime,
@@ -56,10 +63,12 @@ export function submitTask(
   reelId?: string | null,
   shortReelRequest?: GenerateShortReelRequest,
   parentTaskId?: string,
+  requestedProductKind?: QuizProductKind,
 ): Task {
   if (taskType === "GENERATE_BUNDLE_IMAGE" && !runtime.imageConfig.enabled)
     throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
 
+  const productKind = resolveProductKind(runtime, requestedProductKind, parentTaskId);
   const imageVariant = resolveImageVariant(runtime, taskType, episodeId, sceneNumber, requestedImageVariant);
   const lockKey = resolveLockKey(taskType, channelId, episodeId, sceneNumber, imageVariant, reelId);
 
@@ -108,6 +117,8 @@ export function submitTask(
     task_type: taskType,
     channel_id: channelId,
     episode_id: episodeId,
+    // Absent means Episode, so existing task records and equality assertions keep their shape.
+    ...(productKind === "episode" ? {} : { product_kind: productKind }),
     episode_title: episodeTitle,
     reel_id: reelId ?? null,
     ...(shortReelRequest ? { short_reel_request: shortReelRequest } : {}),

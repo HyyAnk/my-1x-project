@@ -1,4 +1,4 @@
-import type { AppConfig, ContextManifest, Task, TaskEvent, TaskStatus, TaskType } from "@studio/shared";
+import type { AppConfig, ContextManifest, QuizProductRef, Task, TaskEvent, TaskStatus, TaskType } from "@studio/shared";
 import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient, CodexServerRequest } from "../codex.js";
 import type { ContextEngine } from "../context.js";
@@ -116,6 +116,7 @@ export interface TaskManagerRuntime {
     reelId?: string | null,
     parentTaskId?: string,
   ): Task;
+  submitForProduct(taskType: TaskType, product: QuizProductRef, parentTaskId?: string): Task;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
   close(): Promise<void>;
   waitForTaskTerminal(

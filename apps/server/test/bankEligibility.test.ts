@@ -3,6 +3,7 @@ import type { BankQuestion } from "@studio/shared";
 import {
   evaluateBankQuestionEligibility,
   evaluateEpisodeQuestionEligibility,
+  evaluateQuizShortQuestionEligibility,
   evaluateShortReelQuestionEligibility,
 } from "../src/quiz/bank/bankEligibility.js";
 
@@ -144,6 +145,18 @@ describe("bank eligibility policies", () => {
     expect(
       evaluateShortReelQuestionEligibility(question({ fun_fact: "Casino owners love poker nights." }), { targetArchetype: "deep_trivia" }),
     ).toMatchObject({ eligible: false, reason: "KID_UNSAFE_CONTENT" });
+  });
+
+  it("applies the Quiz Short policy through the generic entry point", () => {
+    expect(evaluateBankQuestionEligibility(question(), { policy: "quiz_short", targetLanguage: "en" }).eligible).toBe(true);
+    expect(evaluateQuizShortQuestionEligibility(question({ explanation: "" })).eligible).toBe(true);
+    expect(evaluateEpisodeQuestionEligibility(question({ explanation: "" }), { targetLanguage: "en" })).toMatchObject({
+      eligible: false,
+      reason: "EMPTY_QUESTION_OR_EXPLANATION",
+    });
+    const wordy = question({ question: `${"Which planet is known as the red planet? ".repeat(3)}Think carefully.` });
+    expect(evaluateEpisodeQuestionEligibility(wordy, { targetLanguage: "en" }).eligible).toBe(true);
+    expect(evaluateQuizShortQuestionEligibility(wordy)).toMatchObject({ eligible: false, reason: "TEXT_TOO_LONG_FOR_SHORT" });
   });
 
   it("rejects questions about Knowledge Base subjects curated as teen or mature, even with harmless wording", () => {

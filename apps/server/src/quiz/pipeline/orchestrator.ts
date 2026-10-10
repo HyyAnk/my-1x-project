@@ -11,6 +11,7 @@ import {
   type VideoTitle,
   type VoicePlan,
   type ThumbnailLayoutType,
+  type QuizProductRef,
 } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import type { QuizVoicePacingClamp } from "../audio/voiceSynthesis.js";
@@ -22,6 +23,7 @@ import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/as
 import { compileTimeline, runQa, assertQuizRenderReady } from "./stages/timelineAssessmentStages.js";
 import { ensureEpisodeThumbnail } from "../thumbnail/ensureEpisodeThumbnail.js";
 import { generateEpisodeDescription, generateEpisodeTitle } from "./stages/videoMetadataStages.js";
+import { resolvePipelineProductRef } from "./quizProductView.js";
 
 export { remixQuizQuestions } from "./remixQuestions.js";
 export {
@@ -47,7 +49,10 @@ export type QuizOrchestratorInput = {
     question_history?: AppConfig["question_history"];
   };
   channelId: string;
+  /** Product id: an Episode id or a Quiz Short id. Existing Episode call sites keep passing their episode id here. */
   episodeId: string;
+  /** Explicit product reference; when absent the kind is resolved from the id prefix (see quizProductPaths.ts). */
+  product?: QuizProductRef;
   activeEngine?: "codex" | "antigravity";
   antigravityClient?: AntigravityClient;
   codexClient?: CodexAppServerClient;
@@ -72,16 +77,7 @@ export type QuizArtifacts = {
   title: VideoTitle | null;
 };
 
-export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<QuizArtifacts> {
-  const generatedQuiz = await generateQuiz(input);
-  const director = await generateDirector(input);
-  const assetPlan = await planAssets(input);
-  const voicePlan = await planVoice(input);
-
-  const [assetResolutionResult, voiceResult] = await Promise.all([resolveAssets(input), generateVoice(input)]);
-
-  const qaResult = await runQa(input);
-
+async function ensureThumbnailNonBlocking(input: QuizOrchestratorInput): Promise<void> {
   try {
     await ensureEpisodeThumbnail(input.repository, {
       channelId: input.channelId,
@@ -105,20 +101,31 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
   } catch {
     // Non-blocking
   }
+}
 
-  // The description stage generates the title first, so both target the same search keyword.
-  let description: VideoDescription | null;
-  let title: VideoTitle | null;
+/** The description stage generates the title first, so both target the same search keyword. */
+async function generateMetadataWithFallback(
+  input: QuizOrchestratorInput,
+): Promise<{ description: VideoDescription | null; title: VideoTitle | null }> {
   try {
     const metadata = await generateEpisodeDescription(input);
-    description = metadata.description;
-    title = metadata.title;
+    return { description: metadata.description, title: metadata.title };
   } catch {
-    description = await input.repository.readVideoDescription(input.channelId, input.episodeId);
-    title = await input.repository.readVideoTitle(input.channelId, input.episodeId);
+    return {
+      description: await input.repository.readVideoDescription(input.channelId, input.episodeId),
+      title: await input.repository.readVideoTitle(input.channelId, input.episodeId),
+    };
   }
+}
 
-  return {
+export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<QuizArtifacts> {
+  const generatedQuiz = await generateQuiz(input);
+  const director = await generateDirector(input);
+  const assetPlan = await planAssets(input);
+  const voicePlan = await planVoice(input);
+  const [assetResolutionResult, voiceResult] = await Promise.all([resolveAssets(input), generateVoice(input)]);
+  const qaResult = await runQa(input);
+  const artifacts: QuizArtifacts = {
     quiz: generatedQuiz.quiz,
     history_check: generatedQuiz.history_check,
     director_plan: director.director_plan,
@@ -127,7 +134,16 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     voice_plan: voicePlan.voice_plan,
     timeline: voiceResult.timeline,
     assessment: qaResult.assessment,
-    description,
-    title,
+    description: null,
+    title: null,
   };
+
+  const product = resolvePipelineProductRef(input);
+  if (product.kind === "quiz_short") {
+    // Portrait covers and Quiz Short titles arrive in Phase 5; the pipeline stops after QA for now.
+    console.warn(`[orchestrator] Quiz Short "${product.product_id}": thumbnail, title and description are not implemented in this phase.`);
+    return artifacts;
+  }
+  await ensureThumbnailNonBlocking(input);
+  return { ...artifacts, ...(await generateMetadataWithFallback(input)) };
 }

@@ -5,6 +5,7 @@ import { runQuizV2Pipeline } from "./quizV2PipelineRunner.js";
 import type { PipelineRun, TaskManagerRuntime } from "../runtime.js";
 import { synthesizeScenesFromQuiz } from "../../quiz/domain/quizArtifactSynthesizer.js";
 import { recordIndependentStageTiming } from "./independentStageTiming.js";
+import { productRefFromTask, taskProductKind } from "../taskProductRef.js";
 
 type PipelineStepFn = (label: string, percent: number, childType: TaskType, shouldRun: () => Promise<boolean>) => Promise<boolean>;
 
@@ -101,7 +102,12 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
       progress_percent: 0,
     });
 
-    await runQuizNativePipeline(this, task, episodeId, step);
+    if (taskProductKind(task) === "episode") {
+      await runQuizNativePipeline(this, task, episodeId, step);
+    } else if (!(await this.repository.readQuiz(task.channel_id, productRefFromTask(task)))) {
+      // Quiz Short questions are locked at topic confirmation; there are no scenes to derive them from.
+      throw new Error("Quiz Short questions are missing. Confirm the topic again to rebuild them.");
+    }
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
     await runQuizV2Pipeline.call(this, task);

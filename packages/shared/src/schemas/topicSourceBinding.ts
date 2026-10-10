@@ -85,6 +85,7 @@ export const TopicSourceExclusionReasonCodeSchema = z.enum([
   "INCOMPATIBLE_CHOICES",
   "ANSWER_LEAKED_IN_STEM",
   "KID_UNSAFE_CONTENT",
+  "TEXT_TOO_LONG_FOR_SHORT",
 ]);
 export type TopicSourceExclusionReasonCode = z.infer<typeof TopicSourceExclusionReasonCodeSchema>;
 

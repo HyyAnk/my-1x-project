@@ -31,12 +31,7 @@ function resolveBridgeTopicParams(options?: CompileIntroOptions) {
   };
 }
 
-function addBridgeTopicSfx(
-  ctx: TimelineContext,
-  topicStart: number,
-  segmentId: string,
-  options?: CompileIntroOptions,
-): void {
+function addBridgeTopicSfx(ctx: TimelineContext, topicStart: number, segmentId: string, options?: CompileIntroOptions): void {
   ctx.add({
     type: "sfx.play",
     at_seconds: topicStart,
@@ -51,7 +46,7 @@ function addBridgeTopicSfx(
   const itemCount = showcaseItems && showcaseItems.length > 0 ? Math.min(showcaseItems.length, 4) : 0;
 
   if (itemCount > 0) {
-    const popOffsets = [0.30, 0.42, 0.54, 0.66];
+    const popOffsets = [0.3, 0.42, 0.54, 0.66];
     for (let i = 0; i < itemCount; i++) {
       const item = showcaseItems![i];
       ctx.add({
@@ -92,12 +87,7 @@ function addBridgeTopicSfx(
   });
 }
 
-function addBridgeStingerTransition(
-  ctx: TimelineContext,
-  transitionStart: number,
-  stingerDuration: number,
-  transitionType: string,
-): void {
+function addBridgeStingerTransition(ctx: TimelineContext, transitionStart: number, stingerDuration: number, transitionType: string): void {
   ctx.add({
     type: "transition.start",
     at_seconds: transitionStart,
@@ -142,14 +132,11 @@ function compileBridgeTopicSegment(
   options?: CompileIntroOptions,
 ): void {
   const topicStart = ctx.cursor;
-  const { topicPause, badgeText, subtitle, visualStyle, mascotAction, stingerDuration, transitionType } =
-    resolveBridgeTopicParams(options);
+  const { topicPause, badgeText, subtitle, visualStyle, mascotAction, stingerDuration, transitionType } = resolveBridgeTopicParams(options);
 
   const topicDuration = ctx.scheduleNarration(topicSegment.segment_id, topicStart, topicSegment.text, null);
   const transitionOverlap = hasNextScene ? round(stingerDuration * 0.5) : 0;
-  const totalSceneDuration = hasNextScene
-    ? round(topicDuration + topicPause + transitionOverlap)
-    : round(topicDuration + topicPause);
+  const totalSceneDuration = hasNextScene ? round(topicDuration + topicPause + transitionOverlap) : round(topicDuration + topicPause);
 
   ctx.add({
     type: "bridge.topic.enter",

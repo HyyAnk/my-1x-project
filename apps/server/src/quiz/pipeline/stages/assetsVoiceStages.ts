@@ -12,16 +12,21 @@ import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 import { resolveEpisodeIntroOutro } from "../../introOutro/episodeSelection.js";
-import { resolveEffectiveBridgeConfig, resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
+import {
+  resolveEffectiveBridgeConfig,
+  resolveEpisodeBridgeConfig,
+  resolveBridgeChannelDisplayName,
+} from "../../bridge/resolveBridgeConfig.js";
+import { loadPipelineProductView, resolvePipelineProductRef } from "../quizProductView.js";
+import { toQuizProductRef, type QuizProductId } from "../../../repository/quizProductPaths.js";
 
 export async function planAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_plan: QuizAssetPlan; artifact_path: string; invalidated: string[] }> {
-  const [quiz, director_plan, channel, episode] = await Promise.all([
+  const [quiz, director_plan, channel] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId).catch(() => null),
-    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning visual assets", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before planning visual assets", "DIRECTOR_REQUIRED");
@@ -94,8 +99,11 @@ export async function resolveAssets(
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }
 
-export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput["repository"], channelId: string, episodeId: string) {
-  const [channel, episode] = await Promise.all([repository.getChannel(channelId), repository.getEpisode(channelId, episodeId)]);
+/** Quiz Shorts carry no bookends: the intro/outro durations are zero and nothing is skipped by style. */
+export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput["repository"], channelId: string, product: QuizProductId) {
+  const ref = toQuizProductRef(channelId, product);
+  if (ref.kind === "quiz_short") return { style: null, skipIntro: true, skipOutro: true, introDuration: 0, outroDuration: 0 };
+  const [channel, episode] = await Promise.all([repository.getChannel(channelId), repository.getEpisode(channelId, ref.product_id)]);
   const { snapshot, pair } = await resolveEpisodeIntroOutro(repository, channel, episode);
   return {
     style: pair?.style ?? null,
@@ -109,22 +117,23 @@ export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput[
 export async function planVoice(
   input: QuizOrchestratorInput,
 ): Promise<{ voice_plan: VoicePlan; artifact_path: string; invalidated: string[] }> {
-  const [quiz, channel, episode] = await Promise.all([
+  const [quiz, channel, view] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
-    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
+    loadPipelineProductView(input).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning voice", "QUIZ_REQUIRED");
-  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, resolvePipelineProductRef(input));
   const director = await input.repository.readDirectorPlan(input.channelId, input.episodeId);
   const bridgeConfig = resolveEffectiveBridgeConfig(channel);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode?.quiz_config?.channel_brand_name);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, view?.quiz_config.channel_brand_name);
+  // Seam: the short pacing profile (view.quiz_config.pacing_profile) switches to the pacing-aware voice plan in the next phase.
   const voice_plan = buildQuizVoicePlan(quiz, {
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
     director: director ?? undefined,
     channelName,
-    topic: episode?.topic?.title,
+    topic: view?.topic?.title,
     bridgeConfig,
     customCtaText: bridgeConfig.customCtaText,
     includeBridgeSegments: bridgeConfig.enabled !== false,
@@ -144,26 +153,26 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   timeline_path: string;
   invalidated: string[];
 }> {
-  const [quiz, director_plan, channel, episode] = await Promise.all([
+  const [quiz, director_plan, channel, view] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
-    input.repository.getEpisode(input.channelId, input.episodeId).catch(() => null),
+    loadPipelineProductView(input).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before generating voice", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before generating voice", "DIRECTOR_REQUIRED");
   assertDirectorPlanValid(quiz, director_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
-  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, resolvePipelineProductRef(input));
   const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, episode?.quiz_config?.channel_brand_name);
+  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, view?.quiz_config.channel_brand_name);
   const plannedVoice = buildQuizVoicePlan(quiz, {
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
     director: director_plan,
     channelName,
-    topic: episode?.topic?.title,
+    topic: view?.topic?.title,
     bridgeConfig,
     customCtaText: bridgeConfig.customCtaText,
     includeBridgeSegments: bridgeConfig.enabled !== false,
@@ -191,7 +200,7 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
     introDuration: introOutro.introDuration,
     outroDuration: introOutro.outroDuration,
     channelName,
-    topic: episode?.topic?.title,
+    topic: view?.topic?.title,
     bridgeConfig,
   });
   const narration = await assembleQuizNarration({

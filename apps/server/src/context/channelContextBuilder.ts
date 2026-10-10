@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { type Channel, type ContextManifest, type TaskType } from "@studio/shared";
+import { QUIZ_SHORT_DEFAULT_QUESTION_COUNT, type Channel, type ContextManifest, type TaskType } from "@studio/shared";
 import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import type { ContextFile } from "./contextTypes.js";
@@ -104,6 +104,7 @@ export async function buildChannelContext(input: {
       channelId,
       topicHint,
       taxonomy,
+      quizShortQuestionCount: QUIZ_SHORT_DEFAULT_QUESTION_COUNT,
     });
 
     const matrixPlan: TopicMatrixPlan = {

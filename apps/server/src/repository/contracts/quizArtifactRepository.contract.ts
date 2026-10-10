@@ -19,6 +19,7 @@ import type {
   QuestionImagesOverviewResponse,
 } from "@studio/shared";
 import type { BundleImageMeta } from "../types.js";
+import type { QuizProductId } from "../quizProductPaths.js";
 
 export type QuizArtifactFilename =
   | "quiz-v2.json"
@@ -37,35 +38,36 @@ export interface IQuizArtifactRepository {
   // Generic Quiz Artifact targets
   readQuizArtifact<T>(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     filename: QuizArtifactFilename,
     schema: { parse(value: unknown): T },
   ): Promise<T | null>;
-  writeQuizArtifact<T>(channelId: string, episodeId: string, filename: QuizArtifactFilename, value: T): Promise<string>;
+  writeQuizArtifact<T>(channelId: string, product: QuizProductId, filename: QuizArtifactFilename, value: T): Promise<string>;
   quizArtifactTarget(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     filename: QuizArtifactFilename,
   ): Promise<{ absolutePath: string; relativePath: string }>;
 
   // Specific Quiz Artifacts
-  readQuiz(channelId: string, episodeId: string): Promise<QuizV2 | null>;
-  writeQuiz(channelId: string, episodeId: string, quiz: QuizV2): Promise<string>;
-  readDirectorPlan(channelId: string, episodeId: string): Promise<DirectorPlan | null>;
-  writeDirectorPlan(channelId: string, episodeId: string, plan: DirectorPlan): Promise<string>;
-  readAssetPlan(channelId: string, episodeId: string): Promise<QuizAssetPlan | null>;
-  writeAssetPlan(channelId: string, episodeId: string, plan: QuizAssetPlan): Promise<string>;
-  readQuizAssetResolution(channelId: string, episodeId: string): Promise<QuizAssetResolution | null>;
-  writeQuizAssetResolution(channelId: string, episodeId: string, resolution: QuizAssetResolution): Promise<string>;
+  readQuiz(channelId: string, product: QuizProductId): Promise<QuizV2 | null>;
+  writeQuiz(channelId: string, product: QuizProductId, quiz: QuizV2): Promise<string>;
+  readDirectorPlan(channelId: string, product: QuizProductId): Promise<DirectorPlan | null>;
+  writeDirectorPlan(channelId: string, product: QuizProductId, plan: DirectorPlan): Promise<string>;
+  readAssetPlan(channelId: string, product: QuizProductId): Promise<QuizAssetPlan | null>;
+  writeAssetPlan(channelId: string, product: QuizProductId, plan: QuizAssetPlan): Promise<string>;
+  readQuizAssetResolution(channelId: string, product: QuizProductId): Promise<QuizAssetResolution | null>;
+  writeQuizAssetResolution(channelId: string, product: QuizProductId, resolution: QuizAssetResolution): Promise<string>;
   writeQuizImageAsset(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     assetId: string,
     fingerprint: string,
     content: Uint8Array,
     meta?: BundleImageMeta,
   ): Promise<string>;
-  resolveQuizAssetPath(channelId: string, episodeId: string, assetPath: string): Promise<string>;
+  resolveQuizAssetPath(channelId: string, product: QuizProductId, assetPath: string): Promise<string>;
+  // Question image uploads remain Episode-only until the Quiz Short editor lands (Phase 6).
   listEpisodeQuestionImages(channelId: string, episodeId: string): Promise<QuestionImagesOverviewResponse>;
   saveUploadedQuestionImage(
     channelId: string,
@@ -81,12 +83,12 @@ export interface IQuizArtifactRepository {
     questionNumber: number,
     options?: { slotId?: string; assetId?: string },
   ): Promise<{ item: QuestionImageItem; invalidated: string[] }>;
-  readQuizTimeline(channelId: string, episodeId: string): Promise<QuizTimeline | null>;
-  writeQuizTimeline(channelId: string, episodeId: string, timeline: QuizTimeline): Promise<string>;
-  readQuizAssessment(channelId: string, episodeId: string): Promise<QuizAssessment | null>;
-  writeQuizAssessment(channelId: string, episodeId: string, assessment: QuizAssessment): Promise<string>;
-  readVoicePlan(channelId: string, episodeId: string): Promise<VoicePlan | null>;
-  writeVoicePlan(channelId: string, episodeId: string, plan: VoicePlan): Promise<string>;
+  readQuizTimeline(channelId: string, product: QuizProductId): Promise<QuizTimeline | null>;
+  writeQuizTimeline(channelId: string, product: QuizProductId, timeline: QuizTimeline): Promise<string>;
+  readQuizAssessment(channelId: string, product: QuizProductId): Promise<QuizAssessment | null>;
+  writeQuizAssessment(channelId: string, product: QuizProductId, assessment: QuizAssessment): Promise<string>;
+  readVoicePlan(channelId: string, product: QuizProductId): Promise<VoicePlan | null>;
+  writeVoicePlan(channelId: string, product: QuizProductId, plan: VoicePlan): Promise<string>;
   getRenderedVoiceMetrics(): Promise<{
     rendered_characters: number;
     rendered_duration_seconds: number;
@@ -114,18 +116,18 @@ export interface IQuizArtifactRepository {
     costUsd?: number;
     note?: string;
   }): Promise<UsageLedger>;
-  readHistoryCheck(channelId: string, episodeId: string): Promise<QuestionHistoryCheckResult | null>;
-  writeHistoryCheck(channelId: string, episodeId: string, result: QuestionHistoryCheckResult): Promise<string>;
-  readVideoDescription(channelId: string, episodeId: string): Promise<VideoDescription | null>;
-  writeVideoDescription(channelId: string, episodeId: string, description: VideoDescription): Promise<string>;
-  readVideoTitle(channelId: string, episodeId: string): Promise<VideoTitle | null>;
-  writeVideoTitle(channelId: string, episodeId: string, title: VideoTitle): Promise<string>;
-  readQuizStageTimings(channelId: string, episodeId: string): Promise<QuizStageTimings | null>;
-  writeQuizStageTimings(channelId: string, episodeId: string, timings: QuizStageTimings): Promise<string>;
+  readHistoryCheck(channelId: string, product: QuizProductId): Promise<QuestionHistoryCheckResult | null>;
+  writeHistoryCheck(channelId: string, product: QuizProductId, result: QuestionHistoryCheckResult): Promise<string>;
+  readVideoDescription(channelId: string, product: QuizProductId): Promise<VideoDescription | null>;
+  writeVideoDescription(channelId: string, product: QuizProductId, description: VideoDescription): Promise<string>;
+  readVideoTitle(channelId: string, product: QuizProductId): Promise<VideoTitle | null>;
+  writeVideoTitle(channelId: string, product: QuizProductId, title: VideoTitle): Promise<string>;
+  readQuizStageTimings(channelId: string, product: QuizProductId): Promise<QuizStageTimings | null>;
+  writeQuizStageTimings(channelId: string, product: QuizProductId, timings: QuizStageTimings): Promise<string>;
   readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]>;
   appendQuestionHistory(
     channelId: string,
-    episodeId: string,
+    product: QuizProductId,
     questions: QuizQuestion[],
     ttlDays?: number,
     renderTaskId?: string,
@@ -137,6 +139,6 @@ export interface IQuizArtifactRepository {
     ttlDays?: number,
   ): Promise<void>;
   readBgmHistory(channelId: string): Promise<BgmHistoryEntry[]>;
-  appendBgmHistory(channelId: string, episodeId: string, trackId: string, filename: string, ttlDays?: number): Promise<void>;
-  invalidateQuizArtifacts(channelId: string, episodeId: string, stages: string[]): Promise<string[]>;
+  appendBgmHistory(channelId: string, product: QuizProductId, trackId: string, filename: string, ttlDays?: number): Promise<void>;
+  invalidateQuizArtifacts(channelId: string, product: QuizProductId, stages: string[]): Promise<string[]>;
 }

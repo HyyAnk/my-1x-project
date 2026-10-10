@@ -139,14 +139,11 @@ describe("Phase 8: End-to-End Integration & Regression QA", () => {
     // 3. COMPILE PROMPTS (verifying framing rules and cache version)
     for (const bridgeAsset of bridgeAssets) {
       const promptResult = compileQuizAssetPrompt(bridgeAsset);
-      expect(promptResult.cacheVersion).toContain("-v1-bridge-showcase");
+      expect(promptResult.cacheVersion).toContain("-v2-bridge-showcase-backdrop");
       expect(promptResult.prompt).toContain("Bridge topic showcase item");
-      if (bridgeAsset.transparent_background) {
-        expect(promptResult.prompt).toContain("isolated centered subject on a pure solid white studio backdrop");
-        expect(promptResult.prompt).toContain("Bridge showcase sticker contract");
-      } else {
-        expect(promptResult.prompt).toContain("Bridge showcase card vignette contract");
-      }
+      expect(bridgeAsset.transparent_background).toBe(false);
+      expect(promptResult.prompt).toContain("Bridge showcase card contract");
+      expect(promptResult.prompt).not.toContain("pure solid white studio backdrop");
     }
 
     // 4. TIMELINE COMPILATION (verifying staggered pop audio SFX)
@@ -193,13 +190,11 @@ describe("Phase 8: End-to-End Integration & Regression QA", () => {
     expect(topicEnter!.payload.showcaseItems).toHaveLength(4);
 
     // Verify 4 staggered ui_pop SFX events at +0.30s, +0.42s, +0.54s, +0.66s
-    const topicSfxEvents = timeline.events.filter(
-      (e) => e.type === "sfx.play" && e.segment_id === "intro_topic",
-    );
+    const topicSfxEvents = timeline.events.filter((e) => e.type === "sfx.play" && e.segment_id === "intro_topic");
     expect(topicSfxEvents).toHaveLength(6); // whoosh + 4 pops + sparkle
     expect(topicSfxEvents[0].payload.sound).toBe("transition_fast");
 
-    const expectedPops = [6.30, 6.42, 6.54, 6.66];
+    const expectedPops = [6.3, 6.42, 6.54, 6.66];
     for (let i = 0; i < 4; i++) {
       const popEvent = topicSfxEvents[i + 1];
       expect(popEvent.payload.sound).toBe("ui_pop");
@@ -300,9 +295,7 @@ describe("Phase 8: End-to-End Integration & Regression QA", () => {
     });
 
     // Exactly 3 SFX events: whoosh, single counter pop, sparkle
-    const topicSfxEvents = timeline.events.filter(
-      (e) => e.type === "sfx.play" && e.segment_id === "intro_topic",
-    );
+    const topicSfxEvents = timeline.events.filter((e) => e.type === "sfx.play" && e.segment_id === "intro_topic");
     expect(topicSfxEvents).toHaveLength(3);
     expect(topicSfxEvents[1].payload.name).toBe("count_sticker_bounce");
 
