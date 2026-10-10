@@ -3,14 +3,14 @@ import { SCORE_CTA_CLIP_ID } from "./scoreCtaClip.js";
 
 export type QuizShortMascotViolation = {
   clipId: string;
-  reason: "mascot_outside_reveal_or_cta" | "mascot_phase_not_reveal";
+  reason: "mascot_outside_question_or_cta" | "mascot_phase_not_allowed";
   phase?: string;
 };
 
 const MASCOT_CONTAINER_PATTERN = /class="[^"]*\bcandy-mascot-container\b[^"]*"/;
 const MASCOT_STATE_PHASE_PATTERN = /class="[^"]*\bmascot-v2-state\b[^"]*"[^>]*data-mascot-phase="([^"]+)"/g;
 const CLIP_ID_PATTERN = /<section[^>]*\sid="([^"]+)"/;
-const REVEAL_PHASES = new Set(["reveal", "explain"]);
+const QUESTION_CLIP_PHASES = new Set(["thinking", "reveal", "explain"]);
 
 function clipSources(bundle: CandyArcadeCompositionBundle): Array<{ clipId: string; html: string }> {
   return Object.entries(bundle.files)
@@ -23,9 +23,9 @@ function statePhases(html: string): string[] {
 }
 
 /**
- * QA-visible invariant for Quiz Shorts: the mascot may appear only on answer reveals inside
- * question clips and on the score CTA clip. Any mascot container elsewhere, or any question
- * mascot state outside the reveal beat, is reported so the QA module can fail the render.
+ * QA-visible invariant for Quiz Shorts: inside question clips the mascot may only think (while the
+ * question is read) and celebrate the reveal; outside them it appears only on the score CTA clip.
+ * A mascot on the kickoff card or any other clip, or any other question-clip state, is reported.
  */
 export function findQuizShortMascotViolations(bundle: CandyArcadeCompositionBundle): QuizShortMascotViolation[] {
   const violations: QuizShortMascotViolation[] = [];
@@ -33,11 +33,11 @@ export function findQuizShortMascotViolations(bundle: CandyArcadeCompositionBund
     if (!MASCOT_CONTAINER_PATTERN.test(html)) continue;
     if (clipId === SCORE_CTA_CLIP_ID) continue;
     if (!clipId.startsWith("quiz-q")) {
-      violations.push({ clipId, reason: "mascot_outside_reveal_or_cta" });
+      violations.push({ clipId, reason: "mascot_outside_question_or_cta" });
       continue;
     }
     for (const phase of statePhases(html)) {
-      if (!REVEAL_PHASES.has(phase)) violations.push({ clipId, reason: "mascot_phase_not_reveal", phase });
+      if (!QUESTION_CLIP_PHASES.has(phase)) violations.push({ clipId, reason: "mascot_phase_not_allowed", phase });
     }
   }
   return violations;

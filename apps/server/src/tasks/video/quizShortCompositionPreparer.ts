@@ -49,7 +49,7 @@ const NO_BOOKENDS: VideoCompositionContext["introOutro"] = {
 /**
  * Prepares the portrait Quiz Short composition: loads the Quiz V2 artifacts, assets, soundtrack
  * and mascot the same way Episodes do, but with no bookend resolution, no style pinning write and
- * the reveal-only mascot invariant enforced before the HTML is written.
+ * the Quiz Short mascot invariant enforced before the HTML is written.
  */
 export async function prepareQuizShortComposition(options: QuizShortCompositionOptions): Promise<VideoCompositionContext> {
   const { runtime, repository, channel, product, quizShort, scenes, onProgress } = options;
@@ -166,7 +166,7 @@ function assertMascotRevealOnly(html: string, files: Record<string, string>): vo
   if (violations.length === 0) return;
   const detail = violations.map((violation) => `${violation.clipId}: ${violation.reason}`).join("; ");
   throw new RepositoryError(
-    `Quiz Short mascot must appear only on answer reveals and the score CTA (${detail})`,
+    `Quiz Short mascot may only think and celebrate in question clips and appear on the score CTA (${detail})`,
     "QUIZ_SHORT_MASCOT_VISIBILITY",
   );
 }

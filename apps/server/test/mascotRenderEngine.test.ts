@@ -487,8 +487,9 @@ describe("Mascot portrait canvas and storage migration", () => {
     const questionClip = Object.entries(bundle.files).find(([file]) => file.includes("quiz-q1-"))?.[1] ?? "";
     expect(questionClip).toContain("quiz-frame-portrait");
     expect(questionClip).toContain("layout-short_");
-    // A thinking-only mascot has nothing to show at reveal, so the reveal-only policy keeps it off the question clip entirely.
-    expect(questionClip).not.toContain("candy-mascot-container");
+    // A thinking-only mascot thinks while the question is read and has nothing to show at reveal.
+    const thinkingPhases = [...questionClip.matchAll(/data-mascot-phase="([^"]+)"/g)].map((match) => match[1]);
+    expect(thinkingPhases).toEqual(["thinking"]);
     const revealBundle = buildCandyArcadeCompositionBundle({
       productKind: "quiz_short",
       quiz,
@@ -502,8 +503,9 @@ describe("Mascot portrait canvas and storage migration", () => {
     });
     const revealClip = Object.entries(revealBundle.files).find(([file]) => file.includes("quiz-q1-"))?.[1] ?? "";
     const phases = [...revealClip.matchAll(/data-mascot-phase="([^"]+)"/g)].map((match) => match[1]);
-    expect(phases.length).toBeGreaterThan(0);
-    expect(phases.every((phase) => phase === "reveal" || phase === "explain")).toBe(true);
+    expect(phases[0]).toBe("thinking");
+    expect(phases.slice(1).length).toBeGreaterThan(0);
+    expect(phases.slice(1).every((phase) => phase === "reveal" || phase === "explain")).toBe(true);
     expect(revealClip).toContain('data-mascot-aspect-ratio="9:16"');
     expect(Object.keys(bundle.files).some((file) => file.includes("candy-score-cta"))).toBe(true);
     expect(Object.keys(bundle.files).some((file) => file.includes("candy-intro") || file.includes("candy-outro"))).toBe(false);
@@ -560,11 +562,10 @@ describe("Mascot portrait canvas and storage migration", () => {
     );
     expect(css).toContain("--safe-zone-right: 151px");
     expect(css).toContain(
-      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene.clip .candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container { bottom: 212px; }',
+      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene.clip .candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container { bottom: 120px; }',
     );
-    expect(css).toContain(
-      ".candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container.anchor-bottom_right { right: 226px; }",
-    );
+    // Centered on the canvas: (1080 - 220) / 2 = 430 for either channel anchor.
+    expect(css).toContain(".mascot-v2-container.mascot-v2-container.mascot-v2-container.anchor-bottom_left { left: 430px; right: auto; }");
     expect(css).not.toContain(".quiz-frame-unified.candy-scene {");
   });
 

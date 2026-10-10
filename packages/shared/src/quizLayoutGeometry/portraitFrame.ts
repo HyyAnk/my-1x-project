@@ -43,9 +43,9 @@ export const PORTRAIT_FRAME_GEOMETRY: QuizPortraitFrameGeometry = Object.freeze(
   question: Object.freeze({ x: GUTTER, y: 260, width: 936, height: 240 }),
   arena: Object.freeze({ x: GUTTER, y: 530, width: 936, height: 968 }),
   countdown: Object.freeze({ x: 858, y: 430, width: 150, height: 150 }),
-  // No fact card on Quiz Shorts: the reveal beat is too short to read one, so the mascot owns
-  // the bottom band. It may dip below the safe area: platform captions sit bottom-left.
-  mascot: Object.freeze({ x: 480, y: 1180, width: 528, height: 528 }),
+  // No fact card on Quiz Shorts, so the mascot owns the bottom band, centered under the choices.
+  // It dips into the reserved bottom band; its cut edge sits 120 px above the canvas bottom.
+  mascot: Object.freeze({ x: 223, y: 1166, width: 634, height: 634 }),
   cta: Object.freeze({ x: GUTTER, y: 540, width: 936, height: 580 }),
 });
 

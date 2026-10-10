@@ -3,7 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
 import { afterEach, describe, expect, it } from "vitest";
-import type { MascotAssetRegistration } from "@studio/shared";
+import { RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16, adaptMascotV1ToV2, type MascotAssetRegistration } from "@studio/shared";
+import { renderState } from "../src/quiz/render/mascot/index.js";
 import { measureMascotContentBounds, measureRegistrationContentBounds } from "../src/tasks/video/mascotContentBounds.js";
 import { resolveQuestionBundleAction } from "../src/quiz/render/mascot/adapter/mascotQuestionVariantSelector.js";
 import { stillImageMascot } from "./candyArcadeTestUtils.js";
@@ -100,5 +101,69 @@ describe("mascot profile measurement", () => {
       content_bounds: { x: 0, y: 0, width: 220, height: 150 },
       pivot: { x: 110, y: 220 },
     });
+  });
+});
+
+describe("mascot ledge metrics", () => {
+  function celebrateStateHtml(registration: MascotAssetRegistration): string {
+    const bundle = adaptMascotV1ToV2(stillImageMascot)!;
+    const placed = {
+      ...bundle,
+      config: {
+        ...bundle.config,
+        placements: {
+          ...bundle.config.placements,
+          "9:16": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16, anchor: "bottom_right" as const },
+        },
+      },
+      assets: {
+        ...bundle.assets,
+        actions: {
+          ...bundle.assets.actions,
+          celebrate: {
+            version: 2 as const,
+            action: "celebrate" as const,
+            image_url: "./celebrate.png",
+            registration,
+            motion: { preset: "none" as const, speed: 1, intensity: "normal" as const },
+          },
+        },
+      },
+    };
+    return renderState(
+      placed,
+      "9:16",
+      { phase: "reveal", atSeconds: 0, durationSeconds: 1, playing: true, revealOutcome: "correct" },
+      (url) => url,
+      false,
+    );
+  }
+
+  it("puts the ledge on the feet of a landscape mascot whose art reaches the image bottom", () => {
+    // The user's mascot: a 1280x720 image whose opaque art touches the bottom row, pivot at the bottom center.
+    const html = celebrateStateHtml({
+      source_width: 1280,
+      source_height: 720,
+      content_bounds: { x: 0, y: 0, width: 1280, height: 720 },
+      pivot: { x: 640, y: 720 },
+      offset_x: 0,
+      offset_y: 0,
+    });
+    expect(html).toContain("--mascot-content-bottom-gap:0px");
+    expect(html).toContain("--mascot-content-center-x:0px");
+    expect(html).toMatch(/--mascot-content-width:633\.6px/);
+  });
+
+  it("lifts the ledge by the transparent padding under the art", () => {
+    // 220x220 canvas, art in the top 150 rows, pivot at the canvas bottom: 70 transparent rows x scale 2.88.
+    const html = celebrateStateHtml({
+      source_width: 220,
+      source_height: 220,
+      content_bounds: { x: 0, y: 0, width: 220, height: 150 },
+      pivot: { x: 110, y: 220 },
+      offset_x: 0,
+      offset_y: 0,
+    });
+    expect(html).toContain("--mascot-content-bottom-gap:201.6px");
   });
 });

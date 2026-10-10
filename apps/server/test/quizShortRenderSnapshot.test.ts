@@ -179,16 +179,21 @@ describe("Quiz Short render snapshot", () => {
     expect(normalizeForSnapshot(cta.html)).toMatchSnapshot();
   });
 
-  it("shows the mascot only on answer reveals and the CTA", () => {
+  it("thinks while the question is read, celebrates from the reveal and appears on the CTA", () => {
     for (const specimen of specimens) {
       expect(findQuizShortMascotViolations(specimen.bundle)).toEqual([]);
       for (const clip of questionClips(specimen.bundle)) {
-        const phases = [...clip.html.matchAll(/data-mascot-phase="([^"]+)"/g)].map((match) => match[1]);
-        expect(phases.length).toBeGreaterThan(0);
-        expect(phases.every((phase) => phase === "reveal" || phase === "explain")).toBe(true);
+        const states = [...clip.html.matchAll(/--mascot-state-delay:([0-9.]+)s;[^"]*"[^>]*data-mascot-phase="([^"]+)"/g)].map((match) => ({
+          delay: Number(match[1]),
+          phase: match[2],
+        }));
+        expect(states.length).toBeGreaterThan(1);
         const revealAt = Number(clip.html.match(/data-reveal-at="([^"]+)"/)![1]);
-        const delays = [...clip.html.matchAll(/--mascot-state-delay:([0-9.]+)s/g)].map((match) => Number(match[1]));
-        for (const delay of delays) expect(delay).toBeGreaterThanOrEqual(revealAt - 0.001);
+        expect(states[0]).toEqual({ delay: 0, phase: "thinking" });
+        for (const state of states.slice(1)) {
+          expect(["reveal", "explain"]).toContain(state.phase);
+          expect(state.delay).toBeGreaterThanOrEqual(revealAt - 0.001);
+        }
       }
     }
   });

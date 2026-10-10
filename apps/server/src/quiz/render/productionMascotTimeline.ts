@@ -22,10 +22,11 @@ export type ProductionMascotTimelineEvent = {
 
 /**
  * "always": the mascot stays on stage through every question phase (Episodes).
- * "reveal_only": markers are emitted only from the answer reveal onward (Quiz Shorts), so the
- * mascot never occupies the arena while viewers are reading the question or thinking.
+ * "reveal_only": markers are emitted only from the answer reveal onward (the Quiz Short score CTA).
+ * "think_then_reveal": one thinking marker from the clip start, then the reveal (Quiz Short
+ * question clips): the mascot ponders while the question is read and celebrates the answer.
  */
-export type MascotVisibilityPolicy = "always" | "reveal_only";
+export type MascotVisibilityPolicy = "always" | "reveal_only" | "think_then_reveal";
 
 export type ProductionMascotRenderOptions = {
   phase: "intro" | "question" | "outro";
@@ -66,9 +67,11 @@ export function resolveProductionMascotMarkers(
   const explanationAt = resolveExplanationAt(events);
   const revealOutcome = options.revealOutcome ?? "correct";
   const markers = new Map<number, MascotMarker>();
-  const revealOnly = options.visibilityPolicy === "reveal_only";
+  const revealOnly = options.visibilityPolicy === "reveal_only" || options.visibilityPolicy === "think_then_reveal";
 
-  if (!revealOnly) {
+  if (options.visibilityPolicy === "think_then_reveal") {
+    addMarker(markers, { atSeconds: clipStartSeconds, phase: "thinking", revealOutcome: null }, clipStartSeconds, clipEndSeconds);
+  } else if (!revealOnly) {
     addMarker(markers, { atSeconds: clipStartSeconds, phase: "question", revealOutcome: null }, clipStartSeconds, clipEndSeconds);
     addPhaseMarker(markers, choicesAt, "choices", clipStartSeconds, clipEndSeconds);
     addPhaseMarker(markers, thinkingAt, "thinking", clipStartSeconds, clipEndSeconds);

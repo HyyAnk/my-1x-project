@@ -67,7 +67,10 @@ export function renderState(
 
   const geometry = resolveMascotRenderGeometry(spec);
   const bounds = geometry.visible_content;
-  const contentBottomGap = Math.max(0, geometry.box_y + geometry.box_height - (bounds.y + bounds.height));
+  // The frame is translated so the art's pivot lands on the stage pivot (container bottom center);
+  // measure the visible content from that point, not from the translated box edge.
+  const contentBottomGap = Math.max(0, geometry.pivot_y - (bounds.y + bounds.height));
+  const contentCenterOffsetX = bounds.x + bounds.width / 2 - geometry.pivot_x;
   const pivot = localPivot(spec, geometry);
   const assetPivot = localAssetPivot(spec, geometry);
   const duration = Math.max(0.04, finiteNonNegative(state.durationSeconds));
@@ -84,6 +87,8 @@ export function renderState(
     `--mascot-registration-x:${px(geometry.registration_offset_x)}`,
     `--mascot-registration-y:${px(geometry.registration_offset_y)}`,
     `--mascot-content-bottom-gap:${px(contentBottomGap)}`,
+    `--mascot-content-width:${px(bounds.width)}`,
+    `--mascot-content-center-x:${px(contentCenterOffsetX)}`,
     ...motionStyle(effectiveMotion, timelineTime, duration, stateDelay, preview),
   ].join(";");
   const art = renderArt(

@@ -224,7 +224,7 @@ export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_16_9 = { ...RECOMMENDED_MASCOT_
  */
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 = {
   position: "bottom_right",
-  scale: 2.4,
+  scale: 2.88,
   offset_x: 0,
   offset_y: 0,
   flip_x: false,

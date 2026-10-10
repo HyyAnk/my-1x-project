@@ -27,7 +27,7 @@ export function resolveQuestionClipFrameProfile(input: {
     productKind,
     aspectRatio: input.aspectRatio ?? "16:9",
     isShort,
-    mascotVisibility: isShort ? "reveal_only" : "always",
+    mascotVisibility: isShort ? "think_then_reveal" : "always",
   };
 }
 
