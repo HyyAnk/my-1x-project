@@ -1,6 +1,6 @@
 import os from "node:os";
-import { resolveHardwareBrowserPath } from "../../infrastructure/executables/browserDiscovery.js";
-export { resolveHardwareBrowserPath } from "../../infrastructure/executables/browserDiscovery.js";
+import { resolveBrowserOverridePath } from "../../infrastructure/executables/browserDiscovery.js";
+export { resolveBrowserOverridePath, resolveHardwareBrowserPath } from "../../infrastructure/executables/browserDiscovery.js";
 
 /**
  * Calculates the optimal number of parallel workers for HyperFrames rendering
@@ -33,15 +33,19 @@ export function calculateOptimalWorkers(configuredWorkers?: number): number {
 
 /**
  * Builds the runtime environment variables for HyperFrames with hardware GPU acceleration.
+ * The browser is HyperFrames' managed chrome-headless-shell unless HYPERFRAMES_BROWSER_PATH
+ * explicitly names another executable.
  */
 export function getHyperframesExecutionEnv(): Record<string, string> {
-  const browserPath = resolveHardwareBrowserPath();
+  const browserPath = resolveBrowserOverridePath();
   const { HYPERFRAMES_BROWSER_PATH: _browserOverride, ...environment } = process.env;
 
   return {
     ...environment,
     PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS: process.env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS || "300000",
-    PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS: process.env.PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS || "300000",
+    // A single CDP call (one frame capture) takes well under a second. A hung worker is
+    // only detected when this expires, so 5 minutes here meant 5 idle minutes per hang.
+    PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS: process.env.PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS || "60000",
     PRODUCER_PLAYER_READY_TIMEOUT_MS: process.env.PRODUCER_PLAYER_READY_TIMEOUT_MS || "60000",
     PRODUCER_EXPERIMENTAL_FAST_CAPTURE: process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE || "true",
     PRODUCER_ENABLE_STREAMING_ENCODE: process.env.PRODUCER_ENABLE_STREAMING_ENCODE || "true",
@@ -49,11 +53,15 @@ export function getHyperframesExecutionEnv(): Record<string, string> {
     // once they exceed the producer's conservative 240 second default.
     PRODUCER_STREAMING_ENCODE_MAX_DURATION_SECONDS:
       process.env.PRODUCER_STREAMING_ENCODE_MAX_DURATION_SECONDS || "900",
-    HF_DE_PARALLEL_STREAM: process.env.HF_DE_PARALLEL_STREAM || "true",
-    // Screenshot capture is the stable Windows path. Keep its workers streaming
-    // into FFmpeg so parallel capture does not wait for a frame directory merge.
-    HF_CAPTURE_PARALLEL_STREAM: process.env.HF_CAPTURE_PARALLEL_STREAM || "true",
-    HF_DE_STALL_MS: process.env.HF_DE_STALL_MS || "600000",
+    // Parallel workers capture to disk instead of streaming into FFmpeg. Streaming is
+    // ~30% faster when nothing fails, but one crashed browser worker makes the producer
+    // restart the whole capture on a single worker (~3x slower). The disk path only
+    // re-captures missing frames, so long episodes finish in a predictable time.
+    HF_DE_PARALLEL_STREAM: process.env.HF_DE_PARALLEL_STREAM || "false",
+    HF_CAPTURE_PARALLEL_STREAM: process.env.HF_CAPTURE_PARALLEL_STREAM || "false",
+    // Headless-shell workers load the page in ~1s, so a 2 minute stall budget still
+    // tolerates slow first loads without idling for 10 minutes before falling back.
+    HF_DE_STALL_MS: process.env.HF_DE_STALL_MS || "120000",
     HF_FAST_CAPTURE_CSSFX: process.env.HF_FAST_CAPTURE_CSSFX || "true",
     HYPERFRAMES_RENDER_DETACHED: process.env.HYPERFRAMES_RENDER_DETACHED || "1",
     ...(browserPath ? { HYPERFRAMES_BROWSER_PATH: browserPath } : {}),

@@ -112,6 +112,7 @@ describe("Quiz Source IDs Resilience and Preflight Safety", () => {
       readQuizTimeline: vi.fn().mockResolvedValue(null),
       readQuizAssessment: vi.fn().mockResolvedValue(null),
       readVideoDescription: vi.fn().mockResolvedValue(null),
+      readVideoTitle: vi.fn().mockResolvedValue(null),
       writeQuiz: vi.fn((_c, _e, q) => {
         currentQuiz = q;
         writtenQuizzes.push(q);

@@ -16,7 +16,8 @@ export function formatSourceBackedTopicPrompt(allocation: TopicAllocationResult,
   const slotDescriptions = allocatedSlots.map((slot) => {
     const questionSummaries = slot.allocatedQuestions.map((q, idx) => {
       const choicesStr = q.choices.map((c) => `[${c.id}] ${c.text}`).join(" | ");
-      return `    Q${idx + 1} (${q.question.id}): "${q.sourceText}" | Choices: ${choicesStr} | Correct: [${q.correctChoiceId}] "${q.selectedAnswerText}" | Explanation: ${q.explanation}`;
+      // Explanations are omitted: titles, premises and hooks only need each question and its answer.
+      return `    Q${idx + 1} (${q.question.id}): "${q.sourceText}" | Choices: ${choicesStr} | Correct: [${q.correctChoiceId}] "${q.selectedAnswerText}"`;
     });
 
     return `Slot ${slot.slot} (${slot.slotId}): ${slot.name}
@@ -49,9 +50,8 @@ For each allocated slot (${allocatedSlots.map((s) => s.slotId).join(", ")}), ret
 - slot_id: string (must match the assigned slot_id, e.g. "${allocatedSlots[0]?.slotId ?? "slot_1"}")
 - title: string (catchy, engaging episode or short-reel title)
 - premise: string (brief 1-2 sentence overview of the quiz narrative or hook)
-- why_it_fits: string (why this fits the channel DNA and audience)
 - hook: string (irresistible opening hook line)
-- estimated_potential: string (why this topic will perform well)
+Keep every field concise and do not add any other fields.
 
 DO NOT alter, replace, or return source questions, source bindings, content_kind, archetype, or domain_id. The server retains sole authority over all questions and bindings.
 Return a JSON array containing exactly ${allocatedSlots.length} candidates, one for each allocated slot.${hintGuidance}`;

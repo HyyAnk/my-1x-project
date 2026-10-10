@@ -1,0 +1,103 @@
+/* ==========================================================================
+   YouTube Title Card (shares the description panel shell)
+   ========================================================================== */
+
+.video-title-info {
+  display: inline-flex;
+  color: var(--muted);
+  cursor: help;
+}
+
+.video-title-generate,
+.video-title-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+}
+
+.video-title-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+}
+
+.video-title-editor {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.video-title-input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.video-title-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.video-title-checks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.video-title-length {
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--ink-secondary);
+}
+
+.video-title-length.is-truncated {
+  color: var(--yellow);
+}
+
+.video-title-length.is-overflow {
+  color: var(--notice-error);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.video-title-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.video-title-check.is-pass {
+  color: var(--green);
+}
+
+.video-title-check.is-warn {
+  color: var(--yellow);
+}
+
+.video-title-empty {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 640px) {
+  .video-title-editor {
+    flex-direction: column;
+  }
+}

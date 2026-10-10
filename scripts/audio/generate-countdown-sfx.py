@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Pure Crystal Glass "Ting... Ting..." Countdown Synthesizer (5-4-3-2-1).
-Style: Thánh thót, trong vắt như tiếng gõ ly pha lê / chuông bấm lễ tân (Pure Crystal Ting).
+Style: clear and bright, like tapping a crystal glass or a reception desk bell (Pure Crystal Ting).
 Zero distortion, pure harmonic crystal glass ringing with ascending musical pitches.
 Format: Studio-grade 48kHz, 16-bit Mono WAV.
 """

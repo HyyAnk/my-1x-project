@@ -7,7 +7,7 @@ import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizArtifacts, QuizOrchestratorInput } from "../orchestrator.js";
 
 export async function readQuizArtifacts(input: QuizOrchestratorInput): Promise<QuizArtifacts> {
-  const [quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description] =
+  const [quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description, title] =
     await Promise.all([
       input.repository.readQuiz(input.channelId, input.episodeId),
       input.repository.readHistoryCheck(input.channelId, input.episodeId),
@@ -18,8 +18,9 @@ export async function readQuizArtifacts(input: QuizOrchestratorInput): Promise<Q
       input.repository.readQuizTimeline(input.channelId, input.episodeId),
       input.repository.readQuizAssessment(input.channelId, input.episodeId),
       input.repository.readVideoDescription(input.channelId, input.episodeId),
+      input.repository.readVideoTitle(input.channelId, input.episodeId),
     ]);
-  return { quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description };
+  return { quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description, title };
 }
 
 export async function generateQuiz(

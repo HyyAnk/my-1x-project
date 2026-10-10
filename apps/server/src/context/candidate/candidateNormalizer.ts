@@ -20,6 +20,7 @@ import {
   type CandidateTextFields,
 } from "./candidateFieldValidator.js";
 import { resolveCombinedAgeBand } from "../../quiz/bank/audience/audienceBand.js";
+import { deriveSlotSupportingCopy } from "./slotSupportingCopy.js";
 
 /**
  * Builds a validated ShortReel TopicCandidate from slot plan and validated fields.
@@ -132,7 +133,7 @@ export function buildCandidateFromSlot(
  * Builds a ShortReel TopicRunCandidate for an allocated slot.
  */
 export function buildShortReelRunCandidate(slot: AllocatedSlot, item: Record<string, unknown>, channelId: string): TopicRunCandidate {
-  const textFields = extractCandidateTextFields(item, slot.slot);
+  const textFields = extractCandidateTextFields(item, slot.slot, deriveSlotSupportingCopy(slot));
   const topicId = makeId("topic_reel");
   const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
   const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
@@ -168,7 +169,7 @@ export function buildShortReelRunCandidate(slot: AllocatedSlot, item: Record<str
  * Builds an Episode TopicRunCandidate for an allocated slot.
  */
 export function buildEpisodeRunCandidate(slot: AllocatedSlot, item: Record<string, unknown>, channelId: string): TopicRunCandidate {
-  const textFields = extractCandidateTextFields(item, slot.slot);
+  const textFields = extractCandidateTextFields(item, slot.slot, deriveSlotSupportingCopy(slot));
   const topicId = makeId("topic_ep");
   const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
   const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;

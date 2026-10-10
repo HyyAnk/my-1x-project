@@ -52,18 +52,18 @@ describe("CostSavingsSection i18n & unit localization", () => {
       </LanguageProvider>,
     );
 
-    // AI Images Produced should display 'images' in English, NOT 'ảnh'
+    // AI Images Produced should display 'images' in English, not the retired Vietnamese unit label
     const imageCountMetric = screen.getByText(/42 images/i);
     expect(imageCountMetric).toBeDefined();
-    expect(screen.queryByText(/42 ảnh/i)).toBeNull();
+    expect(screen.queryByText(/42 \u1EA3nh/i)).toBeNull();
 
-    // Rendered characters should display 'chars', NOT 'ký tự'
+    // Rendered characters should display 'chars', not the retired Vietnamese unit label
     expect(screen.getByText(/25,000 chars/i)).toBeDefined();
-    expect(screen.queryByText(/ký tự/i)).toBeNull();
+    expect(screen.queryByText(/k\u00FD t\u1EF1/i)).toBeNull();
 
-    // Audio produced should display 'mins', NOT 'phút'
+    // Audio produced should display 'mins', not the retired Vietnamese unit label
     expect(screen.getByText(/3\.0 mins/i)).toBeDefined();
-    expect(screen.queryByText(/phút/i)).toBeNull();
+    expect(screen.queryByText(/ph\u00FAt/i)).toBeNull();
 
     // Card titles should be localized in English
     expect(screen.getByText("Voice TTS Savings")).toBeDefined();
@@ -91,7 +91,7 @@ describe("CostSavingsSection i18n & unit localization", () => {
     );
 
     expect(screen.getByText(/1 image/i)).toBeDefined();
-    expect(screen.queryByText(/1 ảnh/i)).toBeNull();
+    expect(screen.queryByText(/1 \u1EA3nh/i)).toBeNull();
   });
 
   it("coerces legacy 'vi' setting to English and renders pure English economics", () => {
@@ -113,15 +113,15 @@ describe("CostSavingsSection i18n & unit localization", () => {
 
     // AI Images Produced should display 'images' in English
     expect(screen.getAllByText(/42 images/i).length).toBeGreaterThan(0);
-    expect(screen.queryByText(/ảnh/i)).toBeNull();
+    expect(screen.queryByText(/\u1EA3nh/i)).toBeNull();
 
     // Rendered characters should display 'chars'
     expect(screen.getAllByText(/25,000 chars/i).length).toBeGreaterThan(0);
-    expect(screen.queryByText(/ký tự/i)).toBeNull();
+    expect(screen.queryByText(/k\u00FD t\u1EF1/i)).toBeNull();
 
     // Audio produced should display 'mins'
     expect(screen.getAllByText(/3\.0 mins/i).length).toBeGreaterThan(0);
-    expect(screen.queryByText(/phút/i)).toBeNull();
+    expect(screen.queryByText(/ph\u00FAt/i)).toBeNull();
 
     // Card titles should be localized in English
     expect(screen.getAllByText("Voice TTS Savings").length).toBeGreaterThan(0);

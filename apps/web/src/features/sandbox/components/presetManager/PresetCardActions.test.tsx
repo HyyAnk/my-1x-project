@@ -91,10 +91,10 @@ describe("PresetCardActions", () => {
       { wrapper },
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /Confirm|Xác nhận/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Confirm/i }));
     expect(onConfirmDelete).toHaveBeenCalledWith("custom_preset_1");
 
-    fireEvent.click(screen.getByRole("button", { name: /Cancel|Hủy/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
     expect(onCancelDelete).toHaveBeenCalledOnce();
   });
 });

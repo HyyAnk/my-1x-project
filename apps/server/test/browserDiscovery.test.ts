@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { resolveHardwareBrowserPath } from "../src/infrastructure/executables/browserDiscovery.js";
+import { resolveBrowserOverridePath, resolveHardwareBrowserPath } from "../src/infrastructure/executables/browserDiscovery.js";
 import { getHyperframesExecutionEnv } from "../src/tasks/video/videoPerformance.js";
 
 afterEach(() => vi.unstubAllEnvs());
@@ -76,5 +76,17 @@ describe("shared browser discovery", () => {
   it("does not pass an invalid browser override to the render process", () => {
     vi.stubEnv("HYPERFRAMES_BROWSER_PATH", "/nonexistent-browser-fixture");
     expect(getHyperframesExecutionEnv().HYPERFRAMES_BROWSER_PATH).not.toBe("/nonexistent-browser-fixture");
+  });
+
+  it("uses only an explicit, executable browser override", () => {
+    const isExecutable = (file: string) => file === "/custom/browser";
+    expect(resolveBrowserOverridePath({ env: { HYPERFRAMES_BROWSER_PATH: "/custom/browser" }, isExecutable })).toBe("/custom/browser");
+    expect(resolveBrowserOverridePath({ env: { HYPERFRAMES_BROWSER_PATH: "/missing/browser" }, isExecutable })).toBeUndefined();
+    expect(resolveBrowserOverridePath({ env: { PATH: "/usr/bin" }, isExecutable: () => true })).toBeUndefined();
+  });
+
+  it("lets HyperFrames use its managed headless shell when no override is set", () => {
+    vi.stubEnv("HYPERFRAMES_BROWSER_PATH", "");
+    expect(getHyperframesExecutionEnv().HYPERFRAMES_BROWSER_PATH).toBeUndefined();
   });
 });

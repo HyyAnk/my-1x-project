@@ -11,6 +11,7 @@ import { handleServerRequest } from "./stream/approvalHandler.js";
 import { completeWithOutput } from "./handlers/outputCompletionHandler.js";
 import { resolveTopicRunTargetCounts } from "../context/topicRunTargets.js";
 import { runThumbnailTask } from "./thumbnail/thumbnailTaskRunner.js";
+import { startEnginePreflight } from "./enginePreflight.js";
 
 export {
   retryQuizResearch,
@@ -72,6 +73,7 @@ export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
       queue_position: null,
       progress_message: "Preparing scoped context",
     });
+    const enginePreflight = startEnginePreflight(this);
     const topicHint = this.topicHints.get(task.task_id);
     const manifest = await this.contextEngine.build(
       task.task_type,
@@ -104,7 +106,7 @@ export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
     const client = isAntigravity ? this.antigravity! : this.codex;
     const engineName = isAntigravity ? "Antigravity" : "Codex";
     await this.update(task.task_id, { progress_message: `Connecting to ${engineName}` });
-    await client.connect();
+    await enginePreflight;
     const threadId = task.codex_thread_id ? await client.resumeThread(task.codex_thread_id) : await client.startThread();
     const completionPromise = new Promise<void>((resolve) => this.completionWaiters.set(task.task_id, resolve));
     const activeRecord: ActiveRun = {

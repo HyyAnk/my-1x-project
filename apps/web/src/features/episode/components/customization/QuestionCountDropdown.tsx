@@ -1,11 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useRef } from "react";
+import { CaretDown, CircleNotch } from "@phosphor-icons/react";
 import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
-import { CustomizationPill } from "./CustomizationPill";
+import { useQuestionCountInput } from "../../hooks/useQuestionCountInput";
 import { CustomizationPopover } from "./CustomizationPopover";
 
 const QUESTION_PRESETS = [4, 6, 8, 10, 12, 15, 20];
+const QUESTION_COUNT_INPUT_ID = "episode-question-count-input";
 
 type Props = {
   disabled: boolean;
@@ -31,64 +34,41 @@ export function QuestionCountDropdown({
   onPreview,
 }: Props) {
   const { t } = useTranslation();
-  const [inputValue, setInputValue] = useState<string>(String(questionCountDraft));
-  const prevIsOpen = useRef(isOpen);
-
-  const closeDropdown = () => {
-    if (onClose) {
-      onClose();
-    } else {
-      onToggle();
-    }
-  };
-
-  useEffect(() => {
-    setInputValue(String(questionCountDraft));
-  }, [questionCountDraft]);
-
-  useEffect(() => {
-    if (prevIsOpen.current && !isOpen) {
-      const parsed = parseInt(inputValue, 10);
-      if (Number.isFinite(parsed)) {
-        const count = Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, parsed));
-        if (count !== questionCountDraft) {
-          setQuestionCountDraft(count);
-          onSaveQuestionCount(count);
-        }
-      }
-    } else if (!prevIsOpen.current && isOpen) {
-      setInputValue(String(questionCountDraft));
-    }
-    prevIsOpen.current = isOpen;
-  }, [isOpen, inputValue, questionCountDraft, onSaveQuestionCount, setQuestionCountDraft]);
+  const skipCommitOnBlur = useRef(false);
+  const countInput = useQuestionCountInput({
+    committedCount: questionCountDraft,
+    onCommit: (count) => {
+      setQuestionCountDraft(count);
+      onSaveQuestionCount(count);
+    },
+  });
 
   const handleSelectPresetCount = (count: number) => {
-    setQuestionCountDraft(count);
-    setInputValue(String(count));
-    onSaveQuestionCount(count);
-    closeDropdown();
+    countInput.commitCount(count);
+    if (onClose) onClose();
+    else onToggle();
   };
 
-  const handleStep = (delta: number) => {
-    const current = Number(questionCountDraft) || QUIZ_MIN_QUESTION_COUNT;
-    const next = Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, current + delta));
-    if (next !== current) {
-      setQuestionCountDraft(next);
-      setInputValue(String(next));
-      onSaveQuestionCount(next);
+  const handleBlur = () => {
+    if (skipCommitOnBlur.current) {
+      skipCommitOnBlur.current = false;
+      return;
     }
+    countInput.commitInput();
   };
 
-  const handleCustomSubmit = (shouldClose = true) => {
-    const parsed = parseInt(inputValue, 10);
-    const count = Number.isFinite(parsed)
-      ? Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, parsed))
-      : questionCountDraft;
-    setInputValue(String(count));
-    setQuestionCountDraft(count);
-    onSaveQuestionCount(count);
-    if (shouldClose) {
-      closeDropdown();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.currentTarget.blur();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      skipCommitOnBlur.current = true;
+      countInput.revertInput();
+      e.currentTarget.blur();
+    } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      countInput.step(e.key === "ArrowUp" ? 1 : -1);
     }
   };
 
@@ -97,29 +77,54 @@ export function QuestionCountDropdown({
 
   return (
     <div className="customization-dropdown-item customization-stepper-control">
-      <div className="customization-stepper-wrapper">
+      <div className={`customization-stepper-wrapper ${isOpen ? "is-active" : ""} ${saving ? "is-saving" : ""}`}>
         <button
           type="button"
           className="stepper-step-btn stepper-step-dec"
-          onClick={() => handleStep(-1)}
+          onClick={() => countInput.step(-1)}
           disabled={disabled || saving || isAtMin}
           aria-label={t("episodeCustomization.decrementQuestions")}
           title={t("episodeCustomization.decrementQuestions")}
         >
           −
         </button>
-        <CustomizationPill
-          label={t("episodeCustomization.pillQuestions")}
-          value={t("episodeCustomization.valueQuestionCount", { count: questionCountDraft })}
-          isOpen={isOpen}
-          disabled={disabled}
-          saving={saving}
-          onToggle={onToggle}
-        />
+        <label className="stepper-count-field" htmlFor={QUESTION_COUNT_INPUT_ID}>
+          <span className="pill-label">{t("episodeCustomization.pillQuestions")}</span>
+          <input
+            id={QUESTION_COUNT_INPUT_ID}
+            type="text"
+            inputMode="numeric"
+            className="stepper-count-input"
+            value={countInput.inputValue}
+            onChange={(e) => countInput.changeInput(e.target.value)}
+            onFocus={(e) => e.currentTarget.select()}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            autoComplete="off"
+            aria-label={t("episodeCustomization.pillQuestions")}
+            title={t("episodeCustomization.questionCountInputHint", {
+              min: QUIZ_MIN_QUESTION_COUNT,
+              max: QUIZ_MAX_QUESTION_COUNT,
+            })}
+          />
+        </label>
+        <button
+          type="button"
+          className="stepper-presets-btn"
+          onClick={onToggle}
+          disabled={disabled || saving}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-label={t("episodeCustomization.showQuestionPresets")}
+          title={t("episodeCustomization.showQuestionPresets")}
+        >
+          {saving ? <CircleNotch className="pill-spinner spin" size={13} /> : <CaretDown size={12} className="pill-caret" />}
+        </button>
         <button
           type="button"
           className="stepper-step-btn stepper-step-inc"
-          onClick={() => handleStep(1)}
+          onClick={() => countInput.step(1)}
           disabled={disabled || saving || isAtMax}
           aria-label={t("episodeCustomization.incrementQuestions")}
           title={t("episodeCustomization.incrementQuestions")}
@@ -142,24 +147,6 @@ export function QuestionCountDropdown({
                 <span>{preset}</span>
               </button>
             ))}
-          </div>
-          <div className="custom-count-input-row">
-            <span>{t("episodeCustomization.customCountLabel")}</span>
-            <input
-              type="number"
-              min={QUIZ_MIN_QUESTION_COUNT}
-              max={QUIZ_MAX_QUESTION_COUNT}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onBlur={() => handleCustomSubmit(false)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleCustomSubmit(true);
-              }}
-              className="custom-count-input"
-            />
-            <button type="button" className="primary-button compact custom-count-apply-btn" onClick={() => handleCustomSubmit(true)}>
-              {t("episodeCustomization.applyCount")}
-            </button>
           </div>
         </CustomizationPopover>
       ) : null}

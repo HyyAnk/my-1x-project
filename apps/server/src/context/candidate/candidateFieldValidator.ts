@@ -25,18 +25,28 @@ export function ensureCandidateObject(raw: unknown, slotNumber: number | string)
   return raw as Record<string, unknown>;
 }
 
+/** Server-derived supporting copy used when the model was not asked to write it. */
+export type CandidateSupportingCopy = Pick<CandidateTextFields, "whyItFits" | "estimatedPotential">;
+
 /**
- * Extracts and validates required text fields from a candidate item.
+ * Extracts and validates required text fields from a candidate item. When supporting copy is supplied,
+ * missing why_it_fits / estimated_potential values fall back to it instead of failing validation.
  */
-export function extractCandidateTextFields(item: Record<string, unknown>, slotNumber: number | string): CandidateTextFields {
+export function extractCandidateTextFields(
+  item: Record<string, unknown>,
+  slotNumber: number | string,
+  supportingCopy?: CandidateSupportingCopy,
+): CandidateTextFields {
   const title = typeof item.title === "string" ? item.title.trim() : "";
   const premise = typeof item.premise === "string" ? item.premise.trim() : "";
-  const whyItFits = typeof (item.why_it_fits ?? item.whyItFits) === "string" ? String(item.why_it_fits ?? item.whyItFits).trim() : "";
+  const rawWhyItFits = typeof (item.why_it_fits ?? item.whyItFits) === "string" ? String(item.why_it_fits ?? item.whyItFits).trim() : "";
   const hook = typeof item.hook === "string" ? item.hook.trim() : "";
-  const estimatedPotential =
+  const rawEstimatedPotential =
     typeof (item.estimated_potential ?? item.estimatedPotential) === "string"
       ? String(item.estimated_potential ?? item.estimatedPotential).trim()
       : "";
+  const whyItFits = rawWhyItFits || supportingCopy?.whyItFits || "";
+  const estimatedPotential = rawEstimatedPotential || supportingCopy?.estimatedPotential || "";
 
   if (!title || !premise || !whyItFits || !hook || !estimatedPotential) {
     throw new Error(

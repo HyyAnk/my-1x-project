@@ -13,7 +13,7 @@ import type { RepositoryService } from "../../repository.js";
 import { getEpisodeThumbnailManifest } from "../../quiz/thumbnail/index.js";
 import { refreshDescriptionChapters } from "../../quiz/description/descriptionChapterSection.js";
 import { resolveAudiencePolicy } from "../../quiz/description/descriptionAudiencePolicy.js";
-import { formatExportDescriptionText } from "./descriptionExportFormatter.js";
+import { collectDescriptionTags, formatExportDescriptionText } from "./descriptionExportFormatter.js";
 import { packageExportThumbnails } from "./thumbnailExportPackager.js";
 import { updateExportsManifest } from "./exportsManifestManager.js";
 import { queueExportPackaging } from "./exportPackagingQueue.js";
@@ -113,6 +113,10 @@ async function buildEpisodeExport(
     // Fallback description.md may not exist
   }
 
+  // The SEO YouTube title replaces the internal topic title wherever the export is uploaded from.
+  const videoTitle = await repository.readVideoTitle(channelId, episodeId).catch(() => null);
+  const publishTitle = videoTitle?.title ?? episode.topic.title;
+
   const effectiveDuration = duration ?? episode.video_duration_seconds ?? 0;
   const timeline = await readTimelineForChapters(repository, channelId, episodeId);
   const refreshedBody = refreshDescriptionChapters({
@@ -123,7 +127,7 @@ async function buildEpisodeExport(
   });
 
   const descriptionContent = formatExportDescriptionText({
-    title: episode.topic.title,
+    title: publishTitle,
     description: videoDesc,
     fallbackText,
     bodyText: refreshedBody.text,
@@ -147,7 +151,7 @@ async function buildEpisodeExport(
     channel_slug: channel.slug,
     episode_id: episode.episode_id,
     episode_slug: episode.slug,
-    title: episode.topic.title,
+    title: publishTitle,
     status: "ready",
     duration_seconds: effectiveDuration,
     aspect_ratio: "16:9",
@@ -155,7 +159,7 @@ async function buildEpisodeExport(
     primary_thumbnail: thumbnailsResult.primaryThumbnail,
     available_thumbnails: thumbnailsResult.availableThumbnails,
     description_file: "description.txt",
-    tags: videoDesc ? [videoDesc.primary_keyword, ...videoDesc.keyword_variations].filter(Boolean) : [],
+    tags: collectDescriptionTags(videoDesc),
     hashtags: videoDesc?.hashtags ?? [],
     category: videoDesc?.suggested_playlist_category,
     chapters: timeline ? refreshedBody.chapters : (videoDesc?.chapters ?? []),
@@ -171,7 +175,7 @@ async function buildEpisodeExport(
   const manifestItem: ExportsManifestItem = {
     episode_id: episode.episode_id,
     episode_slug: episode.slug,
-    title: episode.topic.title,
+    title: publishTitle,
     status: "ready",
     duration_seconds: effectiveDuration,
     export_directory: `episodes/${episode.slug}/export`,

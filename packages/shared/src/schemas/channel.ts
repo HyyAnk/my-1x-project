@@ -19,6 +19,7 @@ import { TopicSourceBindingSetSchema } from "./topicSourceBinding.js";
 import { QuizGameplayIdSchema } from "../quizGameplaySchema.js";
 import { BridgeSceneConfigSchema } from "./quiz/bridgeScenes.js";
 import { MotionTemplateOptionsSchema } from "../motionTemplates/index.js";
+import { ChannelPublishingProfileSchema } from "./channelPublishing.js";
 
 export const QUIZ_CONFIG_FORMATS = ["knowledge", "image_guess", "multiple_choice", "yes_no", "odd_one_out"] as const;
 export const QuizConfigFormatSchema = acceptLegacyVerdictAliases(z.enum(QUIZ_CONFIG_FORMATS));
@@ -52,6 +53,7 @@ export const ChannelSchema = z
     mascot_config: ChannelMascotConfigSchema.default({}),
     default_intro_outro_style_id: z.string().nullable().optional(),
     bridge_scene_config: BridgeSceneConfigSchema.optional().default({}),
+    publishing_profile: ChannelPublishingProfileSchema.optional(),
   })
   .strict();
 

@@ -34,10 +34,13 @@ describe("kid safety detector", () => {
 
   it("flags alcohol, gambling, drugs, graphic violence, horror, and sexual content", () => {
     expect(findKidUnsafeTerm("Drinking a Bloody Mary cures a hangover")?.category).toBe("alcohol");
+    expect(findKidUnsafeTerm("The pirates got drunk on the island")?.category).toBe("alcohol");
     expect(findKidUnsafeTerm("Poker and roulette fill every casino")?.category).toBe("gambling");
     expect(findKidUnsafeTerm("He built an illegal meth empire")?.category).toBe("tobacco_drugs");
     expect(findKidUnsafeTerm("Hundreds of prisoners were beheaded")?.category).toBe("graphic_violence");
     expect(findKidUnsafeTerm("The actress leaped to her death from the sign")?.category).toBe("graphic_violence");
+    expect(findKidUnsafeTerm("He sought the stones to wipe out half of all life.")?.category).toBe("graphic_violence");
+    expect(findKidUnsafeTerm("A good rain can wipe out all the dust on the car.")).toBeNull();
     expect(findKidUnsafeTerm("A slasher film full of zombies")?.category).toBe("horror");
     expect(findKidUnsafeTerm("The brand pioneered the lubricated condom")?.category).toBe("sexual_content");
   });
@@ -50,6 +53,7 @@ describe("kid safety detector", () => {
     expect(findKidUnsafeTerm("A solar halo circles the Sun")).toBeNull();
     expect(findKidUnsafeTerm("Naked mole rats live underground")).toBeNull();
     expect(findKidUnsafeTerm("Hercules possessed incredible strength")).toBeNull();
+    expect(findKidUnsafeTerm("Black tea is drunk all over China")).toBeNull();
   });
 
   it("allows passing mentions of wine in narration but not as the on-screen subject", () => {

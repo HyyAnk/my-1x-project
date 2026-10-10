@@ -18,9 +18,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
   const sampleChannel: Channel = {
     channel_id: "channel-1",
     slug: "quiz-master",
-    display_name: "Quiz Master VN",
-    description: "Kênh câu đố kiến thức hấp dẫn",
-    target_audience: "Gia đình và học sinh",
+    display_name: "Quiz Master US",
+    description: "An engaging general knowledge quiz channel",
+    target_audience: "Families and students",
     language: "English",
     country: "US",
     market: "United States",
@@ -49,9 +49,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
     channel_id: "channel-1",
     slug: "ep-01-world-wonders",
     topic: {
-      title: "Kỳ Quan Thế Giới Cổ Đại",
-      premise: "Thử thách kiến thức về các kỳ quan cổ đại",
-      hook: "Bạn có biết kỳ quan nào còn tồn tại đến ngày nay?",
+      title: "Ancient Wonders of the World",
+      premise: "A knowledge challenge about the ancient wonders",
+      hook: "Do you know which wonder still stands today?",
     },
     stage: "SCRIPT_READY",
     script_path: "channels/quiz-master/episodes/ep-01-world-wonders/script.md",
@@ -103,17 +103,17 @@ describe("Quiz Video Description Engine (Step 2)", () => {
         number: 1,
         format: "multiple_choice",
         difficulty: 1,
-        question: "Kim tự tháp Giza nằm ở quốc gia nào?",
+        question: "In which country is the Great Pyramid of Giza?",
         choices: [
-          { id: "choice-a", text: "Ai Cập" },
-          { id: "choice-b", text: "Hy Lạp" },
-          { id: "choice-c", text: "La Mã" },
+          { id: "choice-a", text: "Egypt" },
+          { id: "choice-b", text: "Greece" },
+          { id: "choice-c", text: "Rome" },
         ],
         correct_choice_id: "choice-a",
-        explanation: "Kim tự tháp Giza là kỳ quan cổ đại duy nhất còn nguyên vẹn, nằm tại Ai Cập.",
-        fun_fact: "Xây dựng trong hơn 20 năm.",
+        explanation: "The Great Pyramid of Giza is the only ancient wonder still largely intact, and it stands in Egypt.",
+        fun_fact: "It took more than 20 years to build.",
         source_ids: ["src-1"],
-        visual_opportunity: "Kim tự tháp Giza sừng sững trên sa mạc",
+        visual_opportunity: "The Great Pyramid of Giza towering over the desert",
         validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
       },
       {
@@ -121,17 +121,17 @@ describe("Quiz Video Description Engine (Step 2)", () => {
         number: 2,
         format: "multiple_choice",
         difficulty: 2,
-        question: "Vườn treo Babylon được cho là nằm ở quốc gia hiện đại nào?",
+        question: "In which modern country were the Hanging Gardens of Babylon said to be?",
         choices: [
           { id: "choice-a", text: "Iraq" },
           { id: "choice-b", text: "Iran" },
-          { id: "choice-c", text: "Thổ Nhĩ Kỳ" },
+          { id: "choice-c", text: "Turkey" },
         ],
         correct_choice_id: "choice-a",
-        explanation: "Vườn treo Babylon huyền thoại nằm bên dòng sông Euphrates tại Iraq ngày nay.",
-        fun_fact: "Được vua Nebuchadnezzar II xây dựng.",
+        explanation: "The legendary Hanging Gardens of Babylon stood beside the Euphrates River in present-day Iraq.",
+        fun_fact: "They were built by King Nebuchadnezzar II.",
         source_ids: ["src-2"],
-        visual_opportunity: "Khu vườn bậc thang xanh mướt giữa sa mạc",
+        visual_opportunity: "Lush green terraced gardens in the middle of the desert",
         validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
       },
     ],
@@ -200,9 +200,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
 
   describe("normalizeHashtags", () => {
     it("deduplicates and cleans hashtags correctly", () => {
-      const input = ["#quiz", "trivia", "##QUIZ", "dovui", "  #KiếnThức  "];
+      const input = ["#quiz", "trivia", "##QUIZ", "funfacts", "  #BrainTeaser  "];
       const result = normalizeHashtags(input);
-      expect(result).toEqual(["#quiz", "#trivia", "#dovui", "#KiếnThức"]);
+      expect(result).toEqual(["#quiz", "#trivia", "#funfacts", "#BrainTeaser"]);
     });
   });
 
@@ -212,15 +212,15 @@ describe("Quiz Video Description Engine (Step 2)", () => {
         quiz: sampleQuiz,
         channel: sampleChannel,
         episode: sampleEpisode,
-        toneHint: "Góc nhìn hài hước khám phá",
+        toneHint: "A playful, curious point of view",
       });
 
-      expect(prompt).toContain("Quiz Master VN");
-      expect(prompt).toContain("Kỳ Quan Thế Giới Cổ Đại");
+      expect(prompt).toContain("Quiz Master US");
+      expect(prompt).toContain("Ancient Wonders of the World");
       expect(prompt).toContain("Total Questions (Exact Ground Truth): 2");
-      expect(prompt).toContain("Q1: Kim tự tháp Giza nằm ở quốc gia nào?");
-      expect(prompt).toContain("Ai Cập");
-      expect(prompt).toContain("Góc nhìn hài hước khám phá");
+      expect(prompt).toContain("Q1: In which country is the Great Pyramid of Giza?");
+      expect(prompt).toContain("Egypt");
+      expect(prompt).toContain("A playful, curious point of view");
       expect(prompt).toContain("12 MANDATORY GENERATION RULES");
       expect(prompt).toContain("NO SPOILERS");
       expect(prompt).not.toContain("Ans:");
@@ -234,23 +234,23 @@ describe("Quiz Video Description Engine (Step 2)", () => {
 
   describe("parseDescriptionJsonResponse", () => {
     it("parses pure json strings", () => {
-      const json = '{"topic_category": "Lịch sử", "primary_keyword": "đố vui lịch sử"}';
+      const json = '{"topic_category": "History", "primary_keyword": "history trivia"}';
       const parsed = parseDescriptionJsonResponse(json);
-      expect(parsed.topic_category).toBe("Lịch sử");
-      expect(parsed.primary_keyword).toBe("đố vui lịch sử");
+      expect(parsed.topic_category).toBe("History");
+      expect(parsed.primary_keyword).toBe("history trivia");
     });
 
     it("parses json wrapped in markdown code fences", () => {
-      const json = '```json\n{"topic_category": "Khoa học", "primary_keyword": "câu đố khoa học"}\n```';
+      const json = '```json\n{"topic_category": "Science", "primary_keyword": "science quiz"}\n```';
       const parsed = parseDescriptionJsonResponse(json);
-      expect(parsed.topic_category).toBe("Khoa học");
-      expect(parsed.primary_keyword).toBe("câu đố khoa học");
+      expect(parsed.topic_category).toBe("Science");
+      expect(parsed.primary_keyword).toBe("science quiz");
     });
 
     it("parses json surrounded by conversational preamble", () => {
-      const text = 'Here is the requested description metadata:\n\n{"topic_category": "Địa lý"}\n\nHope this helps!';
+      const text = 'Here is the requested description metadata:\n\n{"topic_category": "Geography"}\n\nHope this helps!';
       const parsed = parseDescriptionJsonResponse(text);
-      expect(parsed.topic_category).toBe("Địa lý");
+      expect(parsed.topic_category).toBe("Geography");
     });
   });
 
@@ -258,7 +258,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
     it("builds fallback descriptions for supported locales (en, de, fr, es)", () => {
       const tiers = calculateScoringTiers(5);
       const enFallback = buildFallbackDescription("en", sampleEpisode, 5, tiers);
-      expect(enFallback.primary_keyword).toBe("kỳ quan thế giới cổ đại");
+      expect(enFallback.primary_keyword).toBe("ancient wonders of the world");
       expect(enFallback.hook_lines).toContain("5 Question Challenge!");
       expect(enFallback.suggested_playlist_category).toBe(sampleEpisode.topic.title);
 
@@ -336,27 +336,28 @@ describe("Quiz Video Description Engine (Step 2)", () => {
   describe("assembleFullDescription", () => {
     it("assembles complete description text with proper sections and character count", () => {
       const result = assembleFullDescription({
-        hookLines: "Khám phá 8 kỳ quan thế giới cổ đại!\nCùng thử thách trí nhớ xem bạn biết được bao nhiêu kỳ quan.",
+        hookLines: "Explore the 8 ancient wonders of the world!\nTest your memory and see how many wonders you know.",
         semanticParagraph:
-          "Video đưa bạn khám phá Kim tự tháp Giza hùng vĩ tại Ai Cập và Vườn treo Babylon huyền thoại bên dòng sông Euphrates.",
+          "This video takes you to the majestic Great Pyramid of Giza in Egypt and the legendary Hanging Gardens of Babylon beside the Euphrates.",
         scoringCta: {
-          beginner: "1–2 câu: Mới nhập môn",
-          intermediate: "3–5 câu: Hiểu biết sâu rộng",
-          expert: "6–8 câu: Bậc thầy kỳ quan",
-          cta_text: "Bạn trả lời đúng bao nhiêu câu? Hãy bình luận kết quả nhé!",
+          beginner: "1–2 correct: Newcomer",
+          intermediate: "3–5 correct: Well-Read Explorer",
+          expert: "6–8 correct: Wonder Master",
+          cta_text: "How many did you answer correctly? Share your score in the comments!",
         },
-        suggestedPlaylistCategory: "Kỳ Quan & Lịch Sử",
-        hashtags: ["#quiz", "#kyquan", "#lichsu", "#trivia"],
+        suggestedPlaylistCategory: "Wonders & History",
+        hashtags: ["#quiz", "#wonders", "#history", "#trivia"],
         language: "English",
       });
 
-      expect(result.fullText).toContain("Khám phá 8 kỳ quan thế giới cổ đại!");
+      expect(result.fullText).toContain("Explore the 8 ancient wonders of the world!");
       expect(result.fullText).toContain("🏆 SCORING TIERS:");
-      expect(result.fullText).toContain("• 1–2 câu: Mới nhập môn");
-      expect(result.fullText).toContain("• 6–8 câu: Bậc thầy kỳ quan");
-      expect(result.fullText).toContain("👉 Bạn trả lời đúng bao nhiêu câu? Hãy bình luận kết quả nhé!");
-      expect(result.fullText).toContain("📂 Playlist Category: Kỳ Quan & Lịch Sử");
-      expect(result.fullText).toContain("#quiz #kyquan #lichsu #trivia");
+      expect(result.fullText).toContain("• 1–2 correct: Newcomer");
+      expect(result.fullText).toContain("• 6–8 correct: Wonder Master");
+      expect(result.fullText).toContain("👉 How many did you answer correctly? Share your score in the comments!");
+      // The playlist category is internal taxonomy and must not leak into the public text.
+      expect(result.fullText).not.toContain("Playlist Category");
+      expect(result.fullText).toContain("#quiz #wonders #history #trivia");
       expect(result.charCount).toBeGreaterThan(100);
       expect(result.charCount).toBeLessThan(900);
     });
@@ -379,21 +380,21 @@ describe("Quiz Video Description Engine (Step 2)", () => {
                   threadId: "thread-1",
                   turnId: "turn-1",
                   delta: JSON.stringify({
-                    topic_category: "Kỳ quan cổ đại",
-                    primary_keyword: "đố vui kỳ quan thế giới",
-                    keyword_variations: ["trắc nghiệm kỳ quan cổ đại", "câu đố kim tự tháp"],
+                    topic_category: "Ancient Wonders",
+                    primary_keyword: "world wonders trivia",
+                    keyword_variations: ["ancient wonders quiz", "pyramid trivia"],
                     question_count: 2,
-                    hook_lines: "Đố vui kỳ quan thế giới - Bạn biết bao nhiêu điều bí ẩn?\nCùng thử thách kiến thức cổ đại ngay!",
+                    hook_lines: "World wonders trivia - How many mysteries do you know?\nTest your ancient history knowledge now!",
                     semantic_paragraph:
-                      "Tìm hiểu những sự thật thú vị về Kim tự tháp Giza và Vườn treo Babylon qua các câu hỏi hấp dẫn.",
+                      "Uncover fun facts about the Great Pyramid of Giza and the Hanging Gardens of Babylon through exciting questions.",
                     scoring_cta: {
-                      beginner: "1 câu: Tập sự",
-                      intermediate: "1 câu: Hiểu biết",
-                      expert: "2 câu: Bậc thầy kiến thức",
-                      cta_text: "Bạn đúng được mấy câu? Hãy bình luận bên dưới nhé!",
+                      beginner: "1 correct: Apprentice",
+                      intermediate: "1 correct: Explorer",
+                      expert: "2 correct: Knowledge Master",
+                      cta_text: "How many did you get right? Tell us below!",
                     },
-                    suggested_playlist_category: "Địa Lý & Lịch Sử",
-                    hashtags: ["#quiz", "#dovui", "#kyquan", "#lichsu"],
+                    suggested_playlist_category: "Geography & History",
+                    hashtags: ["#quiz", "#trivia", "#wonders", "#history"],
                   }),
                 },
               });
@@ -415,10 +416,10 @@ describe("Quiz Video Description Engine (Step 2)", () => {
         quiz: sampleQuiz,
       });
 
-      expect(description.topic_category).toBe("Kỳ quan cổ đại");
-      expect(description.primary_keyword).toBe("đố vui kỳ quan thế giới");
+      expect(description.topic_category).toBe("Ancient Wonders");
+      expect(description.primary_keyword).toBe("world wonders trivia");
       expect(description.question_count).toBe(2);
-      expect(description.scoring_cta.expert).toContain("Bậc thầy kiến thức");
+      expect(description.scoring_cta.expert).toContain("Knowledge Master");
       expect(description.hashtags).toContain("#quiz");
       expect(description.full_description_text).toContain("🏆 SCORING TIERS:");
       expect(description.char_count).toBeGreaterThan(50);
@@ -437,10 +438,10 @@ describe("Quiz Video Description Engine (Step 2)", () => {
         quiz: sampleQuiz,
       });
 
-      expect(fallback.topic_category).toBe("Kỳ Quan Thế Giới Cổ Đại");
+      expect(fallback.topic_category).toBe("Ancient Wonders of the World");
       expect(fallback.question_count).toBe(2);
       expect(fallback.scoring_cta.beginner).toContain("Beginner");
-      expect(fallback.full_description_text).toContain("Kỳ Quan Thế Giới Cổ Đại");
+      expect(fallback.full_description_text).toContain("Ancient Wonders of the World");
     });
 
     it("strictly adheres to English when channel language is English during fallback", async () => {
@@ -474,14 +475,16 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       expect(fallback.hook_lines).toContain("Super Inventions - 2 Question Challenge!");
       expect(fallback.hook_lines).toContain("Test your knowledge");
       expect(fallback.semantic_paragraph).toContain("Can you spot the odd machine?");
-      expect(fallback.semantic_paragraph).not.toContain("Hãy cùng khám phá");
+      // The fallback teases the episode's own questions so it differs per episode.
+      expect(fallback.semantic_paragraph).toContain("Inside this challenge: In which country is the Great Pyramid of Giza?");
+      expect(fallback.hashtags[0]).toBe("#SuperInventions");
       expect(fallback.scoring_cta.beginner).toContain("Beginner");
       // Age band 7-9 is Made for Kids, so the comment CTA is replaced with a play-along CTA.
       expect(fallback.made_for_kids).toBe(true);
       expect(fallback.scoring_cta.cta_text).toBe("Keep score, then challenge your family to beat it!");
       expect(fallback.full_description_text).toContain("🏆 SCORING TIERS:");
-      expect(fallback.full_description_text).toContain("📂 Playlist Category: Super Inventions");
-      expect(fallback.full_description_text).not.toMatch(/[\u00C0-\u024F\u1E00-\u1EFF]/); // No Vietnamese diacritics
+      expect(fallback.full_description_text).not.toContain("Playlist Category");
+      expect(fallback.full_description_text).not.toMatch(/[\u00C0-\u024F\u1E00-\u1EFF]/); // No accented Latin characters
     });
   });
 });

@@ -8,6 +8,7 @@ import { QuizV2Panel } from "../../../components/QuizV2Panel";
 import { QuizVideoPanel } from "../QuizVideoPanel";
 import { ThumbnailPreviewCard } from "./ThumbnailPreviewCard";
 import { VideoDescriptionCard } from "./VideoDescriptionCard";
+import { VideoTitleCard } from "./VideoTitleCard";
 import { EpisodeWorkspaceTabs } from "./EpisodeWorkspaceTabs";
 
 type QuizEpisodeViewProps = {
@@ -51,6 +52,8 @@ export function QuizEpisodeView({
   fastRenderMode,
   onToggleFastRender,
 }: QuizEpisodeViewProps) {
+  const hasQuizQuestions = Boolean(quizV2?.quiz?.questions && quizV2.quiz.questions.length > 0);
+
   return (
     <>
       <EpisodeQuizCustomizationBar
@@ -114,11 +117,20 @@ export function QuizEpisodeView({
         onUpdated={pipeline.load}
       />
 
+      <VideoTitleCard
+        channelId={channel.channel_id}
+        episodeId={episodeId}
+        hasQuiz={hasQuizQuestions}
+        initialTitle={quizV2?.title}
+        onNotice={onNotice}
+        onUpdated={pipeline.load}
+      />
+
       <VideoDescriptionCard
         channel={channel}
         episode={episode}
         episodeId={episodeId}
-        hasQuiz={Boolean(quizV2?.quiz?.questions && quizV2.quiz.questions.length > 0)}
+        hasQuiz={hasQuizQuestions}
         initialDescription={quizV2?.description}
         onNotice={onNotice}
         onUpdated={pipeline.load}

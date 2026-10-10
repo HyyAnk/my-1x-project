@@ -94,6 +94,7 @@ export async function generateJitQuestionsWithLLM(
     domainId,
     subtopicId,
     language: generationLanguage,
+    keepModelDifficulty: true,
   });
 
   return parsed.slice(0, targetDifficulties.length);

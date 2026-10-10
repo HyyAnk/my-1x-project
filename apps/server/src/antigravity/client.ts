@@ -4,6 +4,7 @@ import type { StudioLogger } from "../logger.js";
 import { discoverActiveSession, resolveAntigravityTarget } from "./discovery.js";
 import { formatModelLabel, getAgentApiModels, getCliModels, getGoogleApiModels, parseModelListOutput, withCurrentModel } from "./models.js";
 import { executeTurn, type TurnRunnerContext } from "./turnRunner.js";
+import { ensureAgentApiSessionReady } from "./sessionReadiness.js";
 import {
   AntigravityUnavailableError,
   DEFAULT_ANTIGRAVITY_MODELS,
@@ -205,6 +206,16 @@ export class AntigravityClient extends EventEmitter {
     if (this.resolvedTarget) return this.resolvedTarget;
     this.resolvedTarget = await resolveAntigravityTarget(this.config, this.rootDirectory);
     return this.resolvedTarget;
+  }
+
+  /** Refreshes a stale IDE session (or fails fast) before a turn; non-AgentAPI targets need no session. */
+  async ensureSessionReady(): Promise<void> {
+    const target = await this.resolveTarget();
+    if (target.kind !== "agentapi") return;
+    await ensureAgentApiSessionReady({
+      getSession: (forceRefresh) => this.getActiveSession(forceRefresh),
+      canDiscoverSessions: process.platform === "win32",
+    });
   }
 
   async getActiveSession(forceRefresh = false): Promise<ActiveSessionInfo> {

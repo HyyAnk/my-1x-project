@@ -85,14 +85,14 @@ describe("SandboxPresetManagerModal", () => {
     expect(screen.getByText("My Custom Preset")).toBeDefined();
 
     // Click Built-in tab
-    const builtInTab = screen.getByRole("button", { name: /Built-In|Hệ thống/i });
+    const builtInTab = screen.getByRole("button", { name: /Built-In/i });
     fireEvent.click(builtInTab);
 
     expect(screen.getByText("BuiltIn Classic")).toBeDefined();
     expect(screen.queryByText("My Custom Preset")).toBeNull();
 
     // Click Custom tab
-    const customTab = screen.getByRole("button", { name: /Custom|Tùy chỉnh/i });
+    const customTab = screen.getByRole("button", { name: /Custom/i });
     fireEvent.click(customTab);
 
     expect(screen.queryByText("BuiltIn Classic")).toBeNull();
@@ -119,7 +119,7 @@ describe("SandboxPresetManagerModal", () => {
       { wrapper },
     );
 
-    const loadBtn = screen.getByRole("button", { name: /Load|Tải/i });
+    const loadBtn = screen.getByRole("button", { name: /Load/i });
     fireEvent.click(loadBtn);
 
     expect(onLoadPreset).toHaveBeenCalledWith(mockBuiltIn);
@@ -145,13 +145,13 @@ describe("SandboxPresetManagerModal", () => {
       { wrapper },
     );
 
-    const editBtn = screen.getByTitle(/Edit name|Đổi tên/i);
+    const editBtn = screen.getByTitle(/Edit name/i);
     fireEvent.click(editBtn);
 
-    const nameInput = screen.getByPlaceholderText(/Preset Name|Tên preset/i);
+    const nameInput = screen.getByPlaceholderText(/Preset Name/i);
     fireEvent.change(nameInput, { target: { value: "Updated Custom Preset" } });
 
-    const saveBtn = screen.getByRole("button", { name: /Save|Lưu/i });
+    const saveBtn = screen.getByRole("button", { name: /Save/i });
     fireEvent.click(saveBtn);
 
     expect(onUpdateMetadata).toHaveBeenCalledWith("custom_1", "Updated Custom Preset", "Custom preset description");

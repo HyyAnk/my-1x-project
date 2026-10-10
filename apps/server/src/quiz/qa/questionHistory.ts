@@ -8,78 +8,15 @@ import {
   nowIso,
 } from "@studio/shared";
 
-/**
- * Normalizes question text: NFKC normalization, lowercase, punctuation removal, whitespace trimming.
- * Uses an ASCII fast-path for maximum throughput while maintaining full unicode correctness.
- */
-export function normalizeQuestionText(text: string): string {
-  // eslint-disable-next-line no-control-regex
-  if (!/[^\x00-\x7F]/.test(text)) {
-    return text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  return text
-    .normalize("NFKC")
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+import { calculateQuestionSimilarity, normalizeQuestionText } from "./questionSimilarity.js";
 
-/**
- * Calculates similarity between two question text strings based on Token Jaccard and Bigram Dice Coefficient.
- * Includes an early-exit length heuristic to avoid expensive n-gram computations when strings differ too much in length.
- */
-export function calculateQuestionSimilarity(textA: string, textB: string): number {
-  const normA = normalizeQuestionText(textA);
-  const normB = normalizeQuestionText(textB);
-
-  if (!normA || !normB) return 0;
-  if (normA === normB) return 1;
-
-  // Early-exit length heuristic: if the length discrepancy between normalized strings is too large,
-  // they can never mathematically meet the similarity threshold (>= 0.75 for Dice/Jaccard overlap).
-  const lenA = normA.length;
-  const lenB = normB.length;
-  const maxLen = Math.max(lenA, lenB);
-  if (maxLen > 0 && Math.abs(lenA - lenB) / maxLen > 0.4) {
-    return 0;
-  }
-
-  // 1. Token Jaccard Similarity
-  const tokensA = new Set(normA.split(" ").filter((w) => w.length > 1));
-  const tokensB = new Set(normB.split(" ").filter((w) => w.length > 1));
-
-  let intersectionCount = 0;
-  for (const token of tokensA) {
-    if (tokensB.has(token)) intersectionCount++;
-  }
-  const unionCount = tokensA.size + tokensB.size - intersectionCount;
-  const jaccard = unionCount > 0 ? intersectionCount / unionCount : 0;
-
-  // 2. Character Bigram Dice Coefficient
-  const getBigrams = (str: string) => {
-    const bigrams = new Set<string>();
-    for (let i = 0; i < str.length - 1; i++) {
-      bigrams.add(str.slice(i, i + 2));
-    }
-    return bigrams;
-  };
-  const bigramsA = getBigrams(normA.replace(/\s/g, ""));
-  const bigramsB = getBigrams(normB.replace(/\s/g, ""));
-
-  let bigramIntersection = 0;
-  for (const bg of bigramsA) {
-    if (bigramsB.has(bg)) bigramIntersection++;
-  }
-  const totalBigrams = bigramsA.size + bigramsB.size;
-  const dice = totalBigrams > 0 ? (2 * bigramIntersection) / totalBigrams : 0;
-
-  return Math.max(jaccard, dice);
-}
+export {
+  calculatePreparedQuestionSimilarity,
+  calculateQuestionSimilarity,
+  normalizeQuestionText,
+  prepareQuestionText,
+  PreparedQuestionText,
+} from "./questionSimilarity.js";
 
 /**
  * Evaluates whether a current question matches a question in history.

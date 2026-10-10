@@ -211,6 +211,30 @@ describe("useTopicAvailability Hook", () => {
     expect(channelApi.topicAvailability).toHaveBeenCalledTimes(2);
   });
 
+  it("lets background triggers wait for an in-flight request instead of cancelling it", async () => {
+    let resolveSlow!: (batch: TopicAvailabilityBatch) => void;
+    vi.mocked(channelApi.topicAvailability)
+      .mockImplementationOnce(() => new Promise<TopicAvailabilityBatch>((resolve) => (resolveSlow = resolve)))
+      .mockResolvedValue(mockBatch);
+
+    const { result } = renderHook(() => useTopicAvailability({ channelId: mockChannelId }));
+    const firstSignal = vi.mocked(channelApi.topicAvailability).mock.calls[0][1]?.signal;
+
+    act(() => {
+      window.dispatchEvent(new Event("focus"));
+    });
+
+    expect(channelApi.topicAvailability).toHaveBeenCalledTimes(1);
+    expect(firstSignal?.aborted).toBe(false);
+
+    await act(async () => {
+      resolveSlow(mockBatch);
+      await Promise.resolve();
+    });
+
+    expect(result.current.availability).toEqual(mockBatch);
+  });
+
   it("accepts newer request B even if B.checked_at is earlier than prior state (clock skew)", async () => {
     const batchEarlierCheckedAt: TopicAvailabilityBatch = {
       ...mockBatch,

@@ -120,12 +120,12 @@ export const KID_SAFE_PHRASE_ALLOWLIST: readonly RegExp[] = [
 /** Case-insensitive topic patterns; each matched fragment is reported as the triggering term. */
 export const KID_UNSAFE_TOPIC_PATTERNS: Readonly<Record<Exclude<KidSafetyCategory, "mature_franchise">, RegExp>> = {
   alcohol:
-    /\b(?:beers?|brewery|breweries|brewers?|winery|wineries|winemaking|wine tasting|whisk(?:e)?ys?|vodka|tequila|liquors?|cocktails?|bloody mary|hangovers?|alcoholic\w*|alcoholism|intoxicat\w*|drunk\w*|booze|absinthe|heineken|guinness|budweiser|jack daniel'?s|smirnoff|bacardi|johnnie walker|hennessy|j[aä]germeister)\b/i,
+    /\b(?:beers?|brewery|breweries|brewers?|winery|wineries|winemaking|wine tasting|whisk(?:e)?ys?|vodka|tequila|liquors?|cocktails?|bloody mary|hangovers?|alcoholic\w*|alcoholism|intoxicat\w*|drunken\w*|drunkards?|(?:get|gets|got|getting|gotten) drunk|drunk driv\w*|booze|absinthe|heineken|guinness|budweiser|jack daniel'?s|smirnoff|bacardi|johnnie walker|hennessy|j[aä]germeister)\b/i,
   tobacco_drugs:
     /\b(?:cigars?|cigarettes?|tobacco|marlboro|nicotine|vap(?:e|es|ing)|cocaine|heroin|opium|cannabis|marijuana|narcotics?|meth|methamphetamine|lsd|overdos\w*|drug (?:lords?|empires?|cartels?|dealers?|trafficking))\b/i,
   gambling: /\b(?:casinos?|gambl\w*|poker|roulette|blackjack|slot machines?|betting|bookmakers?)\b/i,
   graphic_violence:
-    /\b(?:murder\w*|slaughter\w*|massacre\w*|behead\w*|decapitat\w*|(?:was|were) executed|public executions?|tortur\w*|corpses?|bloody|bloodbath|bloodshed|gunned down|shot (?:dead|and killed)|stabb(?:ed|ing)|assassinat\w*|genocide|war crimes?|suicide|hanged|(?:killed|killing|kills) (?:an estimated |over |more than |nearly |about |roughly )?\d[\d,]+|people were killed|(?:leaped|leapt|jumped) to (?:his|her|their) deaths?|took (?:his|her|their) own lives?)\b/i,
+    /\b(?:murder\w*|slaughter\w*|massacre\w*|behead\w*|decapitat\w*|(?:was|were) executed|public executions?|tortur\w*|corpses?|bloody|bloodbath|bloodshed|gunned down|shot (?:dead|and killed)|stabb(?:ed|ing)|assassinat\w*|genocide|war crimes?|suicide|hanged|(?:killed|killing|kills) (?:an estimated |over |more than |nearly |about |roughly )?\d[\d,]+|people were killed|(?:leaped|leapt|jumped) to (?:his|her|their) deaths?|took (?:his|her|their) own lives?|wip(?:e|es|ed|ing) out (?:half|all|every)\b[^.!?]{0,30}\b(?:life|lives|people|living|humanity|creatures))\b/i,
   horror:
     /\b(?:horror|slashers?|zombies?|possessed by (?:a |an |the )?(?:demons?|devils?|evil spirits?|ghosts?)|demonic possession|exorcis\w*|serial killers?|haunted house|jump scares?)\b/i,
   sexual_content: /\b(?:sexual\w*|sexy|condoms?|nude|nudity|erotic\w*|porn\w*|brothels?|prostitut\w*|seduc\w*|lingerie|strip clubs?)\b/i,

@@ -13,6 +13,8 @@ import type {
   UploadQuestionImageResponse,
   VideoDescription,
   VideoDescriptionInput,
+  VideoTitle,
+  VideoTitleInput,
   VoicePlan,
 } from "@studio/shared";
 import type { CreateStylePresetInput, StyleCatalogSnapshot, StylePreset, UpdateStylePresetInput } from "@studio/shared";
@@ -91,6 +93,18 @@ export const quizApi = {
   saveVideoDescription: (channelId: string, episodeId: string, input: VideoDescriptionInput) =>
     request<{ description: VideoDescription; artifact_path: string }>(
       `/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/description`,
+      { method: "PUT", body: JSON.stringify(input) },
+    ),
+  getVideoTitle: (channelId: string, episodeId: string) =>
+    request<{ title: VideoTitle | null }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/title`),
+  generateVideoTitle: (channelId: string, episodeId: string, toneHint?: string) =>
+    request<{ title: VideoTitle; description: VideoDescription | null; artifact_path: string }>(
+      `/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/title/generate`,
+      { method: "POST", body: JSON.stringify({ tone_hint: toneHint }) },
+    ),
+  saveVideoTitle: (channelId: string, episodeId: string, input: VideoTitleInput) =>
+    request<{ title: VideoTitle; description: VideoDescription | null; artifact_path: string }>(
+      `/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/title`,
       { method: "PUT", body: JSON.stringify(input) },
     ),
   getQuestionImages: (channelId: string, episodeId: string) =>

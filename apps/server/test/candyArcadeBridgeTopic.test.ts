@@ -277,7 +277,9 @@ describe("Stage 5: CandyArcade Bridge Scene 1 (Topic Teaser)", () => {
       expect(css).toContain(".bridge-spotlight-halo");
       expect(css).toContain(".bridge-topic-shockwave");
       expect(css).toContain("@keyframes bridge-card-pop");
-      expect(css).toContain("@keyframes bridge-pill-pulse");
+      expect(css).toContain("@keyframes bridge-pill-pop");
+      expect(css).toContain("@keyframes bridge-title-sway");
+      expect(css).not.toContain("bridge-pill-pulse");
       expect(css).toContain("@keyframes bridge-monogram-drift-up");
       expect(css).toContain("@keyframes bridge-shockwave-burst");
       expect(css).toContain("@keyframes bridge-spotlight-breathe");

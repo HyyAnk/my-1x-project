@@ -3,6 +3,7 @@
    ========================================================================== */
 @import "./channels/channelCards.css";
 @import "./channels/channelModal.css";
+@import "./channels/channelPublishingProfile.css";
 @import "./channels/channelDetail.css";
 @import "./channels/channelIntroOutro.css";
 @import "./channels/introOutroCategories.css";

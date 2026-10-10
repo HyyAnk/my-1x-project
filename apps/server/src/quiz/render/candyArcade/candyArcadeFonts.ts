@@ -119,7 +119,7 @@ export function candyArcadeFontReadinessScript(): string {
     ${choiceTextFitScript()}
     ${factTextFitScript()}
     const checks=${JSON.stringify(checks)};
-    const sample="BẠN CÓ BIẾT? Hành tinh kỳ thú 0123456789";
+    const sample="DID YOU KNOW? Amazing planets 0123456789 \\u00C0\\u0102\\u0110\\u01A0\\u01AF\\u1EA0\\u1EBE\\u1EF9";
     window.__playerReady=false;
     window.__renderReady=false;
     window.__fontStatus={state:"loading",families:checks.map((item)=>item.family)};

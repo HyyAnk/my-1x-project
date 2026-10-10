@@ -164,6 +164,14 @@ export function runAutoQaOnQuestion(
   };
 }
 
+/** Leading "In <Franchise>," or "In <Franchise>:" anchor required by the Franchise Anchor Mandate. */
+const FRANCHISE_ANCHOR_PREFIX = /^\s*in\s+[^,:?]{1,40}[,:]\s*/i;
+
+function openingWords(questionText: string): string[] {
+  const withoutAnchor = questionText.replace(FRANCHISE_ANCHOR_PREFIX, "");
+  return normalizeQuestionText(withoutAnchor || questionText).split(" ").filter(Boolean);
+}
+
 /**
  * Detects formulaic boilerplate repetition across a batch (e.g. repetitive suffixes or identical consecutive prefixes).
  */
@@ -187,16 +195,15 @@ export function detectSyntacticRepetition(question: BankQuestion, priorApprovedQ
     }
   }
 
-  // 2. Check for 3+ consecutive questions with identical 2-word opening prefix
-  const words = norm.split(" ").filter(Boolean);
+  // 2. Check for 3+ consecutive questions with identical 2-word opening prefix.
+  // The mandatory franchise anchor ("In Marvel, ...") is not a stylistic opening, so it is skipped.
+  const words = openingWords(question.question || "");
   if (words.length >= 2 && priorApprovedQuestions.length >= 2) {
     const currentPrefix = words.slice(0, 2).join(" ");
-    const last1 = normalizeQuestionText(priorApprovedQuestions[priorApprovedQuestions.length - 1].question || "")
-      .split(" ")
+    const last1 = openingWords(priorApprovedQuestions[priorApprovedQuestions.length - 1].question || "")
       .slice(0, 2)
       .join(" ");
-    const last2 = normalizeQuestionText(priorApprovedQuestions[priorApprovedQuestions.length - 2].question || "")
-      .split(" ")
+    const last2 = openingWords(priorApprovedQuestions[priorApprovedQuestions.length - 2].question || "")
       .slice(0, 2)
       .join(" ");
 

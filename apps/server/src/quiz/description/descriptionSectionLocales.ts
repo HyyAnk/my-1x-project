@@ -7,7 +7,8 @@ const CJK_SPACER = "";
 export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocale> = {
   en: {
     scoringHeader: "🏆 SCORING TIERS:",
-    playlistHeader: "📂 Playlist Category:",
+    footerLabels: { morePlaylist: "▶️ More quizzes like this:", subscribe: "🔔 Subscribe for new quizzes:", about: "ℹ️ About" },
+    fallbackTeaserLead: "Inside this challenge:",
     chaptersHeader: "⏱️ CHAPTERS:",
     chapterLabels: { intro: "Intro", question: (n) => `Question ${n}`, results: "Final Score" },
     scoreUnit: { one: "point", other: "points", spacer: LATIN_SPACER },
@@ -16,7 +17,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   de: {
     scoringHeader: "🏆 PUNKTESTUFEN:",
-    playlistHeader: "📂 Playlist-Kategorie:",
+    footerLabels: { morePlaylist: "▶️ Mehr Quizze wie dieses:", subscribe: "🔔 Abonniere für neue Quizze:", about: "ℹ️ Über" },
+    fallbackTeaserLead: "In dieser Challenge:",
     chaptersHeader: "⏱️ KAPITEL:",
     chapterLabels: { intro: "Intro", question: (n) => `Frage ${n}`, results: "Endergebnis" },
     scoreUnit: { one: "Punkt", other: "Punkte", spacer: LATIN_SPACER },
@@ -25,7 +27,12 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   fr: {
     scoringHeader: "🏆 BARÈME DE SCORE :",
-    playlistHeader: "📂 Catégorie de playlist :",
+    footerLabels: {
+      morePlaylist: "▶️ Plus de quiz comme celui-ci :",
+      subscribe: "🔔 Abonne-toi pour de nouveaux quiz :",
+      about: "ℹ️ À propos de",
+    },
+    fallbackTeaserLead: "Au programme de ce défi :",
     chaptersHeader: "⏱️ CHAPITRES :",
     chapterLabels: { intro: "Intro", question: (n) => `Question ${n}`, results: "Score final" },
     scoreUnit: { one: "point", other: "points", spacer: LATIN_SPACER, zeroIsSingular: true },
@@ -34,7 +41,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   es: {
     scoringHeader: "🏆 NIVELES DE PUNTUACIÓN:",
-    playlistHeader: "📂 Categoría de playlist:",
+    footerLabels: { morePlaylist: "▶️ Más quizzes como este:", subscribe: "🔔 Suscríbete para nuevos quizzes:", about: "ℹ️ Sobre" },
+    fallbackTeaserLead: "En este desafío:",
     chaptersHeader: "⏱️ CAPÍTULOS:",
     chapterLabels: { intro: "Intro", question: (n) => `Pregunta ${n}`, results: "Puntuación final" },
     scoreUnit: { one: "punto", other: "puntos", spacer: LATIN_SPACER },
@@ -43,7 +51,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   it: {
     scoringHeader: "🏆 LIVELLI DI PUNTEGGIO:",
-    playlistHeader: "📂 Categoria playlist:",
+    footerLabels: { morePlaylist: "▶️ Altri quiz come questo:", subscribe: "🔔 Iscriviti per nuovi quiz:", about: "ℹ️ Chi è" },
+    fallbackTeaserLead: "In questa sfida:",
     chaptersHeader: "⏱️ CAPITOLI:",
     chapterLabels: { intro: "Intro", question: (n) => `Domanda ${n}`, results: "Punteggio finale" },
     scoreUnit: { one: "punto", other: "punti", spacer: LATIN_SPACER },
@@ -52,7 +61,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   pt: {
     scoringHeader: "🏆 NÍVEIS DE PONTUAÇÃO:",
-    playlistHeader: "📂 Categoria da playlist:",
+    footerLabels: { morePlaylist: "▶️ Mais quizzes como este:", subscribe: "🔔 Inscreva-se para novos quizzes:", about: "ℹ️ Sobre" },
+    fallbackTeaserLead: "Neste desafio:",
     chaptersHeader: "⏱️ CAPÍTULOS:",
     chapterLabels: { intro: "Intro", question: (n) => `Pergunta ${n}`, results: "Pontuação final" },
     scoreUnit: { one: "ponto", other: "pontos", spacer: LATIN_SPACER },
@@ -61,7 +71,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   nl: {
     scoringHeader: "🏆 SCORENIVEAUS:",
-    playlistHeader: "📂 Playlistcategorie:",
+    footerLabels: { morePlaylist: "▶️ Meer quizzen zoals deze:", subscribe: "🔔 Abonneer voor nieuwe quizzen:", about: "ℹ️ Over" },
+    fallbackTeaserLead: "In deze uitdaging:",
     chaptersHeader: "⏱️ HOOFDSTUKKEN:",
     chapterLabels: { intro: "Intro", question: (n) => `Vraag ${n}`, results: "Eindscore" },
     scoreUnit: { one: "punt", other: "punten", spacer: LATIN_SPACER },
@@ -70,7 +81,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   ja: {
     scoringHeader: "🏆 スコア評価：",
-    playlistHeader: "📂 再生リストカテゴリ：",
+    footerLabels: { morePlaylist: "▶️ 同じようなクイズはこちら：", subscribe: "🔔 チャンネル登録で新作クイズをチェック：", about: "ℹ️" },
+    fallbackTeaserLead: "このチャレンジの問題：",
     chaptersHeader: "⏱️ チャプター：",
     chapterLabels: { intro: "イントロ", question: (n) => `第${n}問`, results: "結果発表" },
     scoreUnit: { one: "点", other: "点", spacer: CJK_SPACER },
@@ -79,7 +91,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   ko: {
     scoringHeader: "🏆 점수 등급:",
-    playlistHeader: "📂 재생목록 카테고리:",
+    footerLabels: { morePlaylist: "▶️ 비슷한 퀴즈 더 보기:", subscribe: "🔔 구독하고 새 퀴즈 받아보기:", about: "ℹ️" },
+    fallbackTeaserLead: "이번 챌린지 문제:",
     chaptersHeader: "⏱️ 챕터:",
     chapterLabels: { intro: "인트로", question: (n) => `${n}번 문제`, results: "최종 점수" },
     scoreUnit: { one: "점", other: "점", spacer: CJK_SPACER },
@@ -88,7 +101,8 @@ export const DESCRIPTION_SECTION_LOCALES: Record<string, DescriptionSectionLocal
   },
   zh: {
     scoringHeader: "🏆 得分等级：",
-    playlistHeader: "📂 播放列表分类：",
+    footerLabels: { morePlaylist: "▶️ 更多同类问答：", subscribe: "🔔 订阅获取最新问答：", about: "ℹ️ 关于" },
+    fallbackTeaserLead: "本期挑战题目：",
     chaptersHeader: "⏱️ 章节：",
     chapterLabels: { intro: "开场", question: (n) => `第${n}题`, results: "最终得分" },
     scoreUnit: { one: "分", other: "分", spacer: CJK_SPACER },

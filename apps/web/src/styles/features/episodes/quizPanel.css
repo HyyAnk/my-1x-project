@@ -111,15 +111,6 @@
   box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
-.customization-stepper-wrapper .customization-pill-btn {
-  height: 100%;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  padding: 0 8px;
-  box-shadow: none;
-}
-
 .stepper-step-btn {
   display: inline-flex;
   align-items: center;
@@ -146,6 +137,70 @@
 .stepper-step-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.customization-stepper-wrapper.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.customization-stepper-wrapper.is-saving {
+  opacity: 0.75;
+}
+
+.stepper-count-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 4px 0 10px;
+  line-height: 1.15;
+  cursor: text;
+}
+
+.stepper-count-input {
+  width: 4ch;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 600;
+  outline: none;
+}
+
+.stepper-count-input:focus {
+  color: var(--accent);
+}
+
+.stepper-count-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.stepper-presets-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.stepper-presets-btn:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.stepper-presets-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.stepper-presets-btn[aria-expanded="true"] .pill-caret {
+  transform: rotate(180deg);
+  color: var(--accent);
 }
 
 .stepper-step-dec {
@@ -654,34 +709,6 @@ button.episode-style-preview-status.is-error {
   background: var(--accent);
   color: #ffffff;
   border-color: var(--accent);
-}
-
-.custom-count-input-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.custom-count-input {
-  width: 54px;
-  height: 28px;
-  padding: 2px 6px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface);
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 12px;
-  text-align: center;
-}
-
-.custom-count-apply-btn {
-  font-size: 11px;
-  padding: 4px 8px;
 }
 
 /* ==========================================================================

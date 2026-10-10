@@ -13,6 +13,7 @@ import type {
   QuizV2,
   UsageLedger,
   VideoDescription,
+  VideoTitle,
   VoicePlan,
   QuestionImageItem,
   QuestionImagesOverviewResponse,
@@ -29,6 +30,7 @@ export type QuizArtifactFilename =
   | "qa.json"
   | "history-check.json"
   | "video-description.json"
+  | "video-title.json"
   | "stage-timings.json";
 
 export interface IQuizArtifactRepository {
@@ -116,6 +118,8 @@ export interface IQuizArtifactRepository {
   writeHistoryCheck(channelId: string, episodeId: string, result: QuestionHistoryCheckResult): Promise<string>;
   readVideoDescription(channelId: string, episodeId: string): Promise<VideoDescription | null>;
   writeVideoDescription(channelId: string, episodeId: string, description: VideoDescription): Promise<string>;
+  readVideoTitle(channelId: string, episodeId: string): Promise<VideoTitle | null>;
+  writeVideoTitle(channelId: string, episodeId: string, title: VideoTitle): Promise<string>;
   readQuizStageTimings(channelId: string, episodeId: string): Promise<QuizStageTimings | null>;
   writeQuizStageTimings(channelId: string, episodeId: string, timings: QuizStageTimings): Promise<string>;
   readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]>;

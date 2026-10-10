@@ -89,6 +89,7 @@ export async function generateChunkCandidates(
       input.timeoutMs,
       input.modelOverride,
     );
+    assertStructuredReply(rawOutput);
     const parsed = parseBatchGenerationOutput(rawOutput, {
       archetypeId: archId,
       domainId: domId,
@@ -122,6 +123,7 @@ export async function generateChunkCandidates(
       input.timeoutMs,
       input.modelOverride,
     );
+    assertStructuredReply(rawOutput);
     const parsed = parseReverseBatchGenerationOutput(rawOutput, targets, {
       archetypeId: chunk.archetypeId,
       language: input.language,
@@ -132,4 +134,23 @@ export async function generateChunkCandidates(
   }
 
   return chunkCandidates;
+}
+
+/** True when a model reply holds no JSON array at all (empty, cut off, or prose), as opposed to an array of rejected items. */
+function isUnstructuredReply(rawOutput: string): boolean {
+  const start = rawOutput.indexOf("[");
+  const end = rawOutput.lastIndexOf("]");
+  if (start === -1 || end <= start) return true;
+  try {
+    return !Array.isArray(JSON.parse(rawOutput.slice(start, end + 1)));
+  } catch {
+    return true;
+  }
+}
+
+/** An empty or unparseable reply is transient; throwing lets the chunk retry instead of silently yielding nothing. */
+function assertStructuredReply(rawOutput: string): void {
+  if (isUnstructuredReply(rawOutput)) {
+    throw new Error("EMPTY_CHUNK_OUTPUT: the model reply contained no parseable JSON array of questions");
+  }
 }

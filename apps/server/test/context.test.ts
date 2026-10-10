@@ -77,10 +77,10 @@ describe("ContextEngine", () => {
       null,
       undefined,
       0,
-      "Các loại nghề nghiệp",
+      "Types of careers",
     );
     expect(context.prompt).toContain("IMPORTANT TOPIC THEME REQUIREMENT");
-    expect(context.prompt).toContain("Các loại nghề nghiệp");
+    expect(context.prompt).toContain("Types of careers");
     expect(context.prompt).toContain("Exactly 2 candidates MUST be directly inspired by");
     expect(context.prompt).toContain("The remaining candidates should be diverse");
     expect(context.prompt).toContain("Return exactly 8 JSON candidates");

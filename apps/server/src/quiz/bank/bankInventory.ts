@@ -1,17 +1,13 @@
 import {
   sourceCanonicalJsonStringify,
-  hashBankQuestionSource,
   sourceSha256Hex,
   type BankQuestionWithCooldown,
   type QuizConfigFormat,
   type TopicSourceExclusionReasonCode,
   type TopicInventoryScanStatus,
 } from "@studio/shared";
-import {
-  evaluateEpisodeQuestionEligibility,
-  evaluateShortReelQuestionEligibility,
-  type EvaluatedBankQuestionCandidate,
-} from "./bankEligibility.js";
+import type { EvaluatedBankQuestionCandidate } from "./bankEligibility.js";
+import { createBankInventoryEvaluator, type BankInventoryEvaluator } from "./bankInventoryEvaluator.js";
 
 export interface BankInventoryReader {
   queryQuestionBankQuestions(params: {
@@ -51,8 +47,15 @@ function increment(target: Partial<Record<TopicSourceExclusionReasonCode, number
   target[reason] = (target[reason] ?? 0) + 1;
 }
 
-function hashEligibleSource(candidate: EvaluatedBankQuestionCandidate): string {
-  return hashBankQuestionSource(candidate.question);
+function recordExclusions(
+  question: BankQuestionWithCooldown,
+  evaluator: BankInventoryEvaluator,
+  exclusions: Partial<Record<TopicSourceExclusionReasonCode, number>>,
+): void {
+  const episode = evaluator.episode(question);
+  if (!episode.eligible) increment(exclusions, episode.reason);
+  const shortReel = evaluator.shortReel(question);
+  if (shortReel && !shortReel.eligible) increment(exclusions, shortReel.reason);
 }
 
 function classifyStatus(scanned: number, total: number): TopicInventoryScanStatus {
@@ -65,48 +68,41 @@ function createResult(
   scanned: BankQuestionWithCooldown[],
   total: number,
   exclusions: Partial<Record<TopicSourceExclusionReasonCode, number>>,
-  targetLanguage: string,
-  expectedFormat: BankInventoryScanOptions["episodeExpectedFormat"],
+  evaluator: BankInventoryEvaluator,
   errorCode?: BankInventoryScan["error_code"],
 ): BankInventoryScan {
   const eligibleByPolicy = { episode: 0, short_reel: 0 };
   const eligibleSources: BankInventoryScan["eligible_sources"] = [];
   for (const question of scanned) {
-    const episode = evaluateEpisodeQuestionEligibility(question, { targetLanguage, expectedFormat });
+    const episode = evaluator.episode(question);
     if (episode.eligible) {
       eligibleByPolicy.episode += 1;
       eligibleSources.push({
         policy: "episode",
         candidate: episode.candidate,
-        source_content_hash: hashEligibleSource(episode.candidate),
+        source_content_hash: evaluator.sourceHash(episode.candidate.question),
       });
     }
-    if (
-      question.archetype_id === "deep_trivia" ||
-      question.archetype_id === "versus_faceoff" ||
-      question.archetype_id === "verdict_yes_no"
-    ) {
-      const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
-      if (shortReel.eligible) {
-        eligibleByPolicy.short_reel += 1;
-        eligibleSources.push({
-          policy: "short_reel",
-          candidate: shortReel.candidate,
-          source_content_hash: hashEligibleSource(shortReel.candidate),
-        });
-      }
+    const shortReel = evaluator.shortReel(question);
+    if (shortReel?.eligible) {
+      eligibleByPolicy.short_reel += 1;
+      eligibleSources.push({
+        policy: "short_reel",
+        candidate: shortReel.candidate,
+        source_content_hash: evaluator.sourceHash(shortReel.candidate.question),
+      });
     }
   }
   const digest = sourceSha256Hex(
     sourceCanonicalJsonStringify({
       sources: scanned
-        .map((question) => ({ id: question.id, hash: hashBankQuestionSource(question) }))
+        .map((question) => ({ id: question.id, hash: evaluator.sourceHash(question) }))
         .sort((a, b) => a.id.localeCompare(b.id)),
       total,
       status,
       exclusions,
       policies: ["episode", "short_reel"],
-      episode_expected_format: expectedFormat ?? null,
+      episode_expected_format: evaluator.expectedFormat ?? null,
     }),
   );
   return {
@@ -133,6 +129,7 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
   let offset = 0;
   let total = 0;
   const seenIds = new Set<string>();
+  const evaluator = createBankInventoryEvaluator(options.targetLanguage, options.episodeExpectedFormat);
   try {
     if (reader.readQuestionBankQuestionsSnapshot) {
       const snapshot = await reader.readQuestionBankQuestionsSnapshot({
@@ -141,56 +138,17 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         offset: 0,
       });
       if (!Number.isInteger(snapshot.total) || snapshot.total < 0 || snapshot.questions.length > snapshot.total) {
-        return createResult(
-          "incomplete",
-          checkedAt,
-          snapshot.questions,
-          snapshot.total,
-          exclusions,
-          options.targetLanguage,
-          options.episodeExpectedFormat,
-          "BANK_SCAN_INCONSISTENT",
-        );
+        return createResult("incomplete", checkedAt, snapshot.questions, snapshot.total, exclusions, evaluator, "BANK_SCAN_INCONSISTENT");
       }
       if (snapshot.questions.length < snapshot.total) {
-        return createResult(
-          "incomplete",
-          checkedAt,
-          snapshot.questions,
-          snapshot.total,
-          exclusions,
-          options.targetLanguage,
-          options.episodeExpectedFormat,
-          "BANK_SCAN_TRUNCATED",
-        );
+        return createResult("incomplete", checkedAt, snapshot.questions, snapshot.total, exclusions, evaluator, "BANK_SCAN_TRUNCATED");
       }
       for (const question of snapshot.questions) {
         if (seenIds.has(question.id)) {
-          return createResult(
-            "incomplete",
-            checkedAt,
-            snapshot.questions,
-            snapshot.total,
-            exclusions,
-            options.targetLanguage,
-            options.episodeExpectedFormat,
-            "BANK_SCAN_INCONSISTENT",
-          );
+          return createResult("incomplete", checkedAt, snapshot.questions, snapshot.total, exclusions, evaluator, "BANK_SCAN_INCONSISTENT");
         }
         seenIds.add(question.id);
-        const episode = evaluateEpisodeQuestionEligibility(question, {
-          targetLanguage: options.targetLanguage,
-          expectedFormat: options.episodeExpectedFormat,
-        });
-        if (!episode.eligible) increment(exclusions, episode.reason);
-        if (
-          question.archetype_id === "deep_trivia" ||
-          question.archetype_id === "versus_faceoff" ||
-          question.archetype_id === "verdict_yes_no"
-        ) {
-          const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
-          if (!shortReel.eligible) increment(exclusions, shortReel.reason);
-        }
+        recordExclusions(question, evaluator, exclusions);
       }
       return createResult(
         classifyStatus(snapshot.questions.length, snapshot.total),
@@ -198,8 +156,7 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         snapshot.questions,
         snapshot.total,
         exclusions,
-        options.targetLanguage,
-        options.episodeExpectedFormat,
+        evaluator,
       );
     }
 
@@ -212,89 +169,23 @@ export async function scanBankInventory(reader: BankInventoryReader, options: Ba
         page.questions.length > Math.max(0, page.total - offset) ||
         (offset > 0 && page.total !== total)
       ) {
-        return createResult(
-          "incomplete",
-          checkedAt,
-          scanned,
-          page.total,
-          exclusions,
-          options.targetLanguage,
-          options.episodeExpectedFormat,
-          "BANK_SCAN_INCONSISTENT",
-        );
+        return createResult("incomplete", checkedAt, scanned, page.total, exclusions, evaluator, "BANK_SCAN_INCONSISTENT");
       }
       total = page.total;
       for (const question of page.questions) {
         if (seenIds.has(question.id))
-          return createResult(
-            "incomplete",
-            checkedAt,
-            scanned,
-            total,
-            exclusions,
-            options.targetLanguage,
-            options.episodeExpectedFormat,
-            "BANK_SCAN_INCONSISTENT",
-          );
+          return createResult("incomplete", checkedAt, scanned, total, exclusions, evaluator, "BANK_SCAN_INCONSISTENT");
         seenIds.add(question.id);
         scanned.push(question);
-        const episode = evaluateEpisodeQuestionEligibility(question, {
-          targetLanguage: options.targetLanguage,
-          expectedFormat: options.episodeExpectedFormat,
-        });
-        if (!episode.eligible) increment(exclusions, episode.reason);
-        if (
-          question.archetype_id === "deep_trivia" ||
-          question.archetype_id === "versus_faceoff" ||
-          question.archetype_id === "verdict_yes_no"
-        ) {
-          const shortReel = evaluateShortReelQuestionEligibility(question, { targetArchetype: question.archetype_id });
-          if (!shortReel.eligible) increment(exclusions, shortReel.reason);
-        }
+        recordExclusions(question, evaluator, exclusions);
       }
       offset += page.questions.length;
-      if (offset >= total)
-        return createResult(
-          classifyStatus(scanned.length, total),
-          checkedAt,
-          scanned,
-          total,
-          exclusions,
-          options.targetLanguage,
-          options.episodeExpectedFormat,
-        );
+      if (offset >= total) return createResult(classifyStatus(scanned.length, total), checkedAt, scanned, total, exclusions, evaluator);
       if (page.questions.length === 0)
-        return createResult(
-          "incomplete",
-          checkedAt,
-          scanned,
-          total,
-          exclusions,
-          options.targetLanguage,
-          options.episodeExpectedFormat,
-          "BANK_SCAN_INCONSISTENT",
-        );
+        return createResult("incomplete", checkedAt, scanned, total, exclusions, evaluator, "BANK_SCAN_INCONSISTENT");
     }
-    return createResult(
-      "incomplete",
-      checkedAt,
-      scanned,
-      total,
-      exclusions,
-      options.targetLanguage,
-      options.episodeExpectedFormat,
-      "BANK_SCAN_TRUNCATED",
-    );
+    return createResult("incomplete", checkedAt, scanned, total, exclusions, evaluator, "BANK_SCAN_TRUNCATED");
   } catch {
-    return createResult(
-      "unavailable",
-      checkedAt,
-      scanned,
-      total,
-      exclusions,
-      options.targetLanguage,
-      options.episodeExpectedFormat,
-      "BANK_READ_FAILED",
-    );
+    return createResult("unavailable", checkedAt, scanned, total, exclusions, evaluator, "BANK_READ_FAILED");
   }
 }

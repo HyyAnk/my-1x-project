@@ -214,7 +214,8 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
       subtopicId: "tricky_riddles",
     });
     expect(parsed.length).toBe(1);
-    expect(parsed[0].id).toBe(sampleValidQuestion.id);
+    // Ids are always minted by the parser so a model-supplied id can never overwrite an existing question.
+    expect(parsed[0].id).toMatch(/^SPE-LOG-TRI-[0-9A-F]{8}$/);
   });
 
   it("Batch Service: generates and persists clean questions while rejecting bad ones", async () => {
@@ -375,10 +376,12 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     expect(result.success).toBe(true);
     expect(result.generatedCount).toBe(1);
     expect(result.approvedCount).toBe(1);
-    expect(result.savedQuestions.some((q) => q.id === testLlmId)).toBe(true);
+    const savedLlmQuestion = result.savedQuestions.find((q) => q.question.includes(testLlmId));
+    expect(savedLlmQuestion).toBeDefined();
+    expect(savedLlmQuestion?.id).not.toBe(testLlmId);
 
     // Clean up
-    await app.repository.deleteQuestionBankQuestion(testLlmId);
+    await app.repository.deleteQuestionBankQuestion(savedLlmQuestion!.id);
   });
 
   it("POST /api/question-bank/generate-batch returns 503 when no AI client and no candidates", async () => {
@@ -509,6 +512,18 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     expect(issue?.type).toBe("quality");
     expect(issue?.message).toContain("Monotonous opening repetition");
     expect(issue?.message).toContain("which game");
+  });
+
+  it("Auto-QA: detectSyntacticRepetition ignores the mandatory franchise anchor when comparing openings", () => {
+    const makeQ = (id: string, q: string): BankQuestion => ({ ...sampleValidQuestion, id, question: q });
+    const q1 = makeQ("F1", "In Marvel, can you guess this armored inventor from his silhouette?");
+    const q2 = makeQ("F2", "In Marvel, behind the scan beam: name the thunder god!");
+    const q3 = makeQ("F3", "In Marvel, unmask the legend: which sorcerer guards Earth?");
+    expect(detectSyntacticRepetition(q3, [q1, q2])).toBeNull();
+
+    const q4 = makeQ("F4", "In Marvel, can you guess this wall-crawling hero?");
+    const q5 = makeQ("F5", "In DC, can you guess this caped detective?");
+    expect(detectSyntacticRepetition(q5, [q1, q4])?.message).toContain("can you");
   });
 
   it("Auto-QA Performance: scales to 50,000 existing questions in < 100ms with Level 1 O(1) exact-hash and Level 2 scoped deduplication", () => {

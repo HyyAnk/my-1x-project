@@ -105,9 +105,11 @@ export async function retryTopicSuggestions(this: TaskManagerRuntime, active: Ac
   const allocation = getAssignedTopicAllocation(active.manifest);
   const defaultSlotCount = DEFAULT_TOPIC_EPISODE_TARGET_COUNT + DEFAULT_TOPIC_SHORT_REEL_TARGET_COUNT;
   const slotCount = allocation ? allocation.allocatedSlots.length : (active.topicMatrixPlan?.slots.length ?? defaultSlotCount);
+  // Source-backed slots only need the creative copy; the legacy matrix plan still asks for every candidate field.
+  const creativeFields = allocation ? "slot_id, title, premise, hook" : "slot_id, title, premise, why_it_fits, hook, estimated_potential";
   const turnId = await client.startTurn(
     threadId,
-    `${active.manifest.prompt}\n\nSTRICT RETRY: The previous topic suggestions response failed slot plan validation (${reason}). Start over in a fresh response. Return exactly ${slotCount} JSON candidate(s) strictly matching the assigned allocated slot plan. For each candidate, provide ONLY the creative fields: slot_id, title, premise, why_it_fits, hook, estimated_potential. Do not return Markdown fences or commentary outside the JSON.`,
+    `${active.manifest.prompt}\n\nSTRICT RETRY: The previous topic suggestions response failed slot plan validation (${reason}). Start over in a fresh response. Return exactly ${slotCount} JSON candidate(s) strictly matching the assigned allocated slot plan. For each candidate, provide ONLY the creative fields: ${creativeFields}. Do not return Markdown fences or commentary outside the JSON.`,
   );
   active.threadId = threadId;
   active.turnId = turnId;

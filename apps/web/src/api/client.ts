@@ -6,6 +6,7 @@ import type {
   QuizV2,
   TaskEvent,
   VideoDescription,
+  VideoTitle,
   VoicePlan,
   QuizStageTimings,
 } from "@studio/shared";
@@ -46,6 +47,7 @@ export type QuizV2State = {
   timeline: QuizTimeline | null;
   assessment: QuizAssessment | null;
   description?: VideoDescription | null;
+  title?: VideoTitle | null;
   timings?: QuizStageTimings | null;
   render_stale?: boolean;
   stages: QuizV2Stages;

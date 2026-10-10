@@ -50,7 +50,7 @@ export type ResolveBgmOptions = {
   outroStartSeconds?: number;
 };
 
-export const DEFAULT_BGM_BASE_VOLUME = 0.04;
+export const DEFAULT_BGM_BASE_VOLUME = 0.08;
 
 export { hashStringToSeed };
 

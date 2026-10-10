@@ -10,21 +10,13 @@ import { bankQuestionToRow, rowToBankQuestion } from "../src/repository/quiz/ban
 describe("bankQuestionNormalizer", () => {
   describe("normalizeVerdictQuestionText", () => {
     it("converts trailing 'True or False?' to 'Yes or No?'", () => {
-      expect(normalizeVerdictQuestionText("The Earth orbits the Sun. True or False?")).toBe(
-        "The Earth orbits the Sun. Yes or No?",
-      );
+      expect(normalizeVerdictQuestionText("The Earth orbits the Sun. True or False?")).toBe("The Earth orbits the Sun. Yes or No?");
     });
 
     it("handles variations in casing, colons, and hyphens", () => {
-      expect(normalizeVerdictQuestionText("Sharks are mammals: true or false")).toBe(
-        "Sharks are mammals Yes or No?",
-      );
-      expect(normalizeVerdictQuestionText("Octopuses have 3 hearts - TRUE OR FALSE?")).toBe(
-        "Octopuses have 3 hearts Yes or No?",
-      );
-      expect(normalizeVerdictQuestionText("Bananas grow on trees — True or False?")).toBe(
-        "Bananas grow on trees Yes or No?",
-      );
+      expect(normalizeVerdictQuestionText("Sharks are mammals: true or false")).toBe("Sharks are mammals Yes or No?");
+      expect(normalizeVerdictQuestionText("Octopuses have 3 hearts - TRUE OR FALSE?")).toBe("Octopuses have 3 hearts Yes or No?");
+      expect(normalizeVerdictQuestionText("Bananas grow on trees — True or False?")).toBe("Bananas grow on trees Yes or No?");
     });
 
     it("preserves non-verdict questions unmodified", () => {
@@ -76,13 +68,13 @@ describe("bankQuestionNormalizer", () => {
         status: "approved",
         language: "en",
         translations: {
-          vi: {
-            question: "Mặt trời có phải là một ngôi sao? True or False?",
+          es: {
+            question: "¿Es el Sol una estrella? True or False?",
             choices: [
               { id: "A", text: "True" },
               { id: "B", text: "False" },
             ],
-            explanation: "Mặt trời là một ngôi sao.",
+            explanation: "El Sol es una estrella.",
             verified: true,
           },
         },
@@ -95,9 +87,9 @@ describe("bankQuestionNormalizer", () => {
       expect(normalized.question).toBe("Is the sun a star? Yes or No?");
       expect(normalized.choices[0].text).toBe("Yes");
       expect(normalized.choices[1].text).toBe("No");
-      expect(normalized.translations?.vi.question).toBe("Mặt trời có phải là một ngôi sao? Yes or No?");
-      expect(normalized.translations?.vi.choices[0].text).toBe("Yes");
-      expect(normalized.translations?.vi.choices[1].text).toBe("No");
+      expect(normalized.translations?.es.question).toBe("¿Es el Sol una estrella? Yes or No?");
+      expect(normalized.translations?.es.choices[0].text).toBe("Yes");
+      expect(normalized.translations?.es.choices[1].text).toBe("No");
     });
 
     it("normalizes legacy verdict_fact_myth questions", () => {

@@ -81,6 +81,13 @@ describe("kid reading level and Auto-QA kid rules", () => {
     expect(issues[0]).toMatchObject({ type: "quality", details: { rule: "kid_safety", category: "gambling" } });
   });
 
+  it("raises a kid_safety issue when the visual prompt is unsuitable", () => {
+    const question = makeQuestion({
+      visual_spec: { intent: "question_illustration", aspect_ratio: "16:9", prompt: "A bloody battlefield full of zombies" },
+    });
+    expect(checkKidAudienceIssues(question)[0]).toMatchObject({ details: { rule: "kid_safety", field: "visual_prompt" } });
+  });
+
   it("screens malformed model candidates without throwing", () => {
     const malformed = { ...makeQuestion(), question: undefined, choices: undefined } as unknown as BankQuestion;
     expect(() => checkKidAudienceIssues(malformed)).not.toThrow();

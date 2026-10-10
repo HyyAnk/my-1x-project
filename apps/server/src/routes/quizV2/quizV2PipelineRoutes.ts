@@ -36,13 +36,16 @@ export function registerQuizV2PipelineRoutes(server: FastifyInstance, deps: Quiz
     };
     const result = await generateQuiz(stepDeps);
     let description = null;
+    let title = null;
     try {
-      const descResult = await generateEpisodeDescription(stepDeps);
-      description = descResult.description;
+      // Fresh questions make the previous title stale; the title is regenerated before the description.
+      const metadata = await generateEpisodeDescription({ ...stepDeps, force: true });
+      description = metadata.description;
+      title = metadata.title;
     } catch {
       // Non-blocking fallback
     }
-    return { ...result, description };
+    return { ...result, description, title };
   });
 
   server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/director/generate", async (request) => {
@@ -97,12 +100,14 @@ export function registerQuizV2PipelineRoutes(server: FastifyInstance, deps: Quiz
     };
     const result = await remixQuizQuestions(stepDeps, input.question_ids, input.mode);
     let description = null;
+    let title = null;
     try {
-      const descResult = await generateEpisodeDescription({ ...stepDeps, force: true });
-      description = descResult.description;
+      const metadata = await generateEpisodeDescription({ ...stepDeps, force: true });
+      description = metadata.description;
+      title = metadata.title;
     } catch {
       // Non-blocking fallback
     }
-    return { ...result, description };
+    return { ...result, description, title };
   });
 }

@@ -29,17 +29,17 @@ describe("RepositoryService", () => {
     const repository = await fixture();
     await repository.ensureBootstrap();
     const input = {
-      name: "Đời sống & Máy móc",
+      name: "Niños & Máquinas: Ça Marche",
       description: "A channel",
       target_audience: "Curious people",
-      language: "Vietnamese",
+      language: "Spanish",
       market: "Global",
       dna_mode: "example" as const,
     };
     const first = await repository.createChannel(input);
     const second = await repository.createChannel(input);
-    expect(first.slug).toBe("doi-song-may-moc");
-    expect(second.slug).toBe("doi-song-may-moc-2");
+    expect(first.slug).toBe("ninos-maquinas-ca-marche");
+    expect(second.slug).toBe("ninos-maquinas-ca-marche-2");
     expect((await repository.listChannels()).length).toBe(2);
     const persisted = JSON.parse(
       await readFile(path.join(repository.storageRoot, "channels", first.slug, "channel.json"), "utf8"),

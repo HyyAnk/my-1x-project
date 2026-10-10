@@ -12,9 +12,12 @@ import {
   MATURE_FRANCHISE_TITLES,
 } from "./kidSafetyLexicon.js";
 
-const MATURE_FRANCHISE_PATTERNS = MATURE_FRANCHISE_TITLES.map(
-  (title) => [title, new RegExp(`(?<![\\w-])${title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`)] as const,
-);
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const wholeTermPattern = (alternatives: string) => new RegExp(`(?<![\\w-])(?:${alternatives})(?![\\w-])`);
+
+const MATURE_FRANCHISE_PATTERNS = MATURE_FRANCHISE_TITLES.map((title) => [title, wholeTermPattern(escapeRegExp(title))] as const);
+/** Matches whenever any single title pattern would, so the common clean case costs one scan instead of one per title. */
+const ANY_MATURE_FRANCHISE_PATTERN = wholeTermPattern(MATURE_FRANCHISE_TITLES.map(escapeRegExp).join("|"));
 
 const TOPIC_PATTERN_ENTRIES = Object.entries(KID_UNSAFE_TOPIC_PATTERNS) as Array<[KidSafetyCategory, RegExp]>;
 const ON_SCREEN_PATTERN_ENTRIES = Object.entries(KID_UNSAFE_ON_SCREEN_PATTERNS) as Array<[KidSafetyCategory, RegExp]>;
@@ -76,6 +79,7 @@ export function detectKidSafetyIssue(question: KidSafetyScreenableQuestion): Kid
 /** Returns the teen- or adult-rated franchise a text refers to (e.g. "Kratos from God of War"), or null. */
 export function findMatureFranchise(text: string): string | null {
   const screened = stripAllowlistedPhrases(text);
+  if (!ANY_MATURE_FRANCHISE_PATTERN.test(screened)) return null;
   return MATURE_FRANCHISE_PATTERNS.find(([, pattern]) => pattern.test(screened))?.[0] ?? null;
 }
 

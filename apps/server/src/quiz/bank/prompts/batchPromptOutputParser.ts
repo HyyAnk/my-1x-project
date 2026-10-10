@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { BankQuestionSchema, normalizeLegacyVerdictIdentifier, type BankGameplayArchetypeId, type BankQuestion } from "@studio/shared";
 import { ARCHETYPE_GUIDELINES } from "./archetypePromptGuidelines.js";
 import { sanitizeBankQuestionText } from "./bankQuestionSanitizer.js";
@@ -24,6 +25,8 @@ interface BuildQuestionOptions {
   subtopicId: string;
   entityId?: string;
   difficulty?: number;
+  /** Keep a per-item difficulty the caller explicitly asked the model for (e.g. retention-arc slots). */
+  keepModelDifficulty?: boolean;
   ageBand?: "kids" | "family" | "teen" | "mature";
   generationLanguage?: string;
   expectedChoiceCount: number;
@@ -32,21 +35,30 @@ interface BuildQuestionOptions {
   isReverse?: boolean;
 }
 
+/**
+ * Saving upserts by id, so a reused id silently overwrites an existing question. Ids are always minted here
+ * (never taken from model output) with 32 random bits, which keeps collisions negligible at bank scale.
+ */
 function makeUniqueBankId(archetypeId: string, domainId: string, subtopicId: string): string {
   const prefix = `${archetypeId.slice(0, 3)}-${domainId.slice(0, 3)}-${subtopicId.slice(0, 3)}`.toUpperCase();
-  return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+  return `${prefix}-${randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
 /**
- * The age band is always measured from the generated text. A difficulty the model was explicitly asked for
- * (e.g. one slot of a retention arc) is kept; otherwise it is measured as well.
+ * Age band and difficulty are measured from the generated text: batch prompts echo one requested difficulty
+ * for every item, so the model's value carries no information. Callers that ask for a specific difficulty
+ * per item (e.g. retention-arc slots) opt in to keeping it.
  */
-function audienceMetadata(question: string, item: Record<string, unknown>): Pick<BankQuestion, "age_band" | "difficulty"> {
+function audienceMetadata(
+  question: string,
+  item: Record<string, unknown>,
+  keepModelDifficulty: boolean,
+): Pick<BankQuestion, "age_band" | "difficulty"> {
   const explanation = typeof item.explanation === "string" ? item.explanation : "";
   const profile = estimateAudienceProfile({ question, explanation });
   const requested = item.difficulty;
-  const difficulty = typeof requested === "number" && Number.isInteger(requested) && requested >= 1 && requested <= 5 ? requested : profile.difficulty;
-  return { age_band: profile.age_band, difficulty };
+  const isValidRequested = typeof requested === "number" && Number.isInteger(requested) && requested >= 1 && requested <= 5;
+  return { age_band: profile.age_band, difficulty: keepModelDifficulty && isValidRequested ? requested : profile.difficulty };
 }
 
 function warnUnparseableOutput(context: string, rawOutput: string): void {
@@ -165,13 +177,13 @@ function buildAndValidateBankQuestion(opts: BuildQuestionOptions): BankQuestion 
     question: sanitizedQuestion,
     choices: normalizedChoices ?? item.choices,
     format: isVerdict ? "yes_no" : (typeof item.format === "string" ? item.format : "multiple_choice"),
-    id: typeof item.id === "string" && item.id.trim() ? item.id.trim() : makeUniqueBankId(opts.archetypeId, opts.domainId, opts.subtopicId),
+    id: makeUniqueBankId(opts.archetypeId, opts.domainId, opts.subtopicId),
     entity_id: opts.entityId,
     archetype_id: isVerdict ? "verdict_yes_no" : opts.archetypeId,
     domain_id: opts.domainId,
     subtopic_id: opts.subtopicId,
     status: "approved",
-    ...audienceMetadata(sanitizedQuestion, item),
+    ...audienceMetadata(sanitizedQuestion, item, opts.keepModelDifficulty === true),
     created_at: opts.now,
     updated_at: opts.now,
     ...(opts.generationLanguage ? { language: opts.generationLanguage } : {}),
@@ -198,6 +210,7 @@ function parseGenerationOutputInternal(
     subtopicId?: string;
     language?: string;
     difficulty?: number;
+    keepModelDifficulty?: boolean;
     ageBand?: "kids" | "family" | "teen" | "mature";
   },
   targets?: TargetEntityForGeneration[],
@@ -232,6 +245,7 @@ function parseGenerationOutputInternal(
       subtopicId,
       entityId,
       difficulty: meta.difficulty,
+      keepModelDifficulty: meta.keepModelDifficulty,
       ageBand: meta.ageBand,
       generationLanguage,
       expectedChoiceCount: expectedCount,
@@ -253,6 +267,7 @@ export function parseBatchGenerationOutput(
     subtopicId: string;
     language?: string;
     difficulty?: number;
+    keepModelDifficulty?: boolean;
     ageBand?: "kids" | "family" | "teen" | "mature";
   },
 ): BankQuestion[] {

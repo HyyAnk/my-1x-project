@@ -51,6 +51,19 @@ function executableFile(candidate: string, platform: NodeJS.Platform): boolean {
   }
 }
 
+/**
+ * Returns the user's explicit HYPERFRAMES_BROWSER_PATH when it points at a real executable.
+ * Renders otherwise use HyperFrames' managed chrome-headless-shell: on Windows the desktop
+ * chrome.exe ignores `--version` during render preflight and opens a visible browser window,
+ * and it captured frames ~45% slower than the headless shell in local benchmarks.
+ */
+export function resolveBrowserOverridePath(options: Pick<BrowserDiscoveryOptions, "platform" | "env" | "isExecutable"> = {}): string | undefined {
+  const platform = options.platform ?? process.platform;
+  const override = environmentValue(options.env ?? process.env, "HYPERFRAMES_BROWSER_PATH", platform);
+  const isExecutable = options.isExecutable ?? ((candidate: string) => executableFile(candidate, platform));
+  return override && isExecutable(override) ? override : undefined;
+}
+
 /** Shared by production and diagnostics; never launches a browser or invokes a shell. */
 export function resolveHardwareBrowserPath(options: BrowserDiscoveryOptions = {}): string | undefined {
   const platform = options.platform ?? process.platform;

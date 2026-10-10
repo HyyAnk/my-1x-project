@@ -79,6 +79,7 @@ export function registerQuizV2ArtifactRoutes(server: FastifyInstance, deps: Quiz
       timeline,
       assessment,
       description,
+      title,
     } = await readQuizArtifacts(pipelineDeps(params.channelId, params.episodeId));
     const timings = await repository.readQuizStageTimings(params.channelId, params.episodeId);
     const active = tasks
@@ -93,6 +94,7 @@ export function registerQuizV2ArtifactRoutes(server: FastifyInstance, deps: Quiz
       timeline,
       assessment,
       description,
+      title,
       timings,
       render_stale: Boolean(episode.render_stale),
       stages: {

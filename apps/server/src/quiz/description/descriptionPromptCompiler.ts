@@ -2,6 +2,12 @@ import type { Channel, Episode, QuizV2 } from "@studio/shared";
 import { calculateScoringTiers, formatScoringRange } from "./scoringTiers.js";
 import type { ProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
 import { describeAudienceCtaRule, resolveAudiencePolicy } from "./descriptionAudiencePolicy.js";
+import {
+  buildTitleContextLines,
+  describeHookTitleRule,
+  describePrimaryKeywordRule,
+  type DescriptionTitleContext,
+} from "./descriptionTitleAlignment.js";
 
 export interface CompileVideoDescriptionPromptInput {
   quiz: QuizV2;
@@ -10,6 +16,8 @@ export interface CompileVideoDescriptionPromptInput {
   toneHint?: string;
   targetLanguage?: string;
   localization?: ProductLocalizationArtifact | null;
+  /** The episode's YouTube title, generated before the description so both target the same keyword. */
+  videoTitle?: DescriptionTitleContext | null;
 }
 
 /**
@@ -33,7 +41,7 @@ export function buildSpoilerFreeQuestionSummaries(quiz: QuizV2, localization?: P
  * Implements the 12 Quiz Description rules with strict anti-hallucination, anti-spoiler and SEO LSI constraints.
  */
 export function compileVideoDescriptionPrompt(input: CompileVideoDescriptionPromptInput): string {
-  const { quiz, channel, episode, toneHint, targetLanguage, localization } = input;
+  const { quiz, channel, episode, toneHint, targetLanguage, localization, videoTitle } = input;
   const questionCount = quiz.questions.length;
   const tiers = calculateScoringTiers(questionCount);
   const language = targetLanguage || localization?.target_language || channel.language || "English";
@@ -54,6 +62,7 @@ export function compileVideoDescriptionPrompt(input: CompileVideoDescriptionProm
     `- Brand Name: "${episode.quiz_config?.channel_brand_name || channel.display_name}"`,
     `- Language: ${language}`,
     `- Topic Title: "${episode.topic.title}"`,
+    ...buildTitleContextLines(videoTitle),
     `- Topic Hook: "${episode.topic.hook}"`,
     `- Total Questions (Exact Ground Truth): ${questionCount}`,
     `- Audience: ${audience.madeForKids ? "Made for Kids (comments disabled)" : "General audience (comments enabled)"}`,
@@ -68,9 +77,9 @@ export function compileVideoDescriptionPrompt(input: CompileVideoDescriptionProm
     buildSpoilerFreeQuestionSummaries(quiz, localization),
     ``,
     `[12 MANDATORY GENERATION RULES]:`,
-    `1. TOPIC & PRIMARY KEYWORD: Identify the main niche topic and 1 high-intent search phrase (e.g. "world geography quiz", "science trivia challenge").`,
+    describePrimaryKeywordRule(videoTitle),
     `2. QUESTION COUNT: Explicitly mention the exact number (${questionCount}) in the hook. Do NOT alter or guess this number.`,
-    `3. HOOK (2-3 lines, max 150 chars): Line 1 must contain the primary search keyword verbatim. Line 2 must use a natural synonym or semantic variation. Line 3 sets up the challenge.`,
+    `3. HOOK (2-3 lines, max 150 chars): Line 1 must contain the primary search keyword verbatim. Line 2 must use a natural synonym or semantic variation. Line 3 sets up the challenge.${describeHookTitleRule(videoTitle)}`,
     `4. LSI SEMANTIC PARAGRAPH: Write a cohesive, natural 3-4 sentence paragraph weaving specific entities and concepts directly from the questions above. Do NOT list items as bullet points. Do NOT invent concepts not in the script.`,
     `5. NO SPOILERS: Never state, hint at, or confirm any answer. Frame every entity as an open question or teaser (e.g. "Which country hides the Great Pyramid?"), never as a fact that resolves a question.`,
     `6. SCORING RANK TITLES: Return ONLY an engaging rank title per tier in ${language} (e.g. "Novice", "Scholar", "Master"). Do NOT write numbers or ranges; they are added automatically.`,

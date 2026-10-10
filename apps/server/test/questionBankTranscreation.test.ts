@@ -153,13 +153,13 @@ Hope this viral riddle performs well on Shorts!
 
     it("throws an error if choice count mismatches source question", () => {
       const badChoicesJson = JSON.stringify({
-        language: "vi",
-        question: "Một chiếc gậy?",
+        language: "fr",
+        question: "Combien de bouts a une baguette coupée en deux ?",
         choices: [
-          { id: "A", text: "1 đầu" },
-          { id: "B", text: "2 đầu" },
+          { id: "A", text: "1 bout" },
+          { id: "B", text: "2 bouts" },
         ], // 2 choices provided, but sampleSpeedBlitzQuestion has 3 choices!
-        explanation: "Giải thích",
+        explanation: "Explication",
         fun_fact: "",
       });
 
@@ -168,13 +168,13 @@ Hope this viral riddle performs well on Shorts!
 
     it("throws an error if choice IDs do not match source question", () => {
       const wrongIdsJson = JSON.stringify({
-        language: "vi",
-        question: "Cá voi xanh?",
+        language: "fr",
+        question: "La baleine bleue est-elle le plus grand animal ?",
         choices: [
-          { id: "1", text: "ĐÚNG" },
-          { id: "2", text: "SAI" },
+          { id: "1", text: "VRAI" },
+          { id: "2", text: "FAUX" },
         ],
-        explanation: "Giải thích",
+        explanation: "Explication",
         fun_fact: "",
       });
 

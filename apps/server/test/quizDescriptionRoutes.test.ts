@@ -6,20 +6,20 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   executeSinglePromptText: vi.fn().mockResolvedValue(
     JSON.stringify({
-      topic_category: "Sinh vật biển",
-      primary_keyword: "đố vui sinh vật biển",
-      keyword_variations: ["trắc nghiệm đại dương", "bí ẩn biển sâu"],
+      topic_category: "Sea Creatures",
+      primary_keyword: "sea creature trivia",
+      keyword_variations: ["ocean quiz", "deep sea mysteries"],
       question_count: 3,
-      hook_lines: "Đố vui sinh vật biển - Bạn biết bao nhiêu loài dưới đại dương?\nCùng thử thách kiến thức biển sâu ngay!",
-      semantic_paragraph: "Khám phá thế giới đại dương bao la với những câu đố về các sinh vật kỳ thú.",
+      hook_lines: "Sea creature trivia - How many ocean species do you know?\nTest your deep sea knowledge now!",
+      semantic_paragraph: "Explore the vast ocean world with puzzles about amazing sea creatures.",
       scoring_cta: {
-        beginner: "1 câu: Thủy thủ tập sự",
-        intermediate: "2 câu: Nhà thám hiểm biển",
-        expert: "3 câu: Bậc thầy đại dương",
-        cta_text: "Bạn đúng được mấy câu? Hãy bình luận bên dưới nhé!",
+        beginner: "1 correct: Apprentice Sailor",
+        intermediate: "2 correct: Sea Explorer",
+        expert: "3 correct: Ocean Master",
+        cta_text: "How many did you get right? Tell us below!",
       },
-      suggested_playlist_category: "Sinh Vật Biển & Đại Dương",
-      hashtags: ["#quiz", "#sinhvatbien", "#daiduong", "#trivia"],
+      suggested_playlist_category: "Sea Creatures & Oceans",
+      hashtags: ["#quiz", "#seacreatures", "#ocean", "#trivia"],
     }),
   ),
 }));
@@ -72,10 +72,10 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           topic_id: "topic-" + index,
           channel_id: channel.channel_id,
           content_kind: "episode" as const,
-          title: "Bí Ẩn Đại Dương " + index,
-          premise: "Khám phá các loài sinh vật biển kỳ lạ",
-          why_it_fits: "Phù hợp chủ đề",
-          hook: "Bạn có biết loài cá nào phát sáng dưới đáy biển sâu?",
+          title: "Ocean Mysteries " + index,
+          premise: "Discover strange sea creatures",
+          why_it_fits: "Fits the channel theme",
+          hook: "Do you know which fish glows in the deep sea?",
           estimated_potential: "High",
           generated_at: new Date().toISOString(),
           selected: false,
@@ -96,8 +96,8 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
             episode_id: episode.episode_id,
             scene_number: number,
             duration_seconds: 10,
-            dialogue: `Câu hỏi ${number}`,
-            visual_prompt: `Sinh vật biển ${number}`,
+            dialogue: `Question ${number}`,
+            visual_prompt: `Sea creature ${number}`,
             transition_note: "",
             continuity_note: "",
             sequence_id: `sequence-${number}`,
@@ -121,11 +121,11 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
             quiz: {
               phase: "question" as const,
               question_number: number,
-              question: `Loài sinh vật biển số ${number} là gì?`,
-              choices: ["A. Cá voi", "B. Cá mập", "C. Cá heo"],
-              answer: "A. Cá voi",
-              explanation: `Cá voi số ${number} là loài động vật lớn nhất.`,
-              image_prompt: "Cá voi xanh dưới đại dương",
+              question: `What is sea creature number ${number}?`,
+              choices: ["A. Whale", "B. Shark", "C. Dolphin"],
+              answer: "A. Whale",
+              explanation: `Whale number ${number} is the largest animal.`,
+              image_prompt: "A blue whale in the ocean",
             },
             audio_asset_path: null,
             audio_generated_at: null,
@@ -163,13 +163,13 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/description`,
         });
         expect(getAfter.statusCode).toBe(200);
-        expect(getAfter.json<DescriptionResponse>().description.primary_keyword).toBe("đố vui sinh vật biển");
+        expect(getAfter.json<DescriptionResponse>().description.primary_keyword).toBe("sea creature trivia");
 
         // 4. Regenerate description with a custom tone hint
         const postGenerate = await app.server.inject({
           method: "POST",
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/description/generate`,
-          payload: { tone_hint: "Hấp dẫn và tò mò" },
+          payload: { tone_hint: "Engaging and curious" },
         });
         expect(postGenerate.statusCode).toBe(200);
         const generated = postGenerate.json<DescriptionResponse>();
@@ -181,17 +181,17 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           method: "PUT",
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/description`,
           payload: {
-            full_description_text: "Mô tả đã được chỉnh sửa thủ công bởi người dùng!\n\n#quiz #ocean",
-            primary_keyword: "bí ẩn đại dương",
+            full_description_text: "This description was manually edited by the user!\n\n#quiz #ocean",
+            primary_keyword: "ocean mysteries",
           },
         });
         expect(putRes.statusCode).toBe(200);
         const updated = putRes.json<DescriptionResponse>();
-        expect(updated.description.full_description_text).toBe("Mô tả đã được chỉnh sửa thủ công bởi người dùng!\n\n#quiz #ocean");
+        expect(updated.description.full_description_text).toBe("This description was manually edited by the user!\n\n#quiz #ocean");
 
         // Verify description.md on disk was updated
         const updatedMdContent = await readFile(descMdPath, "utf8");
-        expect(updatedMdContent.trim()).toBe("Mô tả đã được chỉnh sửa thủ công bởi người dùng!\n\n#quiz #ocean");
+        expect(updatedMdContent.trim()).toBe("This description was manually edited by the user!\n\n#quiz #ocean");
 
         // 6. Full QuizV2 state includes description
         const fullStateRes = await app.server.inject({
@@ -200,7 +200,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
         });
         expect(fullStateRes.statusCode).toBe(200);
         expect(fullStateRes.json<DescriptionResponse>().description.full_description_text).toBe(
-          "Mô tả đã được chỉnh sửa thủ công bởi người dùng!\n\n#quiz #ocean",
+          "This description was manually edited by the user!\n\n#quiz #ocean",
         );
       } finally {
         await app.close();

@@ -17,9 +17,18 @@ export interface DescriptionChapterLabels {
   results: string;
 }
 
+export interface DescriptionFooterLabels {
+  morePlaylist: string;
+  subscribe: string;
+  /** Prefix placed before the channel name in the about line. */
+  about: string;
+}
+
 export interface DescriptionSectionLocale {
   scoringHeader: string;
-  playlistHeader: string;
+  footerLabels: DescriptionFooterLabels;
+  /** Lead-in sentence placed before question teasers in template fallbacks. */
+  fallbackTeaserLead: string;
   chaptersHeader: string;
   chapterLabels: DescriptionChapterLabels;
   scoreUnit: ScoreUnitForms;

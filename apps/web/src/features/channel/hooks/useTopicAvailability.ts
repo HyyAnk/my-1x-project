@@ -74,11 +74,20 @@ export function useTopicAvailability({
       }
       return null;
     } finally {
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
       if (requestSeq === sequenceRef.current && isMountedRef.current) {
         setLoading(false);
       }
     }
   }, [channelId, enabled]);
+
+  // Background triggers wait for the in-flight request instead of cancelling it: an aborted fetch does not stop server work
+  const refreshIfIdle = useCallback(() => {
+    if (abortControllerRef.current) return;
+    void refresh();
+  }, [refresh]);
 
   // Initial and reactive fetch on channel change
   useEffect(() => {
@@ -112,7 +121,7 @@ export function useTopicAvailability({
       const now = Date.now();
       if (now - lastTriggerTime < 1000) return;
       lastTriggerTime = now;
-      void refresh();
+      refreshIfIdle();
     };
 
     const onFocus = () => {
@@ -135,7 +144,7 @@ export function useTopicAvailability({
 
     const intervalId = window.setInterval(() => {
       if (document.visibilityState === "visible") {
-        void refresh();
+        refreshIfIdle();
       }
     }, boundedInterval);
 
@@ -145,7 +154,7 @@ export function useTopicAvailability({
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.clearInterval(intervalId);
     };
-  }, [channelId, enabled, boundedInterval, refresh]);
+  }, [channelId, enabled, boundedInterval, refreshIfIdle]);
 
   const availabilityMap = useMemo(() => {
     const map = new Map<string, TopicAvailability>();

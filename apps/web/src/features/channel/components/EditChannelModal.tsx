@@ -6,6 +6,8 @@ import { AccessibleModal } from "../../../components/AccessibleModal";
 import { useTranslation } from "../../../i18n";
 import type { Notice } from "../../../components/types";
 import { CountrySelectDropdown } from "./CountrySelectDropdown";
+import { ChannelPublishingProfileFields } from "./ChannelPublishingProfileFields";
+import { usePublishingProfileForm } from "../hooks/usePublishingProfileForm";
 
 const EDIT_CHANNEL_TITLE_ID = "edit-channel-title";
 
@@ -28,12 +30,14 @@ export function EditChannelModal({ channel, onClose, onSaved, onNotice }: EditCh
     language: channel.language,
   });
 
+  const publishingForm = usePublishingProfileForm(channel.publishing_profile);
   const [busy, setBusy] = useState(false);
+  const canSubmit = Boolean(form.display_name.trim()) && publishingForm.isValid;
   const submittingRef = useRef(false);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!form.display_name.trim() || submittingRef.current) return;
+    if (!canSubmit || submittingRef.current) return;
     submittingRef.current = true;
     setBusy(true);
     try {
@@ -44,6 +48,7 @@ export function EditChannelModal({ channel, onClose, onSaved, onNotice }: EditCh
         country: form.country,
         market: form.market.trim(),
         language: form.language.trim(),
+        publishing_profile: publishingForm.toPayload(),
       });
       onNotice({ tone: "good", message: t("channelDetail.channelUpdatedNotice") });
       await onSaved();
@@ -140,13 +145,15 @@ export function EditChannelModal({ channel, onClose, onSaved, onNotice }: EditCh
               placeholder={t("channels.marketFieldPlaceholder")}
             />
           </div>
+
+          <ChannelPublishingProfileFields form={publishingForm} disabled={busy} />
         </div>
 
         <div className="channel-create-actions">
           <button type="button" className="quiet-button channel-cancel-btn" onClick={onClose} disabled={busy}>
             {t("common.cancel")}
           </button>
-          <button type="submit" className="primary-button channel-submit-btn" disabled={busy || !form.display_name.trim()}>
+          <button type="submit" className="primary-button channel-submit-btn" disabled={busy || !canSubmit}>
             {busy ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} weight="bold" />}
             <span>{busy ? t("channelDetail.savingChannel") : t("channelDetail.saveChanges")}</span>
           </button>

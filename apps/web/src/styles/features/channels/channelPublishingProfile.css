@@ -1,0 +1,80 @@
+/* YouTube publishing links section inside the Edit Channel modal */
+.channel-publishing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--line-dark);
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.channel-publishing-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.channel-publishing-logo {
+  color: #ff0000;
+}
+
+.channel-publishing-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Matches ".modal label" for the playlist group, which has no single control to label. */
+.channel-publishing-group-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.channel-publishing-playlist-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.channel-publishing-remove {
+  padding: 8px;
+}
+
+.channel-publishing-add {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.channel-publishing-error {
+  font-size: 11.5px;
+  color: var(--notice-error, #ef4444);
+}
+
+.channel-publishing-section .channel-create-input[aria-invalid="true"] {
+  border-color: var(--notice-error, #ef4444);
+}
+
+@media (max-width: 640px) {
+  .channel-publishing-playlist-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .channel-publishing-playlist-row > input {
+    grid-column: 1;
+  }
+
+  .channel-publishing-playlist-row > .channel-publishing-remove {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}

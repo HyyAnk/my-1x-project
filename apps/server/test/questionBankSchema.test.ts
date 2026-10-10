@@ -401,7 +401,7 @@ describe("Question Bank Schemas", () => {
 
       // Normalization helpers
       expect(normalizeLanguageCode("Vietnamese")).toBe("en");
-      expect(normalizeLanguageCode("Tiếng Việt")).toBe("en");
+      expect(normalizeLanguageCode("Vietnamien")).toBe("en");
       expect(normalizeLanguageCode("ENGLISH")).toBe("en");
       expect(normalizeLanguageCode("Spanish")).toBe("es");
       expect(normalizeLanguageCode("Japanese")).toBe("ja");

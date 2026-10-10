@@ -61,11 +61,12 @@ describe("quiz font parity", () => {
     expect(() => resolveCandyArcadeFonts(isolatedRoot)).toThrow("CANDY_ARCADE_FONT_MISSING");
   });
 
-  it("gates readiness on every font with Vietnamese glyphs", () => {
+  it("gates readiness on every font with extended Latin glyphs", () => {
     const script = candyArcadeFontReadinessScript();
     expect(script).toContain("document.fonts.load");
     expect(script).toContain("document.fonts.check");
-    expect(script).toContain("Hành tinh kỳ thú");
+    expect(script).toContain("DID YOU KNOW? Amazing planets");
+    expect(script).toContain("\\u1EA0\\u1EBE\\u1EF9");
     expect(script).toContain("window.__renderReady=false");
     expect(script).toContain("window.__renderReady=true");
     expect(buildSandboxComposition({}).html).toContain("__fontReadyPromise");

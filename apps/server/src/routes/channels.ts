@@ -20,6 +20,7 @@ import { createEpisodeFromTopicWithBank } from "../quiz/bank/questionBankToQuizB
 import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
 import { getTopicAvailabilityBatch, getLatestTopicRun } from "../repository/topics.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
+import { createCoalescingRunner } from "../utils/concurrency.js";
 
 export type ChannelsRouteDeps = {
   repository: RepositoryService;
@@ -32,6 +33,7 @@ export type ChannelsRouteDeps = {
 export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository, tasks, logger, state } = deps;
+    const coalesceTopicAvailability = createCoalescingRunner<Awaited<ReturnType<typeof getTopicAvailabilityBatch>>>();
     server.get("/api/channels", async (request) => {
       const query = request.query as { includeArchived?: string };
       return { channels: await repository.listChannels(query.includeArchived !== "false") };
@@ -131,7 +133,7 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
     });
     server.get("/api/channels/:channelId/topics/availability", async (request) => {
       const channelId = (request.params as { channelId: string }).channelId;
-      return getTopicAvailabilityBatch(repository, channelId);
+      return coalesceTopicAvailability(channelId, () => getTopicAvailabilityBatch(repository, channelId));
     });
     server.post("/api/channels/:channelId/topics/suggest", async (request, reply) => {
       const channelId = (request.params as { channelId: string }).channelId;

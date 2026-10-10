@@ -1,6 +1,7 @@
 import type { FastifyPluginCallback } from "fastify";
 import type { QuizV2RouteDeps } from "./quizV2Types.js";
 import { registerQuizV2ArtifactRoutes } from "./quizV2ArtifactRoutes.js";
+import { registerQuizV2TitleRoutes } from "./quizV2TitleRoutes.js";
 import { registerQuizV2PipelineRoutes } from "./quizV2PipelineRoutes.js";
 import { registerQuizV2MediaRoutes } from "./quizV2MediaRoutes.js";
 import { registerQuizQuestionImageRoutes } from "./quizQuestionImageRoutes.js";
@@ -8,6 +9,7 @@ import { registerQuizQuestionImageRoutes } from "./quizQuestionImageRoutes.js";
 export type { QuizV2RouteDeps } from "./quizV2Types.js";
 export { registerQuizV2PipelineRoutes } from "./quizV2PipelineRoutes.js";
 export { registerQuizV2ArtifactRoutes, resolveTopicFields, mergeUpdatedDescription } from "./quizV2ArtifactRoutes.js";
+export { registerQuizV2TitleRoutes, mergeManualVideoTitle } from "./quizV2TitleRoutes.js";
 export { registerQuizV2MediaRoutes } from "./quizV2MediaRoutes.js";
 export { registerQuizQuestionImageRoutes } from "./quizQuestionImageRoutes.js";
 
@@ -17,6 +19,7 @@ export { registerQuizQuestionImageRoutes } from "./quizQuestionImageRoutes.js";
 export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     registerQuizV2ArtifactRoutes(server, deps);
+    registerQuizV2TitleRoutes(server, deps);
     registerQuizV2PipelineRoutes(server, deps);
     registerQuizV2MediaRoutes(server, deps);
     registerQuizQuestionImageRoutes(server, deps);

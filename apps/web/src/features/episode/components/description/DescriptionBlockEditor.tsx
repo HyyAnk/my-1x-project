@@ -1,5 +1,6 @@
 import { Check, Copy, Hash, Sparkle, Trophy, YoutubeLogo } from "@phosphor-icons/react";
 import type { VideoDescription } from "@studio/shared";
+import { extractScoringBlock } from "../../utils/descriptionBlocks";
 
 interface DescriptionBlockEditorProps {
   description: VideoDescription | null;
@@ -10,7 +11,7 @@ interface DescriptionBlockEditorProps {
 export function DescriptionBlockEditor({ description, copiedBlock, onCopyBlock }: DescriptionBlockEditorProps) {
   if (!description) return null;
 
-  const scoringText = `🏆 SCORING TIERS:\n• ${description.scoring_cta.beginner}\n• ${description.scoring_cta.intermediate}\n• ${description.scoring_cta.expert}\n\n${description.scoring_cta.cta_text}`;
+  const scoringText = extractScoringBlock(description);
   const hashtagsText = description.hashtags.join(" ");
 
   return (

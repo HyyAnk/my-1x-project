@@ -1,5 +1,6 @@
 import { commonEn } from "./locales/en/common";
 import { channelsEn } from "./locales/en/channels";
+import { channelPublishingEn } from "./locales/en/channelPublishing";
 import { episodesEn } from "./locales/en/episodes";
 import { quizEn } from "./locales/en/quiz";
 import { mascotsEn } from "./locales/en/mascots";
@@ -11,6 +12,7 @@ import { questionBankEn } from "./locales/en/questionBank";
 export const en = {
   ...commonEn,
   ...channelsEn,
+  ...channelPublishingEn,
   ...episodesEn,
   ...quizEn,
   ...mascotsEn,

@@ -8,20 +8,20 @@ import {
   type QuizTimeline,
   type QuizV2,
   type VideoDescription,
+  type VideoTitle,
   type VoicePlan,
   type ThumbnailLayoutType,
 } from "@studio/shared";
-import { RepositoryError, type RepositoryService } from "../../repository.js";
+import type { RepositoryService } from "../../repository.js";
 import type { QuizVoicePacingClamp } from "../audio/voiceSynthesis.js";
 import type { AntigravityClient } from "../../antigravity.js";
 import type { CodexAppServerClient } from "../../codex.js";
-import { generateVideoDescription } from "../description/index.js";
-import { resolveEpisodeTargetLanguage } from "../bank/localization/productLocalization.js";
 
 import { readQuizArtifacts, generateQuiz, generateDirector } from "./stages/quizGenerationStage.js";
 import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/assetsVoiceStages.js";
 import { compileTimeline, runQa, assertQuizRenderReady } from "./stages/timelineAssessmentStages.js";
 import { ensureEpisodeThumbnail } from "../thumbnail/ensureEpisodeThumbnail.js";
+import { generateEpisodeDescription, generateEpisodeTitle } from "./stages/videoMetadataStages.js";
 
 export { remixQuizQuestions } from "./remixQuestions.js";
 export {
@@ -35,6 +35,8 @@ export {
   compileTimeline,
   runQa,
   assertQuizRenderReady,
+  generateEpisodeTitle,
+  generateEpisodeDescription,
 };
 
 export type QuizOrchestratorInput = {
@@ -67,47 +69,8 @@ export type QuizArtifacts = {
   timeline: QuizTimeline | null;
   assessment: QuizAssessment | null;
   description: VideoDescription | null;
+  title: VideoTitle | null;
 };
-
-export async function generateEpisodeDescription(
-  input: QuizOrchestratorInput & { toneHint?: string; force?: boolean; timeoutMs?: number },
-): Promise<{ description: VideoDescription; artifact_path: string }> {
-  const [episode, channel, quiz, timeline] = await Promise.all([
-    input.repository.getEpisode(input.channelId, input.episodeId),
-    input.repository.getChannel(input.channelId),
-    input.repository.readQuiz(input.channelId, input.episodeId),
-    input.repository.readQuizTimeline(input.channelId, input.episodeId).catch(() => null),
-  ]);
-
-  if (!quiz || quiz.questions.length === 0) {
-    throw new RepositoryError("Quiz questions must be generated before video description", "QUIZ_REQUIRED");
-  }
-
-  const client = input.activeEngine === "antigravity" && input.antigravityClient ? input.antigravityClient : input.codexClient;
-
-  if (!client) {
-    throw new RepositoryError("No active LLM client available for generating description", "LLM_CLIENT_UNAVAILABLE");
-  }
-
-  const timeoutMs = input.timeoutMs ?? (process.env.NODE_ENV === "test" || process.env.VITEST ? 1500 : 45_000);
-
-  const { targetLanguage, localization } = await resolveEpisodeTargetLanguage(input.repository, input.channelId, episode);
-
-  const description = await generateVideoDescription({
-    client,
-    channel,
-    episode,
-    quiz,
-    timeline,
-    toneHint: input.toneHint,
-    timeoutMs,
-    targetLanguage,
-    localization,
-  });
-
-  const artifact_path = await input.repository.writeVideoDescription(input.channelId, input.episodeId, description);
-  return { description, artifact_path };
-}
 
 export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<QuizArtifacts> {
   const generatedQuiz = await generateQuiz(input);
@@ -143,12 +106,16 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     // Non-blocking
   }
 
+  // The description stage generates the title first, so both target the same search keyword.
   let description: VideoDescription | null;
+  let title: VideoTitle | null;
   try {
-    const descResult = await generateEpisodeDescription(input);
-    description = descResult.description;
+    const metadata = await generateEpisodeDescription(input);
+    description = metadata.description;
+    title = metadata.title;
   } catch {
     description = await input.repository.readVideoDescription(input.channelId, input.episodeId);
+    title = await input.repository.readVideoTitle(input.channelId, input.episodeId);
   }
 
   return {
@@ -161,5 +128,6 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     timeline: voiceResult.timeline,
     assessment: qaResult.assessment,
     description,
+    title,
   };
 }

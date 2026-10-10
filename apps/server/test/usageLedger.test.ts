@@ -70,13 +70,13 @@ describe("UsageLedger Analytics & Persistence", () => {
         {
           segment_id: "seg-1",
           role: "intro",
-          text: "Xin chào các bạn đến với câu đố hôm nay!",
+          text: "Hello everyone, welcome to today's quiz!",
           duration_seconds: 4.5,
         },
         {
           segment_id: "seg-2",
           role: "question",
-          text: "Câu hỏi số một là gì?",
+          text: "What is question number one?",
           duration_seconds: 3.2,
         },
       ],

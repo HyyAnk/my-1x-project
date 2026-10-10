@@ -86,7 +86,7 @@ describe("SandboxPresetSelector", () => {
     );
 
     // Overwrite button should be present
-    const overwriteBtn = screen.getByRole("button", { name: /Cập nhật đè|Update/i });
+    const overwriteBtn = screen.getByRole("button", { name: /Update/i });
     expect(overwriteBtn).toBeDefined();
 
     fireEvent.click(overwriteBtn);
@@ -107,11 +107,11 @@ describe("SandboxPresetSelector", () => {
       { wrapper },
     );
 
-    const manageBtn = screen.getByRole("button", { name: /Quản lý|Manage/i });
+    const manageBtn = screen.getByRole("button", { name: /Manage/i });
     expect(manageBtn).toBeDefined();
 
     fireEvent.click(manageBtn);
     // Manager modal header should now be visible
-    expect(screen.getByText(/Quản lý Style Presets|Style Preset Manager/i)).toBeDefined();
+    expect(screen.getByText(/Style Preset Manager/i)).toBeDefined();
   });
 });

@@ -1,4 +1,5 @@
 import type { VideoDescription } from "@studio/shared";
+import { sanitizeYouTubeDescription, sanitizeYouTubeTags } from "../../quiz/description/descriptionYouTubeSanitizer.js";
 
 export interface FormatDescriptionInput {
   title: string;
@@ -6,6 +7,12 @@ export interface FormatDescriptionInput {
   fallbackText?: string | null;
   /** Pre-processed body (e.g. with refreshed chapters) that overrides the stored text. */
   bodyText?: string | null;
+}
+
+/** Collects primary and variation keywords as YouTube-safe tags within the 500-character budget. */
+export function collectDescriptionTags(description?: VideoDescription | null): string[] {
+  if (!description) return [];
+  return sanitizeYouTubeTags([description.primary_keyword, ...(description.keyword_variations ?? [])]);
 }
 
 export function formatExportDescriptionText(input: FormatDescriptionInput): string {
@@ -16,7 +23,7 @@ export function formatExportDescriptionText(input: FormatDescriptionInput): stri
   sections.push(`[TITLE]\n${title.trim()}`);
 
   // Description body section
-  const mainText = (bodyText || description?.full_description_text || fallbackText || "").trim();
+  const mainText = sanitizeYouTubeDescription(bodyText || description?.full_description_text || fallbackText || "");
   if (mainText) {
     sections.push(`[DESCRIPTION]\n${mainText}`);
   }
@@ -28,14 +35,7 @@ export function formatExportDescriptionText(input: FormatDescriptionInput): stri
   }
 
   // Keywords / Tags section
-  const keywords: string[] = [];
-  if (description?.primary_keyword) {
-    keywords.push(description.primary_keyword);
-  }
-  if (description?.keyword_variations && Array.isArray(description.keyword_variations)) {
-    keywords.push(...description.keyword_variations);
-  }
-  const cleanKeywords = Array.from(new Set(keywords.map((k) => k.trim()).filter((k) => k.length > 0)));
+  const cleanKeywords = collectDescriptionTags(description);
   if (cleanKeywords.length > 0) {
     sections.push(`[TAGS / KEYWORDS]\n${cleanKeywords.join(", ")}`);
   }

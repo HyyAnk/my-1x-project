@@ -1,11 +1,6 @@
 import path from "node:path";
-import {
-  type BankQuestion,
-  type BankQuestionWithCooldown,
-  type QuestionContentType,
-  inferQuestionHistoryContentType,
-} from "@studio/shared";
-import { calculateQuestionSimilarity } from "../../../quiz/qa/questionHistory.js";
+import type { BankQuestionWithCooldown } from "@studio/shared";
+import { createBankCooldownCalculator, type BankCooldownScope } from "./bankCooldownCalculator.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { QUESTION_BANK_DIR } from "./bankPathResolver.js";
 import { withBankSqliteDb } from "./bankSqliteEngine.js";
@@ -26,7 +21,7 @@ export {
 
 export const COOLDOWN_DAYS_DEFAULT = 30;
 
-export type BankCooldownScope = "all" | "episode" | "short_reel";
+export type { BankCooldownScope } from "./bankCooldownCalculator.js";
 
 export interface QueryQuestionBankParams {
   channelId?: string;
@@ -44,83 +39,7 @@ export interface QueryQuestionBankParams {
   offset?: number;
 }
 
-/**
- * Calculates channel cooldown for a single question based on channel history and optional scope.
- */
-function computeQuestionCooldown(
-  question: BankQuestion,
-  historyEntries: Array<{
-    question_id: string;
-    question_text: string;
-    rendered_at: string;
-    episode_id?: string;
-    episode_title?: string;
-    content_type?: QuestionContentType;
-  }>,
-  nowMs: number,
-  cooldownMs: number,
-  scope?: BankCooldownScope,
-): BankQuestionWithCooldown {
-  const scopedHistory =
-    scope === "episode"
-      ? historyEntries.filter((entry) => inferQuestionHistoryContentType(entry) === "episode")
-      : scope === "short_reel"
-        ? historyEntries.filter((entry) => inferQuestionHistoryContentType(entry) === "short_reel")
-        : historyEntries;
-
-  if (scopedHistory.length === 0) {
-    return {
-      ...question,
-      channel_cooldown: {
-        is_cooldown: false,
-        days_remaining: 0,
-      },
-    };
-  }
-
-  let matchedEntry: (typeof scopedHistory)[number] | null = null;
-  let highestSim = 0;
-
-  for (const entry of scopedHistory) {
-    if (entry.question_id === question.id) {
-      matchedEntry = entry;
-      break;
-    }
-    const sim = calculateQuestionSimilarity(question.question, entry.question_text);
-    if (sim >= 0.75 && sim > highestSim) {
-      highestSim = sim;
-      matchedEntry = entry;
-    }
-  }
-
-  if (matchedEntry) {
-    const renderedMs = new Date(matchedEntry.rendered_at).getTime();
-    const timeDiff = nowMs - renderedMs;
-    if (timeDiff < cooldownMs) {
-      const daysRemaining = Math.max(1, Math.ceil((cooldownMs - timeDiff) / (24 * 60 * 60 * 1000)));
-      return {
-        ...question,
-        channel_cooldown: {
-          is_cooldown: true,
-          days_remaining: daysRemaining,
-          last_used_at: matchedEntry.rendered_at,
-          episode_id: matchedEntry.episode_id,
-          episode_title: matchedEntry.episode_title,
-          content_type: inferQuestionHistoryContentType(matchedEntry),
-        },
-      };
-    }
-  }
-
-  return {
-    ...question,
-    channel_cooldown: {
-      is_cooldown: false,
-      days_remaining: 0,
-      last_used_at: matchedEntry ? matchedEntry.rendered_at : undefined,
-    },
-  };
-}
+const COOLDOWN_MS_DEFAULT = COOLDOWN_DAYS_DEFAULT * 24 * 60 * 60 * 1000;
 
 /**
  * Queries bank questions with multi-attribute filtering, search, pagination,
@@ -144,17 +63,12 @@ export async function queryQuestionBankQuestionsUnlocked(
       if (params.channelId) {
         historyEntries = await this.readQuestionHistory(params.channelId).catch(() => []);
       }
-      const nowMs = Date.now();
-      const cooldownMs = COOLDOWN_DAYS_DEFAULT * 24 * 60 * 60 * 1000;
-      const questionsWithCooldown = questions.map((q) =>
-        params.channelId
-          ? computeQuestionCooldown(q, historyEntries, nowMs, cooldownMs, effectiveScope)
-          : {
-              ...q,
-              channel_cooldown: { is_cooldown: false, days_remaining: 0 },
-            },
-      );
-      return { questions: questionsWithCooldown, total };
+      const applyCooldown = createBankCooldownCalculator(historyEntries, {
+        nowMs: Date.now(),
+        cooldownMs: COOLDOWN_MS_DEFAULT,
+        scope: effectiveScope,
+      });
+      return { questions: questions.map(applyCooldown), total };
     }
 
     const historyEntries = await this.readQuestionHistory(params.channelId!).catch(() => []);
@@ -164,9 +78,12 @@ export async function queryQuestionBankQuestionsUnlocked(
       offset: 0,
     });
 
-    const nowMs = Date.now();
-    const cooldownMs = COOLDOWN_DAYS_DEFAULT * 24 * 60 * 60 * 1000;
-    let filtered = allMatching.map((q) => computeQuestionCooldown(q, historyEntries, nowMs, cooldownMs, effectiveScope));
+    const applyCooldown = createBankCooldownCalculator(historyEntries, {
+      nowMs: Date.now(),
+      cooldownMs: COOLDOWN_MS_DEFAULT,
+      scope: effectiveScope,
+    });
+    let filtered = allMatching.map(applyCooldown);
 
     if (params.cooldownOnly) {
       filtered = filtered.filter((q) => q.channel_cooldown?.is_cooldown);
@@ -240,9 +157,7 @@ export async function getQuestionBankQuestionUnlocked(
     }
 
     const historyEntries = await this.readQuestionHistory(channelId).catch(() => []);
-    const nowMs = Date.now();
-    const cooldownMs = COOLDOWN_DAYS_DEFAULT * 24 * 60 * 60 * 1000;
-    return computeQuestionCooldown(matchedQuestion, historyEntries, nowMs, cooldownMs, scope);
+    return createBankCooldownCalculator(historyEntries, { nowMs: Date.now(), cooldownMs: COOLDOWN_MS_DEFAULT, scope })(matchedQuestion);
   });
 }
 

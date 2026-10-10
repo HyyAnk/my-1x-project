@@ -302,7 +302,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
   });
 
   it("strictly generates authentic Nordic and Dutch thumbnail texts for all 10 core languages", () => {
-    // 1. Dutch (Tiếng Hà Lan)
+    // 1. Dutch
     const nlPlan = resolveThumbnailLayout({
       topicTitle: "Algemene Kennis Quiz",
       questionCount: 15,
@@ -312,7 +312,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(nlPlan.hookText).toBe("ALGEMENE KENNIS");
     expect(nlPlan.badgeText).toBe("15 VRAGEN");
 
-    // 2. Norwegian (Tiếng Na Uy)
+    // 2. Norwegian
     const noPlan = resolveThumbnailLayout({
       topicTitle: "Generell Kunnskap Quiz",
       questionCount: 15,
@@ -322,7 +322,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(noPlan.hookText).toBe("GENERELL KUNNSKAP");
     expect(noPlan.badgeText).toBe("15 SPØRSMÅL");
 
-    // 3. Swedish (Tiếng Thụy Điển)
+    // 3. Swedish
     const svPlan = resolveThumbnailLayout({
       topicTitle: "Allmänbildning Quiz",
       questionCount: 15,
@@ -332,7 +332,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(svPlan.hookText).toBe("ALLMÄNBILDNING");
     expect(svPlan.badgeText).toBe("15 FRÅGOR");
 
-    // 4. Danish (Tiếng Đan Mạch)
+    // 4. Danish
     const daPlan = resolveThumbnailLayout({
       topicTitle: "Almen Viden Quiz",
       questionCount: 15,
@@ -342,7 +342,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(daPlan.hookText).toBe("ALMEN VIDEN");
     expect(daPlan.badgeText).toBe("15 SPØRGSMÅL");
 
-    // 5. Finnish (Tiếng Phần Lan)
+    // 5. Finnish
     const fiPlan = resolveThumbnailLayout({
       topicTitle: "Yleistieto Tietovisa",
       questionCount: 15,

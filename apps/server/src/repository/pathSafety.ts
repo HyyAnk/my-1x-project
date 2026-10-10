@@ -63,8 +63,9 @@ export function resolvePath(roots: RepositoryRoots, root: keyof RepositoryRoots,
 export function slugify(input: string): string {
   const normalized = input
     .trim()
-    .replaceAll("đ", "d")
-    .replaceAll("Đ", "D")
+    // D-with-stroke has no Unicode decomposition, so it is mapped to a plain "d" before stripping accents.
+    .replaceAll("\u0111", "d")
+    .replaceAll("\u0110", "D")
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "");
   const slug = normalized

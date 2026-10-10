@@ -4,6 +4,11 @@ import {
   type BridgeShowcaseItem,
   type QuizV2,
 } from "@studio/shared";
+import {
+  buildExclusionClause,
+  buildTopicIgnoreSet,
+  pickDistinctSubject,
+} from "./showcaseSubjectDistinctness.js";
 
 /**
  * Normalizes a raw topic string into a clean, concise phrase.
@@ -16,40 +21,6 @@ function cleanTopicTitle(rawTopic?: string): string {
     topic = topic.slice(colonIndex + 1).trim() || topic.slice(0, colonIndex).trim();
   }
   return topic.replace(/[!?,;.:：]+$/, "").trim();
-}
-
-/**
- * Normalizes a text string to extract meaningful entity words for deduplication.
- */
-function extractEntityKeywords(text?: string): Set<string> {
-  if (!text) return new Set();
-  const STOP_WORDS = new Set([
-    "with", "from", "that", "this", "what", "which", "where", "when", "your", "their",
-    "character", "iconic", "cinematic", "stylized", "portrait", "sacred", "golden",
-    "scene", "avatar", "symbol", "emblem", "photo", "image", "illustration", "standing",
-    "holding", "glowing", "background", "ambient", "peaceful", "friendly", "smiling",
-    "card", "sticker", "figure", "visual", "opportunity", "quiz", "challenge", "topic",
-    "the", "and", "for", "key", "related"
-  ]);
-
-  const words = text.toLowerCase().match(/[a-z0-9]{3,}/g) || [];
-  return new Set(words.filter((w) => !STOP_WORDS.has(w)));
-}
-
-/**
- * Checks whether two subject descriptions share too much entity similarity.
- */
-function isSimilarSubject(a?: string, b?: string): boolean {
-  if (!a || !b) return false;
-  const setA = extractEntityKeywords(a);
-  const setB = extractEntityKeywords(b);
-  if (setA.size === 0 || setB.size === 0) return false;
-
-  let overlap = 0;
-  for (const word of setA) {
-    if (setB.has(word)) overlap++;
-  }
-  return overlap >= 2 || (overlap >= 1 && (setA.size <= 2 || setB.size <= 2));
 }
 
 /**
@@ -125,38 +96,48 @@ export function extractBridgeShowcaseItems(
   );
 
   const clues = extractQuestionVisualClues(quiz);
+  const ignore = buildTopicIgnoreSet(topicTitle);
+  const chosen: string[] = [];
+
+  const pickSlot = (preferred: readonly string[], alternates: readonly string[], fallback: string): string => {
+    const subject =
+      pickDistinctSubject(preferred, chosen, ignore) ??
+      pickDistinctSubject(alternates, chosen, ignore) ??
+      `${fallback}${buildExclusionClause(chosen, ignore)}`;
+    chosen.push(subject);
+    return subject;
+  };
 
   // Slot 1: Emblem / Sacred Artifact / Inanimate Relic
-  const symbolSubject =
-    clues.symbols[0] ||
-    `Iconic emblem and golden sacred symbol of ${topicTitle}`;
-
-  // Slot 2: Hero Character Portrait
-  const portraitSubject =
-    clues.portraits[0] ||
-    (clues.characters[0] && !isSimilarSubject(clues.characters[0], symbolSubject) ? clues.characters[0] : null) ||
-    `Cinematic portrait of key figure related to ${topicTitle}`;
-
-  // Slot 3: Scenic Event / Majestic Realm (Must not duplicate Slot 1 or Slot 2)
-  const sceneSubject =
-    clues.scenes.find((s) => !isSimilarSubject(s, symbolSubject) && !isSimilarSubject(s, portraitSubject)) ||
-    clues.scenes[0] ||
-    `Dramatic atmospheric landscape and historic setting of ${topicTitle}`;
-
-  // Slot 4: Mythical Creature, Beast, or Distinct Secondary Subject (Guaranteed not to duplicate Slot 2)
-  const candidateCharacter = clues.characters.find(
-    (c) => c.toLowerCase().trim() !== portraitSubject.toLowerCase().trim() && !isSimilarSubject(c, portraitSubject),
-  ) || clues.characters.find(
-    (c) => c.toLowerCase().trim() !== portraitSubject.toLowerCase().trim(),
+  const symbolSubject = pickSlot(
+    clues.symbols,
+    [],
+    `Iconic emblem and golden sacred symbol of ${topicTitle}`,
   );
 
-  const avatarSubject =
-    clues.creatures[0] ||
-    candidateCharacter ||
-    `Distinct character avatar, mythical creature, or fantasy companion related to ${topicTitle}`;
+  // Slot 2: Hero Character Portrait
+  const portraitSubject = pickSlot(
+    clues.portraits,
+    clues.characters,
+    `Cinematic portrait of key figure related to ${topicTitle}`,
+  );
 
-  const isCreature = Boolean(clues.creatures.length && avatarSubject === clues.creatures[0]);
-  const isAvatar = Boolean(candidateCharacter && avatarSubject === candidateCharacter);
+  // Slot 3: Scenic Event / Majestic Realm
+  const sceneSubject = pickSlot(
+    clues.scenes,
+    [],
+    `Dramatic atmospheric landscape and historic setting of ${topicTitle}`,
+  );
+
+  // Slot 4: Mythical Creature, Beast, or Distinct Secondary Subject
+  const avatarSubject = pickSlot(
+    clues.creatures,
+    [...clues.characters, ...clues.portraits],
+    `Distinct character avatar, mythical creature, or fantasy companion related to ${topicTitle}`,
+  );
+
+  const isCreature = clues.creatures.includes(avatarSubject);
+  const isAvatar = clues.characters.includes(avatarSubject) || clues.portraits.includes(avatarSubject);
 
   const items: BridgeShowcaseItem[] = [
     {
@@ -165,7 +146,7 @@ export function extractBridgeShowcaseItems(
       presentation: "die_cut_sticker",
       rotation_deg: -2,
       transparent_background: true,
-      caption: clues.symbols.length ? "Symbol" : "Artifact",
+      caption: clues.symbols.includes(symbolSubject) ? "Symbol" : "Artifact",
     },
     {
       asset_id: "asset-bridge-item-2",

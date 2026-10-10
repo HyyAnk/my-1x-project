@@ -1,7 +1,7 @@
 import os from "node:os";
 import { tsImport } from "tsx/esm/api";
 
-const { resolveHardwareBrowserPath } = await tsImport("../apps/server/src/infrastructure/executables/browserDiscovery.ts", import.meta.url);
+const { resolveBrowserOverridePath } = await tsImport("../apps/server/src/infrastructure/executables/browserDiscovery.ts", import.meta.url);
 
 function calculateOptimalWorkers(configuredWorkers) {
   if (typeof configuredWorkers === "number" && configuredWorkers > 0) {
@@ -73,7 +73,7 @@ function log(level, step, message) {
 const cpuCount = os.cpus().length;
 const totalRamGb = (os.totalmem() / (1024 * 1024 * 1024)).toFixed(1);
 const freeRamGb = (os.freemem() / (1024 * 1024 * 1024)).toFixed(1);
-const browserPath = resolveHardwareBrowserPath() || "Built-in Chromium";
+const browserPath = resolveBrowserOverridePath() || "HyperFrames managed chrome-headless-shell";
 const fastCapture = process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE ?? "true";
 const optimalWorkers = calculateOptimalWorkers();
 

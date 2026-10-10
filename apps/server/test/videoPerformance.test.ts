@@ -55,7 +55,8 @@ describe("videoPerformance", () => {
     const env = getHyperframesExecutionEnv();
     expect(env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE).toBe("true");
     expect(env.PRODUCER_STREAMING_ENCODE_MAX_DURATION_SECONDS).toBe("900");
-    expect(env.HF_CAPTURE_PARALLEL_STREAM).toBe("true");
+    expect(env.HF_CAPTURE_PARALLEL_STREAM).toBe("false");
+    expect(env.HF_DE_PARALLEL_STREAM).toBe("false");
     expect(env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS).toBeDefined();
     expect(env.HYPERFRAMES_RENDER_DETACHED).toBe("1");
   });

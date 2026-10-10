@@ -8,6 +8,7 @@ import { formatTopicMatrixPrompt, planTopicSuggestionMatrix, type TopicMatrixPla
 import { scanBankInventory } from "../quiz/bank/bankInventory.js";
 import { allocateSourceBackedTopicSlots, type TopicAllocationResult } from "./bankTopicAllocation.js";
 import { formatSourceBackedTopicPrompt } from "./bankTopicPromptBuilder.js";
+import { MAX_EXISTING_TOPIC_TITLES, selectRecentTopicTitles } from "./existingTopicTitles.js";
 
 const assignedTopicPlans = new WeakMap<ContextManifest, TopicMatrixPlan>();
 const assignedTopicAllocations = new WeakMap<ContextManifest, TopicAllocationResult>();
@@ -72,8 +73,8 @@ export async function buildChannelContext(input: {
     const episodes = await repository.listEpisodes(channelId);
     add({
       path: `channels/${channel.slug}/topic_database.json`,
-      reason: "existing titles and premises only",
-      content: JSON.stringify(topics.map(({ title, premise }) => ({ title, premise }))),
+      reason: `existing titles only (most recent ${MAX_EXISTING_TOPIC_TITLES})`,
+      content: JSON.stringify(selectRecentTopicTitles(topics)),
     });
     add({
       path: `channels/${channel.slug}/episodes/index.json`,

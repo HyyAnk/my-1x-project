@@ -8,8 +8,8 @@ const mockChannel: Channel = {
   channel_id: "channel-1",
   name: "Quiz Channel",
   slug: "quiz-channel",
-  language: "vi",
-  country: "VN",
+  language: "en",
+  country: "US",
   audience: "kids",
   persona: "Friendly guide",
   created_at: "2026-09-01T00:00:00.000Z",
@@ -20,9 +20,9 @@ const mockEpisode: Episode = {
   episode_id: "ep-101",
   channel_id: "channel-1",
   topic: {
-    title: "Động vật biển",
-    core_premise: "Khám phá đại dương",
-    hook: "Bí mật biển sâu",
+    title: "Sea Animals",
+    core_premise: "Explore the ocean",
+    hook: "Secrets of the deep sea",
   },
   stage: "IDEA",
   target_duration_minutes: 2,
@@ -124,24 +124,24 @@ describe("directQuizHandler", () => {
       schema_version: 2,
       episode_id: "ep-101",
       age_band: "7-9",
-      language: "vi",
+      language: "en",
       questions: [
         {
           id: "question-01",
           number: 1,
           format: "multiple_choice",
           difficulty: 1,
-          question: "Cá heo thở bằng gì?",
+          question: "What do dolphins breathe with?",
           choices: [
-            { id: "choice-a", text: "Phổi" },
-            { id: "choice-b", text: "Mang" },
-            { id: "choice-c", text: "Da" },
+            { id: "choice-a", text: "Lungs" },
+            { id: "choice-b", text: "Gills" },
+            { id: "choice-c", text: "Skin" },
           ],
           correct_choice_id: "choice-a",
-          explanation: "Cá heo là động vật có vú thở bằng phổi.",
-          fun_fact: "Cá heo thở qua lỗ thở trên đầu.",
+          explanation: "Dolphins are mammals that breathe with lungs.",
+          fun_fact: "Dolphins breathe through a blowhole on top of their heads.",
           source_ids: ["C01"],
-          visual_opportunity: "Chú cá heo dễ thương nhảy trên mặt biển xanh biếc.",
+          visual_opportunity: "A cute dolphin leaping above the bright blue sea.",
           validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
         },
         {
@@ -149,17 +149,17 @@ describe("directQuizHandler", () => {
           number: 2,
           format: "multiple_choice",
           difficulty: 2,
-          question: "Bạch tuộc có bao nhiêu trái tim?",
+          question: "How many hearts does an octopus have?",
           choices: [
             { id: "choice-a", text: "1" },
             { id: "choice-b", text: "3" },
             { id: "choice-c", text: "2" },
           ],
           correct_choice_id: "choice-b",
-          explanation: "Bạch tuộc có đúng 3 quả tim.",
-          fun_fact: "Máu bạch tuộc có màu xanh lam.",
+          explanation: "An octopus has exactly 3 hearts.",
+          fun_fact: "Octopus blood is blue.",
           source_ids: ["C02"],
-          visual_opportunity: "Chú bạch tuộc màu cam tinh nghịch bơi quanh rạn san hô.",
+          visual_opportunity: "A playful orange octopus swimming around a coral reef.",
           validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
         },
       ],
@@ -240,7 +240,7 @@ describe("directQuizHandler", () => {
       schema_version: 2,
       episode_id: "ep-101",
       age_band: "7-9",
-      language: "vi",
+      language: "en",
       questions: [
         {
           id: "question-01",
@@ -267,7 +267,7 @@ describe("directQuizHandler", () => {
           choices: [
             { id: "choice-a", label: "Recovered Text A" }, // text is missing!
             { id: "choice-b", option: "Recovered Text B" }, // text is missing!
-            { id: "choice-c", value: "Recovered Text C" },  // text is missing!
+            { id: "choice-c", value: "Recovered Text C" }, // text is missing!
           ],
           correct_choice_id: "choice-b",
           explanation: "Explanation 2",
@@ -348,4 +348,3 @@ describe("directQuizHandler", () => {
     expect(questions[0].choices[1].text).toBe("No");
   });
 });
-

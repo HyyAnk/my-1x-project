@@ -20,6 +20,7 @@ import {
   QuizConfigFormatSchema,
 } from "../schemas.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
+import { ChannelPublishingProfileSchema } from "../schemas/channelPublishing.js";
 import { EpisodeSchema } from "../schemas/episode.js";
 import { TaskSchema } from "../events.js";
 import { ShortReelRecordSchema } from "../shortReel/shortReel.schema.js";
@@ -74,6 +75,7 @@ export const UpdateChannelInputSchema = z.object({
   default_palette_id: z.string().optional(),
   mascot_id: z.string().nullable().optional(),
   mascot_config: ChannelMascotConfigSchema.optional(),
+  publishing_profile: ChannelPublishingProfileSchema.optional(),
 });
 
 export const SaveTextInputSchema = z.object({ content: z.string() });

@@ -70,7 +70,8 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     }
   }
 
-  if (!artifacts.description) {
+  // Episodes created before titles existed get a title, then a description aligned with it.
+  if (!artifacts.description || !artifacts.title) {
     const descStart = Date.now();
     try {
       await generateEpisodeDescription(input);

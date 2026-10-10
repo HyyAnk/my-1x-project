@@ -8,6 +8,7 @@ export const KID_SAFE_CONTENT_POLICY_LINES: readonly string[] = [
   `2. FORBIDDEN FRANCHISES: never use titles, characters, or worlds rated for teens or adults (R, M, TV-14, TV-MA, PEGI 16+), including: ${MATURE_FRANCHISE_TITLES.join(", ")}.`,
   "3. PREFER FAMILY FAVORITES: animals, nature, space, science, everyday objects, sports, food, world places, and films, cartoons, anime, and games rated G, PG, E, or E10+.",
   "4. STORYBOOK CONFLICT ONLY: villains, battles, and myths may appear only in storybook terms ('defeated', 'outsmarted', 'turned to stone'); never describe killing, injuries, blood, or death.",
+  "5. FRIENDLY VISUALS: visual prompts describe bright, inviting scenes; never 'menacing', 'terrifying', or 'violent' framing, no blood, and no weapons aimed at the viewer.",
 ];
 
 /** Reading-level rules so a nine-year-old can follow the on-screen question and the narrated reveal. */

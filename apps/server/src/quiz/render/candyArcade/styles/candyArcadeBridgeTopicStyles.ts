@@ -356,13 +356,12 @@ export function candyArcadeBridgeTopicStylesCss(): string {
     0 18px 26px rgba(217, 119, 6, 0.42);
   transform: rotate(-1.5deg);
   margin-bottom: 24px;
-  animation: bridge-pill-pulse 2.2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite alternate;
+  animation: bridge-pill-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.05s) both;
 }
 
 .bridge-pill-icon {
   font-size: 32px;
   display: inline-block;
-  animation: bridge-icon-wiggle 2s ease-in-out infinite alternate 0.4s;
 }
 
 .bridge-topic-title {
@@ -384,7 +383,9 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
-  animation: bridge-title-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.12s) both;
+  animation:
+    bridge-title-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.12s) both,
+    bridge-title-sway 3.2s ease-in-out calc(var(--clip-start, 0s) + 0.87s) infinite alternate;
 }
 
 .bridge-topic-badge {
@@ -514,15 +515,39 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   }
 }
 
-@keyframes bridge-pill-pulse {
+@keyframes bridge-pill-pop {
   0% {
-    transform: rotate(-2.5deg) scale(1);
+    opacity: 0;
+    transform: rotate(-8deg) scale(0.4) translateY(-20px);
   }
-  50% {
-    transform: rotate(1.5deg) scale(1.08, 0.94);
+  70% {
+    opacity: 1;
+    transform: rotate(0.5deg) scale(1.1) translateY(4px);
   }
   100% {
-    transform: rotate(-2.5deg) scale(0.98, 1.04);
+    opacity: 1;
+    transform: rotate(-1.5deg) scale(1) translateY(0);
+  }
+}
+
+@keyframes bridge-title-sway {
+  0% {
+    transform: rotate(-1.2deg) scale(1) translateY(0);
+  }
+  50% {
+    transform: rotate(0.4deg) scale(1.03) translateY(-6px);
+  }
+  100% {
+    transform: rotate(1.2deg) scale(1.01) translateY(2px);
+  }
+}
+
+@keyframes bridge-title-glow {
+  0% {
+    filter: drop-shadow(0 0 0 rgba(255, 234, 167, 0)) brightness(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 22px rgba(255, 234, 167, 0.75)) brightness(1.12);
   }
 }
 
@@ -932,7 +957,10 @@ export function candyArcadeBridgeTopicStylesCss(): string {
   box-sizing: border-box;
   overflow: visible;
   word-break: break-word;
-  animation: bridge-title-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.12s) both;
+  animation:
+    bridge-title-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.12s) both,
+    bridge-title-sway 3.2s ease-in-out calc(var(--clip-start, 0s) + 0.87s) infinite alternate,
+    bridge-title-glow 1.6s ease-in-out calc(var(--clip-start, 0s) + 0.87s) infinite alternate;
 }
 
 .bridge-topic-scene.has-showcase .bridge-topic-prompt {
@@ -1004,6 +1032,11 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 }
 
 /* Pop-in Entrance & Float Keyframes */
+.bridge-showcase-item.item-1 { --float-tilt: -3deg; }
+.bridge-showcase-item.item-2 { --float-tilt: 2.5deg; }
+.bridge-showcase-item.item-3 { --float-tilt: -2deg; }
+.bridge-showcase-item.item-4 { --float-tilt: 3deg; }
+
 .bridge-showcase-item.item-1 {
   animation: bridge-item-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--clip-start, 0s) + 0.30s) both,
              bridge-item-float 4s ease-in-out calc(var(--clip-start, 0s) + 0.80s) infinite alternate;
@@ -1038,10 +1071,13 @@ export function candyArcadeBridgeTopicStylesCss(): string {
 
 @keyframes bridge-item-float {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-22px) rotate(var(--float-tilt, -2deg)) scale(1.05);
   }
   100% {
-    transform: translateY(-10px);
+    transform: translateY(-8px) rotate(calc(var(--float-tilt, -2deg) * -0.5)) scale(1.02);
   }
 }
 

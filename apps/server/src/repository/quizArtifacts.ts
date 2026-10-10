@@ -21,6 +21,8 @@ export {
   writeQuizStageTimings,
 } from "./quiz/quizPlanArtifacts.js";
 
+export { readVideoTitle, writeVideoTitle } from "./quiz/videoTitleArtifacts.js";
+
 export { writeQuizImageAsset, resolveQuizAssetPath, getRenderedVoiceMetrics } from "./quiz/quizMediaArtifacts.js";
 
 export {

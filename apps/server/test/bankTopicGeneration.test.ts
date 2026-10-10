@@ -484,7 +484,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
   });
 
   describe("formatSourceBackedTopicPrompt", () => {
-    it("formats full English question, choice, correct-ID and explanation context without truncation", () => {
+    it("formats full English question, choice and correct-ID context without truncation, omitting explanations", () => {
       const questions = [makeQuestion({ id: "q_prompt_1", archetype_id: "deep_trivia" })];
       const allocation = allocateSourceBackedTopicSlots({
         questions,
@@ -497,22 +497,20 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(prompt.sourceContextText).toContain("q_prompt_1");
       expect(prompt.sourceContextText).toContain("Choice A");
       expect(prompt.sourceContextText).toContain("Correct: [a]");
-      expect(prompt.sourceContextText).toContain("Explanation: Because q_prompt_1 is true.");
+      expect(prompt.sourceContextText).not.toContain("Explanation:");
       expect(prompt.outputContract).toContain("CRITICAL CONTRACT");
+      expect(prompt.outputContract).not.toContain("why_it_fits");
+      expect(prompt.outputContract).not.toContain("estimated_potential");
     });
 
     it("throws explicit OVERSIZED_CONTEXT error instead of silently truncating context", () => {
-      // Create a slot with an excessively long explanation to simulate oversized context
-      const oversizedQuestion = makeQuestion({
-        id: "oversized_q",
-        archetype_id: "deep_trivia",
-        explanation: "X".repeat(MAX_SOURCE_CONTEXT_CHARS + 1000),
-      });
+      // Inflate an allocated question text to simulate oversized context
       const allocation = allocateSourceBackedTopicSlots({
-        questions: [oversizedQuestion],
+        questions: [makeQuestion({ id: "oversized_q", archetype_id: "deep_trivia" })],
         scanStatus: "complete_nonempty",
         channelId: "channel_1",
       });
+      allocation.allocatedSlots[0].allocatedQuestions[0].sourceText = "X".repeat(MAX_SOURCE_CONTEXT_CHARS + 1000);
 
       expect(() => formatSourceBackedTopicPrompt(allocation)).toThrowError(/OVERSIZED_CONTEXT/);
     });

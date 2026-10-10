@@ -11,7 +11,12 @@ import {
 
 const EN_LABELS = getDescriptionSectionLocale("en").chapterLabels;
 
-function event(index: number, type: QuizTimelineEvent["type"], atSeconds: number, extra: Partial<QuizTimelineEvent> = {}): QuizTimelineEvent {
+function event(
+  index: number,
+  type: QuizTimelineEvent["type"],
+  atSeconds: number,
+  extra: Partial<QuizTimelineEvent> = {},
+): QuizTimelineEvent {
   return {
     event_id: `event-${index}`,
     type,
@@ -82,7 +87,9 @@ describe("upsertChaptersSection", () => {
 
   it("inserts the block before the scoring section", () => {
     const text = "Hook line\n\nParagraph.\n\n🏆 SCORING TIERS:\n• 0–1 points: Rookie\n\n#quiz";
-    expect(upsertChaptersSection(text, block)).toBe(`Hook line\n\nParagraph.\n\n${block}\n\n🏆 SCORING TIERS:\n• 0–1 points: Rookie\n\n#quiz`);
+    expect(upsertChaptersSection(text, block)).toBe(
+      `Hook line\n\nParagraph.\n\n${block}\n\n🏆 SCORING TIERS:\n• 0–1 points: Rookie\n\n#quiz`,
+    );
   });
 
   it("inserts before a trailing hashtag paragraph when no scoring section exists", () => {
@@ -123,7 +130,7 @@ describe("assembleFullDescription localization", () => {
     });
     expect(fullText).toContain("⏱️ CAPÍTULOS:\n0:00 Pregunta 1");
     expect(fullText).toContain("🏆 NIVELES DE PUNTUACIÓN:");
-    expect(fullText).toContain("📂 Categoría de playlist: Trivia");
+    expect(fullText).not.toContain("Categoría");
     expect(fullText).not.toContain("SCORING TIERS");
   });
 });

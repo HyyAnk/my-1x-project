@@ -327,7 +327,7 @@ describe("ChannelBrandNameControl Component", () => {
     );
 
     expect(screen.getByText("Connection failed")).toBeDefined();
-    const retryBtn = screen.getByRole("button", { name: /Retry|Thử lại/i });
+    const retryBtn = screen.getByRole("button", { name: /Retry/i });
     expect(retryBtn).toBeDefined();
 
     fireEvent.click(retryBtn);

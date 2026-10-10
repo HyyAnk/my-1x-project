@@ -4,7 +4,7 @@ import { promisify } from "node:util";
 import { z } from "zod";
 import { resolveConfig } from "@hyperframes/producer";
 import { StudioLogger } from "../../../logger.js";
-import { resolveHardwareBrowserPath } from "../videoPerformance.js";
+import { resolveBrowserOverridePath } from "../videoPerformance.js";
 import { createHyperframesChunkPort, prepareResumablePlan } from "./hyperframesChunkAdapter.js";
 import { resumeChunkRender } from "./resumeChunkRender.js";
 import { acquireRenderLease } from "./renderLease.js";
@@ -55,7 +55,7 @@ async function render(request: z.infer<typeof RequestSchema>): Promise<void> {
   const engineConfig = resolveConfig({
     concurrency: request.workers,
     browserGpuMode: "software",
-    chromePath: resolveHardwareBrowserPath(),
+    chromePath: resolveBrowserOverridePath(),
     forceScreenshot: true,
     useDrawElement: false,
     enableStreamingEncode: false,

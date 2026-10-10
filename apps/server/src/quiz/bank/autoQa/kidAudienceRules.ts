@@ -1,6 +1,6 @@
 import type { BankQuestion } from "@studio/shared";
 import { checkKidReadingLevel } from "../audience/kidReadingLevel.js";
-import { describeKidSafetyFinding, detectKidSafetyIssue } from "../kidSafety/kidSafetyDetector.js";
+import { describeKidSafetyFinding, detectKidSafetyIssue, findKidUnsafeTerm } from "../kidSafety/kidSafetyDetector.js";
 import type { AutoQaIssue } from "./autoQa.types.js";
 
 /** Raw model candidates can miss fields; screen whatever text is present instead of failing. */
@@ -24,6 +24,14 @@ export function checkKidAudienceIssues(question: BankQuestion): AutoQaIssue[] {
       type: "quality",
       message: describeKidSafetyFinding(safetyFinding),
       details: { rule: "kid_safety", ...safetyFinding },
+    });
+  }
+  const visualFinding = findKidUnsafeTerm(question.visual_spec?.prompt ?? "");
+  if (visualFinding) {
+    issues.push({
+      type: "quality",
+      message: `Visual prompt is not suitable for a kids and family audience (${visualFinding.category.replace(/_/g, " ")}: "${visualFinding.term}").`,
+      details: { rule: "kid_safety", field: "visual_prompt", ...visualFinding },
     });
   }
   for (const readingIssue of checkKidReadingLevel(copy)) {
