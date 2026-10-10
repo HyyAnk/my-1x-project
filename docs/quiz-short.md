@@ -56,7 +56,7 @@ The Quiz V2 orchestrator and task runners resolve a `QuizProductRef` and read a 
 | `short_versus_two`        | 2 choice images (3:4) | Side by side comparison or identification  |
 | `short_verdict_yes_no`    | 1 hero (4:3)          | Yes or No with two large buttons           |
 
-The real browser render of a Quiz Short is covered only by the opt-in system test `quizShortRender.system.test.ts`; run it before the first production use.
+The ring timer is a 150 px badge on the question card's bottom-right corner, the reveal card sits at the bottom left of the safe area and the mascot uses the compact portrait preset at the bottom right (`RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16`), so no layout overlaps another slot. The opt-in system test `quizShortRender.system.test.ts` checks and renders a five-question specimen in the real HyperFrames browser; run it after changing portrait geometry or styles.
 
 ## Cover, title and description
 

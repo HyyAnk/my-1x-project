@@ -8,7 +8,7 @@ export interface TopicHistoryFilterBarProps {
 
 /**
  * TopicHistoryFilterBar renders format filter tabs with real-time topic counts
- * for quick segmentation between 16:9 episodes and 9:16 shorts.
+ * for quick segmentation between 16:9 episodes, 9:16 quiz shorts and 9:16 short reels.
  */
 export function TopicHistoryFilterBar({ activeFilter, metrics, onFilterChange }: TopicHistoryFilterBarProps) {
   return (
@@ -38,6 +38,20 @@ export function TopicHistoryFilterBar({ activeFilter, metrics, onFilterChange }:
         <span className="topic-format-dot is-landscape" aria-hidden="true" />
         <span>16:9 Episodes</span>
         <span className="topic-history-filter-count">({metrics.episodeCount})</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        id="topic-history-filter-quiz-short"
+        aria-selected={activeFilter === "quiz_short"}
+        aria-controls="topic-history-list"
+        className={`topic-history-filter-btn${activeFilter === "quiz_short" ? " is-active" : ""}`}
+        onClick={() => onFilterChange("quiz_short")}
+      >
+        <span className="topic-format-dot is-vertical" aria-hidden="true" />
+        <span>9:16 Quiz Shorts</span>
+        <span className="topic-history-filter-count">({metrics.quizShortCount})</span>
       </button>
 
       <button

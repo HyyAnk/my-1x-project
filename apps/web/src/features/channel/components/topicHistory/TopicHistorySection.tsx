@@ -6,6 +6,13 @@ import { calculateTopicHistoryMetrics, filterHistoryTopics } from "../../utils/t
 import { TopicHistoryFilterBar } from "./TopicHistoryFilterBar";
 import { TopicHistoryRow } from "./TopicHistoryRow";
 
+const TOPIC_HISTORY_EMPTY_LABELS: Record<TopicHistoryFilter, string> = {
+  all: "topics",
+  episode: "16:9 Episodes",
+  quiz_short: "9:16 Quiz Shorts",
+  short_reel: "9:16 Shorts",
+};
+
 const INITIAL_VISIBLE_COUNT = 6;
 
 export interface TopicHistorySectionProps {
@@ -109,7 +116,7 @@ export function TopicHistorySection({
         <div id="topic-history-content-panel">
           {filteredTopics.length === 0 ? (
             <div className="topic-history-empty-filter">
-              <p>No {activeFilter === "episode" ? "16:9 Episodes" : "9:16 Shorts"} in history archive.</p>
+              <p>No {TOPIC_HISTORY_EMPTY_LABELS[activeFilter]} in history archive.</p>
             </div>
           ) : (
             <div id="topic-history-list" className="topic-history-list">

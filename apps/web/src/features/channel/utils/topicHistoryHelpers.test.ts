@@ -247,6 +247,7 @@ describe("topicHistoryHelpers", () => {
       expect(metrics).toEqual({
         totalCount: 2,
         episodeCount: 1,
+        quizShortCount: 0,
         shortReelCount: 1,
         readyCount: 1,
         unboundCount: 1,
@@ -259,6 +260,7 @@ describe("topicHistoryHelpers", () => {
       expect(metrics).toEqual({
         totalCount: 0,
         episodeCount: 0,
+        quizShortCount: 0,
         shortReelCount: 0,
         readyCount: 0,
         unboundCount: 0,

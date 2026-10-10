@@ -16,6 +16,7 @@ import {
   type MascotProfile,
   type MascotRenderBundleV2,
   type MascotSpriteAction,
+  RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16,
 } from "@studio/shared";
 import { RepositoryService } from "../src/repository.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
@@ -94,7 +95,14 @@ describe("Mascot V2 core engine", () => {
     );
 
     expect(bundle).not.toBeNull();
-    expect(bundle?.config.placements["16:9"]).toEqual(bundle?.config.placements["9:16"]);
+    // Portrait ignores the landscape placement numbers and uses the compact Quiz Short preset.
+    expect(bundle?.config.placements["9:16"]).toMatchObject({
+      anchor: RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16.position,
+      scale: RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16.scale,
+      offset_x: 0,
+      offset_y: 0,
+      flip_x: false,
+    });
     expect(bundle?.config.placements["16:9"]).toMatchObject({
       anchor: "bottom_right",
       scale: 1.84,
@@ -554,7 +562,7 @@ describe("Mascot portrait canvas and storage migration", () => {
     expect(css).toContain(
       '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait .candy-mascot-container.mascot-v2-container { bottom: 440px; }',
     );
-    expect(css).toContain(".candy-mascot-container.mascot-v2-container.anchor-bottom_right { right: 80px; }");
+    expect(css).toContain(".candy-mascot-container.mascot-v2-container.anchor-bottom_right { right: 72px; }");
     expect(css).not.toContain(".quiz-frame-unified.candy-scene {");
   });
 

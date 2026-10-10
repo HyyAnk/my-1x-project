@@ -1,6 +1,6 @@
 # Quiz Short implementation plan
 
-Status: implemented, 2026-10-10. Phases 0 to 7 landed in commits fad8762, d513f5f, 46c459a, 9426c62 and the documentation commit that follows. Known gaps: no ZIP export package for Quiz Shorts, the real browser render is covered only by the opt-in system test, the topic history filter has no Quiz Short tab, and portrait image prompt copy still uses landscape framing wording.
+Status: implemented, 2026-10-10. Phases 0 to 7 landed in commits fad8762, d513f5f, 46c459a, 9426c62, 43d26f0 and the follow-up commit that verified the portrait render. The five-question specimen was checked and rendered in the real HyperFrames browser (`quizShortRender.system.test.ts`, opt-in); the only remaining advisory is the WCAG contrast of dimmed wrong choices, which Episodes share by design. Known gaps: no ZIP export package for Quiz Shorts (publishing is MP4 plus title and description by decision), and the HyperFrames lint warns about the two mascot image nodes per reveal (reveal and reward beats), which Episodes also emit.
 
 Quiz Short is a third content kind next to Episodes and Short Reels: a 9:16 portrait quiz video with five questions by default, sourced from one Question Bank topic, rendered to MP4 by the Quiz V2 pipeline, with its own tab in the channel UI.
 

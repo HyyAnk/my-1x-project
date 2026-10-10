@@ -18,7 +18,7 @@ ${scope} .ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; tr
 ${scope} .ring-track { fill: rgba(255,255,255,.92); stroke: rgba(13,35,71,.14); stroke-width: 18; }
 ${scope} .ring-progress { fill: none; stroke: var(--accent, #FF6277); stroke-width: 18; stroke-linecap: round; stroke-dasharray: ${SHORT_RING_CIRCUMFERENCE}; stroke-dashoffset: 0; animation: short-ring-drain var(--timer-duration, 3s) linear var(--timer-start, 0s) both; }
 ${scope} .ring-digits { position: absolute; inset: 0; display: grid; place-items: center; }
-${scope} .ring-digit { position: absolute; opacity: 0; font-family: ${HEADLINE_FONT}; font-size: 128px; font-weight: 900; line-height: 1; color: #342245; text-shadow: 0 3px 0 rgba(255,255,255,.9); }
+${scope} .ring-digit { position: absolute; opacity: 0; font-family: ${HEADLINE_FONT}; font-size: 80px; font-weight: 900; line-height: 1; color: #342245; text-shadow: 0 3px 0 rgba(255,255,255,.9); }
 ${digits}
 @keyframes short-ring-drain { from { stroke-dashoffset: 0; } to { stroke-dashoffset: ${SHORT_RING_CIRCUMFERENCE}; } }
 @keyframes short-digit-tick { 0% { opacity: 0; transform: scale(.55); } 14% { opacity: 1; transform: scale(1.1); } 30% { transform: scale(1); } 86% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.9); } }

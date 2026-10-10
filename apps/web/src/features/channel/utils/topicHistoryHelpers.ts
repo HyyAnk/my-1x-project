@@ -87,10 +87,7 @@ export function filterHistoryTopics(topics: TopicCandidate[], filter: TopicHisto
   const normalizedQuery = searchQuery?.trim().toLowerCase() ?? "";
 
   return topics.filter((topic) => {
-    if (filter === "episode" && topic.content_kind !== "episode") {
-      return false;
-    }
-    if (filter === "short_reel" && topic.content_kind !== "short_reel") {
+    if (filter !== "all" && topic.content_kind !== filter) {
       return false;
     }
     if (!normalizedQuery) {
@@ -114,6 +111,7 @@ export function calculateTopicHistoryMetrics(
   availabilityMap?: Map<string, TopicAvailability>,
 ): TopicHistoryMetrics {
   let episodeCount = 0;
+  let quizShortCount = 0;
   let shortReelCount = 0;
   let readyCount = 0;
   let unboundCount = 0;
@@ -122,6 +120,8 @@ export function calculateTopicHistoryMetrics(
   for (const topic of topics) {
     if (topic.content_kind === "short_reel") {
       shortReelCount += 1;
+    } else if (topic.content_kind === "quiz_short") {
+      quizShortCount += 1;
     } else {
       episodeCount += 1;
     }
@@ -143,6 +143,7 @@ export function calculateTopicHistoryMetrics(
   return {
     totalCount: topics.length,
     episodeCount,
+    quizShortCount,
     shortReelCount,
     readyCount,
     unboundCount,

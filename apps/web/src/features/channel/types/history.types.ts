@@ -3,7 +3,7 @@ import type { TopicCandidate, TopicContentKind } from "@studio/shared";
 /**
  * Filter mode for topic history: all, long-form episodes (16:9), or short-reels (9:16).
  */
-export type TopicHistoryFilter = "all" | "episode" | "short_reel";
+export type TopicHistoryFilter = "all" | "episode" | "quiz_short" | "short_reel";
 
 /**
  * Format badge metadata defining visual badge presentation.
@@ -43,6 +43,7 @@ export interface TopicAvailabilityPresentation {
 export interface TopicHistoryMetrics {
   totalCount: number;
   episodeCount: number;
+  quizShortCount: number;
   shortReelCount: number;
   readyCount: number;
   unboundCount: number;

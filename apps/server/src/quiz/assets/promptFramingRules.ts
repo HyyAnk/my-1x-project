@@ -11,6 +11,11 @@ export function framingRules(
 ): string {
   const layoutId = options?.layoutId;
 
+  const portraitRules = portraitFramingRules(layoutId);
+  if (portraitRules) {
+    return portraitRules;
+  }
+
   if (layoutId === "media_left_choices_right" || (purpose === "hero_question_image" && aspectRatio === "4:3" && !layoutId?.startsWith("verdict"))) {
     return [
       "Output aspect ratio: 4:3.",
@@ -95,6 +100,50 @@ export function framingRules(
     "Keep critical identifying details centered inside the safe region with comfortable breathing room from all edges.",
     "Do not draw card borders, guidelines, measurement markings, frames, captions, watermarks, or interface elements.",
   ].join("\n");
+}
+
+const NO_CHROME_RULE =
+  "Do not draw card borders, guidelines, measurement markings, frames, badges, answer text, letters, captions, watermarks, or interface elements.";
+
+/** Quiz Short layouts render on a 1080x1920 canvas; the wording must describe the portrait frame, not a landscape card. */
+function portraitFramingRules(layoutId: string | undefined): string | null {
+  if (layoutId === "short_media_top_choices") {
+    return [
+      "Output aspect ratio: 4:3.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details centered inside the safe region with comfortable breathing room, avoiding borders and edges.",
+      "The image will be displayed in a wide hero card at the top of a vertical 9:16 quiz frame, with the answer choices stacked below it.",
+      NO_CHROME_RULE,
+    ].join("\n");
+  }
+  if (layoutId === "short_verdict_yes_no") {
+    return [
+      "Output aspect ratio: 4:3.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details centered inside the safe region with comfortable breathing room, avoiding borders and edges.",
+      "The image will be displayed in a wide verdict card in the middle of a vertical 9:16 quiz frame, with YES and NO buttons below it.",
+      NO_CHROME_RULE,
+    ].join("\n");
+  }
+  if (layoutId === "short_versus_two") {
+    return [
+      "Output aspect ratio: 3:4.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details inside the safe region, keeping the focal subject in the upper and middle area with generous bottom margin.",
+      "The image will be displayed in one of two side-by-side portrait cards in a vertical 9:16 quiz frame, with a VS emblem between them and a label below.",
+      NO_CHROME_RULE,
+    ].join("\n");
+  }
+  if (layoutId?.startsWith("short_")) {
+    return [
+      "Output aspect ratio: 4:3.",
+      "Create one large, clearly recognizable subject with a complete silhouette.",
+      "Keep critical identifying details centered inside the safe region with comfortable breathing room, avoiding borders and edges.",
+      "The image will be displayed inside a vertical 9:16 quiz frame.",
+      NO_CHROME_RULE,
+    ].join("\n");
+  }
+  return null;
 }
 
 export function purposeRules(purpose: QuizAssetRequirement["purpose"]): string {

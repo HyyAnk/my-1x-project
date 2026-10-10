@@ -9,7 +9,8 @@ describe("TopicHistoryFilterBar", () => {
   });
   const metrics: TopicHistoryMetrics = {
     totalCount: 12,
-    episodeCount: 8,
+    episodeCount: 6,
+    quizShortCount: 2,
     shortReelCount: 4,
     readyCount: 10,
     unboundCount: 2,
@@ -31,8 +32,10 @@ describe("TopicHistoryFilterBar", () => {
     expect(epTab.getAttribute("aria-selected")).toBe("false");
     expect(shortTab.getAttribute("aria-selected")).toBe("false");
 
+    const quizShortTab = getByRole("tab", { name: /9:16 Quiz Shorts/i });
     expect(allTab.textContent).toContain("(12)");
-    expect(epTab.textContent).toContain("(8)");
+    expect(epTab.textContent).toContain("(6)");
+    expect(quizShortTab.textContent).toContain("(2)");
     expect(shortTab.textContent).toContain("(4)");
   });
 
@@ -49,5 +52,8 @@ describe("TopicHistoryFilterBar", () => {
     fireEvent.click(shortTab);
     expect(onFilterChange).toHaveBeenCalledTimes(2);
     expect(onFilterChange).toHaveBeenCalledWith("short_reel");
+
+    fireEvent.click(getByRole("tab", { name: /9:16 Quiz Shorts/i }));
+    expect(onFilterChange).toHaveBeenCalledWith("quiz_short");
   });
 });

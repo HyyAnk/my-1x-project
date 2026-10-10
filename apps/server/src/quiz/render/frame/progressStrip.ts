@@ -42,6 +42,6 @@ ${scope} .progress-segments { display: flex; flex: 1 1 auto; gap: 12px; height: 
 ${scope} .progress-segment { flex: 1 1 0; height: 100%; border-radius: 999px; background: rgba(255,255,255,.38); box-shadow: inset 0 2px 0 rgba(255,255,255,.5), 0 4px 0 rgba(13,35,71,.14); }
 ${scope} .progress-segment.is-complete { background: var(--progress-accent, #FFC436); }
 ${scope} .progress-segment.is-active { background: #FFFFFF; box-shadow: 0 0 18px rgba(255,255,255,.85), 0 4px 0 rgba(13,35,71,.14); }
-${scope} .progress-label { flex: 0 0 auto; min-width: 112px; text-align: right; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 44px; font-weight: 900; line-height: 1; color: #FFFFFF; text-shadow: 0 3px 0 rgba(13,35,71,.35); }
+${scope} .progress-label { flex: 0 0 auto; min-width: 112px; padding: 6px 18px; border-radius: 999px; background: rgba(13,35,71,.78); text-align: center; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 40px; font-weight: 900; line-height: 1; color: #FFFFFF; }
 `;
 }

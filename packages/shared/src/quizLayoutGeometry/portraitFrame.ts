@@ -43,9 +43,10 @@ export const PORTRAIT_FRAME_GEOMETRY: QuizPortraitFrameGeometry = Object.freeze(
   progressStrip: Object.freeze({ x: GUTTER, y: 212, width: 936, height: 24 }),
   question: Object.freeze({ x: GUTTER, y: 260, width: 936, height: 240 }),
   arena: Object.freeze({ x: GUTTER, y: 530, width: 936, height: 968 }),
-  countdown: Object.freeze({ x: 420, y: 1000, width: 240, height: 240 }),
-  reveal: Object.freeze({ x: GUTTER, y: 1320, width: 936, height: 160 }),
-  mascot: Object.freeze({ x: 700, y: 1180, width: 300, height: 300 }),
+  countdown: Object.freeze({ x: 858, y: 430, width: 150, height: 150 }),
+  // The reveal card stops short of the mascot column so the two never overlap.
+  reveal: Object.freeze({ x: GUTTER, y: 1380, width: 648, height: 118 }),
+  mascot: Object.freeze({ x: 744, y: 1216, width: 264, height: 264 }),
   cta: Object.freeze({ x: GUTTER, y: 640, width: 936, height: 640 }),
 });
 

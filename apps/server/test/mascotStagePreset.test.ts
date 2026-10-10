@@ -1,3 +1,4 @@
+import { RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 } from "@studio/shared";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -66,15 +67,19 @@ describe("Mascot Stage default placement preset", () => {
       });
       const firstMascot = await app.repository.saveMascot({ name: "First Mascot" });
       const secondMascot = await app.repository.saveMascot({ name: "Second Mascot" });
-      for (const aspect of ["16:9", "9:16"] as const) {
-        expect(firstMascot.render_bundle?.config.placements[aspect]).toMatchObject({
-          anchor: "bottom_left",
-          scale: 3.6,
-          offset_x: 121,
-          offset_y: 181,
-          flip_x: false,
-        });
-      }
+      expect(firstMascot.render_bundle?.config.placements["16:9"]).toMatchObject({
+        anchor: "bottom_left",
+        scale: 3.6,
+        offset_x: 121,
+        offset_y: 181,
+        flip_x: false,
+      });
+      // Portrait (Quiz Short) always uses its own compact preset, independent of the stage default.
+      expect(firstMascot.render_bundle?.config.placements["9:16"]).toMatchObject({
+        anchor: RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16.position,
+        scale: RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16.scale,
+        flip_x: false,
+      });
 
       const firstAssignment = await app.server.inject({
         method: "PUT",

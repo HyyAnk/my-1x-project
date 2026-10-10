@@ -89,15 +89,15 @@ function measureRmsRange(buffer: Uint8Array, startSeconds: number, endSeconds: n
 }
 
 describe("Soundtrack Ducking Engine", () => {
-  it("uses subtle unobtrusive BGM base volume of 0.04", () => {
-    expect(DEFAULT_BGM_BASE_VOLUME).toBe(0.04);
+  it("uses a subtle BGM base volume below the ducking threshold ceiling", () => {
+    expect(DEFAULT_BGM_BASE_VOLUME).toBe(0.08);
 
     const registry = new BgmRegistry();
     const schedule = registry.resolveBgmSchedule(120);
-    expect(schedule[0]?.volume).toBe(0.04);
+    expect(schedule[0]?.volume).toBe(DEFAULT_BGM_BASE_VOLUME);
 
     const defaultSchedule = defaultBgmRegistry.resolveBgmSchedule(60);
-    expect(defaultSchedule[0]?.volume).toBe(0.04);
+    expect(defaultSchedule[0]?.volume).toBe(DEFAULT_BGM_BASE_VOLUME);
   });
 
   it("exports calibrated default ducking parameters matching broadcast standards", () => {

@@ -32,8 +32,8 @@ function portraitPhaseCss(scope: string): string {
 ${scope} .phase-region { position: absolute; z-index: 5; inset: 0; width: ${canvas.width}px; height: ${canvas.height}px; margin: 0; transform: none; pointer-events: none; }
 ${scope} .quiz-thinking-anchor { position: absolute; left: ${countdown.x}px; top: ${countdown.y}px; width: ${countdown.width}px; height: ${countdown.height}px; pointer-events: auto; }
 ${scope} .quiz-fact-anchor { position: absolute; left: ${reveal.x}px; top: ${reveal.y}px; width: ${reveal.width}px; height: ${reveal.height}px; pointer-events: auto; }
-${scope} .quiz-fact-anchor > .fact-card { position: relative; inset: auto; width: 100%; height: 100%; max-width: none; margin: 0; transform: none; box-sizing: border-box; padding: 14px 32px; border: 6px solid rgba(255,255,255,.85); border-radius: 36px; display: flex; align-items: center; justify-content: center; }
-${scope} .quiz-fact-anchor > .fact-card p { margin: 0; width: 100%; text-align: center; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 40px; font-weight: 900; line-height: 1.18; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+${scope} .quiz-fact-anchor > .fact-card { position: relative; inset: auto; width: 100%; height: 100%; max-width: none; margin: 0; transform: none; box-sizing: border-box; padding: 10px 28px; border: 6px solid rgba(255,255,255,.85); border-radius: 30px; display: flex; align-items: center; justify-content: center; }
+${scope} .quiz-fact-anchor > .fact-card p { margin: 0; width: 100%; text-align: center; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 32px; font-weight: 900; line-height: 1.18; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 `;
 }
 

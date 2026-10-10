@@ -208,8 +208,27 @@ export function resolveMascotStyle(profile: MascotProfile, styleId?: string | nu
 
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = STAGE_PLACEMENT_DEFAULT;
 
+type MascotPlacementPresetLike = {
+  position: "bottom_left" | "bottom_right";
+  scale: number;
+  offset_x: number;
+  offset_y: number;
+  flip_x: boolean;
+};
+
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_16_9 = { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET };
-export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 = { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET };
+/**
+ * Portrait (Quiz Short) placement. The landscape preset is tuned for the 380 px left column of
+ * the 16:9 frame; on a 1080x1920 canvas that scale covers the choices, so the portrait frame
+ * anchors a compact mascot at the bottom right of its safe area (see PORTRAIT_FRAME_GEOMETRY.mascot).
+ */
+export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 = {
+  position: "bottom_right",
+  scale: 1.2,
+  offset_x: 0,
+  offset_y: 0,
+  flip_x: false,
+} as const satisfies MascotPlacementPresetLike;
 
 export const MascotPlacementPresetSchema = z.object({
   position: z.enum(["bottom_left", "bottom_right"]).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),
@@ -263,7 +282,11 @@ export function resolveChannelMascotPlacement(
   config: Partial<ChannelMascotConfig> | ChannelMascotConfig | null | undefined,
   aspectRatio: "16:9" | "9:16",
 ): MascotPlacementPreset {
-  const explicit = aspectRatio === "16:9" ? config?.placements?.["16:9"] : undefined;
+  if (aspectRatio === "9:16") {
+    // Channel placement numbers are authored for the landscape stage; portrait uses its own preset.
+    return { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16, flip_x: config?.flip_x ?? false };
+  }
+  const explicit = config?.placements?.["16:9"];
   if (explicit) {
     return {
       position: explicit.position,

@@ -1,3 +1,4 @@
+import { DEFAULT_BGM_BASE_VOLUME } from "../src/quiz/audio/bgmRegistry.js";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -86,7 +87,7 @@ describe("BGM Registry and Audio Pipeline", () => {
     expect(schedule.length).toBe(1);
     expect(schedule[0]?.startSeconds).toBe(0);
     expect(schedule[0]?.durationSeconds).toBe(175);
-    expect(schedule[0]?.volume).toBe(0.04);
+    expect(schedule[0]?.volume).toBe(DEFAULT_BGM_BASE_VOLUME);
     expect(schedule[0]?.bpm).toBeGreaterThan(110);
   });
 
@@ -124,7 +125,7 @@ describe("BGM Registry and Audio Pipeline", () => {
     expect(bundle.html).toContain(`data-start="${firstStart.toFixed(3)}"`);
     expect(bundle.html).toContain(`data-duration="${expectedBgmDuration.toFixed(3)}"`);
     expect(bundle.html).toContain('data-track-index="4"');
-    expect(bundle.html).toContain('data-volume="0.040"');
+    expect(bundle.html).toContain('data-volume="0.080"');
     expect(bundle.html).toContain('data-automation="');
     expect(bundle.html).toContain('src="./bgm/');
     expect(bundle.html).not.toContain('src="file:///');
@@ -149,8 +150,8 @@ describe("BGM Registry and Audio Pipeline", () => {
     expect(points.length).toBeGreaterThanOrEqual(3);
     // Starts at 0 (fade-in at Question 1 enter)
     expect(points[0]).toEqual({ t: 0, v: 0 });
-    // Ramps to base volume 0.04
-    expect(points[1]).toEqual({ t: 0.5, v: 0.04 });
+    // Ramps to the default base volume
+    expect(points[1]).toEqual({ t: 0.5, v: DEFAULT_BGM_BASE_VOLUME });
     // Ends at 0 (fade-out ending at Outro start)
     expect(points[points.length - 1].v).toBe(0);
     expect(points[points.length - 1].t).toBeCloseTo(expectedBgmDuration, 1);
@@ -319,7 +320,7 @@ describe("BGM Registry and Audio Pipeline", () => {
 
     const firstTag = clips[0];
     expect(firstTag).toContain(`data-start="${startSeconds.toFixed(3)}"`);
-    expect(firstTag).toContain('data-volume="0.040"');
+    expect(firstTag).toContain('data-volume="0.080"');
     expect(firstTag).toContain('data-track-index="4"');
 
     const lastTag = clips[clips.length - 1];
@@ -331,7 +332,7 @@ describe("BGM Registry and Audio Pipeline", () => {
 
     const points = automation.lanes[0].points;
     expect(points[0]).toEqual({ t: 0, v: 0 });
-    expect(points[1]).toEqual({ t: 0.5, v: 0.04 });
+    expect(points[1]).toEqual({ t: 0.5, v: DEFAULT_BGM_BASE_VOLUME });
 
     const finalPoint = points[points.length - 1];
     const prevPoint = points[points.length - 2];
@@ -370,6 +371,6 @@ describe("BGM Registry and Audio Pipeline", () => {
 
     expect(bundle.html).toContain(`data-start="${explicitStart.toFixed(3)}"`);
     expect(bundle.html).toContain(`data-duration="${(explicitOutro - explicitStart).toFixed(3)}"`);
-    expect(bundle.html).toContain('data-volume="0.040"');
+    expect(bundle.html).toContain('data-volume="0.080"');
   });
 });
