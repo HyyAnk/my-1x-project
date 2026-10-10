@@ -1,6 +1,6 @@
 # Question bank and source-bound topics
 
-The bank stores reusable English source questions; Episodes and Short Reels consume source-bound selections and own localized output.
+The bank stores reusable English source questions; Episodes, [Quiz Shorts](quiz-short.md) and Short Reels consume source-bound selections and own localized output. Each kind has its own eligibility policy and cooldown scope (`episode`, `quiz_short`, `short_reel`).
 
 ## Boundaries and entry points
 

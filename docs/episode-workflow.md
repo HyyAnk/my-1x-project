@@ -6,7 +6,9 @@ Topics and bank questions feed landscape Episodes through [the bank bridge](../a
 
 A selected bank question can also create an Episode through the single-question bridge. Pipeline auto-start is controlled by the flow's input; do not assume every creation always starts rendering.
 
-[Episode contracts](../packages/shared/src/schemas/channel.ts) fix render aspect ratio to `16:9`. [Short Reels](short-reel.md) have their own records, confirmation and deliverables.
+[Episode contracts](../packages/shared/src/schemas/channel.ts) fix render aspect ratio to `16:9`. Portrait quiz videos are [Quiz Shorts](quiz-short.md), a separate record that shares the pipeline; [Short Reels](short-reel.md) have their own records, confirmation and deliverables.
+
+Topic allocation binds eight approved sources to every Episode slot; confirmation can take up to that bound count, so the topic prompt's "3-10 questions" wording is a hint to the model, not the capacity rule.
 
 ## Build and resume
 

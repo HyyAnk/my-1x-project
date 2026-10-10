@@ -18,10 +18,9 @@ See [Architecture](architecture.md) for system boundaries and [Episode workflow]
 4. Resolve assets and synthesize voice concurrently when both need work; otherwise run only the needed branch.
 5. Ensure a measured, compiled timeline.
 6. Run QA and supported healing.
-7. Attempt thumbnail generation.
-8. Return to the outer runner for the video child task.
+7. Return to the outer runner, which submits the thumbnail child task and then the video child task.
 
-Description and thumbnail failures are non-fatal warnings. Both calls are awaited: non-fatal does not mean detached or zero-latency. The runner does not generate the thumbnail twice in this sequence.
+Title and description failures are non-fatal warnings and are awaited: non-fatal does not mean detached or zero-latency. Thumbnail generation is a separate `GENERATE_THUMBNAIL` task, not a step of this runner.
 
 Voice synthesis measures segment durations and assembles episode narration. Timing must use measured media, not estimated text duration alone. Stage and parallel timings are persisted for diagnostics.
 
@@ -66,7 +65,7 @@ stage-timings.json
 
 [videoRunner.ts](../apps/server/src/tasks/videoRunner.ts) owns composition preparation, render execution, output persistence, completion, and history handling. It appends question history after rendering and rolls back question-history entries by render task on failure. BGM history has separate error handling; do not claim both ledgers form a single atomic transaction.
 
-Episode configuration currently fixes output to landscape `16:9`; see [config schema](../packages/shared/src/schemas/config.ts) and [channel/episode schemas](../packages/shared/src/schemas/channel.ts). Lower-level portrait-capable types do not establish a supported portrait episode workflow. [Short Reels](short-reel.md) are a separate product.
+Episode configuration fixes output to landscape `16:9`; see [config schema](../packages/shared/src/schemas/config.ts) and [channel/episode schemas](../packages/shared/src/schemas/channel.ts). Portrait output is the [Quiz Short](quiz-short.md) product: the same pipeline keyed by a `QuizProductRef`, with its own record, portrait layouts (`short_*` ids), the short pacing profile and a reveal-only mascot policy. [Short Reels](short-reel.md) are a separate scripted product.
 
 ## Verification
 

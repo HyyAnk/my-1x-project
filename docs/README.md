@@ -14,6 +14,7 @@ Current guides for **AI Quiz Studio**. Source, schemas, and tests take precedenc
 - [Question bank and source-bound topics](question-bank.md)
 - [Episode workflow](episode-workflow.md)
 - [Quiz Engine V2](quiz-engine-v2.md)
+- [Quiz Shorts](quiz-short.md)
 - [Short Reels](short-reel.md)
 - [Mascot rendering contract](mascot-rendering-contract.md)
 - [Intro and Outro Script Studio](intro-outro.md)
