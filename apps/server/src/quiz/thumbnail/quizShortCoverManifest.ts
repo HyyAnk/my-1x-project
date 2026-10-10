@@ -1,6 +1,5 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { z } from "zod";
 import type { Channel, QuizShort, QuizV2 } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { thumbnailInputFingerprint } from "./thumbnailReuseStore.js";
@@ -8,22 +7,8 @@ import { thumbnailInputFingerprint } from "./thumbnailReuseStore.js";
 export const QUIZ_SHORT_COVER_MANIFEST_FILENAME = "cover-manifest.json";
 export const QUIZ_SHORT_COVER_FILENAME = "cover.png";
 
-export const QuizShortCoverManifestSchema = z.object({
-  version: z.literal(1),
-  prompt_version: z.string().min(1),
-  /** Hash of every input that changes the cover: questions, topic, mascot, prompt version. */
-  fingerprint: z.string().min(1),
-  asset_path: z.string().min(1),
-  hook_text: z.string().min(1),
-  badge_text: z.string().min(1),
-  archetype_name: z.string().min(1),
-  width: z.literal(1080),
-  height: z.literal(1920),
-  provider: z.string().optional(),
-  model: z.string().optional(),
-  generated_at: z.string().min(1),
-});
-export type QuizShortCoverManifest = z.infer<typeof QuizShortCoverManifestSchema>;
+export { QuizShortCoverManifestSchema, type QuizShortCoverManifest } from "@studio/shared";
+import { QuizShortCoverManifestSchema, type QuizShortCoverManifest } from "@studio/shared";
 
 export interface QuizShortCoverFingerprintInput {
   promptVersion: string;

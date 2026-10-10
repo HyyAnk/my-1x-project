@@ -7,6 +7,7 @@ export * from "./quiz.js";
 export * from "./episode.js";
 export * from "./quizProduct.js";
 export * from "./quizShort.js";
+export * from "./quizShortCover.js";
 export * from "./config.js";
 export * from "./thumbnail.js";
 export * from "./videoDescription.js";

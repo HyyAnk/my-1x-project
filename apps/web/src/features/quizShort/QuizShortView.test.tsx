@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import type { Task, ThumbnailManifest, VideoTitle } from "@studio/shared";
+import type { Task, QuizShortCoverManifest, VideoTitle } from "@studio/shared";
 import { createMockChannel } from "../../../test/helpers/shortReelFixture";
 import { createMockQuizShort } from "../../../test/helpers/quizShortFixture";
 import { quizShortApi, type QuizShortWorkspaceResponse } from "../../api/quizShortApi";
@@ -54,14 +54,18 @@ const sampleTitle: VideoTitle = {
   updated_at: "2026-09-07T12:00:00.000Z",
 };
 
-const sampleManifest = {
-  episode_id: quizShort.quiz_short_id,
-  channel_id: channel.channel_id,
-  layout: "mega_grid",
-  asset_path_9_16: "channels/x/quiz_shorts/ocean-giants/assets/cover.png",
-  created_at: "2026-09-07T12:00:00.000Z",
-  updated_at: "2026-09-07T12:00:00.000Z",
-} as unknown as ThumbnailManifest;
+const sampleManifest: QuizShortCoverManifest = {
+  version: 1,
+  prompt_version: "v1",
+  fingerprint: "f".repeat(64),
+  asset_path: "channels/x/quiz_shorts/ocean-giants/assets/cover.png",
+  hook_text: "WHICH OCEAN GIANT IS LONGEST",
+  badge_text: "5 QUESTIONS",
+  archetype_name: "The Curious Explorer",
+  width: 1080,
+  height: 1920,
+  generated_at: "2026-09-07T12:00:00.000Z",
+};
 
 function renderView(tasks: Task[] = [], onTaskSubmitted = vi.fn(), onNotice = vi.fn()) {
   return render(
@@ -179,10 +183,9 @@ describe("QuizShortView", () => {
     expect(screen.getByAltText("Cover thumbnail for Ocean Giants.")).toBeTruthy();
     expect(screen.getByAltText("Cover for Ocean Giants.")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
-    await waitFor(() =>
-      expect(quizShortApi.generateQuizShortThumbnail).toHaveBeenCalledWith(channel.channel_id, quizShort.quiz_short_id, expect.any(Object)),
-    );
+    expect(screen.getByTestId("quiz-short-cover-summary").textContent).toContain("5 QUESTIONS");
+    fireEvent.click(screen.getByTestId("quiz-short-cover-generate"));
+    await waitFor(() => expect(quizShortApi.generateQuizShortThumbnail).toHaveBeenCalledWith(channel.channel_id, quizShort.quiz_short_id));
 
     fireEvent.click(screen.getByRole("button", { name: /Regenerate/i }));
     await waitFor(() =>

@@ -50,7 +50,7 @@ export function ThumbnailControlsDeck(props: ThumbnailControlsDeckProps) {
     : null;
   const compositionLabel = manifest?.composition ? COMPOSITION_LABELS[manifest.composition] : null;
   const editorialName = editorialLabel && compositionLabel ? `${editorialLabel} · ${compositionLabel}` : editorialLabel;
-  const activeName = editorialName || (manifest ? THUMBNAIL_LAYOUT_CATALOG[manifest.layout].name : null);
+  const activeName = editorialName || (manifest ? (THUMBNAIL_LAYOUT_CATALOG[manifest.layout]?.name ?? null) : null);
 
   return (
     <div className="thumbnail-controls-deck">

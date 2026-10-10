@@ -2,13 +2,12 @@ import type {
   DirectorPlan,
   QuizAssessment,
   QuizShort,
+  QuizShortCoverManifest,
   QuizShortSettingsInput,
   QuizStageTimings,
   QuizTimeline,
   QuizV2,
   Task,
-  ThumbnailLayoutType,
-  ThumbnailManifest,
   VideoDescription,
   VideoDescriptionInput,
   VideoTitle,
@@ -29,12 +28,6 @@ export type QuizShortWorkspaceResponse = {
   timings: QuizStageTimings | null;
   render_stale: boolean;
   stages: QuizShortWorkspaceStages;
-};
-
-export type QuizShortThumbnailGenerateBody = {
-  layout_override?: ThumbnailLayoutType;
-  custom_hook_text?: string;
-  badge_override?: string;
 };
 
 const base = (channelId: string, quizShortId: string) =>
@@ -84,11 +77,11 @@ export const quizShortApi = {
       body: JSON.stringify(input),
     }),
   getQuizShortThumbnail: (channelId: string, quizShortId: string) =>
-    request<{ manifest: ThumbnailManifest | null }>(`${base(channelId, quizShortId)}/thumbnail`),
-  generateQuizShortThumbnail: (channelId: string, quizShortId: string, body: QuizShortThumbnailGenerateBody = {}) =>
-    request<{ ok: true; manifest: ThumbnailManifest }>(`${base(channelId, quizShortId)}/thumbnail/generate`, {
+    request<{ manifest: QuizShortCoverManifest | null }>(`${base(channelId, quizShortId)}/thumbnail`),
+  generateQuizShortThumbnail: (channelId: string, quizShortId: string) =>
+    request<{ ok: true; manifest: QuizShortCoverManifest }>(`${base(channelId, quizShortId)}/thumbnail/generate`, {
       method: "POST",
-      body: JSON.stringify(body),
+      body: JSON.stringify({}),
     }),
   quizShortThumbnailFileUrl: (channelId: string, quizShortId: string, version?: string | null) =>
     `${base(channelId, quizShortId)}/thumbnail/file${version ? `?t=${encodeURIComponent(version)}` : ""}`,

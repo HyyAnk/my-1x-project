@@ -1,14 +1,38 @@
-import { ImageSquare } from "@phosphor-icons/react";
+import { ArrowsClockwise, ImageSquare } from "@phosphor-icons/react";
+import type { QuizShortCoverManifest } from "@studio/shared";
 import type { useQuizShortThumbnail } from "../hooks/useQuizShortThumbnail";
-import { ThumbnailControlsDeck } from "../../episode/components/ThumbnailControlsDeck";
 
 export type QuizShortThumbnailPanelProps = {
   thumbnail: ReturnType<typeof useQuizShortThumbnail>;
   title: string;
 };
 
-/** One 9:16 cover with the shared controls deck; Quiz Shorts have no ratio or history picker. */
+function formatGeneratedAt(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString("en-US");
+}
+
+function CoverSummary({ manifest }: { manifest: QuizShortCoverManifest }) {
+  return (
+    <dl className="quiz-short-cover-summary" data-testid="quiz-short-cover-summary">
+      <dt>Hook</dt>
+      <dd>{manifest.hook_text}</dd>
+      <dt>Badge</dt>
+      <dd>{manifest.badge_text}</dd>
+      <dt>Persona</dt>
+      <dd>{manifest.archetype_name}</dd>
+      <dt>Generated</dt>
+      <dd>{formatGeneratedAt(manifest.generated_at)}</dd>
+    </dl>
+  );
+}
+
+/**
+ * One 9:16 cover planned from the hook question. Quiz Shorts have no layout, badge or ratio
+ * pickers: the cover manifest is its own artifact, so this panel does not reuse the Episode deck.
+ */
 export function QuizShortThumbnailPanel({ thumbnail, title }: QuizShortThumbnailPanelProps) {
+  const actionLabel = thumbnail.generating ? "Generating cover..." : thumbnail.hasThumbnail ? "New cover" : "Generate cover";
   return (
     <section className="quiz-short-thumbnail-panel" aria-label="Cover thumbnail" data-testid="quiz-short-thumbnail-panel">
       <div className="quiz-short-thumbnail-stage">
@@ -21,20 +45,24 @@ export function QuizShortThumbnailPanel({ thumbnail, title }: QuizShortThumbnail
           </div>
         )}
       </div>
-      <ThumbnailControlsDeck
-        selectedLayout={thumbnail.selectedLayout}
-        setSelectedLayout={thumbnail.setSelectedLayout}
-        selectedBadge={thumbnail.selectedBadge}
-        setSelectedBadge={thumbnail.setSelectedBadge}
-        customHook={thumbnail.customHook}
-        setCustomHook={thumbnail.setCustomHook}
-        manifest={thumbnail.manifest}
-        hasAnyThumbnail={thumbnail.hasThumbnail}
-        generating={thumbnail.generating}
-        loading={thumbnail.loading}
-        onGenerateThumbnail={() => void thumbnail.generate()}
-        onResetDefaults={thumbnail.resetDefaults}
-      />
+      <div className="quiz-short-cover-controls">
+        <span className="control-field-label">Cover</span>
+        {thumbnail.manifest ? (
+          <CoverSummary manifest={thumbnail.manifest} />
+        ) : (
+          <p className="quiz-short-cover-hint">The cover uses the first question as its hook and shows the question count badge.</p>
+        )}
+        <button
+          type="button"
+          className="quiz-short-cover-generate"
+          onClick={() => void thumbnail.generate()}
+          disabled={thumbnail.generating}
+          data-testid="quiz-short-cover-generate"
+        >
+          <ArrowsClockwise size={14} aria-hidden="true" />
+          {actionLabel}
+        </button>
+      </div>
     </section>
   );
 }
