@@ -115,11 +115,19 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const fake = new FakeCodex();
     let activeAudio = 0;
     let maxActiveAudio = 0;
+    // Barrier instead of a fixed sleep: each call holds until both calls are active (or 2 s pass),
+    // so a loaded machine cannot finish the first task before the second one starts. A pool of one
+    // still fails the assertion because the first call times out alone.
+    let releaseBothActive: () => void = () => undefined;
+    const bothActive = new Promise<void>((resolve) => {
+      releaseBothActive = resolve;
+    });
     const providerFactory = (target: { channelId: string; episodeId: string; sceneNumber: number }): AudioProvider => ({
       async generateDialogue(): Promise<{ asset_path: string }> {
         activeAudio += 1;
         maxActiveAudio = Math.max(maxActiveAudio, activeAudio);
-        await new Promise((resolve) => setTimeout(resolve, 30));
+        if (activeAudio >= 2) releaseBothActive();
+        await Promise.race([bothActive, new Promise((resolve) => setTimeout(resolve, 2_000))]);
         const assetPath = await repository.writeSceneAudio(target.channelId, target.episodeId, target.sceneNumber, fakeWav());
         activeAudio -= 1;
         return { asset_path: assetPath };

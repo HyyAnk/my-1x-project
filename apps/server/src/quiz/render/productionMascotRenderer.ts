@@ -2,7 +2,6 @@ import {
   adaptMascotConfigV1ToV2,
   adaptMascotV1ToV2,
   resolveEffectiveMascotMediaMode,
-  resolveMascotRenderSpec,
   type ChannelMascotConfig,
   type MascotProfile,
   type MascotRenderAspectRatio,
@@ -27,9 +26,12 @@ import {
 } from "./animationRenderSnapshot.js";
 import {
   resolveProductionMascotMarkers,
+  type MascotMarker,
   type ProductionMascotRenderOptions as BaseProductionMascotRenderOptions,
   type ProductionMascotTimelineEvent,
 } from "./productionMascotTimeline.js";
+import { findActiveMarkerIndex, resolveMarkerRenderSpec } from "./productionMascotTimelineAnimation.js";
+import { consolidateAdjacentMascotAnimationStates, resolveSeekSegmentStart } from "./productionMascotStateConsolidation.js";
 
 export type ProductionMascotRenderOptions = BaseProductionMascotRenderOptions & {
   styleId?: string | null;
@@ -53,6 +55,7 @@ export {
   createMascotAnimationRenderSnapshot,
   findSnapshotEntry,
   recordMascotAnimationSnapshotEntry,
+  consolidateAdjacentMascotAnimationStates,
 };
 
 /**
@@ -125,24 +128,47 @@ export function sanitizeMascotRenderBundleForMediaMode(
   };
 }
 
-/** Production adapter for the canonical Mascot Render Contract V2 HTML layer. */
-export function renderProductionMascotHtmlLayer(
+function phaseClassFor(phase: ProductionMascotRenderOptions["phase"]): string {
+  if (phase === "intro") return "mascot-intro";
+  if (phase === "outro") return "mascot-outro";
+  return "mascot-stage";
+}
+
+type PreparedProductionMascotRender = {
+  mediaBundle: MascotRenderBundleV2;
+  mediaMode: MascotStateMediaMode;
+  aspectRatio: MascotRenderAspectRatio;
+  clipStart: number;
+  clipDuration: number;
+  markers: MascotMarker[];
+};
+
+function finiteNonNegative(value: number): number {
+  return Number.isFinite(value) ? Math.max(0, value) : 0;
+}
+
+/** Adapts the mascot for the phase, resolves its media-mode bundle and the clip's phase markers. */
+function prepareProductionMascotRender(
   mascot: MascotProfile | null | undefined,
   config: ChannelMascotConfig | null | undefined,
   options: ProductionMascotRenderOptions,
-): string {
-  const effectiveMediaMode = resolveEffectiveMascotMediaMode(config, options.mediaMode);
-  const effectiveMascot = adaptMascotForPhase(mascot, options.phase, options.styleId, effectiveMediaMode);
+): PreparedProductionMascotRender | null {
+  const mediaMode = resolveEffectiveMascotMediaMode(config, options.mediaMode);
+  const effectiveMascot = adaptMascotForPhase(mascot, options.phase, options.styleId, mediaMode);
   const bundle = resolveEffectiveRenderBundle(effectiveMascot, config);
-  if (!bundle) return "";
-  const mediaBundle = sanitizeMascotRenderBundleForMediaMode(bundle, effectiveMediaMode);
-
+  if (!bundle) return null;
+  const mediaBundle = sanitizeMascotRenderBundleForMediaMode(bundle, mediaMode);
   synchronizeBundleVisibility(mediaBundle, effectiveMascot);
 
   const clipStart = finiteNonNegative(options.clipStartSeconds);
   const clipDuration = Math.max(0.04, finiteNonNegative(options.clipDurationSeconds));
   const markers = resolveProductionMascotMarkers(options, clipStart, clipDuration);
-  const rawStates = markers.map((marker, index) => ({
+  return { mediaBundle, mediaMode, aspectRatio: options.aspectRatio ?? "16:9", clipStart, clipDuration, markers };
+}
+
+function markersToHtmlStates(prepared: PreparedProductionMascotRender): MascotHtmlState[] {
+  const { markers, clipStart, clipDuration } = prepared;
+  return markers.map((marker, index) => ({
     phase: marker.phase,
     atSeconds: Math.max(0, marker.atSeconds),
     durationSeconds: Math.max(0.04, (markers[index + 1]?.atSeconds ?? clipStart + clipDuration) - marker.atSeconds),
@@ -151,97 +177,54 @@ export function renderProductionMascotHtmlLayer(
     revealOutcome: marker.revealOutcome,
     playing: true,
   }));
+}
 
-  const states = consolidateAdjacentMascotAnimationStates(
-    mediaBundle,
-    options.aspectRatio ?? "16:9",
-    rawStates,
-    effectiveMediaMode,
-  );
+/** Production adapter for the canonical Mascot Render Contract V2 HTML layer. */
+export function renderProductionMascotHtmlLayer(
+  mascot: MascotProfile | null | undefined,
+  config: ChannelMascotConfig | null | undefined,
+  options: ProductionMascotRenderOptions,
+): string {
+  const prepared = prepareProductionMascotRender(mascot, config, options);
+  if (!prepared) return "";
+  const { mediaBundle, mediaMode, aspectRatio } = prepared;
+  const states = consolidateAdjacentMascotAnimationStates(mediaBundle, aspectRatio, markersToHtmlStates(prepared), mediaMode);
 
   return renderMascotHtmlFromBundle({
     bundle: mediaBundle,
-    aspectRatio: options.aspectRatio ?? "16:9",
+    aspectRatio,
     states,
-    phaseClass: options.phase === "intro" ? "mascot-intro" : options.phase === "outro" ? "mascot-outro" : "mascot-stage",
+    phaseClass: phaseClassFor(options.phase),
     sourceMapper: options.sourceMapper,
     extraClass: options.extraClass,
-    clipStartSeconds: clipStart,
-    mediaMode: effectiveMediaMode,
+    clipStartSeconds: prepared.clipStart,
+    mediaMode,
   });
 }
 
-/**
- * Consolidates contiguous mascot animation states that share the same animated asset,
- * preventing HyperFrames and CSS animation restart stutters at marker boundaries.
- */
-export function consolidateAdjacentMascotAnimationStates(
-  bundle: MascotRenderBundleV2,
-  aspectRatio: MascotRenderAspectRatio,
-  states: MascotHtmlState[],
-  mediaMode?: MascotStateMediaMode,
-): MascotHtmlState[] {
-  if (states.length <= 1 || mediaMode === "static") return states;
-
-  const result: MascotHtmlState[] = [];
-  let currentGroup: {
-    state: MascotHtmlState;
-    spec: ReturnType<typeof resolveMascotRenderSpec>;
-  } | null = null;
-
-  for (const state of states) {
-    const spec = resolveMascotRenderSpec(bundle, {
-      aspect_ratio: aspectRatio,
-      phase: state.phase,
-      reveal_outcome: state.revealOutcome ?? null,
-      action_override: state.actionOverride ?? null,
-      timeline_time_seconds: state.timelineTimeSeconds ?? state.atSeconds,
-      playing: state.playing,
-    });
-
-    if (!currentGroup) {
-      currentGroup = { state: { ...state }, spec };
-      result.push(currentGroup.state);
-      continue;
-    }
-
-    const prevSpec: ReturnType<typeof resolveMascotRenderSpec> = currentGroup.spec;
-    const isAnimatable = Boolean(
-      spec?.asset.animation && (spec.asset.animation.transparent_video_url || spec.asset.animation.atlas_url),
-    );
-    const isPrevAnimatable = Boolean(
-      prevSpec?.asset.animation && (prevSpec.asset.animation.transparent_video_url || prevSpec.asset.animation.atlas_url),
-    );
-
-    const samePlacement =
-      prevSpec?.placement.anchor === spec?.placement.anchor &&
-      prevSpec?.placement.offset_x === spec?.placement.offset_x &&
-      prevSpec?.placement.offset_y === spec?.placement.offset_y &&
-      prevSpec?.placement.scale === spec?.placement.scale &&
-      prevSpec?.placement.flip_x === spec?.placement.flip_x;
-
-    const canMerge =
-      isAnimatable &&
-      isPrevAnimatable &&
-      prevSpec?.asset.action === spec?.asset.action &&
-      prevSpec?.asset.animation?.slot_index === spec?.asset.animation?.slot_index &&
-      prevSpec?.asset.animation?.transparent_video_url === spec?.asset.animation?.transparent_video_url &&
-      prevSpec?.asset.animation?.atlas_url === spec?.asset.animation?.atlas_url &&
-      samePlacement;
-
-    if (canMerge) {
-      currentGroup.state.durationSeconds += state.durationSeconds;
-    } else {
-      currentGroup = { state: { ...state }, spec };
-      result.push(currentGroup.state);
-    }
-  }
-
-  return result;
-}
-
-function finiteNonNegative(value: number): number {
-  return Number.isFinite(value) ? Math.max(0, value) : 0;
+function resolveSeekState(prepared: PreparedProductionMascotRender, targetTime: number): MascotHtmlState {
+  const { markers, mediaBundle, aspectRatio } = prepared;
+  const activeIndex = findActiveMarkerIndex(markers, targetTime);
+  const activeMarker = markers[activeIndex];
+  const activeSpec = resolveMarkerRenderSpec(mediaBundle, aspectRatio, activeMarker, targetTime);
+  const segmentStartTime = resolveSeekSegmentStart({
+    bundle: mediaBundle,
+    aspectRatio,
+    markers,
+    activeIndex,
+    activeSpec,
+    mediaMode: prepared.mediaMode,
+  });
+  const nextMarkerTime = markers[activeIndex + 1]?.atSeconds ?? prepared.clipStart + prepared.clipDuration;
+  return {
+    phase: activeMarker.phase,
+    atSeconds: segmentStartTime,
+    durationSeconds: Math.max(0.04, nextMarkerTime - activeMarker.atSeconds),
+    timelineTimeSeconds: targetTime,
+    actionOverride: activeMarker.actionOverride,
+    revealOutcome: activeMarker.revealOutcome,
+    playing: true,
+  };
 }
 
 /**
@@ -258,100 +241,18 @@ export function renderProductionMascotAtTime(
   options: ProductionMascotRenderOptions,
   timeSeconds: number,
 ): string {
-  const effectiveMediaMode = resolveEffectiveMascotMediaMode(config, options.mediaMode);
-  const effectiveMascot = adaptMascotForPhase(mascot, options.phase, options.styleId, effectiveMediaMode);
-  const bundle = resolveEffectiveRenderBundle(effectiveMascot, config);
-  if (!bundle) return "";
-  const mediaBundle = sanitizeMascotRenderBundleForMediaMode(bundle, effectiveMediaMode);
-
-  synchronizeBundleVisibility(mediaBundle, effectiveMascot);
-
-  const clipStart = finiteNonNegative(options.clipStartSeconds);
-  const clipDuration = Math.max(0.04, finiteNonNegative(options.clipDurationSeconds));
-  const markers = resolveProductionMascotMarkers(options, clipStart, clipDuration);
-  const targetTime = finiteNonNegative(timeSeconds);
-
-  let activeMarker = markers[0];
-  let activeIndex = 0;
-  for (let i = 0; i < markers.length; i++) {
-    if (markers[i].atSeconds <= targetTime) {
-      activeMarker = markers[i];
-      activeIndex = i;
-    } else {
-      break;
-    }
-  }
-
-  const activeSpec = resolveMascotRenderSpec(mediaBundle, {
-    aspect_ratio: options.aspectRatio ?? "16:9",
-    phase: activeMarker.phase,
-    reveal_outcome: activeMarker.revealOutcome ?? null,
-    action_override: activeMarker.actionOverride ?? null,
-    timeline_time_seconds: targetTime,
-    playing: true,
-  });
-
-  let segmentStartTime = activeMarker.atSeconds;
-  if (activeSpec) {
-    const isStatic = effectiveMediaMode === "static" || !activeSpec.asset.animation;
-    for (let i = activeIndex - 1; i >= 0; i--) {
-      const prevMarker = markers[i];
-      const prevSpec = resolveMascotRenderSpec(mediaBundle, {
-        aspect_ratio: options.aspectRatio ?? "16:9",
-        phase: prevMarker.phase,
-        reveal_outcome: prevMarker.revealOutcome ?? null,
-        action_override: prevMarker.actionOverride ?? null,
-        timeline_time_seconds: prevMarker.atSeconds,
-        playing: true,
-      });
-      if (!prevSpec) break;
-
-      const samePlacement =
-        prevSpec.placement.anchor === activeSpec.placement.anchor &&
-        prevSpec.placement.offset_x === activeSpec.placement.offset_x &&
-        prevSpec.placement.offset_y === activeSpec.placement.offset_y &&
-        prevSpec.placement.scale === activeSpec.placement.scale &&
-        prevSpec.placement.flip_x === activeSpec.placement.flip_x;
-
-      const matches = isStatic
-        ? Boolean(prevSpec.asset.image_url) &&
-          prevSpec.asset.image_url === activeSpec.asset.image_url &&
-          samePlacement
-        : prevSpec.asset.action === activeSpec.asset.action &&
-          prevSpec.asset.animation?.slot_index === activeSpec.asset.animation?.slot_index &&
-          prevSpec.asset.animation?.transparent_video_url === activeSpec.asset.animation?.transparent_video_url &&
-          prevSpec.asset.animation?.atlas_url === activeSpec.asset.animation?.atlas_url &&
-          samePlacement;
-
-      if (matches) {
-        segmentStartTime = prevMarker.atSeconds;
-      } else {
-        break;
-      }
-    }
-  }
-
-  const nextMarkerTime = markers[activeIndex + 1]?.atSeconds ?? clipStart + clipDuration;
-  const state = {
-    phase: activeMarker.phase,
-    atSeconds: segmentStartTime,
-    durationSeconds: Math.max(0.04, nextMarkerTime - activeMarker.atSeconds),
-    timelineTimeSeconds: targetTime,
-    actionOverride: activeMarker.actionOverride,
-    revealOutcome: activeMarker.revealOutcome,
-    playing: true,
-  };
-
+  const prepared = prepareProductionMascotRender(mascot, config, options);
+  if (!prepared) return "";
   return renderMascotHtmlFromBundle({
-    bundle: mediaBundle,
-    aspectRatio: options.aspectRatio ?? "16:9",
-    states: [state],
-    phaseClass: options.phase === "intro" ? "mascot-intro" : options.phase === "outro" ? "mascot-outro" : "mascot-stage",
+    bundle: prepared.mediaBundle,
+    aspectRatio: prepared.aspectRatio,
+    states: [resolveSeekState(prepared, finiteNonNegative(timeSeconds))],
+    phaseClass: phaseClassFor(options.phase),
     sourceMapper: options.sourceMapper,
     extraClass: options.extraClass,
     preview: true,
-    clipStartSeconds: clipStart,
-    mediaMode: effectiveMediaMode,
+    clipStartSeconds: prepared.clipStart,
+    mediaMode: prepared.mediaMode,
   });
 }
 

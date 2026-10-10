@@ -237,16 +237,16 @@ export function parseBridgeShowcaseLlmOutput(
       .replace(/\s*```$/, "")
       .trim();
 
-    const parsed = JSON.parse(cleaned);
+    const parsed: unknown = JSON.parse(cleaned);
     if (!Array.isArray(parsed) || parsed.length !== 4) {
       return fallbackItems;
     }
 
     const validated: BridgeShowcaseItem[] = [];
     for (let i = 0; i < 4; i++) {
-      const candidate = parsed[i];
+      const candidate: unknown = parsed[i];
       const result = BridgeShowcaseItemSchema.safeParse({
-        ...candidate,
+        ...(candidate && typeof candidate === "object" ? candidate : {}),
         transparent_background: false,
         asset_id: `asset-bridge-item-${i + 1}`,
       });

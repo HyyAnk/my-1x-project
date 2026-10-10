@@ -52,7 +52,7 @@ export function adaptProductionQuizScene(input: ProductionSceneAdapterInput): Qu
     layout: {
       id: assertRenderableLayoutId(input.layoutResolution.layoutId),
       source: input.layoutResolution.source,
-      capability: input.layoutResolution.capability as QuizSceneRenderModel["layout"]["capability"],
+      capability: input.layoutResolution.capability,
       presentation: quizChoicePresentationFor(input.archetype, input.question.format),
     },
     aspectRatio: input.aspectRatio,

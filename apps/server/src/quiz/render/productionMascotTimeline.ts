@@ -1,8 +1,6 @@
 import {
   MascotActionTypeSchema,
   MascotStateSchema,
-  resolveAnimationFrameAtTime,
-  resolveMascotRenderSpec,
   type AtlasCssOffset,
   type MascotActionType,
   type MascotFrameRect,
@@ -13,6 +11,13 @@ import {
   type MascotRevealOutcome,
   type QuizTimelineEventType,
 } from "@studio/shared";
+import {
+  applyAnimationFrame,
+  findActiveMarkerIndex,
+  isPhaseArtMissing,
+  resolveAnimationSegmentStart,
+  resolveMarkerRenderSpec,
+} from "./productionMascotTimelineAnimation.js";
 
 export type ProductionMascotTimelineEvent = {
   type: QuizTimelineEventType;
@@ -179,37 +184,15 @@ export function resolveProductionMascotTimelineAtTime(
   const clipStart = Number.isFinite(options.clipStartSeconds) ? Math.max(0, options.clipStartSeconds) : 0;
   const clipDuration = Math.max(0.04, Number.isFinite(options.clipDurationSeconds) ? Math.max(0, options.clipDurationSeconds) : 0);
   const targetTime = Number.isFinite(timeSeconds) ? Math.max(0, timeSeconds) : 0;
+  const aspectRatio = options.aspectRatio ?? "16:9";
 
   const markers = resolveProductionMascotMarkers(options, clipStart, clipDuration);
   if (markers.length === 0) return null;
 
-  let activeMarker = markers[0];
-  let activeIndex = 0;
-  for (let i = 0; i < markers.length; i++) {
-    if (markers[i].atSeconds <= targetTime) {
-      activeMarker = markers[i];
-      activeIndex = i;
-    } else {
-      break;
-    }
-  }
-
-  const spec = resolveMascotRenderSpec(bundle, {
-    aspect_ratio: options.aspectRatio ?? "16:9",
-    phase: activeMarker.phase,
-    reveal_outcome: activeMarker.revealOutcome ?? null,
-    action_override: activeMarker.actionOverride ?? null,
-    timeline_time_seconds: targetTime,
-    playing: true,
-  });
-  if (!spec) return null;
-
-  if (activeMarker.phase === "reveal" && !bundle.assets.actions.celebrate?.image_url?.trim()) {
-    return null;
-  }
-  if (activeMarker.phase === "thinking" && !bundle.assets.actions.thinking?.image_url?.trim()) {
-    return null;
-  }
+  const activeIndex = findActiveMarkerIndex(markers, targetTime);
+  const activeMarker = markers[activeIndex];
+  const spec = resolveMarkerRenderSpec(bundle, aspectRatio, activeMarker, targetTime);
+  if (!spec || isPhaseArtMissing(bundle, activeMarker.phase)) return null;
 
   const result: ProductionTimelineResolvedFrame = {
     timeSeconds: targetTime,
@@ -217,55 +200,10 @@ export function resolveProductionMascotTimelineAtTime(
     phase: activeMarker.phase,
     action: spec.asset.action,
   };
-
   if (spec.asset.animation) {
-    const hasIdle = Boolean(bundle.assets.actions.idle?.image_url?.trim());
-    let segmentStartTime = activeMarker.atSeconds;
-    for (let i = activeIndex - 1; i >= 0; i--) {
-      const prevMarker = markers[i];
-      if (hasIdle && activeMarker.phase === "thinking" && prevMarker.phase !== "thinking") {
-        break;
-      }
-      const prevSpec = resolveMascotRenderSpec(bundle, {
-        aspect_ratio: options.aspectRatio ?? "16:9",
-        phase: prevMarker.phase,
-        reveal_outcome: prevMarker.revealOutcome ?? null,
-        action_override: prevMarker.actionOverride ?? null,
-        timeline_time_seconds: prevMarker.atSeconds,
-        playing: true,
-      });
-      if (
-        prevSpec &&
-        prevSpec.asset.action === spec.asset.action &&
-        prevSpec.asset.animation?.slot_index === spec.asset.animation?.slot_index &&
-        prevSpec.asset.animation?.transparent_video_url === spec.asset.animation?.transparent_video_url &&
-        prevSpec.asset.animation?.atlas_url === spec.asset.animation?.atlas_url
-      ) {
-        segmentStartTime = prevMarker.atSeconds;
-      } else {
-        break;
-      }
-    }
-
-    const elapsedSeconds = Math.max(0, targetTime - segmentStartTime);
-    const resolved = resolveAnimationFrameAtTime(spec.asset.animation, elapsedSeconds);
-    result.animationFrameIndex = resolved.frameIndex;
-    result.animationFrame = resolved.frame;
-    result.atlasOffsets = resolved.atlasOffsets;
-    result.isClamped = resolved.isClamped;
-
-    if (spec.asset.animation.transparent_video_url) {
-      result.transparentVideoUrl = spec.asset.animation.transparent_video_url;
-      const isOneShot =
-        spec.asset.animation.loop_policy === "one_shot_rest" || (!spec.asset.animation.loop && spec.asset.animation.loop_policy !== "loop");
-      const cycle = spec.asset.animation.duration_ms
-        ? spec.asset.animation.duration_ms / 1000
-        : spec.asset.animation.frame_count / spec.asset.animation.fps;
-      const rawSeek = isOneShot ? Math.min(elapsedSeconds, cycle) : elapsedSeconds % cycle;
-      result.seekTimeSeconds = Number(rawSeek.toFixed(3));
-    }
+    const segmentStartTime = resolveAnimationSegmentStart({ bundle, aspectRatio, markers, activeIndex, spec });
+    applyAnimationFrame(result, spec.asset.animation, Math.max(0, targetTime - segmentStartTime));
   }
-
   return result;
 }
 

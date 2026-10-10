@@ -105,7 +105,48 @@ export function applyOutroPhaseFallback(
   }
 }
 
-function applySecondaryQuestionFallback(
+/** Animation mode may substitute the style anchor for a missing state; static mode never does. */
+function resolveQuestionAnchor(style: MascotStyle, mediaMode: MascotStateMediaMode): string {
+  const candidateAnchor = style.anchor_image_url?.trim();
+  return mediaMode === "animation" && candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
+}
+
+function resolveVariantUrl(variant: MascotStateVariant | undefined, isAnimationMode: boolean, fallbackUrl: string): string {
+  return isAnimationMode
+    ? (variant?.animation?.transparent_video_url ?? variant?.image_url ?? fallbackUrl)
+    : (variant?.image_url ?? variant?.transparent_image_url ?? fallbackUrl);
+}
+
+type QuestionStateFallback = {
+  action: "thinking" | "celebrate";
+  variant: MascotStateVariant | undefined;
+  defaultMotionPreset: MascotMotionPreset;
+};
+
+function applyQuestionStateFallback(
+  mascot: MascotProfile,
+  validAnchor: string,
+  fallback: QuestionStateFallback,
+  apply: ApplyPhaseActionFn,
+  mediaMode: MascotStateMediaMode,
+): void {
+  if (hasDedicatedAction(mascot, fallback.action)) return;
+  const { variant } = fallback;
+  const isAnimationMode = mediaMode === "animation";
+  const fallbackUrl = resolveVariantUrl(variant, isAnimationMode, validAnchor);
+  if (!fallbackUrl) return;
+  apply(
+    fallback.action,
+    fallbackUrl,
+    variant?.motion_preset ?? fallback.defaultMotionPreset,
+    variant?.motion_speed ?? 1.0,
+    variant?.motion_intensity ?? "normal",
+    isAnimationMode ? variant?.animation : undefined,
+  );
+}
+
+/** Secondary and core styles share the same thinking-then-celebrate fallback order. */
+function applyQuestionStateFallbacks(
   mascot: MascotProfile,
   style: MascotStyle,
   celebrateVariants: MascotStateVariant[],
@@ -113,102 +154,21 @@ function applySecondaryQuestionFallback(
   apply: ApplyPhaseActionFn,
   mediaMode: MascotStateMediaMode = "static",
 ): void {
-  const candidateAnchor = style.anchor_image_url?.trim();
-  const validAnchor = mediaMode === "animation" && candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
-  const isAnimationMode = mediaMode === "animation";
-
-  const thinkingFallback = thinkingVariants[0];
-  const thinkingUrl = isAnimationMode
-    ? (thinkingFallback?.animation?.transparent_video_url ?? thinkingFallback?.image_url ?? validAnchor)
-    : (thinkingFallback?.image_url ?? thinkingFallback?.transparent_image_url ?? validAnchor);
-  if (thinkingUrl && !hasDedicatedAction(mascot, "thinking")) {
-    apply(
-      "thinking",
-      thinkingUrl,
-      thinkingFallback?.motion_preset ?? "sway",
-      thinkingFallback?.motion_speed ?? 1.0,
-      thinkingFallback?.motion_intensity ?? "normal",
-      isAnimationMode ? thinkingFallback?.animation : undefined,
-    );
-  }
-
-  const celebrateFallback = celebrateVariants[0];
-  const celebrateUrl = isAnimationMode
-    ? (celebrateFallback?.animation?.transparent_video_url ?? celebrateFallback?.image_url ?? validAnchor)
-    : (celebrateFallback?.image_url ?? celebrateFallback?.transparent_image_url ?? validAnchor);
-  if (celebrateUrl && !hasDedicatedAction(mascot, "celebrate")) {
-    apply(
-      "celebrate",
-      celebrateUrl,
-      celebrateFallback?.motion_preset ?? "jump",
-      celebrateFallback?.motion_speed ?? 1.0,
-      celebrateFallback?.motion_intensity ?? "normal",
-      isAnimationMode ? celebrateFallback?.animation : undefined,
-    );
-  }
-}
-
-function applyCoreThinkingFallback(
-  mascot: MascotProfile,
-  validAnchor: string,
-  thinkingVariants: MascotStateVariant[],
-  apply: ApplyPhaseActionFn,
-  mediaMode: MascotStateMediaMode = "static",
-): void {
-  if (hasDedicatedAction(mascot, "thinking")) return;
-  const fallbackVariant = thinkingVariants[0];
-  const isAnimationMode = mediaMode === "animation";
-  const fallbackUrl = isAnimationMode
-    ? (fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? validAnchor)
-    : (fallbackVariant?.image_url ?? fallbackVariant?.transparent_image_url ?? validAnchor);
-  if (!fallbackUrl) return;
-  apply(
-    "thinking",
-    fallbackUrl,
-    fallbackVariant?.motion_preset ?? "sway",
-    fallbackVariant?.motion_speed ?? 1.0,
-    fallbackVariant?.motion_intensity ?? "normal",
-    isAnimationMode ? fallbackVariant?.animation : undefined,
+  const validAnchor = resolveQuestionAnchor(style, mediaMode);
+  applyQuestionStateFallback(
+    mascot,
+    validAnchor,
+    { action: "thinking", variant: thinkingVariants[0], defaultMotionPreset: "sway" },
+    apply,
+    mediaMode,
   );
-}
-
-function applyCoreCelebrateFallback(
-  mascot: MascotProfile,
-  validAnchor: string,
-  celebrateVariants: MascotStateVariant[],
-  apply: ApplyPhaseActionFn,
-  mediaMode: MascotStateMediaMode = "static",
-): void {
-  if (hasDedicatedAction(mascot, "celebrate")) return;
-  const fallbackVariant = celebrateVariants[0];
-  const isAnimationMode = mediaMode === "animation";
-  const fallbackUrl = isAnimationMode
-    ? (fallbackVariant?.animation?.transparent_video_url ?? fallbackVariant?.image_url ?? validAnchor)
-    : (fallbackVariant?.image_url ?? fallbackVariant?.transparent_image_url ?? validAnchor);
-  if (!fallbackUrl) return;
-  apply(
-    "celebrate",
-    fallbackUrl,
-    fallbackVariant?.motion_preset ?? "jump",
-    fallbackVariant?.motion_speed ?? 1.0,
-    fallbackVariant?.motion_intensity ?? "normal",
-    isAnimationMode ? fallbackVariant?.animation : undefined,
+  applyQuestionStateFallback(
+    mascot,
+    validAnchor,
+    { action: "celebrate", variant: celebrateVariants[0], defaultMotionPreset: "jump" },
+    apply,
+    mediaMode,
   );
-}
-
-function applyCoreQuestionFallback(
-  mascot: MascotProfile,
-  style: MascotStyle,
-  celebrateVariants: MascotStateVariant[],
-  thinkingVariants: MascotStateVariant[],
-  apply: ApplyPhaseActionFn,
-  mediaMode: MascotStateMediaMode = "static",
-): void {
-  const candidateAnchor = style.anchor_image_url?.trim();
-  const validAnchor = mediaMode === "animation" && candidateAnchor && !isMockFixtureIdentifier(candidateAnchor) ? candidateAnchor : "";
-
-  applyCoreThinkingFallback(mascot, validAnchor, thinkingVariants, apply, mediaMode);
-  applyCoreCelebrateFallback(mascot, validAnchor, celebrateVariants, apply, mediaMode);
 }
 
 /**
@@ -222,12 +182,7 @@ export function applyQuestionPhaseFallback(
   apply: ApplyPhaseActionFn,
   mediaMode: MascotStateMediaMode = "static",
 ): void {
-  const isSecondaryStyle = !style.is_default && style.id !== "core";
-  if (isSecondaryStyle) {
-    applySecondaryQuestionFallback(mascot, style, celebrateVariants, thinkingVariants, apply, mediaMode);
-    return;
-  }
-  applyCoreQuestionFallback(mascot, style, celebrateVariants, thinkingVariants, apply, mediaMode);
+  applyQuestionStateFallbacks(mascot, style, celebrateVariants, thinkingVariants, apply, mediaMode);
 }
 
 function pruneSecondaryPhaseActions(

@@ -4,8 +4,6 @@ import { MascotStageSettingsSchema } from "./mascot.js";
 import { IsoDate, QUIZ_MAX_CHOICES_PER_QUESTION } from "./common.js";
 import {
   IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
-  IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
-  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
   resolveImgStudioFallbackLevel2Model,
   resolveImgStudioFallbackLevel3Model,
 } from "../constants/imgstudioModels.js";
