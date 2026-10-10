@@ -6,7 +6,7 @@ import { ensureQuizAssetSizing } from "../../quiz/assets/ensureQuizAssetSizing.j
 import {
   compileTimeline,
   generateDirector,
-  generateEpisodeDescription,
+  generateProductDescription,
   generateQuiz,
   generateVoice,
   planAssets,
@@ -75,17 +75,11 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     }
   }
 
-  if (product.kind === "quiz_short") {
-    // Portrait titles and descriptions arrive in Phase 5; nothing is faked here.
-    this.logger.warn(`Quiz Short "${product.id}": title and description generation is not implemented in this phase.`, {
-      profileId: task.channel_id,
-      workerId: task.task_id,
-    });
-  } else if (!artifacts.description || !artifacts.title) {
-    // Episodes created before titles existed get a title, then a description aligned with it.
+  if (!artifacts.description || !artifacts.title) {
+    // Episodes and Quiz Shorts get a title, then a description aligned with it; failures never block the render.
     const descStart = Date.now();
     try {
-      await generateEpisodeDescription(input);
+      await generateProductDescription(input);
       await recordStageTiming("description", descStart);
     } catch (error) {
       this.logger.warn(`Auto video description generation non-blocking skip: ${(error as Error).message}`, {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, FilmSlate, FilmStrip, Lightbulb, VideoCamera } from "@phosphor-icons/react";
+import { DeviceMobile, FileText, FilmSlate, FilmStrip, Lightbulb, VideoCamera } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { buildHash, getNavProps } from "../../hooks/useRouter";
@@ -7,6 +7,7 @@ import { ChannelDetailHeader } from "./components/ChannelDetailHeader";
 import { ChannelDetailModals } from "./components/ChannelDetailModals";
 import { ChannelLoadingState } from "./components/ChannelLoadingState";
 import { ChannelEpisodesTab } from "./components/ChannelEpisodesTab";
+import { ChannelQuizShortsTab } from "./components/ChannelQuizShortsTab";
 import { ChannelShortReelsTab } from "./components/ChannelShortReelsTab";
 import { ChannelTopicsTab } from "./components/ChannelTopicsTab";
 import { ChannelDnaTab } from "./components/ChannelDnaTab";
@@ -26,6 +27,7 @@ type ChannelDetailProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
   onDelete: (channel: Channel) => void;
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
+  openQuizShort?: (channelId: string, quizShortId: string) => void;
   simplifyMode?: boolean;
 };
 
@@ -42,8 +44,14 @@ export function ChannelDetail(props: ChannelDetailProps) {
     onNotice,
     onDelete,
     openEpisode,
+    openQuizShort,
     simplifyMode = true,
   } = props;
+
+  const navigateToQuizShort = (channelId: string, quizShortId: string) => {
+    if (openQuizShort) openQuizShort(channelId, quizShortId);
+    else window.location.hash = buildHash({ page: "channels", channelId, quizShortId });
+  };
 
   const state = useChannelDetail({
     channel,
@@ -54,6 +62,7 @@ export function ChannelDetail(props: ChannelDetailProps) {
     onNotice,
     onTaskSubmitted,
     onSelectEpisode: (episodeId) => openEpisode(channel.channel_id, episodeId),
+    onSelectQuizShort: (quizShortId) => navigateToQuizShort(channel.channel_id, quizShortId),
     simplifyMode,
   });
 
@@ -79,6 +88,7 @@ export function ChannelDetail(props: ChannelDetailProps) {
         <div className="channel-group-tabs" role="tablist" aria-label="Channel workspace tabs">
           {[
             { id: "episodes" as ChannelTab, label: "Episodes", icon: FilmSlate, count: state.episodes.length },
+            { id: "quiz-shorts" as ChannelTab, label: "Quiz Shorts", icon: DeviceMobile, count: state.quizShorts.length },
             { id: "short-reels" as ChannelTab, label: "Short-Reels", icon: FilmStrip, count: state.shortReels.length },
             { id: "topics" as ChannelTab, label: "Idea Lab & Topics", icon: Lightbulb, count: state.topics.length },
             ...(!simplifyMode ? [{ id: "dna" as ChannelTab, label: "Channel DNA & Identity", icon: FileText }] : []),
@@ -122,7 +132,18 @@ export function ChannelDetail(props: ChannelDetailProps) {
             loading={state.episodesHook.loading}
           />
         ) : null}
-        {/* Tab 2: Short-Reels */}
+        {/* Tab 2: Quiz Shorts */}
+        {state.channelTab === "quiz-shorts" ? (
+          <ChannelQuizShortsTab
+            channel={channel}
+            quizShorts={state.quizShorts}
+            tasks={tasks}
+            onOpenQuizShort={navigateToQuizShort}
+            onDeleteQuizShort={(quizShort) => state.setDeleteQuizShortTarget(quizShort)}
+            onGoToTopics={() => state.switchTab("topics")}
+          />
+        ) : null}
+        {/* Tab 3: Short-Reels */}
         {state.channelTab === "short-reels" ? (
           <ChannelShortReelsTab
             channel={channel}
@@ -136,7 +157,7 @@ export function ChannelDetail(props: ChannelDetailProps) {
             onNewShortReel={() => setIsCreateShortReelOpen(true)}
           />
         ) : null}
-        {/* Tab 3: Idea Lab & Topics */}
+        {/* Tab 4: Idea Lab & Topics */}
         {state.channelTab === "topics" ? (
           <ChannelTopicsTab
             channel={channel}
@@ -157,7 +178,7 @@ export function ChannelDetail(props: ChannelDetailProps) {
             clearingTopicHistory={state.clearingTopicHistory}
           />
         ) : null}
-        {/* Tab 4: Channel DNA & Identity */}
+        {/* Tab 5: Channel DNA & Identity */}
         {state.channelTab === "dna" && !simplifyMode ? (
           <ChannelDnaTab
             channel={channel}
@@ -181,7 +202,7 @@ export function ChannelDetail(props: ChannelDetailProps) {
             onTaskSubmitted={onTaskSubmitted}
           />
         ) : null}
-        {/* Tab 5: Custom Intro & Outro Styles */}
+        {/* Tab 6: Custom Intro & Outro Styles */}
         {state.channelTab === "intro-outro" ? (
           <ChannelIntroOutroTab channel={channel} onNotice={onNotice} onChannelUpdate={() => void onRefresh()} />
         ) : null}

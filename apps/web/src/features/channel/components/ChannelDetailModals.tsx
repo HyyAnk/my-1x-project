@@ -3,6 +3,7 @@ import type { Notice } from "../../../components/types";
 import { MascotAssignModal } from "../../../components/MascotAssignModal";
 import { CreateShortReelModal } from "./CreateShortReelModal";
 import { DeleteEpisodeModal } from "./DeleteEpisodeModal";
+import { DeleteQuizShortModal } from "./DeleteQuizShortModal";
 import { DeleteShortReelModal } from "./DeleteShortReelModal";
 import { EditChannelModal } from "./EditChannelModal";
 import { buildHash } from "../../../hooks/useRouter";
@@ -61,6 +62,16 @@ export function ChannelDetailModals({
           onClose={() => state.setDeleteEpisodeTarget(null)}
           onDeleted={state.handleEpisodeDeleted}
           onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete episode" })}
+        />
+      ) : null}
+
+      {state.deleteQuizShortTarget ? (
+        <DeleteQuizShortModal
+          channel={channel}
+          quizShort={state.deleteQuizShortTarget}
+          onClose={() => state.setDeleteQuizShortTarget(null)}
+          onDeleted={state.handleQuizShortDeleted}
+          onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete Quiz Short" })}
         />
       ) : null}
 

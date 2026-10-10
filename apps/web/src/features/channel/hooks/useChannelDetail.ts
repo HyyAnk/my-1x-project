@@ -8,9 +8,10 @@ import { useChannelDna } from "./useChannelDna";
 import { useChannelMascotAndStyle } from "./useChannelMascotAndStyle";
 import { useTopicAvailability } from "./useTopicAvailability";
 import { useChannelEpisodes } from "./useChannelEpisodes";
+import { useChannelQuizShorts } from "./useChannelQuizShorts";
 
-export type ChannelTab = "episodes" | "short-reels" | "topics" | "dna" | "intro-outro";
-const CHANNEL_TABS: readonly ChannelTab[] = ["episodes", "short-reels", "topics", "dna", "intro-outro"];
+export type ChannelTab = "episodes" | "quiz-shorts" | "short-reels" | "topics" | "dna" | "intro-outro";
+const CHANNEL_TABS: readonly ChannelTab[] = ["episodes", "quiz-shorts", "short-reels", "topics", "dna", "intro-outro"];
 
 export type UseChannelDetailProps = {
   channel: Channel;
@@ -21,6 +22,7 @@ export type UseChannelDetailProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
   onTaskSubmitted: (task: Task) => void;
   onSelectEpisode?: (episodeId: string) => void;
+  onSelectQuizShort?: (quizShortId: string) => void;
   simplifyMode?: boolean;
 };
 
@@ -33,6 +35,7 @@ export function useChannelDetail({
   onNotice,
   onTaskSubmitted,
   onSelectEpisode,
+  onSelectQuizShort,
   simplifyMode = true,
 }: UseChannelDetailProps) {
   const [topics, setTopics] = useState<TopicCandidate[]>([]);
@@ -89,6 +92,12 @@ export function useChannelDetail({
     onNotice,
   });
 
+  const quizShortsHook = useChannelQuizShorts({
+    channelId: channel.channel_id,
+    onNotice,
+    onRefresh,
+  });
+
   const load = useCallback(
     async (showLoading = false) => {
       const version = ++loadVersion.current;
@@ -107,11 +116,12 @@ export function useChannelDetail({
         setShortReels(shortReelsResponse.short_reels ?? []);
         void topicAvailabilityHook.refresh();
         void episodesHook.reload();
+        void quizShortsHook.reload();
       } finally {
         if (showLoading && version === loadVersion.current) setLoadingChannel(false);
       }
     },
-    [channel.channel_id, episodesHook.reload, topicAvailabilityHook.refresh],
+    [channel.channel_id, episodesHook.reload, quizShortsHook.reload, topicAvailabilityHook.refresh],
   );
 
   useEffect(() => {
@@ -180,6 +190,8 @@ export function useChannelDetail({
         });
         await load();
         await onRefresh();
+        if (onSelectQuizShort) onSelectQuizShort(result.quiz_short.quiz_short_id);
+        else switchTab("quiz-shorts");
       } else {
         if (result.task) {
           onTaskSubmitted(result.task);
@@ -272,6 +284,10 @@ export function useChannelDetail({
     episodes: episodesHook.episodes,
     episodesHook,
     shortReels,
+    quizShorts: quizShortsHook.quizShorts,
+    deleteQuizShortTarget: quizShortsHook.deleteQuizShortTarget,
+    setDeleteQuizShortTarget: quizShortsHook.setDeleteQuizShortTarget,
+    handleQuizShortDeleted: quizShortsHook.handleQuizShortDeleted,
     editingDna: dnaHook.editingDna,
     setEditingDna: dnaHook.setEditingDna,
     dnaDraft: dnaHook.dnaDraft,

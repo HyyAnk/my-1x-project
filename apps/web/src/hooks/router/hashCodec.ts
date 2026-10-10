@@ -5,6 +5,7 @@ export type RouteState = {
   channelId: string | null;
   episodeId: string | null;
   shortReelId: string | null;
+  quizShortId: string | null;
   mascotId: string | null;
   step: number | null;
   tab: string | null;
@@ -37,6 +38,7 @@ export function parseHash(hash: string): RouteState {
       channelId: null,
       episodeId: null,
       shortReelId: null,
+      quizShortId: null,
       mascotId: null,
       step: null,
       tab,
@@ -55,6 +57,7 @@ export function parseHash(hash: string): RouteState {
       channelId: null,
       episodeId: null,
       shortReelId: null,
+      quizShortId: null,
       mascotId: null,
       step: null,
       tab,
@@ -75,6 +78,7 @@ export function parseHash(hash: string): RouteState {
       channelId,
       episodeId: null,
       shortReelId: null,
+      quizShortId: null,
       mascotId: null,
       step: null,
       tab,
@@ -89,6 +93,7 @@ export function parseHash(hash: string): RouteState {
     channelId: null,
     episodeId: null,
     shortReelId: null,
+    quizShortId: null,
     mascotId: null,
     step: null,
     tab,
@@ -114,6 +119,7 @@ function parseMascotRoute(
     channelId: null,
     episodeId: null,
     shortReelId: null,
+    quizShortId: null,
     mascotId,
     step,
     tab: effectiveTab,
@@ -128,14 +134,17 @@ function parseChannelRoute(segments: string[], tab: string | null, group: string
   const episodeId = isEpisodesSegment && segments[3] ? decodeURIComponent(segments[3]) : null;
   const isShortReelsSegment = segments[2] === "short-reels";
   const shortReelId = isShortReelsSegment && segments[3] ? decodeURIComponent(segments[3]) : null;
+  const isQuizShortsSegment = segments[2] === "quiz-shorts";
+  const quizShortId = isQuizShortsSegment && segments[3] ? decodeURIComponent(segments[3]) : null;
 
-  const effectiveTab = tab ?? (isShortReelsSegment && !shortReelId ? "short-reels" : null);
+  const effectiveTab = tab ?? resolveChannelCollectionTab(isShortReelsSegment && !shortReelId, isQuizShortsSegment && !quizShortId);
 
   return {
     page: "channels",
     channelId,
     episodeId,
     shortReelId,
+    quizShortId,
     mascotId: null,
     step: null,
     tab: effectiveTab,
@@ -144,11 +153,18 @@ function parseChannelRoute(segments: string[], tab: string | null, group: string
   };
 }
 
+function resolveChannelCollectionTab(isShortReelsList: boolean, isQuizShortsList: boolean): string | null {
+  if (isShortReelsList) return "short-reels";
+  if (isQuizShortsList) return "quiz-shorts";
+  return null;
+}
+
 export function buildHash(state: {
   page: Page;
   channelId?: string | null;
   episodeId?: string | null;
   shortReelId?: string | null;
+  quizShortId?: string | null;
   mascotId?: string | null;
   step?: number | null;
   tab?: string | null;
@@ -159,6 +175,8 @@ export function buildHash(state: {
     path = `/channels/${encodeURIComponent(state.channelId)}`;
     if (state.shortReelId) {
       path += `/short-reels/${encodeURIComponent(state.shortReelId)}`;
+    } else if (state.quizShortId) {
+      path += `/quiz-shorts/${encodeURIComponent(state.quizShortId)}`;
     } else if (state.episodeId) {
       path += `/episodes/${encodeURIComponent(state.episodeId)}`;
     }

@@ -28,7 +28,8 @@ export function mergeUpdatedDescription(params: {
   input: ReturnType<typeof VideoDescriptionInputSchema.parse>;
   existing: VideoDescription | null;
   channel: Awaited<ReturnType<RepositoryService["getChannel"]>>;
-  episode: Awaited<ReturnType<RepositoryService["getEpisode"]>>;
+  /** The Episode or Quiz Short record; only the topic title and question count are read. */
+  episode: { topic: { title: string }; quiz_config: { question_count: number } };
   quiz: Awaited<ReturnType<RepositoryService["readQuiz"]>>;
 }): VideoDescription {
   const { input, existing, channel, episode, quiz } = params;

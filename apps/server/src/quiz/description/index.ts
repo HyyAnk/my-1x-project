@@ -16,3 +16,7 @@ export * from "./descriptionFallbackLocales.js";
 export * from "./descriptionResponseParser.js";
 export * from "./descriptionGenerator.js";
 export * from "./descriptionTitleAlignment.js";
+export * from "./quizShortDescriptionFallbackLocales.js";
+export * from "./quizShortDescriptionFormatter.js";
+export * from "./quizShortDescriptionPromptCompiler.js";
+export * from "./quizShortDescriptionGenerator.js";

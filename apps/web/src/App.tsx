@@ -109,6 +109,7 @@ function AppContent() {
           selectedChannel={orch.selectedChannel}
           selectedEpisodeId={orch.selectedEpisodeId}
           selectedShortReelId={orch.selectedShortReelId}
+          selectedQuizShortId={orch.selectedQuizShortId}
           selectedMascotId={orch.selectedMascotId}
           selectedStep={orch.selectedStep}
           openMascot={orch.openMascot}
@@ -135,6 +136,7 @@ function AppContent() {
           openChannel={orch.openChannel}
           openBrandAssets={orch.openBrandAssets}
           openEpisode={orch.openEpisode}
+          openQuizShort={orch.openQuizShort}
           setQueryParam={orch.setQueryParam}
           upsertTask={orch.upsertTask}
           requestCreateChannel={orch.requestCreateChannel}

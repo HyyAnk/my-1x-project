@@ -55,6 +55,27 @@ describe("hashCodec", () => {
     expect(built).toBe("#/channels/ch-1?tab=short-reels");
   });
 
+  it("parses and builds quiz-shorts routes and the quiz-shorts tab", () => {
+    const workspace = parseHash("#/channels/ch-1/quiz-shorts/qshort_1");
+    expect(workspace.page).toBe("channels");
+    expect(workspace.channelId).toBe("ch-1");
+    expect(workspace.quizShortId).toBe("qshort_1");
+    expect(workspace.episodeId).toBeNull();
+    expect(workspace.shortReelId).toBeNull();
+    expect(workspace.tab).toBeNull();
+
+    const listFromPath = parseHash("#/channels/ch-1/quiz-shorts");
+    expect(listFromPath.tab).toBe("quiz-shorts");
+    expect(listFromPath.quizShortId).toBeNull();
+
+    const listFromQuery = parseHash("#/channels/ch-1?tab=quiz-shorts");
+    expect(listFromQuery.tab).toBe("quiz-shorts");
+
+    expect(buildHash({ page: "channels", channelId: "ch-1", quizShortId: "qshort_1" })).toBe("#/channels/ch-1/quiz-shorts/qshort_1");
+    expect(buildHash({ page: "channels", channelId: "ch-1", tab: "quiz-shorts" })).toBe("#/channels/ch-1?tab=quiz-shorts");
+    expect(parseHash("#/channels/ch-1/episodes/ep-1").quizShortId).toBeNull();
+  });
+
   it("parses and builds mascot routes with mascotId and step", () => {
     const libraryRoute = parseHash("#/mascots");
     expect(libraryRoute.page).toBe("mascots");

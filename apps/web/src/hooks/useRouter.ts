@@ -83,6 +83,7 @@ export function useRouter() {
       channelId: route.channelId,
       episodeId: route.episodeId,
       shortReelId: route.shortReelId,
+      quizShortId: route.quizShortId,
       mascotId: route.mascotId,
       step: route.step,
       tab: route.tab,

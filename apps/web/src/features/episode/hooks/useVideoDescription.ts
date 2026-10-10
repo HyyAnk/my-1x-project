@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { VIDEO_DESCRIPTION_MAX_CHARS, type VideoDescription } from "@studio/shared";
 import { quizApi } from "../../../api/quizApi";
 import type { Notice } from "../../../components/types";
+import type { VideoDescriptionClient } from "../../quizProduct/types/videoMetadataClient.types";
 
 export type DescriptionViewTab = "preview" | "blocks" | "edit";
 
@@ -12,6 +13,16 @@ export interface UseVideoDescriptionProps {
   initialDescription?: VideoDescription | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onUpdated?: () => Promise<void> | void;
+  /** Data-access override; defaults to the Episode quiz-v2 description routes. */
+  client?: VideoDescriptionClient;
+}
+
+export function buildEpisodeDescriptionClient(channelId: string, episodeId: string): VideoDescriptionClient {
+  return {
+    get: () => quizApi.getVideoDescription(channelId, episodeId),
+    generate: (toneHint, force) => quizApi.generateVideoDescription(channelId, episodeId, toneHint, force),
+    save: (input) => quizApi.saveVideoDescription(channelId, episodeId, input),
+  };
 }
 
 export function useVideoDescription({
@@ -21,7 +32,9 @@ export function useVideoDescription({
   initialDescription,
   onNotice,
   onUpdated,
+  client,
 }: UseVideoDescriptionProps) {
+  const descriptionClient = useMemo(() => client ?? buildEpisodeDescriptionClient(channelId, episodeId), [client, channelId, episodeId]);
   const [description, setDescription] = useState<VideoDescription | null>(initialDescription ?? null);
   const [draftText, setDraftText] = useState<string>(initialDescription?.full_description_text ?? "");
   const [loading, setLoading] = useState(false);
@@ -42,7 +55,7 @@ export function useVideoDescription({
   const fetchDescription = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await quizApi.getVideoDescription(channelId, episodeId);
+      const res = await descriptionClient.get();
       if (res.description) {
         setDescription(res.description);
         setDraftText(res.description.full_description_text);
@@ -52,7 +65,7 @@ export function useVideoDescription({
     } finally {
       setLoading(false);
     }
-  }, [channelId, episodeId]);
+  }, [descriptionClient]);
 
   useEffect(() => {
     if (!initialDescription) {
@@ -68,7 +81,7 @@ export function useVideoDescription({
     setGenerating(true);
     try {
       const effectiveHint = hint !== undefined ? hint : toneHint;
-      const res = await quizApi.generateVideoDescription(channelId, episodeId, effectiveHint);
+      const res = await descriptionClient.generate(effectiveHint);
       setDescription(res.description);
       setDraftText(res.description.full_description_text);
       if (hint !== undefined) setToneHint(hint);
@@ -85,9 +98,7 @@ export function useVideoDescription({
     if (!draftText.trim()) return;
     setSaving(true);
     try {
-      const res = await quizApi.saveVideoDescription(channelId, episodeId, {
-        full_description_text: draftText,
-      });
+      const res = await descriptionClient.save({ full_description_text: draftText });
       setDescription(res.description);
       setDraftText(res.description.full_description_text);
       await onUpdated?.();

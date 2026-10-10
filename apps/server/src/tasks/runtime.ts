@@ -6,6 +6,7 @@ import type { StudioLogger } from "../logger.js";
 import type { RepositoryService } from "../repository.js";
 import type { ChatterboxTarget } from "../providers/chatterbox.js";
 import type { AudioProvider, ImageProvider } from "../providers/index.js";
+import type { PortraitImageClient } from "../providers/imageGeneration/imageGeneration.types.js";
 import type { TopicMatrixPlan } from "../context/topicMatrixPlanner.js";
 import type { GenerateShortReelTarget } from "@studio/shared";
 import type { VideoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
@@ -47,6 +48,8 @@ export interface TaskManagerRuntime {
   failedBuildCleanupTimer: NodeJS.Timeout | null;
   imageConfig: AppConfig["image_generation"];
   imageFallbackConfig?: AppConfig["image_fallback"];
+  /** Portrait provider for Quiz Short covers and Short Reels; built from the image config when absent. */
+  portraitImageClient?: PortraitImageClient;
   imageVariants: Map<string, number>;
   logger: StudioLogger;
   locks: Set<string>;

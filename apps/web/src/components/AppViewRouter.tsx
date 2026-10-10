@@ -34,6 +34,7 @@ export interface AppViewRouterProps {
   selectedChannel: Channel | null;
   selectedEpisodeId: string | null;
   selectedShortReelId?: string | null;
+  selectedQuizShortId?: string | null;
   selectedMascotId?: string | null;
   selectedStep?: number | null;
   openMascot?: (mascotId?: string | null, step?: number | null) => void;
@@ -60,6 +61,7 @@ export interface AppViewRouterProps {
   openChannel: (channelId: string) => void;
   openBrandAssets?: (channelId?: string | null, tab?: string) => void;
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
+  openQuizShort?: (channelId: string, quizShortId: string) => void;
   setQueryParam: (key: string, value: string | null) => void;
   upsertTask: (task: Task) => void;
   requestCreateChannel: () => void;
@@ -115,6 +117,7 @@ export function AppViewRouter(props: AppViewRouterProps) {
             selectedChannel={props.selectedChannel}
             selectedEpisodeId={props.selectedEpisodeId}
             selectedShortReelId={props.selectedShortReelId}
+            selectedQuizShortId={props.selectedQuizShortId}
             channels={props.channels}
             tasks={props.tasks}
             activeTab={props.tab}
@@ -127,6 +130,7 @@ export function AppViewRouter(props: AppViewRouterProps) {
             onNotice={props.setNotice}
             onDelete={props.requestDeleteChannel}
             openEpisode={props.openEpisode}
+            openQuizShort={props.openQuizShort}
             maxDuration={props.appConfig?.video_generation.max_scene_duration_seconds ?? 8}
             narrationWordsPerSecond={props.appConfig?.video_generation.narration_words_per_second ?? 2.3}
             imageGenerationEnabled={props.appConfig?.image_generation?.enabled ?? true}

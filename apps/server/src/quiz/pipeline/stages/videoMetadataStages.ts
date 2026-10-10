@@ -1,12 +1,11 @@
 import type { VideoDescription, VideoTitle } from "@studio/shared";
-import { RepositoryError } from "../../../repository.js";
 import type { LLMClient } from "../../../utils/promptSanitizer.js";
-import { resolveEpisodeTargetLanguage } from "../../bank/localization/productLocalization.js";
-import { generateVideoDescription } from "../../description/index.js";
+import { generateQuizShortDescription, generateVideoDescription } from "../../description/index.js";
 import { getEpisodeThumbnailManifest } from "../../thumbnail/index.js";
+import { readQuizShortCoverManifest } from "../../thumbnail/quizShortCoverManifest.js";
 import { generateVideoTitle, loadRecentChannelTitles } from "../../title/index.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
-import { resolvePipelineProductRef } from "../quizProductView.js";
+import { loadMetadataContext, resolveMetadataClient, resolveMetadataTimeout, type MetadataContext } from "./videoMetadataContext.js";
 
 type MetadataStageOptions = { toneHint?: string; timeoutMs?: number };
 
@@ -15,60 +14,42 @@ export type GenerateEpisodeDescriptionOptions = MetadataStageOptions & {
   force?: boolean;
 };
 
-function resolveMetadataClient(input: QuizOrchestratorInput, artifactLabel: string): LLMClient {
-  const client = input.activeEngine === "antigravity" && input.antigravityClient ? input.antigravityClient : input.codexClient;
-  if (!client) {
-    throw new RepositoryError(`No active LLM client available for generating ${artifactLabel}`, "LLM_CLIENT_UNAVAILABLE");
+async function loadThumbnailHookText(input: QuizOrchestratorInput, context: MetadataContext): Promise<string | null | undefined> {
+  if (context.kind === "quiz_short") {
+    return (await readQuizShortCoverManifest(input.repository, input.channelId, context.ref.product_id).catch(() => null))?.hook_text;
   }
-  return client;
-}
-
-function resolveMetadataTimeout(timeoutMs?: number): number {
-  return timeoutMs ?? (process.env.NODE_ENV === "test" || process.env.VITEST ? 1500 : 45_000);
-}
-
-async function loadMetadataContext(input: QuizOrchestratorInput, artifactLabel: string) {
-  if (resolvePipelineProductRef(input).kind === "quiz_short") {
-    // Quiz Short titles and descriptions use the portrait-aware generators that arrive in Phase 5.
-    throw new RepositoryError(
-      `Quiz Short video ${artifactLabel} generation is not implemented in this phase`,
-      "QUIZ_SHORT_METADATA_NOT_IMPLEMENTED",
-    );
-  }
-  const [episode, channel, quiz] = await Promise.all([
-    input.repository.getEpisode(input.channelId, input.episodeId),
-    input.repository.getChannel(input.channelId),
-    input.repository.readQuiz(input.channelId, input.episodeId),
-  ]);
-  if (!quiz || quiz.questions.length === 0) {
-    throw new RepositoryError(`Quiz questions must be generated before video ${artifactLabel}`, "QUIZ_REQUIRED");
-  }
-  const { targetLanguage, localization } = await resolveEpisodeTargetLanguage(input.repository, input.channelId, episode);
-  return { episode, channel, quiz, targetLanguage, localization };
+  return (await getEpisodeThumbnailManifest(input.repository, input.channelId, context.ref.product_id).catch(() => null))?.hook_text;
 }
 
 /**
- * Generates and stores the episode's single SEO YouTube title. Runs before the description.
+ * Generates and stores the product's single SEO YouTube title. Runs before the description.
+ * Episodes use the long-form formula; Quiz Shorts the 70-character "#Shorts" variant.
  */
-export async function generateEpisodeTitle(
+export async function generateProductTitle(
   input: QuizOrchestratorInput & MetadataStageOptions,
 ): Promise<{ title: VideoTitle; artifact_path: string }> {
   const context = await loadMetadataContext(input, "title");
   const client = resolveMetadataClient(input, "title");
-  const [thumbnailManifest, recentTitles] = await Promise.all([
-    getEpisodeThumbnailManifest(input.repository, input.channelId, input.episodeId).catch(() => null),
-    loadRecentChannelTitles(input.repository, input.channelId, input.episodeId).catch(() => []),
+  const [thumbnailHookText, recentTitles] = await Promise.all([
+    loadThumbnailHookText(input, context),
+    loadRecentChannelTitles(input.repository, input.channelId, context.ref.product_id).catch(() => []),
   ]);
 
   const title = await generateVideoTitle({
     client,
-    ...context,
-    thumbnailHookText: thumbnailManifest?.hook_text,
+    channel: context.channel,
+    quiz: context.quiz,
+    episode: context.kind === "episode" ? context.episode : context.quizShort,
+    productKind: context.kind,
+    productId: context.ref.product_id,
+    targetLanguage: context.targetLanguage,
+    localization: context.localization,
+    thumbnailHookText,
     recentTitles,
     toneHint: input.toneHint,
     timeoutMs: resolveMetadataTimeout(input.timeoutMs),
   });
-  const artifact_path = await input.repository.writeVideoTitle(input.channelId, input.episodeId, title);
+  const artifact_path = await input.repository.writeVideoTitle(input.channelId, context.ref, title);
   return { title, artifact_path };
 }
 
@@ -76,40 +57,56 @@ export async function generateEpisodeTitle(
  * Returns the stored title, generating one first when it is missing or stale.
  * Title failures never block the description.
  */
-async function ensureEpisodeTitle(input: QuizOrchestratorInput & GenerateEpisodeDescriptionOptions): Promise<VideoTitle | null> {
+async function ensureProductTitle(input: QuizOrchestratorInput & GenerateEpisodeDescriptionOptions): Promise<VideoTitle | null> {
   const existing = await input.repository.readVideoTitle(input.channelId, input.episodeId).catch(() => null);
   const isStale = Boolean(input.force) && existing?.source !== "manual";
   if (existing && !isStale) return existing;
   try {
-    return (await generateEpisodeTitle({ ...input, toneHint: undefined })).title;
+    return (await generateProductTitle({ ...input, toneHint: undefined })).title;
   } catch (error) {
     console.warn(
-      `[videoMetadataStages] Title generation skipped for episode "${input.episodeId}":`,
+      `[videoMetadataStages] Title generation skipped for product "${input.episodeId}":`,
       error instanceof Error ? error.message : error,
     );
     return existing;
   }
 }
 
+async function generateDescriptionForContext(
+  input: QuizOrchestratorInput & GenerateEpisodeDescriptionOptions,
+  context: MetadataContext,
+  client: LLMClient,
+  title: VideoTitle | null,
+): Promise<VideoDescription> {
+  const shared = {
+    client,
+    channel: context.channel,
+    quiz: context.quiz,
+    targetLanguage: context.targetLanguage,
+    localization: context.localization,
+    videoTitle: title,
+    toneHint: input.toneHint,
+    timeoutMs: resolveMetadataTimeout(input.timeoutMs),
+  };
+  if (context.kind === "quiz_short") return generateQuizShortDescription({ ...shared, quizShort: context.quizShort });
+  const timeline = await input.repository.readQuizTimeline(input.channelId, context.ref).catch(() => null);
+  return generateVideoDescription({ ...shared, episode: context.episode, timeline });
+}
+
 /**
  * Generates the SEO description after making sure the title exists, so both target the same keyword.
  */
-export async function generateEpisodeDescription(
+export async function generateProductDescription(
   input: QuizOrchestratorInput & GenerateEpisodeDescriptionOptions,
 ): Promise<{ description: VideoDescription; title: VideoTitle | null; artifact_path: string }> {
   const context = await loadMetadataContext(input, "description");
   const client = resolveMetadataClient(input, "description");
-  const title = await ensureEpisodeTitle(input);
-  const timeline = await input.repository.readQuizTimeline(input.channelId, input.episodeId).catch(() => null);
-
-  const description = await generateVideoDescription({
-    client,
-    ...context,
-    timeline,
-    videoTitle: title,
-    toneHint: input.toneHint,
-    timeoutMs: resolveMetadataTimeout(input.timeoutMs),
-  });
-  const artifact_path = await input.repository.writeVideoDescription(input.channelId, input.episodeId, description);
+  const title = await ensureProductTitle(input);
+  const description = await generateDescriptionForContext(input, context, client, title);
+  const artifact_path = await input.repository.writeVideoDescription(input.channelId, context.ref, description);
   return { description, title, artifact_path };
 }
+
+/** Episode names kept for every existing call site; both functions dispatch on the product kind. */
+export const generateEpisodeTitle = generateProductTitle;
+export const generateEpisodeDescription = generateProductDescription;

@@ -4,6 +4,7 @@ import { refreshEpisodeExport } from "../export/episodeExportPackager.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { recordIndependentStageTiming } from "../pipeline/independentStageTiming.js";
 import { taskProductKind } from "../taskProductRef.js";
+import { runQuizShortCoverStep } from "./quizShortCoverTaskStep.js";
 
 export async function runThumbnailTask(runtime: TaskManagerRuntime, task: Task): Promise<void> {
   const controller = new AbortController();
@@ -15,11 +16,8 @@ export async function runThumbnailTask(runtime: TaskManagerRuntime, task: Task):
     if (!task.episode_id) throw new Error("Episode is required for thumbnail generation");
     if (runtime.get(task.task_id).status === "CANCELLED") return;
     if (taskProductKind(task) === "quiz_short") {
-      // The portrait cover service arrives in Phase 5; until then the task completes without producing a cover.
-      const message = "Quiz Short thumbnail generation is not implemented in this phase; no cover was produced.";
-      runtime.logger.warn(message, context);
-      await runtime.update(task.task_id, { status: "RUNNING", started_at: nowIso(), queue_position: null, progress_message: message });
-      await runtime.finish(task.task_id, "COMPLETED", null, []);
+      const outputs = await runQuizShortCoverStep(runtime, task, task.episode_id, signal, started);
+      await runtime.finish(task.task_id, "COMPLETED", null, outputs);
       return;
     }
     await runtime.update(task.task_id, {

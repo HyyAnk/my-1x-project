@@ -1,7 +1,7 @@
 import { nowIso, type GenerateShortReelRequest, type ReelKey, type ReelStageProgress, type Task } from "@studio/shared";
 import type { TaskManagerRuntime } from "./runtime.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
-import { createPortraitImageClient } from "../providers/imageGeneration/portraitImageClient.js";
+import { resolveRuntimePortraitImageClient } from "./portraitImageRuntime.js";
 import type { PortraitImageClient } from "../providers/imageGeneration/imageGeneration.types.js";
 import { executeReelGeneration } from "../shortReel/generationWorkflow.js";
 import type { ReelGenerationProgress } from "../shortReel/generation.types.js";
@@ -35,10 +35,7 @@ export async function runShortReelTask(runtime: TaskManagerRuntime, task: Task):
 
     const llmClient: LLMClient = runtime.activeEngine === "antigravity" && runtime.antigravity ? runtime.antigravity : runtime.codex;
 
-    const imageClient: PortraitImageClient =
-      (runtime as unknown as { portraitImageClient?: PortraitImageClient }).portraitImageClient ??
-      (runtime as unknown as { imageClient?: PortraitImageClient }).imageClient ??
-      createPortraitImageClient(runtime.imageConfig, runtime.imageFallbackConfig);
+    const imageClient: PortraitImageClient = resolveRuntimePortraitImageClient(runtime);
 
     const stages: ReelStageProgress[] = [];
     let latestRevision: number | null = null;

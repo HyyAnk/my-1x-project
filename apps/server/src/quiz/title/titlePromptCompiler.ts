@@ -1,15 +1,26 @@
-import { VIDEO_TITLE_KEYWORD_WINDOW_CHARS, VIDEO_TITLE_MAX_CHARS, VIDEO_TITLE_VISIBLE_CHARS, type Channel, type Episode, type QuizV2 } from "@studio/shared";
+import {
+  VIDEO_TITLE_KEYWORD_WINDOW_CHARS,
+  VIDEO_TITLE_MAX_CHARS,
+  VIDEO_TITLE_VISIBLE_CHARS,
+  type Channel,
+  type QuizProductKind,
+  type QuizV2,
+} from "@studio/shared";
 import type { ProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
 import { resolveAudiencePolicy } from "../description/descriptionAudiencePolicy.js";
 import { buildSpoilerFreeQuestionSummaries } from "../description/descriptionPromptCompiler.js";
-import type { TitleIssue } from "./videoTitle.types.js";
+import { buildQuizShortTitleRuleLines } from "./quizShortTitlePromptRules.js";
+import type { TitleIssue, TitleProductContext } from "./videoTitle.types.js";
 
 const MAX_RECENT_TITLES_IN_PROMPT = 15;
 
 export interface CompileVideoTitlePromptInput {
   quiz: QuizV2;
   channel: Channel;
-  episode: Episode;
+  /** The Episode or Quiz Short record; only the topic and audience config are read. */
+  episode: TitleProductContext;
+  /** Defaults to "episode". Quiz Shorts get the 70-character "#Shorts" rules. */
+  productKind?: QuizProductKind;
   language: string;
   localization?: ProductLocalizationArtifact | null;
   thumbnailHookText?: string | null;
@@ -20,7 +31,7 @@ export interface CompileVideoTitlePromptInput {
 function buildContextLines(input: CompileVideoTitlePromptInput, madeForKids: boolean): string[] {
   const { channel, episode, quiz, language, thumbnailHookText, toneHint } = input;
   return [
-    `[CHANNEL & EPISODE CONTEXT]:`,
+    `[CHANNEL & ${input.productKind === "quiz_short" ? "QUIZ SHORT" : "EPISODE"} CONTEXT]:`,
     `- Channel: "${channel.display_name}"`,
     `- Language: ${language}`,
     `- Working Topic Title (internal, rewrite it for search): "${episode.topic.title}"`,
@@ -38,7 +49,7 @@ function buildRecentTitleLines(recentTitles: string[]): string[] {
   return [``, `[RECENT TITLES ON THIS CHANNEL (your title must clearly differ from all of them)]:`, ...titles.map((title) => `- ${title}`)];
 }
 
-function buildRuleLines(questionCount: number, language: string, madeForKids: boolean): string[] {
+function buildEpisodeRuleLines(questionCount: number, language: string, madeForKids: boolean): string[] {
   return [
     `[TITLE FORMULA (keyword-first + number + challenge hook)]:`,
     `<Primary Keyword> Quiz: ${questionCount} <Topic> Questions <Challenge Hook>`,
@@ -58,16 +69,22 @@ function buildRuleLines(questionCount: number, language: string, madeForKids: bo
   ];
 }
 
+function buildRuleLines(input: CompileVideoTitlePromptInput, madeForKids: boolean): string[] {
+  return input.productKind === "quiz_short"
+    ? buildQuizShortTitleRuleLines(input.language, madeForKids)
+    : buildEpisodeRuleLines(input.quiz.questions.length, input.language, madeForKids);
+}
+
 /**
- * Compiles the prompt for a single search-optimized YouTube title built from the
- * keyword-first + number + challenge hook formula.
+ * Compiles the prompt for a single search-optimized YouTube title. Episodes follow the
+ * keyword-first + number + challenge hook formula; Quiz Shorts follow the short "#Shorts" rules.
  */
 export function compileVideoTitlePrompt(input: CompileVideoTitlePromptInput): string {
   const audience = resolveAudiencePolicy(input.episode.quiz_config?.age_band ?? input.quiz.age_band);
-  const questionCount = input.quiz.questions.length;
+  const productLabel = input.productKind === "quiz_short" ? "Quiz Short (9:16 vertical video)" : "quiz episode";
   return [
     `You are an elite YouTube SEO strategist for educational quiz channels.`,
-    `Write exactly ONE YouTube video title for the quiz episode below.`,
+    `Write exactly ONE YouTube video title for the ${productLabel} below.`,
     ``,
     ...buildContextLines(input, audience.madeForKids),
     ``,
@@ -75,7 +92,7 @@ export function compileVideoTitlePrompt(input: CompileVideoTitlePromptInput): st
     buildSpoilerFreeQuestionSummaries(input.quiz, input.localization),
     ...buildRecentTitleLines(input.recentTitles),
     ``,
-    ...buildRuleLines(questionCount, input.language, audience.madeForKids),
+    ...buildRuleLines(input, audience.madeForKids),
     ``,
     `Return ONLY a valid JSON object matching this exact schema:`,
     `{"title": "The YouTube title", "primary_keyword": "exact keyword phrase as it appears in the title"}`,

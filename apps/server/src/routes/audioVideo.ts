@@ -205,7 +205,7 @@ function registerStreamingRoutes(
   server.get("/api/voice/rendered-metrics", async () => repository.getRenderedVoiceMetrics());
 }
 
-function sendRange(
+export function sendRange(
   range: string | undefined,
   file: { absolutePath: string; size: number; modified_at: string },
   contentType: string,

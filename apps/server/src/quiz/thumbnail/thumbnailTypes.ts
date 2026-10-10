@@ -1,4 +1,4 @@
-import type { MascotProfile, QuizImageStyle, ThumbnailAspectRatio, ThumbnailLayoutType } from "@studio/shared";
+import type { MascotProfile, QuizImageStyle, ThumbnailAspectRatio, ThumbnailComposition, ThumbnailLayoutType } from "@studio/shared";
 import type { EditorialThumbnailDesign } from "./editorial/editorialTypes.js";
 
 export type MascotThemedPersona = {
@@ -65,6 +65,8 @@ export type ResolveThumbnailInput = {
   language?: string;
   mascotProfile?: MascotProfile | null;
   rng?: () => number;
+  /** Compositions used recently by this episode and its channel, newest first. */
+  recentCompositions?: ThumbnailComposition[];
 };
 
 export type CompiledThumbnailPrompts = {

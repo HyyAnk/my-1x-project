@@ -117,7 +117,9 @@ export async function finalizeRenderOutputs(
     );
   }
   if (product.view.kind !== "episode") {
-    runtime.logger.warn("Quiz Short export packaging is not implemented in this phase; the rendered MP4 stays in the product assets.");
+    runtime.logger.warn(
+      "Quiz Shorts have no ZIP export package; the rendered MP4 stays in the product assets next to the cover, title and description.",
+    );
     return;
   }
   try {

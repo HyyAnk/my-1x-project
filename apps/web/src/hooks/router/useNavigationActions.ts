@@ -91,6 +91,13 @@ export function useNavigationActions(navigate: (to: string, replace?: boolean) =
     [navigate],
   );
 
+  const openQuizShort = useCallback(
+    (channelId: string, quizShortId: string) => {
+      navigate(`/channels/${encodeURIComponent(channelId)}/quiz-shorts/${encodeURIComponent(quizShortId)}`);
+    },
+    [navigate],
+  );
+
   const openMascot = useCallback(
     (mascotId?: string | null, step?: number | null) => {
       if (!mascotId) {
@@ -120,6 +127,7 @@ export function useNavigationActions(navigate: (to: string, replace?: boolean) =
     openChannel,
     openEpisode,
     openShortReel,
+    openQuizShort,
     openMascot,
     openBrandAssets,
     setQueryParam,

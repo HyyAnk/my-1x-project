@@ -1,5 +1,6 @@
 import { VIDEO_TITLE_KEYWORD_WINDOW_CHARS, VIDEO_TITLE_MAX_CHARS } from "@studio/shared";
 import { findSpoilerLeaks } from "../description/descriptionSpoilerGuard.js";
+import { QUIZ_SHORT_TITLE_MAX_CHARS, QUIZ_SHORT_TITLE_SUFFIX, hasQuizShortTitleSuffix } from "./quizShortTitleRules.js";
 import type { TitleDraft, TitleIssue, TitleReviewContext } from "./videoTitle.types.js";
 
 const ANGLE_BRACKETS = /[<>]/g;
@@ -67,10 +68,20 @@ export function containsQuestionCount(title: string, questionCount: number): boo
   return new RegExp(`(?<!\\d)${questionCount}(?!\\d)`).test(title.normalize("NFKC"));
 }
 
-function collectFormatIssues(title: string): TitleIssue[] {
+function collectFormatIssues(title: string, context: TitleReviewContext): TitleIssue[] {
   const issues: TitleIssue[] = [];
-  if (title.length > VIDEO_TITLE_MAX_CHARS) {
-    issues.push({ code: "TOO_LONG", severity: "blocker", detail: `Title has ${title.length} characters; YouTube allows ${VIDEO_TITLE_MAX_CHARS}.` });
+  const isShort = context.productKind === "quiz_short";
+  const maxChars = isShort ? QUIZ_SHORT_TITLE_MAX_CHARS : VIDEO_TITLE_MAX_CHARS;
+  if (title.length > maxChars) {
+    const limitLabel = isShort ? `Quiz Shorts allow ${maxChars}` : `YouTube allows ${maxChars}`;
+    issues.push({ code: "TOO_LONG", severity: "blocker", detail: `Title has ${title.length} characters; ${limitLabel}.` });
+  }
+  if (isShort && !hasQuizShortTitleSuffix(title)) {
+    issues.push({
+      code: "SHORTS_SUFFIX_MISSING",
+      severity: "blocker",
+      detail: `Quiz Short titles must end with "${QUIZ_SHORT_TITLE_SUFFIX}".`,
+    });
   }
   const shoutingWords = title.match(SHOUTING_WORD) ?? [];
   if (shoutingWords.length > MAX_SHOUTING_WORDS) {
@@ -98,8 +109,12 @@ function collectKeywordIssues(draft: TitleDraft): TitleIssue[] {
 
 function collectContentIssues(title: string, context: TitleReviewContext): TitleIssue[] {
   const issues: TitleIssue[] = [];
-  if (!containsQuestionCount(title, context.questionCount)) {
-    issues.push({ code: "QUESTION_COUNT_MISSING", severity: "advisory", detail: `Include the exact question count (${context.questionCount}) as digits.` });
+  if (context.productKind !== "quiz_short" && !containsQuestionCount(title, context.questionCount)) {
+    issues.push({
+      code: "QUESTION_COUNT_MISSING",
+      severity: "advisory",
+      detail: `Include the exact question count (${context.questionCount}) as digits.`,
+    });
   }
   const duplicate = context.recentTitles.find((recent) => isNearDuplicateTitle(title, recent));
   if (duplicate) {
@@ -114,7 +129,7 @@ function collectContentIssues(title: string, context: TitleReviewContext): Title
 /** Runs every deterministic YouTube SEO and safety check against a sanitized draft. */
 export function reviewTitleDraft(draft: TitleDraft, context: TitleReviewContext): TitleIssue[] {
   if (!draft.title) return [{ code: "EMPTY", severity: "blocker", detail: "Title is empty." }];
-  return [...collectFormatIssues(draft.title), ...collectKeywordIssues(draft), ...collectContentIssues(draft.title, context)];
+  return [...collectFormatIssues(draft.title, context), ...collectKeywordIssues(draft), ...collectContentIssues(draft.title, context)];
 }
 
 export function hasBlockingIssue(issues: TitleIssue[]): boolean {

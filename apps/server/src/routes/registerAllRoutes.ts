@@ -33,6 +33,9 @@ import { resolveIntroOutroScriptModel } from "../introOutroScripts/model.js";
 import { registerMascotsRoutes } from "./mascots.js";
 import { registerQuestionBankRoutes } from "./questionBank.js";
 import { registerQuizShortsRoutes } from "./quizShorts.js";
+import { registerQuizShortWorkspaceRoutes } from "./quizShortWorkspace.js";
+import { registerQuizShortMetadataRoutes } from "./quizShortMetadata.js";
+import { registerQuizShortMetadataEditRoutes } from "./quizShortMetadataEdit.js";
 import { registerQuizV2Routes } from "./quizV2.js";
 import { registerSettingsRoutes } from "./settings.js";
 import { registerShortReelsRoutes } from "./shortReels.js";
@@ -108,6 +111,11 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   );
   await server.register(registerEpisodesRoutes({ repository, state, tasks }));
   await server.register(registerQuizShortsRoutes({ repository, tasks }));
+  await server.register(registerQuizShortWorkspaceRoutes({ repository, tasks }));
+  await server.register(registerQuizShortMetadataEditRoutes({ repository }));
+  await server.register(
+    registerQuizShortMetadataRoutes({ repository, tasks, codex, antigravity, state, portraitImageClient, llmClient: activeLlmClient }),
+  );
   await server.register(
     registerShortReelsRoutes({ repository, tasks, logger, llmClient: activeLlmClient, imageClient: portraitImageClient }),
   );

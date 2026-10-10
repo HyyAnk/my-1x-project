@@ -9,6 +9,7 @@ import { settingsApi } from "./api/settingsApi";
 import { analyticsApi } from "./api/analyticsApi";
 import { questionBankApi } from "./api/questionBankApi";
 import { shortReelApi } from "./api/shortReelApi";
+import { quizShortApi } from "./api/quizShortApi";
 import { introOutroApi } from "./api/introOutroApi";
 import { introOutroScriptApi } from "./api/introOutroScriptApi";
 import { channelAssetsApi } from "./api/channelAssetsApi";
@@ -26,6 +27,7 @@ export * from "./api/settingsApi";
 export * from "./api/analyticsApi";
 export * from "./api/questionBankApi";
 export * from "./api/shortReelApi";
+export * from "./api/quizShortApi";
 export * from "./api/introOutroApi";
 export * from "./api/introOutroScriptApi";
 export * from "./api/channelAssetsApi";
@@ -47,6 +49,7 @@ export const api = {
   ...analyticsApi,
   ...questionBankApi,
   ...shortReelApi,
+  ...quizShortApi,
   ...introOutroApi,
   ...introOutroScriptApi,
   ...channelAssetsApi,
@@ -54,4 +57,3 @@ export const api = {
   ...motionApi,
   motion: motionApi,
 };
-

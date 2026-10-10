@@ -16,6 +16,7 @@ import type { ContextEngine } from "../context.js";
 import type { StudioLogger } from "../logger.js";
 import { ChatterboxProvider, type ChatterboxTarget } from "../providers/chatterbox.js";
 import type { AudioProvider } from "../providers/index.js";
+import type { PortraitImageClient } from "../providers/imageGeneration/imageGeneration.types.js";
 import { RepositoryError, RepositoryService } from "../repository.js";
 import { TaskAbortRegistry } from "./taskAbortRegistry.js";
 import { TaskApprovalRegistry } from "./taskApprovalRegistry.js";
@@ -70,6 +71,8 @@ export class TaskManager extends TaskManagerLifecycleBase implements TaskManager
   audioConfig: AppConfig["audio_generation"];
   imageConfig: AppConfig["image_generation"];
   imageFallbackConfig: AppConfig["image_fallback"];
+  /** Injected by tests or the app; runners fall back to building one from the image config. */
+  portraitImageClient?: PortraitImageClient;
   videoConfig: AppConfig["video_generation"];
   readonly videoRenderLimiter = videoRenderConcurrencyLimiter;
   readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;

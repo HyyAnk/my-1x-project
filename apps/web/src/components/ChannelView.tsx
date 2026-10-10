@@ -12,6 +12,7 @@ import { EpisodeCard } from "../features/channel/components/EpisodeCard";
 import { CreateChannelModal } from "../features/channel/components/CreateChannelModal";
 import { ChannelDetail } from "../features/channel/ChannelDetail";
 import { ShortReelStudio } from "../features/shortReel/ShortReelStudio";
+import { QuizShortView } from "../features/quizShort/QuizShortView";
 
 export {
   DeleteChannelModal,
@@ -31,6 +32,7 @@ export function ChannelsView({
   selectedChannel,
   selectedEpisodeId,
   selectedShortReelId,
+  selectedQuizShortId,
   channels,
   tasks,
   activeTab,
@@ -43,6 +45,7 @@ export function ChannelsView({
   onNotice,
   onDelete,
   openEpisode,
+  openQuizShort,
   maxDuration,
   narrationWordsPerSecond,
   imageGenerationEnabled,
@@ -52,6 +55,7 @@ export function ChannelsView({
   selectedChannel: Channel | null;
   selectedEpisodeId: string | null;
   selectedShortReelId?: string | null;
+  selectedQuizShortId?: string | null;
   channels: Channel[];
   tasks: Task[];
   activeTab?: string | null;
@@ -64,6 +68,7 @@ export function ChannelsView({
   onNotice: (notice: NonNullable<Notice>) => void;
   onDelete: (channel: Channel) => void;
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
+  openQuizShort?: (channelId: string, quizShortId: string) => void;
   maxDuration: number;
   narrationWordsPerSecond: number;
   imageGenerationEnabled: boolean;
@@ -82,6 +87,22 @@ export function ChannelsView({
         onNavigateHome={onNavigateHome}
         onNavigateChannels={() => openChannel("")}
         onNavigateChannel={() => openChannel(selectedChannel.channel_id)}
+      />
+    );
+  }
+
+  if (selectedChannel && selectedQuizShortId) {
+    return (
+      <QuizShortView
+        channel={selectedChannel}
+        quizShortId={selectedQuizShortId}
+        tasks={tasks}
+        onBack={() => openChannel(selectedChannel.channel_id, "quiz-shorts")}
+        onNavigateHome={onNavigateHome}
+        onNavigateChannels={() => openChannel("")}
+        onNavigateChannel={() => openChannel(selectedChannel.channel_id)}
+        onTaskSubmitted={onTaskSubmitted}
+        onNotice={onNotice}
       />
     );
   }
@@ -124,6 +145,7 @@ export function ChannelsView({
         onNotice={onNotice}
         onDelete={onDelete}
         openEpisode={openEpisode}
+        openQuizShort={openQuizShort}
         simplifyMode={simplifyMode}
       />
     );

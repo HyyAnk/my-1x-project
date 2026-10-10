@@ -21,9 +21,14 @@ import type { CodexAppServerClient } from "../../codex.js";
 import { readQuizArtifacts, generateQuiz, generateDirector } from "./stages/quizGenerationStage.js";
 import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/assetsVoiceStages.js";
 import { compileTimeline, runQa, assertQuizRenderReady } from "./stages/timelineAssessmentStages.js";
-import { ensureEpisodeThumbnail } from "../thumbnail/ensureEpisodeThumbnail.js";
-import { generateEpisodeDescription, generateEpisodeTitle } from "./stages/videoMetadataStages.js";
-import { resolvePipelineProductRef } from "./quizProductView.js";
+import type { PortraitImageClient } from "../../providers/imageGeneration/imageGeneration.types.js";
+import { ensureProductThumbnailNonBlocking } from "./stages/productThumbnailStage.js";
+import {
+  generateEpisodeDescription,
+  generateEpisodeTitle,
+  generateProductDescription,
+  generateProductTitle,
+} from "./stages/videoMetadataStages.js";
 
 export { remixQuizQuestions } from "./remixQuestions.js";
 export {
@@ -39,6 +44,8 @@ export {
   assertQuizRenderReady,
   generateEpisodeTitle,
   generateEpisodeDescription,
+  generateProductTitle,
+  generateProductDescription,
 };
 
 export type QuizOrchestratorInput = {
@@ -56,6 +63,8 @@ export type QuizOrchestratorInput = {
   activeEngine?: "codex" | "antigravity";
   antigravityClient?: AntigravityClient;
   codexClient?: CodexAppServerClient;
+  /** Portrait provider for Quiz Short covers; built from the image config when absent. */
+  portraitImageClient?: PortraitImageClient;
   onAssetProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   onVoiceProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   onVoicePacingClamp?: (details: QuizVoicePacingClamp) => Promise<void> | void;
@@ -77,38 +86,12 @@ export type QuizArtifacts = {
   title: VideoTitle | null;
 };
 
-async function ensureThumbnailNonBlocking(input: QuizOrchestratorInput): Promise<void> {
-  try {
-    await ensureEpisodeThumbnail(input.repository, {
-      channelId: input.channelId,
-      episodeId: input.episodeId,
-      activeEngine: input.activeEngine,
-      antigravityClient: input.antigravityClient,
-      codexClient: input.codexClient,
-      customHookText: input.customHookText,
-      layoutOverride: input.layoutOverride,
-      badgeOverride: input.badgeOverride,
-      imageConfig: input.config.image_generation
-        ? {
-            api_key: input.config.image_generation.api_key,
-            model: input.config.image_generation.model,
-            provider: input.config.image_generation.provider,
-            base_url: input.config.image_generation.base_url,
-          }
-        : undefined,
-      imageFallbackConfig: input.config.image_fallback,
-    });
-  } catch {
-    // Non-blocking
-  }
-}
-
 /** The description stage generates the title first, so both target the same search keyword. */
 async function generateMetadataWithFallback(
   input: QuizOrchestratorInput,
 ): Promise<{ description: VideoDescription | null; title: VideoTitle | null }> {
   try {
-    const metadata = await generateEpisodeDescription(input);
+    const metadata = await generateProductDescription(input);
     return { description: metadata.description, title: metadata.title };
   } catch {
     return {
@@ -138,12 +121,6 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     title: null,
   };
 
-  const product = resolvePipelineProductRef(input);
-  if (product.kind === "quiz_short") {
-    // Portrait covers and Quiz Short titles arrive in Phase 5; the pipeline stops after QA for now.
-    console.warn(`[orchestrator] Quiz Short "${product.product_id}": thumbnail, title and description are not implemented in this phase.`);
-    return artifacts;
-  }
-  await ensureThumbnailNonBlocking(input);
+  await ensureProductThumbnailNonBlocking(input);
   return { ...artifacts, ...(await generateMetadataWithFallback(input)) };
 }

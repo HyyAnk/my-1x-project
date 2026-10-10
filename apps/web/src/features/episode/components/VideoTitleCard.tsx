@@ -1,6 +1,7 @@
 import { Check, CircleNotch, Copy, FloppyDisk, Info, Sparkle, TextT } from "@phosphor-icons/react";
 import { VIDEO_TITLE_MAX_CHARS, type VideoTitle, type VideoTitleSource } from "@studio/shared";
 import type { Notice } from "../../../components/types";
+import type { VideoTitleClient } from "../../quizProduct/types/videoMetadataClient.types";
 import { useVideoTitle } from "../hooks/useVideoTitle";
 import { VideoTitleSeoChecks } from "./title/VideoTitleSeoChecks";
 
@@ -11,6 +12,7 @@ export interface VideoTitleCardProps {
   initialTitle?: VideoTitle | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onUpdated?: () => Promise<void> | void;
+  client?: VideoTitleClient;
 }
 
 const SOURCE_BADGES: Record<VideoTitleSource, string> = {
@@ -19,9 +21,9 @@ const SOURCE_BADGES: Record<VideoTitleSource, string> = {
   manual: "Edited",
 };
 
-export function VideoTitleCard({ channelId, episodeId, hasQuiz = true, initialTitle, onNotice, onUpdated }: VideoTitleCardProps) {
+export function VideoTitleCard({ channelId, episodeId, hasQuiz = true, initialTitle, onNotice, onUpdated, client }: VideoTitleCardProps) {
   const { title, draftTitle, setDraftTitle, generating, saving, copied, generate, save, copyToClipboard, metrics, canGenerate, canSave } =
-    useVideoTitle({ channelId, episodeId, hasQuiz, initialTitle, onNotice, onUpdated });
+    useVideoTitle({ channelId, episodeId, hasQuiz, initialTitle, onNotice, onUpdated, client });
 
   return (
     <section className="video-description-panel video-title-panel">

@@ -1,6 +1,7 @@
 import { Clock, PencilSimpleLine, SquaresFour, YoutubeLogo, Sparkle } from "@phosphor-icons/react";
 import type { Channel, Episode, VideoDescription } from "@studio/shared";
 import type { Notice } from "../../../components/types";
+import type { VideoDescriptionClient } from "../../quizProduct/types/videoMetadataClient.types";
 import { useVideoDescription } from "../hooks/useVideoDescription";
 import { DescriptionBlockEditor } from "./description/DescriptionBlockEditor";
 import { DescriptionCollapsedBar } from "./description/DescriptionCollapsedBar";
@@ -10,22 +11,24 @@ import { DescriptionYouTubePreview } from "./description/DescriptionYouTubePrevi
 
 export interface VideoDescriptionCardProps {
   channel: Channel;
-  episode: Episode;
+  /** Optional: Quiz Shorts render this card without an Episode record. */
+  episode?: Episode;
   episodeId: string;
   hasQuiz?: boolean;
   initialDescription?: VideoDescription | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onUpdated?: () => Promise<void> | void;
+  client?: VideoDescriptionClient;
 }
 
 export function VideoDescriptionCard({
   channel,
-  episode: _episode,
   episodeId,
   hasQuiz = true,
   initialDescription,
   onNotice,
   onUpdated,
+  client,
 }: VideoDescriptionCardProps) {
   const {
     description,
@@ -54,6 +57,7 @@ export function VideoDescriptionCard({
     initialDescription,
     onNotice,
     onUpdated,
+    client,
   });
 
   return (

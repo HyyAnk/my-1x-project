@@ -19,6 +19,8 @@ export interface RequestVideoTitleInput {
   client: LLMClient;
   prompt: string;
   review: TitleReviewContext;
+  /** Product-specific normalization applied after parsing, e.g. the Quiz Short " #Shorts" suffix. */
+  finalizeDraft?: (draft: TitleDraft) => TitleDraft;
   modelOverride?: string;
   signal?: AbortSignal;
   timeoutMs: number;
@@ -57,7 +59,8 @@ export async function requestVideoTitle(input: RequestVideoTitleInput): Promise<
         }),
       { attempts: 3, baseDelayMs: 1500 },
     );
-    const draft = parseTitleDraft(rawOutput);
+    const parsed = parseTitleDraft(rawOutput);
+    const draft = parsed && input.finalizeDraft ? input.finalizeDraft(parsed) : parsed;
     issues = draft ? reviewTitleDraft(draft, input.review) : [UNPARSEABLE_ISSUE];
     if (draft && issues.length === 0) return draft;
     if (draft && attempt === MAX_TITLE_ATTEMPTS && !hasBlockingIssue(issues)) return draft;

@@ -35,7 +35,8 @@ export function buildQuizAnswerKeys(quiz: QuizV2, localization?: ProductLocaliza
   const keys: QuizAnswerKey[] = [];
   for (const question of quiz.questions) {
     if (question.choices.length === BINARY_CHOICE_COUNT) continue;
-    const localized = localization?.status === "applied" ? localization.quiz_questions?.find((item) => item.question_id === question.id) : undefined;
+    const localized =
+      localization?.status === "applied" ? localization.quiz_questions?.find((item) => item.question_id === question.id) : undefined;
     const questionText = normalizeForMatch(`${question.question} ${localized?.question ?? ""}`);
     const textsFor = (choiceId: string) => [
       question.choices.find((choice) => choice.id === choiceId)?.text,
@@ -57,7 +58,10 @@ export function buildQuizAnswerKeys(quiz: QuizV2, localization?: ProductLocaliza
  */
 export function findSpoilerLeaks(text: string, answerKeys: QuizAnswerKey[]): SpoilerLeak[] {
   if (!text.trim() || answerKeys.length === 0) return [];
-  const sentences = text.split(SENTENCE_BOUNDARY).map((sentence) => sentence.trim()).filter(Boolean);
+  const sentences = text
+    .split(SENTENCE_BOUNDARY)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
   const leaks: SpoilerLeak[] = [];
   for (const sentence of sentences) {
     const normalized = normalizeForMatch(sentence);
@@ -70,10 +74,19 @@ export function findSpoilerLeaks(text: string, answerKeys: QuizAnswerKey[]): Spo
   return leaks;
 }
 
-/** Collects the viewer-facing copy fields of a raw LLM description payload. */
+/** Collects the viewer-facing copy fields of a raw LLM description payload (Episode and Quiz Short shapes). */
 export function collectPublicDescriptionCopy(rawJson: Record<string, unknown>): string {
   const scoring = rawJson.scoring_cta && typeof rawJson.scoring_cta === "object" ? (rawJson.scoring_cta as Record<string, unknown>) : {};
-  return [rawJson.hook_lines, rawJson.semantic_paragraph, scoring.beginner, scoring.intermediate, scoring.expert, scoring.cta_text]
+  return [
+    rawJson.hook_lines,
+    rawJson.semantic_paragraph,
+    rawJson.teaser,
+    rawJson.score_cta,
+    scoring.beginner,
+    scoring.intermediate,
+    scoring.expert,
+    scoring.cta_text,
+  ]
     .filter((value): value is string => typeof value === "string")
     .join("\n");
 }
