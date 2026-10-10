@@ -121,6 +121,49 @@ describe("Quiz Short cover planner", () => {
     expect(persona.archetypeId).toBe(pool[0].id);
   });
 
+  it("writes a fresh hook from the chosen question and lists earlier hooks to avoid", async () => {
+    const pool = MASCOT_ARCHETYPES_CATALOG.slice(0, 1);
+    const quiz = buildTextQuizShortQuiz();
+    const llm = mockLlm(
+      JSON.stringify({
+        variations: [
+          {
+            id: 1,
+            archetypeId: pool[0].id,
+            archetypeName: pool[0].name,
+            role: "Planet scout",
+            expression: "Curious grin",
+            poseDescription: "Peeking from behind a planet",
+            hookText: "GUESS THE GIANT PLANET",
+          },
+        ],
+      }),
+    );
+    const persona = await planQuizShortCoverWithAI({
+      quizShort: makeQuizShort(),
+      quiz,
+      archetypesOverride: pool,
+      llmClient: llm,
+      questionIndex: 2,
+      avoidHooks: ["WHICH PLANET IS LARGEST"],
+    });
+    expect(persona.hookText).toBe("GUESS THE GIANT PLANET");
+
+    const prompt = buildQuizShortCoverPlannerPrompt(
+      { quizShort: makeQuizShort(), quiz, questionIndex: 2, avoidHooks: ["WHICH PLANET IS LARGEST"] },
+      pool,
+    );
+    expect(prompt).toContain(quiz.questions[2].question);
+    expect(prompt).toContain('Previous Hook Banners (do not repeat): "WHICH PLANET IS LARGEST"');
+    expect(prompt).toContain('"hookText"');
+  });
+
+  it("clamps the hook question index to the quiz", () => {
+    const quiz = buildTextQuizShortQuiz();
+    expect(resolveQuizShortHookQuestion(quiz, makeQuizShort(), 99).question).toBe(quiz.questions[quiz.questions.length - 1].question);
+    expect(resolveQuizShortHookQuestion(quiz, makeQuizShort(), -1).question).toBe(quiz.questions[0].question);
+  });
+
   it("compiles a cover prompt with the hook banner, badge, safe zones and no answer", () => {
     const quiz = buildQuizShortQuiz([{ choices: ["Jupiter", "Mars", "Venus"], correctIndex: 1 }, {}, {}]);
     const persona = createFallbackQuizShortCoverPersona(MASCOT_ARCHETYPES_CATALOG[0], "Nova");

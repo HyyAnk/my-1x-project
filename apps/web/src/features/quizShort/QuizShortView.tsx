@@ -91,7 +91,11 @@ export function QuizShortView(props: QuizShortViewProps) {
         <div className="quiz-short-workspace-side">
           <QuizShortStageList stages={stageSummaries} />
           <QuizShortCustomizationBar channel={channel} quizShort={quizShort} settings={settings} disabled={isRunning} />
-          <QuizShortThumbnailPanel thumbnail={thumbnail} title={quizShort.topic.title} />
+          <QuizShortThumbnailPanel
+            thumbnail={thumbnail}
+            title={quizShort.topic.title}
+            questions={state.workspace?.quiz?.questions.map((question) => question.question) ?? []}
+          />
         </div>
       </div>
 

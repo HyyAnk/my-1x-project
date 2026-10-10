@@ -184,8 +184,14 @@ describe("QuizShortView", () => {
     expect(screen.getByAltText("Cover for Ocean Giants.")).toBeTruthy();
 
     expect(screen.getByTestId("quiz-short-cover-summary").textContent).toContain("5 QUESTIONS");
+    fireEvent.change(screen.getByTestId("quiz-short-cover-hook"), { target: { value: "Beat all five" } });
     fireEvent.click(screen.getByTestId("quiz-short-cover-generate"));
-    await waitFor(() => expect(quizShortApi.generateQuizShortThumbnail).toHaveBeenCalledWith(channel.channel_id, quizShort.quiz_short_id));
+    await waitFor(() =>
+      expect(quizShortApi.generateQuizShortThumbnail).toHaveBeenCalledWith(channel.channel_id, quizShort.quiz_short_id, {
+        question_index: 0,
+        hook_text: "Beat all five",
+      }),
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /Regenerate/i }));
     await waitFor(() =>

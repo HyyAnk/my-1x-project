@@ -28,6 +28,10 @@ export interface PlanQuizShortCoverInput {
   signal?: AbortSignal;
   archetypesOverride?: MascotArchetypeDefinition[];
   rng?: () => number;
+  /** Which quiz question the hook is written from; defaults to question one. */
+  questionIndex?: number;
+  /** Hooks of earlier covers that the new plan must not repeat. */
+  avoidHooks?: readonly string[];
 }
 
 function sanitizeUntrusted(text: string | undefined | null): string {
@@ -35,8 +39,17 @@ function sanitizeUntrusted(text: string | undefined | null): string {
   return JSON.stringify(text).slice(1, -1).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
 }
 
-export function resolveQuizShortHookQuestion(quiz: QuizV2, quizShort: Pick<QuizShort, "topic">): QuizShortHookQuestion {
-  const first = quiz.questions[0];
+export function resolveQuizShortHookQuestionIndex(quiz: Pick<QuizV2, "questions">, requested?: number): number {
+  if (requested === undefined || !Number.isInteger(requested) || requested < 0) return 0;
+  return Math.min(requested, Math.max(0, quiz.questions.length - 1));
+}
+
+export function resolveQuizShortHookQuestion(
+  quiz: QuizV2,
+  quizShort: Pick<QuizShort, "topic">,
+  questionIndex?: number,
+): QuizShortHookQuestion {
+  const first = quiz.questions[resolveQuizShortHookQuestionIndex(quiz, questionIndex)];
   if (!first) {
     return { question: quizShort.topic.hook, choices: [], correctChoiceText: "", hookText: sanitizeThumbnailHook(quizShort.topic.hook) };
   }
@@ -55,7 +68,8 @@ export function formatQuizShortQuestionBadge(questionCount: number): string {
 }
 
 export function buildQuizShortCoverPlannerPrompt(input: PlanQuizShortCoverInput, archetypes: readonly MascotArchetypeDefinition[]): string {
-  const hook = resolveQuizShortHookQuestion(input.quiz, input.quizShort);
+  const hook = resolveQuizShortHookQuestion(input.quiz, input.quizShort, input.questionIndex);
+  const avoidHooks = (input.avoidHooks ?? []).filter((text) => text.trim().length > 0);
   const archetypesSection = archetypes
     .map((a, i) => `Variation ${i + 1} (Archetype ID ${a.id}: "${a.name}"):\n- Core Emotional/Behavioral Direction: ${a.guideline}`)
     .join("\n\n");
@@ -68,7 +82,8 @@ export function buildQuizShortCoverPlannerPrompt(input: PlanQuizShortCoverInput,
     `Mascot Character: "${sanitizeUntrusted(input.mascotName || "Mascot")}"`,
     `Topic: "${sanitizeUntrusted(input.quizShort.topic.title)}"`,
     `Premise: "${sanitizeUntrusted(input.quizShort.topic.premise)}"`,
-    `Hook Question (question one): "${sanitizeUntrusted(hook.question)}"`,
+    `Hook Question: "${sanitizeUntrusted(hook.question)}"`,
+    `Previous Hook Banners (do not repeat): ${avoidHooks.map((text) => `"${sanitizeUntrusted(text)}"`).join(", ") || "none"}`,
     `Visible Choices: ${hook.choices.map((choice) => `"${sanitizeUntrusted(choice)}"`).join(", ") || "none"}`,
     `Question Count Badge: "${formatQuizShortQuestionBadge(input.quiz.questions.length)}"`,
     "</context>",
@@ -84,6 +99,8 @@ export function buildQuizShortCoverPlannerPrompt(input: PlanQuizShortCoverInput,
     "- Write everything in English.",
     "- DO NOT reveal, name or hint at the correct answer in any visual element.",
     "- DO NOT rely on generic pointing poses or static standing postures.",
+    "- For each variation write a DIFFERENT hook banner: 3 to 6 words, uppercase, a curiosity teaser about the hook question.",
+    "- Hook banners must not repeat any previous hook banner listed above and must never contain the answer.",
     "",
     "Respond with ONLY valid JSON matching this schema:",
     "{",
@@ -97,7 +114,8 @@ export function buildQuizShortCoverPlannerPrompt(input: PlanQuizShortCoverInput,
     '      "prop": "<Contextual prop or thematic item>",',
     '      "expression": "<Expressive, friendly facial expression fitting the archetype>",',
     '      "poseDescription": "<Dynamic action and full-body posture embodying the archetype>",',
-    '      "dramaticHook": "<Brief visual climax description>"',
+    '      "dramaticHook": "<Brief visual climax description>",',
+    '      "hookText": "<3 to 6 word uppercase curiosity banner>"',
     "    }",
     "  ]",
     "}",

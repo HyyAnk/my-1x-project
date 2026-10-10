@@ -78,6 +78,46 @@ describe("Quiz Short cover service", () => {
     expect(client.generate).toHaveBeenCalledTimes(3);
   });
 
+  it("writes a new plan on every regeneration: custom hook, chosen question and hook history", async () => {
+    const f = await fixture();
+    const client = fakeCoverClient(await portraitPng("blue"));
+    const first = await generateQuizShortCover({ ...f, portraitImageClient: client });
+    expect(first.manifest.hook_source).toBe("question");
+    expect(first.manifest.previous_hooks).toEqual([]);
+
+    const custom = await generateQuizShortCover({
+      ...f,
+      portraitImageClient: client,
+      force: true,
+      hookText: "can you beat all five",
+      questionIndex: 1,
+    });
+    expect(custom.manifest.hook_source).toBe("custom");
+    expect(custom.manifest.hook_text).toBe("CAN YOU BEAT ALL FIVE");
+    expect(custom.manifest.hook_question_index).toBe(1);
+    expect(custom.manifest.previous_hooks).toEqual([first.manifest.hook_text]);
+    const request = client.generate.mock.calls[1][0] as { prompt: string };
+    expect(request.prompt).toContain('Hook Banner: "CAN YOU BEAT ALL FIVE"');
+    expect(request.prompt).toContain(f.quiz.questions[1].question);
+
+    const planned = await generateQuizShortCover({
+      ...f,
+      portraitImageClient: client,
+      force: true,
+      llmClient: {
+        connect: vi.fn(async () => undefined),
+        generateContent: vi.fn(async () => ({
+          text: JSON.stringify({
+            variations: [{ id: 1, role: "Scout", expression: "Grin", poseDescription: "Leaning in", hookText: "ONLY ONE IS RIGHT" }],
+          }),
+        })),
+      },
+    });
+    expect(planned.manifest.hook_source).toBe("llm");
+    expect(planned.manifest.hook_text).toBe("ONLY ONE IS RIGHT");
+    expect(planned.manifest.previous_hooks).toEqual([first.manifest.hook_text, "CAN YOU BEAT ALL FIVE"]);
+  });
+
   it("rejects landscape provider output and leaves the record untouched", async () => {
     const f = await fixture();
     const client = fakeCoverClient(await portraitPng("red", 1280, 720));

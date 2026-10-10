@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { QuizShort, QuizShortCoverManifest, Task } from "@studio/shared";
+import type { QuizShort, QuizShortCoverGenerateInput, QuizShortCoverManifest, Task } from "@studio/shared";
 import { quizShortApi } from "../../../api/quizShortApi";
 import type { Notice } from "../../../components/types";
 import { isTaskActive, latestTask } from "../../../lib/utils";
@@ -18,6 +18,8 @@ export function useQuizShortThumbnail({ channelId, quizShortId, quizShort, tasks
   const [manifest, setManifest] = useState<QuizShortCoverManifest | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
+  const [hookText, setHookText] = useState("");
+  const [questionIndex, setQuestionIndex] = useState(0);
 
   const thumbnailTask = useMemo(() => latestTask(tasks, ["GENERATE_THUMBNAIL"]), [tasks]);
   const generating = requesting || Boolean(thumbnailTask && isTaskActive(thumbnailTask));
@@ -41,7 +43,9 @@ export function useQuizShortThumbnail({ channelId, quizShortId, quizShort, tasks
     if (generating) return;
     setRequesting(true);
     try {
-      const response = await quizShortApi.generateQuizShortThumbnail(channelId, quizShortId);
+      const body: QuizShortCoverGenerateInput = { question_index: questionIndex };
+      if (hookText.trim()) body.hook_text = hookText.trim();
+      const response = await quizShortApi.generateQuizShortThumbnail(channelId, quizShortId, body);
       setManifest(response.manifest);
       onNotice({ tone: "good", message: "Quiz Short cover generated" });
       await load();
@@ -57,5 +61,17 @@ export function useQuizShortThumbnail({ channelId, quizShortId, quizShort, tasks
     ? quizShortApi.quizShortThumbnailFileUrl(channelId, quizShortId, manifest?.generated_at ?? quizShort?.updated_at)
     : null;
 
-  return { manifest, loading, generating, hasThumbnail, imageUrl, generate, thumbnailTask };
+  return {
+    manifest,
+    loading,
+    generating,
+    hasThumbnail,
+    imageUrl,
+    generate,
+    thumbnailTask,
+    hookText,
+    setHookText,
+    questionIndex,
+    setQuestionIndex,
+  };
 }

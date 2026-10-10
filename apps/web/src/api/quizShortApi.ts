@@ -2,6 +2,7 @@ import type {
   DirectorPlan,
   QuizAssessment,
   QuizShort,
+  QuizShortCoverGenerateInput,
   QuizShortCoverManifest,
   QuizShortSettingsInput,
   QuizStageTimings,
@@ -78,10 +79,10 @@ export const quizShortApi = {
     }),
   getQuizShortThumbnail: (channelId: string, quizShortId: string) =>
     request<{ manifest: QuizShortCoverManifest | null }>(`${base(channelId, quizShortId)}/thumbnail`),
-  generateQuizShortThumbnail: (channelId: string, quizShortId: string) =>
+  generateQuizShortThumbnail: (channelId: string, quizShortId: string, body: QuizShortCoverGenerateInput = {}) =>
     request<{ ok: true; manifest: QuizShortCoverManifest }>(`${base(channelId, quizShortId)}/thumbnail/generate`, {
       method: "POST",
-      body: JSON.stringify({}),
+      body: JSON.stringify(body),
     }),
   quizShortThumbnailFileUrl: (channelId: string, quizShortId: string, version?: string | null) =>
     `${base(channelId, quizShortId)}/thumbnail/file${version ? `?t=${encodeURIComponent(version)}` : ""}`,

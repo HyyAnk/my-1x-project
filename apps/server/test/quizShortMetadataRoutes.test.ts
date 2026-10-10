@@ -107,6 +107,27 @@ describe("Quiz Short metadata routes", () => {
     }
   });
 
+  it("regenerates the cover from a chosen question with a custom hook", { timeout: 20_000 }, async () => {
+    scriptLlmResponses();
+    const { app, baseUrl } = await createTestApp();
+    try {
+      const generated = await app.server.inject({
+        method: "POST",
+        url: `${baseUrl}/thumbnail/generate`,
+        payload: { hook_text: "which one saves the day", question_index: 1 },
+      });
+      expect(generated.statusCode).toBe(200);
+      const manifest = generated.json<{ manifest: QuizShortCoverManifest }>().manifest;
+      expect(manifest.hook_text).toBe("WHICH ONE SAVES THE DAY");
+      expect(manifest.hook_source).toBe("custom");
+      expect(manifest.hook_question_index).toBe(1);
+      const rejected = await app.server.inject({ method: "POST", url: `${baseUrl}/thumbnail/generate`, payload: { question_index: -1 } });
+      expect(rejected.statusCode).toBe(400);
+    } finally {
+      await app.close();
+    }
+  });
+
   it("generates the short title and description and reads them back", { timeout: 20_000 }, async () => {
     scriptLlmResponses();
     const { app, fixture, baseUrl } = await createTestApp();

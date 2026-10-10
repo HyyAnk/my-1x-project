@@ -1,5 +1,12 @@
 import path from "node:path";
-import { nowIso, type Channel, type QuizShort, type QuizV2 } from "@studio/shared";
+import {
+  QUIZ_SHORT_COVER_HOOK_HISTORY_LIMIT,
+  nowIso,
+  type Channel,
+  type QuizShort,
+  type QuizShortCoverHookSource,
+  type QuizV2,
+} from "@studio/shared";
 import type { StudioLogger } from "../../logger.js";
 import type { PortraitImageClient } from "../../providers/imageGeneration/imageGeneration.types.js";
 import { normalizeReelPortrait } from "../../providers/imageGeneration/portraitNormalizer.js";
@@ -14,7 +21,14 @@ import {
   writeQuizShortCoverManifest,
   type QuizShortCoverManifest,
 } from "./quizShortCoverManifest.js";
-import { formatQuizShortQuestionBadge, planQuizShortCoverWithAI, resolveQuizShortHookQuestion } from "./quizShortCoverPlanner.js";
+import {
+  formatQuizShortQuestionBadge,
+  planQuizShortCoverWithAI,
+  resolveQuizShortHookQuestion,
+  resolveQuizShortHookQuestionIndex,
+  type QuizShortCoverPersona,
+} from "./quizShortCoverPlanner.js";
+import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { QUIZ_SHORT_COVER_PROMPT_VERSION, buildQuizShortCoverPrompt } from "./quizShortCoverPrompt.js";
 import { resolveQuizShortCoverReference } from "./quizShortCoverReference.js";
 
@@ -29,6 +43,10 @@ export interface GenerateQuizShortCoverInput {
   signal?: AbortSignal;
   /** Regenerate even when an up-to-date cover already exists. */
   force?: boolean;
+  /** Banner text written by the user; sanitized with the hook guardrail. */
+  hookText?: string;
+  /** Quiz question the hook is written from; defaults to question one. */
+  questionIndex?: number;
 }
 
 export interface GenerateQuizShortCoverResult {
@@ -77,6 +95,26 @@ async function requestCoverBytes(
   }
 }
 
+type ResolvedCoverHook = { text: string; source: QuizShortCoverHookSource; questionIndex: number };
+
+/** Custom text wins, then the planner's fresh banner, then the banner derived from the question itself. */
+function resolveCoverHook(input: GenerateQuizShortCoverInput, persona: QuizShortCoverPersona): ResolvedCoverHook {
+  const questionIndex = resolveQuizShortHookQuestionIndex(input.quiz, input.questionIndex);
+  const derived = resolveQuizShortHookQuestion(input.quiz, input.quizShort, questionIndex).hookText;
+  if (input.hookText?.trim()) {
+    return { text: sanitizeThumbnailHook(input.hookText, derived), source: "custom", questionIndex };
+  }
+  if (persona.hookText) {
+    return { text: sanitizeThumbnailHook(persona.hookText, derived), source: "llm", questionIndex };
+  }
+  return { text: derived, source: "question", questionIndex };
+}
+
+function hookHistory(existing: QuizShortCoverManifest | null): string[] {
+  if (!existing) return [];
+  return [...(existing.previous_hooks ?? []), existing.hook_text].slice(-QUIZ_SHORT_COVER_HOOK_HISTORY_LIMIT);
+}
+
 /**
  * Generates the single 9:16 cover of a Quiz Short from its hook question, normalizes it to exactly
  * 1080x1920 PNG, stores it under the product assets and records the path on the record. A manifest
@@ -101,19 +139,25 @@ export async function generateQuizShortCover(input: GenerateQuizShortCoverInput)
   }
 
   const mascot = await loadChannelMascot(repository, channel.channel_id, quizShort.quiz_short_id, channel.mascot_id, input.logger);
+  const previousHooks = hookHistory(existing);
   const persona = await planQuizShortCoverWithAI({
     quizShort,
     quiz,
     mascotName: mascot?.name,
     llmClient: input.llmClient,
     signal: input.signal,
+    questionIndex: input.questionIndex,
+    avoidHooks: previousHooks,
   });
+  const hook = resolveCoverHook(input, persona);
   const prompt = buildQuizShortCoverPrompt({
     quizShort,
     quiz,
     mascotName: mascot?.name,
     hasMascotReference: reference.hasMascotReference,
     persona,
+    hookText: hook.text,
+    questionIndex: hook.questionIndex,
   });
   input.signal?.throwIfAborted();
 
@@ -128,7 +172,10 @@ export async function generateQuizShortCover(input: GenerateQuizShortCoverInput)
     prompt_version: QUIZ_SHORT_COVER_PROMPT_VERSION,
     fingerprint,
     asset_path: assetPath,
-    hook_text: resolveQuizShortHookQuestion(quiz, quizShort).hookText,
+    hook_text: hook.text,
+    hook_question_index: hook.questionIndex,
+    hook_source: hook.source,
+    previous_hooks: previousHooks,
     badge_text: formatQuizShortQuestionBadge(quiz.questions.length),
     archetype_name: persona.archetypeName,
     width: 1080,
@@ -150,6 +197,8 @@ export interface GenerateQuizShortCoverForProductInput {
   logger?: StudioLogger;
   signal?: AbortSignal;
   force?: boolean;
+  hookText?: string;
+  questionIndex?: number;
 }
 
 /** Loads the channel, record and quiz for a Quiz Short id, then generates (or reuses) its cover. */

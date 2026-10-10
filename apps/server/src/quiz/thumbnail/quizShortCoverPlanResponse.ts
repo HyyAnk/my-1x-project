@@ -9,6 +9,8 @@ export interface QuizShortCoverPersona {
   expression: string;
   poseDescription: string;
   dramaticHook?: string;
+  /** A fresh uppercase hook banner proposed by the planner; sanitized before use. */
+  hookText?: string;
 }
 
 interface RawCoverVariation {
@@ -21,6 +23,7 @@ interface RawCoverVariation {
   expression?: string;
   poseDescription?: string;
   dramaticHook?: string;
+  hookText?: string;
 }
 
 interface RawCoverPlanResponse {
@@ -56,6 +59,7 @@ function toPersona(
     expression: optionalText(raw.expression) ?? fallback.expression,
     poseDescription: optionalText(raw.poseDescription) ?? fallback.poseDescription,
     dramaticHook: optionalText(raw.dramaticHook),
+    hookText: optionalText(raw.hookText),
   };
 }
 

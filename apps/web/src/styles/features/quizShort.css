@@ -268,3 +268,27 @@
     margin: 0 auto;
   }
 }
+
+.quiz-short-cover-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--text-muted, inherit);
+}
+
+.quiz-short-cover-field select,
+.quiz-short-cover-field input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  background: var(--surface-strong, #111);
+  color: inherit;
+  font: inherit;
+}
+
+.quiz-short-cover-source {
+  font-weight: 400;
+  color: var(--text-muted, inherit);
+}

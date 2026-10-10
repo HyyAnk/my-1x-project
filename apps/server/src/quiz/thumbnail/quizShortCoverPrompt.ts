@@ -10,6 +10,9 @@ export interface BuildQuizShortCoverPromptInput {
   /** True when the reference image is the channel mascot; false when it is only a blank canvas plate. */
   hasMascotReference: boolean;
   persona: QuizShortCoverPersona;
+  /** Sanitized banner text; defaults to the hook question's derived banner. */
+  hookText?: string;
+  questionIndex?: number;
 }
 
 function sanitizeUntrusted(text: string | undefined | null): string {
@@ -43,7 +46,8 @@ function referenceLines(input: BuildQuizShortCoverPromptInput): string[] {
  * question-count badge, kid-safe English copy and no answer spoiler.
  */
 export function buildQuizShortCoverPrompt(input: BuildQuizShortCoverPromptInput): string {
-  const hook = resolveQuizShortHookQuestion(input.quiz, input.quizShort);
+  const hook = resolveQuizShortHookQuestion(input.quiz, input.quizShort, input.questionIndex);
+  const hookText = input.hookText ?? hook.hookText;
   const badge = formatQuizShortQuestionBadge(input.quiz.questions.length);
   const mascot = sanitizeUntrusted(input.mascotName || "Mascot");
   return [
@@ -64,7 +68,7 @@ export function buildQuizShortCoverPrompt(input: BuildQuizShortCoverPromptInput)
     "- Keep the right 14% free of text so action buttons never cover it.",
     "",
     "TEXT ELEMENTS (native typography, English only):",
-    `- Hook Banner: "${sanitizeUntrusted(hook.hookText)}" in bold sans-serif capitals on a paint-brush banner.`,
+    `- Hook Banner: "${sanitizeUntrusted(hookText)}" in bold sans-serif capitals on a paint-brush banner.`,
     `- Question Count Badge: a round or pill badge reading "${sanitizeUntrusted(badge)}" near the top-left of the safe zone.`,
     "- No other words, numbers or letters anywhere on the cover.",
     "",

@@ -1,6 +1,7 @@
 import type { FastifyPluginCallback } from "fastify";
 import { readFile, stat } from "node:fs/promises";
 import {
+  QuizShortCoverGenerateInputSchema,
   GenerateVideoDescriptionInputSchema,
   GenerateVideoTitleInputSchema,
   quizShortProductRef,
@@ -62,7 +63,10 @@ export function registerQuizShortMetadataRoutes(deps: QuizShortMetadataRouteDeps
 
     server.post("/api/channels/:channelId/quiz-shorts/:quizShortId/thumbnail/generate", async (request, reply) => {
       const params = request.params as QuizShortParams;
+      const input = QuizShortCoverGenerateInputSchema.parse(parseBody(request.body));
       const result = await generateQuizShortCoverForProduct({
+        hookText: input.hook_text,
+        questionIndex: input.question_index,
         repository,
         channelId: params.channelId,
         quizShortId: params.quizShortId,
