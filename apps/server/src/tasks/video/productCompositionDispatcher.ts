@@ -2,6 +2,7 @@ import type { Channel, Scene } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { prepareVideoComposition, type VideoCompositionContext } from "./videoCompositionPreparer.js";
+import { prepareQuizShortComposition } from "./quizShortCompositionPreparer.js";
 import type { VideoRenderProduct } from "./videoRenderProduct.js";
 
 export type ProductCompositionOptions = {
@@ -16,14 +17,16 @@ export type ProductCompositionOptions = {
 };
 
 /**
- * Routes composition preparation by product kind. Episodes use the landscape preparer as before.
- * The portrait Quiz Short composition (layout slots, mascot rules, CTA clip) is Phase 4 work, so
- * a Quiz Short render stops here with an explicit error instead of pretending to compose.
+ * Routes composition preparation by product kind. Episodes use the landscape preparer with its
+ * intro/outro bookends; Quiz Shorts use the portrait preparer (kickoff, questions, score CTA).
  */
 export async function prepareProductVideoComposition(options: ProductCompositionOptions): Promise<VideoCompositionContext> {
   const { product, ...rest } = options;
   if (product.view.episode) {
     return prepareVideoComposition({ ...rest, episode: product.view.episode, renderAspectRatio: product.renderAspectRatio });
   }
-  throw new RepositoryError("Quiz Short portrait composition is not implemented in this phase", "QUIZ_SHORT_RENDER_NOT_IMPLEMENTED");
+  if (product.view.quizShort) {
+    return prepareQuizShortComposition({ ...rest, product, quizShort: product.view.quizShort });
+  }
+  throw new RepositoryError(`Unsupported product kind "${product.view.kind}" for video composition`, "UNSUPPORTED_PRODUCT_KIND");
 }

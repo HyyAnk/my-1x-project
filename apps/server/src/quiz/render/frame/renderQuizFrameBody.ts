@@ -1,19 +1,26 @@
-import { QUIZ_LANDSCAPE_LAYOUT_IDS, type MascotRenderAspectRatio, type QuizPreviewLayoutId } from "@studio/shared";
+import { isQuizLandscapeLayoutId, isQuizPortraitLayoutId, type MascotRenderAspectRatio, type QuizPreviewLayoutId } from "@studio/shared";
 import type { QuizLayoutSlots } from "../layouts/types.js";
 
 /**
- * Determines if the given layout and aspect ratio use the unified landscape quiz frame.
- * Only the eight active landscape 16:9 layouts are unified; baseline and 9:16 portrait are not.
+ * Determines if the given layout and aspect ratio use a unified quiz frame with fixed anchors:
+ * the seven landscape layouts on 16:9 and the four portrait Quiz Short layouts on 9:16.
+ * Baseline and mismatched layout/canvas pairs fall back to the legacy flowing stage.
  */
 export function isUnifiedQuizFrame(layoutId: QuizPreviewLayoutId, aspectRatio: MascotRenderAspectRatio): boolean {
-  return aspectRatio === "16:9" && (QUIZ_LANDSCAPE_LAYOUT_IDS as readonly string[]).includes(layoutId);
+  if (aspectRatio === "16:9") return isQuizLandscapeLayoutId(layoutId);
+  return isPortraitQuizFrame(layoutId, aspectRatio);
+}
+
+/** True only for a portrait Quiz Short layout rendered on the 9:16 canvas. */
+export function isPortraitQuizFrame(layoutId: QuizPreviewLayoutId, aspectRatio: MascotRenderAspectRatio): boolean {
+  return aspectRatio === "9:16" && isQuizPortraitLayoutId(layoutId);
 }
 
 /**
- * Renders the shared outer landscape quiz frame containing:
+ * Renders the shared outer quiz frame containing:
  * - fixed question card anchor
  * - layout-owned content arena
- * - fixed phase region (thinking bar / fact card dock)
+ * - fixed phase region (thinking bar or ring timer / fact card dock)
  */
 export function renderQuizFrameBody(slots: QuizLayoutSlots, contentHtml: string): string {
   return (

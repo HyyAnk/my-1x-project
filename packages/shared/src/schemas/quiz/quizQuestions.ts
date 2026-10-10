@@ -50,6 +50,8 @@ export const QuizQuestionSchema = z
     source_ids: z.string().min(1).array().default([]),
     visual_opportunity: z.string().trim().max(1000).default(""),
     validation: QuizQuestionValidationSchema.default({}),
+    /** Choice ids dropped by a product adapter (for example the Quiz Short portrait versus layout), kept for QA. */
+    adapted_from_choice_ids: z.string().min(1).array().optional(),
   })
   .superRefine((question, ctx) => {
     const choiceIds = new Set<string>();

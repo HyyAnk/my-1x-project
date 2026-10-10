@@ -5,6 +5,7 @@ import {
   getQuizImageSlotGeometry,
   getQuizPreviewLayoutCapability,
   recommendImageSizing,
+  isQuizPortraitLayoutId,
   isResolvedQuizLayoutId,
   type ResolvedQuizLayoutId,
   QUIZ_DEFAULT_ASSET_METRICS,
@@ -63,7 +64,7 @@ export function getOptimalAssetDimensions(
       purpose: purposeKind,
       presentation: "visual",
       choiceCount: 3,
-      canvasAspectRatio: "16:9",
+      canvasAspectRatio: isQuizPortraitLayoutId(layoutId) ? "9:16" : "16:9",
     });
     if (geom) {
       const rec = recommendImageSizing(geom);
@@ -130,7 +131,13 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
 
   const effectiveTargetFormat =
     resolvedFormat === "original"
-      ? (sourceExt === ".png" ? "png" : sourceExt === ".webp" ? "webp" : sourceExt === ".avif" ? "avif" : "jpeg")
+      ? sourceExt === ".png"
+        ? "png"
+        : sourceExt === ".webp"
+          ? "webp"
+          : sourceExt === ".avif"
+            ? "avif"
+            : "jpeg"
       : resolvedFormat;
 
   const isFormatConversion =

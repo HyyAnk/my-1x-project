@@ -4,6 +4,9 @@ import type { LLMClient } from "../../../utils/promptSanitizer.js";
 
 export type { ShortReelDisplayProjection };
 
+export const LOCALIZED_PRODUCT_CONTENT_KINDS = ["episode", "short_reel", "quiz_short"] as const;
+export type LocalizedProductContentKind = (typeof LOCALIZED_PRODUCT_CONTENT_KINDS)[number];
+
 export const SUPPORTED_BASE_LANGUAGES = ["en", "es", "fr", "de", "it", "pt", "ja", "ko", "zh"] as const;
 export type SupportedBaseLanguage = (typeof SUPPORTED_BASE_LANGUAGES)[number];
 
@@ -27,7 +30,7 @@ export const ProductLocalizationArtifactSchema = z
   .object({
     schema_version: z.literal(1),
     product_id: z.string().trim().min(1),
-    content_kind: z.enum(["episode", "short_reel"]),
+    content_kind: z.enum(LOCALIZED_PRODUCT_CONTENT_KINDS),
     target_language: z.enum(SUPPORTED_BASE_LANGUAGES),
     source_question_ids: z.array(z.string().trim().min(1)),
     source_content_hashes: z.array(z.string().regex(/^[a-f0-9]{64}$/)),
@@ -50,7 +53,7 @@ export type TranslateFunction = (params: {
 export interface LocalizeProductContentInput {
   targetLanguage?: string;
   productId: string;
-  contentKind: "episode" | "short_reel";
+  contentKind: LocalizedProductContentKind;
   sourceQuestionIds: string[];
   sourceContentHashes: string[];
   quizQuestions: QuizQuestion[];

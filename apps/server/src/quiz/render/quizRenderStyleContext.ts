@@ -4,11 +4,26 @@ export type QuizRenderStyleContext = Omit<QuizStyleResolutionContext, "beat"> & 
   transitions?: TransitionSettings;
 };
 
+/** The style slice Episodes and Quiz Shorts both carry in their quiz config. */
+export type QuizRenderStyleConfig = Pick<
+  QuizConfig,
+  | "visual_theme"
+  | "palette_id"
+  | "thinking_bar_style"
+  | "question_box_style"
+  | "answer_card_style"
+  | "question_counter_style"
+  | "background_style"
+  | "channel_brand_name"
+  | "style_catalog_revision"
+  | "style_preset_revision"
+>;
+
 /**
- * Adapts persisted Channel and Episode settings to the shared style policy
+ * Adapts persisted Channel and product settings to the shared style policy
  * without collapsing their precedence layers.
  */
-export function buildQuizRenderStyleContext(channel: Channel, episode: QuizConfig): QuizRenderStyleContext {
+export function buildQuizRenderStyleContext(channel: Channel, episode: QuizRenderStyleConfig): QuizRenderStyleContext {
   return {
     theme: episode.visual_theme,
     transitions:

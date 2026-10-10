@@ -25,6 +25,10 @@ import { getMascotPreloadUrls } from "../src/quiz/render/mascotStateResolver.js"
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
+import { createQuizShortDirectorPlan } from "../src/quiz/director/quizShortDirectorPlan.js";
+import { buildQuizShortVoicePlan } from "../src/quiz/audio/quizShortVoicePlan.js";
+import { buildQuizShortConfig } from "./fixtures/quizShortFixtures.js";
+import { stillImageMascot } from "./candyArcadeTestUtils.js";
 import { migrateMascotStorage, rollbackMascotStorage } from "../src/repository/mascotMigration.js";
 
 const roots: string[] = [];
@@ -426,7 +430,7 @@ describe("Mascot portrait canvas and storage migration", () => {
     ).toThrow();
   });
 
-  it("rejects the retired portrait production composition path", () => {
+  it("builds the portrait Quiz Short production composition with the reveal-only mascot", () => {
     const quiz = QuizV2Schema.parse({
       schema_version: 2,
       episode_id: "batch-e-quiz",
@@ -453,22 +457,51 @@ describe("Mascot portrait canvas and storage migration", () => {
         },
       ],
     });
-    const director = createDefaultDirectorPlan(quiz, "9:16");
-    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    expect(() =>
-      buildCandyArcadeCompositionBundle({
-        quiz,
-        director,
-        timeline,
-        styleContext: { theme: "candy_arcade" },
-        audioPath: "./narration.wav",
-        narrationDurationSeconds: timeline.duration_seconds,
-        aspectRatio: "9:16",
-      }),
-    ).toThrow(/no production renderer/);
+    const director = createQuizShortDirectorPlan(quiz, buildQuizShortConfig());
+    const timeline = compileQuizTimeline({
+      quiz,
+      director,
+      voicePlan: buildQuizShortVoicePlan(quiz, { director }),
+      productKind: "quiz_short",
+    });
+    const bundle = buildCandyArcadeCompositionBundle({
+      productKind: "quiz_short",
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      aspectRatio: "9:16",
+      mascot: batchMascot,
+    });
+    expect(bundle.html).toContain('data-width="1080" data-height="1920" data-aspect-ratio="9:16"');
+    const questionClip = Object.entries(bundle.files).find(([file]) => file.includes("quiz-q1-"))?.[1] ?? "";
+    expect(questionClip).toContain("quiz-frame-portrait");
+    expect(questionClip).toContain("layout-short_");
+    // A thinking-only mascot has nothing to show at reveal, so the reveal-only policy keeps it off the question clip entirely.
+    expect(questionClip).not.toContain("candy-mascot-container");
+    const revealBundle = buildCandyArcadeCompositionBundle({
+      productKind: "quiz_short",
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      aspectRatio: "9:16",
+      mascot: stillImageMascot,
+    });
+    const revealClip = Object.entries(revealBundle.files).find(([file]) => file.includes("quiz-q1-"))?.[1] ?? "";
+    const phases = [...revealClip.matchAll(/data-mascot-phase="([^"]+)"/g)].map((match) => match[1]);
+    expect(phases.length).toBeGreaterThan(0);
+    expect(phases.every((phase) => phase === "reveal" || phase === "explain")).toBe(true);
+    expect(revealClip).toContain('data-mascot-aspect-ratio="9:16"');
+    expect(Object.keys(bundle.files).some((file) => file.includes("candy-score-cta"))).toBe(true);
+    expect(Object.keys(bundle.files).some((file) => file.includes("candy-intro") || file.includes("candy-outro"))).toBe(false);
   });
 
-  it("rejects retired portrait mascot composition CSS", () => {
+  it("emits portrait safe-zone mascot CSS for the Quiz Short composition", () => {
     const quiz = QuizV2Schema.parse({
       schema_version: 2,
       episode_id: "batch-e-safe-zone-quiz",
@@ -495,19 +528,34 @@ describe("Mascot portrait canvas and storage migration", () => {
         },
       ],
     });
-    const director = createDefaultDirectorPlan(quiz, "9:16");
-    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    expect(() =>
-      buildCandyArcadeCompositionBundle({
-        quiz,
-        director,
-        timeline,
-        styleContext: { theme: "candy_arcade" },
-        audioPath: "./narration.wav",
-        narrationDurationSeconds: timeline.duration_seconds,
-        aspectRatio: "9:16",
-      }),
-    ).toThrow(/no production renderer/);
+    const director = createQuizShortDirectorPlan(quiz, buildQuizShortConfig());
+    const timeline = compileQuizTimeline({
+      quiz,
+      director,
+      voicePlan: buildQuizShortVoicePlan(quiz, { director }),
+      productKind: "quiz_short",
+    });
+    const bundle = buildCandyArcadeCompositionBundle({
+      productKind: "quiz_short",
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      aspectRatio: "9:16",
+      mascot: batchMascot,
+    });
+    const css = bundle.html.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? "";
+    expect(css).toContain(
+      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene { padding: 0; --safe-zone-top: 192px; --safe-zone-bottom: 422px;',
+    );
+    expect(css).toContain("--safe-zone-right: 151px");
+    expect(css).toContain(
+      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait .candy-mascot-container.mascot-v2-container { bottom: 440px; }',
+    );
+    expect(css).toContain(".candy-mascot-container.mascot-v2-container.anchor-bottom_right { right: 80px; }");
+    expect(css).not.toContain(".quiz-frame-unified.candy-scene {");
   });
 
   it("migrates V1 mascot manifests idempotently with a backup and restores the exact original on rollback", async () => {

@@ -11,7 +11,7 @@ import {
   reconcileQuizAssetSizing,
   type SizingChange,
 } from "./reconcileQuizAssetSizing.js";
-import { planQuizAssets } from "./assetPlanner.js";
+import { planQuizAssets, type PlanQuizAssetsOptions } from "./assetPlanner.js";
 
 export type EnsureQuizAssetSizingIntent = "inspect" | "generate" | "render";
 
@@ -28,6 +28,8 @@ export interface EnsureQuizAssetSizingInput {
   channelId: string;
   episodeId: string;
   artifacts?: EnsureQuizAssetSizingArtifacts;
+  /** Product canvas and bridge rules; Quiz Shorts pass the portrait canvas here. */
+  planOptions?: PlanQuizAssetsOptions;
   intent: EnsureQuizAssetSizingIntent;
   confirmed?: boolean;
   sourceIdentityToken?: string;
@@ -92,7 +94,7 @@ export async function ensureQuizAssetSizing(
     if (intent === "render") {
       throw new RepositoryError("Asset plan is required before video rendering", "QUIZ_V2_REQUIRED");
     }
-    const planned = planQuizAssets(quiz, director);
+    const planned = planQuizAssets(quiz, director, undefined, input.planOptions);
     if (intent === "generate") {
       await repository.writeAssetPlan(channelId, episodeId, planned);
       return {
@@ -116,7 +118,7 @@ export async function ensureQuizAssetSizing(
 
   const resolution = await repository.readQuizAssetResolution(channelId, episodeId).catch(() => null);
 
-  const { plan: reconciledPlan, changes } = reconcileQuizAssetSizing(quiz, director, assetPlan, resolution);
+  const { plan: reconciledPlan, changes } = reconcileQuizAssetSizing(quiz, director, assetPlan, resolution, input.planOptions);
 
   const generationAffectingChanges = changes.filter((c) => c.kind === "generation_affecting");
   const affectedAssetIds = Array.from(new Set(changes.map((c) => c.assetId)));

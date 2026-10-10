@@ -112,14 +112,18 @@ describe("Quiz Short repository", () => {
     await repository.saveVideoMetadata(channelId, ref, "channels/x/quiz_shorts/ocean-giants/assets/quiz-video.mp4", 48, "manifest.json");
     expect((await repository.getQuizShort(channelId, saved.quiz_short_id)).render_stale).toBe(false);
 
-    const updated = await repository.updateQuizShortSettings(channelId, saved.quiz_short_id, {
-      palette_id: "sunny",
-      layout_pair: { primary: "short_stack_list", secondary: "short_verdict_yes_no" },
-    });
+    const updated = await repository.updateQuizShortSettings(channelId, saved.quiz_short_id, { palette_id: "sunny" });
     expect(updated.quiz_config.palette_id).toBe("sunny");
-    expect(updated.quiz_config.layout_pair).toEqual({ primary: "short_stack_list", secondary: "short_verdict_yes_no" });
     expect(updated.render_stale).toBe(true);
     expect(updated.video_asset_path).toBe("channels/x/quiz_shorts/ocean-giants/assets/quiz-video.mp4");
+
+    // The layout pair drives the Director plan, so changing it rebuilds every downstream artifact including the render.
+    const relaidOut = await repository.updateQuizShortSettings(channelId, saved.quiz_short_id, {
+      layout_pair: { primary: "short_stack_list", secondary: "short_verdict_yes_no" },
+    });
+    expect(relaidOut.quiz_config.layout_pair).toEqual({ primary: "short_stack_list", secondary: "short_verdict_yes_no" });
+    expect(relaidOut.video_asset_path).toBeNull();
+    expect(relaidOut.render_stale).toBe(false);
 
     await expect(repository.updateQuizShortSettings(channelId, saved.quiz_short_id, { question_count: 12 })).rejects.toThrow();
   });

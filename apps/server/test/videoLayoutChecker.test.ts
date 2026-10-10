@@ -24,6 +24,7 @@ vi.mock("../src/quiz/qa/contrastHealer.js", () => ({
 }));
 
 import { getOptimalSampleCount, verifyAndCheckLayout } from "../src/tasks/video/videoLayoutChecker.js";
+import { buildLayoutCheckArgs, resolveLayoutCheckSampling } from "../src/tasks/video/layoutCheckSampling.js";
 import { writeRenderCheckpoint, readRenderCheckpoint } from "../src/tasks/checkpoints.js";
 
 const cleanupDirs: string[] = [];
@@ -40,6 +41,55 @@ describe("videoLayoutChecker", () => {
     expect(getOptimalSampleCount("standard")).toBe(2);
     expect(getOptimalSampleCount("high")).toBe(5);
     expect(getOptimalSampleCount(undefined)).toBe(5);
+  });
+
+  it("samples landscape and portrait canvases with the same counts and adds the portrait caption zone", () => {
+    const landscape = resolveLayoutCheckSampling({ renderQuality: "standard", canvas: { width: 1920, height: 1080 } });
+    expect(landscape).toEqual({ samplesCount: 2, orientation: "landscape", captionZone: null });
+    expect(buildLayoutCheckArgs(landscape, 300000)).toEqual(["--json", "--samples", "2", "--timeout", "300000"]);
+
+    const portrait = resolveLayoutCheckSampling({ renderQuality: "high", canvas: { width: 1080, height: 1920 } });
+    expect(portrait.samplesCount).toBe(5);
+    expect(portrait.orientation).toBe("portrait");
+    expect(portrait.captionZone).toEqual({ y0: Number(((1920 - 422) / 1920).toFixed(4)), y1: 1 });
+    const args = buildLayoutCheckArgs(portrait, 60000);
+    expect(args.slice(0, 5)).toEqual(["--json", "--samples", "5", "--timeout", "60000"]);
+    expect(args[5]).toBe("--caption-zone");
+    expect(args[6]).toBe(`x0=0;y0=${portrait.captionZone!.y0};x1=1;y1=1;severity=warning`);
+
+    expect(resolveLayoutCheckSampling({ renderQuality: "draft" })).toEqual({
+      samplesCount: 1,
+      orientation: "landscape",
+      captionZone: null,
+    });
+  });
+
+  it("passes the portrait caption zone to the hyperframes check for a 1080x1920 render", async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "layout-checker-portrait-"));
+    cleanupDirs.push(tempDir);
+    mocks.execFileAsync.mockResolvedValueOnce({
+      stdout: JSON.stringify({ ok: true, layout: { findings: [] }, contrast: { findings: [] } }),
+      stderr: "",
+    });
+    const progressMessages: string[] = [];
+    const result = await verifyAndCheckLayout({
+      renderRoot: tempDir,
+      rootDir: tempDir,
+      sourceFingerprint: "fingerprint_portrait",
+      fastRenderMode: false,
+      renderQuality: "standard",
+      renderCanvas: { width: 1080, height: 1920 },
+      onProgress: (message) => {
+        progressMessages.push(message);
+      },
+    });
+
+    expect(result).toEqual({ status: "passed", reused: false, bypassed: false, samplesCount: 2 });
+    expect(progressMessages).toContain("Video · checking layout and media (2 portrait samples)");
+    const [, args] = mocks.execFileAsync.mock.calls[0] as [string, string[]];
+    expect(args).toContain("--caption-zone");
+    expect(args[args.indexOf("--caption-zone") + 1]).toMatch(/^x0=0;y0=0\.78[0-9]*;x1=1;y1=1;severity=warning$/);
+    expect(args).toContain(tempDir);
   });
 
   it("recycles verified checkpoint when source fingerprint matches", async () => {

@@ -191,6 +191,21 @@ export async function saveNarrationMetadata(
   segmentCount: number,
   narrationWordCount: number,
 ): Promise<QuizProductRecord> {
+  // Serialized with artifact invalidation so a concurrent asset stage cannot overwrite the narration fields with a stale record.
+  return this.queueEpisodeArtifactMutation(channelId, product, () =>
+    saveNarrationMetadataLocked.call(this, channelId, product, assetPath, durationSeconds, segmentCount, narrationWordCount),
+  );
+}
+
+async function saveNarrationMetadataLocked(
+  this: RepositoryRuntime,
+  channelId: string,
+  product: QuizProductId,
+  assetPath: string,
+  durationSeconds: number,
+  segmentCount: number,
+  narrationWordCount: number,
+): Promise<QuizProductRecord> {
   const location = await this.locateQuizProduct(channelId, product);
   const { record } = location;
   const measuredPace = narrationWordCount / Math.max(0.1, durationSeconds);

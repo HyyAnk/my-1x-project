@@ -28,6 +28,12 @@ export {
   resolveShortReelTargetLanguage,
 } from "./productLocalizationStore.js";
 
+export {
+  saveQuizShortLocalizationArtifact,
+  loadQuizShortLocalizationArtifact,
+  resolveQuizShortTargetLanguage,
+} from "./quizShortLocalizationStore.js";
+
 const LANGUAGE_NAME_MAP: Record<string, string> = {
   english: "en",
   spanish: "es",

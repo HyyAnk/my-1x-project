@@ -62,6 +62,7 @@ export function resolveCandyArcadeSceneTransition(input: ResolveCandyArcadeScene
     nextPalette,
     instanceId: boundaryId,
     instance: resolvedInstance,
+    canvas,
   });
 
   return {

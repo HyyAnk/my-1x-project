@@ -1,7 +1,7 @@
 import type { DirectorPlan, QuestionHistoryCheckResult, QuizV2 } from "@studio/shared";
 import { RepositoryError } from "../../../repository.js";
 import { createEpisodeDirectorPlan } from "../../director/episodeDirectorPlan.js";
-import { createDefaultDirectorPlan } from "../../director/parseDirectorPlan.js";
+import { createQuizShortDirectorPlan } from "../../director/quizShortDirectorPlan.js";
 import { deriveQuizV2FromScenes } from "../../domain/quiz.js";
 import { checkQuestionsAgainstHistory } from "../../qa/questionHistory.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
@@ -25,14 +25,19 @@ export async function readQuizArtifacts(input: QuizOrchestratorInput): Promise<Q
   return { quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description, title };
 }
 
-/** Episodes derive their quiz from scenes; Quiz Shorts receive theirs from the bank at confirmation. */
+/** Quiz Shorts receive their questions from the bank at confirmation, so the saved quiz is the only source. */
+async function readQuizShortQuiz(input: QuizOrchestratorInput): Promise<QuizV2> {
+  const quiz = await input.repository.readQuiz(input.channelId, input.episodeId);
+  if (quiz) return quiz;
+  throw new RepositoryError(
+    "Quiz Short questions are created at topic confirmation and cannot be regenerated here",
+    "QUIZ_SHORT_QUIZ_MISSING",
+  );
+}
+
+/** Episodes derive their quiz from scenes; Quiz Shorts reuse the quiz locked at confirmation. */
 async function deriveProductQuiz(input: QuizOrchestratorInput, view: QuizProductView): Promise<QuizV2> {
-  if (view.kind === "quiz_short") {
-    throw new RepositoryError(
-      "Quiz Short questions are created at topic confirmation and cannot be regenerated here",
-      "QUIZ_SHORT_QUIZ_MISSING",
-    );
-  }
+  if (view.kind === "quiz_short") return readQuizShortQuiz(input);
   const [channel, scenes] = await Promise.all([
     input.repository.getChannel(input.channelId),
     input.repository.readScenes(input.channelId, view.id),
@@ -66,13 +71,14 @@ export async function generateQuiz(
   return { quiz, history_check, artifact_path, invalidated };
 }
 
-/**
- * Quiz Shorts use the portrait default plan until the pacing-aware director (quizShortDirectorPlan)
- * lands; the product view is already threaded so that switch is a one-line change here.
- */
+/** Quiz Shorts alternate their portrait layout pair under the short pacing profile; Episodes keep the landscape director. */
 function createProductDirectorPlan(quiz: QuizV2, view: QuizProductView): DirectorPlan {
-  if (view.kind === "quiz_short") return createDefaultDirectorPlan(quiz, view.quiz_config.render_aspect_ratio);
-  return createEpisodeDirectorPlan(quiz, view.episode!.quiz_config);
+  if (view.kind === "quiz_short") {
+    if (!view.quizShort) throw new RepositoryError("Quiz Short record is required for the Director plan", "QUIZ_SHORT_REQUIRED");
+    return createQuizShortDirectorPlan(quiz, view.quizShort.quiz_config);
+  }
+  if (!view.episode) throw new RepositoryError("Episode record is required for the Director plan", "EPISODE_REQUIRED");
+  return createEpisodeDirectorPlan(quiz, view.episode.quiz_config);
 }
 
 export async function generateDirector(

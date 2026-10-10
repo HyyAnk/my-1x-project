@@ -17,7 +17,11 @@ import type { QuizTemplateScene } from "../../visual/types.js";
 import type { ProductionMascotTimelineEvent } from "../productionMascotRenderer.js";
 import type { Copy } from "./quizCopy.js";
 
+export type CandyArcadeProductKind = "episode" | "quiz_short";
+
 export type QuestionClipInput = {
+  /** Quiz Shorts swap the counter for the progress strip, the thinking bar for the ring timer and hide the mascot until reveal. */
+  productKind?: CandyArcadeProductKind;
   countdownSeconds?: number;
   start: number;
   questionNarrationStart?: number;

@@ -3,6 +3,7 @@ import type { QuizAssetPlan, QuizAssetResolution, QuizIssue } from "@studio/shar
 import type { RepositoryService } from "../../../repository.js";
 import { isValidQuizAsset } from "../assetValidator.js";
 import { createQuizAssetIssue } from "./assetErrorClassifier.js";
+import { toQuizProductRef } from "../../../repository/quizProductPaths.js";
 
 export function hasExplicitAssetProvenance(meta?: {
   model?: string;
@@ -17,6 +18,10 @@ export function hasExplicitAssetProvenance(meta?: {
   );
 }
 
+function isEpisodeProduct(channelId: string, productId: string): boolean {
+  return toQuizProductRef(channelId, productId).kind === "episode";
+}
+
 export async function tryReuseExplicitBundleAsset(input: {
   repository: RepositoryService;
   channelId: string;
@@ -25,7 +30,8 @@ export async function tryReuseExplicitBundleAsset(input: {
   fingerprint: string;
   bundleNumber: number;
 }): Promise<QuizAssetResolution["assets"][number] | null> {
-  if (input.request.purpose !== "hero_question_image" || input.bundleNumber <= 0) {
+  // Scene bundles exist for Episodes only; Quiz Shorts have no explicit bundle images to reuse.
+  if (input.request.purpose !== "hero_question_image" || input.bundleNumber <= 0 || !isEpisodeProduct(input.channelId, input.episodeId)) {
     return null;
   }
   const bundleTarget = await input.repository.getBundleImagePath(input.channelId, input.episodeId, input.bundleNumber);

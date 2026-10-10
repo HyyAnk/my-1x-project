@@ -5,6 +5,7 @@ import { getActiveStyleSnapshot } from "../visual/styleModules/activation.js";
 export class HyperframesRenderer implements QuizRenderer {
   prepare(input: QuizRenderInput): Promise<PreparedQuizRender> {
     const composition = buildCandyArcadeCompositionBundle({
+      productKind: input.productKind,
       quiz: input.quiz,
       director: input.director,
       timeline: input.timeline,

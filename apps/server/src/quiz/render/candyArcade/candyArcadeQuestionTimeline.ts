@@ -10,6 +10,7 @@ import {
   type ResolvedTransitionInstance,
 } from "@studio/shared";
 import type { ResolvedCandyArcadeQuestion } from "./candyArcadeQuestionResolution.js";
+import type { CandyArcadeProductKind } from "./candyArcadeClipTypes.js";
 import { questionClip, type Copy } from "./candyArcadeClips.js";
 import { adaptMascotForQuestion, type MascotAnimationRenderSnapshot } from "../productionMascotRenderer.js";
 import type { QuizRenderStyleContext } from "../quizRenderStyleContext.js";
@@ -33,6 +34,7 @@ export type CandyArcadeQuestionTimelineInput = {
   canvas: { width: number; height: number };
   customTransitionInstances?: Record<string, ResolvedTransitionInstance>;
   mediaMode?: MascotStateMediaMode;
+  productKind?: CandyArcadeProductKind;
 };
 
 export type CandyArcadeQuestionTimelineResult = {
@@ -75,7 +77,9 @@ function computeQuestionTimingBounds(
   const timerHideAt = timerHideEvent?.at_seconds ?? revealStart;
   const rewardStart = eventAt(questionId, "reward.play", revealStart + 0.8);
   const transition = events.find((event) => event.question_id === questionId && event.type === "transition.start");
-  const nextSceneStart = nextQuestionId ? eventAt(nextQuestionId, "question.enter", duration) : (transition?.at_seconds ?? outroStart ?? duration);
+  const nextSceneStart = nextQuestionId
+    ? eventAt(nextQuestionId, "question.enter", duration)
+    : (transition?.at_seconds ?? outroStart ?? duration);
   // A mid-roll CTA between this question and the next one takes over the stage when it starts.
   const interstitialStart = events.find(
     (event) => event.type === "bridge.cta.enter" && event.at_seconds > start && event.at_seconds < nextSceneStart,
@@ -137,6 +141,7 @@ export function buildCandyArcadeQuestionTimeline(input: CandyArcadeQuestionTimel
     if (timing.end - timing.start > 0.04) {
       clips.push(
         questionClip({
+          productKind: input.productKind,
           countdownSeconds:
             input.events.filter((event) => event.question_id === question.id && event.type === "countdown.tick").length || undefined,
           start: timing.start,

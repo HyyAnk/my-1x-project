@@ -4,34 +4,30 @@ import { planQuizAssets } from "../../assets/assetPlanner.js";
 import { reconcileQuizAssetSizing } from "../../assets/reconcileQuizAssetSizing.js";
 import { ensureQuizAssetSizing } from "../../assets/ensureQuizAssetSizing.js";
 import { resolveQuizAssets } from "../../assets/resolveQuizAssets.js";
-import { buildQuizVoicePlan } from "../../audio/voicePlan.js";
-import { assembleQuizNarration, synthesizeQuizVoiceSegments } from "../../audio/voiceSynthesis.js";
-import { quizVoiceTargetWordsPerSecond } from "../../audio/voicePolicy.js";
+import { assembleQuizNarration, synthesizeQuizVoiceSegments, type MeasuredQuizVoice } from "../../audio/voiceSynthesis.js";
 import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js";
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 import { resolveEpisodeIntroOutro } from "../../introOutro/episodeSelection.js";
-import {
-  resolveEffectiveBridgeConfig,
-  resolveEpisodeBridgeConfig,
-  resolveBridgeChannelDisplayName,
-} from "../../bridge/resolveBridgeConfig.js";
+import { resolveEffectiveBridgeConfig, resolveEpisodeBridgeConfig } from "../../bridge/resolveBridgeConfig.js";
 import { loadPipelineProductView, resolvePipelineProductRef } from "../quizProductView.js";
+import { productAssetPlanOptions, productSizingPlanOptions, productTimelineOptions } from "../productPipelineOptions.js";
+import { buildProductVoicePlan, productVoiceTargetWordsPerSecond, resolveProductChannelName } from "./productVoicePlan.js";
 import { toQuizProductRef, type QuizProductId } from "../../../repository/quizProductPaths.js";
 
 export async function planAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_plan: QuizAssetPlan; artifact_path: string; invalidated: string[] }> {
-  const [quiz, director_plan, channel] = await Promise.all([
+  const [quiz, director_plan, channel, view] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId).catch(() => null),
+    loadPipelineProductView(input).catch(() => null),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning visual assets", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before planning visual assets", "DIRECTOR_REQUIRED");
-  const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
-  const planOptions = { bridgeConfig, includeBridgeShowcase: true };
+  const planOptions = productAssetPlanOptions(view, resolveEpisodeBridgeConfig(channel, quiz));
   const existingPlan = await input.repository.readAssetPlan(input.channelId, input.episodeId);
   const asset_plan = existingPlan
     ? reconcileQuizAssetSizing(quiz, director_plan, existingPlan, null, planOptions).plan
@@ -45,11 +41,12 @@ export async function planAssets(
 export async function resolveAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_resolution: QuizAssetResolution; issues: QuizIssue[]; invalidated: string[] }> {
-  const [asset_plan, channel, quiz, director_plan] = await Promise.all([
+  const [asset_plan, channel, quiz, director_plan, view] = await Promise.all([
     input.repository.readAssetPlan(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.readDirectorPlan(input.channelId, input.episodeId),
+    loadPipelineProductView(input).catch(() => null),
   ]);
   if (!asset_plan) throw new RepositoryError("Generate the Asset plan before resolving visual assets", "ASSET_PLAN_REQUIRED");
 
@@ -60,6 +57,7 @@ export async function resolveAssets(
       channelId: input.channelId,
       episodeId: input.episodeId,
       artifacts: { quiz, director: director_plan, assetPlan: asset_plan },
+      planOptions: productSizingPlanOptions(view),
       intent: "generate",
       confirmed: true,
     });
@@ -117,31 +115,50 @@ export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput[
 export async function planVoice(
   input: QuizOrchestratorInput,
 ): Promise<{ voice_plan: VoicePlan; artifact_path: string; invalidated: string[] }> {
-  const [quiz, channel, view] = await Promise.all([
+  const [quiz, channel, view, director] = await Promise.all([
     input.repository.readQuiz(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
     loadPipelineProductView(input).catch(() => null),
+    input.repository.readDirectorPlan(input.channelId, input.episodeId),
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning voice", "QUIZ_REQUIRED");
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, resolvePipelineProductRef(input));
-  const director = await input.repository.readDirectorPlan(input.channelId, input.episodeId);
-  const bridgeConfig = resolveEffectiveBridgeConfig(channel);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, view?.quiz_config.channel_brand_name);
-  // Seam: the short pacing profile (view.quiz_config.pacing_profile) switches to the pacing-aware voice plan in the next phase.
-  const voice_plan = buildQuizVoicePlan(quiz, {
+  const voice_plan = buildProductVoicePlan({
+    quiz,
+    view,
+    channel,
+    director,
+    bridgeConfig: resolveEffectiveBridgeConfig(channel),
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
-    director: director ?? undefined,
-    channelName,
-    topic: view?.topic?.title,
-    bridgeConfig,
-    customCtaText: bridgeConfig.customCtaText,
-    includeBridgeSegments: bridgeConfig.enabled !== false,
   });
   const artifact_path = await input.repository.writeVoicePlan(input.channelId, input.episodeId, voice_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
   return { voice_plan, artifact_path, invalidated };
+}
+
+async function recordMeasuredVoiceUsage(input: QuizOrchestratorInput, voicePlan: VoicePlan): Promise<void> {
+  const characters = voicePlan.segments.reduce((acc, segment) => acc + (segment.text || "").length, 0);
+  const durationSeconds = voicePlan.segments.reduce((acc, segment) => acc + (segment.duration_seconds || 0), 0);
+  await input.repository
+    .recordVoiceUsage({
+      channelId: input.channelId,
+      episodeId: input.episodeId,
+      characters,
+      durationSeconds,
+      segmentsCount: voicePlan.segments.length,
+      note: "Quiz TTS Narration Render",
+    })
+    .catch(() => undefined);
+}
+
+function measuredAudioDurations(measured: MeasuredQuizVoice): Record<string, number> {
+  return Object.fromEntries(
+    measured.voicePlan.segments.flatMap((segment) =>
+      segment.duration_seconds === null ? [] : [[segment.segment_id, segment.duration_seconds]],
+    ),
+  );
 }
 
 export async function generateVoice(input: QuizOrchestratorInput): Promise<{
@@ -161,47 +178,33 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before generating voice", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before generating voice", "DIRECTOR_REQUIRED");
-  assertDirectorPlanValid(quiz, director_plan);
-  const invalidatedStages = invalidateQuizArtifacts("voice");
-  const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
+  const timelineOptions = productTimelineOptions(view);
+  assertDirectorPlanValid(quiz, director_plan, { pacingProfile: timelineOptions.pacingProfile });
+  const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidateQuizArtifacts("voice"));
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, resolvePipelineProductRef(input));
   const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
-  const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, view?.quiz_config.channel_brand_name);
-  const plannedVoice = buildQuizVoicePlan(quiz, {
-    skipIntro: introOutro.skipIntro,
-    skipOutro: introOutro.skipOutro,
-    director: director_plan,
-    channelName,
-    topic: view?.topic?.title,
-    bridgeConfig,
-    customCtaText: bridgeConfig.customCtaText,
-    includeBridgeSegments: bridgeConfig.enabled !== false,
-  });
+  const voiceInput = { quiz, view, channel, director: director_plan, bridgeConfig, ...introOutro };
   const measured = await synthesizeQuizVoiceSegments({
     repository: input.repository,
     config: input.config.audio_generation,
     channelId: input.channelId,
     episodeId: input.episodeId,
-    voicePlan: plannedVoice,
-    targetWordsPerSecond: quizVoiceTargetWordsPerSecond(quiz.age_band),
+    voicePlan: buildProductVoicePlan(voiceInput),
+    targetWordsPerSecond: productVoiceTargetWordsPerSecond(quiz, view),
     onProgress: input.onVoiceProgress,
     onPacingClamp: input.onVoicePacingClamp,
   });
-  const audioDurations = Object.fromEntries(
-    measured.voicePlan.segments.flatMap((segment) =>
-      segment.duration_seconds === null ? [] : [[segment.segment_id, segment.duration_seconds]],
-    ),
-  );
   const timeline = compileQuizTimeline({
     quiz,
     director: director_plan,
     voicePlan: measured.voicePlan,
-    audioDurations,
+    audioDurations: measuredAudioDurations(measured),
     introDuration: introOutro.introDuration,
     outroDuration: introOutro.outroDuration,
-    channelName,
+    channelName: resolveProductChannelName(voiceInput),
     topic: view?.topic?.title,
     bridgeConfig,
+    ...timelineOptions,
   });
   const narration = await assembleQuizNarration({
     repository: input.repository,
@@ -215,20 +218,7 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
     input.repository.writeVoicePlan(input.channelId, input.episodeId, measured.voicePlan),
     input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline),
   ]);
-
-  const renderedCharacters = measured.voicePlan.segments.reduce((acc, s) => acc + (s.text || "").length, 0);
-  const renderedSeconds = measured.voicePlan.segments.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
-  await input.repository
-    .recordVoiceUsage({
-      channelId: input.channelId,
-      episodeId: input.episodeId,
-      characters: renderedCharacters,
-      durationSeconds: renderedSeconds,
-      segmentsCount: measured.voicePlan.segments.length,
-      note: "Quiz TTS Narration Render",
-    })
-    .catch(() => undefined);
-
+  await recordMeasuredVoiceUsage(input, measured.voicePlan);
   return {
     voice_plan: measured.voicePlan,
     timeline,

@@ -1,5 +1,6 @@
 import type { Task } from "@studio/shared";
-import { matchesEpisodeLayout } from "../../quiz/director/episodeDirectorPlan.js";
+import { directorPlanNeedsRefresh } from "../../quiz/pipeline/directorPlanFreshness.js";
+import { productSizingPlanOptions } from "../../quiz/pipeline/productPipelineOptions.js";
 import { isQuizAssetResolutionComplete } from "../../quiz/assets/resolveQuizAssets.js";
 import { ensureQuizAssetSizing } from "../../quiz/assets/ensureQuizAssetSizing.js";
 import {
@@ -34,9 +35,8 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     task.episode_id!,
   );
 
-  // Quiz Short director plans are built at confirmation; only Episodes re-check the requested layout.
-  const directorNeedsRefresh =
-    !artifacts.director_plan || (product.episode !== null && !matchesEpisodeLayout(artifacts.director_plan, product.episode.quiz_config));
+  // Episodes re-check the requested layout; Quiz Shorts re-check the policy version and portrait layouts.
+  const directorNeedsRefresh = directorPlanNeedsRefresh(artifacts.director_plan, product);
   if (!artifacts.quiz || directorNeedsRefresh) {
     const quizContentStart = Date.now();
     if (!artifacts.quiz) {
@@ -66,6 +66,7 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
         director: artifacts.director_plan,
         assetPlan: artifacts.asset_plan,
       },
+      planOptions: productSizingPlanOptions(product),
       intent: "generate",
       confirmed: true,
     });
@@ -74,8 +75,14 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     }
   }
 
-  // Episodes created before titles existed get a title, then a description aligned with it.
-  if (!artifacts.description || !artifacts.title) {
+  if (product.kind === "quiz_short") {
+    // Portrait titles and descriptions arrive in Phase 5; nothing is faked here.
+    this.logger.warn(`Quiz Short "${product.id}": title and description generation is not implemented in this phase.`, {
+      profileId: task.channel_id,
+      workerId: task.task_id,
+    });
+  } else if (!artifacts.description || !artifacts.title) {
+    // Episodes created before titles existed get a title, then a description aligned with it.
     const descStart = Date.now();
     try {
       await generateEpisodeDescription(input);

@@ -18,6 +18,8 @@ import type { MascotAnimationRenderSnapshot } from "./animationRenderSnapshot.js
 import type { ResolvedChannelBrandIdentity } from "../brand/channelBrandAssetResolver.js";
 
 export type QuizRenderInput = {
+  /** Defaults to "episode"; "quiz_short" selects the portrait composition. */
+  productKind?: "episode" | "quiz_short";
   quiz: QuizV2;
   director: DirectorPlan;
   timeline: QuizTimeline;

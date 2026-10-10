@@ -1,5 +1,6 @@
-import type { Channel, ConfirmTopicResponse, QuizImageStyle, Task, TopicAvailabilityBatch, TopicCandidate, TopicRun } from "@studio/shared";
+import type { Channel, ConfirmTopicResponse, Task, TopicAvailabilityBatch, TopicCandidate, TopicRun } from "@studio/shared";
 import { request } from "./client";
+import { buildTopicConfirmPayload, type TopicConfirmRequestOptions } from "./topicConfirmPayload";
 
 export const channelApi = {
   channels: (signal?: AbortSignal) => request<{ channels: Channel[] }>("/api/channels", { signal }),
@@ -21,23 +22,10 @@ export const channelApi = {
       method: "POST",
       body: JSON.stringify({ topic_hint: topicHint?.trim() || undefined }),
     }),
-  confirmTopic: (
-    channelId: string,
-    topicId: string,
-    questionCount?: number,
-    visualStyle?: QuizImageStyle | "mixed",
-    autoStartPipeline: boolean = false,
-    renderAspectRatio?: "9:16" | "16:9",
-  ) =>
-    request<ConfirmTopicResponse>(`/api/channels/${channelId}/topics/${topicId}/confirm`, {
+  confirmTopic: (channelId: string, topic: Pick<TopicCandidate, "topic_id" | "content_kind">, options: TopicConfirmRequestOptions = {}) =>
+    request<ConfirmTopicResponse>(`/api/channels/${channelId}/topics/${topic.topic_id}/confirm`, {
       method: "POST",
-      body: JSON.stringify({
-        topic_id: topicId,
-        question_count: questionCount,
-        visual_style: visualStyle,
-        auto_start_pipeline: autoStartPipeline,
-        render_aspect_ratio: renderAspectRatio,
-      }),
+      body: JSON.stringify(buildTopicConfirmPayload(topic.topic_id, topic.content_kind, options)),
     }),
   deleteTopic: (channelId: string, topicId: string) =>
     request<{ ok: true; topic_id: string }>(`/api/channels/${channelId}/topics/${topicId}`, {

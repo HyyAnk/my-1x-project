@@ -6,7 +6,9 @@ export type LayoutContentGeometry = Readonly<{
   answers: Readonly<Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>>>;
 }>;
 
-function mapAnswers(variants: QuizLayoutGeometry["answerVariants"]): Readonly<Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>>> {
+export function mapAnswerVariants(
+  variants: QuizLayoutGeometry["answerVariants"],
+): Readonly<Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>>> {
   const result: Partial<Record<0 | 1 | 2 | 3, readonly FrameRect[]>> = {};
   for (const [key, variant] of Object.entries(variants)) {
     const count = Number(key) as 0 | 1 | 2 | 3;
@@ -20,36 +22,36 @@ function mapAnswers(variants: QuizLayoutGeometry["answerVariants"]): Readonly<Pa
 export const LAYOUT_CONTENT_GEOMETRY: Readonly<Record<QuizLandscapeLayoutId, LayoutContentGeometry>> = Object.freeze({
   media_left_choices_right: Object.freeze({
     hero: QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.hero,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.media_left_choices_right.answerVariants),
   }),
 
   visual_choices_three: Object.freeze({
     hero: null,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.visual_choices_three.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.visual_choices_three.answerVariants),
   }),
 
   visual_choices_three_pure: Object.freeze({
     hero: null,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.visual_choices_three_pure.answerVariants),
   }),
 
   split_versus_two: Object.freeze({
     hero: null,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.split_versus_two.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.split_versus_two.answerVariants),
   }),
 
   verdict_yes_no: Object.freeze({
     hero: QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.hero,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.verdict_yes_no.answerVariants),
   }),
 
   full_stack_list: Object.freeze({
     hero: null,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.full_stack_list.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.full_stack_list.answerVariants),
   }),
 
   mystery_reveal: Object.freeze({
     hero: QUIZ_LAYOUT_GEOMETRY.mystery_reveal.hero,
-    answers: mapAnswers(QUIZ_LAYOUT_GEOMETRY.mystery_reveal.answerVariants),
+    answers: mapAnswerVariants(QUIZ_LAYOUT_GEOMETRY.mystery_reveal.answerVariants),
   }),
 });

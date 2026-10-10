@@ -31,7 +31,7 @@ import { autoInjectFontFaces, candyArcadeSystemFontFaceCss } from "./candyArcade
 import { channelBrandMarkCss } from "./channelBrandMarkStyles.js";
 import { productionMascotCss } from "./productionMascotStyles.js";
 import { quizLayoutCss } from "../layouts/registry.js";
-import { quizFrameCss } from "../frame/quizFrameStyles.js";
+import { quizFrameCss, quizPortraitFrameCss } from "../frame/quizFrameStyles.js";
 import {
   baseChoiceStyles,
   choiceIdentityStyles,
@@ -102,7 +102,7 @@ ${getThinkingBarsCss(options.styleCatalogRevision)}
 ${getQuestionBoxesCss(options.styleCatalogRevision)}
 ${getCounterBadgesCss(options.styleCatalogRevision)}
 ${getAnswerCardSkinsCss(options.styleCatalogRevision)}
-${aspectRatio === "16:9" ? quizFrameCss() : ""}
+${aspectRatio === "16:9" ? quizFrameCss() : quizPortraitFrameCss()}
 ${semanticBackgroundLayerCss()}
 ${options.backgroundStyles ? getSelectedBackgroundStylesCss(options.backgroundStyles, options.styleCatalogRevision) : getBackgroundStylesCss(options.styleCatalogRevision)}
 ${answerCardPresentationContractCss()}

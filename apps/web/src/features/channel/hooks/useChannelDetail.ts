@@ -163,7 +163,7 @@ export function useChannelDetail({
     if (confirmingTopicId) return;
     setConfirmingTopicId(topic.topic_id);
     try {
-      const result = await api.confirmTopic(channel.channel_id, topic.topic_id, questionCount, visualStyle, false);
+      const result = await api.confirmTopic(channel.channel_id, topic, { questionCount, visualStyle, autoStartPipeline: false });
       if (result.content_kind === "short_reel") {
         onNotice({
           tone: "good",

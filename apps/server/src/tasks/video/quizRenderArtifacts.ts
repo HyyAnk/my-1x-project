@@ -1,19 +1,21 @@
+import type { QuizProductRef } from "@studio/shared";
 import { RepositoryError } from "../../repository/errors.js";
 import type { QuizRenderArtifactRepository, RequiredQuizRenderArtifacts } from "./quizRenderArtifacts.types.js";
 
 export type { QuizRenderArtifactRepository, RequiredQuizRenderArtifacts };
 
+/** Accepts an Episode id or an explicit product ref (Quiz Shorts live under a different collection). */
 export async function loadRequiredQuizRenderArtifacts(
   repository: QuizRenderArtifactRepository,
   channelId: string,
-  episodeId: string,
+  product: string | QuizProductRef,
 ): Promise<RequiredQuizRenderArtifacts> {
   const [quiz, director, assetPlan, voicePlan, timeline] = await Promise.all([
-    repository.readQuiz(channelId, episodeId),
-    repository.readDirectorPlan(channelId, episodeId),
-    repository.readAssetPlan(channelId, episodeId),
-    repository.readVoicePlan(channelId, episodeId),
-    repository.readQuizTimeline(channelId, episodeId),
+    repository.readQuiz(channelId, product),
+    repository.readDirectorPlan(channelId, product),
+    repository.readAssetPlan(channelId, product),
+    repository.readVoicePlan(channelId, product),
+    repository.readQuizTimeline(channelId, product),
   ]);
 
   const missing: string[] = [];

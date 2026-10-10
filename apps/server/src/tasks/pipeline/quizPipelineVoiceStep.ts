@@ -6,8 +6,11 @@ import { generateVoice, resolveAssets, runQa, readQuizArtifacts } from "../../qu
 import { RepositoryError } from "../../repository.js";
 import { hasValidNarrationAsset } from "./pipelineHelpers.js";
 import { resolveIntroOutroConfig } from "../../quiz/pipeline/stages/assetsVoiceStages.js";
-import { matchesBookendTiming } from "../../quiz/introOutro/renderTiming.js";
+import { hasLegacyBookendVoiceSegments, matchesProductBookendTiming } from "../../quiz/pipeline/voicePlanFreshness.js";
 import { productRefFromTask } from "../taskProductRef.js";
+import { loadQuizProductView } from "../../quiz/pipeline/quizProductView.js";
+import { productPacingProfile } from "../../quiz/pipeline/productPipelineOptions.js";
+import { findUnhealableQuizBlocker } from "./quizQaBlockerPolicy.js";
 
 export { handleVoicePacingClamp, createQuizPipelineInput } from "./voiceProgressTracker.js";
 
@@ -17,19 +20,24 @@ export async function shouldRegenerateQuizVoice(
   episodeNarrationAssetPath: string | null,
   artifacts: Awaited<ReturnType<typeof readQuizArtifacts>>,
 ): Promise<boolean> {
-  const media = await resolveIntroOutroConfig(runtime.repository, task.channel_id, productRefFromTask(task));
+  const ref = productRefFromTask(task);
+  const [media, view] = await Promise.all([
+    resolveIntroOutroConfig(runtime.repository, task.channel_id, ref),
+    loadQuizProductView(runtime.repository, ref).catch(() => null),
+  ]);
   const voicePaceNeedsRegeneration = artifacts.quiz
     ? quizVoicePlanNeedsRegeneration({
         voicePlan: artifacts.voice_plan,
         ageBand: artifacts.quiz.age_band,
         assessmentIssueCodes: artifacts.assessment?.issues.map((issue) => issue.code),
+        pacingProfile: productPacingProfile(view),
       })
     : false;
 
   return (
     !artifacts.voice_plan ||
-    !matchesBookendTiming(artifacts.timeline, media.introDuration, media.outroDuration) ||
-    artifacts.voice_plan.segments.some((segment) => segment.role === "intro" || segment.role === "outro") ||
+    !matchesProductBookendTiming(view, artifacts.timeline, media) ||
+    hasLegacyBookendVoiceSegments(artifacts.voice_plan) ||
     voicePaceNeedsRegeneration ||
     !(await hasValidNarrationAsset.call(runtime, task.channel_id, task.episode_id!, episodeNarrationAssetPath)) ||
     artifacts.voice_plan.segments.some((segment) => segment.duration_seconds === null)
@@ -61,10 +69,11 @@ export async function healQuizVoicePacingWithAI(
 ): Promise<boolean> {
   if (!artifacts.quiz || !artifacts.voice_plan) return false;
   const client = runtime.antigravity ?? (runtime.activeEngine === "codex" ? runtime.codex : undefined);
+  const view = await loadQuizProductView(runtime.repository, productRefFromTask(task)).catch(() => null);
   const healResult = await healQuizVoicePacingWithLLM({
     voicePlan: artifacts.voice_plan,
     ageBand: artifacts.quiz.age_band,
-    targetWordsPerSecond: quizVoiceTargetWordsPerSecond(artifacts.quiz.age_band),
+    targetWordsPerSecond: quizVoiceTargetWordsPerSecond(artifacts.quiz.age_band, productPacingProfile(view)),
     client,
     logger: runtime.logger,
     channelId: task.channel_id,
@@ -163,6 +172,10 @@ export async function executeQuizQaGatesWithHealing(
     const blockers = artifacts.assessment?.issues.filter((issue) => issue.severity === "blocker") ?? [];
     if (blockers.length === 0) {
       return artifacts;
+    }
+    const unhealable = findUnhealableQuizBlocker(blockers);
+    if (unhealable) {
+      throw new RepositoryError(`Quiz V2 QA blocked production (${unhealable.code}): ${unhealable.message}`, "QUIZ_QA_BLOCKED");
     }
 
     const missingSourceBlockers = blockers.filter((issue) => issue.code === "semantic_sources_missing");

@@ -1,5 +1,6 @@
 export * from "./candyArcadeRootVars.js";
 export * from "./candyArcadePortraitStyles.js";
+export * from "./candyArcadeQuizShortStyles.js";
 export * from "./candyArcadeMascotCapacityStyles.js";
 export * from "./candyArcadeStageStyles.js";
 export * from "./candyArcadeKeyframes.js";

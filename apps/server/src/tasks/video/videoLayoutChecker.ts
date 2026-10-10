@@ -12,6 +12,9 @@ import { healCompositionContrast } from "../../quiz/qa/contrastHealer.js";
 import { readRenderCheckpoint, writeRenderCheckpoint } from "../checkpoints.js";
 import { getHyperframesInvocation } from "./videoInvocation.js";
 import { getHyperframesExecutionEnv } from "./videoPerformance.js";
+import { buildLayoutCheckArgs, getOptimalSampleCount, resolveLayoutCheckSampling, type LayoutCheckCanvas } from "./layoutCheckSampling.js";
+
+export { getOptimalSampleCount, resolveLayoutCheckSampling, buildLayoutCheckArgs };
 
 const execFileAsync = promisify(execFile);
 
@@ -21,6 +24,8 @@ export interface LayoutCheckOptions {
   sourceFingerprint: string;
   fastRenderMode?: boolean;
   renderQuality?: "draft" | "standard" | "high";
+  /** Output canvas; portrait canvases sample with the reserved caption band as an advisory zone. */
+  renderCanvas?: LayoutCheckCanvas;
   onProgress?: (message: string, percent: number) => Promise<void> | void;
 }
 
@@ -36,14 +41,8 @@ function isCheckStatusReady(status: string | undefined): boolean {
   return status === "passed" || status === "skipped_fast_mode";
 }
 
-export function getOptimalSampleCount(renderQuality?: "draft" | "standard" | "high"): number {
-  if (renderQuality === "draft") return 1;
-  if (renderQuality === "standard") return 2;
-  return 5;
-}
-
 export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise<LayoutCheckResult> {
-  const { renderRoot, rootDir, sourceFingerprint, fastRenderMode, renderQuality, onProgress } = options;
+  const { renderRoot, rootDir, sourceFingerprint, fastRenderMode, renderQuality, renderCanvas, onProgress } = options;
   const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
   const checkpoint = await readRenderCheckpoint(checkpointPath);
 
@@ -68,9 +67,10 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
     return { status: "passed", reused: false, bypassed: true, samplesCount: 0 };
   }
 
-  const samplesCount = getOptimalSampleCount(renderQuality);
+  const sampling = resolveLayoutCheckSampling({ renderQuality, canvas: renderCanvas });
+  const samplesCount = sampling.samplesCount;
   if (onProgress) {
-    await onProgress(`Video · checking layout and media (${samplesCount} samples)`, 58);
+    await onProgress(`Video · checking layout and media (${samplesCount} ${sampling.orientation} samples)`, 58);
   }
 
   let checkOutput: string;
@@ -79,15 +79,7 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
   const hyperframesEnv = getHyperframesExecutionEnv();
 
   for (let attempt = 1; attempt <= maxCheckAttempts; attempt++) {
-    const checkInvocation = getHyperframesInvocation(
-      "check",
-      renderRoot,
-      "--json",
-      "--samples",
-      String(samplesCount),
-      "--timeout",
-      String(checkTimeoutMs),
-    );
+    const checkInvocation = getHyperframesInvocation("check", renderRoot, ...buildLayoutCheckArgs(sampling, checkTimeoutMs));
 
     try {
       ({ stdout: checkOutput } = await execFileAsync(checkInvocation.command, checkInvocation.args, {

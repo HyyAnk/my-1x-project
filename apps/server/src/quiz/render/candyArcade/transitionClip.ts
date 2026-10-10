@@ -1,4 +1,4 @@
-import { getTransitionDefinition, type ResolvedTransitionInstance } from "@studio/shared";
+import { getTransitionDefinition, MASCOT_CANVAS_SIZES, type ResolvedTransitionInstance } from "@studio/shared";
 import { renderResolvedTransitionClip } from "../transitions/renderTransitionClip.js";
 import type { QuizTemplateScene } from "../../visual/types.js";
 
@@ -9,6 +9,8 @@ export type TransitionClipInput = {
   nextPalette: QuizTemplateScene["palette"];
   instanceId?: string;
   instance?: ResolvedTransitionInstance;
+  /** Output canvas; defaults to the landscape Episode canvas for legacy callers. */
+  canvas?: { width: number; height: number };
 };
 
 export function transitionClip(input: TransitionClipInput): string {
@@ -19,6 +21,7 @@ export function transitionClip(input: TransitionClipInput): string {
       nextPalette: input.nextPalette,
     });
   }
+  const canvas = input.canvas ?? MASCOT_CANVAS_SIZES["16:9"];
   try {
     const def = getTransitionDefinition(input.visual.transitionId);
     if (def.id === "cut") return "";
@@ -29,8 +32,8 @@ export function transitionClip(input: TransitionClipInput): string {
       startFrame: Math.round(input.start * 30),
       boundaryFrame: Math.round(((input.start + input.end) / 2) * 30),
       availableEndFrameExclusive: Math.round(input.end * 30),
-      width: 1920,
-      height: 1080,
+      width: canvas.width,
+      height: canvas.height,
       fromColor: input.visual.palette.accent,
       toColor: input.nextPalette.backgroundPrimary,
       inkColor: input.visual.palette.text,

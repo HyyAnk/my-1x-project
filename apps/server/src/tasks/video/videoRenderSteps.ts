@@ -57,6 +57,7 @@ export async function renderProductVideo(
     sourceFingerprint: comp.sourceFingerprint,
     fastRenderMode: product.view.quiz_config.fast_render_mode ?? runtime.videoConfig.fast_render_mode,
     renderQuality: runtime.videoConfig.render_quality,
+    renderCanvas: product.renderCanvas,
     onProgress,
   });
   ensureVideoTaskActive(runtime, task.task_id, signal);

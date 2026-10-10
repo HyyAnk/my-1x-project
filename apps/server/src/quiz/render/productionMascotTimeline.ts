@@ -20,6 +20,13 @@ export type ProductionMascotTimelineEvent = {
   payload?: Record<string, unknown>;
 };
 
+/**
+ * "always": the mascot stays on stage through every question phase (Episodes).
+ * "reveal_only": markers are emitted only from the answer reveal onward (Quiz Shorts), so the
+ * mascot never occupies the arena while viewers are reading the question or thinking.
+ */
+export type MascotVisibilityPolicy = "always" | "reveal_only";
+
 export type ProductionMascotRenderOptions = {
   phase: "intro" | "question" | "outro";
   aspectRatio?: MascotRenderAspectRatio;
@@ -29,6 +36,7 @@ export type ProductionMascotRenderOptions = {
   revealOutcome?: MascotRevealOutcome;
   sourceMapper?: (url: string) => string;
   extraClass?: string;
+  visibilityPolicy?: MascotVisibilityPolicy;
 };
 
 export type MascotMarker = {
@@ -58,15 +66,19 @@ export function resolveProductionMascotMarkers(
   const explanationAt = resolveExplanationAt(events);
   const revealOutcome = options.revealOutcome ?? "correct";
   const markers = new Map<number, MascotMarker>();
+  const revealOnly = options.visibilityPolicy === "reveal_only";
 
-  addMarker(markers, { atSeconds: clipStartSeconds, phase: "question", revealOutcome: null }, clipStartSeconds, clipEndSeconds);
-  addPhaseMarker(markers, choicesAt, "choices", clipStartSeconds, clipEndSeconds);
-  addPhaseMarker(markers, thinkingAt, "thinking", clipStartSeconds, clipEndSeconds);
+  if (!revealOnly) {
+    addMarker(markers, { atSeconds: clipStartSeconds, phase: "question", revealOutcome: null }, clipStartSeconds, clipEndSeconds);
+    addPhaseMarker(markers, choicesAt, "choices", clipStartSeconds, clipEndSeconds);
+    addPhaseMarker(markers, thinkingAt, "thinking", clipStartSeconds, clipEndSeconds);
+  }
   addPhaseMarker(markers, revealAt, "reveal", clipStartSeconds, clipEndSeconds, revealOutcome);
   addPhaseMarker(markers, explanationAt, "explain", clipStartSeconds, clipEndSeconds, null, "point");
 
   for (const { event } of events) {
     if (event.type !== "mascot.state") continue;
+    if (revealOnly && event.at_seconds < revealAt) continue;
     const actionOverride = parseActionOverride(event.payload?.state);
     if (!actionOverride) continue;
     const phase = phaseAt(event.at_seconds, choicesAt, thinkingAt, revealAt, explanationAt);

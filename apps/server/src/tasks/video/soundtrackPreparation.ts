@@ -9,7 +9,8 @@ export type PrepareSoundtrackInput = {
   renderRoot: string;
   narration: { absolutePath: string; modified_at: string; size: number };
   timeline: QuizTimeline;
-  episode: Episode;
+  /** Only the product id is read; Quiz Shorts pass their own id here. */
+  episode: Pick<Episode, "episode_id">;
   bgmHistory: BgmHistoryEntry[];
   assetSources: Record<string, string>;
   onProgressMessage?: (message: string) => Promise<void>;
@@ -33,10 +34,9 @@ export async function prepareSoundtrack({
   let selectedBgmTrackId: string | null = null;
   let selectedBgmFilename: string | null = null;
 
-  const firstPlayStart =
-    timeline.events.find(
-      (event) => event.type === "bridge.topic.enter" || event.type === "bridge.cta.enter" || event.type === "question.enter",
-    )?.at_seconds;
+  const firstPlayStart = timeline.events.find(
+    (event) => event.type === "bridge.topic.enter" || event.type === "bridge.cta.enter" || event.type === "question.enter",
+  )?.at_seconds;
   const outroStart = timeline.events.find(
     (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
   )?.at_seconds;

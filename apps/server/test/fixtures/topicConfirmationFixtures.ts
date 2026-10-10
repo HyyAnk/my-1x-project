@@ -101,7 +101,7 @@ export function createSourceBindingsForQuestions(
 export interface CreateBoundCandidateOptions {
   channelId: string;
   topicId: string;
-  contentKind?: "episode" | "short_reel";
+  contentKind?: "episode" | "short_reel" | "quiz_short";
   slotId?: string;
   title?: string;
   premise?: string;
@@ -121,6 +121,7 @@ export interface CreateBoundCandidateOptions {
 
 export function createBoundCandidate(options: CreateBoundCandidateOptions): TopicRunCandidate {
   const contentKind = options.contentKind ?? "episode";
+  const isPortrait = contentKind === "short_reel" || contentKind === "quiz_short";
   const questionCount = options.questionCount ?? (options.questions ? options.questions.length : contentKind === "short_reel" ? 1 : 3);
   const sourceBindings = options.sourceBindings ?? (options.questions ? createSourceBindingsForQuestions(options.questions) : []);
 
@@ -130,7 +131,7 @@ export function createBoundCandidate(options: CreateBoundCandidateOptions): Topi
     channel_id: options.channelId,
     content_kind: contentKind,
     archetype: options.archetype ?? "deep_trivia",
-    aspect_ratio: options.aspectRatio ?? (contentKind === "short_reel" ? "9:16" : "16:9"),
+    aspect_ratio: options.aspectRatio ?? (isPortrait ? "9:16" : "16:9"),
     title: options.title ?? "Test Topic",
     premise: options.premise ?? "A fun quiz premise",
     why_it_fits: options.whyItFits ?? "Fits category",

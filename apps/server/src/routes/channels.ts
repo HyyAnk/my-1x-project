@@ -18,6 +18,7 @@ import type { AppState } from "./state.js";
 import { createVoiceWithPreview } from "./voiceHelpers.js";
 import { createEpisodeFromTopicWithBank } from "../quiz/bank/questionBankToQuizBridge.js";
 import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
+import { confirmQuizShortTopicRoute } from "./channels/confirmQuizShortTopic.js";
 import { getTopicAvailabilityBatch, getLatestTopicRun } from "../repository/topics.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 import { createCoalescingRunner } from "../utils/concurrency.js";
@@ -187,6 +188,11 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
           },
           llmClient: deps.llmClient,
         });
+        return reply.code(201).send(result);
+      }
+
+      if (topic.content_kind === "quiz_short") {
+        const result = await confirmQuizShortTopicRoute(deps, params.channelId, params.topicId, payload);
         return reply.code(201).send(result);
       }
 

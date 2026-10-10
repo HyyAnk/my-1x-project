@@ -23,13 +23,17 @@ function resolveNextResolvedStyle(
   return input.resolved_visual_style ?? current.resolved_visual_style ?? "pixar_3d";
 }
 
-/** Settings that change the question set or image prompts: every quiz artifact downstream of the quiz is stale. */
-function hasQuizSourceSettingsChanged(next: QuizShortConfig, prev: QuizShortConfig): boolean {
+/**
+ * Settings that change the question set, the image prompts or the Director layouts: every quiz
+ * artifact downstream of the quiz (director, assets, voice, timeline, qa, render) is stale.
+ */
+export function hasQuizSourceSettingsChanged(next: QuizShortConfig, prev: QuizShortConfig): boolean {
   return (
     next.question_count !== prev.question_count ||
     next.age_band !== prev.age_band ||
     next.visual_style !== prev.visual_style ||
-    next.resolved_visual_style !== prev.resolved_visual_style
+    next.resolved_visual_style !== prev.resolved_visual_style ||
+    JSON.stringify(next.layout_pair) !== JSON.stringify(prev.layout_pair)
   );
 }
 
@@ -45,7 +49,6 @@ export function hasQuizShortRenderSettingsChanged(next: QuizShortConfig, prev: Q
     next.palette_id !== prev.palette_id ||
     next.style_preset_id !== prev.style_preset_id ||
     JSON.stringify(next.mascot_style_selection) !== JSON.stringify(prev.mascot_style_selection) ||
-    JSON.stringify(next.layout_pair) !== JSON.stringify(prev.layout_pair) ||
     next.outro_cta_enabled !== prev.outro_cta_enabled
   );
 }

@@ -1,13 +1,9 @@
-import {
-  hashBankQuestionSource,
-  isLegacyVerdictIdentifier,
-  type BankQuestion,
-  type BankQuestionWithCooldown,
-  type TopicRunCandidate,
-} from "@studio/shared";
+import { hashBankQuestionSource, type BankQuestion, type BankQuestionWithCooldown, type TopicRunCandidate } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../../repository.js";
-import { evaluateEpisodeQuestionEligibility, evaluateShortReelQuestionEligibility } from "../bankEligibility.js";
-import { detectStemAnswerLeak } from "../autoQa/stemLeakDetector.js";
+import type { BankCooldownScope } from "../../../repository/quizArtifacts.js";
+import { checkBoundSourceEligibility } from "./boundSourceEligibility.js";
+
+export { checkEpisodeEligibility, checkQuizShortEligibility, checkShortReelEligibility } from "./boundSourceEligibility.js";
 
 export interface ResolveBoundTopicSourcesInput {
   repository: RepositoryService;
@@ -28,93 +24,84 @@ export interface ResolvedBoundTopicSources {
   snapshotToken?: string;
 }
 
-/** New topic suggestions never bind leaked questions; sources bound before screening are kept but reported. */
-function warnGrandfatheredStemLeak(bankQuestion: BankQuestionWithCooldown): void {
-  const leak = detectStemAnswerLeak(bankQuestion);
-  if (leak) console.warn(`[BoundSourceResolver] Bound source "${bankQuestion.id}" predates answer-leak screening: ${leak.message}`);
+async function findBoundCandidate(repository: RepositoryService, channelId: string, topicId: string): Promise<TopicRunCandidate> {
+  await repository.getChannel(channelId);
+  const topics = await repository.listTopics(channelId);
+  const candidate = topics.find((t) => t.topic_id === topicId) as TopicRunCandidate | undefined;
+  if (!candidate || candidate.channel_id !== channelId) {
+    throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
+  }
+  if (!candidate.source_bindings || candidate.source_bindings.length === 0) {
+    throw new RepositoryError(
+      "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
+      "UNBOUND_LEGACY_TOPIC",
+    );
+  }
+  return candidate;
 }
 
-function checkShortReelEligibility(candidate: TopicRunCandidate, bankQuestion: BankQuestionWithCooldown, force: boolean): void {
-  const targetArchetype: "versus_faceoff" | "deep_trivia" =
-    candidate.archetype === "versus_faceoff" || candidate.archetype === "deep_trivia"
-      ? candidate.archetype
-      : (bankQuestion.archetype_id as "versus_faceoff" | "deep_trivia");
-  const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
-  warnGrandfatheredStemLeak(bankQuestion);
-  const eligibility = evaluateShortReelQuestionEligibility(evalQuestion, { targetArchetype, allowStemLeak: true });
-  if (!eligibility.eligible) {
-    if (!force && bankQuestion.channel_cooldown?.is_cooldown) {
-      const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
-      throw new RepositoryError(
-        `SOURCE_QUESTION_IN_COOLDOWN: Bound source question "${bankQuestion.id}" entered channel cooldown (${days} days remaining). Re-suggest topics or set force=true to override.`,
-        "SOURCE_QUESTION_IN_COOLDOWN",
-      );
-    }
-    if (eligibility.reason === "NOT_APPROVED") {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_NOT_APPROVED: Bound source question "${bankQuestion.id}" is not approved.`,
-        "SOURCE_QUESTION_NOT_APPROVED",
-      );
-    }
-    if (eligibility.reason === "MISSING_ENGLISH_SOURCE") {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_NOT_ENGLISH: Bound source question "${bankQuestion.id}" must be explicitly English.`,
-        "SOURCE_QUESTION_NOT_ENGLISH",
-      );
-    }
+/** Short Reels always bind one source; Quiz Shorts and Episodes take the requested count or the candidate's own. */
+function resolveSelectedCount(candidate: TopicRunCandidate, requestedQuestionCount: number | undefined): number {
+  if (candidate.content_kind === "short_reel") return 1;
+  if (candidate.content_kind === "quiz_short") return requestedQuestionCount ?? candidate.question_count;
+  return requestedQuestionCount ?? candidate.question_count ?? candidate.source_bindings.length;
+}
+
+function assertSourceCapacity(candidate: TopicRunCandidate, selectedCount: number): void {
+  if (selectedCount <= 0) {
+    throw new RepositoryError("Invalid question count requested", "INVALID_QUESTION_COUNT");
+  }
+  if (selectedCount > candidate.source_bindings.length) {
     throw new RepositoryError(
-      `SOURCE_QUESTION_INELIGIBLE: Bound source question "${bankQuestion.id}" is ineligible: ${eligibility.detail}`,
-      "SOURCE_QUESTION_INELIGIBLE",
+      `INSUFFICIENT_SOURCE_CAPACITY: Requested question count (${selectedCount}) exceeds supported source capacity (${candidate.source_bindings.length})`,
+      "INSUFFICIENT_SOURCE_CAPACITY",
     );
   }
 }
 
-function checkEpisodeEligibility(candidate: TopicRunCandidate, bankQuestion: BankQuestionWithCooldown, force: boolean): void {
-  const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
-  const candQuizFormat = (candidate as { quiz_format?: string; format?: string }).quiz_format ?? (candidate as { format?: string }).format;
-  const expectedFormat =
-    candQuizFormat === "yes_no" || isLegacyVerdictIdentifier(candQuizFormat)
-      ? "yes_no"
-      : candQuizFormat === "multiple_choice" || candQuizFormat === "knowledge"
-        ? "multiple_choice"
-        : undefined;
-  warnGrandfatheredStemLeak(bankQuestion);
-  const eligibility = evaluateEpisodeQuestionEligibility(evalQuestion, {
-    targetLanguage: "en",
-    expectedFormat,
-    allowStemLeak: true,
-  });
-  if (!eligibility.eligible) {
-    if (!force && bankQuestion.channel_cooldown?.is_cooldown) {
-      const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
+function assertUniqueBindings(bindings: TopicRunCandidate["source_bindings"]): void {
+  const seenQuestionIds = new Set<string>();
+  for (const binding of bindings) {
+    if (seenQuestionIds.has(binding.source_question_id)) {
       throw new RepositoryError(
-        `SOURCE_QUESTION_IN_COOLDOWN: Bound source question "${bankQuestion.id}" entered channel cooldown (${days} days remaining). Re-suggest topics or set force=true to override.`,
-        "SOURCE_QUESTION_IN_COOLDOWN",
+        `DUPLICATE_SOURCE_QUESTION_ID: Duplicate source question ID "${binding.source_question_id}" in candidate bindings`,
+        "DUPLICATE_SOURCE_QUESTION_ID",
       );
     }
-    if (eligibility.reason === "NOT_APPROVED") {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_NOT_APPROVED: Bound source question "${bankQuestion.id}" is not approved.`,
-        "SOURCE_QUESTION_NOT_APPROVED",
-      );
-    }
-    if (eligibility.reason === "MISSING_ENGLISH_SOURCE") {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_NOT_ENGLISH: Bound source question "${bankQuestion.id}" must be explicitly English.`,
-        "SOURCE_QUESTION_NOT_ENGLISH",
-      );
-    }
-    if (eligibility.reason === "INCOMPATIBLE_FORMAT") {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_FORMAT_MISMATCH: Bound source question "${bankQuestion.id}" format mismatch: ${eligibility.detail}`,
-        "SOURCE_QUESTION_FORMAT_MISMATCH",
-      );
-    }
+    seenQuestionIds.add(binding.source_question_id);
+  }
+}
+
+function cooldownScopeFor(candidate: TopicRunCandidate): BankCooldownScope {
+  if (candidate.content_kind === "short_reel") return "short_reel";
+  if (candidate.content_kind === "quiz_short") return "quiz_short";
+  return "episode";
+}
+
+function verifyBoundQuestion(
+  binding: TopicRunCandidate["source_bindings"][number],
+  bankQuestion: BankQuestionWithCooldown | undefined,
+): BankQuestionWithCooldown {
+  const questionId = binding.source_question_id;
+  if (!bankQuestion) {
     throw new RepositoryError(
-      `SOURCE_QUESTION_INELIGIBLE: Bound source question "${bankQuestion.id}" is ineligible: ${eligibility.detail}`,
-      "SOURCE_QUESTION_INELIGIBLE",
+      `SOURCE_QUESTION_NOT_FOUND: Bound source question "${questionId}" was not found in question bank. Re-suggest topics to bind active sources.`,
+      "SOURCE_QUESTION_NOT_FOUND",
     );
   }
+  if (bankQuestion.status !== "approved") {
+    throw new RepositoryError(
+      `SOURCE_QUESTION_NOT_APPROVED: Bound source question "${questionId}" is not approved (status: "${bankQuestion.status}"). Only approved questions can be confirmed into products.`,
+      "SOURCE_QUESTION_NOT_APPROVED",
+    );
+  }
+  if (hashBankQuestionSource(bankQuestion) !== binding.source_content_hash) {
+    throw new RepositoryError(
+      `SOURCE_QUESTION_MODIFIED: Bound source question "${questionId}" was modified after topic suggestion. Re-suggest topics to synchronize canonical content.`,
+      "SOURCE_QUESTION_MODIFIED",
+    );
+  }
+  return bankQuestion;
 }
 
 /**
@@ -124,107 +111,30 @@ function checkEpisodeEligibility(candidate: TopicRunCandidate, bankQuestion: Ban
  */
 export async function resolveBoundTopicSources(input: ResolveBoundTopicSourcesInput): Promise<ResolvedBoundTopicSources> {
   const { repository, channelId, topicId, requestedQuestionCount, force } = input;
+  const candidate = await findBoundCandidate(repository, channelId, topicId);
 
-  // 1. Verify channel exists
-  await repository.getChannel(channelId);
-
-  // 2. Locate topic candidate in channel repository
-  const topics = await repository.listTopics(channelId);
-  const candidate = topics.find((t) => t.topic_id === topicId) as TopicRunCandidate | undefined;
-  if (!candidate || candidate.channel_id !== channelId) {
-    throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
-  }
-
-  // 3. Reject unbound legacy topic candidates
-  if (!candidate.source_bindings || candidate.source_bindings.length === 0) {
-    throw new RepositoryError(
-      "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
-      "UNBOUND_LEGACY_TOPIC",
-    );
-  }
-
-  // 4. Enforce supported source capacity
-  const isShortReel = candidate.content_kind === "short_reel";
-  const selectedCount = isShortReel ? 1 : (requestedQuestionCount ?? candidate.question_count ?? candidate.source_bindings.length);
-
-  if (selectedCount <= 0) {
-    throw new RepositoryError("Invalid question count requested", "INVALID_QUESTION_COUNT");
-  }
-
-  if (selectedCount > candidate.source_bindings.length) {
-    throw new RepositoryError(
-      `INSUFFICIENT_SOURCE_CAPACITY: Requested question count (${selectedCount}) exceeds supported source capacity (${candidate.source_bindings.length})`,
-      "INSUFFICIENT_SOURCE_CAPACITY",
-    );
-  }
-
-  // 5. Authoritatively resolve bound questions and verify immutable content hashes
+  const selectedCount = resolveSelectedCount(candidate, requestedQuestionCount);
+  assertSourceCapacity(candidate, selectedCount);
   const activeBindings = candidate.source_bindings.slice(0, selectedCount);
+  assertUniqueBindings(activeBindings);
 
-  // Reject duplicate source question IDs in active bindings
-  const seenQuestionIds = new Set<string>();
-  for (const binding of activeBindings) {
-    if (seenQuestionIds.has(binding.source_question_id)) {
-      throw new RepositoryError(
-        `DUPLICATE_SOURCE_QUESTION_ID: Duplicate source question ID "${binding.source_question_id}" in candidate bindings`,
-        "DUPLICATE_SOURCE_QUESTION_ID",
-      );
-    }
-    seenQuestionIds.add(binding.source_question_id);
-  }
-
-  // Read full ordered binding set against one coherent inventory snapshot
+  // Read the full ordered binding set against one coherent inventory snapshot.
   const snapshot = await repository.readQuestionBankQuestionsSnapshot({
     channelId,
-    scope: candidate.content_kind === "short_reel" ? "short_reel" : "episode",
+    scope: cooldownScopeFor(candidate),
     limit: 100000,
     offset: 0,
   });
-
-  const bankQuestionMap = new Map<string, BankQuestionWithCooldown>();
-  for (const q of snapshot.questions) {
-    bankQuestionMap.set(q.id, q);
-  }
+  const bankQuestionMap = new Map<string, BankQuestionWithCooldown>(snapshot.questions.map((q) => [q.id, q]));
 
   const questions: BankQuestion[] = [];
   const questionIds: string[] = [];
   const sourceContentHashes: string[] = [];
-
   for (const binding of activeBindings) {
-    const questionId = binding.source_question_id;
-    const bankQuestion = bankQuestionMap.get(questionId);
-
-    if (!bankQuestion) {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_NOT_FOUND: Bound source question "${questionId}" was not found in question bank. Re-suggest topics to bind active sources.`,
-        "SOURCE_QUESTION_NOT_FOUND",
-      );
-    }
-
-    if (bankQuestion.status !== "approved") {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_NOT_APPROVED: Bound source question "${questionId}" is not approved (status: "${bankQuestion.status}"). Only approved questions can be confirmed into products.`,
-        "SOURCE_QUESTION_NOT_APPROVED",
-      );
-    }
-
-    const currentHash = hashBankQuestionSource(bankQuestion);
-    if (currentHash !== binding.source_content_hash) {
-      throw new RepositoryError(
-        `SOURCE_QUESTION_MODIFIED: Bound source question "${questionId}" was modified after topic suggestion. Re-suggest topics to synchronize canonical content.`,
-        "SOURCE_QUESTION_MODIFIED",
-      );
-    }
-
-    // Evaluate full shared eligibility
-    if (isShortReel) {
-      checkShortReelEligibility(candidate, bankQuestion, Boolean(force));
-    } else {
-      checkEpisodeEligibility(candidate, bankQuestion, Boolean(force));
-    }
-
+    const bankQuestion = verifyBoundQuestion(binding, bankQuestionMap.get(binding.source_question_id));
+    checkBoundSourceEligibility(candidate, bankQuestion, Boolean(force));
     questions.push(bankQuestion);
-    questionIds.push(questionId);
+    questionIds.push(binding.source_question_id);
     sourceContentHashes.push(binding.source_content_hash);
   }
 

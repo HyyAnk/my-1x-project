@@ -1,9 +1,11 @@
-/**
- * Universal 9:16 portrait safe-zone styles (TikTok, Shorts, Reels).
- */
+import { candyArcadeQuizShortStylesCss } from "./candyArcadeQuizShortStyles.js";
 
+/**
+ * Universal 9:16 portrait safe-zone styles (TikTok, Shorts, Reels), plus the Quiz Short
+ * bookend, progress strip and ring timer rules that only exist on the portrait canvas.
+ */
 export function candyArcadePortraitStylesCss(): string {
-  return `
+  return `${candyArcadeQuizShortStylesCss()}
 /* Universal 9:16 portrait safe-zone custom properties (TikTok, Shorts, Reels) */
 #stage[data-aspect-ratio="9:16"] {
   --safe-zone-top: 180px;

@@ -1,6 +1,8 @@
 import { LANDSCAPE_FRAME, LAYOUT_ARENA_GEOMETRY } from "./landscapeFrameGeometry.js";
 import { counterQuestionLayoutCss } from "./counterQuestionLayout.js";
 
+export { quizPortraitFrameCss, PORTRAIT_FRAME_SCOPE } from "./quizPortraitFrameStyles.js";
+
 /**
  * Returns scoped CSS rules for the unified 16:9 landscape quiz frame.
  * Controls fixed positioning for counter, question card, brand rail, thinking bar, and fact card.

@@ -25,7 +25,7 @@ import { compileCompositionHtml } from "./compositionHtmlCompiler.js";
 import { resolveEpisodeIntroOutro } from "../../quiz/introOutro/episodeSelection.js";
 import { prepareIntroOutroTiming } from "./introOutroTimingPreparation.js";
 import { resolveChannelBrandIdentity } from "../../quiz/brand/channelBrandAssetResolver.js";
-import { resolveEffectiveBridgeConfig, resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../quiz/bridge/resolveBridgeConfig.js";
+import { resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../quiz/bridge/resolveBridgeConfig.js";
 
 export {
   resolveAndCopyIntroOutro,
@@ -50,9 +50,12 @@ export type VideoCompositionContext = {
   introOutro: IntroOutroMediaResolution;
 };
 
-export function buildMascotRenderDependencies(mascot: MascotProfile | null, episode: Episode): string[] {
+export function buildMascotRenderDependencies(
+  mascot: MascotProfile | null,
+  product: { quiz_config: Parameters<typeof resolveMascotStyleIdForQuizConfig>[1] },
+): string[] {
   if (!mascot) return [];
-  const styleId = resolveMascotStyleIdForQuizConfig(mascot, episode.quiz_config);
+  const styleId = resolveMascotStyleIdForQuizConfig(mascot, product.quiz_config);
   const selectedStyles = styleId === "cycle" ? (mascot.styles ?? []) : (mascot.styles ?? []).filter((style) => style.id === styleId);
   return [
     `mascot-profile:${mascot.id}:${mascot.updated_at}`,

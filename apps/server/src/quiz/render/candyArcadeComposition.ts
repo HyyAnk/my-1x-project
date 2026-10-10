@@ -53,8 +53,13 @@ import { resolveQuestionPaletteAfter } from "./candyArcade/bridgeScenePalette.js
 import { isBridgeBrandStingerEvent, isBridgeCtaToQuestionEvent } from "../bridge/bridgeTransitionIds.js";
 import { assembleCandyArcadeDocument } from "./candyArcade/candyArcadeAssetBundler.js";
 import type { ResolvedChannelBrandIdentity } from "../brand/channelBrandAssetResolver.js";
+import { resolveChosenMascotStyleId } from "./candyArcade/mascotStyleSelection.js";
+import { buildQuizShortCompositionBundle } from "./candyArcade/quizShortComposition.js";
+import type { CandyArcadeProductKind } from "./candyArcade/candyArcadeClipTypes.js";
 
 export type CandyArcadeCompositionInput = {
+  /** Episodes render the landscape bookend flow; Quiz Shorts render the portrait kickoff, questions and score CTA. */
+  productKind?: CandyArcadeProductKind;
   quiz: QuizV2;
   director: DirectorPlan;
   timeline: QuizTimeline;
@@ -129,16 +134,6 @@ export {
   candyArcadeSystemFontFaceCss,
 };
 
-function resolveChosenMascotStyleId(input: CandyArcadeCompositionInput): string | null | undefined {
-  return (
-    input.mascotStyleId ??
-    (input.quiz as { quiz_config?: { mascot_style_id?: string } }).quiz_config?.mascot_style_id ??
-    (input as { quiz_config?: { mascot_style_id?: string } }).quiz_config?.mascot_style_id ??
-    (input.mascotConfig as { mascot_style_id?: string })?.mascot_style_id ??
-    input.mascot?.active_style_id
-  );
-}
-
 function resolveFirstAndOutroTiming(events: QuizTimeline["events"], firstQuestionId?: string) {
   const firstStart = firstQuestionId
     ? (events.find((event) => event.question_id === firstQuestionId && event.type === "question.enter")?.at_seconds ?? 0)
@@ -159,7 +154,12 @@ export function buildCandyArcadeComposition(input: CandyArcadeCompositionInput):
   return buildCandyArcadeCompositionBundle(input).html;
 }
 
+/** Entry point for every product: Quiz Shorts take the portrait path, Episodes the landscape bookend flow below. */
 export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionInput): CandyArcadeCompositionBundle {
+  return input.productKind === "quiz_short" ? buildQuizShortCompositionBundle(input) : buildEpisodeCompositionBundle(input);
+}
+
+function buildEpisodeCompositionBundle(input: CandyArcadeCompositionInput): CandyArcadeCompositionBundle {
   QuizV2Schema.parse(input.quiz);
   const aspectRatio = input.aspectRatio ?? "16:9";
   const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
@@ -235,11 +235,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   });
 
   if (introEnd > 0.04 && (input.transitionType ?? "stinger_swipe") !== "cut") {
-    const introTiming = calculateIntroTransitionTiming(
-      introEnd,
-      input.transitionType ?? "stinger_swipe",
-      input.transitionDurationSeconds,
-    );
+    const introTiming = calculateIntroTransitionTiming(introEnd, input.transitionType ?? "stinger_swipe", input.transitionDurationSeconds);
     if (introTiming.transitionDuration > 0) {
       events.push({
         event_id: "transition-intro",
@@ -266,9 +262,11 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       (input.quiz as { bridge_config?: { enableShowcase?: boolean } })?.bridge_config?.enableShowcase === false;
 
     const showcaseItems =
-      (rawShowcaseItems && rawShowcaseItems.length > 0)
+      rawShowcaseItems && rawShowcaseItems.length > 0
         ? rawShowcaseItems
-        : (!isShowcaseDisabled ? extractBridgeShowcaseItems(input.quiz) : undefined);
+        : !isShowcaseDisabled
+          ? extractBridgeShowcaseItems(input.quiz)
+          : undefined;
 
     clips.push(
       bridgeTopicClip({
@@ -277,10 +275,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         topic: resolvedTopic,
         questionCount: (bridgeTopicEvent.payload?.questionCount as number) || input.quiz.questions.length,
         badgeText: bridgeTopicEvent.payload?.badgeText as string | undefined,
-        promptText:
-          (bridgeTopicEvent.payload?.subtitle as string) ||
-          (bridgeTopicEvent.payload?.promptText as string) ||
-          undefined,
+        promptText: (bridgeTopicEvent.payload?.subtitle as string) || (bridgeTopicEvent.payload?.promptText as string) || undefined,
         visualStyle: bridgeTopicEvent.payload?.visualStyle as string | undefined,
         mascotAction: bridgeTopicEvent.payload?.mascotAction as string | undefined,
         aspectRatio,
@@ -290,8 +285,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         channelName,
         hasCustomLogo: input.brandIdentity?.hasCustomLogo ?? false,
         logoUrl: input.brandIdentity?.logoRelativeUrl,
-        fallbackInitial:
-          input.brandIdentity?.fallbackInitial ?? (channelName.trim().charAt(0).toUpperCase() || "★"),
+        fallbackInitial: input.brandIdentity?.fallbackInitial ?? (channelName.trim().charAt(0).toUpperCase() || "★"),
         showcaseItems,
         assets: input.assets,
       }),
@@ -311,9 +305,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       "Channel";
 
     const stingerDuration = bridgeStingerEvent?.duration_seconds ?? 1.3;
-    const stingerStart =
-      bridgeStingerEvent?.at_seconds ??
-      (bridgeCtaEvent ? Math.max(0, bridgeCtaEvent.at_seconds - 0.65) : 0);
+    const stingerStart = bridgeStingerEvent?.at_seconds ?? (bridgeCtaEvent ? Math.max(0, bridgeCtaEvent.at_seconds - 0.65) : 0);
 
     if (!bridgeStingerEvent) {
       events.push({
@@ -367,8 +359,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         channelName,
         hasCustomLogo: input.brandIdentity?.hasCustomLogo ?? false,
         logoUrl: input.brandIdentity?.logoRelativeUrl,
-        fallbackInitial:
-          input.brandIdentity?.fallbackInitial ?? (channelName.trim().charAt(0).toUpperCase() || "★"),
+        fallbackInitial: input.brandIdentity?.fallbackInitial ?? (channelName.trim().charAt(0).toUpperCase() || "★"),
         aspectRatio,
         fromColor: firstQuestionPalette?.backgroundPrimary,
         toColor: firstQuestionPalette?.backgroundSecondary,
@@ -392,10 +383,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         duration: bridgeCtaEvent.duration_seconds,
         channelName,
         badgeText: bridgeCtaEvent.payload?.badgeText as string | undefined,
-        headlineText:
-          (bridgeCtaEvent.payload?.customText as string) ||
-          (bridgeCtaEvent.payload?.headlineText as string) ||
-          undefined,
+        headlineText: (bridgeCtaEvent.payload?.customText as string) || (bridgeCtaEvent.payload?.headlineText as string) || undefined,
         promptText: bridgeCtaEvent.payload?.promptText as string | undefined,
         ctaMode: (bridgeCtaEvent.payload?.ctaMode as "hero_action" | "classic") || "hero_action",
         minimalBranding: (bridgeCtaEvent.payload?.minimalBranding as boolean | undefined) ?? true,
@@ -409,12 +397,10 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
 
   const bridgeCtaToQuestionEvent = events.find(isBridgeCtaToQuestionEvent);
   const questionAfterCtaPalette = bridgeCtaEvent
-    ? resolveQuestionPaletteAfter(events, resolvedQuestions, bridgeCtaEvent.at_seconds) ?? firstQuestionPalette
+    ? (resolveQuestionPaletteAfter(events, resolvedQuestions, bridgeCtaEvent.at_seconds) ?? firstQuestionPalette)
     : firstQuestionPalette;
 
-  const shouldRenderCtaToQuestionStinger = Boolean(
-    bridgeCtaToQuestionEvent || (bridgeCtaEvent && resolvedQuestions.length > 0),
-  );
+  const shouldRenderCtaToQuestionStinger = Boolean(bridgeCtaToQuestionEvent || (bridgeCtaEvent && resolvedQuestions.length > 0));
 
   if (shouldRenderCtaToQuestionStinger) {
     const ctaToQuestionDuration = bridgeCtaToQuestionEvent?.duration_seconds ?? 1.2;
@@ -491,9 +477,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   clips.push(...timeline.clips);
   Object.assign(transitionInstances, timeline.transitionInstances);
 
-  const preOutroEvent = events.find(
-    (event) => event.type === "pre_outro.enter" || event.segment_id === "pre_outro",
-  );
+  const preOutroEvent = events.find((event) => event.type === "pre_outro.enter" || event.segment_id === "pre_outro");
   if (preOutroEvent) {
     clips.push(
       preOutroClip({
@@ -536,7 +520,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
 
   if (preOutroEvent && outroClip) {
     const celebrationDuration = preOutroToOutroEvent?.duration_seconds ?? 2.0;
-    const boundary = typeof outroStart === "number" ? outroStart : (preOutroEvent.at_seconds + preOutroEvent.duration_seconds);
+    const boundary = typeof outroStart === "number" ? outroStart : preOutroEvent.at_seconds + preOutroEvent.duration_seconds;
     const halfDuration = celebrationDuration * 0.5;
     const celebrationStart = Math.max(0, Math.round((boundary - halfDuration) * 1000) / 1000);
 
@@ -559,9 +543,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     aspectRatio,
     duration,
     fps,
-    mascot: input.mascot
-      ? { ...input.mascot, active_style_id: chosenStyleId ?? input.mascot.active_style_id }
-      : null,
+    mascot: input.mascot ? { ...input.mascot, active_style_id: chosenStyleId ?? input.mascot.active_style_id } : null,
     usedBackgroundStyles,
     styleCatalogRevision: input.styleContext.styleCatalogRevision ?? undefined,
     audioPath: input.audioPath,

@@ -10,6 +10,8 @@ import type { QuizArtifacts, QuizOrchestratorInput } from "../orchestrator.js";
 import { resolveIntroOutroConfig } from "./assetsVoiceStages.js";
 import { resolveEpisodeBridgeConfig, resolveBridgeChannelDisplayName } from "../../bridge/resolveBridgeConfig.js";
 import { loadPipelineProductView, resolvePipelineProductRef } from "../quizProductView.js";
+import { productPacingProfile, productTimelineOptions } from "../productPipelineOptions.js";
+import { hasLegacyBookendVoiceSegments } from "../voicePlanFreshness.js";
 
 export async function compileTimeline(
   input: QuizOrchestratorInput,
@@ -24,10 +26,11 @@ export async function compileTimeline(
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before compiling the timeline", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before compiling the timeline", "DIRECTOR_REQUIRED");
   if (!voice_plan) throw new RepositoryError("Generate the voice plan before compiling the timeline", "VOICE_PLAN_REQUIRED");
-  if (voice_plan.segments.some((segment) => segment.role === "intro" || segment.role === "outro")) {
+  if (hasLegacyBookendVoiceSegments(voice_plan)) {
     throw new RepositoryError("Regenerate episode voice before rebuilding a legacy Intro/Outro timeline.", "INTRO_OUTRO_VOICE_STALE");
   }
-  assertDirectorPlanValid(quiz, director_plan);
+  const timelineOptions = productTimelineOptions(view);
+  assertDirectorPlanValid(quiz, director_plan, { pacingProfile: timelineOptions.pacingProfile });
   const audioDurations: Record<string, number> = {};
   for (const segment of voice_plan.segments) {
     if (segment.duration_seconds !== null) audioDurations[segment.segment_id] = segment.duration_seconds;
@@ -35,7 +38,6 @@ export async function compileTimeline(
   const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, resolvePipelineProductRef(input));
   const bridgeConfig = resolveEpisodeBridgeConfig(channel, quiz);
   const channelName = resolveBridgeChannelDisplayName(channel, bridgeConfig, view?.quiz_config.channel_brand_name);
-  // Seam: the short pacing profile (view.quiz_config.pacing_profile) selects the bookend-free compiler in the next phase.
   const timeline = compileQuizTimeline({
     quiz,
     director: director_plan,
@@ -46,6 +48,7 @@ export async function compileTimeline(
     channelName,
     topic: view?.topic?.title,
     bridgeConfig,
+    ...timelineOptions,
   });
   const artifact_path = await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
   const invalidatedStages = invalidateQuizArtifacts("timeline");
@@ -54,7 +57,11 @@ export async function compileTimeline(
 }
 
 export async function runQa(input: QuizOrchestratorInput): Promise<{ assessment: QuizAssessment; artifact_path: string }> {
-  const [artifacts, channel] = await Promise.all([readQuizArtifacts(input), input.repository.getChannel(input.channelId)]);
+  const [artifacts, channel, view] = await Promise.all([
+    readQuizArtifacts(input),
+    input.repository.getChannel(input.channelId),
+    loadPipelineProductView(input).catch(() => null),
+  ]);
   if (!artifacts.quiz) throw new RepositoryError("Generate the Quiz facts before running QA", "QUIZ_REQUIRED");
   const mascot = channel.mascot_id ? await input.repository.getMascot(channel.mascot_id).catch(() => null) : null;
   const assessment = assessQuiz({
@@ -67,6 +74,7 @@ export async function runQa(input: QuizOrchestratorInput): Promise<{ assessment:
     measuredAudio: artifacts.voice_plan ? artifacts.voice_plan.segments.every((segment) => segment.duration_seconds !== null) : false,
     mascot,
     mascotConfig: channel.mascot_config,
+    pacingProfile: productPacingProfile(view),
   });
   const artifact_path = await input.repository.writeQuizAssessment(input.channelId, input.episodeId, assessment);
   return { assessment, artifact_path };
@@ -107,6 +115,7 @@ export async function assertQuizRenderReady(
     measuredAudio: view.media.narration_duration_seconds !== null,
     mascot,
     mascotConfig: channel.mascot_config,
+    pacingProfile: productPacingProfile(view),
   });
   if (!preflight.ok) {
     const blocker = preflight.assessment.issues.find((issue) => issue.severity === "blocker");

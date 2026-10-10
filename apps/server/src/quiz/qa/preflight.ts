@@ -4,6 +4,7 @@ import type {
   MascotProfile,
   QuizAssessment,
   QuizAssetPlan,
+  QuizPacingProfile,
   QuizTimeline,
   QuizV2,
   VoicePlan,
@@ -20,6 +21,8 @@ export type QuizRenderPreflightInput = {
   measuredAudio: boolean;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
+  /** "short" runs the Quiz Short gates (no choice narration, duration budget, portrait layouts). */
+  pacingProfile?: QuizPacingProfile;
 };
 
 export function preflightQuizRender(input: QuizRenderPreflightInput): { ok: boolean; assessment: QuizAssessment } {

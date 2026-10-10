@@ -19,11 +19,15 @@ export function resolveChoiceDecorationVariant(
     case "media_left_choices_right":
     case "visual_choices_three":
     case "full_stack_list":
+    case "short_stack_list":
+    case "short_media_top_choices":
       return "detached_badge";
     case "visual_choices_three_pure":
       return "media_bottom_badge";
     case "split_versus_two":
     case "verdict_yes_no":
+    case "short_versus_two":
+    case "short_verdict_yes_no":
       return "text_only";
     case "mystery_reveal":
       return "single_reveal";

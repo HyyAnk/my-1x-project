@@ -10,3 +10,7 @@ export * from "./episodeStagingPublisher.js";
 export * from "./singleQuestionBridge.js";
 export * from "./topicEpisodeConfig.js";
 export * from "./topicEpisodeBridge.js";
+export * from "./quizShortQuestionAdapter.js";
+export * from "./quizShortConfirmationConfig.js";
+export * from "./quizShortRecordBuilder.js";
+export * from "./quizShortBridge.js";

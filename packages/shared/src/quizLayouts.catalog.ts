@@ -24,10 +24,12 @@ export {
 import { QUIZ_LANDSCAPE_LAYOUT_IDS as LANDSCAPE_IDS, QUIZ_PORTRAIT_LAYOUT_IDS as PORTRAIT_IDS } from "./quizLayoutGeometry/index.js";
 
 /**
- * Layout ids that have a production HTML renderer today. Portrait layouts join this
- * union once their renderers land; until then preview and render stay landscape-only.
+ * Layout ids that have a production HTML renderer: the landscape Episode catalog, the portrait
+ * Quiz Short catalog and the preview-only baseline.
  */
-export const QuizPreviewLayoutIdSchema = acceptLegacyVerdictAliases(z.union([z.enum(LANDSCAPE_IDS), z.literal("baseline")]));
+export const QuizPreviewLayoutIdSchema = acceptLegacyVerdictAliases(
+  z.union([z.enum(LANDSCAPE_IDS), z.enum(PORTRAIT_IDS), z.literal("baseline")]),
+);
 export type QuizPreviewLayoutId = z.infer<typeof QuizPreviewLayoutIdSchema>;
 
 const supportedLandscapeAspectRatios = ["16:9"] as const;

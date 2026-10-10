@@ -23,7 +23,7 @@ export const QUIZ_SHORT_TEXT_LAYOUT_PAIR: QuizShortLayoutPair = { primary: "shor
 export const QUIZ_SHORT_TEXT_ONLY_LAYOUT_PAIR: QuizShortLayoutPair = { primary: "short_stack_list", secondary: "short_stack_list" };
 export const QUIZ_SHORT_IMAGE_LAYOUT_PAIR: QuizShortLayoutPair = { primary: "short_media_top_choices", secondary: "short_versus_two" };
 
-function isImageTopic(quiz: QuizV2): boolean {
+function isImageTopic(quiz: Pick<QuizV2, "questions">): boolean {
   return quiz.questions.length > 0 && quiz.questions.every((question) => question.visual_opportunity.trim().length > 0);
 }
 
@@ -32,7 +32,10 @@ function isImageTopic(quiz: QuizV2): boolean {
  * subject) alternate the two media layouts; text topics alternate the stack list with the
  * verdict layout only when the quiz actually contains yes/no questions.
  */
-export function resolveQuizShortLayoutPair(quiz: QuizV2, config?: Pick<QuizShortConfig, "layout_pair">): QuizShortLayoutPair {
+export function resolveQuizShortLayoutPair(
+  quiz: Pick<QuizV2, "questions">,
+  config?: Pick<QuizShortConfig, "layout_pair">,
+): QuizShortLayoutPair {
   if (config?.layout_pair) return config.layout_pair;
   if (isImageTopic(quiz)) return QUIZ_SHORT_IMAGE_LAYOUT_PAIR;
   const hasYesNo = quiz.questions.some((question) => question.format === "yes_no");

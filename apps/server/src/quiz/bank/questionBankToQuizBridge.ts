@@ -34,4 +34,10 @@ export {
   handleExistingConfirmationReceipt,
 } from "./bridge/topicEpisodeBridge.js";
 
+export { createQuizShortFromTopicWithBank, executeQuizShortConfirmation } from "./bridge/quizShortBridge.js";
+export type {
+  CreateQuizShortFromTopicWithBankInput,
+  CreateQuizShortFromTopicWithBankResult,
+} from "./bridge/quizShortConfirmationConfig.js";
+
 export { withTopicConfirmationLock, isTopicConfirmationLocked, clearAllTopicConfirmationLocks } from "./bridge/topicConfirmationLock.js";
