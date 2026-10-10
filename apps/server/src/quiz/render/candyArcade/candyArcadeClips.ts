@@ -202,6 +202,7 @@ export function questionClip(input: QuestionClipInput): string {
     aspectRatio: profile.aspectRatio,
     thinkingHtml,
     factHtml,
+    omitFactCard: profile.isShort,
   });
   const layoutBody = renderQuizLayoutBody(model.layout.id, {
     questionBoxHtml: stableParts.questionBoxHtml,

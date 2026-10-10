@@ -17,7 +17,6 @@ export type QuizPortraitFrameGeometry = Readonly<{
   question: QuizRect;
   arena: QuizRect;
   countdown: QuizRect;
-  reveal: QuizRect;
   mascot: QuizRect;
   cta: QuizRect;
 }>;
@@ -44,10 +43,9 @@ export const PORTRAIT_FRAME_GEOMETRY: QuizPortraitFrameGeometry = Object.freeze(
   question: Object.freeze({ x: GUTTER, y: 260, width: 936, height: 240 }),
   arena: Object.freeze({ x: GUTTER, y: 530, width: 936, height: 968 }),
   countdown: Object.freeze({ x: 858, y: 430, width: 150, height: 150 }),
-  // The reveal card stops short of the mascot column so the two never overlap.
-  reveal: Object.freeze({ x: GUTTER, y: 1352, width: 468, height: 146 }),
-  // The mascot may dip below the safe area: platform captions sit bottom-left, not bottom-right.
-  mascot: Object.freeze({ x: 568, y: 1180, width: 440, height: 440 }),
+  // No fact card on Quiz Shorts: the reveal beat is too short to read one, so the mascot owns
+  // the bottom band. It may dip below the safe area: platform captions sit bottom-left.
+  mascot: Object.freeze({ x: 480, y: 1180, width: 528, height: 528 }),
   cta: Object.freeze({ x: GUTTER, y: 540, width: 936, height: 580 }),
 });
 

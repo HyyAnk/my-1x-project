@@ -560,10 +560,10 @@ describe("Mascot portrait canvas and storage migration", () => {
     );
     expect(css).toContain("--safe-zone-right: 151px");
     expect(css).toContain(
-      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene.clip .candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container { bottom: 300px; }',
+      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene.clip .candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container { bottom: 212px; }',
     );
     expect(css).toContain(
-      ".candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container.anchor-bottom_right { right: 182px; }",
+      ".candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container.anchor-bottom_right { right: 226px; }",
     );
     expect(css).not.toContain(".quiz-frame-unified.candy-scene {");
   });

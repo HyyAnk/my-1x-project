@@ -20,7 +20,7 @@ import {
   type MascotAnimationRenderSnapshot,
 } from "../../animationRenderSnapshot.js";
 import { buildLegacySpriteAction } from "./mascotV1ActionBuilder.js";
-import { buildBundleActionV2 } from "./mascotV2BundleBuilder.js";
+import { buildBundleActionV2, variantRegistration } from "./mascotV2BundleBuilder.js";
 
 /**
  * Resolves the active MascotStyle for a question or scene.
@@ -77,6 +77,46 @@ export function resolveQuestionAction(
 /**
  * Resolves a modern V2 bundle action for a specific question state.
  */
+/** Static still image action: motion from the variant, registration from its measured pixel bounds. */
+function buildStaticVariantAction(
+  type: "thinking" | "celebrate",
+  variant: MascotStateVariant,
+  imageUrl: string,
+  defaultPreset: MascotMotionPreset,
+  existing?: MascotActionAssetV2 | null,
+): MascotActionAssetV2 {
+  const sanitizedExisting = existing ? { ...existing, animation: undefined, legacy_animation: undefined } : undefined;
+  return buildBundleActionV2(
+    type,
+    imageUrl,
+    variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
+    variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
+    variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
+    sanitizedExisting,
+    undefined,
+    variantRegistration(variant, sanitizedExisting),
+  );
+}
+
+/** Animated action: video or atlas media with the variant's published animation asset attached. */
+function buildAnimatedVariantAction(
+  type: "thinking" | "celebrate",
+  variant: MascotStateVariant,
+  mediaUrl: string,
+  defaultPreset: MascotMotionPreset,
+  existing?: MascotActionAssetV2 | null,
+): MascotActionAssetV2 {
+  return buildBundleActionV2(
+    type,
+    mediaUrl,
+    variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
+    variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
+    variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
+    existing,
+    variant.animation ?? undefined,
+  );
+}
+
 export function resolveQuestionBundleAction(
   type: "thinking" | "celebrate",
   variant: MascotStateVariant | null,
@@ -95,32 +135,11 @@ export function resolveQuestionBundleAction(
     if (isStatic) {
       // Static mode requires a real still image. Animation-only variants are not
       // rendered and the style anchor is not used as a question-state fallback.
-      if (imageUrl) {
-        const sanitizedExisting = existing ? { ...existing, animation: undefined, legacy_animation: undefined } : undefined;
-        return buildBundleActionV2(
-          type,
-          imageUrl,
-          variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
-          variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
-          variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
-          sanitizedExisting,
-          undefined,
-        );
-      }
+      if (imageUrl) return buildStaticVariantAction(type, variant, imageUrl, defaultPreset, existing);
     } else {
       // In animation mode: prioritize video or atlas URL and attach animation asset
       const mediaUrl = animVideoUrl || animAtlasUrl || imageUrl;
-      if (mediaUrl) {
-        return buildBundleActionV2(
-          type,
-          mediaUrl,
-          variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
-          variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
-          variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
-          existing,
-          variant.animation ?? undefined,
-        );
-      }
+      if (mediaUrl) return buildAnimatedVariantAction(type, variant, mediaUrl, defaultPreset, existing);
     }
   }
   if (mediaMode === "static") {

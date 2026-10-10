@@ -67,7 +67,6 @@ describe("Quiz Short layout registry", () => {
     expect(isInsidePortraitSafeArea(PORTRAIT_FRAME.progressStrip)).toBe(true);
     expect(isInsidePortraitSafeArea(PORTRAIT_FRAME.question)).toBe(true);
     expect(isInsidePortraitSafeArea(PORTRAIT_FRAME.countdown)).toBe(true);
-    expect(isInsidePortraitSafeArea(PORTRAIT_FRAME.reveal)).toBe(true);
     expect(isInsidePortraitSafeArea(PORTRAIT_FRAME.cta)).toBe(true);
     for (const layoutId of QUIZ_PORTRAIT_LAYOUT_IDS) {
       const geometry = PORTRAIT_LAYOUT_CONTENT_GEOMETRY[layoutId];

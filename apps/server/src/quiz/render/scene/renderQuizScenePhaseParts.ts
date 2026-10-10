@@ -7,6 +7,8 @@ export type RenderQuizScenePhasePartsInput = {
   thinkingHtml: string;
   factHtml: string;
   omitMysteryFactCard?: boolean;
+  /** Quiz Shorts never show the fact card; the reveal beat is too short to read it. */
+  omitFactCard?: boolean;
 };
 
 export function shouldRenderFactCard(layoutId: string): boolean {
@@ -18,7 +20,7 @@ export function shouldRenderFactCard(layoutId: string): boolean {
 
 export function renderQuizScenePhaseParts(input: RenderQuizScenePhasePartsInput): string {
   const isUnified = isUnifiedQuizFrame(input.layoutId, input.aspectRatio);
-  const factVisible = shouldRenderFactCard(input.layoutId);
+  const factVisible = !input.omitFactCard && shouldRenderFactCard(input.layoutId);
   const effectiveFactHtml = factVisible ? input.factHtml : "";
 
   if (!isUnified) {

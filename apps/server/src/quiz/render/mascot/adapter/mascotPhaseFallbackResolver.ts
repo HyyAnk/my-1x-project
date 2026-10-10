@@ -13,7 +13,7 @@ import {
   type MascotStateVariant,
   type MascotStyle,
 } from "@studio/shared";
-import { buildBundleActionV2 } from "./mascotV2BundleBuilder.js";
+import { buildBundleActionV2, variantRegistration } from "./mascotV2BundleBuilder.js";
 
 /**
  * Checks whether the mascot has a dedicated, non-empty asset for the given action.
@@ -278,25 +278,35 @@ export function adaptMascotForPhase(
   const thinkingVariants = filterPreferredVariants(style.states?.thinking, mediaMode);
 
   const hasDedicated =
-    hasDedicatedAction(mascot, "thinking") ||
-    hasDedicatedAction(mascot, "celebrate") ||
-    hasDedicatedAction(mascot, "idle");
+    hasDedicatedAction(mascot, "thinking") || hasDedicatedAction(mascot, "celebrate") || hasDedicatedAction(mascot, "idle");
 
   if (phase === "question" && mediaMode === "static" && !hasDedicated && celebrateVariants.length === 0 && thinkingVariants.length === 0) {
     return null;
   }
 
   let adaptedRenderBundle = mascot.render_bundle ?? adaptMascotV1ToV2(mascot);
+  const variants = [...celebrateVariants, ...thinkingVariants];
 
   const applyPhaseAction: ApplyPhaseActionFn = (action, url, motionPreset, speed = 1.0, intensity = "normal", animation) => {
     if (adaptedRenderBundle) {
+      // A url that came from a measured style variant carries that variant's pixel bounds.
+      const sourceVariant = variants.find((variant) => variant.image_url === url || variant.transparent_image_url === url);
       adaptedRenderBundle = {
         ...adaptedRenderBundle,
         assets: {
           ...adaptedRenderBundle.assets,
           actions: {
             ...adaptedRenderBundle.assets.actions,
-            [action]: buildBundleActionV2(action, url, motionPreset, speed, intensity, undefined, animation),
+            [action]: buildBundleActionV2(
+              action,
+              url,
+              motionPreset,
+              speed,
+              intensity,
+              undefined,
+              animation,
+              sourceVariant ? variantRegistration(sourceVariant) : undefined,
+            ),
           },
         },
       };

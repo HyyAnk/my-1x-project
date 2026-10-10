@@ -9,6 +9,7 @@ import { buildQuizShortVoicePlan } from "../src/quiz/audio/quizShortVoicePlan.js
 import { createQuizShortDirectorPlan } from "../src/quiz/director/quizShortDirectorPlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
+import { measureMascotContentBounds } from "../src/tasks/video/mascotContentBounds.js";
 import { findQuizShortMascotViolations } from "../src/quiz/render/candyArcade/quizShortMascotInvariant.js";
 import { getHyperframesInvocation } from "../src/tasks/video/videoInvocation.js";
 import { buildLayoutCheckArgs, resolveLayoutCheckSampling } from "../src/tasks/video/layoutCheckSampling.js";
@@ -43,7 +44,12 @@ function bundleRelativeMascot(): MascotProfile {
 async function writeMascotAssets(renderRoot: string): Promise<void> {
   const assetsDir = path.join(renderRoot, "assets");
   await mkdir(assetsDir, { recursive: true });
-  const png = await sharp({ create: { width: 220, height: 220, channels: 4, background: { r: 255, g: 180, b: 40, alpha: 1 } } })
+  // Opaque art in the top 150 rows over a transparent canvas: a mascot cut at its canvas edge.
+  const art = await sharp({ create: { width: 220, height: 150, channels: 4, background: { r: 255, g: 180, b: 40, alpha: 1 } } })
+    .png()
+    .toBuffer();
+  const png = await sharp({ create: { width: 220, height: 220, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([{ input: art, top: 0, left: 0 }])
     .png()
     .toBuffer();
   await Promise.all(MASCOT_ASSET_FILES.map((name) => writeFile(path.join(assetsDir, name), png)));
@@ -77,6 +83,7 @@ describe("Quiz Short portrait render specimen", () => {
     const renderRoot = path.join(outputRoot, "five-question-text");
     await mkdir(renderRoot, { recursive: true });
     await writeMascotAssets(renderRoot);
+    const mascot = await measureMascotContentBounds(bundleRelativeMascot(), renderRoot);
 
     const bundle = buildCandyArcadeCompositionBundle({
       productKind: "quiz_short",
@@ -88,7 +95,7 @@ describe("Quiz Short portrait render specimen", () => {
       premixedAudio: true,
       narrationDurationSeconds: timeline.duration_seconds,
       aspectRatio: "9:16",
-      mascot: bundleRelativeMascot(),
+      mascot,
       fps: 24,
     });
     expect(findQuizShortMascotViolations(bundle)).toEqual([]);

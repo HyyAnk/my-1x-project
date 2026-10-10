@@ -114,15 +114,15 @@ describe("Quiz Short render snapshot", () => {
       expect(clip.html).toContain('<div class="quiz-thinking-anchor" data-quiz-fixed="thinking"><div class="short-ring-timer"');
       expect(clip.html).toContain('data-countdown-seconds="3"');
       expect(clip.html).not.toContain('class="thinking-bar');
-      expect(clip.html).toContain('<div class="quiz-fact-anchor" data-quiz-fixed="fact"><div class="fact-card"');
+      expect(clip.html).not.toContain("quiz-fact-anchor");
+      expect(clip.html).not.toContain('class="fact-card"');
       expect(clip.html).not.toContain("channel-brand-mark");
     });
     const css = bundle.html;
-    const { progressStrip, question, countdown, reveal } = PORTRAIT_FRAME_GEOMETRY;
+    const { progressStrip, question, countdown } = PORTRAIT_FRAME_GEOMETRY;
     expect(css).toContain(`.quiz-progress-strip { position: absolute; z-index: 6; left: ${progressStrip.x}px; top: ${progressStrip.y}px;`);
     expect(css).toContain(`.quiz-question-anchor { position: absolute; z-index: 3; left: ${question.x}px; top: ${question.y}px;`);
     expect(css).toContain(`.quiz-thinking-anchor { position: absolute; left: ${countdown.x}px; top: ${countdown.y}px;`);
-    expect(css).toContain(`.quiz-fact-anchor { position: absolute; left: ${reveal.x}px; top: ${reveal.y}px;`);
   });
 
   it("enforces the portrait text minimums in the stylesheet", () => {

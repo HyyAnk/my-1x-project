@@ -66,6 +66,8 @@ export function renderState(
     mediaMode === "static" || hasAnimation ? { preset: "none", speed: 1, intensity: "normal" } : spec.motion;
 
   const geometry = resolveMascotRenderGeometry(spec);
+  const bounds = geometry.visible_content;
+  const contentBottomGap = Math.max(0, geometry.box_y + geometry.box_height - (bounds.y + bounds.height));
   const pivot = localPivot(spec, geometry);
   const assetPivot = localAssetPivot(spec, geometry);
   const duration = Math.max(0.04, finiteNonNegative(state.durationSeconds));
@@ -81,6 +83,7 @@ export function renderState(
     `--mascot-pivot-compensation-y:${px(geometry.pivot_compensation_y)}`,
     `--mascot-registration-x:${px(geometry.registration_offset_x)}`,
     `--mascot-registration-y:${px(geometry.registration_offset_y)}`,
+    `--mascot-content-bottom-gap:${px(contentBottomGap)}`,
     ...motionStyle(effectiveMotion, timelineTime, duration, stateDelay, preview),
   ].join(";");
   const art = renderArt(
@@ -95,7 +98,6 @@ export function renderState(
     clipStartSeconds,
     mediaMode,
   );
-  const bounds = geometry.visible_content;
   const assetUrl =
     mediaMode !== "static" && spec.asset.animation
       ? spec.asset.animation.atlas_url || spec.asset.animation.transparent_video_url || spec.asset.image_url

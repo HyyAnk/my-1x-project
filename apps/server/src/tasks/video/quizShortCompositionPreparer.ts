@@ -12,6 +12,7 @@ import type { TaskManagerRuntime } from "../runtime.js";
 import { renderSourceFingerprint } from "../fingerprints.js";
 import { loadRequiredQuizRenderArtifacts } from "./quizRenderArtifacts.js";
 import { prepareLocalizedMascot } from "./mascotLocalization.js";
+import { measureMascotContentBounds } from "./mascotContentBounds.js";
 import { prepareSoundtrack } from "./soundtrackPreparation.js";
 import { prepareVideoAssets } from "./videoAssetPreparation.js";
 import { syncStaticMediaAssets } from "./videoStaticAssets.js";
@@ -89,7 +90,8 @@ export async function prepareQuizShortComposition(options: QuizShortCompositionO
   );
 
   const bgmHistory = await repository.readBgmHistory(channelId);
-  const mascotProfile = await prepareLocalizedMascot(channel, repository, renderRoot);
+  const localizedMascot = await prepareLocalizedMascot(channel, repository, renderRoot);
+  const mascotProfile = localizedMascot ? await measureMascotContentBounds(localizedMascot, renderRoot) : null;
   const { selectedBgmTrackId, selectedBgmFilename } = await prepareSoundtrack({
     renderRoot,
     narration,

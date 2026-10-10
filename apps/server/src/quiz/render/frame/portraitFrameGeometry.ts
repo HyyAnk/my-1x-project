@@ -11,7 +11,6 @@ export type PortraitFrameGeometry = Readonly<{
   question: FrameRect;
   arena: FrameRect;
   countdown: FrameRect;
-  reveal: FrameRect;
   mascot: FrameRect;
   cta: FrameRect;
 }>;
@@ -27,7 +26,6 @@ export const PORTRAIT_FRAME: PortraitFrameGeometry = Object.freeze({
   question: PORTRAIT_FRAME_GEOMETRY.question,
   arena: PORTRAIT_FRAME_GEOMETRY.arena,
   countdown: PORTRAIT_FRAME_GEOMETRY.countdown,
-  reveal: PORTRAIT_FRAME_GEOMETRY.reveal,
   mascot: PORTRAIT_FRAME_GEOMETRY.mascot,
   cta: PORTRAIT_FRAME_GEOMETRY.cta,
 });
