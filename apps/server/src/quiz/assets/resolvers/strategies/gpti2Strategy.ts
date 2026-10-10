@@ -11,17 +11,10 @@ export interface Gpti2AssetOptions {
   fallbackTier?: number;
 }
 
-/**
- * Strategy for generating quiz image assets using the GPT-I2 provider.
- */
-export async function generateGpti2Asset(
-  input: ProviderAssetInput,
-  options: Gpti2AssetOptions = {},
-): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, imageConfig, imageFallbackConfig, logger } = input;
-  input.cancellationSignal?.throwIfAborted();
+type GeneratedGpti2Asset = { path: string; price_vnd?: number; model?: string };
 
-  const isFallback = options.fallbackTier !== undefined;
+function resolveGpti2Credentials(input: ProviderAssetInput, isFallback: boolean): { apiKey: string; model: string } {
+  const { imageConfig, imageFallbackConfig } = input;
   const apiKey =
     (isFallback ? imageFallbackConfig?.gpti2_api_key : undefined) ||
     imageConfig?.gpti2_api_key ||
@@ -34,14 +27,19 @@ export async function generateGpti2Asset(
     imageConfig?.gpti2_model ||
     imageConfig?.model ||
     DEFAULT_GPTI2_MODEL;
+  return { apiKey, model };
+}
 
-  const provider = new Gpti2QuizImageProvider(
-    repository,
-    { channelId, episodeId },
-    { apiKey, model },
-  );
+function isNonRetryableGenerationError(err: unknown): boolean {
+  return isContentFilterError(err) || (err instanceof RepositoryError && err.code === "image_request_size_conflict");
+}
 
-  let generated: { path: string; price_vnd?: number; model?: string } | null = null;
+async function generateWithRetry(
+  input: ProviderAssetInput,
+  provider: Gpti2QuizImageProvider,
+): Promise<GeneratedGpti2Asset | null> {
+  const { channelId, episodeId, request, fingerprint, compiledPrompt, logger } = input;
+  let generated: GeneratedGpti2Asset | null = null;
   for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
     input.cancellationSignal?.throwIfAborted();
     try {
@@ -58,10 +56,7 @@ export async function generateGpti2Asset(
       break;
     } catch (err) {
       input.cancellationSignal?.throwIfAborted();
-      if (
-        isContentFilterError(err) ||
-        (err instanceof RepositoryError && err.code === "image_request_size_conflict")
-      ) {
+      if (isNonRetryableGenerationError(err)) {
         throw err;
       }
       if (attempt < MAX_GENERATION_ATTEMPTS) {
@@ -75,6 +70,26 @@ export async function generateGpti2Asset(
       throw err;
     }
   }
+  return generated;
+}
+
+/**
+ * Strategy for generating quiz image assets using the GPT-I2 provider.
+ */
+export async function generateGpti2Asset(
+  input: ProviderAssetInput,
+  options: Gpti2AssetOptions = {},
+): Promise<ProviderAssetOutput> {
+  const { repository, channelId, episodeId, request, fingerprint, imageConfig } = input;
+  input.cancellationSignal?.throwIfAborted();
+
+  const provider = new Gpti2QuizImageProvider(
+    repository,
+    { channelId, episodeId },
+    resolveGpti2Credentials(input, options.fallbackTier !== undefined),
+  );
+
+  const generated = await generateWithRetry(input, provider);
 
   if (!generated) {
     throw new Error(`Failed to generate asset ${request.asset_id}`);

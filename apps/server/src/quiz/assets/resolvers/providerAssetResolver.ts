@@ -72,7 +72,7 @@ async function attemptPrimaryProvider(input: ProviderAssetInput): Promise<Provid
  * protected by an optional circuit breaker.
  */
 export async function resolveProviderAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { channelId, episodeId, request, imageConfig, imageFallbackConfig, logger } = input;
+  const { channelId, episodeId, request, imageFallbackConfig, logger } = input;
   const fallbackModels = resolveImgStudioFallbackModels({
     level1_model: imageFallbackConfig?.level1_model,
     level2_model: imageFallbackConfig?.level2_model,

@@ -16,7 +16,7 @@ type Props = {
   onOpenBatchModal?: () => void;
 };
 
-export function ScriptStudioHeader({ studio, step, onStepChange, hasContent, activeJob, draftPending, onOpenBatchModal }: Props) {
+export function ScriptStudioHeader({ studio, step, onStepChange, hasContent, draftPending, onOpenBatchModal }: Props) {
   const projectActionDisabled = studio.busy !== null || draftPending;
   const stepLabels: Record<ScriptStudioStep, string> = {
     configure: "Create",

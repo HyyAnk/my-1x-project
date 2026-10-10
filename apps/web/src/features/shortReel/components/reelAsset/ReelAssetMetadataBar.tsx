@@ -40,7 +40,7 @@ export function ReelAssetMetadataBar({
     }
   };
 
-  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleDownload = async () => {
     if (!downloadUrl) return;
     try {
       setIsDownloading(true);

@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import {
   extractFranchiseContext,
   resolveChoiceAssetSubject,
-  resolveGraphicChoiceSubject,
 } from "../src/quiz/assets/choiceSubjectEnricher.js";
 import { loadBundleReferenceImageBase64 } from "../src/quiz/assets/resolvers/bundleReferenceLoader.js";
 import type { RepositoryService } from "../src/repository.js";

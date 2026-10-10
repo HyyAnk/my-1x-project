@@ -12,103 +12,117 @@ function hasTwoPicturedCandidates(input: ResolveThumbnailInput): boolean {
   return choices?.length === 2 && !isVerdictFormat(input.questionFormat) && !isVerdictChoicePair(choices);
 }
 
-/**
- * Resolves the optimal editorial seed based on the episode topic, questions, and layout constraints.
- */
-export function resolveEditorialSeed(input: ResolveThumbnailInput): {
+type EditorialDomainSeed = (typeof EDITORIAL_DOMAIN_SEEDS)[number];
+
+interface EditorialSeedResolution {
   design: EditorialThumbnailDesign;
   hookText: string;
   subjectAnchors: QuizSubjectAnchor[];
   mascotPose: EditorialMascotPose;
-} {
+}
+
+/**
+ * Resolves the optimal editorial seed based on the episode topic, questions, and layout constraints.
+ */
+export function resolveEditorialSeed(input: ResolveThumbnailInput): EditorialSeedResolution {
   const comparison = input.layoutOverride === "split_vs" || (!input.layoutOverride && hasTwoPicturedCandidates(input));
   const odd = input.layoutOverride === "odd_one_out";
-  const mystery = input.layoutOverride === "mystery_silhouette";
 
   const context = `${input.topicTitle} ${input.topicSummary || ""} ${input.questions?.map((q) => q.question).join(" ") || ""}`.toLowerCase();
   const matchedDomain = resolveHighestScoringDomain(input.topicTitle, input.topicSummary || "", context);
 
   // 1. Comparison layout (split_vs / Real vs Fake)
-  if (comparison) {
-    const archetype = EDITORIAL_CHALLENGE_ARCHETYPES.real_vs_fake!;
-    const foodOrFruit = matchedDomain?.id === "food_gastronomy" ? matchedDomain.subjects[0] : undefined;
-    const subject = foodOrFruit || {
-      label: "Comparison",
-      hook: archetype.defaultHook,
-      visualPrompt:
-        "two nearly identical real-world objects labeled A and B placed side by side on a clean studio table under crisp directional keylight; exactly one possesses an authentic natural flaw revealing the genuine original",
-      mascotPose: archetype.mascotPose,
-      background: archetype.background,
-      backgroundAtmosphere: archetype.backgroundAtmosphere,
-      spatialComposition: archetype.spatialComposition,
-    };
-    return {
-      design: {
-        version: 1,
-        template: "comparison",
-        background: subject.background || archetype.background,
-        candidateCount: 2,
-        backgroundAtmosphere: subject.backgroundAtmosphere || archetype.backgroundAtmosphere,
-        spatialComposition: subject.spatialComposition || archetype.spatialComposition,
-      },
-      hookText: input.customHookText || subject.hook || archetype.defaultHook,
-      subjectAnchors: [
-        { label: "Option A", visualPrompt: subject.visualPrompt },
-        { label: "Option B", visualPrompt: subject.visualPrompt },
-      ],
-      mascotPose: subject.mascotPose || archetype.mascotPose,
-    };
-  }
-
+  if (comparison) return resolveComparisonSeed(input, matchedDomain);
   // 2. Odd-one-out layout
-  if (odd) {
-    const archetype = EDITORIAL_CHALLENGE_ARCHETYPES.odd_one_out!;
-    const wildlifeOdd = matchedDomain?.subjects.find((s) => s.label.includes("Odd"));
-    const subject = wildlifeOdd || {
-      label: "Odd Item",
-      hook: archetype.defaultHook,
-      visualPrompt:
-        "four nearly identical vibrant organic subjects labeled A, B, C, D arranged cleanly in a row on a bright studio surface; subject C displays a subtle natural pattern variation",
-      mascotPose: archetype.mascotPose,
-      background: archetype.background,
-      backgroundAtmosphere: archetype.backgroundAtmosphere,
-      spatialComposition: archetype.spatialComposition,
-    };
-    return {
-      design: {
-        version: 1,
-        template: "comparison",
-        background: subject.background || archetype.background,
-        candidateCount: 4,
-        backgroundAtmosphere: subject.backgroundAtmosphere || archetype.backgroundAtmosphere,
-        spatialComposition: subject.spatialComposition || archetype.spatialComposition,
-      },
-      hookText: input.customHookText || subject.hook || archetype.defaultHook,
-      subjectAnchors: [{ label: subject.label, visualPrompt: subject.visualPrompt }],
-      mascotPose: subject.mascotPose || archetype.mascotPose,
-    };
-  }
-
+  if (odd) return resolveOddOneOutSeed(input, matchedDomain);
   // 3. Matched domain
-  if (matchedDomain) {
-    const specificSubject = findBestMatchingSubject(matchedDomain.subjects, context);
-    return {
-      design: {
-        version: 1,
-        template: matchedDomain.preferredTemplate,
-        background: specificSubject.background || matchedDomain.background,
-        candidateCount: matchedDomain.preferredTemplate === "comparison" ? 2 : 0,
-        backgroundAtmosphere: specificSubject.backgroundAtmosphere || matchedDomain.backgroundAtmosphere,
-        spatialComposition: specificSubject.spatialComposition,
-      },
-      hookText: input.customHookText || specificSubject.hook,
-      subjectAnchors: [{ label: specificSubject.label, visualPrompt: specificSubject.visualPrompt }],
-      mascotPose: specificSubject.mascotPose,
-    };
-  }
-
+  if (matchedDomain) return resolveMatchedDomainSeed(input, matchedDomain, context);
   // 4. Default fallback: Extreme Macro Mystery
-  const defaultArchetype = EDITORIAL_CHALLENGE_ARCHETYPES.extreme_macro!;
+  return resolveDefaultMacroSeed(input);
+}
+
+function resolveComparisonSeed(input: ResolveThumbnailInput, matchedDomain: EditorialDomainSeed | undefined): EditorialSeedResolution {
+  const archetype = EDITORIAL_CHALLENGE_ARCHETYPES.real_vs_fake;
+  const foodOrFruit = matchedDomain?.id === "food_gastronomy" ? matchedDomain.subjects[0] : undefined;
+  const subject = foodOrFruit || {
+    label: "Comparison",
+    hook: archetype.defaultHook,
+    visualPrompt:
+      "two nearly identical real-world objects labeled A and B placed side by side on a clean studio table under crisp directional keylight; exactly one possesses an authentic natural flaw revealing the genuine original",
+    mascotPose: archetype.mascotPose,
+    background: archetype.background,
+    backgroundAtmosphere: archetype.backgroundAtmosphere,
+    spatialComposition: archetype.spatialComposition,
+  };
+  return {
+    design: {
+      version: 1,
+      template: "comparison",
+      background: subject.background || archetype.background,
+      candidateCount: 2,
+      backgroundAtmosphere: subject.backgroundAtmosphere || archetype.backgroundAtmosphere,
+      spatialComposition: subject.spatialComposition || archetype.spatialComposition,
+    },
+    hookText: input.customHookText || subject.hook || archetype.defaultHook,
+    subjectAnchors: [
+      { label: "Option A", visualPrompt: subject.visualPrompt },
+      { label: "Option B", visualPrompt: subject.visualPrompt },
+    ],
+    mascotPose: subject.mascotPose || archetype.mascotPose,
+  };
+}
+
+function resolveOddOneOutSeed(input: ResolveThumbnailInput, matchedDomain: EditorialDomainSeed | undefined): EditorialSeedResolution {
+  const archetype = EDITORIAL_CHALLENGE_ARCHETYPES.odd_one_out;
+  const wildlifeOdd = matchedDomain?.subjects.find((s) => s.label.includes("Odd"));
+  const subject = wildlifeOdd || {
+    label: "Odd Item",
+    hook: archetype.defaultHook,
+    visualPrompt:
+      "four nearly identical vibrant organic subjects labeled A, B, C, D arranged cleanly in a row on a bright studio surface; subject C displays a subtle natural pattern variation",
+    mascotPose: archetype.mascotPose,
+    background: archetype.background,
+    backgroundAtmosphere: archetype.backgroundAtmosphere,
+    spatialComposition: archetype.spatialComposition,
+  };
+  return {
+    design: {
+      version: 1,
+      template: "comparison",
+      background: subject.background || archetype.background,
+      candidateCount: 4,
+      backgroundAtmosphere: subject.backgroundAtmosphere || archetype.backgroundAtmosphere,
+      spatialComposition: subject.spatialComposition || archetype.spatialComposition,
+    },
+    hookText: input.customHookText || subject.hook || archetype.defaultHook,
+    subjectAnchors: [{ label: subject.label, visualPrompt: subject.visualPrompt }],
+    mascotPose: subject.mascotPose || archetype.mascotPose,
+  };
+}
+
+function resolveMatchedDomainSeed(
+  input: ResolveThumbnailInput,
+  matchedDomain: EditorialDomainSeed,
+  context: string,
+): EditorialSeedResolution {
+  const specificSubject = findBestMatchingSubject(matchedDomain.subjects, context);
+  return {
+    design: {
+      version: 1,
+      template: matchedDomain.preferredTemplate,
+      background: specificSubject.background || matchedDomain.background,
+      candidateCount: matchedDomain.preferredTemplate === "comparison" ? 2 : 0,
+      backgroundAtmosphere: specificSubject.backgroundAtmosphere || matchedDomain.backgroundAtmosphere,
+      spatialComposition: specificSubject.spatialComposition,
+    },
+    hookText: input.customHookText || specificSubject.hook,
+    subjectAnchors: [{ label: specificSubject.label, visualPrompt: specificSubject.visualPrompt }],
+    mascotPose: specificSubject.mascotPose,
+  };
+}
+
+function resolveDefaultMacroSeed(input: ResolveThumbnailInput): EditorialSeedResolution {
+  const defaultArchetype = EDITORIAL_CHALLENGE_ARCHETYPES.extreme_macro;
   return {
     design: {
       version: 1,
@@ -176,6 +190,6 @@ function findBestMatchingSubject(subjects: EditorialSubjectSeed[], context: stri
       return subject;
     }
   }
-  return subjects[0]!;
+  return subjects[0];
 }
 

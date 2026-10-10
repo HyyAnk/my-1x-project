@@ -1,11 +1,13 @@
 import React from "react";
-import { DotsSixVertical, FilmSlate, Smiley } from "@phosphor-icons/react";
+import { DotsSixVertical } from "@phosphor-icons/react";
 import { getCountryName, getLanguageDisplay, type Channel, type MascotProfile } from "@studio/shared";
 import { CountryFlag } from "../CountryFlag";
 import { useTranslation } from "../../i18n";
 import { buildHash, getNavProps } from "../../hooks/useRouter";
 import { formatRelativeTime } from "./utils/formatRelativeTime";
 import { ChannelCardMenu } from "./ChannelCardMenu";
+import { ChannelMascotPill } from "./ChannelMascotPill";
+import { ChannelVideoCountBadge } from "./ChannelVideoCountBadge";
 import type { DraggableCardProps } from "../../features/channel/hooks/useChannelDragAndDrop";
 
 export type ChannelCardProps = {
@@ -92,20 +94,7 @@ export function ChannelCard({
 
       <div className="channel-card-body">
         <h3 className="channel-card-title">{channel.display_name}</h3>
-        {channel.mascot_id ? (
-          <div className="channel-card-meta">
-            <span className="channel-mascot-pill" title={assignedMascot?.description || assignedMascot?.name || "Mascot"}>
-              {assignedMascot?.master_image_url ? (
-                <img src={assignedMascot.master_image_url} alt={assignedMascot.name} className="channel-mascot-avatar" />
-              ) : (
-                <span className="channel-mascot-avatar-fallback">
-                  <Smiley size={11} weight="fill" />
-                </span>
-              )}
-              <span>{assignedMascot?.name || "Mascot"}</span>
-            </span>
-          </div>
-        ) : null}
+        {channel.mascot_id ? <ChannelMascotPill mascot={assignedMascot} /> : null}
       </div>
 
       <div className="channel-card-footer">
@@ -117,15 +106,7 @@ export function ChannelCard({
           ) : null}
         </div>
 
-        <div
-          className={`channel-video-count-badge ${channel.episode_count ? "has-videos" : "is-empty"}`}
-          title={`${channel.episode_count || 0} ${channel.episode_count === 1 ? "video" : "videos"}`}
-          aria-label={`${channel.episode_count || 0} ${channel.episode_count === 1 ? "video" : "videos"}`}
-        >
-          <FilmSlate size={13} weight={channel.episode_count ? "fill" : "regular"} className="count-icon" />
-          <span className="count-number">{channel.episode_count || 0}</span>
-          <span className="count-label">{channel.episode_count === 1 ? "video" : "videos"}</span>
-        </div>
+        <ChannelVideoCountBadge episodeCount={channel.episode_count} />
       </div>
     </article>
   );

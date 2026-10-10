@@ -1,0 +1,15 @@
+export type SubjectDomainCategory =
+  | "medical"
+  | "space"
+  | "gaming"
+  | "science"
+  | "norse"
+  | "greek"
+  | "history"
+  | "ocean"
+  | "food"
+  | "animals"
+  | "school"
+  | "supercars"
+  | "fantasy"
+  | "general";

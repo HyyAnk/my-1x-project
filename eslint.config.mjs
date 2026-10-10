@@ -19,6 +19,8 @@ export default tseslint.config(
       "scripts/archive/**",
       "docs/**",
       "**/tmp/**",
+      // Local throwaway debugging scripts; excluded from git in .git/info/exclude.
+      "scratch/**",
     ],
   },
   {

@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowsClockwise, CheckCircle, Image, Sparkle, UploadSimple, WarningCircle } from "@phosphor-icons/react";
+import { ArrowsClockwise, CheckCircle, Image, UploadSimple, WarningCircle } from "@phosphor-icons/react";
 import type { QuestionImagesOverviewResponse } from "../../types/questionImages.types";
 
 export interface QuestionImagesSummaryHeaderProps {

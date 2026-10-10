@@ -1,4 +1,5 @@
 import type { BankQuestion } from "@studio/shared";
+import type { AutoQaIssue } from "../autoQa/autoQa.types.js";
 import { normalizeGenerationLanguage } from "../batchGeneratorPrompt.js";
 import { runBatchAutoQa, QuestionBankAutoQaIndex, type BatchAutoQaReport } from "../questionBankAutoQa.js";
 import { remediateLeakedQuestionsBatch } from "../remediation/index.js";
@@ -134,7 +135,7 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
           );
           return leakIssue ? { question: r.question, issue: leakIssue } : null;
         })
-        .filter((item): item is { question: BankQuestion; issue: any } => item !== null);
+        .filter((item): item is { question: BankQuestion; issue: AutoQaIssue } => item !== null);
 
       if (leakedItems.length > 0) {
         try {

@@ -5,7 +5,6 @@ import {
   getTransition,
   getTransitionDefinition,
   isValidTransition,
-  listTransitions,
   morphWipeTransition,
   registerMotionTransitions,
   resetTransitionCatalog,

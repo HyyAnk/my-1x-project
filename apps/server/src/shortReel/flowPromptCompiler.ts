@@ -23,10 +23,6 @@ function formatProps(props: string[]): string {
   return props.length > 0 ? props.join(", ") : "None";
 }
 
-function formatVisibleText(visibleText: string[]): string {
-  return visibleText.length > 0 ? visibleText.map((t) => `"${t}"`).join(", ") : "None";
-}
-
 function compileSegmentPrompt(
   segment: ReelSegment,
   cumulativeTiming: { start: number; end: number },

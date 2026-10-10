@@ -4,7 +4,6 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   resolveEffectiveMascotMediaMode,
-  type AppConfig,
   type Channel,
   type MascotProfile,
   type MascotStateMediaMode,
@@ -25,7 +24,6 @@ describe("Mascot State Media Mode End-to-End Regression Suite (Phase 5)", () => 
   let renderRoot: string;
   let repository: RepositoryService;
   let baseChannel: Channel;
-  let mascot: MascotProfile;
 
   beforeEach(async () => {
     tempDir = await mkdtemp(path.join(os.tmpdir(), "mascot-media-mode-e2e-"));
@@ -33,7 +31,6 @@ describe("Mascot State Media Mode End-to-End Regression Suite (Phase 5)", () => 
     const setup = await setupParityMascotWorkspace(tempDir);
     repository = setup.repository;
     baseChannel = setup.channel;
-    mascot = setup.mascot;
   });
 
   afterEach(async () => {

@@ -8,7 +8,7 @@ import { registerMascotPackageRoutes } from "./mascotPackageRoutes.js";
 import { registerMascotMigrationRoutes } from "./mascotMigrationRoutes.js";
 import { registerMascotAnimationRoutes } from "./mascotAnimationRoutes.js";
 import { registerMascotActivityRoutes } from "./mascotActivityRoutes.js";
-import { registerMascotAuditRoutes, resolveAuditService } from "./mascotAuditRoutes.js";
+import { registerMascotAuditRoutes } from "./mascotAuditRoutes.js";
 import { registerMascotVariantExportRoutes } from "./mascotVariantExportRoutes.js";
 
 export type { MascotsRouteDeps } from "./mascotTypes.js";

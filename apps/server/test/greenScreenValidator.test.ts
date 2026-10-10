@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import sharp from "sharp";
 import {
-  decodePngToRgba,
   detectNativeTransparency,
   encodeRgbaToPng,
   isChromaGreenPixel,

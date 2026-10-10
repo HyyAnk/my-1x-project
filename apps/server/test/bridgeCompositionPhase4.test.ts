@@ -97,7 +97,7 @@ describe("Phase 4: Brand Logo Stinger Composition Integration & Audio Harmonizat
 
     // 2. Subcomposition file exists with dynamic stinger elements
     const stingerFile = Object.entries(bundle.files).find(
-      ([path, content]) => content.includes("transition-brand-logo-stinger"),
+      ([, content]) => content.includes("transition-brand-logo-stinger"),
     )?.[1];
     expect(stingerFile).toBeDefined();
     expect(stingerFile).toContain("brand-stinger-backdrop");
@@ -165,7 +165,7 @@ describe("Phase 4: Brand Logo Stinger Composition Integration & Audio Harmonizat
     });
 
     const stingerFile = Object.entries(bundle.files).find(
-      ([path, content]) => content.includes("transition-brand-logo-stinger"),
+      ([, content]) => content.includes("transition-brand-logo-stinger"),
     )?.[1];
     expect(stingerFile).toBeDefined();
     expect(stingerFile).toContain("brand-stinger-logo-img");

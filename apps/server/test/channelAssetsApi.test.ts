@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type {
-  BrandAssetItem,
   ChannelAssetsOverviewResponse,
   ChannelAssetMutationResponse,
   ChannelAssetDeleteResponse,

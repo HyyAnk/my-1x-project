@@ -6,7 +6,6 @@ import {
   SocialAssetKindSchema,
   BrandAssetItemSchema,
   BrandIdentityAssetsSchema,
-  SocialPlatformAssetsSchema,
   SocialDesignAssetsSchema,
   SocialArtAssetSchema,
   ChannelAssetManifestSchema,

@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it } from "vitest";
 import sharp from "sharp";
 import { RepositoryService } from "../src/repository.js";
 import {
@@ -44,6 +44,8 @@ describe("Mascot Visual Anchor Data Contract (Stage 1)", () => {
     expect(typeof loadFromService).toBe("function");
     expect(loadChannelMascotVisualAnchor).toBe(loadFromIndex);
     expect(loadChannelMascotVisualAnchor).toBe(loadFromService);
+    expectTypeOf<AnchorFromIndex>().toEqualTypeOf<MascotVisualAnchor>();
+    expectTypeOf<AnchorFromService>().toEqualTypeOf<MascotVisualAnchor>();
   });
 
   it("returns null safely when mascotId is undefined or null", async () => {

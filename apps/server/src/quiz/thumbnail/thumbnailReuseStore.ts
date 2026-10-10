@@ -24,7 +24,7 @@ export interface ThumbnailFingerprintInput {
   [key: string]: unknown;
 }
 
-export function thumbnailInputFingerprint(input: ThumbnailFingerprintInput | unknown): string {
+export function thumbnailInputFingerprint(input: ThumbnailFingerprintInput): string {
   return createHash("sha256").update(JSON.stringify(input)).digest("hex");
 }
 

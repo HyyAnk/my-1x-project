@@ -47,7 +47,7 @@ export function registerChannelAssetReadRoutes(server: FastifyInstance, deps: Ch
     const channel = await repository.getChannel(params.channelId);
     const assetsRoot = path.resolve(repository.storageRoot, "channels", channel.slug, "assets");
     const rawWildcard = params["*"] || "";
-    let decodedWildcard = rawWildcard;
+    let decodedWildcard: string;
     try {
       decodedWildcard = decodeURIComponent(rawWildcard);
     } catch {

@@ -1,8 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
 import {
-  type MotionPromptRequest,
   type MotionTemplatePlacement,
-  type SaveChannelMotionPresetRequest,
   MotionPreviewMarkupRequestSchema,
   MotionPromptRequestSchema,
   SaveChannelMotionPresetRequestSchema,
@@ -46,7 +44,7 @@ export function registerMotionRoutes(deps: MotionRoutesDeps): FastifyPluginCallb
         });
       }
 
-      const output = generateMotionPromptConfig(parsed.data as MotionPromptRequest);
+      const output = generateMotionPromptConfig(parsed.data);
       return reply.code(200).send(output);
     });
 
@@ -140,7 +138,7 @@ export function registerMotionRoutes(deps: MotionRoutesDeps): FastifyPluginCallb
       const preset = await saveChannelMotionPreset(
         repository,
         params.channelId,
-        parsed.data as SaveChannelMotionPresetRequest,
+        parsed.data,
       );
       return reply.code(200).send({ success: true, preset });
     });

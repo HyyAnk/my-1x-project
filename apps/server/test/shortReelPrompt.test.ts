@@ -117,7 +117,7 @@ describe("Short-Reel Prompt Compiler and Prompt Builder (Phase 04)", () => {
 
   it("compileFlowPrompts includes boundary text transitions and rendering/timing disclaimers", () => {
     // 1. With base repair script (seamless empty text transition)
-    const [p1, p2, p3] = compileFlowPrompts(script);
+    const [p1, p2] = compileFlowPrompts(script);
 
     // Initial boundary text in segment 1
     expect(p1).toContain("Boundary Text Transition: Initial scene; introduce in-frame text naturally according to segment cue timing.");

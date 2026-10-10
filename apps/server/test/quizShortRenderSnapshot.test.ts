@@ -71,8 +71,11 @@ function questionClips(bundle: CandyArcadeCompositionBundle): Array<{ id: string
 }
 
 /** Strips volatile data URIs so the snapshot stays readable and stable. */
+/** Inline images and the drive letter of fixture file URLs vary per checkout; neither is render behavior. */
 function normalizeForSnapshot(html: string): string {
-  return html.replace(/src="data:[^"]+"/g, 'src="data:image/svg+xml;base64,[inline]"');
+  return html
+    .replace(/src="data:[^"]+"/g, 'src="data:image/svg+xml;base64,[inline]"')
+    .replace(/file:\/\/\/[A-Za-z]:\//g, "file:///<drive>/");
 }
 
 const textSpecimen = buildSpecimen(buildTextQuizShortQuiz());

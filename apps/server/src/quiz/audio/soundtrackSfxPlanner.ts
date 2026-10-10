@@ -55,65 +55,74 @@ function resolveCountdownSfx(val: unknown) {
   return { intent, filename, dur, vol };
 }
 
-function resolveEventSfxConfig(event: QuizTimeline["events"][number]) {
-  if (event.type === "choices.enter") {
-    return { intent: "ui_pop", filename: "ui_pop.wav", dur: 0.12, vol: 0.55 };
+type TimelineEvent = QuizTimeline["events"][number];
+
+interface EventSfxConfig {
+  intent: string;
+  filename: string;
+  dur: number;
+  vol: number;
+}
+
+const SFX_PLAY_INTENT_FILES: ReadonlyArray<{ intents: readonly string[]; filename: string; fallbackDur: number }> = [
+  { intents: ["transition_fast", "whoosh"], filename: "lightning_brush.wav", fallbackDur: 0.65 },
+  { intents: ["transition_soft", "splash"], filename: "bubble_splash.wav", fallbackDur: 0.65 },
+  { intents: ["correct_small", "ding", "sparkle"], filename: "correct_ding.wav", fallbackDur: 0.55 },
+  { intents: ["correct_big", "triumph"], filename: "correct_triumph.wav", fallbackDur: 1.2 },
+  { intents: ["streak", "score_gain"], filename: "streak.wav", fallbackDur: 0.8 },
+];
+
+function resolveRewardSfx(event: TimelineEvent): EventSfxConfig {
+  const isBig = event.payload?.intensity === "big";
+  return {
+    intent: isBig ? "correct_big" : "correct_small",
+    filename: isBig ? "correct_triumph.wav" : "correct_ding.wav",
+    dur: isBig ? 1.5 : 1.1,
+    vol: 0.75,
+  };
+}
+
+function resolveTransitionSfx(event: TimelineEvent): EventSfxConfig | null {
+  if (isBridgeStingerTransition(event)) {
+    return null;
   }
-  if (event.type === "countdown.tick") {
-    return resolveCountdownSfx(event.payload?.value);
-  }
-  if (event.type === "reward.play") {
-    const isBig = event.payload?.intensity === "big";
-    return {
-      intent: isBig ? "correct_big" : "correct_small",
-      filename: isBig ? "correct_triumph.wav" : "correct_ding.wav",
-      dur: isBig ? 1.5 : 1.1,
-      vol: 0.75,
-    };
-  }
-  if (event.type === "transition.start") {
-    if (isBridgeStingerTransition(event)) {
+  const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
+  return {
+    intent: isLightning ? "transition_fast" : "transition_soft",
+    filename: isLightning ? "lightning_brush.wav" : "bubble_splash.wav",
+    dur: isLightning ? 0.7 : 0.65,
+    vol: 0.6,
+  };
+}
+
+function resolveSfxPlayConfig(event: TimelineEvent): EventSfxConfig {
+  const soundIntent = (event.payload?.sound as string) || (event.payload?.name as string) || "ui_pop";
+  const baseDur = event.duration_seconds || 0.35;
+  const vol = typeof event.payload?.volume === "number" ? event.payload.volume : 0.6;
+  const match = SFX_PLAY_INTENT_FILES.find((entry) => entry.intents.includes(soundIntent));
+  return {
+    intent: soundIntent,
+    filename: match ? match.filename : "ui_pop.wav",
+    dur: match ? baseDur || match.fallbackDur : baseDur,
+    vol,
+  };
+}
+
+function resolveEventSfxConfig(event: TimelineEvent): EventSfxConfig | null {
+  switch (event.type) {
+    case "choices.enter":
+      return { intent: "ui_pop", filename: "ui_pop.wav", dur: 0.12, vol: 0.55 };
+    case "countdown.tick":
+      return resolveCountdownSfx(event.payload?.value);
+    case "reward.play":
+      return resolveRewardSfx(event);
+    case "transition.start":
+      return resolveTransitionSfx(event);
+    case "sfx.play":
+      return resolveSfxPlayConfig(event);
+    default:
       return null;
-    }
-    const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
-    return {
-      intent: isLightning ? "transition_fast" : "transition_soft",
-      filename: isLightning ? "lightning_brush.wav" : "bubble_splash.wav",
-      dur: isLightning ? 0.7 : 0.65,
-      vol: 0.6,
-    };
   }
-  if (event.type === "sfx.play") {
-    const soundIntent = (event.payload?.sound as string) || (event.payload?.name as string) || "ui_pop";
-    let filename = "ui_pop.wav";
-    let dur = event.duration_seconds || 0.35;
-    const vol = typeof event.payload?.volume === "number" ? event.payload.volume : 0.6;
-
-    if (soundIntent === "transition_fast" || soundIntent === "whoosh") {
-      filename = "lightning_brush.wav";
-      dur = dur || 0.65;
-    } else if (soundIntent === "transition_soft" || soundIntent === "splash") {
-      filename = "bubble_splash.wav";
-      dur = dur || 0.65;
-    } else if (soundIntent === "correct_small" || soundIntent === "ding" || soundIntent === "sparkle") {
-      filename = "correct_ding.wav";
-      dur = dur || 0.55;
-    } else if (soundIntent === "correct_big" || soundIntent === "triumph") {
-      filename = "correct_triumph.wav";
-      dur = dur || 1.2;
-    } else if (soundIntent === "streak" || soundIntent === "score_gain") {
-      filename = "streak.wav";
-      dur = dur || 0.8;
-    }
-
-    return {
-      intent: soundIntent,
-      filename,
-      dur,
-      vol,
-    };
-  }
-  return null;
 }
 
 export function resolveSfxSchedule(

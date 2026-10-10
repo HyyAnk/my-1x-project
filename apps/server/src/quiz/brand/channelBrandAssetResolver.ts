@@ -37,7 +37,7 @@ export async function resolveChannelBrandIdentity(options: {
   const channelName = channel.display_name?.trim() || channel.slug || "Channel";
   const fallbackInitial = extractChannelInitial(channelName);
 
-  let manifest: ChannelAssetManifest | null = null;
+  let manifest: ChannelAssetManifest | null;
   try {
     manifest = await repository.getChannelAssetManifest(channel.slug);
   } catch {

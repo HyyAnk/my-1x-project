@@ -9,6 +9,8 @@ function isCompleteEpisodeDir(dir: string): boolean {
   return existsSync(path.join(dir, "quiz", "quiz-v2.json")) && existsSync(path.join(dir, "quiz", "qa.json"));
 }
 
+const FIXTURE_EPISODE_DIR = path.resolve(__dirname, "fixtures/remediation");
+
 function resolveActiveEpisodeDir(): string {
   if (process.env.ACTIVE_EPISODE_DIR && isCompleteEpisodeDir(process.env.ACTIVE_EPISODE_DIR)) {
     return process.env.ACTIVE_EPISODE_DIR;
@@ -32,12 +34,12 @@ function resolveActiveEpisodeDir(): string {
         );
         if (isCompleteEpisodeDir(candidate)) return candidate;
       }
-    } catch { }
+    } catch {
+      return FIXTURE_EPISODE_DIR;
+    }
   }
-  return path.resolve(__dirname, "fixtures/remediation");
+  return FIXTURE_EPISODE_DIR;
 }
-
-const FIXTURE_EPISODE_DIR = path.resolve(__dirname, "fixtures/remediation");
 
 function loadJson<T>(filePath: string): T {
   return JSON.parse(readFileSync(filePath, "utf8")) as T;

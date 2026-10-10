@@ -4,7 +4,7 @@ import { defaultBgmRegistry, type ResolveBgmOptions } from "../../audio/bgmRegis
 import { DEFAULT_SFX_MAP } from "../../audio/sfxRegistry.js";
 import { buildLocalizedArtifactFilename, parseAnimationArtifactUrl } from "../../../tasks/video/mascotAnimationResolver.js";
 import { escAttr } from "./candyArcadeSvg.js";
-import { isBridgeStingerTransition } from "../../bridge/bridgeTransitionIds.js";
+import { resolveCandyArcadeSfxSpec } from "./candyArcadeSfxEvents.js";
 
 export type SfxRawClip = {
   id: string;
@@ -154,116 +154,20 @@ export function buildBgmClips(
   });
 }
 
-function resolveCountdownSfx(val: unknown): { filename: string; dur: number; vol: string } {
-  const isFinalTick = val === 1;
-  const filename =
-    typeof val === "number" && val >= 1 && val <= 5
-      ? val === 1
-        ? "countdown_1.wav"
-        : `countdown_${val}.wav`
-      : isFinalTick
-        ? "countdown_final.wav"
-        : "countdown_tick.wav";
-  const dur = val === 1 || isFinalTick ? 0.35 : val === 2 ? 0.09 : 0.08;
-  const vol = val === 1 || isFinalTick ? "0.60" : val === 2 ? "0.50" : val === 3 ? "0.48" : "0.45";
-  return { filename, dur, vol };
-}
-
 function createSfxRawClip(event: QuizTimeline["events"][number], assets?: Record<string, string>): SfxRawClip | null {
+  const spec = resolveCandyArcadeSfxSpec(event);
+  if (!spec) return null;
   const timeMs = Math.round(event.at_seconds * 1000);
   const eventSlug = event.type.replaceAll(".", "-");
-  const id = `sfx-${eventSlug}-${timeMs}`;
-
-  if (event.type === "choices.enter") {
-    return {
-      id,
-      className: "clip sfx-clip",
-      start: event.at_seconds,
-      duration: 0.12,
-      trackIndex: 3,
-      volume: "0.55",
-      src: sfxSource("ui_pop.wav", assets),
-    };
-  }
-
-  if (event.type === "countdown.tick") {
-    const { filename, dur, vol } = resolveCountdownSfx(event.payload?.value);
-    return {
-      id,
-      className: "clip sfx-clip",
-      start: event.at_seconds,
-      duration: dur,
-      trackIndex: 3,
-      volume: vol,
-      src: sfxSource(filename, assets),
-    };
-  }
-
-  if (event.type === "reward.play") {
-    const isBig = event.payload?.intensity === "big";
-    return {
-      id,
-      className: "clip sfx-clip",
-      start: event.at_seconds,
-      duration: isBig ? 1.5 : 1.1,
-      trackIndex: 3,
-      volume: "0.75",
-      src: sfxSource(isBig ? "correct_triumph.wav" : "correct_ding.wav", assets),
-    };
-  }
-
-  if (event.type === "transition.start") {
-    if (isBridgeStingerTransition(event)) {
-      return null;
-    }
-    const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
-    return {
-      id,
-      className: "clip sfx-clip",
-      start: event.at_seconds,
-      duration: isLightning ? 0.7 : 0.65,
-      trackIndex: 3,
-      volume: "0.60",
-      src: sfxSource(isLightning ? "lightning_brush.wav" : "bubble_splash.wav", assets),
-    };
-  }
-
-  if (event.type === "sfx.play") {
-    const soundIntent = (event.payload?.sound as string) || "ui_pop";
-    let filename = "ui_pop.wav";
-    let dur = event.duration_seconds || 0.35;
-    const rawVol = event.payload?.volume;
-    const vol = typeof rawVol === "number" ? rawVol.toFixed(2) : typeof rawVol === "string" ? rawVol : "0.60";
-
-    if (soundIntent === "transition_fast" || soundIntent === "whoosh") {
-      filename = "lightning_brush.wav";
-      dur = dur || 0.65;
-    } else if (soundIntent === "transition_soft" || soundIntent === "splash") {
-      filename = "bubble_splash.wav";
-      dur = dur || 0.65;
-    } else if (soundIntent === "correct_small" || soundIntent === "ding" || soundIntent === "sparkle") {
-      filename = "correct_ding.wav";
-      dur = dur || 0.55;
-    } else if (soundIntent === "correct_big" || soundIntent === "triumph") {
-      filename = "correct_triumph.wav";
-      dur = dur || 1.2;
-    } else if (soundIntent === "streak" || soundIntent === "score_gain") {
-      filename = "streak.wav";
-      dur = dur || 0.8;
-    }
-
-    return {
-      id,
-      className: "clip sfx-clip",
-      start: event.at_seconds,
-      duration: dur,
-      trackIndex: 3,
-      volume: vol,
-      src: sfxSource(filename, assets),
-    };
-  }
-
-  return null;
+  return {
+    id: `sfx-${eventSlug}-${timeMs}`,
+    className: "clip sfx-clip",
+    start: event.at_seconds,
+    duration: spec.duration,
+    trackIndex: 3,
+    volume: spec.volume,
+    src: sfxSource(spec.filename, assets),
+  };
 }
 
 export function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>): string[] {

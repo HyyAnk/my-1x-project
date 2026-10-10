@@ -6,7 +6,7 @@ import type { MotionPreviewState } from "../types/motionUi.types";
 export interface UseMotionPreviewResult {
   previewState: MotionPreviewState;
   fetchPreview: (
-    templateId: MotionTemplateId | string,
+    templateId: string,
     options?: MotionTemplateOptions,
     aspectRatio?: MascotRenderAspectRatio,
   ) => Promise<void>;
@@ -28,7 +28,7 @@ export function useMotionPreview(
 
   const fetchPreview = useCallback(
     async (
-      templateId: MotionTemplateId | string,
+      templateId: string,
       options?: MotionTemplateOptions,
       aspectRatio?: MascotRenderAspectRatio,
     ) => {

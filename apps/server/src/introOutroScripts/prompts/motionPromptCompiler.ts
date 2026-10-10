@@ -1,4 +1,4 @@
-import type { MotionPromptRequest, MotionPromptStyleMood } from "@studio/shared";
+import type { MotionPromptStyleMood } from "@studio/shared";
 
 export interface MotionPromptCompilerOptions {
   topicTitle: string;

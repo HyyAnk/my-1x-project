@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import path from "node:path";
 import {
   type QuestionImageItem,
   type QuestionImagesOverviewResponse,
@@ -10,6 +9,13 @@ import { RepositoryError } from "../errors.js";
 import { isValidImageBuffer } from "../helpers.js";
 import type { RepositoryRuntime } from "../runtime.js";
 
+import {
+  matchesChoiceDeleteAsset,
+  matchesHeroDeleteAsset,
+  matchesUploadTarget,
+  readUndeclaredStringProperty,
+  type UploadTargetRef,
+} from "./questionImageAssetMatching.js";
 import { buildQuestionImageSlots, summarizeSlotsToItem } from "./questionImageSlots.js";
 
 /**
@@ -46,7 +52,7 @@ export async function listEpisodeQuestionImages(
     const bundle = bundleByNumber.get(index);
     const effectiveLayoutId =
       q?.layout_id ??
-      (quiz as any)?.layout_id ??
+      readUndeclaredStringProperty(quiz, "layout_id") ??
       episode.quiz_config?.target_layout ??
       "media_left_choices_right";
 
@@ -149,38 +155,19 @@ export async function saveUploadedQuestionImage(
     assets: [],
   };
 
-  const existingAssetIndex = baseResolution.assets.findIndex(
-    (a) =>
-      a.asset_id === targetAssetId ||
-      (isChoiceSlot &&
-        (a.question_id === targetQId || a.question_id === `q${questionNumber}`) &&
-        ((a as any).choice_id === targetChoiceId ||
-          a.semantic_key?.endsWith(`:choice:${targetChoiceId}`) ||
-          a.asset_id.endsWith(`-${targetChoiceId}`) ||
-          a.asset_id === `asset-${targetQId}-${targetChoiceId}`)) ||
-      (!isChoiceSlot &&
-        (a.asset_id === `q${questionNumber}_hero` ||
-          ((a.question_id === targetQId || a.question_id === `q${questionNumber}`) &&
-            a.purpose === "hero_question_image"))),
-  );
+  const uploadTarget: UploadTargetRef = {
+    questionId: targetQId,
+    questionNumber,
+    choiceId: targetChoiceId,
+    assetId: targetAssetId,
+    isChoiceSlot,
+  };
+  const existingAssetIndex = baseResolution.assets.findIndex((a) => matchesUploadTarget(a, uploadTarget));
 
-  const planReq = assetPlan?.assets.find(
-    (a) =>
-      a.asset_id === targetAssetId ||
-      (isChoiceSlot &&
-        (a.question_id === targetQId || a.question_id === `q${questionNumber}`) &&
-        ((a as any).choice_id === targetChoiceId ||
-          a.semantic_key?.endsWith(`:choice:${targetChoiceId}`) ||
-          a.asset_id.endsWith(`-${targetChoiceId}`) ||
-          a.asset_id === `asset-${targetQId}-${targetChoiceId}`)) ||
-      (!isChoiceSlot &&
-        (a.asset_id === `q${questionNumber}_hero` ||
-          ((a.question_id === targetQId || a.question_id === `q${questionNumber}`) &&
-            a.purpose === "hero_question_image"))),
-  );
+  const planReq = assetPlan?.assets.find((a) => matchesUploadTarget(a, uploadTarget));
 
   const choice = targetQuestion?.choices?.find((c) => c.id === targetChoiceId);
-  const effectiveLayoutId = targetQuestion?.layout_id ?? (quiz as any)?.layout_id ?? "media_left_choices_right";
+  const effectiveLayoutId = targetQuestion?.layout_id ?? readUndeclaredStringProperty(quiz, "layout_id") ?? "media_left_choices_right";
   const choiceAspectRatio = resolveQuizLayoutAssetAspectRatio(
     effectiveLayoutId,
     targetPurpose === "answer_option" ? "answer_option" : "hero_question_image",
@@ -261,25 +248,11 @@ export async function deleteUploadedQuestionImage(
   if (assetResolution) {
     let updatedAssets = [...assetResolution.assets];
     if (isChoiceSlot) {
-      updatedAssets = updatedAssets.filter(
-        (a) =>
-          !(
-            (a.question_id === targetQId || a.question_id === `q${questionNumber}`) &&
-            ((a as any).choice_id === slotId ||
-              a.semantic_key?.endsWith(`:choice:${slotId}`) ||
-              a.asset_id.endsWith(`-${slotId}`) ||
-              a.asset_id === targetAssetId ||
-              a.asset_id === `asset-${targetQId}-${slotId}`)
-          ),
-      );
+      const choiceRef = { questionId: targetQId, questionNumber, choiceId: slotId, assetId: targetAssetId };
+      updatedAssets = updatedAssets.filter((a) => !matchesChoiceDeleteAsset(a, choiceRef));
     } else {
-      updatedAssets = updatedAssets.filter(
-        (a) =>
-          !(
-            (a.question_id === targetQId || a.question_id === `q${questionNumber}`) &&
-            (a.purpose === "hero_question_image" || a.asset_id === `q${questionNumber}_hero`)
-          ),
-      );
+      const heroRef = { questionId: targetQId, questionNumber };
+      updatedAssets = updatedAssets.filter((a) => !matchesHeroDeleteAsset(a, heroRef));
     }
 
     await this.writeQuizAssetResolution(channelId, episodeId, {

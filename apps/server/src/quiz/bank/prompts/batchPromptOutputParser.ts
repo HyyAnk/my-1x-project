@@ -128,6 +128,17 @@ function normalizeChoices(
   return choices;
 }
 
+function canonicalizeVerdictChoiceLabels(choices: readonly unknown[]): unknown[] {
+  return choices.map((c: unknown): unknown => {
+    if (typeof c === "object" && c !== null && "text" in c) {
+      const text = String(c.text).trim();
+      if (/^(true|fact)$/i.test(text)) return { ...c, text: "Yes" };
+      if (/^(false|myth)$/i.test(text)) return { ...c, text: "No" };
+    }
+    return c;
+  });
+}
+
 function normalizeVisualSpec(visualSpec: unknown): Record<string, unknown> | undefined {
   if (!visualSpec || typeof visualSpec !== "object") return undefined;
   const vs = { ...(visualSpec as Record<string, unknown>) };
@@ -162,14 +173,7 @@ function buildAndValidateBankQuestion(opts: BuildQuestionOptions): BankQuestion 
 
   // Models occasionally answer a Yes/No prompt with True/False labels; the Yes/No buttons are canonical.
   if (isVerdict && Array.isArray(normalizedChoices)) {
-    normalizedChoices = normalizedChoices.map((c) => {
-      if (typeof c === "object" && c !== null && "text" in c) {
-        const text = String((c as { text: unknown }).text).trim();
-        if (/^(true|fact)$/i.test(text)) return { ...c, text: "Yes" };
-        if (/^(false|myth)$/i.test(text)) return { ...c, text: "No" };
-      }
-      return c;
-    });
+    normalizedChoices = canonicalizeVerdictChoiceLabels(normalizedChoices);
   }
 
   const candidate: Record<string, unknown> = {

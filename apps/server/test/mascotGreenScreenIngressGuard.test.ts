@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { AppConfig, MascotProfile } from "@studio/shared";
+import type { AppConfig } from "@studio/shared";
 import { buildApp } from "../src/app.js";
 import { generateMascotStyleConcept, generateMascotStyleSlot } from "../src/quiz/mascot/artGenerator.js";
 import { generateMascotArtWithFallback } from "../src/quiz/mascot/services/mascotAiImageClient.js";
@@ -12,7 +12,7 @@ import {
   validateGeneratedGreenScreen,
 } from "../src/quiz/mascot/services/mascotGreenScreenIngressGuard.js";
 import { MASCOT_GREEN_SCREEN_REINFORCEMENT_TAGS } from "../src/quiz/mascotPromptConstants.js";
-import { encodeRgbaToPng, validateGreenScreen, type DecodedImage } from "../src/utils/imageMatting.js";
+import { encodeRgbaToPng, validateGreenScreen } from "../src/utils/imageMatting.js";
 import * as shopAiKeyModule from "../src/providers/shopAiKeyImage.js";
 
 type Rgba = [number, number, number, number];

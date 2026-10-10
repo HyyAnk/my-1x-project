@@ -3,6 +3,7 @@ import { compactImagePrompt } from "../../utils/promptSanitizer.js";
 import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
 import { downloadImageUrl } from "../gpti2Dimensions.js";
 import { callImgStudioApi, DEFAULT_IMGSTUDIO_BASE_URL } from "./client.js";
+import { extractImgStudioImageFields } from "./responseImageFields.js";
 import { resolveImgStudioAspectRatio, resolveImgStudioResolution } from "./dimensions.js";
 import { createImgStudioIdempotencyKey, createImgStudioRunId } from "./idempotency.js";
 import type { ImgStudioGenerationOptions, ImgStudioImageResult } from "./types.js";
@@ -68,24 +69,8 @@ export async function generateImgStudioImageBytes(
     },
   );
 
-  // Pick strictly the first image if multiple images are returned (e.g. Krea 2 Turbo generates 4 images)
-  const dataItem = Array.isArray(response.data) ? response.data[0] : response.data;
-  let b64Json = dataItem?.b64_json || response.b64_json;
-  let imageUrl = dataItem?.url || response.url;
-  if (Array.isArray(b64Json)) {
-    b64Json = b64Json[0];
-  }
-  if (Array.isArray(imageUrl)) {
-    imageUrl = imageUrl[0];
-  }
-  if (typeof imageUrl === "string") {
-    if (imageUrl.includes(",") && !imageUrl.startsWith("data:")) {
-      imageUrl = imageUrl.split(",")[0]?.trim();
-    } else if (imageUrl.includes("\n")) {
-      imageUrl = imageUrl.split("\n")[0]?.trim();
-    }
-  }
-  const priceVnd = options.priceVnd ?? response.cost_vnd ?? dataItem?.price_vnd ?? response.price_vnd ?? 150;
+  const { b64Json, imageUrl, priceVnd: responsePriceVnd } = extractImgStudioImageFields(response);
+  const priceVnd = options.priceVnd ?? responsePriceVnd ?? 150;
 
   if (b64Json) {
     const rawBase64 = b64Json.replace(/^data:image\/[^;]+;base64,/i, "");

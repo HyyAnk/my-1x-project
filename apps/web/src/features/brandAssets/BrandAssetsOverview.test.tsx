@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { BrandAssetsOverview } from "./BrandAssetsOverview";
 import type { Channel, ChannelAssetsOverviewResponse } from "@studio/shared";
 import { api } from "../../api";

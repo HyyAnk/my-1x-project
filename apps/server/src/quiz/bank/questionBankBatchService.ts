@@ -1,4 +1,5 @@
 import { normalizeLegacyVerdictIdentifier, type BankQuestion } from "@studio/shared";
+import type { AutoQaIssue } from "./autoQa/autoQa.types.js";
 import type { RepositoryService } from "../../repository/service.js";
 import { runBatchAutoQa } from "./questionBankAutoQa.js";
 import { remediateLeakedQuestionsBatch } from "./remediation/index.js";
@@ -81,7 +82,7 @@ export async function generateQuestionBankBatch(
           );
           return leakIssue ? { question: r.question, issue: leakIssue } : null;
         })
-        .filter((item): item is { question: BankQuestion; issue: any } => item !== null);
+        .filter((item): item is { question: BankQuestion; issue: AutoQaIssue } => item !== null);
 
       if (leakedItems.length > 0) {
         try {

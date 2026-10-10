@@ -35,7 +35,9 @@ function resolveExternalLiveMascotPath(): string | null {
         const candidate = path.join(parsed.storage_path, ".quiz-studio", "mascots", "mascot_22cb190ece7b4475", "mascot.json");
         if (fs.existsSync(candidate)) return candidate;
       }
-    } catch {}
+    } catch {
+      return null;
+    }
   }
   return null;
 }

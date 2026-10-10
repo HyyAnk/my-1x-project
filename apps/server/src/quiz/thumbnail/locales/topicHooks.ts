@@ -612,69 +612,33 @@ function matchesAny(text: string, keywords: readonly string[]): boolean {
   return containsAnyKeyword(text, keywords);
 }
 
+const TOPIC_HOOK_RULES: ReadonlyArray<{ keywords: readonly string[]; hooks: Record<SupportedLanguage, string> }> = [
+  { keywords: NORSE_KEYWORDS, hooks: NORSE_HOOKS },
+  { keywords: GREEK_KEYWORDS, hooks: GREEK_HOOKS },
+  { keywords: MEDICAL_KEYWORDS, hooks: MEDICAL_HOOKS },
+  { keywords: SCHOOL_KEYWORDS, hooks: SCHOOL_HOOKS },
+  { keywords: GAMING_KEYWORDS, hooks: GAMING_HOOKS },
+  { keywords: SCIENCE_KEYWORDS, hooks: SCIENCE_HOOKS },
+  { keywords: HISTORY_KEYWORDS, hooks: HISTORY_HOOKS },
+  { keywords: OCEAN_KEYWORDS, hooks: OCEAN_HOOKS },
+  { keywords: FOOD_KEYWORDS, hooks: FOOD_HOOKS },
+  { keywords: FANTASY_KEYWORDS, hooks: FANTASY_HOOKS },
+  { keywords: TECH_KEYWORDS, hooks: TECH_HOOKS },
+  { keywords: MOVIE_KEYWORDS, hooks: MOVIE_HOOKS },
+  { keywords: SPORTS_KEYWORDS, hooks: SPORTS_HOOKS },
+  { keywords: HERO_KEYWORDS, hooks: HERO_HOOKS },
+  { keywords: SPACE_KEYWORDS, hooks: SPACE_HOOKS },
+  { keywords: ANIMAL_KEYWORDS, hooks: ANIMAL_HOOKS },
+  { keywords: FLAG_KEYWORDS, hooks: FLAG_HOOKS },
+  { keywords: COOKIE_KEYWORDS, hooks: COOKIE_HOOKS },
+  { keywords: CAR_KEYWORDS, hooks: CAR_HOOKS },
+];
+
 /**
  * Resolves topic-specific high-CTR hook headline across 17+ domain taxonomies with multilingual support.
  */
 export function resolveTopicSpecificHook(topicText: string, language: SupportedLanguage): string | null {
   const lower = topicText.toLowerCase();
-
-  if (matchesAny(lower, NORSE_KEYWORDS)) {
-    return NORSE_HOOKS[language] || NORSE_HOOKS.en;
-  }
-  if (matchesAny(lower, GREEK_KEYWORDS)) {
-    return GREEK_HOOKS[language] || GREEK_HOOKS.en;
-  }
-  if (matchesAny(lower, MEDICAL_KEYWORDS)) {
-    return MEDICAL_HOOKS[language] || MEDICAL_HOOKS.en;
-  }
-  if (matchesAny(lower, SCHOOL_KEYWORDS)) {
-    return SCHOOL_HOOKS[language] || SCHOOL_HOOKS.en;
-  }
-  if (matchesAny(lower, GAMING_KEYWORDS)) {
-    return GAMING_HOOKS[language] || GAMING_HOOKS.en;
-  }
-  if (matchesAny(lower, SCIENCE_KEYWORDS)) {
-    return SCIENCE_HOOKS[language] || SCIENCE_HOOKS.en;
-  }
-  if (matchesAny(lower, HISTORY_KEYWORDS)) {
-    return HISTORY_HOOKS[language] || HISTORY_HOOKS.en;
-  }
-  if (matchesAny(lower, OCEAN_KEYWORDS)) {
-    return OCEAN_HOOKS[language] || OCEAN_HOOKS.en;
-  }
-  if (matchesAny(lower, FOOD_KEYWORDS)) {
-    return FOOD_HOOKS[language] || FOOD_HOOKS.en;
-  }
-  if (matchesAny(lower, FANTASY_KEYWORDS)) {
-    return FANTASY_HOOKS[language] || FANTASY_HOOKS.en;
-  }
-  if (matchesAny(lower, TECH_KEYWORDS)) {
-    return TECH_HOOKS[language] || TECH_HOOKS.en;
-  }
-  if (matchesAny(lower, MOVIE_KEYWORDS)) {
-    return MOVIE_HOOKS[language] || MOVIE_HOOKS.en;
-  }
-  if (matchesAny(lower, SPORTS_KEYWORDS)) {
-    return SPORTS_HOOKS[language] || SPORTS_HOOKS.en;
-  }
-  if (matchesAny(lower, HERO_KEYWORDS)) {
-    return HERO_HOOKS[language] || HERO_HOOKS.en;
-  }
-  if (matchesAny(lower, SPACE_KEYWORDS)) {
-    return SPACE_HOOKS[language] || SPACE_HOOKS.en;
-  }
-  if (matchesAny(lower, ANIMAL_KEYWORDS)) {
-    return ANIMAL_HOOKS[language] || ANIMAL_HOOKS.en;
-  }
-  if (matchesAny(lower, FLAG_KEYWORDS)) {
-    return FLAG_HOOKS[language] || FLAG_HOOKS.en;
-  }
-  if (matchesAny(lower, COOKIE_KEYWORDS)) {
-    return COOKIE_HOOKS[language] || COOKIE_HOOKS.en;
-  }
-  if (matchesAny(lower, CAR_KEYWORDS)) {
-    return CAR_HOOKS[language] || CAR_HOOKS.en;
-  }
-
-  return null;
+  const rule = TOPIC_HOOK_RULES.find((candidate) => matchesAny(lower, candidate.keywords));
+  return rule ? rule.hooks[language] || rule.hooks.en : null;
 }

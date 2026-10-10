@@ -85,7 +85,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `   c. SCENE PURITY & ZERO STYLE POLLUTION: Focus purely on scene content and target subject/emblem. NEVER copy/paste generic camera buzzwords (such as 'wildlife and nature photography style') or UI elements (cards, text, buttons, countdown timers).`,
     `7. VISUAL PROMPT LANGUAGE: The "visual_opportunity" field MUST ALWAYS be written 100% in English, even when "${targetLanguage}" is requested for the question and choices, because AI image generation models require English prompts.`,
     `8. ABSOLUTE LANGUAGE INTEGRITY: Write every question, choice text, explanation, and fun_fact 100% in "${targetLanguage}". Never mix any other language into the content.`,
-    `9. STRICT JSON ESCAPING & QUOTATION: Inside all JSON string values (question, choices, explanation, fun_fact, visual_opportunity), NEVER use unescaped double quotes (\"). Always use single quotes (') for all titles, names, spoken dialogue, quotes, and nicknames (e.g. 'Pac-Man', 'The King', never "Pac-Man"). Every property name must be enclosed in double quotes followed strictly by a colon ':' without trailing commas.`,
+    `9. STRICT JSON ESCAPING & QUOTATION: Inside all JSON string values (question, choices, explanation, fun_fact, visual_opportunity), NEVER use unescaped double quotes ("). Always use single quotes (') for all titles, names, spoken dialogue, quotes, and nicknames (e.g. 'Pac-Man', 'The King', never "Pac-Man"). Every property name must be enclosed in double quotes followed strictly by a colon ':' without trailing commas.`,
   ];
 
   return lines.join("\n");

@@ -2,7 +2,6 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   MascotPublishedAnimationAssetSchema,
-  MASCOT_DEFAULT_PLACEMENT,
   MASCOT_RECOMMENDED_PLACEMENT,
   resolveMascotAnimationFrameGeometry,
   resolveMascotAnimationRegistration,

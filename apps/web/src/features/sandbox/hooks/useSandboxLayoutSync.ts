@@ -4,6 +4,7 @@ import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxQuestionState, PresetSampleQuestion } from "./useSandboxQuestionState";
 import type { SandboxViewportState } from "./useSandboxViewportState";
+import { planLayoutChoiceTransition, type SandboxChoiceDraft } from "../utils/sandboxLayoutChoices";
 
 export interface UseSandboxLayoutSyncOptions {
   design: SandboxDesignState;
@@ -13,65 +14,19 @@ export interface UseSandboxLayoutSyncOptions {
 }
 
 export function useSandboxLayoutSync({ design, question, viewport, mascot: _mascot }: UseSandboxLayoutSyncOptions) {
-  const cachedDraftChoicesRef = useRef<{ choices: string[]; correctIndex: number } | null>(null);
+  const cachedDraftChoicesRef = useRef<SandboxChoiceDraft | null>(null);
 
   const handleLayoutChange = useCallback(
     (newLayoutId: QuizPreviewLayoutId) => {
       design.setLayoutId(newLayoutId);
-      const isBinaryChoices = question.choices.length === 2 && question.choices[0] === "Yes" && question.choices[1] === "No";
-
-      if (newLayoutId === "mystery_reveal") {
-        if (question.choices.length > 1) {
-          cachedDraftChoicesRef.current = {
-            choices: [...question.choices],
-            correctIndex: question.correctChoiceIndex,
-          };
-        }
-        const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || "Pikachu";
-        question.setChoices([currentAnswer]);
-        question.setCorrectChoiceIndex(0);
-      } else if (newLayoutId === "verdict_yes_no") {
-        const isYnChoices = question.choices.length === 2 && question.choices[0] === "Yes" && question.choices[1] === "No";
-        if (question.choices.length !== 2 || !isYnChoices) {
-          question.setChoices(["Yes", "No"]);
-          if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
-        }
-      } else if (newLayoutId === "split_versus_two") {
-        if (question.choices.length !== 2 || isBinaryChoices) {
-          if (
-            cachedDraftChoicesRef.current &&
-            cachedDraftChoicesRef.current.choices.length === 2 &&
-            !cachedDraftChoicesRef.current.choices.includes("Yes")
-          ) {
-            question.setChoices([...cachedDraftChoicesRef.current.choices]);
-            question.setCorrectChoiceIndex(Math.min(cachedDraftChoicesRef.current.correctIndex, 1));
-          } else {
-            question.setChoices(question.choices.length > 2 && !isBinaryChoices ? question.choices.slice(0, 2) : ["Option A", "Option B"]);
-            if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
-          }
-        }
-      } else if (
-        newLayoutId === "visual_choices_three" ||
-        newLayoutId === "visual_choices_three_pure" ||
-        newLayoutId === "media_left_choices_right" ||
-        newLayoutId === "full_stack_list"
-      ) {
-        if (cachedDraftChoicesRef.current && cachedDraftChoicesRef.current.choices.length >= 3) {
-          const cached = cachedDraftChoicesRef.current;
-          cachedDraftChoicesRef.current = null;
-          question.setChoices([...cached.choices]);
-          question.setCorrectChoiceIndex(cached.correctIndex);
-        } else if (question.choices.length < 3) {
-          if (isBinaryChoices) {
-            question.setChoices(["Option A", "Option B", "Option C"]);
-          } else if (question.choices.length <= 1) {
-            const firstChoice = question.choices[0] || "Option A";
-            question.setChoices([firstChoice, "Option B", "Option C"]);
-          } else {
-            question.setChoices([...question.choices, "Option C"]);
-          }
-        }
-      }
+      const transition = planLayoutChoiceTransition(
+        newLayoutId,
+        { choices: question.choices, correctIndex: question.correctChoiceIndex },
+        cachedDraftChoicesRef.current,
+      );
+      cachedDraftChoicesRef.current = transition.nextCachedDraft;
+      if (transition.choices !== undefined) question.setChoices(transition.choices);
+      if (transition.correctIndex !== undefined) question.setCorrectChoiceIndex(transition.correctIndex);
     },
     [design, question],
   );

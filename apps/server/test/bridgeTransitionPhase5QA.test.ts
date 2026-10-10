@@ -108,7 +108,7 @@ describe("Phase 5: Automated Testing, Rendering Parity & QA", () => {
 
       // 3. Stinger subcomposition file geometry
       const stingerFile = Object.entries(bundle.files).find(
-        ([name, content]) => content.includes("transition-brand-logo-stinger"),
+        ([, content]) => content.includes("transition-brand-logo-stinger"),
       )?.[1];
       expect(stingerFile).toBeDefined();
       expect(stingerFile).toContain('data-width="1920"');
@@ -230,7 +230,7 @@ describe("Phase 5: Automated Testing, Rendering Parity & QA", () => {
 
       // Subcomposition properly escapes special characters
       const stingerFile = Object.entries(bundle.files).find(
-        ([name, content]) => content.includes("transition-brand-logo-stinger"),
+        ([, content]) => content.includes("transition-brand-logo-stinger"),
       )?.[1];
       expect(stingerFile).toBeDefined();
       expect(stingerFile).toContain("Quiz &amp; Brain Lab &lt;Junior&gt; &#39;Edition&#39;");

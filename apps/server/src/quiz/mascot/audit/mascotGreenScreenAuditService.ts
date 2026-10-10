@@ -14,9 +14,7 @@ import {
   type MascotProfile,
   type MascotSlotBatchJob,
   type MascotSlotJobState,
-  type MascotStyleBatchJob,
   type QueueSlotGenerationItem,
-  type QueueStyleGenerationItem,
 } from "@studio/shared";
 import { RepositoryError } from "../../../repository/errors.js";
 import type { RepositoryService } from "../../../repository/service.js";

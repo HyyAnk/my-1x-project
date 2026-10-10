@@ -1,4 +1,4 @@
-import { IntroOutroScriptContentSchema } from "@studio/shared";
+import { IntroOutroScriptContentSchema, type IntroOutroScriptContent } from "@studio/shared";
 import { z } from "zod";
 import { IntroOutroScriptError } from "./errors.js";
 import type { ScriptGenerationInput } from "./generation.types.js";
@@ -17,6 +17,65 @@ function record(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 }
 
+type GenerationClip = ScriptGenerationInput["clips"][number];
+type PairAnchor = ScriptGenerationInput["pairAnchor"];
+type CompanionContent = ScriptGenerationInput["companionContent"];
+
+function assertSharedDirection(shared: Record<string, unknown>): void {
+  z.object({
+    style: z.object({ description: z.string(), staging: z.string(), motion_language: z.string() }).passthrough(),
+    logo_placement: z.string().max(400),
+  })
+    .passthrough()
+    .parse(shared);
+}
+
+function buildAudio(
+  raw: Record<string, unknown>,
+  shared: Record<string, unknown>,
+  anchor: PairAnchor,
+  companion: CompanionContent,
+): Record<string, unknown> {
+  return {
+    ...record(raw.audio),
+    music_direction:
+      record(raw.audio).music_direction ?? shared.music_direction ?? anchor?.music_direction ?? companion?.audio.music_direction,
+  };
+}
+
+function resolveTransitionStyle(rawDirections: Record<string, unknown>, clip: GenerationClip): Record<string, unknown> {
+  if (clip.clipKind !== "outro" || clip.durationSeconds < 12) return {};
+  return {
+    transition_style:
+      rawDirections.transition_style ??
+      (clip.transitionStyle && clip.transitionStyle !== "auto" ? clip.transitionStyle : "flash_stunt"),
+  };
+}
+
+function buildProductionDirections(params: {
+  raw: Record<string, unknown>;
+  shared: Record<string, unknown>;
+  clip: GenerationClip;
+  voiceover: IntroOutroScriptContent["voiceover"];
+  selectedLogoMode: string;
+  anchor: PairAnchor;
+  companion: CompanionContent;
+}): Record<string, unknown> {
+  const { raw, shared, clip, voiceover, selectedLogoMode, anchor, companion } = params;
+  const rawDirections = record(raw.production_directions);
+  return {
+    ...rawDirections,
+    voice_source: rawDirections.voice_source ?? (voiceover.enabled ? "mascot" : "none"),
+    logo_mode: selectedLogoMode,
+    logo_placement:
+      selectedLogoMode === "none"
+        ? "No logo"
+        : (anchor?.logo_placement ?? companion?.production_directions?.logo_placement ?? shared.logo_placement),
+    end_hold_seconds: rawDirections.end_hold_seconds ?? (clip.clipKind === "intro" ? 0 : 1),
+    ...resolveTransitionStyle(rawDirections, clip),
+  };
+}
+
 export function parseGeneratedClip(
   input: ScriptGenerationInput,
   clip: ScriptGenerationInput["clips"][number],
@@ -28,13 +87,7 @@ export function parseGeneratedClip(
   const companion = input.companionContent;
   const anchor = input.pairAnchor;
   // New shared direction is concise; a legacy companion remains exact for pair continuity.
-  if (!companion && !anchor)
-    z.object({
-      style: z.object({ description: z.string(), staging: z.string(), motion_language: z.string() }).passthrough(),
-      logo_placement: z.string().max(400),
-    })
-      .passthrough()
-      .parse(shared);
+  if (!companion && !anchor) assertSharedDirection(shared);
   const selectedLogoMode = logoMode(input, clip);
   const anchorLogoMode = companion?.production_directions?.logo_mode ?? logoMode(input, input.clips[0]);
   if (selectedLogoMode !== anchorLogoMode) {
@@ -51,28 +104,8 @@ export function parseGeneratedClip(
         voiceover,
         style: anchor?.style ?? companion?.style ?? shared.style,
         timeline,
-        audio: {
-          ...record(raw.audio),
-          music_direction:
-            record(raw.audio).music_direction ?? shared.music_direction ?? anchor?.music_direction ?? companion?.audio.music_direction,
-        },
-        production_directions: {
-          ...record(raw.production_directions),
-          voice_source: record(raw.production_directions).voice_source ?? (voiceover.enabled ? "mascot" : "none"),
-          logo_mode: selectedLogoMode,
-          logo_placement:
-            selectedLogoMode === "none"
-              ? "No logo"
-              : (anchor?.logo_placement ?? companion?.production_directions?.logo_placement ?? shared.logo_placement),
-          end_hold_seconds: record(raw.production_directions).end_hold_seconds ?? (clip.clipKind === "intro" ? 0 : 1),
-          ...(clip.clipKind === "outro" && clip.durationSeconds >= 12
-            ? {
-                transition_style:
-                  (record(raw.production_directions).transition_style as any) ??
-                  (clip.transitionStyle && clip.transitionStyle !== "auto" ? clip.transitionStyle : "flash_stunt"),
-              }
-            : {}),
-        },
+        audio: buildAudio(raw, shared, anchor, companion),
+        production_directions: buildProductionDirections({ raw, shared, clip, voiceover, selectedLogoMode, anchor, companion }),
       },
       clipKind: clip.clipKind,
       durationSeconds: clip.durationSeconds,

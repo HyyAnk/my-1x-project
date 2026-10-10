@@ -1,7 +1,7 @@
 import type { Channel, Episode, MascotProfile, ThumbnailHistoryItem, ThumbnailManifest } from "@studio/shared";
 import { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
-import { planThumbnailWithAI } from "./thumbnailAiPlanner.js";
+import { planThumbnailWithAI, type PlanThumbnailWithAiInput } from "./thumbnailAiPlanner.js";
 import { compileThumbnailPrompt } from "./thumbnailPromptCompiler.js";
 import { resolveEpisodeTargetLanguage, type loadProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
 import {
@@ -36,6 +36,17 @@ export { applyLocalizedQuestionProjection, loadChannelMascot, loadChannelMascotV
 export type { MascotVisualAnchor } from "./thumbnailTypes.js";
 export const isValidShortHookText = (text: string | null | undefined): boolean => validateThumbnailHook(text).valid;
 
+function resolveEffectiveCustomHook(options: GenerateEpisodeThumbnailOptions, localizedHook: string | undefined): string | undefined {
+  const manualHook = options.customHookText?.trim();
+  return manualHook || (isValidShortHookText(localizedHook) ? localizedHook?.trim() : undefined);
+}
+
+function resolvePlannerLlmClient(options: GenerateEpisodeThumbnailOptions): PlanThumbnailWithAiInput["llmClient"] {
+  return options.activeEngine === "antigravity" && options.antigravityClient
+    ? options.antigravityClient
+    : options.codexClient || options.antigravityClient || null;
+}
+
 async function createThumbnailPlan(params: {
   episode: Episode;
   channel: Channel;
@@ -50,8 +61,7 @@ async function createThumbnailPlan(params: {
   const { episode, channel, questions, mascotProfile, localization, targetLanguage, recentHistory, options, logger } = params;
   const isApplied = localization?.status === "applied";
   const localizedHook = isApplied ? localization.thumbnail_text : undefined;
-  const manualHook = options.customHookText?.trim();
-  const effectiveCustomHook = manualHook || (isValidShortHookText(localizedHook) ? localizedHook?.trim() : undefined);
+  const effectiveCustomHook = resolveEffectiveCustomHook(options, localizedHook);
 
   return planThumbnailWithAI({
     editorial: !options.layoutOverride,
@@ -70,10 +80,7 @@ async function createThumbnailPlan(params: {
     recentHeadlines: recentHistory.headlines,
     badgeOverride: options.badgeOverride || "auto",
     mascotProfile,
-    llmClient:
-      options.activeEngine === "antigravity" && options.antigravityClient
-        ? options.antigravityClient
-        : options.codexClient || options.antigravityClient || null,
+    llmClient: resolvePlannerLlmClient(options),
     logger,
     channelId: channel.channel_id,
     episodeId: episode.episode_id,

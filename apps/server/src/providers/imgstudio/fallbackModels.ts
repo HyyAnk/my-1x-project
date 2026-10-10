@@ -1,9 +1,6 @@
 import {
   IMGSTUDIO_FALLBACK_LEVEL_1_MODEL_ID,
   IMGSTUDIO_FALLBACK_LEVEL_2_MODEL_ID,
-  IMGSTUDIO_FALLBACK_LEVEL_3_MODEL_ID,
-  IMGSTUDIO_GEMINI_3_1_FLASH_MODEL_ID,
-  IMGSTUDIO_KREA_2_TURBO_MODEL_ID,
   resolveImgStudioFallbackLevel2Model,
   resolveImgStudioFallbackLevel3Model,
   resolveImgStudioModelName,

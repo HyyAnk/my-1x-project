@@ -2,7 +2,6 @@ import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { MascotProfile } from "@studio/shared";
 import { RepositoryService } from "../src/repository/service.js";
 import { encodeRgbaToPng } from "../src/utils/imageMatting.js";
 import { MascotGreenScreenAuditService } from "../src/quiz/mascot/audit/index.js";

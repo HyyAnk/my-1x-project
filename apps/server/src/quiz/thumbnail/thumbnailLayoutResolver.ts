@@ -3,13 +3,11 @@ import {
   getCuriosityBadgeText,
   getThumbnailLocalizedTexts,
   resolveThumbnailLanguage,
-  resolveTopicSpecificHook,
 } from "./thumbnailLocale.js";
 import type { QuizThumbnailPlan, ResolveThumbnailInput } from "./thumbnailTypes.js";
 import { resolveMascotThemedPersona } from "./thumbnailPersonaResolver.js";
 import { resolveSubjectAnchors } from "./thumbnailSubjectAnchorResolver.js";
 import { resolveFallbackEnvironment } from "./thumbnailEnvironmentResolver.js";
-import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { resolveUniversalTopicHook } from "./thumbnailTopicHookExtractor.js";
 
 export { resolveMascotThemedPersona } from "./thumbnailPersonaResolver.js";

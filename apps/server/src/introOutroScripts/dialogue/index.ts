@@ -1,5 +1,4 @@
 import type { IntroOutroClipKind, IntroOutroScriptContent } from "@studio/shared";
-import type { MascotDialogueSeedEntry } from "./dialogueTypes.js";
 import { INTRO_DIALOGUE_BY_SEED } from "./introDialogue.js";
 import { OUTRO_DIALOGUE_BY_SEED } from "./outroDialogue.js";
 

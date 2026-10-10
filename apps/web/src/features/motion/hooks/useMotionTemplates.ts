@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { MotionTemplateDefinition, MotionTemplatePlacement } from "@studio/shared";
+import type { MotionTemplateDefinition } from "@studio/shared";
 import { api } from "../../../api";
 import type { MotionCategoryFilter, MotionPlacementFilter } from "../types/motionUi.types";
 

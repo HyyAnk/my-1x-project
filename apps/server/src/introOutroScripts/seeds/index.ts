@@ -1,6 +1,6 @@
 import type { CreativeSeed } from "@studio/shared";
-import { INTRO_SEEDS, INTRO_SEED_DEFINITIONS } from "./introSeeds.js";
-import { OUTRO_SEEDS, OUTRO_SEED_DEFINITIONS } from "./outroSeeds.js";
+import { INTRO_SEEDS } from "./introSeeds.js";
+import { OUTRO_SEEDS } from "./outroSeeds.js";
 
 export { INTRO_SEEDS, INTRO_SEED_DEFINITIONS } from "./introSeeds.js";
 export { OUTRO_SEEDS, OUTRO_SEED_DEFINITIONS } from "./outroSeeds.js";

@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   BUILT_IN_PRESETS,
   resolveBuiltInPresetCategoryId,
   type Channel,
   type Episode,
   type IntroOutroSelection,
-  type IntroOutroStyle,
 } from "@studio/shared";
-import { api } from "../../../../api";
-import type { IntroOutroCategorySummary } from "../../../../api/introOutroApi";
+import { useIntroOutroStyleCatalog } from "../../hooks/useIntroOutroStyleCatalog";
+import {
+  buildBuiltInStyleSubtitle,
+  buildIntroOutroDisplayValue,
+  buildMotionTemplateSummary,
+  sortActiveIntroOutroStyles,
+} from "../../utils/introOutroStyleHelpers";
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
 import { StyleOptionRow } from "./StyleOptionRow";
+import { IntroOutroPairOptionRow } from "./IntroOutroPairOptionRow";
+import { IntroOutroStatusMessages } from "./IntroOutroStatusMessages";
 import { MotionTemplateSelector } from "../../../motion/components/MotionTemplateSelector";
 
 export interface IntroOutroStyleDropdownProps {
@@ -37,9 +43,7 @@ export function IntroOutroStyleDropdown({
   onToggle,
   onSaveIntroOutroSelection,
 }: IntroOutroStyleDropdownProps) {
-  const [styles, setStyles] = useState<IntroOutroStyle[]>([]);
-  const [categories, setCategories] = useState<IntroOutroCategorySummary[]>([]);
-  const [loadFailed, setLoadFailed] = useState(false);
+  const { styles, categories, loadFailed } = useIntroOutroStyleCatalog(channel.channel_id, isOpen);
   const [isMotionSelectorOpen, setIsMotionSelectorOpen] = useState(false);
   const selection = resolveSelection(episode);
   const categoryId = resolveBuiltInPresetCategoryId(episode.quiz_config);
@@ -49,61 +53,16 @@ export function IntroOutroStyleDropdown({
   const snapshot = episode.quiz_config?.intro_outro_snapshot;
   const pinnedPair = snapshot?.pair_id ? styles.find((style) => style.style_id === snapshot.pair_id) : undefined;
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoadFailed(false);
-    void Promise.all([api.listIntroOutroStyles(channel.channel_id), api.listIntroOutroCategories(channel.channel_id)])
-      .then(([styleResponse, categoryResponse]) => {
-        if (!cancelled) {
-          setStyles(styleResponse.styles);
-          setCategories(categoryResponse.categories);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setLoadFailed(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [channel.channel_id, isOpen]);
-
-  const motionSummary =
-    selection.mode === "motion_template"
-      ? [selection.intro_template_id ? `Intro: ${selection.intro_template_id}` : null, selection.outro_template_id ? `Outro: ${selection.outro_template_id}` : null]
-          .filter(Boolean)
-          .join(" · ") || "Configured"
-      : null;
-
-  const displayValue =
-    selection.mode === "none"
-      ? "None"
-      : selection.mode === "motion_template"
-        ? `Motion · ${motionSummary}`
-        : selection.mode === "specific_pair"
-          ? (selectedStyle?.name ?? "Specific Pair")
-          : `Built-in Style · ${category.name}`;
+  const motionSelection = selection.mode === "motion_template" ? selection : null;
+  const motionSummary = buildMotionTemplateSummary(selection);
+  const displayValue = buildIntroOutroDisplayValue(selection, motionSummary, selectedStyle?.name, category.name);
 
   const defaultStyle = styles.find((s) => s.style_id === channel.default_intro_outro_style_id);
   const hasUncategorizedDefaultFallback = Boolean(
     readyInCategory === 0 && defaultStyle && !defaultStyle.style_preset_id && defaultStyle.status === "active",
   );
 
-
-  const getCategoryInfo = (presetId?: string | null) => {
-    if (!presetId) return { name: "Uncategorized", icon: "📦" };
-    const found = BUILT_IN_PRESETS.find((p) => p.id === presetId);
-    return { name: found?.name ?? "Custom Style", icon: found?.icon ?? "🎬" };
-  };
-
-  const sortedStyles = [...styles.filter((style) => style.status === "active")].sort((a, b) => {
-    const aMatch = a.style_preset_id === category.id ? 1 : 0;
-    const bMatch = b.style_preset_id === category.id ? 1 : 0;
-    if (bMatch !== aMatch) return bMatch - aMatch;
-    const aDefault = a.style_id === channel.default_intro_outro_style_id ? 1 : 0;
-    const bDefault = b.style_id === channel.default_intro_outro_style_id ? 1 : 0;
-    if (bDefault !== aDefault) return bDefault - aDefault;
-    return a.name.localeCompare(b.name);
-  });
+  const sortedStyles = sortActiveIntroOutroStyles(styles, category.id, channel.default_intro_outro_style_id);
 
   return (
     <div className="customization-dropdown-item">
@@ -122,13 +81,11 @@ export function IntroOutroStyleDropdown({
             name="intro_outro_choice"
             label={`Built-in Style · ${category.name}`}
             leading={<span className="style-option-emoji">{category.icon}</span>}
-            subtitle={
-              readyInCategory > 0
-                ? `${readyInCategory} ready pair${readyInCategory > 1 ? "s" : ""} in ${category.name}`
-                : hasUncategorizedDefaultFallback
-                  ? `Fallback to channel default (${defaultStyle?.name})`
-                  : undefined
-            }
+            subtitle={buildBuiltInStyleSubtitle(
+              readyInCategory,
+              category.name,
+              hasUncategorizedDefaultFallback ? defaultStyle?.name : undefined,
+            )}
             badge={readyInCategory > 0 ? `${readyInCategory} Ready` : undefined}
             checked={selection.mode === "style_builtin"}
             onSelect={() => onSaveIntroOutroSelection({ mode: "style_builtin" })}
@@ -142,49 +99,25 @@ export function IntroOutroStyleDropdown({
             checked={selection.mode === "motion_template"}
             onSelect={() => setIsMotionSelectorOpen(true)}
           />
-          {selection.mode === "style_builtin" && snapshot ? (
+          <IntroOutroStatusMessages
+            isBuiltInSelected={selection.mode === "style_builtin"}
+            snapshot={snapshot}
+            pinnedPairName={pinnedPair?.name}
+            showNoReadyPairs={!snapshot && categories.length > 0 && readyInCategory === 0 && !hasUncategorizedDefaultFallback}
+            categoryName={category.name}
+          />
 
-            <div className="style-option-message" role="status">
-              {snapshot.pair_id ? `Selected pair: ${pinnedPair?.name ?? snapshot.pair_id}` : "No intro/outro for this episode"}
-            </div>
-          ) : null}
-          {!snapshot && categories.length > 0 && readyInCategory === 0 && !hasUncategorizedDefaultFallback ? (
-            <div className="style-option-message" role="status">
-              No ready pairs in {category.name}
-            </div>
-          ) : null}
-
-          {sortedStyles.map((style) => {
-            const cat = getCategoryInfo(style.style_preset_id);
-            const isDefault = style.style_id === channel.default_intro_outro_style_id;
-            const matchesPreset = style.style_preset_id === category.id;
-            const durationLabel =
-              style.intro && style.outro
-                ? ` · ${style.intro.duration_seconds.toFixed(0)}s / ${style.outro.duration_seconds.toFixed(0)}s`
-                : "";
-            return (
-              <StyleOptionRow
-                key={style.style_id}
-                name="intro_outro_choice"
-                label={style.name}
-                leading={
-                  style.intro?.thumbnail_filename ? (
-                    <img
-                      src={api.getIntroOutroThumbUrl(channel.channel_id, style.style_id, "intro")}
-                      className="style-option-thumb"
-                      alt={style.name}
-                    />
-                  ) : (
-                    <span className="style-option-emoji">{cat.icon}</span>
-                  )
-                }
-                subtitle={`${cat.name}${durationLabel}`}
-                badge={isDefault ? "Default" : matchesPreset ? "Matches Style" : undefined}
-                checked={selection.mode === "specific_pair" && selection.style_id === style.style_id}
-                onSelect={() => onSaveIntroOutroSelection({ mode: "specific_pair", style_id: style.style_id })}
-              />
-            );
-          })}
+          {sortedStyles.map((style) => (
+            <IntroOutroPairOptionRow
+              key={style.style_id}
+              channelId={channel.channel_id}
+              style={style}
+              isDefault={style.style_id === channel.default_intro_outro_style_id}
+              matchesPreset={style.style_preset_id === category.id}
+              checked={selection.mode === "specific_pair" && selection.style_id === style.style_id}
+              onSelect={() => onSaveIntroOutroSelection({ mode: "specific_pair", style_id: style.style_id })}
+            />
+          ))}
 
           <StyleOptionRow
             name="intro_outro_choice"
@@ -201,8 +134,8 @@ export function IntroOutroStyleDropdown({
       {isMotionSelectorOpen && (
         <MotionTemplateSelector
           isOpen={isMotionSelectorOpen}
-          initialIntroTemplateId={selection.mode === "motion_template" ? selection.intro_template_id : undefined}
-          initialOutroTemplateId={selection.mode === "motion_template" ? selection.outro_template_id : undefined}
+          initialIntroTemplateId={motionSelection?.intro_template_id}
+          initialOutroTemplateId={motionSelection?.outro_template_id}
           onClose={() => setIsMotionSelectorOpen(false)}
           onApply={(res) => {
             onSaveIntroOutroSelection({

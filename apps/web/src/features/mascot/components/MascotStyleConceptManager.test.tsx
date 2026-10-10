@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import { BUILT_IN_PRESETS, type MascotProfile } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotStyleConceptManager } from "./MascotStyleConceptManager";

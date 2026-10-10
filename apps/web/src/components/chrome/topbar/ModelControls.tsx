@@ -1,5 +1,5 @@
 import { CaretDown, Image, WarningCircle } from "@phosphor-icons/react";
-import { DEFAULT_GPTI2_MODEL, resolveGpti2Model } from "@studio/shared";
+import { resolveGpti2Model } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 
 export type ImageModelControlProps = {

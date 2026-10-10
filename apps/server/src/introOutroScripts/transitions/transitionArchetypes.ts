@@ -141,7 +141,7 @@ export function buildTwoPartGuidance(style: IntroOutroTransitionStyle | undefine
   technicalContract: string;
 } {
   if (style && style !== "auto" && style in TRANSITION_ARCHETYPES) {
-    const archetype = TRANSITION_ARCHETYPES[style as keyof typeof TRANSITION_ARCHETYPES];
+    const archetype = TRANSITION_ARCHETYPES[style];
     return {
       creativeBrief: `Structure the performance across two linked segments with a seamless ${archetype.label} transition:
 1. ${archetype.part1Guidance(duration)}

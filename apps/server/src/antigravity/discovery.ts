@@ -5,6 +5,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import type { AppConfig } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
+import { probeWindowsLanguageServer, readStoredAntigravityProjectId } from "./languageServerProbe.js";
 import { AntigravityUnavailableError, type ActiveSessionInfo, type ResolvedAntigravityTarget } from "./types.js";
 
 const execFileAsync = promisify(execFile);
@@ -197,70 +198,13 @@ async function performDiscovery(logger: StudioLogger, forceRefresh: boolean): Pr
   }
 
   if (process.platform === "win32" && (forceRefresh || !address || !csrfToken)) {
-    try {
-      const psScript = `
-        $procs = Get-CimInstance Win32_Process -Filter "Name = 'language_server.exe'"
-        $proc = $procs | Where-Object { $_.CommandLine -match '--csrf_token' } | Select-Object -First 1 ProcessId, CommandLine
-        if (-not $proc) { $proc = $procs | Select-Object -First 1 ProcessId, CommandLine }
-        if (-not $proc) { exit 1 }
-        $csrf = if ($proc.CommandLine -match '--csrf_token\\s+([a-zA-Z0-9\\-]+)') { $matches[1] } else { '' }
-        $conns = Get-NetTCPConnection -OwningProcess $proc.ProcessId -State Listen -ErrorAction SilentlyContinue
-        $ports = @()
-        foreach ($conn in $conns) {
-          if ($conn.LocalAddress -in @('127.0.0.1', '0.0.0.0', '::1', '::')) {
-            $ports += $conn.LocalPort
-          }
-        }
-        $portsStr = ($ports | Select-Object -Unique) -join ','
-        Write-Output "$portsStr|$csrf"
-      `;
-      const { stdout } = await execFileAsync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", psScript], {
-        windowsHide: true,
-        timeout: 8000,
-      });
-
-      const line = stdout.trim();
-      const [portsRaw, discoveredCsrf] = line.split("|");
-      const candidatePorts = (portsRaw || "").split(",").map((p) => p.trim()).filter(Boolean);
-
-      let workingAddress: string | null = null;
-      for (const p of candidatePorts) {
-        const candidateAddr = `127.0.0.1:${p}`;
-        if (await isPortResponsive(candidateAddr)) {
-          workingAddress = candidateAddr;
-          break;
-        }
-      }
-
-      if (workingAddress) {
-        address = workingAddress;
-      } else if (candidatePorts.length > 0) {
-        address = `127.0.0.1:${candidatePorts[0]}`;
-      }
-
-      if (discoveredCsrf) csrfToken = discoveredCsrf.trim();
-    } catch (err) {
-      logger.debug(`Language server session discovery failed: ${err instanceof Error ? err.message : "unknown"}`, {
-        step: "antigravity_discovery",
-      });
-    }
+    const probe = await probeWindowsLanguageServer(logger, isPortResponsive);
+    if (probe.address !== null) address = probe.address;
+    if (probe.csrfToken !== null) csrfToken = probe.csrfToken;
   }
 
   if (!projectId) {
-    try {
-      const appStoragePath = path.join(homedir(), "AppData", "Roaming", "Antigravity", "app_storage.json");
-      const raw = await readFile(appStoragePath, "utf8");
-      const parsed = JSON.parse(raw) as Record<string, unknown>;
-      if (typeof parsed.lastCreatedProjectId === "string") {
-        projectId = parsed.lastCreatedProjectId.trim() || null;
-      }
-      if (!projectId && typeof parsed["new-convo-selected-environments"] === "string") {
-        const envs = JSON.parse(parsed["new-convo-selected-environments"]) as Record<string, unknown>;
-        projectId = Object.keys(envs)[0] || null;
-      }
-    } catch {
-      // App storage might not exist
-    }
+    projectId = await readStoredAntigravityProjectId();
   }
 
   if (address) {

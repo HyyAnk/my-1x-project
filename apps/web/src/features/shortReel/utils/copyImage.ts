@@ -38,7 +38,7 @@ export async function convertBlobToPng(blob: Blob): Promise<Blob> {
           }
         }, "image/png");
       } catch (err) {
-        reject(err);
+        reject(err instanceof Error ? err : new Error(String(err)));
       }
     };
 

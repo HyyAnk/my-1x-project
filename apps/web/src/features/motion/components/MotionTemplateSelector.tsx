@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type {
   MotionPromptOutput,
   MotionTemplateDefinition,
-  MotionTemplateId,
   MotionTemplateOptions,
 } from "@studio/shared";
 import { useMotionPreview } from "../hooks/useMotionPreview";

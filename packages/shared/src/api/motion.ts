@@ -5,13 +5,6 @@ import {
   MotionTemplatePlacementSchema,
 } from "../motionTemplates/motionTemplate.schemas.js";
 import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
-import type { MascotRenderAspectRatio } from "../mascot/renderTypes.js";
-import type {
-  MotionTemplateDefinition,
-  MotionTemplateId,
-  MotionTemplateOptions,
-  MotionTemplatePlacement,
-} from "../motionTemplates/motionTemplate.types.js";
 
 export const MotionPreviewMarkupRequestSchema = z.object({
   templateId: MotionTemplateIdSchema,

@@ -1,6 +1,6 @@
 import { FolderSimple, MagnifyingGlass, X } from "@phosphor-icons/react";
 import type { BrandAssetsOverviewProps } from "./types";
-import { useBrandAssetsOverview } from "./hooks/useBrandAssetsOverview";
+import { useBrandAssetsOverview, type ChannelSortOption } from "./hooks/useBrandAssetsOverview";
 import { ChannelAssetSummaryCard } from "./components/ChannelAssetSummaryCard";
 
 export function BrandAssetsOverview({
@@ -61,7 +61,7 @@ export function BrandAssetsOverview({
           <select
             className="channel-sort-select brand-assets-sort-select"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as ChannelSortOption)}
             aria-label="Sort channels"
             data-testid="brand-assets-sort-select"
           >

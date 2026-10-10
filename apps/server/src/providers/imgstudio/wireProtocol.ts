@@ -195,8 +195,8 @@ function parseResponseItem(value: unknown): ImgStudioGenerationResponseItem | un
   }
   if (typeof value !== "object") return undefined;
   const item = value as Record<string, unknown>;
-  const rawUrl = Array.isArray(item.url) ? item.url[0] : item.url;
-  const rawB64 = Array.isArray(item.b64_json) ? item.b64_json[0] : item.b64_json;
+  const rawUrl: unknown = Array.isArray(item.url) ? item.url[0] : item.url;
+  const rawB64: unknown = Array.isArray(item.b64_json) ? item.b64_json[0] : item.b64_json;
   return {
     url: typeof rawUrl === "string" ? rawUrl : undefined,
     b64_json: typeof rawB64 === "string" ? rawB64 : undefined,
@@ -227,8 +227,8 @@ export function parseGenerationResponse(payload: Record<string, unknown>): ImgSt
   const errorPayload = payload.error && typeof payload.error === "object" ? (payload.error as Record<string, unknown>) : undefined;
   const errorCode = errorPayload?.code;
 
-  const rawUrl = Array.isArray(payload.url) ? payload.url[0] : payload.url;
-  const rawB64 = Array.isArray(payload.b64_json) ? payload.b64_json[0] : payload.b64_json;
+  const rawUrl: unknown = Array.isArray(payload.url) ? payload.url[0] : payload.url;
+  const rawB64: unknown = Array.isArray(payload.b64_json) ? payload.b64_json[0] : payload.b64_json;
 
   return {
     id: readString(payload, "id"),
