@@ -1,4 +1,5 @@
 import {
+  PORTRAIT_MASCOT_CONTENT_FIT,
   resolveMascotRenderGeometry,
   resolveMascotRenderSpec,
   type MascotMotionConfig,
@@ -7,6 +8,7 @@ import {
   type MascotRenderBundleV2,
   type MascotRenderPhase,
   type MascotRevealOutcome,
+  type MascotRenderSpecV2,
   type MascotStateMediaMode,
 } from "@studio/shared";
 import { escAttr } from "../candyArcade/candyArcadeSvg.js";
@@ -34,6 +36,24 @@ export type MascotHtmlState = {
   playing: boolean;
 };
 
+/**
+ * Portrait (Quiz Short) mascots must fit PORTRAIT_MASCOT_CONTENT_FIT so tall art never covers the
+ * answers; wide art keeps its full size. Returns the spec at the fitted scale and the scale to emit
+ * on the state layer, or null when no reduction is needed.
+ */
+function fitPortraitMascot(
+  spec: MascotRenderSpecV2,
+  aspectRatio: MascotRenderAspectRatio,
+): { spec: MascotRenderSpecV2; scaleOverride: number | null } {
+  if (aspectRatio !== "9:16") return { spec, scaleOverride: null };
+  const bounds = resolveMascotRenderGeometry(spec).visible_content;
+  if (bounds.width <= 0 || bounds.height <= 0) return { spec, scaleOverride: null };
+  const factor = Math.min(1, PORTRAIT_MASCOT_CONTENT_FIT.width / bounds.width, PORTRAIT_MASCOT_CONTENT_FIT.height / bounds.height);
+  if (factor >= 0.999) return { spec, scaleOverride: null };
+  const scale = Math.round(spec.placement.scale * factor * 1000) / 1000;
+  return { spec: { ...spec, placement: { ...spec.placement, scale } }, scaleOverride: scale };
+}
+
 export function renderState(
   bundle: MascotRenderBundleV2,
   aspectRatio: MascotRenderAspectRatio,
@@ -44,7 +64,7 @@ export function renderState(
   mediaMode?: MascotStateMediaMode,
 ): string {
   const timelineTime = finiteNonNegative(state.timelineTimeSeconds ?? state.atSeconds);
-  const spec = resolveMascotRenderSpec(bundle, {
+  let spec = resolveMascotRenderSpec(bundle, {
     aspect_ratio: aspectRatio,
     phase: state.phase,
     reveal_outcome: state.revealOutcome ?? null,
@@ -65,6 +85,8 @@ export function renderState(
   const effectiveMotion: MascotMotionConfig =
     mediaMode === "static" || hasAnimation ? { preset: "none", speed: 1, intensity: "normal" } : spec.motion;
 
+  const { spec: fittedSpec, scaleOverride } = fitPortraitMascot(spec, aspectRatio);
+  spec = fittedSpec;
   const geometry = resolveMascotRenderGeometry(spec);
   const bounds = geometry.visible_content;
   // The frame is translated so the art's pivot lands on the stage pivot (container bottom center);
@@ -86,6 +108,7 @@ export function renderState(
     `--mascot-pivot-compensation-y:${px(geometry.pivot_compensation_y)}`,
     `--mascot-registration-x:${px(geometry.registration_offset_x)}`,
     `--mascot-registration-y:${px(geometry.registration_offset_y)}`,
+    ...(scaleOverride === null ? [] : [`--mascot-scale:${numberValue(scaleOverride)}`]),
     `--mascot-content-bottom-gap:${px(contentBottomGap)}`,
     `--mascot-content-width:${px(bounds.width)}`,
     `--mascot-content-center-x:${px(contentCenterOffsetX)}`,

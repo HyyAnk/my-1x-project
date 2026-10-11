@@ -44,10 +44,17 @@ export const PORTRAIT_FRAME_GEOMETRY: QuizPortraitFrameGeometry = Object.freeze(
   arena: Object.freeze({ x: GUTTER, y: 530, width: 936, height: 968 }),
   countdown: Object.freeze({ x: 858, y: 430, width: 150, height: 150 }),
   // No fact card on Quiz Shorts, so the mascot owns the bottom band, centered under the choices.
-  // It dips into the reserved bottom band; its cut edge sits 120 px above the canvas bottom.
-  mascot: Object.freeze({ x: 223, y: 1166, width: 634, height: 634 }),
+  // Its cut edge sits 190 px above the canvas bottom, clear of the platform's channel name row.
+  mascot: Object.freeze({ x: 160, y: 970, width: 760, height: 760 }),
   cta: Object.freeze({ x: GUTTER, y: 540, width: 936, height: 580 }),
 });
 
+/**
+ * Largest visible mascot art in the portrait frame: the slot width, and the height between the
+ * lowest answer row of any portrait layout (y 1210) and the mascot's cut edge. Art taller than this
+ * is scaled down so the mascot never covers an answer; wide art keeps the full slot width.
+ */
+export const PORTRAIT_MASCOT_CONTENT_FIT = Object.freeze({ width: 760, height: 520 });
+
 export const PORTRAIT_MIN_QUESTION_FONT_PX = 56;
-export const PORTRAIT_MIN_CHOICE_FONT_PX = 44;
+export const PORTRAIT_MIN_CHOICE_FONT_PX = 48;

@@ -151,11 +151,11 @@ describe("mascot ledge metrics", () => {
     });
     expect(html).toContain("--mascot-content-bottom-gap:0px");
     expect(html).toContain("--mascot-content-center-x:0px");
-    expect(html).toMatch(/--mascot-content-width:633\.6px/);
+    expect(html).toMatch(/--mascot-content-width:760\.32px/);
   });
 
   it("lifts the ledge by the transparent padding under the art", () => {
-    // 220x220 canvas, art in the top 150 rows, pivot at the canvas bottom: 70 transparent rows x scale 2.88.
+    // 220x220 canvas, art in the top 150 rows, pivot at the canvas bottom: 70 transparent rows x scale 3.456.
     const html = celebrateStateHtml({
       source_width: 220,
       source_height: 220,
@@ -164,6 +164,34 @@ describe("mascot ledge metrics", () => {
       offset_x: 0,
       offset_y: 0,
     });
-    expect(html).toContain("--mascot-content-bottom-gap:201.6px");
+    expect(html).toContain("--mascot-content-bottom-gap:241.92px");
+  });
+
+  it("shrinks tall portrait art to the fit box so it never covers the answers", () => {
+    // Square art fully opaque: 760 px tall at the preset scale, reduced to the 520 px fit height.
+    const html = celebrateStateHtml({
+      source_width: 512,
+      source_height: 512,
+      content_bounds: { x: 0, y: 0, width: 512, height: 512 },
+      pivot: { x: 256, y: 512 },
+      offset_x: 0,
+      offset_y: 0,
+    });
+    const scale = Number(html.match(/--mascot-scale:([0-9.]+)/)?.[1]);
+    expect(scale).toBeCloseTo((3.456 * 520) / 760.32, 2);
+    const width = Number(html.match(/--mascot-content-width:([0-9.]+)px/)?.[1]);
+    expect(width).toBeLessThanOrEqual(520.5);
+  });
+
+  it("keeps wide portrait art at full size", () => {
+    const html = celebrateStateHtml({
+      source_width: 1280,
+      source_height: 720,
+      content_bounds: { x: 0, y: 0, width: 1280, height: 720 },
+      pivot: { x: 640, y: 720 },
+      offset_x: 0,
+      offset_y: 0,
+    });
+    expect(html).not.toMatch(/style="[^"]*--mascot-state-delay[^"]*--mascot-scale:/);
   });
 });

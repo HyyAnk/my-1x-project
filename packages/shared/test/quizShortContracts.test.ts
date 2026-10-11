@@ -5,6 +5,7 @@ import {
   PORTRAIT_FRAME_GEOMETRY,
   QUIZ_GAMEPLAY_POLICIES,
   QUIZ_GAMEPLAY_POLICY_VERSION,
+  QUIZ_PORTRAIT_LAYOUT_GEOMETRY,
   QUIZ_PORTRAIT_LAYOUT_IDS,
   QUIZ_SHORT_DEFAULT_QUESTION_COUNT,
   QuizConfigSchema,
@@ -230,4 +231,19 @@ test("QS-08 portrait image slots stay inside the safe area", () => {
     }),
     null,
   );
+});
+
+test("QS-09 every portrait answer row stays inside its layout arena", () => {
+  for (const geometry of Object.values(QUIZ_PORTRAIT_LAYOUT_GEOMETRY)) {
+    const arenaBottom = geometry.arena.y + geometry.arena.height;
+    for (const variant of Object.values(geometry.answerVariants)) {
+      for (const rect of variant?.outer ?? []) {
+        assert.ok(rect.y >= geometry.arena.y, `${geometry.layoutId} row starts above its arena`);
+        assert.ok(
+          rect.y + rect.height <= arenaBottom,
+          `${geometry.layoutId} row ends at ${rect.y + rect.height}, arena ends at ${arenaBottom}`,
+        );
+      }
+    }
+  }
 });

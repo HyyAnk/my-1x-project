@@ -43,7 +43,7 @@ export const SHORT_STACK_LIST_GEOMETRY: QuizLayoutGeometry = Object.freeze({
 /** One hero image (4:3) above 2 or 3 stacked text choices. */
 export const SHORT_MEDIA_TOP_CHOICES_GEOMETRY: QuizLayoutGeometry = Object.freeze({
   layoutId: "short_media_top_choices",
-  arena: Object.freeze({ x: ARENA.x, y: ARENA.y, width: ARENA.width, height: 640 }),
+  arena: Object.freeze({ x: ARENA.x, y: ARENA.y, width: ARENA.width, height: 690 }),
   hero: Object.freeze({ x: 280, y: 530, width: 520, height: 390 }),
   imageSlot: Object.freeze({
     cardBorderBox: Object.freeze({ width: 520, height: 390 }),
@@ -67,15 +67,15 @@ export const SHORT_MEDIA_TOP_CHOICES_GEOMETRY: QuizLayoutGeometry = Object.freez
     }),
     3: createStackedRows({
       x: ARENA.x,
-      rowYPositions: [940, 1018, 1096],
+      rowYPositions: [940, 1032, 1124],
       assemblyWidth: 936,
-      assemblyHeight: 72,
-      badgeSize: 72,
-      textOffsetLeft: 58,
-      textOffsetTop: 6,
-      textWidth: 878,
-      textHeight: 60,
-      gap: 16,
+      assemblyHeight: 84,
+      badgeSize: 84,
+      textOffsetLeft: 66,
+      textOffsetTop: 7,
+      textWidth: 870,
+      textHeight: 70,
+      gap: 8,
       overlap: 28,
     }),
   }),
