@@ -213,6 +213,7 @@ export const QuizShortSettingsInputSchema = z.object({
   layout_pair: QuizShortLayoutPairSchema.optional(),
   outro_cta_enabled: z.boolean().optional(),
   fast_render_mode: z.boolean().optional(),
+  bookend_selection: QuizShortBookendSelectionSchema.optional(),
 });
 export type QuizShortSettingsInput = z.infer<typeof QuizShortSettingsInputSchema>;
 

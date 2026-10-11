@@ -4,6 +4,7 @@ import { IsoDate, QUIZ_SHORT_DEFAULT_QUESTION_COUNT, QUIZ_SHORT_MAX_QUESTION_COU
 import { EpisodeTopicSchema, QuizConfigSchema } from "./channel.js";
 import { QuizProductMediaFieldsSchema } from "./quizProduct.js";
 import { QUIZ_PORTRAIT_LAYOUT_IDS } from "../quizLayoutGeometry/types.js";
+import { QuizShortBookendSelectionSchema } from "./quizShortBookends.js";
 
 export const QuizPortraitLayoutIdSchema = z.enum(QUIZ_PORTRAIT_LAYOUT_IDS);
 
@@ -27,8 +28,8 @@ export const QuizShortQuestionCountSchema = z
   .default(QUIZ_SHORT_DEFAULT_QUESTION_COUNT);
 
 /**
- * Quiz Short config: the Episode config minus intro and bookend options, locked to portrait
- * and the short pacing profile.
+ * Quiz Short config: the Episode config minus the Episode bookend options, locked to portrait
+ * and the short pacing profile. Short bookends use `bookend_selection`.
  */
 export const QuizShortConfigSchema = QuizConfigSchema.omit({
   question_count: true,
@@ -49,6 +50,8 @@ export const QuizShortConfigSchema = QuizConfigSchema.omit({
   /** Retained for director plans that request one explicit portrait layout for every beat. */
   target_layout: QuizLayoutIdSchema.optional(),
   outro_cta_enabled: z.boolean().default(true),
+  /** Short Intro & Outro pair choice; `style_builtin` follows the style preset category. */
+  bookend_selection: QuizShortBookendSelectionSchema.default({ mode: "style_builtin" }),
 });
 export type QuizShortConfig = z.infer<typeof QuizShortConfigSchema>;
 

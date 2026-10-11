@@ -562,7 +562,7 @@ describe("Mascot portrait canvas and storage migration", () => {
     );
     expect(css).toContain("--safe-zone-right: 151px");
     expect(css).toContain(
-      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene.clip .candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container { bottom: 190px; }',
+      '#stage[data-aspect-ratio="9:16"] .quiz-frame-portrait.candy-scene.clip .candy-mascot-container.mascot-v2-container.mascot-v2-container.mascot-v2-container { bottom: 260px; }',
     );
     // Centered on the canvas: (1080 - 220) / 2 = 430 for either channel anchor.
     expect(css).toContain(".mascot-v2-container.mascot-v2-container.mascot-v2-container.anchor-bottom_left { left: 430px; right: auto; }");
