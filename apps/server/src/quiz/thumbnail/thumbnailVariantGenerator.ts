@@ -275,6 +275,7 @@ function buildVariantResult(params: BuildVariantResultParams): VariantGeneration
       layout: plan.layout,
       design_template: plan.editorial?.template,
       composition: plan.editorial?.composition,
+      headline_style: plan.editorial?.headlineStyle,
       hook_text: plan.hookText,
       badge_text: plan.badgeText,
       prompt,

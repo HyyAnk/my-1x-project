@@ -2,6 +2,7 @@ import type { ThumbnailLayoutType } from "@studio/shared";
 import type { QuizThumbnailPlan, ResolveThumbnailInput } from "../thumbnailTypes.js";
 import type { EditorialThumbnailDesign } from "./editorialTypes.js";
 import { selectThumbnailComposition } from "./composition/compositionSelector.js";
+import { selectHeadlineStyle } from "./typography/headlineStyleSelector.js";
 import { sanitizeThumbnailHook } from "../thumbnailHookGuardrail.js";
 import {
   EDITORIAL_CHALLENGE_ARCHETYPES,
@@ -24,12 +25,30 @@ export {
 };
 
 /**
- * Single-subject designs get a rotated composition; it replaces seed staging, which mostly fixed the mascot on the left.
+ * Rotates the scene design across the channel:
+ * - every design gets a headline lettering style (planner suggestion when fresh, else topic-fitting);
+ * - single-subject designs get a composition that replaces seed staging, which mostly fixed the mascot on the left.
  * Comparison and mystery-silhouette designs keep their dedicated layouts.
  */
-function applyComposition(design: EditorialThumbnailDesign, layout: ThumbnailLayoutType, input: ResolveThumbnailInput): EditorialThumbnailDesign {
-  if (design.template === "comparison" || layout === "mystery_silhouette") return design;
-  return { ...design, composition: selectThumbnailComposition(input.recentCompositions ?? [], input.rng), spatialComposition: undefined };
+function applySceneDesign(
+  design: EditorialThumbnailDesign,
+  layout: ThumbnailLayoutType,
+  plan: QuizThumbnailPlan,
+  input: ResolveThumbnailInput,
+): EditorialThumbnailDesign {
+  const headlineStyle = selectHeadlineStyle({
+    preferred: plan.suggestedHeadlineStyle,
+    topicText: `${input.topicTitle} ${input.topicSummary ?? ""}`,
+    recent: input.recentHeadlineStyles ?? [],
+    rng: input.rng,
+  });
+  if (design.template === "comparison" || layout === "mystery_silhouette") return { ...design, headlineStyle };
+  return {
+    ...design,
+    headlineStyle,
+    composition: selectThumbnailComposition(input.recentCompositions ?? [], input.rng),
+    spatialComposition: undefined,
+  };
 }
 
 /**
@@ -75,6 +94,6 @@ export function applyEditorialDesign(plan: QuizThumbnailPlan, input: ResolveThum
       expression: resolvedExpression || "curious",
       poseDescription: resolvedPose || "looking toward the puzzle",
     },
-    editorial: applyComposition(editorialDesign, layout, input),
+    editorial: applySceneDesign(editorialDesign, layout, plan, input),
   };
 }

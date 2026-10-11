@@ -520,9 +520,9 @@ describe("Phase 4: Product Localization Consumers & Finding L1/L2 Regressions", 
       expect(capturedThumbnailPrompt).toContain('"language":"de"');
       expect(capturedThumbnailPrompt).not.toContain('"language":"fr"');
       // Visual scene instructions stay English
-      expect(capturedThumbnailPrompt).toContain("Plan an editorial YouTube quiz thumbnail");
+      expect(capturedThumbnailPrompt).toContain("Plan a story-scene YouTube quiz thumbnail");
+      // The story-scene planner asks for the setting only; lighting falls back to the editorial default.
       expect(capturedThumbnailPrompt).toContain("environment_atmosphere");
-      expect(capturedThumbnailPrompt).toContain("lighting_palette");
     });
 
     it("Short-Reel export fails closed if non-English localization artifact is missing", async () => {

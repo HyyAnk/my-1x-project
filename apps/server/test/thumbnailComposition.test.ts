@@ -30,12 +30,16 @@ describe("composition selection", () => {
 
   it("avoids two distinct compositions even when the newest entries repeat", () => {
     for (const roll of [0, 0.49, 0.99]) {
-      expect(["mascot_left", "reaction_closeup"]).toContain(selectThumbnailComposition(["hero_center", "hero_center", "mascot_right"], () => roll));
+      expect(["mascot_left", "reaction_closeup"]).toContain(
+        selectThumbnailComposition(["hero_center", "hero_center", "mascot_right"], () => roll),
+      );
     }
   });
 
   it("can pick any composition when nothing was used before", () => {
-    const picks = new Set(THUMBNAIL_COMPOSITIONS.map((_, index) => selectThumbnailComposition([], () => index / THUMBNAIL_COMPOSITIONS.length)));
+    const picks = new Set(
+      THUMBNAIL_COMPOSITIONS.map((_, index) => selectThumbnailComposition([], () => index / THUMBNAIL_COMPOSITIONS.length)),
+    );
     expect(picks).toEqual(new Set(THUMBNAIL_COMPOSITIONS));
   });
 
@@ -57,19 +61,29 @@ describe("composition selection", () => {
     expect(await loadRecentThumbnailHistory(repository, "channel", "current")).toEqual({
       compositions: ["mascot_right", "mascot_left"],
       headlines: ["CRACK THIS CLOCK", "WHO RIDES CATS?", "WHICH IS REAL?"],
+      // Editorial thumbnails made before rotation all used brush banners.
+      headlineStyles: ["brush_banner", "brush_banner", "brush_banner"],
     });
   });
 });
 
 describe("composition in editorial plans and prompts", () => {
   it("rotates away from the channel's recent compositions", () => {
-    const plan = applyEditorialDesign(resolveThumbnailLayout(topic), { ...topic, recentCompositions: ["mascot_left", "mascot_right"], rng: () => 0 });
+    const plan = applyEditorialDesign(resolveThumbnailLayout(topic), {
+      ...topic,
+      recentCompositions: ["mascot_left", "mascot_right"],
+      rng: () => 0,
+    });
     expect(plan.editorial?.composition).toBe("hero_center");
     expect(plan.editorial?.spatialComposition).toBeUndefined();
   });
 
   it("keeps dedicated layouts for comparison and mystery designs", () => {
-    const comparisonInput = { topicTitle: "Mars or Venus?", editorial: true, questions: [{ question: "Pick one", choices: ["Mars", "Venus"] }] };
+    const comparisonInput = {
+      topicTitle: "Mars or Venus?",
+      editorial: true,
+      questions: [{ question: "Pick one", choices: ["Mars", "Venus"] }],
+    };
     expect(applyEditorialDesign(resolveThumbnailLayout(comparisonInput), comparisonInput).editorial?.composition).toBeUndefined();
     const mysteryInput = { ...topic, layoutOverride: "mystery_silhouette" as const };
     expect(applyEditorialDesign(resolveThumbnailLayout(mysteryInput), mysteryInput).editorial?.composition).toBeUndefined();
@@ -82,11 +96,14 @@ describe("composition in editorial plans and prompts", () => {
     ["reaction_closeup", "REACTION CLOSE-UP COMPOSITION", "In the top-left area"],
   ] as const)("compiles %s placement into the 16:9 art prompt", (composition, layoutText, headlineText) => {
     const index = THUMBNAIL_COMPOSITIONS.indexOf(composition);
-    const plan = applyEditorialDesign(resolveThumbnailLayout(topic), { ...topic, rng: () => (index + 0.5) / THUMBNAIL_COMPOSITIONS.length });
+    const plan = applyEditorialDesign(resolveThumbnailLayout(topic), {
+      ...topic,
+      rng: () => (index + 0.5) / THUMBNAIL_COMPOSITIONS.length,
+    });
     expect(plan.editorial?.composition).toBe(composition);
     const prompt = compileThumbnailPrompt(plan, "16:9");
     expect(prompt).toContain(layoutText);
-    const headlineLine = prompt.split("\n").find((line) => line.includes("prominently render the exact headline text"));
+    const headlineLine = prompt.split("\n").find((line) => line.includes("render the exact headline text"));
     expect(headlineLine?.startsWith(headlineText)).toBe(true);
   });
 
@@ -105,7 +122,10 @@ describe("composition in editorial plans and prompts", () => {
 
   it("keeps Shorts safe zones in every portrait composition", () => {
     for (const [index] of THUMBNAIL_COMPOSITIONS.entries()) {
-      const plan = applyEditorialDesign(resolveThumbnailLayout(topic), { ...topic, rng: () => (index + 0.5) / THUMBNAIL_COMPOSITIONS.length });
+      const plan = applyEditorialDesign(resolveThumbnailLayout(topic), {
+        ...topic,
+        rng: () => (index + 0.5) / THUMBNAIL_COMPOSITIONS.length,
+      });
       expect(compileThumbnailPrompt(plan, "9:16")).toContain("above y=1440");
     }
   });

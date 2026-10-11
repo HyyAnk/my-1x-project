@@ -23,7 +23,7 @@ describe("editorial thumbnail planning", () => {
     expect(plan.subjectAnchors[0].badge).toBeUndefined();
     expect(plan.badgeText).toBe("");
     const prompt = compileThumbnailPrompt(plan, "16:9");
-    expect(prompt).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+    expect(prompt).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
     expect(prompt).toContain("TEST YOUR SENSES");
     expect(prompt).not.toContain("Curiosity Badge:");
     expect(prompt).not.toContain("3x3");
@@ -251,7 +251,7 @@ describe("editorial seed catalog and domain diversity", () => {
 
     const compiledPrompt = compileThumbnailPrompt(editorialPlan, "16:9");
     expect(compiledPrompt).toContain("Gandalf the Grey");
-    expect(compiledPrompt).toContain("dramatic mystery dark silhouette of the hero subject");
+    expect(compiledPrompt).toContain("dramatic dark silhouette of the hero subject");
     expect(compiledPrompt).not.toContain("sneaker");
   });
 });

@@ -1,4 +1,5 @@
 import type { ThumbnailAspectRatio } from "@studio/shared";
+import { QUIZ_STYLE_CONTRACTS } from "../../assets/promptCompiler.js";
 import type { QuizThumbnailPlan } from "../thumbnailTypes.js";
 import { editorialGeometry } from "./editorialGeometry.js";
 import {
@@ -7,64 +8,72 @@ import {
   compositionMascotFraming,
   LEGACY_COMPOSITION,
 } from "./composition/compositionCatalog.js";
+import { headlineStyleDescription, LEGACY_HEADLINE_STYLE } from "./typography/headlineStyleCatalog.js";
 
+const DEFAULT_STORY_MOMENT = "the mascot reacts with a big, startled double-take as it discovers the hero subject up close";
+
+function resolveBlockLayout(plan: QuizThumbnailPlan, ratio: ThumbnailAspectRatio, subjects: string): string {
+  const design = plan.editorial!;
+  const landscape = ratio === "16:9";
+  if (plan.layout === "mystery_silhouette") {
+    return landscape
+      ? `MYSTERY COMPOSITION: Left block (~35-40% width) features the mascot in a keen deduction pose below the headline; Right block (~60-65% width) features ONE dramatic dark silhouette of the hero subject (${subjects}) backlit by warm golden rim light, creating an intriguing guessing challenge; do not reveal the fully lit subject.`
+      : `MYSTERY COMPOSITION: Upper area features the headline and ONE dramatic dark silhouette of the hero subject (${subjects}), with the mascot beside it, all essential action above y=1440.`;
+  }
+  if (design.spatialComposition) return design.spatialComposition;
+  if (design.template === "comparison") {
+    return design.candidateCount === 4
+      ? "THREE-BLOCK COMPOSITION: Bottom row (y=50% to 95%) contains 4 distinct candidates arranged evenly in a clean horizontal row; Top-left features the headline; Upper-right features the mascot leaning down in keen scrutiny."
+      : `TWO-BLOCK COMPOSITION: Left half (~60% width) contains two large equally lit candidates (${subjects}); Right half (~35% width) features the mascot torn between them; Top-left features the headline.`;
+  }
+  return compositionLayoutPrompt(design.composition ?? LEGACY_COMPOSITION, ratio, subjects);
+}
+
+function candidateLabelLine(candidateCount: number): string {
+  if (candidateCount === 2)
+    return 'OPTION LABELS: two crisp circular badges, "A" beside Option A and "B" beside Option B (solid black circle, bold white capital letter).';
+  if (candidateCount === 4)
+    return 'OPTION LABELS: four crisp circular badges "A", "B", "C", "D" beneath the candidates (solid black circle, bold white capital letter).';
+  return "";
+}
+
+function headlineSection(plan: QuizThumbnailPlan, ratio: ThumbnailAspectRatio): string {
+  const design = plan.editorial!;
+  const placement = design.composition ? compositionHeadlinePlacement(design.composition, ratio) : "In the top-left area";
+  const style = headlineStyleDescription(design.headlineStyle ?? LEGACY_HEADLINE_STYLE);
+  const otherText = design.candidateCount > 0 ? "only the option letter badges" : "no other text";
+  return `INTEGRATED HEADLINE TYPOGRAPHY:
+${placement}, render the exact headline text "${plan.hookText}" as ${style}.
+- Exact text and flawless spelling: "${plan.hookText}". Uppercase, at most two lines, the largest and highest-contrast element in the frame (letter height at least 11% of the frame height) so it reads at 320x180.
+- The headline object is big and close to the camera: it spans at least ${ratio === "16:9" ? "45%" : "70%"} of the frame width and its letters fill it edge to edge. Never a small, distant or background sign, never thin or script lettering.
+- The headline stays fully unobstructed: no subject, mascot, ear, hair or prop may overlap or touch any letter.
+- Besides the headline there is ${otherText}: no other words, letters, numbers, logos or labels anywhere, including clothing, props and background signs.`;
+}
+
+/**
+ * Story-scene art prompt (Short-Reel art direction): one frame from an animated film in which the mascot
+ * acts out a dramatic moment with the quiz subject, with the headline built into the scene.
+ */
 export function compileEditorialPrompt(plan: QuizThumbnailPlan, ratio: ThumbnailAspectRatio, mascot: string): string {
   const design = plan.editorial!;
   const geometry = editorialGeometry(ratio, design);
+  const style = QUIZ_STYLE_CONTRACTS[plan.visualStyle] ?? QUIZ_STYLE_CONTRACTS.pixar_3d;
   const subjects = plan.subjectAnchors.map((subject) => subject.visualPrompt).join("; ");
-  const landscape = ratio === "16:9";
-
-  const isMystery = plan.layout === "mystery_silhouette";
-
-  const mysteryLayout = landscape
-    ? `BALANCED TWO-BLOCK COMPOSITION: Left block (~35-40% width) features expressive mascot staged on middle-to-lower left in keen deduction pose with headline typography positioned prominently above it; Right block (~60-65% width) features ONE dramatic mystery dark silhouette of the hero subject (${subjects}) backlit by warm golden-amber geometric rim lighting with crisp edge separation, creating an intriguing guessing challenge; do not reveal the fully lit subject.`
-    : `BALANCED TWO-BLOCK COMPOSITION: Upper area features headline typography and ONE dramatic mystery dark silhouette of the hero subject (${subjects}), with expressive mascot positioned beside it, all essential action above y=1440.`;
-
-  const blockLayout =
-    (isMystery ? mysteryLayout : design.spatialComposition) ||
-    (design.template === "comparison"
-      ? design.candidateCount === 4
-        ? "BALANCED THREE-BLOCK COMPOSITION: Bottom row (y=50% to 95%) contains 4 distinct candidates arranged evenly in a clean horizontal row on a pristine bright surface; Top-left features headline typography; Upper-right features mascot leaning down in keen scrutiny."
-        : `BALANCED TWO-BLOCK COMPOSITION: Left half (~60% width) contains two large equally lit candidates (${subjects}) on a clean illuminated surface; Right half (~35% width) features mascot in thinker pose gazing left at the choices; Top-left features headline typography.`
-      : compositionLayoutPrompt(design.composition ?? LEGACY_COMPOSITION, ratio, subjects));
-  const headlinePlacement = design.composition ? compositionHeadlinePlacement(design.composition, ratio) : "In the top-left area";
-
-  const atmosphere =
-    design.backgroundAtmosphere ||
-    (design.background === "cream"
-      ? "Clean bright sunlit studio surface with soft warm cream background and diffused natural window glow."
-      : "Vibrant luminous studio atmosphere with warm ambient light, punchy saturated colors, and crisp rim lighting; NEVER a dull uniform pitch-black or gloomy dark navy backdrop.");
-
-  const candidateLabels =
-    design.candidateCount === 2
-      ? 'OPTION CANDIDATE LABELS: Render two crisp circular letter badges positioned beside or beneath each option: circle "A" with white capital letter "A" next to Option A, and circle "B" with white capital letter "B" next to Option B.'
-      : design.candidateCount === 4
-        ? 'OPTION CANDIDATE LABELS: Render four crisp circular letter badges aligned neatly beneath each candidate in the row: circle "A", circle "B", circle "C", circle "D" (solid black circle with clean white outline and bold white capital letter).'
-        : "";
+  const setting = plan.environmentAtmosphere || design.backgroundAtmosphere || style.heroBackground;
+  const moment = plan.mascotPersona.dramaticHook || DEFAULT_STORY_MOMENT;
 
   return [
-    `EDITORIAL THUMBNAIL ART PLATE v1. ${ratio}, target ${geometry.width}x${geometry.height}. Single full-bleed image, not a collage of thumbnails.`,
-    `INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS:
-${headlinePlacement}, prominently render the exact headline text: "${plan.hookText}".
-Typography & Banner Style:
-- Dynamic two-tier textured paint brush stroke background banners with authentic dry-brush bristle edges and subtle splatters.
-- Top banner: bold, rugged black acrylic paint brush stroke featuring clean, bold white uppercase lettering.
-- Bottom banner: energetic bright neon-yellow/golden paint brush stroke featuring bold, high-contrast lettering (with key emphasis words or question marks optionally highlighted in vibrant red or yellow).
-- Lettering must be bold, clean, modern sans-serif block typography with high visual contrast, crisp edges, and flawless spelling: "${plan.hookText}".
-- The headline banners stay fully unobstructed: no subject, mascot, ear, hair or prop may overlap or touch any letter.`,
-    candidateLabels,
-    blockLayout,
+    `STORY-SCENE THUMBNAIL ART PLATE v2. ${ratio}, target ${geometry.width}x${geometry.height}. One single full-bleed frame from an animated feature film, not a collage or split screen.`,
+    `ART DIRECTION: ${style.name} (${style.renderingMedium}). The mascot, the hero subject, the setting and the headline object all share this one stylized 3D look, lighting and materials. Render every subject in this style even if it is described photographically; no photographic cut-outs or stock-photo elements.`,
+    headlineSection(plan, ratio),
+    candidateLabelLine(design.candidateCount),
+    resolveBlockLayout(plan, ratio, subjects),
     `Mascot identity and performance: ${mascot.replace(/Clean bright luminous rim lighting[^.]*\./g, "Crisp directional key lighting with sharp subject separation.")}`,
-    "The mascot is emotionally immersed in the puzzle with exaggerated curiosity or astonishment, eyes locked directly onto the hero subject. Dynamic, engaging staging; never a passive standing presenter. The mascot uses natural expressive body language matching the challenge (e.g. hand under chin for pondering comparisons, blissful closed eyes for smelling, enthusiastic anticipation for tasting, headphones for audio, magnifying glass ONLY for micro-visual detail searches). Avoid unnecessary handheld tools; NO scanners or holographic interfaces.",
+    `STORY MOMENT: ${moment}. The mascot is the protagonist, physically interacting with the hero subject (holding, chasing, recoiling from, hiding behind or wrestling with it) with an exaggerated, instantly readable facial reaction. Never a passive presenter or a generic pointing pose.`,
     design.composition ? compositionMascotFraming(design.composition, ratio) : "",
-    `VIBRANT CONTEXTUAL LIGHTING & ENVIRONMENT: ${atmosphere}. STRICT PROHIBITION: DO NOT use a flat, dull, dark, or gloomy monochrome navy/black background unless specifically depicting midnight space or neon void. Background must possess rich tonal depth, natural ambient warmth, and cheerful luminosity (e.g. sunny citrus warmth for food, airy daylight garden bokeh for floral scents, sunlit natural wood for comparisons, high-key pristine white for pattern spotting, glowing colorful neon for puzzle doors). Focused directional key lighting with crisp optical depth of field, vibrant saturated colors, and high visual contrast.`,
-    `CLEAN MINIMALIST BACKGROUND & SHALLOW DEPTH OF FIELD (HIGH SIGNAL-TO-NOISE RATIO):
-The background MUST BE SIMPLE, SOFT-FOCUS, AND UNCLUTTERED so the viewer's attention locks instantly onto the hero subject and mascot.
-- Extreme optical shallow depth of field (creamy f/1.8 bokeh blur): any background environment must be softly blurred, smooth, and uncluttered.
-- STRICT PROHIBITION: DO NOT fill the background with complex sprawling city skylines, dozens of detailed skyscraper windows, tangled highway spaghetti overpasses, busy street traffic, chaotic bridges, crowd clutter, or intricate architectural noise in the background.
-- Keep the background broad, soft, and atmospheric (e.g. smooth gradient sky, soft diffused studio cyclorama, or creamy blurred bokeh). The hero subject and mascot must remain the ONLY sharp, crisp focal elements.`,
-    "STRICT SUBJECT REALISM: The hero subject must be an authentic, living, high-fidelity real-world subject with rich tangible textures. STRICT PROHIBITION: DO NOT render the subject as a wooden desk toy, educational cutaway model, carved figurine, anatomical diagram, or plastic display on a pedestal base. The subject must feel real, vivid, and tangible. One clear visual question; no answer reveal, glow overload, particles, elaborate scenery, 3D text, or decorative mini badges.",
-    landscape
+    `SETTING & LIGHT: ${setting}. Themed, colorful and warm with real depth, but simplified so the moment reads at a glance: soft depth of field on the background, a few large background shapes, no clutter. Cinematic key and rim light, saturated colors, strong value contrast between headline, subject, mascot and background; never a flat, murky or uniformly dark backdrop.`,
+    "One clear visual question: no answer reveal, no extra characters beyond the mascot and the hero subject, no particles or glow overload.",
+    ratio === "16:9"
       ? "Keep the bottom-right corner clear for the YouTube timestamp."
       : "Keep top 12%, bottom 25%, and rightmost 15% free of essential details for Shorts UI.",
   ]

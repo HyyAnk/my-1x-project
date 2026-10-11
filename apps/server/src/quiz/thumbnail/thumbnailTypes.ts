@@ -1,4 +1,11 @@
-import type { MascotProfile, QuizImageStyle, ThumbnailAspectRatio, ThumbnailComposition, ThumbnailLayoutType } from "@studio/shared";
+import type {
+  MascotProfile,
+  QuizImageStyle,
+  ThumbnailAspectRatio,
+  ThumbnailComposition,
+  ThumbnailHeadlineStyle,
+  ThumbnailLayoutType,
+} from "@studio/shared";
 import type { EditorialThumbnailDesign } from "./editorial/editorialTypes.js";
 
 export type MascotThemedPersona = {
@@ -7,6 +14,8 @@ export type MascotThemedPersona = {
   prop: string;
   expression: string;
   poseDescription: string;
+  /** The single story moment the mascot acts out with the hero subject. */
+  dramaticHook?: string;
 };
 
 export type MascotPersonaVariation = {
@@ -18,6 +27,7 @@ export type MascotPersonaVariation = {
   prop: string;
   expression: string;
   poseDescription: string;
+  dramaticHook?: string;
 };
 
 export type QuizSubjectAnchor = {
@@ -42,6 +52,8 @@ export type QuizThumbnailPlan = {
   questionCount: number;
   environmentAtmosphere?: string;
   lightingPalette?: string;
+  /** Headline lettering style proposed by the planner model; validated against rotation. */
+  suggestedHeadlineStyle?: string;
 };
 
 export type ResolveThumbnailInput = {
@@ -69,6 +81,8 @@ export type ResolveThumbnailInput = {
   recentCompositions?: ThumbnailComposition[];
   /** Headlines used recently by this episode and its channel, newest first. */
   recentHeadlines?: string[];
+  /** Headline lettering styles used recently by this episode and its channel, newest first. */
+  recentHeadlineStyles?: ThumbnailHeadlineStyle[];
 };
 
 export type CompiledThumbnailPrompts = {

@@ -134,7 +134,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
 
       // 4. Compiled prompt contains the punchy hook banner
       expect(manifest.prompt_16_9).toBeDefined();
-      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
 
       // 5. Compiled prompt STRICTLY does NOT contain the full 8-word 48-char topic title
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
@@ -187,7 +187,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
 
       // 4. The prompt includes the sanitized/condensed banner
-      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
       const validation = validateThumbnailHook(manifest.hook_text);
       expect(validation.valid).toBe(true);
     });
@@ -213,7 +213,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       expect(manifest.hook_text).toBe("GAMING MYTHS");
 
       // 2. Prompt renders the custom hook
-      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
 
       // 3. Prompt does NOT contain the overlong topic title
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
@@ -257,7 +257,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_CUSTOM_HOOK);
 
       // 5. Prompt contains the guarded hook banner
-      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
 
       // 6. Validation passes
       const validation = validateThumbnailHook(manifest.hook_text);
@@ -304,7 +304,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       const bodyCustom = JSON.parse(responseWithCustomHook.body);
       expect(bodyCustom.ok).toBe(true);
       expect(bodyCustom.manifest.hook_text).toBe("ARCADE SECRETS");
-      expect(bodyCustom.manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+      expect(bodyCustom.manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
       expect(bodyCustom.manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
 
       // Test with overlong custom hook override
@@ -380,7 +380,7 @@ describe("Thumbnail Pipeline End-to-End Integration (Phase 4)", () => {
       });
 
       expect(manifest.hook_text).toBe("GAMING SECRETS");
-      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY & BRUSH BANNERS");
+      expect(manifest.prompt_16_9).toContain("INTEGRATED HEADLINE TYPOGRAPHY");
       expect(manifest.prompt_16_9).not.toContain(OVERLONG_TOPIC_TITLE);
 
       const savedManifest = await getEpisodeThumbnailManifest(repository, channel.channel_id, episode.episode_id);

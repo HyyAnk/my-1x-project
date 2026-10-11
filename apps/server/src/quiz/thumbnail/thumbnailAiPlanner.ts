@@ -15,7 +15,11 @@ export { GENERIC_CLICHE_PATTERN } from "./thumbnailAiPlanMerge.js";
 export { parseAiPlanJson } from "./thumbnailAiPlanParser.js";
 
 export function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput, directedArchetypes?: MascotArchetypeDefinition[]): string {
-  if (input.editorial) return buildEditorialPlannerPrompt(input);
+  if (input.editorial)
+    return buildEditorialPlannerPrompt(
+      input,
+      (directedArchetypes || input.archetypesOverride || selectRandomArchetypes(MASCOT_ARCHETYPES_CATALOG, 3)).slice(0, 3),
+    );
   const sampleQuestions = (input.questions || []).slice(0, 4).map((q, i) => ({
     number: i + 1,
     question: q.question,

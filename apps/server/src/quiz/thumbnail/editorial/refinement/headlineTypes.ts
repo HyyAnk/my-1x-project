@@ -5,7 +5,7 @@ import type { SupportedLanguage } from "../../locales/types.js";
 export interface EditorialHeadlineContext {
   topicTitle: string;
   topicSummary?: string;
-  questions?: ReadonlyArray<{ question: string; choices?: string[] }>;
+  questions?: ReadonlyArray<{ question: string; choices?: string[]; answer?: string }>;
   questionFormat?: string;
   layout?: ThumbnailLayoutType;
   /** Semantic checks run for English only. */
@@ -20,8 +20,10 @@ export interface EditorialHeadlineContext {
  * - echoes_title: repeats the video title instead of complementing it.
  * - ungrounded_subject: the pictured subject is not taken from any episode question.
  * - repeats_recent_pattern: reuses the opening word or sentence pattern of a recent channel headline.
+ * - reveals_answer: names the correct answer of an episode question.
  */
-export type HeadlineIssueCode = "generic_only" | "unsupported_claim" | "echoes_title" | "ungrounded_subject" | "repeats_recent_pattern";
+export type HeadlineIssueCode =
+  "generic_only" | "unsupported_claim" | "echoes_title" | "ungrounded_subject" | "repeats_recent_pattern" | "reveals_answer";
 
 export interface HeadlineIssue {
   code: HeadlineIssueCode;

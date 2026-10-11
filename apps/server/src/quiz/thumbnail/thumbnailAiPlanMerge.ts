@@ -63,6 +63,7 @@ function buildPersonaVariations(
       prop: v.prop || fallbackPersona.prop,
       expression: v.expression || fallbackPersona.expression,
       poseDescription: v.poseDescription || fallbackPersona.poseDescription,
+      dramaticHook: v.dramaticHook,
     }));
 }
 
@@ -73,6 +74,7 @@ function personaFromPartial(partial: Partial<MascotThemedPersona>, fallbackPerso
     prop: partial.prop || fallbackPersona.prop,
     expression: partial.expression || fallbackPersona.expression,
     poseDescription: partial.poseDescription || fallbackPersona.poseDescription,
+    dramaticHook: partial.dramaticHook,
   };
 }
 
@@ -84,9 +86,9 @@ function pickMascotPersona(
   if (variations.length > 0) {
     const picked = selectRandomVariation(variations);
     if (!picked) return { mascotPersona: fallbackPersona };
-    const { role, costume, prop, expression, poseDescription } = picked.selected;
+    const { role, costume, prop, expression, poseDescription, dramaticHook } = picked.selected;
     return {
-      mascotPersona: { role, costume, prop, expression, poseDescription },
+      mascotPersona: { role, costume, prop, expression, poseDescription, dramaticHook },
       selectedVariationId: picked.selected.id,
     };
   }
@@ -141,5 +143,6 @@ export function mergeAiPlanOutput(
     mascotVariations: variations.length > 0 ? variations : undefined,
     selectedVariationId,
     subjectAnchors: resolveSubjectAnchors(input, parsed, fallbackPlan.subjectAnchors),
+    suggestedHeadlineStyle: parsed.headline_style,
   };
 }

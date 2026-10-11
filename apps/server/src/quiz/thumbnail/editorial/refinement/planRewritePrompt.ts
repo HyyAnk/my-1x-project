@@ -1,5 +1,6 @@
 import type { QuizSubjectAnchor } from "../../thumbnailTypes.js";
 import type { EditorialHeadlineContext, HeadlineIssue } from "./headlineTypes.js";
+import { answersToAvoid } from "./answerLeak.js";
 
 const MAX_SUBJECT_PROMPT_CHARS = 240;
 export const MAX_GROUNDING_QUESTIONS = 12;
@@ -55,13 +56,16 @@ export function buildPlanRewritePrompt(request: PlanRewriteRequest): string {
     "The video title is shown next to the thumbnail: complement it, do not repeat it.",
     "Only promise a taste, sound, smell, real-or-fake, odd-one-out, timed, or yes/no challenge if the episode contains it.",
     "No percentages, IQ scores, difficulty claims, or answer reveals.",
+    `Never write any of these correct answers in the headline: ${JSON.stringify(answersToAvoid(context))}.`,
     ...recentHeadlineRule(context.recentHeadlines),
     ...subjectRules(request),
     JSON.stringify({
       video_title: context.topicTitle,
       summary: context.topicSummary ?? "",
       format: context.questionFormat ?? "",
-      questions: (context.questions ?? []).slice(0, MAX_GROUNDING_QUESTIONS).map((question) => ({ question: question.question, choices: question.choices })),
+      questions: (context.questions ?? [])
+        .slice(0, MAX_GROUNDING_QUESTIONS)
+        .map((question) => ({ question: question.question, choices: question.choices })),
     }),
   ].join("\n");
 }
@@ -70,7 +74,9 @@ function parseSubjects(value: unknown): QuizSubjectAnchor[] | null {
   if (!Array.isArray(value)) return null;
   const subjects = value
     .filter((item): item is { label: unknown; visualPrompt: unknown } => typeof item === "object" && item !== null)
-    .filter((item) => typeof item.label === "string" && item.label.trim() && typeof item.visualPrompt === "string" && item.visualPrompt.trim())
+    .filter(
+      (item) => typeof item.label === "string" && item.label.trim() && typeof item.visualPrompt === "string" && item.visualPrompt.trim(),
+    )
     .map((item) => ({ label: String(item.label).trim(), visualPrompt: String(item.visualPrompt).trim() }));
   return subjects.length > 0 ? subjects : null;
 }

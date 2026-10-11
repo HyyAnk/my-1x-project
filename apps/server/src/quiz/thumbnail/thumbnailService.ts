@@ -78,6 +78,7 @@ async function createThumbnailPlan(params: {
     customHookText: effectiveCustomHook,
     recentCompositions: recentHistory.compositions,
     recentHeadlines: recentHistory.headlines,
+    recentHeadlineStyles: recentHistory.headlineStyles,
     badgeOverride: options.badgeOverride || "auto",
     mascotProfile,
     llmClient: resolvePlannerLlmClient(options),
@@ -153,7 +154,17 @@ async function generateThumbnail(repository: RepositoryService, options: Generat
   const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
   const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
   const recentHistory = await loadRecentThumbnailHistory(repository, channelId, episodeId);
-  const plan = await createThumbnailPlan({ episode, channel, questions, mascotProfile, localization, targetLanguage, recentHistory, options, logger });
+  const plan = await createThumbnailPlan({
+    episode,
+    channel,
+    questions,
+    mascotProfile,
+    localization,
+    targetLanguage,
+    recentHistory,
+    options,
+    logger,
+  });
   options.signal?.throwIfAborted();
 
   const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);

@@ -1,4 +1,4 @@
-import type { ThumbnailComposition, ThumbnailDesignTemplate } from "@studio/shared";
+import type { ThumbnailComposition, ThumbnailDesignTemplate, ThumbnailHeadlineStyle } from "@studio/shared";
 
 export type EditorialBackgroundPalette = "cream" | "navy" | "bright" | (string & {});
 
@@ -9,6 +9,8 @@ export interface EditorialThumbnailDesign {
   candidateCount: 0 | 2 | 4;
   /** Placement of mascot, hero subject and headline for single-subject designs. */
   composition?: ThumbnailComposition;
+  /** Diegetic lettering style of the headline. */
+  headlineStyle?: ThumbnailHeadlineStyle;
   backgroundAtmosphere?: string;
   spatialComposition?: string;
 }

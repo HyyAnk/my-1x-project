@@ -22,12 +22,14 @@ export interface AiThumbnailPersonaVariationOutput {
   prop?: string;
   expression?: string;
   poseDescription?: string;
+  dramaticHook?: string;
 }
 
 export interface AiThumbnailPlanOutput {
   hook_text?: string;
   badge_text?: string;
   layout?: ThumbnailLayoutType;
+  headline_style?: string;
   environment_atmosphere?: string;
   lighting_palette?: string;
   mascot_persona?: Partial<MascotThemedPersona>;

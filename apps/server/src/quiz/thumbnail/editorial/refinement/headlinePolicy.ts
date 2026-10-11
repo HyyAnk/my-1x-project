@@ -1,6 +1,7 @@
 import { sanitizeThumbnailHook } from "../../thumbnailHookGuardrail.js";
 import { GENERIC_HEADLINE_WORDS, HEADLINE_CLAIM_FAMILIES } from "./headlineLexicon.js";
 import { describeRecentRepetition } from "./headlinePattern.js";
+import { findRevealedAnswer } from "./answerLeak.js";
 import { stemHeadlineToken, tokenizeHeadlineText } from "./headlineTokens.js";
 import type { EditorialHeadlineContext, HeadlineAssessment, HeadlineClaimFamily, HeadlineIssue } from "./headlineTypes.js";
 
@@ -67,6 +68,14 @@ function collectSemanticIssues(tokens: string[], headline: string, context: Edit
 export function assessEditorialHeadline(headline: string, context: EditorialHeadlineContext): HeadlineAssessment {
   const tokens = tokenizeHeadlineText(headline);
   const issues = context.languageCode === "en" ? collectSemanticIssues(tokens, headline, context) : [];
+  const revealedAnswer = findRevealedAnswer(headline, context);
+  if (revealedAnswer) {
+    issues.push({
+      code: "reveals_answer",
+      severity: "hard",
+      detail: `Names the correct answer "${revealedAnswer}" of an episode question.`,
+    });
+  }
   if (echoesTitle(tokens, context.topicTitle)) {
     issues.push({ code: "echoes_title", severity: "soft", detail: "Repeats the video title instead of complementing it." });
   }
@@ -79,8 +88,17 @@ export function assessEditorialHeadline(headline: string, context: EditorialHead
  * Picks the first candidate with no issues, otherwise the first with only soft issues,
  * otherwise the first candidate. Candidates are sanitized to the 2-6 word / 30 character contract.
  */
-export function selectEditorialHeadline(candidates: ReadonlyArray<string | null | undefined>, context: EditorialHeadlineContext): HeadlineAssessment {
-  const sanitized = [...new Set(candidates.filter((candidate): candidate is string => Boolean(candidate?.trim())).map((candidate) => sanitizeThumbnailHook(candidate)))];
+export function selectEditorialHeadline(
+  candidates: ReadonlyArray<string | null | undefined>,
+  context: EditorialHeadlineContext,
+): HeadlineAssessment {
+  const sanitized = [
+    ...new Set(
+      candidates
+        .filter((candidate): candidate is string => Boolean(candidate?.trim()))
+        .map((candidate) => sanitizeThumbnailHook(candidate)),
+    ),
+  ];
   const assessments = sanitized.map((headline) => assessEditorialHeadline(headline, context));
   return (
     assessments.find((assessment) => assessment.issues.length === 0) ??
