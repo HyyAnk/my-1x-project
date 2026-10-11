@@ -13,6 +13,7 @@ import {
 import { findAlphaBoundingBox } from "../../quiz/mascot/videoAnimation/packaging/atlasStitcher.js";
 
 const LOCAL_ASSET_PREFIX = "./";
+const API_STATIC_ASSET_URL = /\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/;
 const ALPHA_THRESHOLD = 16;
 
 export type MeasuredImageContent = { canvas: { width: number; height: number }; bounds: MascotBounds };
@@ -70,11 +71,22 @@ async function measureAction(asset: MascotActionAssetV2, renderRoot: string): Pr
   }
 }
 
+/**
+ * The render later rewrites an API asset url to its `./mascot-assets/` copy, so measure that copy too.
+ */
+function renderLocalImagePath(url: string | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith(LOCAL_ASSET_PREFIX)) return url;
+  const filename = url.match(API_STATIC_ASSET_URL)?.[1];
+  return filename ? `./mascot-assets/${decodeURIComponent(filename)}` : null;
+}
+
 /** Style state variants carry optional canvas and content bounds; fill them from the pixels when absent. */
 async function measureVariant(variant: MascotStateVariant, renderRoot: string): Promise<MascotStateVariant> {
-  if (variant.content_bounds || !isLocalAsset(variant.image_url)) return variant;
+  const localPath = renderLocalImagePath(variant.image_url);
+  if (variant.content_bounds || !localPath) return variant;
   try {
-    const measured = await measureImageContent(path.join(renderRoot, variant.image_url));
+    const measured = await measureImageContent(path.join(renderRoot, localPath));
     return measured ? { ...variant, canvas: measured.canvas, content_bounds: measured.bounds } : variant;
   } catch {
     return variant;

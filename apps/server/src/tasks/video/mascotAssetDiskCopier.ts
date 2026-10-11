@@ -9,6 +9,8 @@ import {
   resolveAnimationPhysicalFile,
 } from "./mascotAnimationResolver.js";
 
+const STATIC_ASSET_URL = /\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/;
+
 export type AssetLocalizer = (url?: string | null, context?: AnimationAssetContext) => Promise<string | undefined>;
 
 export async function localizeStaticAsset(
@@ -17,7 +19,7 @@ export async function localizeStaticAsset(
   mascotId: string,
   renderMascotDir: string,
 ): Promise<string | null> {
-  const match = url.match(/\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/);
+  const match = url.match(STATIC_ASSET_URL);
   if (!match || !match[1]) return null;
   const filename = decodeURIComponent(match[1]);
   try {
@@ -67,10 +69,32 @@ export function isSafeLocalAssetUrl(url?: string | null): boolean {
   return url.startsWith("./") || url.startsWith("../") || url.startsWith("data:") || url.startsWith("mascot-assets/");
 }
 
+/** Static assets copy to a context-free filename; animation artifacts are named by their slot context. */
+function localizationKey(url: string, context?: AnimationAssetContext): string {
+  if (STATIC_ASSET_URL.test(url)) return url;
+  return [url, context?.mascotId, context?.styleId, context?.state, context?.slotIndex].join("|");
+}
+
+/**
+ * Shares one in-flight localization per asset. A state variant often names the same file as both its
+ * image and its transparent image; copying it twice at once onto the same target fails with EBUSY on
+ * Windows, which left the variant unlocalized, unmeasured and rendered with a square fallback box.
+ */
+export function dedupeAssetLocalizer(localizer: AssetLocalizer): AssetLocalizer {
+  const inFlight = new Map<string, Promise<string | undefined>>();
+  return (url, context) => {
+    if (!url) return Promise.resolve(undefined);
+    const key = localizationKey(url, context);
+    const pending = inFlight.get(key) ?? localizer(url, context);
+    inFlight.set(key, pending);
+    return pending;
+  };
+}
+
 export function createMascotAssetLocalizer(repository: RepositoryService, mascotId: string, renderMascotDir: string): AssetLocalizer {
   const candidateRoots = resolveCandidateStorageRoots(repository);
 
-  return async (url?: string | null, context?: AnimationAssetContext): Promise<string | undefined> => {
+  return dedupeAssetLocalizer(async (url?: string | null, context?: AnimationAssetContext): Promise<string | undefined> => {
     if (!url) return undefined;
     if (url.startsWith("data:") || url.startsWith("./mascot-assets/")) return url;
     if (url.startsWith("/mascot-assets/")) return `.${url}`;
@@ -83,5 +107,5 @@ export function createMascotAssetLocalizer(repository: RepositoryService, mascot
 
     if (url.startsWith("./") || url.startsWith("../")) return url;
     return undefined;
-  };
+  });
 }

@@ -104,6 +104,33 @@ describe("mascot profile measurement", () => {
   });
 });
 
+describe("mascot measurement of unlocalized variants", () => {
+  it("measures an API-url variant through its render copy", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-bounds-"));
+    roots.push(root);
+    await mkdir(path.join(root, "mascot-assets"), { recursive: true });
+    await writeFile(path.join(root, "mascot-assets", "celebrate.png"), await paddedMascotPng());
+
+    const measured = await measureMascotContentBounds(
+      {
+        ...stillImageMascot,
+        styles: [
+          {
+            ...stillImageMascot.styles[0],
+            states: {
+              thinking: [],
+              celebrate: [{ id: "c1", slot_index: 1, image_url: "/api/mascots/m1/assets/celebrate.png", status: "ready" }],
+            },
+          },
+        ],
+      },
+      root,
+    );
+
+    expect(measured.styles?.[0]?.states.celebrate?.[0]?.canvas).toEqual({ width: 220, height: 220 });
+  });
+});
+
 describe("mascot ledge metrics", () => {
   function celebrateStateHtml(registration: MascotAssetRegistration): string {
     const bundle = adaptMascotV1ToV2(stillImageMascot)!;
