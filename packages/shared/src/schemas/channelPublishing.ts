@@ -26,9 +26,8 @@ export const ChannelPlaylistLinkSchema = z.object({
 
 export type ChannelPlaylistLink = z.infer<typeof ChannelPlaylistLinkSchema>;
 
-/** Public YouTube links and copy appended to every generated episode description. */
+/** Optional playlist links and channel copy appended to generated episode descriptions. */
 export const ChannelPublishingProfileSchema = z.object({
-  channel_url: YouTubeUrlSchema.optional(),
   about_text: z.string().trim().max(CHANNEL_ABOUT_TEXT_MAX_LENGTH).default(""),
   playlists: z.array(ChannelPlaylistLinkSchema).max(CHANNEL_PLAYLIST_LINKS_MAX).default([]),
 });

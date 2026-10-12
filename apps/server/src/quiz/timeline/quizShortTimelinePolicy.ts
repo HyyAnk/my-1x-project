@@ -2,11 +2,20 @@ import type { QuizPacingProfile } from "@studio/shared";
 
 export type QuizTimelineProductKind = "episode" | "quiz_short";
 
-/** Segment ids of the two Quiz Short bookend stages, so QA and render can find them in the timeline. */
+/** Segment ids of the Quiz Short bookend stages, so QA and render can find them in the timeline. */
 export const QUIZ_SHORT_STAGE_SEGMENT_IDS = {
   kickoff: "kickoff",
   scoreCta: "score_cta",
+  /** The uploaded Short intro loop with the quiz title read over it; replaces the kickoff card. */
+  shortIntro: "short_intro",
+  /** The uploaded Short outro, played in full with no narration; replaces the score CTA. */
+  shortOutro: "short_outro",
 } as const;
+
+/** The title appears on the intro canvas before the voice starts reading it. */
+export const SHORT_INTRO_VOICE_LEAD_IN_SECONDS = 0.6;
+/** Hold after the title narration ends before the first question takes over. */
+export const SHORT_INTRO_TAIL_SECONDS = 0.8;
 
 export const SCORE_CTA_DURATION_SECONDS = 3;
 export const SCORE_CTA_ON_SCREEN_COPY = "How many did you get right? Comment below";

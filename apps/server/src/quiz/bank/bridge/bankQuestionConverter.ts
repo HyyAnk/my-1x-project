@@ -12,6 +12,7 @@ import type { RepositoryService } from "../../../repository.js";
 import type { LLMClient } from "../../../utils/promptSanitizer.js";
 import { transcreateBankQuestion } from "../transcreation/transcreationEngine.js";
 import { detectStemAnswerLeak } from "../autoQa/stemLeakDetector.js";
+import { resolveQuestionHighlightPhrase } from "../../formatting/questionHighlightPhrase.js";
 
 export interface ConvertBankQuestionOptions {
   language?: string;
@@ -58,6 +59,19 @@ export async function resolveBankQuestionTranslation(
     });
     return fallbackResult.content;
   }
+}
+
+/**
+ * Picks the highlight phrase that belongs to the displayed question text: the translation's phrase when a
+ * translated question is shown, otherwise the source phrase. Returns undefined when it no longer matches.
+ */
+function resolveDisplayedHighlightPhrase(
+  bankQuestion: BankQuestion,
+  translation: ConvertBankQuestionOptions["translation"],
+  displayedQuestion: string,
+): string | undefined {
+  const phrase = translation?.question ? translation.highlight_phrase : bankQuestion.highlight_phrase;
+  return resolveQuestionHighlightPhrase(displayedQuestion, phrase);
 }
 
 /**
@@ -129,6 +143,7 @@ export function convertBankQuestionToQuizQuestionLossless(
     answer_mode: answerMode,
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
     question: localizedQuestion.trim(),
+    highlight_phrase: resolveDisplayedHighlightPhrase(bankQuestion, translation, localizedQuestion.trim()),
     choices: quizChoices,
     correct_choice_id: bankQuestion.correct_choice_id,
     explanation: localizedExplanation.trim(),
@@ -213,6 +228,9 @@ export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, op
   const requiredCount = bankRequiredChoiceCountForArchetype(bankQuestion.archetype_id);
   const { mapped, correctIndex } = buildConvertedChoices(bankQuestion, options, isMystery, requiredCount);
   const mappedCorrectIndex = Math.min(Math.max(correctIndex, 0), requiredCount - 1);
+  const displayedQuestion = (options.translation?.question || bankQuestion.question || "Engaging trivia challenge question")
+    .slice(0, 320)
+    .trim();
   return QuizQuestionSchema.parse({
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
@@ -220,7 +238,8 @@ export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, op
     gameplay_id: bankQuestion.archetype_id,
     answer_mode: isMystery ? "single_reveal" : "choice_selection",
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
-    question: (options.translation?.question || bankQuestion.question || "Engaging trivia challenge question").slice(0, 320).trim(),
+    question: displayedQuestion,
+    highlight_phrase: resolveDisplayedHighlightPhrase(bankQuestion, options.translation, displayedQuestion),
     choices: mapped,
     correct_choice_id:
       isMystery && bankQuestion.correct_choice_id && mapped.some((m) => m.id === bankQuestion.correct_choice_id)

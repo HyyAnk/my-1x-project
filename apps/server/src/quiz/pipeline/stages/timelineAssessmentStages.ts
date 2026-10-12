@@ -1,3 +1,4 @@
+import { syncDescriptionChapters } from "../../description/descriptionChapterSync.js";
 import type { QuizAssessment, QuizTimeline } from "@studio/shared";
 import { RepositoryError } from "../../../repository.js";
 import { assessQuiz } from "../../qa/quizAssessment.js";
@@ -51,6 +52,7 @@ export async function compileTimeline(
     ...timelineOptions,
   });
   const artifact_path = await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
+  await syncDescriptionChapters(input.repository, input.channelId, input.episodeId, timeline);
   const invalidatedStages = invalidateQuizArtifacts("timeline");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
   return { timeline, artifact_path, invalidated };

@@ -21,6 +21,7 @@ export const LocalizedQuizQuestionSchema = z
   .object({
     question_id: z.string().trim().min(1),
     question: z.string().trim().min(1),
+    highlight_phrase: z.string().trim().min(1).optional(),
     choices: z.array(LocalizedQuizChoiceSchema).min(1),
     explanation: z.string().trim().min(1),
   })

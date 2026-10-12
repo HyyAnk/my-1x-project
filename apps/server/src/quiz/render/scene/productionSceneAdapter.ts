@@ -41,6 +41,7 @@ export function adaptProductionQuizScene(input: ProductionSceneAdapterInput): Qu
       number: input.question.number,
       format: input.question.format,
       text: input.question.question,
+      highlightPhrase: input.question.highlight_phrase,
       visualOpportunity: input.question.visual_opportunity,
       explanation: input.question.explanation,
       funFact: input.question.fun_fact,

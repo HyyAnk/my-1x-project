@@ -1,3 +1,4 @@
+import { syncDescriptionChapters } from "../../quiz/description/descriptionChapterSync.js";
 import type { FastifyInstance } from "fastify";
 import { GenerateVideoDescriptionInputSchema, VideoDescriptionInputSchema, nowIso, type VideoDescription } from "@studio/shared";
 import { generateEpisodeDescription, readQuizArtifacts } from "../../quiz/pipeline/orchestrator.js";
@@ -82,6 +83,7 @@ export function registerQuizV2ArtifactRoutes(server: FastifyInstance, deps: Quiz
       description,
       title,
     } = await readQuizArtifacts(pipelineDeps(params.channelId, params.episodeId));
+    const syncedDescription = description ? await syncDescriptionChapters(repository, params.channelId, params.episodeId, timeline) : null;
     const timings = await repository.readQuizStageTimings(params.channelId, params.episodeId);
     const active = tasks
       .list()
@@ -94,7 +96,7 @@ export function registerQuizV2ArtifactRoutes(server: FastifyInstance, deps: Quiz
       voice_plan: voicePlan,
       timeline,
       assessment,
-      description,
+      description: syncedDescription,
       title,
       timings,
       render_stale: Boolean(episode.render_stale),
@@ -142,7 +144,7 @@ export function registerQuizV2ArtifactRoutes(server: FastifyInstance, deps: Quiz
 
   server.get("/api/channels/:channelId/episodes/:episodeId/quiz-v2/description", async (request) => {
     const params = request.params as { channelId: string; episodeId: string };
-    const description = await repository.readVideoDescription(params.channelId, params.episodeId);
+    const description = await syncDescriptionChapters(repository, params.channelId, params.episodeId);
     return { description };
   });
 

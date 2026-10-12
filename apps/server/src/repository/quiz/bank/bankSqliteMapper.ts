@@ -16,6 +16,7 @@ export interface BankQuestionRow {
   subtopic_id: string;
   language: string | null;
   question: string;
+  highlight_phrase: string | null;
   format: string;
   choices: string;
   correct_choice_id: string;
@@ -44,6 +45,7 @@ export function bankQuestionToRow(question: BankQuestion): BankQuestionRow {
     subtopic_id: normalized.subtopic_id,
     language: normalized.language ?? null,
     question: normalized.question,
+    highlight_phrase: normalized.highlight_phrase ?? null,
     format: normalized.format ?? "multiple_choice",
     choices: JSON.stringify(normalized.choices),
     correct_choice_id: normalized.correct_choice_id,
@@ -101,6 +103,7 @@ export function rowToBankQuestion(row: BankQuestionRow): BankQuestion {
 
   if (row.entity_id) question.entity_id = row.entity_id;
   if (row.language) question.language = row.language;
+  if (row.highlight_phrase) question.highlight_phrase = row.highlight_phrase;
   if (parsedVisualSpec !== undefined) question.visual_spec = parsedVisualSpec;
   if (row.thinking_seconds !== null && row.thinking_seconds !== undefined) {
     question.thinking_seconds = row.thinking_seconds;

@@ -77,7 +77,9 @@ export function resolveBgmScheduleItems(
     if (fadeInDur <= 0.05) fadeInDur = 0;
 
     let fadeOutDur: number;
-    if (isFinalClip) {
+    if (isFinalClip && options?.finalFadeOutSeconds !== undefined) {
+      fadeOutDur = Math.max(0.1, Math.min(options.finalFadeOutSeconds, clipDuration * 0.8));
+    } else if (isFinalClip) {
       let fadeOutSeconds = 1.5;
       if (effectiveEndSeconds >= durationSeconds - 0.05) {
         fadeOutSeconds = 2.0;

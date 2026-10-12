@@ -41,6 +41,8 @@ export interface BuildQuizVoicePlanOptions {
    * segments, label-plus-answer reveal, no explanation, no bridge, pre-outro or outro.
    */
   pacingProfile?: QuizPacingProfile;
+  /** Quiz Short only: replaces the "Five questions. Ready?" kickoff, e.g. with the quiz title read over the intro. */
+  kickoffText?: string;
 }
 
 export function cleanTopicForSpeech(rawTopic?: string): string {
@@ -85,7 +87,7 @@ export function buildQuizVoicePlan(quiz: QuizV2, options?: BuildQuizVoicePlanOpt
   const copy = resolveQuizVoiceCopy(quiz.language, quiz.episode_id);
   const stages = resolveVoicePlanStages(options);
   const segments: VoicePlan["segments"] = [];
-  if (stages.intro) segments.push(stages.short ? buildKickoffSegment(quiz) : buildIntroSegment(copy));
+  if (stages.intro) segments.push(stages.short ? buildKickoffSegment(quiz, options?.kickoffText) : buildIntroSegment(copy));
   if (stages.topic) segments.push(buildTopicSegment(quiz, copy, options));
 
   quiz.questions.forEach((question, index) => {
@@ -128,12 +130,12 @@ function buildIntroSegment(copy: QuizVoiceCopy): VoicePlan["segments"][number] {
   return withPhrases({ segment_id: "intro", role: "intro", question_id: null, text: copy.intro, duration_seconds: null });
 }
 
-function buildKickoffSegment(quiz: QuizV2): VoicePlan["segments"][number] {
+function buildKickoffSegment(quiz: QuizV2, kickoffText?: string): VoicePlan["segments"][number] {
   return withPhrases({
     segment_id: QUIZ_SHORT_KICKOFF_SEGMENT_ID,
     role: "intro",
     question_id: null,
-    text: quizShortKickoffLine(quiz.questions.length, quiz.language),
+    text: kickoffText?.trim() || quizShortKickoffLine(quiz.questions.length, quiz.language),
     duration_seconds: null,
   });
 }

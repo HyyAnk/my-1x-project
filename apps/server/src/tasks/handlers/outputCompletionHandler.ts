@@ -1,5 +1,5 @@
 import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
-import { isSequenceOutputFailure } from "../validators.js";
+import { isMalformedJsonOutput, isSequenceOutputFailure } from "../validators.js";
 import { handleTextArtifactOutput } from "./textArtifactHandlers.js";
 import {
   handleAllScenesOutput,
@@ -48,6 +48,10 @@ async function tryRetryTask(runtime: TaskManagerRuntime, active: ActiveRun, mess
     await runtime.retrySequenceScenes(active, message);
     return true;
   }
+  if (taskType === "GENERATE_QUIZ" && active.quizAttempts < 1 && isMalformedJsonOutput(message)) {
+    await runtime.retryQuiz(active, message);
+    return true;
+  }
   if (taskType === "SUGGEST_TOPICS" && active.topicSuggestionAttempts < 1) {
     await runtime.retryTopicSuggestions(active, message);
     return true;
@@ -55,7 +59,15 @@ async function tryRetryTask(runtime: TaskManagerRuntime, active: ActiveRun, mess
   return false;
 }
 
+async function preserveMalformedOutput(runtime: TaskManagerRuntime, active: ActiveRun, message: string): Promise<void> {
+  if (!isMalformedJsonOutput(message)) return;
+  const { task } = active;
+  const savedPath = await runtime.logger.saveRawOutput(`${task.task_type}-${task.task_id}`, active.output);
+  runtime.logger.warn(`${message}${savedPath ? ` (raw output saved to ${savedPath})` : ""}`, { workerId: task.task_id });
+}
+
 async function handleTaskFailure(runtime: TaskManagerRuntime, active: ActiveRun, message: string): Promise<void> {
+  await preserveMalformedOutput(runtime, active, message);
   try {
     const retried = await tryRetryTask(runtime, active, message);
     if (retried) {

@@ -5,10 +5,13 @@ import { quizShortProductRef, type QuizAssessment, type QuizShort, type Task } f
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { TaskManager } from "../tasks.js";
 import { sendRange } from "./audioVideo.js";
+import { revealFileInSystem } from "../server/fileReveal.js";
 
 export type QuizShortWorkspaceRouteDeps = {
   repository: RepositoryService;
   tasks: TaskManager;
+  /** Opens the OS file manager with the file selected; injectable so tests never launch Explorer. */
+  revealFile?: (filePath: string) => Promise<void>;
 };
 
 type QuizShortParams = { channelId: string; quizShortId: string };
@@ -30,11 +33,12 @@ function renderStage(quizShort: QuizShort, activeTask: Task | undefined): QuizSh
 
 /**
  * Read-only artifact endpoints the Quiz Short workspace view needs: one aggregated workspace
- * payload, the rendered video stream and the render manifest. Writes stay in quizShorts.ts.
+ * payload, the rendered video stream, opening the video's folder and the render manifest. Writes stay in quizShorts.ts.
  */
 export function registerQuizShortWorkspaceRoutes(deps: QuizShortWorkspaceRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository, tasks } = deps;
+    const revealFile = deps.revealFile ?? revealFileInSystem;
     const base = "/api/channels/:channelId/quiz-shorts/:quizShortId";
 
     server.get(`${base}/workspace`, async (request) => {
@@ -74,6 +78,13 @@ export function registerQuizShortWorkspaceRoutes(deps: QuizShortWorkspaceRouteDe
       const params = request.params as QuizShortParams;
       const file = await repository.getEpisodeVideoFile(params.channelId, quizShortProductRef(params.channelId, params.quizShortId));
       return sendRange(request.headers.range, file, "video/mp4", reply, `inline; filename="quiz-short.mp4"`);
+    });
+
+    server.post(`${base}/video/open-folder`, async (request) => {
+      const params = request.params as QuizShortParams;
+      const file = await repository.getEpisodeVideoFile(params.channelId, quizShortProductRef(params.channelId, params.quizShortId));
+      await revealFile(file.absolutePath);
+      return { opened: true, folder_path: path.dirname(file.path) };
     });
 
     server.get(`${base}/render-manifest`, async (request) => {

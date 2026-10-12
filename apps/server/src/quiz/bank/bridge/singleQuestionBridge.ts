@@ -55,6 +55,7 @@ function applySingleQuestionLocalization(
   return {
     ...baseQuizQuestion,
     question: loc.question,
+    highlight_phrase: loc.highlight_phrase,
     explanation: loc.explanation || baseQuizQuestion.explanation,
     choices: baseQuizQuestion.choices.map((c) => ({
       ...c,

@@ -48,6 +48,7 @@ export function normalizeQuizBeatMetadata(beats: Beat[]): Beat[] {
           choices: quiz.choices.map(stripQuizChoiceLabel),
           answer: ownAnswer,
           image_prompt: quiz.image_prompt.trim() || canonical.image_prompt,
+          highlight_phrase: quiz.highlight_phrase?.trim() || canonical.highlight_phrase,
         },
       };
     }
@@ -60,6 +61,7 @@ export function normalizeQuizBeatMetadata(beats: Beat[]): Beat[] {
         answer: canonical.answer,
         explanation: quiz.explanation.trim() || canonical.explanation,
         image_prompt: quiz.image_prompt.trim() || canonical.image_prompt,
+        highlight_phrase: quiz.highlight_phrase?.trim() || canonical.highlight_phrase,
       },
     };
   });

@@ -33,6 +33,8 @@ export const QuizSceneContentSchema = z.object({
   answer: z.string().default(""),
   explanation: z.string().default(""),
   image_prompt: z.string().default(""),
+  /** Focal phrase of `question`, copied verbatim, that the renderer color-highlights. */
+  highlight_phrase: z.string().trim().max(120).optional(),
   answer_mode: QuizAnswerModeSchema.optional().default("choice_selection"),
 });
 

@@ -99,6 +99,24 @@ export async function retrySequenceScenes(this: TaskManagerRuntime, active: Acti
   });
 }
 
+export async function retryQuiz(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
+  const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
+  const threadId = await client.startThread();
+  const turnId = await client.startTurn(
+    threadId,
+    `${active.manifest.prompt}\n\nSTRICT RETRY: The previous QuizV2 response was not valid JSON (${reason}). Start over in a fresh response. Return exactly one complete JSON object that JSON.parse accepts. Every key must be a double-quoted string followed by a colon. Escape every double quote inside string values as \\" (or use single quotes in prose instead), and never put raw line breaks inside strings. Do not add comments, trailing commas, Markdown fences, or any text before or after the JSON object.`,
+  );
+  active.threadId = threadId;
+  active.turnId = turnId;
+  active.output = "";
+  active.quizAttempts += 1;
+  await this.update(active.task.task_id, {
+    codex_thread_id: threadId,
+    codex_turn_id: turnId,
+    progress_message: "Retrying Quiz questions with strict JSON output",
+  });
+}
+
 export async function retryTopicSuggestions(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();

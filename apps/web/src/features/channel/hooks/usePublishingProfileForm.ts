@@ -16,7 +16,6 @@ export function usePublishingProfileForm(initialProfile: ChannelPublishingProfil
 
   const errors = useMemo(() => validatePublishingProfileDraft(draft), [draft]);
 
-  const setChannelUrl = useCallback((channelUrl: string) => setDraft((current) => ({ ...current, channelUrl })), []);
   const setAboutText = useCallback((aboutText: string) => setDraft((current) => ({ ...current, aboutText })), []);
 
   const addPlaylist = useCallback(() => {
@@ -43,7 +42,6 @@ export function usePublishingProfileForm(initialProfile: ChannelPublishingProfil
     errors,
     isValid: !hasPublishingProfileErrors(errors),
     canAddPlaylist: draft.playlists.length < CHANNEL_PLAYLIST_LINKS_MAX,
-    setChannelUrl,
     setAboutText,
     addPlaylist,
     updatePlaylist,

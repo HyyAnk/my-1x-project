@@ -7,6 +7,7 @@ import {
   type BankQuestion,
   type BankTranslationContent,
 } from "@studio/shared";
+import { resolveQuestionHighlightPhrase } from "../../formatting/questionHighlightPhrase.js";
 
 export interface BuildQuestionTranscreationPromptParams {
   question: BankQuestion;
@@ -61,6 +62,7 @@ export function buildQuestionTranscreationPrompt(params: BuildQuestionTranscreat
     `ID: ${question.id}`,
     `Archetype: ${question.archetype_id}`,
     `Question Text: "${question.question}"`,
+    question.highlight_phrase ? `Highlighted Focal Phrase: "${question.highlight_phrase}"` : "",
     `Format: ${question.format}`,
     `Choices:`,
     choicesList,
@@ -79,6 +81,10 @@ export function buildQuestionTranscreationPrompt(params: BuildQuestionTranscreat
     `   - Translate choice texts accurately so the distinction between correct and incorrect remains 100% true.`,
     `3. VISUAL SPECIFICATION:`,
     `   - Do NOT translate visual prompt keywords. Visual spec remains purely in English in the source data.`,
+    `4. HIGHLIGHT PHRASE:`,
+    `   - "highlight_phrase" is the focal word or phrase the video color-highlights in the question box.`,
+    `   - Copy it character for character from YOUR transcreated question (one contiguous span, 1 to 4 words), carrying the same meaning as the source focal phrase.`,
+    `   - Keep compound terms whole (e.g. "Iced tea", never just "Iced").`,
     ...(additionalGuidelines && additionalGuidelines.length > 0
       ? [`=== ADDITIONAL GUIDELINES ===`, ...additionalGuidelines.map((g) => `- ${g}`)]
       : []),
@@ -89,6 +95,7 @@ export function buildQuestionTranscreationPrompt(params: BuildQuestionTranscreat
     `{`,
     `  "language": "${normLang}",`,
     `  "question": "<Transcreated question string in ${normLang}>",`,
+    `  "highlight_phrase": "<Focal phrase copied exactly from the transcreated question>",`,
     `  "choices": [`,
     question.choices.map((c) => `    { "id": "${c.id}", "text": "<Transcreated text for choice ${c.id}>" }`).join(",\n"),
     `  ],`,
@@ -137,6 +144,7 @@ export function parseTranscreationOutput(rawOutput: string, sourceQuestion?: Ban
   }
 
   const result = validation.data;
+  result.highlight_phrase = resolveQuestionHighlightPhrase(result.question, result.highlight_phrase);
 
   // 4. Invariant checks against source question (if provided)
   if (sourceQuestion) {

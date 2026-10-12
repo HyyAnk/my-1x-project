@@ -15,6 +15,7 @@ import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 
 import type { MascotAnimationRenderSnapshot } from "./animationRenderSnapshot.js";
+import type { QuizShortBookendRenderMedia } from "./candyArcade/shortBookends/quizShortBookendClips.js";
 import type { ResolvedChannelBrandIdentity } from "../brand/channelBrandAssetResolver.js";
 
 export type QuizRenderInput = {
@@ -54,6 +55,8 @@ export type QuizRenderInput = {
   outroMotionTemplateId?: string;
   outroMotionTemplateOptions?: MotionTemplateOptions;
   channelName?: string;
+  /** Quiz Short only: the pinned Short Intro & Outro media copied into the render root. */
+  shortBookends?: QuizShortBookendRenderMedia;
 };
 
 export type PreparedQuizRender = {

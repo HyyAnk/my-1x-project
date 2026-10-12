@@ -50,6 +50,11 @@ export const quizShortApi = {
     request<{ manifest: unknown }>(`${base(channelId, quizShortId)}/render-manifest`),
   quizShortVideoUrl: (channelId: string, quizShortId: string, version?: string | null) =>
     `${base(channelId, quizShortId)}/video${version ? `?v=${encodeURIComponent(version)}` : ""}`,
+  openQuizShortVideoFolder: (channelId: string, quizShortId: string) =>
+    request<{ opened: true; folder_path: string }>(`${base(channelId, quizShortId)}/video/open-folder`, {
+      method: "POST",
+      body: "{}",
+    }),
   getQuizShortTitle: (channelId: string, quizShortId: string) =>
     request<{ title: VideoTitle | null }>(`${base(channelId, quizShortId)}/title`),
   generateQuizShortTitle: (channelId: string, quizShortId: string, toneHint?: string) =>

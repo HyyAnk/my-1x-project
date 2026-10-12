@@ -105,6 +105,7 @@ describe("Question Bank Job Manager", () => {
             {
               entity_id: `ENT-JOB-${callCount}`,
               question: `Valid question ${callCount}?`,
+              highlight_phrase: "Valid question",
               format: "multiple_choice",
               choices: [
                 { id: "A", text: "Alpha", is_correct: true },

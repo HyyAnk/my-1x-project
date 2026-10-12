@@ -1,6 +1,11 @@
 import type { VideoFileInfo } from "../components/introOutro/types";
 
-export function inspectPairVideo(file: File, signal: AbortSignal): Promise<VideoFileInfo> {
+export type VideoFrameSize = { width: number; height: number };
+
+const LANDSCAPE_1080P: VideoFrameSize = { width: 1920, height: 1080 };
+
+/** Reads a local video's size and duration, requires an exact frame size and returns it as a data URL. */
+export function inspectPairVideo(file: File, signal: AbortSignal, frame: VideoFrameSize = LANDSCAPE_1080P): Promise<VideoFileInfo> {
   if (file.size > 80 * 1024 * 1024) return Promise.reject(new Error("Choose a video smaller than 80 MB"));
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
@@ -32,8 +37,8 @@ export function inspectPairVideo(file: File, signal: AbortSignal): Promise<Video
       const width = video.videoWidth,
         height = video.videoHeight,
         duration = video.duration;
-      if (width !== 1920 || height !== 1080) {
-        fail(`Use a 1920x1080 video. Selected: ${width}x${height}.`);
+      if (width !== frame.width || height !== frame.height) {
+        fail(`Use a ${frame.width}x${frame.height} video. Selected: ${width}x${height}.`);
         return;
       }
       reader.onerror = () => fail("Could not read video file");

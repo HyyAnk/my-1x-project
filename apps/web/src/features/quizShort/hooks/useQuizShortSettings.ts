@@ -1,5 +1,12 @@
 import { useState } from "react";
-import type { MascotStyleSelection, QuizPaletteId, QuizShort, QuizShortLayoutPair, VisualPresetItem } from "@studio/shared";
+import type {
+  MascotStyleSelection,
+  QuizPaletteId,
+  QuizShort,
+  QuizShortBookendSelection,
+  QuizShortLayoutPair,
+  VisualPresetItem,
+} from "@studio/shared";
 import { quizShortApi } from "../../../api/quizShortApi";
 import type { Notice } from "../../../components/types";
 import type { QuizShortSettingsPatch } from "../types/quizShort.types";
@@ -13,7 +20,7 @@ export type UseQuizShortSettingsProps = {
 };
 
 export type QuizShortSettingsBusyKey =
-  "preset" | "palette" | "mascot-style" | "question-count" | "layout-pair" | "outro-cta" | "fast-render" | null;
+  "preset" | "palette" | "mascot-style" | "question-count" | "layout-pair" | "outro-cta" | "fast-render" | "bookends" | null;
 
 /** PATCHes one settings slice at a time and reflects the saved record back into the workspace. */
 export function useQuizShortSettings({ channelId, quizShortId, quizShort, applyQuizShort, onNotice }: UseQuizShortSettingsProps) {
@@ -60,5 +67,18 @@ export function useQuizShortSettings({ channelId, quizShortId, quizShort, applyQ
   const saveFastRender = (enabled: boolean) =>
     save("fast-render", { fast_render_mode: enabled }, enabled ? "Fast render enabled" : "Fast render disabled");
 
-  return { busy, applyPreset, savePalette, saveMascotStyle, saveQuestionCount, saveLayoutPair, saveOutroCta, saveFastRender };
+  const saveBookendSelection = (selection: QuizShortBookendSelection) =>
+    save("bookends", { bookend_selection: selection }, "Short Intro & Outro updated");
+
+  return {
+    busy,
+    applyPreset,
+    savePalette,
+    saveMascotStyle,
+    saveQuestionCount,
+    saveLayoutPair,
+    saveOutroCta,
+    saveFastRender,
+    saveBookendSelection,
+  };
 }

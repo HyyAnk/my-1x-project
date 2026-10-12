@@ -1,4 +1,5 @@
-import { expandKeywordToTitleSpan, findHighlightKeywordIndex, tokenizeQuestionWords } from "./questionKeywordSpan.js";
+import { findHighlightPhraseSpan } from "../../formatting/questionHighlightPhrase.js";
+import { expandKeywordToTitleSpan, findHighlightKeywordIndex, tokenizeQuestionWords, type TextSpan } from "./questionKeywordSpan.js";
 
 export const QUESTION_KEYWORD_STOP_WORDS = new Set([
   "about",
@@ -38,7 +39,8 @@ export function escAttr(value: string): string {
   return esc(value);
 }
 
-export function highlightQuestionMarkup(question: string, visualOpportunity: string): string {
+/** Heuristic fallback for questions without an LLM-chosen highlight phrase (legacy bank records). */
+function inferHighlightSpan(question: string, visualOpportunity: string): TextSpan | null {
   const opportunityWords = tokenizeQuestionWords(visualOpportunity)
     .map((match) => match[0].toLocaleLowerCase())
     .filter((token) => !QUESTION_KEYWORD_STOP_WORDS.has(token));
@@ -46,8 +48,18 @@ export function highlightQuestionMarkup(question: string, visualOpportunity: str
   const keywordCandidates = new Set(opportunityWords.filter((token) => token.length >= 4));
   const questionTokens = tokenizeQuestionWords(question);
   const matchedIndex = findHighlightKeywordIndex(questionTokens, properNounCandidates, keywordCandidates);
-  if (matchedIndex < 0) return esc(question);
-  const { start, end } = expandKeywordToTitleSpan(question, questionTokens, matchedIndex);
+  if (matchedIndex < 0) return null;
+  return expandKeywordToTitleSpan(question, questionTokens, matchedIndex);
+}
+
+/**
+ * Wraps the question's focal phrase in a highlight. The LLM-chosen `highlightPhrase` wins whenever it is a
+ * whole-word span of the question; otherwise the keyword is inferred from the visual opportunity.
+ */
+export function highlightQuestionMarkup(question: string, visualOpportunity: string, highlightPhrase?: string): string {
+  const span = findHighlightPhraseSpan(question, highlightPhrase) ?? inferHighlightSpan(question, visualOpportunity);
+  if (!span) return esc(question);
+  const { start, end } = span;
   return `${esc(question.slice(0, start))}<strong class="keyword-highlight">${esc(question.slice(start, end))}</strong>${esc(question.slice(end))}`;
 }
 

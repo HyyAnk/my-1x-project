@@ -25,6 +25,7 @@ import { EpisodeSchema } from "../schemas/episode.js";
 import { TaskSchema } from "../events.js";
 import { ShortReelRecordSchema } from "../shortReel/shortReel.schema.js";
 import { QuizShortLayoutPairSchema, QuizShortQuestionCountSchema, QuizShortSchema } from "../schemas/quizShort.js";
+import { QuizShortBookendSelectionSchema } from "../schemas/quizShortBookends.js";
 import { QuizV2Schema } from "../schemas/quiz/quizQuestions.js";
 import { DirectorPlanSchema } from "../schemas/quiz/quizDirector.js";
 

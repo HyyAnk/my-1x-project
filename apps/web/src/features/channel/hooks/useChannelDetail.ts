@@ -10,8 +10,8 @@ import { useTopicAvailability } from "./useTopicAvailability";
 import { useChannelEpisodes } from "./useChannelEpisodes";
 import { useChannelQuizShorts } from "./useChannelQuizShorts";
 
-export type ChannelTab = "episodes" | "quiz-shorts" | "short-reels" | "topics" | "dna" | "intro-outro";
-const CHANNEL_TABS: readonly ChannelTab[] = ["episodes", "quiz-shorts", "short-reels", "topics", "dna", "intro-outro"];
+export type ChannelTab = "episodes" | "quiz-shorts" | "short-reels" | "topics" | "dna" | "intro-outro" | "short-intro-outro";
+const CHANNEL_TABS: readonly ChannelTab[] = ["episodes", "quiz-shorts", "short-reels", "topics", "dna", "intro-outro", "short-intro-outro"];
 
 export type UseChannelDetailProps = {
   channel: Channel;

@@ -65,6 +65,7 @@ export function bankRequiredChoiceCountForArchetype(archetypeId: BankGameplayArc
 export const BankTranslationContentSchema = z.object({
   language: z.string().trim().min(1).max(40),
   question: z.string().trim().min(1).max(400),
+  highlight_phrase: z.string().trim().min(1).max(120).optional(),
   choices: BankTranslationChoiceSchema.array().min(1).max(3),
   explanation: z.string().trim().min(1).max(900),
   fun_fact: z.string().trim().max(700).default(""),
@@ -85,6 +86,8 @@ export const BankQuestionSchema = z
     subtopic_id: BankStorageIdentifierSchema,
     language: z.string().trim().min(1).max(40).optional(),
     question: z.string().trim().min(1).max(350),
+    /** Focal phrase of the question chosen by the generating LLM, copied verbatim from `question`. */
+    highlight_phrase: z.string().trim().min(1).max(120).optional(),
     format: QuizQuestionFormatSchema,
     choices: BankChoiceSchema.array().min(1).max(3),
     correct_choice_id: z.string().trim().min(1),

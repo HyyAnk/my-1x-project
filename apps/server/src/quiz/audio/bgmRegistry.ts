@@ -48,6 +48,8 @@ export type ResolveBgmOptions = {
   baseDirectory?: string;
   startSeconds?: number;
   outroStartSeconds?: number;
+  /** Overrides the closing fade of the last BGM clip, e.g. to fade across a whole outro. */
+  finalFadeOutSeconds?: number;
 };
 
 export const DEFAULT_BGM_BASE_VOLUME = 0.08;

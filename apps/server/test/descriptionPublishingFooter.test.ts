@@ -3,12 +3,12 @@ import { ChannelPublishingProfileSchema, UpdateChannelInputSchema, type Episode,
 import {
   assembleFullDescription,
   buildChannelFooter,
-  buildSubscribeUrl,
   buildTopicHashtag,
   enrichFallbackDescription,
   getDescriptionSectionLocale,
   matchPlaylistLink,
   normalizeHashtags,
+  selectPlaylistLink,
   sanitizeYouTubeDescription,
   sanitizeYouTubeTags,
   truncateToYouTubeLimit,
@@ -22,51 +22,56 @@ const playlists = [
 ];
 
 const profile = ChannelPublishingProfileSchema.parse({
-  channel_url: "https://www.youtube.com/@QuizMaster",
   about_text: "New family-friendly quizzes every week.",
   playlists,
 });
 
 describe("ChannelPublishingProfileSchema", () => {
-  it("accepts YouTube links and rejects other hosts or plain http", () => {
+  it("accepts YouTube playlist links and rejects other hosts or plain http", () => {
     expect(UpdateChannelInputSchema.parse({ publishing_profile: profile }).publishing_profile?.playlists).toHaveLength(3);
-    expect(() => ChannelPublishingProfileSchema.parse({ channel_url: "https://example.com/@QuizMaster" })).toThrow();
-    expect(() => ChannelPublishingProfileSchema.parse({ channel_url: "http://www.youtube.com/@QuizMaster" })).toThrow();
+    const playlistAt = (url: string) => ({ playlists: [{ title: "Space", url }] });
+    expect(() => ChannelPublishingProfileSchema.parse(playlistAt("https://example.com/playlist?list=PL1"))).toThrow();
+    expect(() => ChannelPublishingProfileSchema.parse(playlistAt("http://www.youtube.com/playlist?list=PL1"))).toThrow();
   });
 });
 
-describe("matchPlaylistLink", () => {
+describe("playlist selection", () => {
   it("matches on topic words and ignores generic quiz words", () => {
     expect(matchPlaylistLink(["Retro Gaming & Arcade Trivia"], playlists)?.url).toBe(playlists[0].url);
     expect(matchPlaylistLink(["Ocean Animals Trivia"], playlists)).toBeNull();
     expect(matchPlaylistLink(["Unknown", "Planets of the Solar System"], playlists)?.url).toBe(playlists[1].url);
+  });
+
+  it("falls back to the first configured playlist and returns null when none exist", () => {
+    expect(selectPlaylistLink(["Ocean Animals"], playlists)?.url).toBe(playlists[0].url);
+    expect(selectPlaylistLink(["Ocean Animals"], [])).toBeNull();
   });
 });
 
 describe("buildChannelFooter", () => {
   const labels = getDescriptionSectionLocale("en").footerLabels;
 
-  it("renders playlist, subscribe and about lines", () => {
+  it("renders the playlist and about lines without any subscribe link", () => {
     const footer = buildChannelFooter({ profile, channelName: "Quiz Master", categories: ["Retro Gaming"], labels });
     expect(footer).toBe(
       [
         "▶️ More quizzes like this: https://www.youtube.com/playlist?list=PLretro",
-        "🔔 Subscribe for new quizzes: https://www.youtube.com/@QuizMaster?sub_confirmation=1",
         "ℹ️ About Quiz Master: New family-friendly quizzes every week.",
       ].join("\n"),
     );
+    expect(footer).not.toContain("sub_confirmation");
   });
 
-  it("returns nothing without a publishing profile and skips missing parts", () => {
+  it("shows the first playlist when no playlist matches the topic", () => {
+    const footer = buildChannelFooter({ profile, channelName: "QM", categories: ["Ocean Animals"], labels });
+    expect(footer.split("\n")[0]).toBe("▶️ More quizzes like this: https://www.youtube.com/playlist?list=PLretro");
+  });
+
+  it("returns nothing for an unconfigured channel and skips missing parts", () => {
     expect(buildChannelFooter({ profile: undefined, channelName: "Quiz Master", categories: ["Retro"], labels })).toBe("");
-    const partial = ChannelPublishingProfileSchema.parse({ about_text: "Hi" });
-    expect(buildChannelFooter({ profile: partial, channelName: "QM", categories: ["Retro"], labels })).toBe("ℹ️ About QM: Hi");
-  });
-
-  it("keeps existing query parameters on the subscribe link", () => {
-    expect(buildSubscribeUrl("https://www.youtube.com/channel/UC123?view=0")).toBe(
-      "https://www.youtube.com/channel/UC123?view=0&sub_confirmation=1",
-    );
+    expect(buildChannelFooter({ profile: ChannelPublishingProfileSchema.parse({}), channelName: "QM", categories: [], labels })).toBe("");
+    const aboutOnly = ChannelPublishingProfileSchema.parse({ about_text: "Hi" });
+    expect(buildChannelFooter({ profile: aboutOnly, channelName: "QM", categories: ["Retro"], labels })).toBe("ℹ️ About QM: Hi");
   });
 
   it("is placed after the scoring section and the internal category is never printed", () => {
@@ -76,10 +81,10 @@ describe("buildChannelFooter", () => {
       scoringCta: { beginner: "0–1 points: A", intermediate: "2 points: B", expert: "3 points: C", cta_text: "CTA" },
       suggestedPlaylistCategory: "Retro Gaming",
       hashtags: ["#quiz"],
-      channelFooter: "🔔 Subscribe: https://www.youtube.com/@QuizMaster?sub_confirmation=1",
+      channelFooter: "▶️ More quizzes like this: https://www.youtube.com/playlist?list=PLretro",
     });
     expect(fullText).toBe(
-      "Hook\n\nParagraph\n\n🏆 SCORING TIERS:\n• 0–1 points: A\n• 2 points: B\n• 3 points: C\n👉 CTA\n\n🔔 Subscribe: https://www.youtube.com/@QuizMaster?sub_confirmation=1\n\n#quiz",
+      "Hook\n\nParagraph\n\n🏆 SCORING TIERS:\n• 0–1 points: A\n• 2 points: B\n• 3 points: C\n👉 CTA\n\n▶️ More quizzes like this: https://www.youtube.com/playlist?list=PLretro\n\n#quiz",
     );
   });
 });

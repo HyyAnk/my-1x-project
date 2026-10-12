@@ -8,6 +8,7 @@ import { QUESTION_BANK_DIR } from "./bankPathResolver.js";
 import { assertSafeBankFilesystemPath, assertSafeBankPathSegments } from "./bankPathSafety.js";
 import { getBankSqliteDb } from "./bankSqliteEngine.js";
 import { bankQuestionToRow, type BankQuestionRow } from "./bankSqliteMapper.js";
+import { BANK_QUESTION_UPSERT_SQL, bankQuestionRowValues } from "./bankSqliteQuestionUpsert.js";
 import { matchesArchetypeFilter } from "./bankBatchStorage.js";
 
 interface DiscoveredBatchFile {
@@ -175,38 +176,7 @@ async function parseAndValidateBatchFile(file: DiscoveredBatchFile): Promise<Ban
 }
 
 function persistSyncedBatch(db: ReturnType<typeof getBankSqliteDb>, rows: BankQuestionRow[], files: DiscoveredBatchFile[]): void {
-  const insertQuestionStmt = db.prepare(`
-    INSERT INTO bank_questions (
-      id, entity_id, archetype_id, domain_id, subtopic_id, language, question,
-      format, choices, correct_choice_id, explanation, fun_fact, visual_spec,
-      age_band, difficulty, thinking_seconds, tags, status, created_at, updated_at, translations
-    ) VALUES (
-      ?, ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?, ?, ?
-    )
-    ON CONFLICT(id) DO UPDATE SET
-      entity_id = excluded.entity_id,
-      archetype_id = excluded.archetype_id,
-      domain_id = excluded.domain_id,
-      subtopic_id = excluded.subtopic_id,
-      language = excluded.language,
-      question = excluded.question,
-      format = excluded.format,
-      choices = excluded.choices,
-      correct_choice_id = excluded.correct_choice_id,
-      explanation = excluded.explanation,
-      fun_fact = excluded.fun_fact,
-      visual_spec = excluded.visual_spec,
-      age_band = excluded.age_band,
-      difficulty = excluded.difficulty,
-      thinking_seconds = excluded.thinking_seconds,
-      tags = excluded.tags,
-      status = excluded.status,
-      created_at = excluded.created_at,
-      updated_at = excluded.updated_at,
-      translations = excluded.translations;
-  `);
+  const insertQuestionStmt = db.prepare(BANK_QUESTION_UPSERT_SQL);
 
   const recordSyncStmt = db.prepare(`
     INSERT INTO bank_json_sync (file_path, mtime_ms, file_size)
@@ -219,29 +189,7 @@ function persistSyncedBatch(db: ReturnType<typeof getBankSqliteDb>, rows: BankQu
   db.exec("BEGIN;");
   try {
     for (const row of rows) {
-      insertQuestionStmt.run(
-        row.id,
-        row.entity_id,
-        row.archetype_id,
-        row.domain_id,
-        row.subtopic_id,
-        row.language,
-        row.question,
-        row.format,
-        row.choices,
-        row.correct_choice_id,
-        row.explanation,
-        row.fun_fact,
-        row.visual_spec,
-        row.age_band,
-        row.difficulty,
-        row.thinking_seconds,
-        row.tags,
-        row.status,
-        row.created_at,
-        row.updated_at,
-        row.translations ?? "{}",
-      );
+      insertQuestionStmt.run(...bankQuestionRowValues(row));
     }
     for (const file of files) {
       recordSyncStmt.run(file.filePath, file.mtimeMs, file.fileSize);

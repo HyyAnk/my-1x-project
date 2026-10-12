@@ -21,22 +21,6 @@ export function ChannelPublishingProfileFields({ form, disabled = false }: Chann
       <p className="channel-publishing-hint">{t("channelPublishing.sectionHint")}</p>
 
       <div className="channel-create-field">
-        <label htmlFor="edit-channel-youtube-url" className="channel-create-label">
-          {t("channelPublishing.channelUrlLabel")}
-        </label>
-        <input
-          id="edit-channel-youtube-url"
-          type="url"
-          className="channel-create-input"
-          value={draft.channelUrl}
-          aria-invalid={errors.channelUrl}
-          onChange={(event) => form.setChannelUrl(event.target.value)}
-          placeholder={t("channelPublishing.channelUrlPlaceholder")}
-        />
-        {errors.channelUrl && <span className="channel-publishing-error">{t("channelPublishing.invalidUrl")}</span>}
-      </div>
-
-      <div className="channel-create-field">
         <label htmlFor="edit-channel-about-line" className="channel-create-label">
           {t("channelPublishing.aboutLabel")}
         </label>

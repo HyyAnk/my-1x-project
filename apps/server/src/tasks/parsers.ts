@@ -219,6 +219,7 @@ function parseQuizSceneContent(value: unknown): Scene["quiz"] {
     answer: canonicalAnswer ?? rawAnswer,
     explanation: asString(raw.explanation).trim(),
     image_prompt: asString(raw.image_prompt).trim(),
+    highlight_phrase: asString(raw.highlight_phrase).trim() || undefined,
     answer_mode: answerMode,
   };
 }

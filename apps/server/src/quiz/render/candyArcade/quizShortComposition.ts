@@ -1,45 +1,25 @@
-import {
-  MASCOT_CANVAS_SIZES,
-  QuizV2Schema,
-  resolveEffectiveMascotMediaMode,
-  type QuizTimeline,
-  type QuizTimelineEvent,
-} from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, QuizV2Schema, resolveEffectiveMascotMediaMode } from "@studio/shared";
 import type { CandyArcadeCompositionBundle, CandyArcadeCompositionInput } from "../candyArcadeComposition.js";
 import { createMascotAnimationRenderSnapshot } from "../productionMascotRenderer.js";
-import { QUIZ_SHORT_STAGE_SEGMENT_IDS, SCORE_CTA_DURATION_SECONDS } from "../../timeline/quizShortTimelinePolicy.js";
+import { SCORE_CTA_DURATION_SECONDS } from "../../timeline/quizShortTimelinePolicy.js";
 import { assembleCandyArcadeDocument } from "./candyArcadeAssetBundler.js";
 import { buildCandyArcadeQuestionTimeline } from "./candyArcadeQuestionTimeline.js";
 import { resolveCandyArcadeQuestions } from "./candyArcadeQuestionResolution.js";
-import { DEFAULT_KICKOFF_DURATION_SECONDS, kickoffClip } from "./kickoffClip.js";
 import { resolveChosenMascotStyleId } from "./mascotStyleSelection.js";
 import { quizCopy } from "./quizCopy.js";
 import { scoreCtaClip } from "./scoreCtaClip.js";
+import { buildQuizShortOpening, resolveQuizShortClosingStart, resolveQuizShortStageEvents } from "./shortBookends/quizShortBookendClips.js";
 
+import { buildQuizShortOutroClips } from "./shortBookends/shortOutroClips.js";
+
+export { resolveQuizShortStageEvents } from "./shortBookends/quizShortBookendClips.js";
 export const QUIZ_SHORT_ASPECT_RATIO = "9:16" as const;
 
-type StageEvents = { kickoff?: QuizTimelineEvent; scoreCta?: QuizTimelineEvent; firstQuestionStart: number };
-
-function findStageEvent(events: QuizTimeline["events"], segmentId: string): QuizTimelineEvent | undefined {
-  return events.find((event) => event.type === "background.motion" && event.segment_id === segmentId);
-}
-
-/** Locates the kickoff and score CTA stages the Quiz Short timeline compiler emits. */
-export function resolveQuizShortStageEvents(timeline: QuizTimeline, firstQuestionId: string | undefined): StageEvents {
-  const firstQuestionStart = firstQuestionId
-    ? (timeline.events.find((event) => event.question_id === firstQuestionId && event.type === "question.enter")?.at_seconds ?? 0)
-    : 0;
-  return {
-    kickoff: findStageEvent(timeline.events, QUIZ_SHORT_STAGE_SEGMENT_IDS.kickoff),
-    scoreCta: findStageEvent(timeline.events, QUIZ_SHORT_STAGE_SEGMENT_IDS.scoreCta),
-    firstQuestionStart,
-  };
-}
-
 /**
- * Builds the 1080x1920 Quiz Short composition: kickoff card, the portrait question clips and the
- * three-second score CTA. There is no intro, bridge topic, brand stinger, subscribe CTA, pre-outro,
- * outro or celebration stinger, and the mascot appears only on answer reveals and the CTA.
+ * Builds the 1080x1920 Quiz Short composition: the opening (the Short intro with the title, or the
+ * kickoff card), the portrait question clips and the closing (the full Short outro, or the
+ * three-second score CTA). There is no bridge topic, brand stinger, subscribe CTA, pre-outro or
+ * celebration stinger, and the mascot appears only on answer reveals and the CTA.
  */
 export function buildQuizShortCompositionBundle(input: CandyArcadeCompositionInput): CandyArcadeCompositionBundle {
   QuizV2Schema.parse(input.quiz);
@@ -62,28 +42,24 @@ export function buildQuizShortCompositionBundle(input: CandyArcadeCompositionInp
   const firstPalette = resolvedQuestions[0]?.visual.palette;
   const lastPalette = resolvedQuestions[resolvedQuestions.length - 1]?.visual.palette;
 
-  const kickoffEnd = stages.kickoff ? stages.kickoff.at_seconds + stages.kickoff.duration_seconds : stages.firstQuestionStart;
-  const kickoffDuration = stages.kickoff?.duration_seconds ?? Math.min(DEFAULT_KICKOFF_DURATION_SECONDS, stages.firstQuestionStart);
-  const clips: string[] = [];
-  if (kickoffDuration > 0.04) {
-    clips.push(
-      kickoffClip({
-        start: stages.kickoff?.at_seconds ?? 0,
-        duration: kickoffDuration,
-        questionCount: input.quiz.questions.length,
-        copy,
-        palette: firstPalette,
-      }),
-    );
-  }
-
-  const scoreCtaStart = stages.scoreCta?.at_seconds ?? Math.max(kickoffEnd, duration - SCORE_CTA_DURATION_SECONDS);
+  const opening = buildQuizShortOpening({
+    stages,
+    media: input.shortBookends,
+    questionCount: input.quiz.questions.length,
+    copy,
+    palette: firstPalette,
+    fps,
+    canvas,
+    transitionInstances: input.transitionInstances,
+  });
+  const clips: string[] = [...opening.clips];
+  const closingStart = resolveQuizShortClosingStart(stages, opening.end, duration);
   const timeline = buildCandyArcadeQuestionTimeline({
     quiz: input.quiz,
     resolvedQuestions,
     events,
     duration,
-    outroStart: scoreCtaStart,
+    outroStart: closingStart,
     mascot: input.mascot,
     mascotConfig: input.mascotConfig,
     chosenStyleId,
@@ -101,16 +77,18 @@ export function buildQuizShortCompositionBundle(input: CandyArcadeCompositionInp
   clips.push(...timeline.clips);
 
   clips.push(
-    scoreCtaClip({
-      start: scoreCtaStart,
-      duration: Math.max(0.04, Math.min(duration - scoreCtaStart, stages.scoreCta?.duration_seconds ?? SCORE_CTA_DURATION_SECONDS)),
-      onScreenCopy: typeof stages.scoreCta?.payload?.on_screen_copy === "string" ? stages.scoreCta.payload.on_screen_copy : undefined,
-      aspectRatio,
-      mascot: input.mascot,
-      mascotConfig: input.mascotConfig,
-      mediaMode,
-      palette: lastPalette,
-    }),
+    ...(buildQuizShortOutroClips(stages, input.shortBookends, duration) ?? [
+      scoreCtaClip({
+        start: closingStart,
+        duration: Math.max(0.04, Math.min(duration - closingStart, stages.scoreCta?.duration_seconds ?? SCORE_CTA_DURATION_SECONDS)),
+        onScreenCopy: typeof stages.scoreCta?.payload?.on_screen_copy === "string" ? stages.scoreCta.payload.on_screen_copy : undefined,
+        aspectRatio,
+        mascot: input.mascot,
+        mascotConfig: input.mascotConfig,
+        mediaMode,
+        palette: lastPalette,
+      }),
+    ]),
   );
 
   const usedBackgroundStyles = new Set(resolvedQuestions.map(({ style }) => style.backgroundStyle));
@@ -130,14 +108,14 @@ export function buildQuizShortCompositionBundle(input: CandyArcadeCompositionInp
     assets: input.assets,
     bgmOptions: input.bgmOptions,
     episodeId: input.quiz.episode_id,
-    firstStart: stages.kickoff?.at_seconds ?? 0,
-    outroStart: scoreCtaStart,
+    firstStart: opening.start,
+    outroStart: closingStart,
   });
 
   return {
     html: document.html,
     files: document.files,
-    transitionInstances: timeline.transitionInstances,
+    transitionInstances: { ...opening.transitionInstances, ...timeline.transitionInstances },
     mascotAnimationSnapshot: snapshot,
   };
 }

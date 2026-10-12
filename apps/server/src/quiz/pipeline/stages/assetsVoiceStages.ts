@@ -1,3 +1,4 @@
+import { syncDescriptionChapters } from "../../description/descriptionChapterSync.js";
 import type { QuizAssetPlan, QuizAssetResolution, QuizIssue, VoicePlan, QuizTimeline } from "@studio/shared";
 import { RepositoryError } from "../../../repository.js";
 import { planQuizAssets } from "../../assets/assetPlanner.js";
@@ -15,6 +16,7 @@ import { loadPipelineProductView, resolvePipelineProductRef } from "../quizProdu
 import { productAssetPlanOptions, productSizingPlanOptions, productTimelineOptions } from "../productPipelineOptions.js";
 import { buildProductVoicePlan, productVoiceTargetWordsPerSecond, resolveProductChannelName } from "./productVoicePlan.js";
 import { toQuizProductRef, type QuizProductId } from "../../../repository/quizProductPaths.js";
+import { resolveQuizShortBookendConfig } from "./quizShortBookendConfig.js";
 
 export async function planAssets(
   input: QuizOrchestratorInput,
@@ -97,10 +99,13 @@ export async function resolveAssets(
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }
 
-/** Quiz Shorts carry no bookends: the intro/outro durations are zero and nothing is skipped by style. */
+/**
+ * Bookend durations for voice and timeline. Episodes read their pinned uploaded pair; Quiz Shorts
+ * read their pinned Short Intro & Outro pair, whose intro also turns the kickoff into the title line.
+ */
 export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput["repository"], channelId: string, product: QuizProductId) {
   const ref = toQuizProductRef(channelId, product);
-  if (ref.kind === "quiz_short") return { style: null, skipIntro: true, skipOutro: true, introDuration: 0, outroDuration: 0 };
+  if (ref.kind === "quiz_short") return resolveQuizShortBookendConfig(repository, channelId, ref.product_id);
   const [channel, episode] = await Promise.all([repository.getChannel(channelId), repository.getEpisode(channelId, ref.product_id)]);
   const { snapshot, pair } = await resolveEpisodeIntroOutro(repository, channel, episode);
   return {
@@ -109,6 +114,7 @@ export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput[
     skipOutro: true,
     introDuration: snapshot.intro_duration_seconds,
     outroDuration: snapshot.outro_duration_seconds,
+    shortIntroTitle: undefined,
   };
 }
 
@@ -131,6 +137,7 @@ export async function planVoice(
     bridgeConfig: resolveEffectiveBridgeConfig(channel),
     skipIntro: introOutro.skipIntro,
     skipOutro: introOutro.skipOutro,
+    shortIntroTitle: introOutro.shortIntroTitle,
   });
   const artifact_path = await input.repository.writeVoicePlan(input.channelId, input.episodeId, voice_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
@@ -218,6 +225,7 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
     input.repository.writeVoicePlan(input.channelId, input.episodeId, measured.voicePlan),
     input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline),
   ]);
+  await syncDescriptionChapters(input.repository, input.channelId, input.episodeId, timeline);
   await recordMeasuredVoiceUsage(input, measured.voicePlan);
   return {
     voice_plan: measured.voicePlan,

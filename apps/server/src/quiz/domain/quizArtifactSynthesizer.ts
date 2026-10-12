@@ -130,6 +130,7 @@ export function synthesizeScenesFromQuiz(quiz: QuizV2): Scene[] {
         answer: answerText,
         explanation: question.explanation,
         image_prompt: prompt,
+        ...(question.highlight_phrase ? { highlight_phrase: question.highlight_phrase } : {}),
         answer_mode: question.answer_mode ?? (question.choices.length === 1 ? "single_reveal" : "choice_selection"),
       },
       audio_asset_path: null,

@@ -45,6 +45,7 @@ export async function transcreateBankQuestion(
       content: {
         language: targetLang,
         question: question.question,
+        highlight_phrase: question.highlight_phrase,
         choices: question.choices.map((c) => ({ id: c.id, text: c.text })),
         explanation: question.explanation,
         fun_fact: question.fun_fact || "",

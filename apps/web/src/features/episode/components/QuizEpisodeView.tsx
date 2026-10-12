@@ -7,6 +7,7 @@ import { EpisodeQuizCustomizationBar } from "./EpisodeQuizCustomizationBar";
 import { QuizV2Panel } from "../../../components/QuizV2Panel";
 import { QuizVideoPanel } from "../QuizVideoPanel";
 import { ThumbnailPreviewCard } from "./ThumbnailPreviewCard";
+import { VideoPlaylistCard } from "./playlist/VideoPlaylistCard";
 import { VideoDescriptionCard } from "./VideoDescriptionCard";
 import { VideoTitleCard } from "./VideoTitleCard";
 import { EpisodeWorkspaceTabs } from "./EpisodeWorkspaceTabs";
@@ -124,6 +125,18 @@ export function QuizEpisodeView({
         initialTitle={quizV2?.title}
         onNotice={onNotice}
         onUpdated={pipeline.load}
+      />
+
+      <VideoPlaylistCard
+        channel={channel}
+        input={{
+          contentKind: "episode",
+          domainId: episode.topic.domain_id,
+          archetype: episode.quiz_config?.archetype,
+          quizFormat: episode.quiz_config?.quiz_format,
+          topicText: `${episode.topic.title} ${episode.topic.premise}`,
+        }}
+        onNotice={onNotice}
       />
 
       <VideoDescriptionCard

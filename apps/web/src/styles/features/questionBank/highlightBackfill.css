@@ -1,0 +1,70 @@
+/* Question Bank highlight phrase backfill card */
+.qb-highlight-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.qb-highlight-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.qb-highlight-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.qb-highlight-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 200px;
+  font-size: 13px;
+  color: var(--ink-secondary);
+}
+
+.qb-highlight-copy strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.qb-highlight-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.qb-highlight-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-strong);
+  overflow: hidden;
+}
+
+.qb-highlight-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.qb-highlight-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.qb-highlight-note-error {
+  color: var(--notice-error);
+}

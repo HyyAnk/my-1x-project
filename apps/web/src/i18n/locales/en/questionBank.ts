@@ -252,6 +252,17 @@ export const questionBankEn = {
       viewInActivityBarBtn: "Track in Activity Bar",
     },
 
+    // Highlight phrase backfill
+    highlightBackfill: {
+      title: "Question highlight phrases",
+      coverage: "{withPhrase} / {total} questions have an AI-chosen highlight phrase ({missing} missing).",
+      start: "Fill Missing Highlights",
+      cancel: "Stop",
+      progress: "{processed} / {total} checked, {annotated} highlighted",
+      completed: "Done: {annotated} questions highlighted, {unresolved} still missing (run again to retry).",
+      cancelled: "Stopped: {annotated} questions highlighted so far. Run again to continue.",
+    },
+
     // Alerts & Confirmations
     alerts: {
       chooseChannelRequired: "Please select or create at least one channel to generate a video.",

@@ -19,6 +19,11 @@ export type PrepareSoundtrackInput = {
     outroVideoPath?: string;
     audioMode?: "use_video_audio" | "overlay_bgm";
   };
+  /**
+   * Quiz Short window: BGM and narration play from `startSeconds` to the very end (no silent outro),
+   * and the last BGM clip fades over `finalFadeOutSeconds` when given.
+   */
+  fullLengthBgm?: { startSeconds: number; finalFadeOutSeconds?: number };
 };
 
 export async function prepareSoundtrack({
@@ -30,21 +35,12 @@ export async function prepareSoundtrack({
   assetSources,
   onProgressMessage,
   introOutro,
+  fullLengthBgm,
 }: PrepareSoundtrackInput): Promise<{ selectedBgmTrackId: string | null; selectedBgmFilename: string | null }> {
   let selectedBgmTrackId: string | null = null;
   let selectedBgmFilename: string | null = null;
 
-  const firstPlayStart = timeline.events.find(
-    (event) => event.type === "bridge.topic.enter" || event.type === "bridge.cta.enter" || event.type === "question.enter",
-  )?.at_seconds;
-  const outroStart = timeline.events.find(
-    (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
-  )?.at_seconds;
-
-  const bgmStartSeconds =
-    introOutro?.introVideoPath && typeof firstPlayStart === "number" ? Math.max(0, firstPlayStart) : (firstPlayStart ?? 0);
-
-  const bgmOutroStartSeconds = introOutro?.outroVideoPath && typeof outroStart === "number" ? outroStart : outroStart;
+  const { bgmStartSeconds, outroStart, bgmOutroStartSeconds } = resolveSoundtrackWindow(timeline, introOutro, fullLengthBgm);
 
   const renderSoundtrackPath = path.join(renderRoot, "soundtrack.wav");
   const soundtrackCheckpointPath = path.join(renderRoot, "soundtrack-checkpoint.json");
@@ -57,6 +53,7 @@ export async function prepareSoundtrack({
     {
       startSeconds: bgmStartSeconds,
       outroStartSeconds: bgmOutroStartSeconds,
+      finalFadeOutSeconds: fullLengthBgm?.finalFadeOutSeconds,
     },
   );
   const existingSoundtrackCheckpoint = await readSoundtrackCheckpoint(soundtrackCheckpointPath);
@@ -81,6 +78,7 @@ export async function prepareSoundtrack({
         seed: episode.episode_id,
         startSeconds: bgmStartSeconds,
         outroStartSeconds: bgmOutroStartSeconds,
+        finalFadeOutSeconds: fullLengthBgm?.finalFadeOutSeconds,
       },
       outroStartSeconds: bgmOutroStartSeconds,
       assets: assetSources,
@@ -100,4 +98,24 @@ export async function prepareSoundtrack({
   }
 
   return { selectedBgmTrackId, selectedBgmFilename };
+}
+
+/** Episodes keep BGM between the first played scene and the outro; Quiz Shorts may run it full length. */
+function resolveSoundtrackWindow(
+  timeline: QuizTimeline,
+  introOutro: PrepareSoundtrackInput["introOutro"],
+  fullLengthBgm: PrepareSoundtrackInput["fullLengthBgm"],
+): { bgmStartSeconds: number; outroStart: number | undefined; bgmOutroStartSeconds: number | undefined } {
+  if (fullLengthBgm) {
+    return { bgmStartSeconds: Math.max(0, fullLengthBgm.startSeconds), outroStart: undefined, bgmOutroStartSeconds: undefined };
+  }
+  const firstPlayStart = timeline.events.find(
+    (event) => event.type === "bridge.topic.enter" || event.type === "bridge.cta.enter" || event.type === "question.enter",
+  )?.at_seconds;
+  const outroStart = timeline.events.find(
+    (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
+  )?.at_seconds;
+  const bgmStartSeconds =
+    introOutro?.introVideoPath && typeof firstPlayStart === "number" ? Math.max(0, firstPlayStart) : (firstPlayStart ?? 0);
+  return { bgmStartSeconds, outroStart, bgmOutroStartSeconds: outroStart };
 }

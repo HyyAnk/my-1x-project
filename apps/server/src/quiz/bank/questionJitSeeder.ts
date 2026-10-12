@@ -3,6 +3,8 @@ import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
 import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
 import { ARCHETYPE_GUIDELINES, normalizeGenerationLanguage, parseBatchGenerationOutput } from "./batchGeneratorPrompt.js";
+import { completeHighlightPhrases } from "./highlight/index.js";
+import { QUESTION_HIGHLIGHT_MANDATE_LINES } from "./prompts/strategies/promptCommonBlocks.js";
 import {
   assembleRetentionArc,
   calculateRelevanceScore,
@@ -82,7 +84,9 @@ export async function generateJitQuestionsWithLLM(
     `Domain: "${domainId}", Subtopic: "${subtopicId}". Language: "${generationLanguage || "en"}".`,
     `Target difficulties: ${targetDifficulties.join(", ")}.`,
     `Output ONLY a valid JSON array of question objects with fields:`,
-    `archetype_id, domain_id, subtopic_id, question, format, choices, correct_choice_id, explanation, fun_fact, visual_spec, difficulty, thinking_seconds, tags.`,
+    `archetype_id, domain_id, subtopic_id, question, highlight_phrase, format, choices, correct_choice_id, explanation, fun_fact, visual_spec, difficulty, thinking_seconds, tags.`,
+    ``,
+    ...QUESTION_HIGHLIGHT_MANDATE_LINES,
   ].join("\n");
 
   const raw = await retryWithBackoff(() => executeSinglePromptText(llmClient, prompt, { timeoutMs: 30_000 }), {
@@ -97,7 +101,7 @@ export async function generateJitQuestionsWithLLM(
     keepModelDifficulty: true,
   });
 
-  return parsed.slice(0, targetDifficulties.length);
+  return completeHighlightPhrases(parsed.slice(0, targetDifficulties.length), { llmClient });
 }
 
 async function resolveMissingQuestions(

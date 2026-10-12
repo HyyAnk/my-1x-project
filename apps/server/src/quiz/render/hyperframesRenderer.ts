@@ -37,6 +37,7 @@ export class HyperframesRenderer implements QuizRenderer {
       outroMotionTemplateId: input.outroMotionTemplateId,
       outroMotionTemplateOptions: input.outroMotionTemplateOptions,
       channelName: input.channelName,
+      shortBookends: input.shortBookends,
     });
     return Promise.resolve({
       html: composition.html,

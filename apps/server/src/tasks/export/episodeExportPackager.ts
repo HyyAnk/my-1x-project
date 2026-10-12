@@ -3,7 +3,9 @@ import path from "node:path";
 import {
   EpisodeExportMetadataSchema,
   VideoDescriptionSchema,
+  listAssignedPlaylistTitles,
   nowIso,
+  resolveYouTubePlaylistAssignment,
   type EpisodeExportMetadata,
   type ExportsManifestItem,
   type QuizTimeline,
@@ -126,11 +128,22 @@ async function buildEpisodeExport(
     videoDurationSeconds: effectiveDuration || undefined,
   });
 
+  const playlistTitles = listAssignedPlaylistTitles(
+    resolveYouTubePlaylistAssignment({
+      contentKind: "episode",
+      domainId: episode.topic.domain_id,
+      archetype: episode.quiz_config?.archetype,
+      quizFormat: episode.quiz_config?.quiz_format,
+      topicText: `${episode.topic.title} ${episode.topic.premise}`,
+    }),
+  );
+
   const descriptionContent = formatExportDescriptionText({
     title: publishTitle,
     description: videoDesc,
     fallbackText,
     bodyText: refreshedBody.text,
+    playlistTitles,
   });
   await repository.writeTextAtomic(path.join(exportDir, "description.txt"), descriptionContent);
 
@@ -162,6 +175,7 @@ async function buildEpisodeExport(
     tags: collectDescriptionTags(videoDesc),
     hashtags: videoDesc?.hashtags ?? [],
     category: videoDesc?.suggested_playlist_category,
+    playlists: playlistTitles,
     chapters: timeline ? refreshedBody.chapters : (videoDesc?.chapters ?? []),
     made_for_kids: resolveAudiencePolicy(episode.quiz_config?.age_band).madeForKids,
     rendered_at: renderedAt,

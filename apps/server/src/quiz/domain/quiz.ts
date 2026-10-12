@@ -8,6 +8,7 @@ import {
   type QuizV2,
   type Scene,
 } from "@studio/shared";
+import { resolveQuestionHighlightPhrase } from "../formatting/questionHighlightPhrase.js";
 
 export class QuizDomainError extends Error {
   constructor(
@@ -92,6 +93,15 @@ export function validateQuizV2(value: unknown): QuizV2 {
   } catch (error) {
     throw new QuizDomainError(error instanceof Error ? error.message : "Quiz V2 is invalid", "QUIZ_INVALID");
   }
+}
+
+/** The first highlight phrase any beat of the question carries, kept only while it still matches the question. */
+function sceneHighlightPhraseField(
+  question: string,
+  quizScenes: ReadonlyArray<NonNullable<Scene["quiz"]>>,
+): Pick<QuizQuestion, "highlight_phrase"> {
+  const phrase = resolveQuestionHighlightPhrase(question, quizScenes.find((quiz) => quiz.highlight_phrase)?.highlight_phrase);
+  return phrase ? { highlight_phrase: phrase } : {};
 }
 
 export function deriveQuizV2FromScenes(input: {
@@ -179,6 +189,7 @@ export function deriveQuizV2FromScenes(input: {
         answer_mode: answerMode,
         difficulty: Math.min(5, 1 + Math.floor(index / Math.max(1, Math.ceil(grouped.size / 5)))),
         question,
+        ...sceneHighlightPhraseField(question, quizScenes),
         choices,
         correct_choice_id: choices[canonicalChoiceIndex].id,
         explanation,

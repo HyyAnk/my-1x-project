@@ -10,6 +10,7 @@ import { registerQueryRoutes } from "./queryRoutes.js";
 import { registerCrudRoutes } from "./crudRoutes.js";
 import { registerBatchRoutes } from "./batchRoutes.js";
 import { registerBuildRoutes } from "./buildRoutes.js";
+import { registerHighlightRoutes } from "./highlightRoutes.js";
 
 export type QuestionBankRouteDeps = {
   repository: RepositoryService;
@@ -29,6 +30,7 @@ export function registerQuestionBankRoutes(deps: QuestionBankRouteDeps): Fastify
     registerCrudRoutes(server, deps);
     registerBatchRoutes(server, deps);
     registerBuildRoutes(server, deps);
+    registerHighlightRoutes(server, deps);
     done();
   };
 }
@@ -36,4 +38,5 @@ export function registerQuestionBankRoutes(deps: QuestionBankRouteDeps): Fastify
 export * from "./queryRoutes.js";
 export * from "./crudRoutes.js";
 export * from "./batchRoutes.js";
+export * from "./highlightRoutes.js";
 export * from "./buildRoutes.js";

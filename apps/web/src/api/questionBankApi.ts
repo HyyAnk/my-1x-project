@@ -5,6 +5,7 @@ import type {
   QuestionBankBatchGenResponse,
   QuestionBankJobState,
 } from "../features/questionBank/types/questionBankUi.types";
+import type { HighlightBackfillJobState, HighlightCoverage } from "../features/questionBank/types/questionBankHighlight.types";
 
 export const questionBankApi = {
   getQuestionBankTaxonomy: () => request<{ taxonomy: BankTaxonomy }>("/api/question-bank/taxonomy"),
@@ -79,6 +80,22 @@ export const questionBankApi = {
   cancelBatchGeneration: () =>
     request<{ success: boolean; job: QuestionBankJobState }>("/api/question-bank/generate-batch/cancel", {
       method: "POST",
+    }),
+
+  getHighlightCoverage: () => request<{ coverage: HighlightCoverage }>("/api/question-bank/highlight-coverage"),
+
+  getHighlightBackfillStatus: () => request<{ job: HighlightBackfillJobState }>("/api/question-bank/highlight-backfill/status"),
+
+  startHighlightBackfill: () =>
+    request<{ success: boolean; job: HighlightBackfillJobState }>("/api/question-bank/highlight-backfill", {
+      method: "POST",
+      body: "{}",
+    }),
+
+  cancelHighlightBackfill: () =>
+    request<{ success: boolean; job: HighlightBackfillJobState }>("/api/question-bank/highlight-backfill/cancel", {
+      method: "POST",
+      body: "{}",
     }),
 
   dismissBatchGeneration: () =>

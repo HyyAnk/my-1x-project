@@ -141,12 +141,42 @@ describe("Quiz Short workspace routes", () => {
     }
   });
 
+  it("opens the folder of the rendered video with the video selected", async () => {
+    const revealed: string[] = [];
+    const app = await buildApp(await createTestRoot(), {
+      llmClient: createStubQuizLlmClient(),
+      revealFile: (filePath) => {
+        revealed.push(filePath);
+        return Promise.resolve();
+      },
+    });
+    try {
+      const { channel, quizShort } = await seedQuizShort(app);
+      const ref = quizShortProductRef(channel.channel_id, quizShort.quiz_short_id);
+      const assetPath = await app.repository.writeVideoArtifact(channel.channel_id, ref, new Uint8Array([1, 2, 3, 4]));
+      await app.repository.saveVideoMetadata(channel.channel_id, ref, assetPath, 48);
+
+      const base = `/api/channels/${channel.channel_id}/quiz-shorts/${quizShort.quiz_short_id}`;
+      const open = await app.server.inject({ method: "POST", url: `${base}/video/open-folder`, payload: {} });
+
+      expect(open.statusCode).toBe(200);
+      expect(open.json<{ opened: boolean; folder_path: string }>()).toMatchObject({ opened: true });
+      expect(revealed).toHaveLength(1);
+      expect(path.basename(revealed[0])).toBe("quiz-video.mp4");
+    } finally {
+      await app.close();
+    }
+  });
+
   it("returns 404 for a missing video and an unknown Quiz Short", async () => {
     const app = await buildApp(await createTestRoot(), { llmClient: createStubQuizLlmClient() });
     try {
       const { channel, quizShort } = await seedQuizShort(app);
       const base = `/api/channels/${channel.channel_id}/quiz-shorts`;
       expect((await app.server.inject({ method: "GET", url: `${base}/${quizShort.quiz_short_id}/video` })).statusCode).toBe(404);
+      expect(
+        (await app.server.inject({ method: "POST", url: `${base}/${quizShort.quiz_short_id}/video/open-folder`, payload: {} })).statusCode,
+      ).toBe(404);
       expect((await app.server.inject({ method: "GET", url: `${base}/${quizShort.quiz_short_id}/render-manifest` })).statusCode).toBe(404);
       expect((await app.server.inject({ method: "GET", url: `${base}/qshort_missing/workspace` })).statusCode).toBe(404);
     } finally {

@@ -136,6 +136,10 @@ export function isSequenceOutputFailure(message: string): boolean {
   );
 }
 
+export function isMalformedJsonOutput(message: string): boolean {
+  return message.includes("JSON output malformed") || message === "Codex output did not contain JSON";
+}
+
 export function validateBeatOutput(beats: Beat[], minimumSequences = 5, quiz = false): void {
   const sequences = new Set(beats.map((beat) => beat.sequence_id));
   if (sequences.size < minimumSequences)

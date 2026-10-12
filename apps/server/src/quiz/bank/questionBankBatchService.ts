@@ -3,6 +3,7 @@ import type { AutoQaIssue } from "./autoQa/autoQa.types.js";
 import type { RepositoryService } from "../../repository/service.js";
 import { runBatchAutoQa } from "./questionBankAutoQa.js";
 import { remediateLeakedQuestionsBatch } from "./remediation/index.js";
+import { completeHighlightPhrases } from "./highlight/index.js";
 import { loadAllKnowledgeEntities } from "./knowledgeBaseLoader.js";
 import { calculateMatrixCoverageStats, planBatchChunks } from "./matrixCoverageService.js";
 import {
@@ -111,14 +112,19 @@ export async function generateQuestionBankBatch(
     }
 
     const savedQuestions: BankQuestion[] = [];
+    const approvedQuestions = await completeHighlightPhrases(qaReport.approvedQuestions, {
+      llmClient: input.llmClient,
+      modelOverride: input.modelOverride,
+      signal: input.signal,
+    });
 
-    if (persist && qaReport.approvedQuestions.length > 0) {
-      for (const q of qaReport.approvedQuestions) {
+    if (persist && approvedQuestions.length > 0) {
+      for (const q of approvedQuestions) {
         const saved = await repository.saveQuestionBankQuestion(q);
         savedQuestions.push(saved);
       }
     } else {
-      savedQuestions.push(...qaReport.approvedQuestions);
+      savedQuestions.push(...approvedQuestions);
     }
 
     input.onChunkProgress?.({

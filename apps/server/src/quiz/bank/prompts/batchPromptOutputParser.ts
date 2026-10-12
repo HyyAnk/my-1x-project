@@ -6,6 +6,7 @@ import { normalizeGenerationLanguage } from "./bankLanguageValidator.js";
 import type { TargetEntityForGeneration } from "./reverseMatrixPromptBuilder.js";
 import { balanceGeneratedChoicePositions } from "../choiceOrder/index.js";
 import { estimateAudienceProfile } from "../audience/audienceProfile.js";
+import { resolveQuestionHighlightPhrase } from "../../formatting/questionHighlightPhrase.js";
 
 export { sanitizeBankQuestionText } from "./bankQuestionSanitizer.js";
 export { normalizeGenerationLanguage, VIETNAMESE_LANGUAGE_CODES } from "./bankLanguageValidator.js";
@@ -179,6 +180,8 @@ function buildAndValidateBankQuestion(opts: BuildQuestionOptions): BankQuestion 
   const candidate: Record<string, unknown> = {
     ...item,
     question: sanitizedQuestion,
+    // An invalid or missing phrase is dropped so rendering falls back to the inferred keyword.
+    highlight_phrase: resolveQuestionHighlightPhrase(sanitizedQuestion, item.highlight_phrase),
     choices: normalizedChoices ?? item.choices,
     format: isVerdict ? "yes_no" : (typeof item.format === "string" ? item.format : "multiple_choice"),
     id: makeUniqueBankId(opts.archetypeId, opts.domainId, opts.subtopicId),

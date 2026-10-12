@@ -280,6 +280,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: "ENT-ANI-001",
               question: "Lions roar to mark territory up to five miles. Fact or Myth?",
+              highlight_phrase: "Lions roar to mark territory up to five miles. Fact or Myth?".split(" ")[1],
               format: "true_false",
               choices: [
                 { id: "A", text: "Fact", is_correct: true },
@@ -335,6 +336,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: "ENT-ANI-001",
               question: "Sample test question?",
+              highlight_phrase: "Sample test question?".split(" ")[1],
               format: "multiple_choice",
               choices: [
                 { id: "A", text: "Option A", is_correct: true },
@@ -407,6 +409,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: `ENT-ANI-00${currentId}`,
               question: qText,
+              highlight_phrase: qText.split(" ")[1],
               format: "multiple_choice",
               choices,
               correct_choice_id: "A",
@@ -453,6 +456,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: `ENT-ANI-00${callsCount}`,
               question: `Aborted unique question ${callsCount}?`,
+              highlight_phrase: `Aborted unique question ${callsCount}?`.split(" ")[1],
               format: "multiple_choice",
               choices: [
                 { id: "A", text: "Choice A", is_correct: true },
@@ -498,6 +502,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: "ENT-ANI-001",
               question: "Sample recovered question on retry?",
+              highlight_phrase: "Sample recovered question on retry?".split(" ")[1],
               format: "multiple_choice",
               choices: [
                 { id: "A", text: "Alpha", is_correct: true },
@@ -567,6 +572,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: `ENT-TEST-${callCounter}`,
               question: qText,
+              highlight_phrase: qText.split(" ")[1],
               format: isMystery ? "image_guess" : "multiple_choice",
               choices,
               correct_choice_id: "A",
@@ -623,6 +629,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
             {
               entity_id: "ENT-ANI-001",
               question: "Sample timeout test question?",
+              highlight_phrase: "Sample timeout test question?".split(" ")[1],
               format: "multiple_choice",
               choices: [
                 { id: "A", text: "Choice A", is_correct: true },

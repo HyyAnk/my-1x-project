@@ -1,0 +1,81 @@
+/* ==========================================================================
+   YouTube Playlist Card (shares the description panel shell)
+   ========================================================================== */
+
+.video-playlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 14px 0 0;
+  list-style: none;
+}
+
+.video-playlist-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.video-playlist-row.is-primary {
+  border-color: var(--accent);
+}
+
+.video-playlist-role {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.video-playlist-row.is-primary .video-playlist-role {
+  color: var(--accent);
+}
+
+.video-playlist-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.video-playlist-name strong {
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.video-playlist-name span {
+  color: var(--ink-secondary);
+  font-size: 0.78rem;
+}
+
+.video-playlist-format {
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.video-playlist-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .video-playlist-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .video-playlist-role {
+    grid-column: 1 / -1;
+  }
+}

@@ -70,6 +70,8 @@ export type QuizSceneQuestionInput = {
   number: number;
   format: QuizQuestionFormat;
   text: string;
+  /** LLM-chosen focal phrase of `text`; the renderer infers one from `visualOpportunity` when absent. */
+  highlightPhrase?: string;
   visualOpportunity: string;
   explanation: string;
   funFact: string;
@@ -85,6 +87,7 @@ export type QuizSceneRenderModel = {
     total: number;
     format: QuizQuestionFormat;
     text: string;
+    highlightPhrase?: string;
     visualOpportunity: string;
     factText: string;
     correctChoiceId: string;

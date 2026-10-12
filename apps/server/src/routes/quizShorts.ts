@@ -1,6 +1,7 @@
 import type { FastifyPluginCallback } from "fastify";
 import { QuizShortSettingsInputSchema, quizShortProductRef } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../repository.js";
+import { syncQuizShortBookendPin } from "../quizShortBookends/quizShortBookendSync.js";
 import type { TaskManager } from "../tasks.js";
 
 export type QuizShortsRouteDeps = {
@@ -34,7 +35,8 @@ export function registerQuizShortsRoutes(deps: QuizShortsRouteDeps): FastifyPlug
       if (tasks.hasActiveEpisodeTasks(params.quizShortId)) {
         throw new RepositoryError("Wait for the active Quiz Short task or cancel it before changing settings.", "EPISODE_TASK_ACTIVE");
       }
-      return repository.updateQuizShortSettings(params.channelId, params.quizShortId, input);
+      const updated = await repository.updateQuizShortSettings(params.channelId, params.quizShortId, input);
+      return syncQuizShortBookendPin(repository, updated);
     });
 
     server.delete("/api/channels/:channelId/quiz-shorts/:quizShortId", async (request) => {

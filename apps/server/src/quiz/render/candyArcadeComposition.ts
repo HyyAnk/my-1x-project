@@ -42,6 +42,7 @@ import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 import type { ResolvedChannelBrandIdentity } from "../brand/channelBrandAssetResolver.js";
 import { buildQuizShortCompositionBundle } from "./candyArcade/quizShortComposition.js";
 import { buildEpisodeCompositionBundle } from "./candyArcade/episodeComposition.js";
+import type { QuizShortBookendRenderMedia } from "./candyArcade/shortBookends/quizShortBookendClips.js";
 import type { CandyArcadeProductKind } from "./candyArcade/candyArcadeClipTypes.js";
 
 export type CandyArcadeCompositionInput = {
@@ -79,6 +80,8 @@ export type CandyArcadeCompositionInput = {
   outroMotionTemplateId?: string;
   outroMotionTemplateOptions?: MotionTemplateOptions;
   channelName?: string;
+  /** Quiz Short only: the pinned Short Intro & Outro media copied into the render root. */
+  shortBookends?: QuizShortBookendRenderMedia;
 };
 
 export type CandyArcadeCompositionBundle = {

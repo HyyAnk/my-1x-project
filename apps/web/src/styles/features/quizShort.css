@@ -76,6 +76,12 @@
   gap: 0.5rem;
 }
 
+.quiz-short-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .quiz-short-preview-copy {
   margin: 0;
   font-size: 0.85rem;

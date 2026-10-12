@@ -19,7 +19,6 @@ export interface DescriptionChapterLabels {
 
 export interface DescriptionFooterLabels {
   morePlaylist: string;
-  subscribe: string;
   /** Prefix placed before the channel name in the about line. */
   about: string;
 }

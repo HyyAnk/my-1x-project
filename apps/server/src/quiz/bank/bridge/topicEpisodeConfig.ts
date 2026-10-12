@@ -83,6 +83,7 @@ export function applyLocalizedQuestionOverrides(
     return {
       ...q,
       question: loc.question,
+      highlight_phrase: loc.highlight_phrase,
       explanation: loc.explanation || q.explanation,
       choices: q.choices.map((c) => ({
         ...c,

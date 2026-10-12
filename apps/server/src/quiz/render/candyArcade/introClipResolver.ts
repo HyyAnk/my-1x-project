@@ -1,6 +1,5 @@
 import {
   resolveEffectiveMascotMediaMode,
-  resolveTransitionInstance,
   type ChannelMascotConfig,
   type IntroOutroTransitionType,
   type MascotProfile,
@@ -9,7 +8,7 @@ import {
   type MotionTemplateOptions,
   type ResolvedTransitionInstance,
 } from "@studio/shared";
-import { calculateIntroTransitionTiming } from "./introVideoTransition.js";
+import { INTRO_BOUNDARY_ID, resolveIntroBoundaryTransition } from "./introBoundaryTransition.js";
 import { customIntroVideoClip } from "./customIntroVideoClip.js";
 import { introClip, mascotElement, type Copy } from "./candyArcadeClips.js";
 import { adaptMascotForPhase } from "../productionMascotRenderer.js";
@@ -54,44 +53,16 @@ export type ResolveCandyArcadeIntroClipResult = {
 
 export function resolveCandyArcadeIntroClip(input: ResolveCandyArcadeIntroClipInput): ResolveCandyArcadeIntroClipResult {
   if (input.introVideoPath && input.firstStart > 0.04) {
-    const introBoundaryId = "intro";
     const introTransitionType = input.transitionType ?? "stinger_swipe";
-    const timing = calculateIntroTransitionTiming(input.firstStart, introTransitionType, input.transitionDurationSeconds);
-    const startFrames = Math.round(timing.transitionStart * input.fps);
-    const boundaryFrame = Math.round(input.firstStart * input.fps);
-    const endFramesExclusive = boundaryFrame + Math.max(1, Math.round(timing.transitionDuration * input.fps));
-
-    const fromColor = input.palette?.accent ?? "#F59E0B";
-    const toColor = input.palette?.backgroundPrimary ?? "#EF4444";
-    const inkColor = input.palette?.text ?? "#FFFFFF";
-    const colors = { fromColor, toColor, inkColor };
-
-    let resolvedIntroInstance: ResolvedTransitionInstance | undefined;
-    if (introTransitionType !== "cut") {
-      try {
-        resolvedIntroInstance =
-          input.transitionInstances?.[introBoundaryId] ??
-          resolveTransitionInstance(
-            { id: introTransitionType, durationSeconds: timing.transitionDuration },
-            {
-              instanceId: introBoundaryId,
-              placement: "intro",
-              fps: { numerator: input.fps, denominator: 1 },
-              startFrame: startFrames,
-              boundaryFrame,
-              availableEndFrameExclusive: endFramesExclusive,
-              width: input.canvas.width,
-              height: input.canvas.height,
-              fromColor,
-              toColor,
-              inkColor,
-            },
-          );
-      } catch {
-        // Uncataloged or legacy intro transition type
-      }
-    }
-
+    const transition = resolveIntroBoundaryTransition({
+      boundarySeconds: input.firstStart,
+      transitionType: introTransitionType,
+      transitionDurationSeconds: input.transitionDurationSeconds,
+      transitionInstances: input.transitionInstances,
+      fps: input.fps,
+      canvas: input.canvas,
+      palette: input.palette,
+    });
     const hasAudio = input.hasAudio ?? input.audioMode !== "overlay_bgm";
     const clip = customIntroVideoClip(
       input.introVideoPath,
@@ -99,14 +70,14 @@ export function resolveCandyArcadeIntroClip(input: ResolveCandyArcadeIntroClipIn
       introTransitionType,
       hasAudio,
       input.transitionDurationSeconds,
-      introBoundaryId,
+      INTRO_BOUNDARY_ID,
       input.aspectRatio,
-      colors,
+      transition.colors,
     );
 
     return {
       clip,
-      transitionInstance: resolvedIntroInstance ? { id: introBoundaryId, instance: resolvedIntroInstance } : undefined,
+      transitionInstance: transition.instance ? { id: INTRO_BOUNDARY_ID, instance: transition.instance } : undefined,
     };
   }
 
@@ -135,7 +106,15 @@ export function resolveCandyArcadeIntroClip(input: ResolveCandyArcadeIntroClipIn
   if (input.firstStart > 0.04) {
     const effectiveMode = resolveEffectiveMascotMediaMode(input.mascotConfig, input.mediaMode);
     const introMascot = adaptMascotForPhase(input.mascot, "intro", input.chosenStyleId, effectiveMode);
-    const clip = introClip(input.firstStart, input.questionCount, input.copy, introMascot, input.mascotConfig, input.aspectRatio, effectiveMode);
+    const clip = introClip(
+      input.firstStart,
+      input.questionCount,
+      input.copy,
+      introMascot,
+      input.mascotConfig,
+      input.aspectRatio,
+      effectiveMode,
+    );
     return { clip };
   }
 

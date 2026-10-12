@@ -14,6 +14,7 @@ import { loadRequiredQuizRenderArtifacts } from "./quizRenderArtifacts.js";
 import { prepareLocalizedMascot } from "./mascotLocalization.js";
 import { measureMascotContentBounds } from "./mascotContentBounds.js";
 import { prepareSoundtrack } from "./soundtrackPreparation.js";
+import { prepareQuizShortBookends } from "./quizShortBookendPreparation.js";
 import { prepareVideoAssets } from "./videoAssetPreparation.js";
 import { syncStaticMediaAssets } from "./videoStaticAssets.js";
 import { ensureCurrentAssetSizing, validateQuizPreflight } from "./quizPreflightValidator.js";
@@ -40,16 +41,10 @@ export type QuizShortCompositionOptions = {
 const QUIZ_SHORT_ASPECT_RATIO = "9:16" as const;
 const quizRenderer = new HyperframesRenderer();
 
-/** The Quiz Short composition never carries intro or outro media. */
-const NO_BOOKENDS: VideoCompositionContext["introOutro"] = {
-  selectionSource: "none",
-  unavailableReason: "Quiz Shorts have no intro or outro",
-};
-
 /**
  * Prepares the portrait Quiz Short composition: loads the Quiz V2 artifacts, assets, soundtrack
- * and mascot the same way Episodes do, but with no bookend resolution, no style pinning write and
- * the Quiz Short mascot invariant enforced before the HTML is written.
+ * and mascot the same way Episodes do, resolves the pinned Short Intro & Outro pair instead of the
+ * Episode bookends, and enforces the Quiz Short mascot invariant before the HTML is written.
  */
 export async function prepareQuizShortComposition(options: QuizShortCompositionOptions): Promise<VideoCompositionContext> {
   const { runtime, repository, channel, product, quizShort, scenes, onProgress } = options;
@@ -89,6 +84,7 @@ export async function prepareQuizShortComposition(options: QuizShortCompositionO
     quizShort.narration_duration_seconds !== null,
   );
 
+  const bookends = await prepareQuizShortBookends({ repository, quizShort, timeline: artifacts.timeline, renderRoot });
   const bgmHistory = await repository.readBgmHistory(channelId);
   const localizedMascot = await prepareLocalizedMascot(channel, repository, renderRoot);
   const mascotProfile = localizedMascot ? await measureMascotContentBounds(localizedMascot, renderRoot) : null;
@@ -100,6 +96,7 @@ export async function prepareQuizShortComposition(options: QuizShortCompositionO
     bgmHistory,
     assetSources,
     onProgressMessage: async (message) => onProgress(message, 15),
+    fullLengthBgm: bookends.fullLengthBgm,
   });
 
   const renderFps = runtime.videoConfig?.fps ?? 30;
@@ -126,6 +123,7 @@ export async function prepareQuizShortComposition(options: QuizShortCompositionO
     brandIdentity,
     topic: quizShort.topic?.title,
     channelName: brandIdentity?.channelName ?? channel.display_name,
+    shortBookends: bookends.media,
   });
   assertMascotRevealOnly(prepared.html, prepared.compositionFiles);
 
@@ -136,6 +134,7 @@ export async function prepareQuizShortComposition(options: QuizShortCompositionO
     `mascot-media-mode:${effectiveMediaMode}`,
     `product-kind:quiz_short`,
     ...buildMascotRenderDependencies(mascotProfile, quizShort),
+    ...bookends.renderDependencies,
   ];
   const sourceFingerprint = renderSourceFingerprint(
     prepared.html,
@@ -157,7 +156,7 @@ export async function prepareQuizShortComposition(options: QuizShortCompositionO
     selectedBgmFilename,
     assetResolution,
     preflightAssessment,
-    introOutro: NO_BOOKENDS,
+    introOutro: bookends.introOutro,
   };
 }
 

@@ -42,6 +42,7 @@ export function soundtrackFingerprint(
     targetLufs?: number;
     startSeconds?: number;
     outroStartSeconds?: number;
+    finalFadeOutSeconds?: number;
   },
 ): string {
   return createHash("sha256")
@@ -64,6 +65,7 @@ export function soundtrackFingerprint(
           targetLufs: options?.targetLufs ?? -14,
           startSeconds: options?.startSeconds ?? null,
           outroStartSeconds: options?.outroStartSeconds ?? null,
+          ...(options?.finalFadeOutSeconds !== undefined ? { finalFadeOutSeconds: options.finalFadeOutSeconds } : {}),
         },
       }),
     )

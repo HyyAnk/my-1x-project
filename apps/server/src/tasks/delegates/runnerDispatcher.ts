@@ -12,6 +12,7 @@ import {
   retryVisualBible,
   retrySequenceScenes,
   retryTopicSuggestions,
+  retryQuiz,
 } from "../codexRunner.js";
 import {
   createImageProvider,
@@ -61,6 +62,7 @@ export type TaskRunnerDelegates = Pick<
   | "retryVisualBible"
   | "retrySequenceScenes"
   | "retryTopicSuggestions"
+  | "retryQuiz"
 >;
 
 export const runnerDispatcherMethods: TaskRunnerDelegates = {
@@ -156,6 +158,9 @@ export const runnerDispatcherMethods: TaskRunnerDelegates = {
   },
   retryTopicSuggestions(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
     return retryTopicSuggestions.call(this, active, reason);
+  },
+  retryQuiz(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
+    return retryQuiz.call(this, active, reason);
   },
 };
 
@@ -263,6 +268,9 @@ export abstract class TaskManagerRunnerBase extends EventEmitter implements Task
   }
   retryTopicSuggestions(active: ActiveRun, reason: string): Promise<void> {
     return runnerDispatcherMethods.retryTopicSuggestions.call(this as unknown as TaskManagerRuntime, active, reason);
+  }
+  retryQuiz(active: ActiveRun, reason: string): Promise<void> {
+    return runnerDispatcherMethods.retryQuiz.call(this as unknown as TaskManagerRuntime, active, reason);
   }
 }
 

@@ -20,6 +20,7 @@ export const EpisodeExportMetadataSchema = z.object({
   tags: z.array(z.string()).default([]),
   hashtags: z.array(z.string()).default([]),
   category: z.string().optional(),
+  playlists: z.array(z.string()).default([]),
   chapters: z.array(VideoDescriptionChapterSchema).default([]),
   made_for_kids: z.boolean().optional(),
   rendered_at: z.string(),

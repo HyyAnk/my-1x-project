@@ -5,6 +5,7 @@ import path from "node:path";
 import type { DatabaseSync as SqliteDatabase } from "node:sqlite";
 import { RepositoryError } from "../../errors.js";
 import { normalizeLegacyVerdictRows } from "./bankLegacyVerdictRows.js";
+import { upgradeBankQuestionColumns } from "./bankSqliteSchemaUpgrades.js";
 
 let SqliteDatabaseConstructor: (new (path: string) => SqliteDatabase) | null = null;
 try {
@@ -68,6 +69,7 @@ function initializeSchema(db: SqliteDatabase): void {
       subtopic_id TEXT NOT NULL,
       language TEXT DEFAULT NULL,
       question TEXT NOT NULL,
+      highlight_phrase TEXT DEFAULT NULL,
       format TEXT NOT NULL DEFAULT 'multiple_choice',
       choices TEXT NOT NULL,
       correct_choice_id TEXT NOT NULL,
@@ -95,6 +97,7 @@ function initializeSchema(db: SqliteDatabase): void {
       file_size INTEGER NOT NULL
     );
   `);
+  upgradeBankQuestionColumns(db);
 }
 
 export async function withBankSqliteDb<T>(runtimeBankRoot: string, fn: (db: SqliteDatabase) => Promise<T> | T): Promise<T> {

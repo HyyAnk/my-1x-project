@@ -72,11 +72,19 @@ describe("ChannelDetail Quiz Shorts integration", () => {
     vi.clearAllMocks();
   });
 
-  it("orders the tabs Episodes, Quiz Shorts, Short-Reels, Topics, DNA, Intro & Outro", async () => {
+  it("orders the tabs Episodes, Quiz Shorts, Short-Reels, Topics, DNA, Intro & Outro, Short Intro & Outro", async () => {
     renderChannelDetail("quiz-shorts", { simplifyMode: false });
     await waitFor(() => expect(screen.getByRole("tab", { name: /Quiz Shorts/i })).toBeTruthy());
     const labels = screen.getAllByRole("tab").map((tab) => tab.textContent?.replace(/\d+$/, "").trim());
-    expect(labels).toEqual(["Episodes", "Quiz Shorts", "Short-Reels", "Idea Lab & Topics", "Channel DNA & Identity", "Intro & Outro"]);
+    expect(labels).toEqual([
+      "Episodes",
+      "Quiz Shorts",
+      "Short-Reels",
+      "Idea Lab & Topics",
+      "Channel DNA & Identity",
+      "Intro & Outro",
+      "Short Intro & Outro",
+    ]);
     expect(screen.getByRole("tab", { name: /Quiz Shorts/i }).getAttribute("aria-selected")).toBe("true");
     expect(screen.getByTestId("channel-quiz-shorts-tab")).toBeTruthy();
     expect(screen.getByText(/No quiz shorts confirmed yet/i)).toBeTruthy();

@@ -15,8 +15,16 @@ export type QuizShortBookendKind = z.infer<typeof QuizShortBookendKindSchema>;
  */
 export const QuizShortTitleCanvasSchema = z
   .object({
-    x: z.number().int().min(0).max(QUIZ_SHORT_BOOKEND_WIDTH - 200),
-    y: z.number().int().min(0).max(QUIZ_SHORT_BOOKEND_HEIGHT - 200),
+    x: z
+      .number()
+      .int()
+      .min(0)
+      .max(QUIZ_SHORT_BOOKEND_WIDTH - 200),
+    y: z
+      .number()
+      .int()
+      .min(0)
+      .max(QUIZ_SHORT_BOOKEND_HEIGHT - 200),
     width: z.number().int().min(200).max(QUIZ_SHORT_BOOKEND_WIDTH),
     height: z.number().int().min(200).max(QUIZ_SHORT_BOOKEND_HEIGHT),
   })
@@ -68,7 +76,10 @@ export const QuizShortBookendSelectionSchema = z.discriminatedUnion("mode", [
 ]);
 export type QuizShortBookendSelection = z.infer<typeof QuizShortBookendSelectionSchema>;
 
-/** The pinned bookend decision of one Quiz Short, so retries and later stages share one draw. */
+/**
+ * The pinned bookend decision of one Quiz Short, so retries and later stages share one draw.
+ * The fingerprint covers the media files only; title canvas edits apply on the next render.
+ */
 export const QuizShortBookendSnapshotSchema = z.object({
   version: z.literal(1),
   selection_key: z.string(),
@@ -78,9 +89,6 @@ export const QuizShortBookendSnapshotSchema = z.object({
   intro_duration_seconds: z.number().nonnegative(),
   outro_duration_seconds: z.number().nonnegative(),
   outro_has_audio: z.boolean(),
-  title_canvas: QuizShortTitleCanvasSchema,
-  transition_type: z.string().min(1),
-  transition_duration_seconds: z.number().min(0).max(1.5),
   selected_at: IsoDate,
 });
 export type QuizShortBookendSnapshot = z.infer<typeof QuizShortBookendSnapshotSchema>;

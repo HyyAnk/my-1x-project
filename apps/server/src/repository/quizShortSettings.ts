@@ -49,7 +49,8 @@ export function hasQuizShortRenderSettingsChanged(next: QuizShortConfig, prev: Q
     next.palette_id !== prev.palette_id ||
     next.style_preset_id !== prev.style_preset_id ||
     JSON.stringify(next.mascot_style_selection) !== JSON.stringify(prev.mascot_style_selection) ||
-    next.outro_cta_enabled !== prev.outro_cta_enabled
+    next.outro_cta_enabled !== prev.outro_cta_enabled ||
+    JSON.stringify(next.bookend_selection) !== JSON.stringify(prev.bookend_selection)
   );
 }
 
@@ -70,6 +71,7 @@ const PASS_THROUGH_KEYS = [
   "layout_pair",
   "outro_cta_enabled",
   "fast_render_mode",
+  "bookend_selection",
 ] as const satisfies readonly (keyof QuizShortSettingsInput & keyof QuizShortConfig)[];
 
 function computeUpdatedConfig(prev: QuizShortConfig, input: QuizShortSettingsInput, nextResolvedStyle: QuizImageStyle): QuizShortConfig {

@@ -65,7 +65,11 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
     question: {
       text: normalizedQuestionText,
       visualOpportunity: model.question.visualOpportunity,
-      highlightedHtml: highlightQuestionMarkup(normalizedQuestionText, model.question.visualOpportunity),
+      highlightedHtml: highlightQuestionMarkup(
+        normalizedQuestionText,
+        model.question.visualOpportunity,
+        model.question.highlightPhrase,
+      ),
       layout: questionLayout,
       number: model.question.number,
       paletteAccent: model.palette.accent,

@@ -11,6 +11,7 @@ export function buildQuizSceneRenderModel(input: BuildQuizSceneRenderModelInput)
       total: input.totalQuestions,
       format: input.question.format,
       text: input.question.text,
+      highlightPhrase: input.question.highlightPhrase,
       visualOpportunity: input.question.visualOpportunity,
       factText: input.question.explanation || input.question.funFact,
       correctChoiceId: input.question.correctChoiceId,

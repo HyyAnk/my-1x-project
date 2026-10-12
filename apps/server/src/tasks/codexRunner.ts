@@ -5,7 +5,7 @@ import { Gpti2ImageProvider } from "../providers/gpti2Image.js";
 import { ShopAiKeyImageProvider } from "../providers/shopAiKeyImage.js";
 import type { ActiveRun, TaskManagerRuntime } from "./runtime.js";
 import { getAssignedTopicAllocation, getAssignedTopicMatrixPlan } from "../context/channelContextBuilder.js";
-import { retryQuizResearch, retryScript, retrySequenceScenes, retryVisualBible, retryTopicSuggestions } from "./codexRetries.js";
+import { retryQuizResearch, retryScript, retrySequenceScenes, retryVisualBible, retryTopicSuggestions, retryQuiz } from "./codexRetries.js";
 import { handleNotification } from "./stream/notificationHandler.js";
 import { handleServerRequest } from "./stream/approvalHandler.js";
 import { completeWithOutput } from "./handlers/outputCompletionHandler.js";
@@ -19,6 +19,7 @@ export {
   retryVisualBible,
   retrySequenceScenes,
   retryTopicSuggestions,
+  retryQuiz,
   handleNotification,
   handleServerRequest,
   completeWithOutput,
@@ -121,6 +122,7 @@ export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
       visualBibleAttempts: 0,
       sequenceAttempts: 0,
       topicSuggestionAttempts: 0,
+      quizAttempts: 0,
       topicMatrixPlan: getAssignedTopicMatrixPlan(manifest),
     };
     this.active.set(task.task_id, activeRecord);

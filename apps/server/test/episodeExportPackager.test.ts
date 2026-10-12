@@ -59,6 +59,17 @@ describe("Episode Export Packaging", () => {
       expect(result).toContain("[DESCRIPTION]\nFallback text from description.md");
       expect(result).not.toContain("[HASHTAGS]");
       expect(result).not.toContain("[CATEGORY]");
+      expect(result).not.toContain("[PLAYLIST]");
+    });
+
+    it("places the playlist section between the title and the description", () => {
+      const result = formatExportDescriptionText({
+        title: "Planet Quiz",
+        fallbackText: "Body",
+        playlistTitles: ["Science & Space Quiz", "Guess the Picture"],
+      });
+
+      expect(result.startsWith("[TITLE]\nPlanet Quiz\n\n[PLAYLIST]\nScience & Space Quiz\nGuess the Picture\n\n[DESCRIPTION]\nBody")).toBe(true);
     });
   });
 

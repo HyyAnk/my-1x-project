@@ -1,6 +1,8 @@
 import { BUILT_IN_PRESETS, type Channel, type QuizPaletteId, type QuizShort } from "@studio/shared";
 import type { useQuizShortSettings } from "../hooks/useQuizShortSettings";
 import { useChannelMascotStyles } from "../hooks/useChannelMascotStyles";
+import { useShortBookendPairs } from "../hooks/useShortBookendPairs";
+import { buildBookendSelectionOptions, decodeBookendSelection, encodeBookendSelection } from "../utils/quizShortBookendOptions";
 import {
   QUIZ_SHORT_QUESTION_COUNT_OPTIONS,
   buildLayoutPairOptions,
@@ -27,9 +29,10 @@ const PALETTE_OPTIONS = buildPaletteOptions();
 const LAYOUT_PAIR_OPTIONS = buildLayoutPairOptions();
 const QUESTION_COUNT_OPTIONS = QUIZ_SHORT_QUESTION_COUNT_OPTIONS.map((count) => ({ value: String(count), label: `${count} questions` }));
 
-/** Quiz Short settings limited to what the portrait product supports: no bookends, no aspect ratio. */
+/** Quiz Short settings limited to what the portrait product supports: Short bookends only, no aspect ratio. */
 export function QuizShortCustomizationBar({ channel, quizShort, settings, disabled }: QuizShortCustomizationBarProps) {
   const mascotStyles = useChannelMascotStyles(channel);
+  const bookendPairs = useShortBookendPairs(channel.channel_id);
   const config = quizShort.quiz_config;
   const presetValue = resolveCurrentPresetId(quizShort);
   const hasMascot = Boolean(channel.mascot_id && channel.mascot_id !== "none");
@@ -87,6 +90,15 @@ export function QuizShortCustomizationBar({ channel, quizShort, settings, disabl
           disabled={disabled}
           saving={settings.busy === "layout-pair"}
           onChange={(value) => void settings.saveLayoutPair(decodeLayoutPair(value))}
+        />
+        <QuizShortSettingSelect
+          id="quiz-short-bookends"
+          label="Short Intro & Outro"
+          value={encodeBookendSelection(config.bookend_selection)}
+          options={buildBookendSelectionOptions(quizShort, bookendPairs)}
+          disabled={disabled}
+          saving={settings.busy === "bookends"}
+          onChange={(value) => void settings.saveBookendSelection(decodeBookendSelection(value))}
         />
         <QuizShortSettingToggle
           id="quiz-short-outro-cta"

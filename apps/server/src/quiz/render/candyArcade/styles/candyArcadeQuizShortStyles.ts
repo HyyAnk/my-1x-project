@@ -1,6 +1,7 @@
 import { portraitMascotAnchorCss } from "../../frame/portraitMascotAnchor.js";
 import { PORTRAIT_FRAME } from "../../frame/portraitFrameGeometry.js";
 import { SHORT_RING_CIRCUMFERENCE, SHORT_RING_TIMER_CLASS } from "../shortRingTimer.js";
+import { candyArcadeShortBookendStylesCss } from "./candyArcadeShortBookendStyles.js";
 
 const STAGE = '#stage[data-aspect-ratio="9:16"]';
 const HEADLINE_FONT = '"Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif';
@@ -53,5 +54,6 @@ export function candyArcadeQuizShortStylesCss(): string {
 /* === Quiz Short (9:16) bookends, ring timer and shared motion === */
 ${ringTimerCss()}
 ${bookendCardCss()}
+${candyArcadeShortBookendStylesCss()}
 `;
 }

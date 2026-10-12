@@ -85,10 +85,10 @@ describe("kid audience bank migration", () => {
   it("updates SQLite rows, including rows without a batch file", () => {
     const db = new DatabaseSync(":memory:");
     db.exec(`CREATE TABLE bank_questions (
-      id TEXT PRIMARY KEY, entity_id TEXT, archetype_id TEXT, domain_id TEXT, subtopic_id TEXT, language TEXT, question TEXT,
+      id TEXT PRIMARY KEY, entity_id TEXT, archetype_id TEXT, domain_id TEXT, subtopic_id TEXT, language TEXT, question TEXT, highlight_phrase TEXT,
       format TEXT, choices TEXT, correct_choice_id TEXT, explanation TEXT, fun_fact TEXT, visual_spec TEXT, age_band TEXT,
       difficulty INTEGER, thinking_seconds REAL, tags TEXT, status TEXT, created_at TEXT, updated_at TEXT, translations TEXT)`);
-    const insert = db.prepare(`INSERT INTO bank_questions VALUES (${new Array(21).fill("?").join(", ")})`);
+    const insert = db.prepare(`INSERT INTO bank_questions VALUES (${new Array(22).fill("?").join(", ")})`);
     for (const question of [safe, unsafe]) {
       const row = bankQuestionToRow(question);
       insert.run(...(Object.values(row) as Array<string | number | null>));

@@ -4,6 +4,7 @@ import { useTranslation } from "../../i18n";
 import { useQuestionBank } from "./hooks/useQuestionBank";
 import { QuestionBankHeaderStats } from "./components/QuestionBankHeaderStats";
 import { QuestionBankToolbar } from "./components/QuestionBankToolbar";
+import { QuestionBankHighlightBackfillPanel } from "./components/QuestionBankHighlightBackfillPanel";
 import { QuestionBankTable } from "./components/QuestionBankTable";
 import { QuestionBankLivePreview } from "./components/QuestionBankLivePreview";
 import { QuestionBankFormModal } from "./components/QuestionBankFormModal";
@@ -98,6 +99,8 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo,
           {error}
         </div>
       )}
+
+      <QuestionBankHighlightBackfillPanel />
 
       {/* 2. Unified Search & Filter Command Bar */}
       <QuestionBankToolbar

@@ -63,13 +63,6 @@ export function matchPlaylistLink(categories: string[], playlists: ChannelPlayli
   return best?.link ?? null;
 }
 
-/** Appends YouTube's subscribe-confirmation flag so the link opens the subscribe prompt. */
-export function buildSubscribeUrl(channelUrl: string): string {
-  const url = new URL(channelUrl);
-  url.searchParams.set("sub_confirmation", "1");
-  return url.toString();
-}
-
 export interface ChannelFooterInput {
   profile?: ChannelPublishingProfile | null;
   channelName: string;
@@ -78,19 +71,23 @@ export interface ChannelFooterInput {
 }
 
 /**
- * Builds the channel footer (matching playlist, subscribe link, about line).
- * Returns an empty string when the channel has no publishing profile yet.
+ * Chooses the playlist to promote: the best topic match, otherwise the first configured playlist.
+ * Returns null only when the channel has no playlists set up.
+ */
+export function selectPlaylistLink(categories: string[], playlists: ChannelPlaylistLink[]): ChannelPlaylistLink | null {
+  return matchPlaylistLink(categories, playlists) ?? playlists[0] ?? null;
+}
+
+/**
+ * Builds the channel footer (playlist and about lines). Each line only appears when the
+ * channel configured it, so an unconfigured channel adds nothing.
  */
 export function buildChannelFooter(input: ChannelFooterInput): string {
   const { profile, channelName, categories, labels } = input;
   if (!profile) return "";
-  const playlist = matchPlaylistLink(categories, profile.playlists);
+  const playlist = selectPlaylistLink(categories, profile.playlists);
   const aboutText = profile.about_text.trim();
-  return [
-    playlist ? `${labels.morePlaylist} ${playlist.url}` : "",
-    profile.channel_url ? `${labels.subscribe} ${buildSubscribeUrl(profile.channel_url)}` : "",
-    aboutText ? `${labels.about} ${channelName}: ${aboutText}` : "",
-  ]
+  return [playlist ? `${labels.morePlaylist} ${playlist.url}` : "", aboutText ? `${labels.about} ${channelName}: ${aboutText}` : ""]
     .filter(Boolean)
     .join("\n");
 }

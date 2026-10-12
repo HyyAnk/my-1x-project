@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { LoadingState } from "../../components/EmptyState";
 import { PipelineRail } from "../episode/components/PipelineRail";
+import { VideoPlaylistCard } from "../episode/components/playlist/VideoPlaylistCard";
 import { VideoDescriptionCard } from "../episode/components/VideoDescriptionCard";
 import { VideoTitleCard } from "../episode/components/VideoTitleCard";
 import { useEpisodeTaskTracking } from "../episode/hooks/useEpisodeTaskTracking";
@@ -15,6 +16,7 @@ import { useQuizShortPipeline } from "./hooks/useQuizShortPipeline";
 import { useQuizShortSettings } from "./hooks/useQuizShortSettings";
 import { useQuizShortThumbnail } from "./hooks/useQuizShortThumbnail";
 import { useQuizShortTitle } from "./hooks/useQuizShortTitle";
+import { useQuizShortVideoFolder } from "./hooks/useQuizShortVideoFolder";
 import { buildQuizShortRailReadiness, buildQuizShortStageSummaries, resolveQuizShortPipelineAction } from "./services/quizShortViewModel";
 import type { QuizShortViewProps } from "./types/quizShort.types";
 
@@ -37,6 +39,7 @@ export function QuizShortView(props: QuizShortViewProps) {
   const thumbnail = useQuizShortThumbnail({ channelId, quizShortId, quizShort, tasks: tracking.episodeTasks, onNotice, load });
   const titleClient = useQuizShortTitle(channelId, quizShortId);
   const descriptionClient = useQuizShortDescription(channelId, quizShortId);
+  const videoFolder = useQuizShortVideoFolder({ channelId, quizShortId, onNotice });
 
   const stageSummaries = useMemo(() => buildQuizShortStageSummaries(stages), [stages]);
   const railReadiness = useMemo(() => buildQuizShortRailReadiness(stages), [stages]);
@@ -87,6 +90,8 @@ export function QuizShortView(props: QuizShortViewProps) {
           coverUrl={thumbnail.imageUrl}
           activeTask={tracking.activeEpisodeTask}
           now={tracking.episodeClock}
+          openingFolder={videoFolder.opening}
+          onOpenFolder={() => void videoFolder.openFolder()}
         />
         <div className="quiz-short-workspace-side">
           <QuizShortStageList stages={stageSummaries} />
@@ -106,6 +111,17 @@ export function QuizShortView(props: QuizShortViewProps) {
         client={titleClient}
         onNotice={onNotice}
         onUpdated={load}
+      />
+      <VideoPlaylistCard
+        channel={channel}
+        input={{
+          contentKind: "quiz_short",
+          domainId: quizShort.topic.domain_id,
+          archetype: quizShort.quiz_config.archetype,
+          quizFormat: quizShort.quiz_config.quiz_format,
+          topicText: `${quizShort.topic.title} ${quizShort.topic.premise}`,
+        }}
+        onNotice={onNotice}
       />
       <VideoDescriptionCard
         channel={channel}

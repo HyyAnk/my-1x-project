@@ -1,4 +1,4 @@
-import { appendFile, mkdir } from "node:fs/promises";
+import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { studioRuntimePath } from "./runtimePaths.js";
 
@@ -76,6 +76,20 @@ export class StudioLogger {
 
   debug(message: string, context?: LogContext): void {
     if (this.debugEnabled) void this.write("DEBUG", message, context);
+  }
+
+  /** Persists a raw model response next to the daily logs so malformed output can be inspected later. */
+  async saveRawOutput(label: string, content: string): Promise<string | null> {
+    try {
+      const directory = path.join(this.logDirectory, "raw-output");
+      await mkdir(directory, { recursive: true });
+      const safeLabel = label.replace(/[^a-zA-Z0-9_-]+/g, "-").slice(0, 80) || "output";
+      const file = path.join(directory, `${new Date().toISOString().replace(/[:.]/g, "-")}-${safeLabel}.txt`);
+      await writeFile(file, content, "utf8");
+      return file;
+    } catch {
+      return null;
+    }
   }
 
   private async write(level: LogLevel, message: string, context: LogContext = {}): Promise<void> {

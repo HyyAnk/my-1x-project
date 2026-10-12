@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DeviceMobile, FileText, FilmSlate, FilmStrip, Lightbulb, VideoCamera } from "@phosphor-icons/react";
+import { DeviceMobile, DeviceMobileCamera, FileText, FilmSlate, FilmStrip, Lightbulb, VideoCamera } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { buildHash, getNavProps } from "../../hooks/useRouter";
@@ -12,6 +12,7 @@ import { ChannelShortReelsTab } from "./components/ChannelShortReelsTab";
 import { ChannelTopicsTab } from "./components/ChannelTopicsTab";
 import { ChannelDnaTab } from "./components/ChannelDnaTab";
 import { ChannelIntroOutroTab } from "./components/ChannelIntroOutroTab";
+import { ShortIntroOutroTab } from "../shortIntroOutro";
 import { useChannelDetail, type ChannelTab } from "./hooks/useChannelDetail";
 
 type ChannelDetailProps = {
@@ -93,6 +94,7 @@ export function ChannelDetail(props: ChannelDetailProps) {
             { id: "topics" as ChannelTab, label: "Idea Lab & Topics", icon: Lightbulb, count: state.topics.length },
             ...(!simplifyMode ? [{ id: "dna" as ChannelTab, label: "Channel DNA & Identity", icon: FileText }] : []),
             { id: "intro-outro" as ChannelTab, label: "Intro & Outro", icon: VideoCamera },
+            { id: "short-intro-outro" as ChannelTab, label: "Short Intro & Outro", icon: DeviceMobileCamera },
           ].map((tab) => (
             <a
               key={tab.id}
@@ -206,6 +208,8 @@ export function ChannelDetail(props: ChannelDetailProps) {
         {state.channelTab === "intro-outro" ? (
           <ChannelIntroOutroTab channel={channel} onNotice={onNotice} onChannelUpdate={() => void onRefresh()} />
         ) : null}
+        {/* Tab 7: Quiz Short Intro & Outro pairs */}
+        {state.channelTab === "short-intro-outro" ? <ShortIntroOutroTab channel={channel} onNotice={onNotice} /> : null}
       </section>
 
       <ChannelDetailModals

@@ -42,6 +42,8 @@ export const QuizQuestionSchema = z
     gameplay_id: QuizGameplayIdSchema.optional(),
     difficulty: z.number().int().min(1).max(5),
     question: z.string().trim().min(1).max(320),
+    /** Focal phrase of the question, copied verbatim from `question`, that the renderer color-highlights. */
+    highlight_phrase: z.string().trim().min(1).max(120).optional(),
     answer_mode: QuizAnswerModeSchema.default("choice_selection"),
     choices: QuizChoiceSchema.array().min(1).max(QUIZ_MAX_CHOICES_PER_QUESTION),
     correct_choice_id: z.string().min(1),

@@ -22,6 +22,7 @@ export type ActiveRun = {
   visualBibleAttempts: number;
   sequenceAttempts: number;
   topicSuggestionAttempts: number;
+  quizAttempts: number;
   topicMatrixPlan?: TopicMatrixPlan;
 };
 
@@ -95,6 +96,7 @@ export interface TaskManagerRuntime {
   retrySequenceScenes(active: ActiveRun, reason: string): Promise<void>;
   retryVisualBible(active: ActiveRun, reason: string): Promise<void>;
   retryTopicSuggestions(active: ActiveRun, reason: string): Promise<void>;
+  retryQuiz(active: ActiveRun, reason: string): Promise<void>;
   reconcileQuestionHistory(): Promise<void>;
   reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }>;
   reconcileStartupState(): Promise<{ prunedDirs: string[]; reclaimedBytes: number }>;

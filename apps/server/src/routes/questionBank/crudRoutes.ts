@@ -1,6 +1,14 @@
 import type { FastifyInstance } from "fastify";
-import { BankQuestionSchema } from "@studio/shared";
+import { BankQuestionSchema, type BankQuestion } from "@studio/shared";
 import type { QuestionBankRouteDeps } from "./index.js";
+import { completeHighlightPhrases } from "../../quiz/bank/highlight/index.js";
+import { resolveLlmClient } from "./batchRoutes.js";
+
+/** Manual edits can change the question text, so the stored phrase is re-validated and filled in when missing. */
+async function withHighlightPhrase(question: BankQuestion, deps: QuestionBankRouteDeps): Promise<BankQuestion> {
+  const [completed] = await completeHighlightPhrases([question], { llmClient: resolveLlmClient(deps), maxAttempts: 1 });
+  return completed;
+}
 
 /**
  * Registers CRUD endpoints for creating, updating, deleting, and clearing
@@ -25,7 +33,7 @@ export function registerCrudRoutes(server: FastifyInstance, deps: QuestionBankRo
       });
     }
 
-    const saved = await deps.repository.saveQuestionBankQuestion(parsed.data);
+    const saved = await deps.repository.saveQuestionBankQuestion(await withHighlightPhrase(parsed.data, deps));
     return reply.code(201).send({ question: saved });
   });
 
@@ -56,7 +64,7 @@ export function registerCrudRoutes(server: FastifyInstance, deps: QuestionBankRo
       });
     }
 
-    const updated = await deps.repository.saveQuestionBankQuestion(parsed.data);
+    const updated = await deps.repository.saveQuestionBankQuestion(await withHighlightPhrase(parsed.data, deps));
     return { question: updated };
   });
 

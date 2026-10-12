@@ -3,6 +3,7 @@ import type { AutoQaIssue } from "../autoQa/autoQa.types.js";
 import { normalizeGenerationLanguage } from "../batchGeneratorPrompt.js";
 import { runBatchAutoQa, QuestionBankAutoQaIndex, type BatchAutoQaReport } from "../questionBankAutoQa.js";
 import { remediateLeakedQuestionsBatch } from "../remediation/index.js";
+import { completeHighlightPhrases } from "../highlight/index.js";
 import type { PlannedBatchChunk } from "../matrixCoverageService.js";
 import { AdaptiveRateLimiter } from "./adaptiveRateLimiter.js";
 import { getDynamicDeficitChunk } from "../matrix/matrixDeficitPlanner.js";
@@ -164,12 +165,19 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
       }
     }
 
+    // Runs after remediation, which may rewrite a question and invalidate its earlier phrase.
+    const approvedQuestions = await completeHighlightPhrases(qaReport.approvedQuestions, {
+      llmClient: normalizedInput.llmClient,
+      modelOverride: normalizedInput.modelOverride,
+      signal: normalizedInput.signal,
+    });
+
     try {
       await retryChunkOperation(
         async () => {
           await persistenceMutex.run(async () => {
             const savedMap = new Map<string, BankQuestion>();
-            for (const q of qaReport.approvedQuestions) {
+            for (const q of approvedQuestions) {
               if (savedMap.has(q.id)) continue;
               const saved = persist ? await repository.saveQuestionBankQuestion(q) : q;
               savedMap.set(saved.id, saved);

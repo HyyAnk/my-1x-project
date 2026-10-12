@@ -4,6 +4,7 @@ import {
   VISUAL_ANCHOR_MANDATE_LINES,
 } from "../archetypePromptGuidelines.js";
 import { KID_AUDIENCE_POLICY_LINES } from "../kidAudiencePolicy.js";
+import { QUESTION_HIGHLIGHT_RULE_LINES } from "../../highlight/questionHighlightRules.js";
 
 export { FRANCHISE_ANCHOR_MANDATE_LINES, VISUAL_ANCHOR_MANDATE_LINES };
 
@@ -56,6 +57,12 @@ export const ANSWER_INTEGRITY_MANDATE_LINES: string[] = [
   "   - Never let the stem's category word match only the correct choice (e.g. NEVER ask 'which flask...' when only the correct choice is a flask).",
   "   - Never make the correct choice noticeably longer, more specific, or more formal than the distractors.",
   "3. ANSWER POSITION: Choice order does not matter; the system shuffles answer positions automatically. Never refer to a choice by its letter (A, B, C) in the question, explanation, or fun fact; always name it.",
+];
+
+export const QUESTION_HIGHLIGHT_MANDATE_LINES: string[] = [
+  "=== QUESTION HIGHLIGHT MANDATE (ON-SCREEN KEYWORD) ===",
+  'Every question object MUST include "highlight_phrase": the focal word or phrase the video color-highlights inside the question box.',
+  ...QUESTION_HIGHLIGHT_RULE_LINES,
 ];
 
 export const COMMON_BATCH_CONTENT_POLICY_LINES: string[] = [

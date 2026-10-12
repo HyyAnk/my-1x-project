@@ -1,4 +1,4 @@
-import { DeviceMobile, DownloadSimple } from "@phosphor-icons/react";
+import { DeviceMobile, DownloadSimple, FolderOpen } from "@phosphor-icons/react";
 import type { QuizShort, Task } from "@studio/shared";
 import { quizShortApi } from "../../../api/quizShortApi";
 import { InlineTaskState } from "../../../components/InlineTaskState";
@@ -9,10 +9,19 @@ export type QuizShortPortraitPreviewProps = {
   coverUrl: string | null;
   activeTask: Task | null;
   now: number;
+  openingFolder: boolean;
+  onOpenFolder: () => void;
 };
 
 /** 9:16 stage showing the rendered video, or the cover while no video exists yet. */
-export function QuizShortPortraitPreview({ quizShort, coverUrl, activeTask, now }: QuizShortPortraitPreviewProps) {
+export function QuizShortPortraitPreview({
+  quizShort,
+  coverUrl,
+  activeTask,
+  now,
+  openingFolder,
+  onOpenFolder,
+}: QuizShortPortraitPreviewProps) {
   const videoUrl = quizShort.video_asset_path
     ? quizShortApi.quizShortVideoUrl(quizShort.channel_id, quizShort.quiz_short_id, quizShort.video_generated_at)
     : null;
@@ -36,10 +45,16 @@ export function QuizShortPortraitPreview({ quizShort, coverUrl, activeTask, now 
         <p className="quiz-short-preview-copy">{describeQuizShortRender(quizShort)}</p>
         {activeTask ? <InlineTaskState task={activeTask} now={now} /> : null}
         {videoUrl ? (
-          <a className="quiet-button compact" href={videoUrl} download={`${quizShort.slug}.mp4`}>
-            <DownloadSimple size={15} />
-            <span>Download MP4</span>
-          </a>
+          <div className="quiz-short-preview-actions">
+            <a className="quiet-button compact" href={videoUrl} download={`${quizShort.slug}.mp4`}>
+              <DownloadSimple size={15} />
+              <span>Download MP4</span>
+            </a>
+            <button type="button" className="quiet-button compact" onClick={onOpenFolder} disabled={openingFolder}>
+              <FolderOpen size={15} />
+              <span>{openingFolder ? "Opening..." : "Open folder"}</span>
+            </button>
+          </div>
         ) : null}
       </div>
     </section>

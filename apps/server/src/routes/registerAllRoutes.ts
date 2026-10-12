@@ -33,6 +33,7 @@ import { resolveIntroOutroScriptModel } from "../introOutroScripts/model.js";
 import { registerMascotsRoutes } from "./mascots.js";
 import { registerQuestionBankRoutes } from "./questionBank.js";
 import { registerQuizShortsRoutes } from "./quizShorts.js";
+import { registerQuizShortBookendRoutes } from "./quizShortBookends.js";
 import { registerQuizShortWorkspaceRoutes } from "./quizShortWorkspace.js";
 import { registerQuizShortMetadataRoutes } from "./quizShortMetadata.js";
 import { registerQuizShortMetadataEditRoutes } from "./quizShortMetadataEdit.js";
@@ -111,7 +112,7 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   );
   await server.register(registerEpisodesRoutes({ repository, state, tasks }));
   await server.register(registerQuizShortsRoutes({ repository, tasks }));
-  await server.register(registerQuizShortWorkspaceRoutes({ repository, tasks }));
+  await server.register(registerQuizShortWorkspaceRoutes({ repository, tasks, revealFile }));
   await server.register(registerQuizShortMetadataEditRoutes({ repository }));
   await server.register(
     registerQuizShortMetadataRoutes({ repository, tasks, codex, antigravity, state, portraitImageClient, llmClient: activeLlmClient }),
@@ -130,6 +131,7 @@ export async function registerAllRoutes(deps: RegisterAllRoutesOptions): Promise
   await server.register(registerStyleModulesRoutes({ repository }));
   await server.register(registerQuestionBankRoutes({ repository, tasks, codex, antigravity, state }));
   await server.register(registerIntroOutroStylesRoutes({ repository, logger, state, scripts: scriptRepository }));
+  await server.register(registerQuizShortBookendRoutes({ repository }));
   await server.register(
     registerIntroOutroScriptRoutes({
       repository,
